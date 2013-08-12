@@ -118,7 +118,7 @@ void SpriteTemplate::Animation::setFrame(uint16_t index, cinek_bitmap_index bitm
 }
 
 
-SpriteTemplate::SpriteTemplate(cinek_bitmap_class bitmapClass, uint16_t numStates,
+SpriteTemplate::SpriteTemplate(cinek_bitmap_atlas bitmapClass, uint16_t numStates,
                                const Allocator& allocator) :
     _allocator { allocator },
     _bitmapClass{ bitmapClass },
@@ -141,13 +141,13 @@ SpriteTemplate::SpriteTemplate(SpriteTemplate&& other) :
     _statePool(std::move(other._statePool)),
     _states(std::move(other._states))
 {
-    other._bitmapClass = kCinekBitmapClass_Null;
+    other._bitmapClass = kCinekBitmapAtlas_Null;
 }
 
 SpriteTemplate& SpriteTemplate::operator=(SpriteTemplate&& other)
 {
     _bitmapClass = other._bitmapClass;
-    other._bitmapClass = kCinekBitmapClass_Null;
+    other._bitmapClass = kCinekBitmapAtlas_Null;
     _statePool = std::move(other._statePool);
     _states = std::move(other._states);
     return *this;

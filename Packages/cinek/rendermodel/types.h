@@ -36,19 +36,19 @@ typedef enum cinek_bitmap_type_t
 cinek_bitmap_type;
 
 /** An index to a bitmap collection. */
-typedef uint16_t cinek_bitmap_class;
+typedef uint16_t cinek_bitmap_atlas;
 /** An index to a bitmap in a bitmap collection */
 typedef uint16_t cinek_bitmap_index;
 
 /** Define for an invalid bitmap class value. */
-#define kCinekBitmapClass_Null      ((cinek_bitmap_class)0)
+#define kCinekBitmapAtlas_Null      ((cinek_bitmap_atlas)0)
 /** Define for a null bitmap index. */
 #define kCinekBitmapIndex_Null      ((cinek_bitmap_index)0)
 
 /** Identifies a bitmap from its components. */
 typedef struct cinek_bitmap_t
 {
-    cinek_bitmap_class bmpClass;
+    cinek_bitmap_atlas bmpClass;
     cinek_bitmap_index bmpIndex;
 }
 cinek_bitmap;

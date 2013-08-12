@@ -34,7 +34,7 @@ public:
      * @param numStates     Number of states to reserve in the state table.
      * @param allocator     An optional allocator.
      */
-    SpriteTemplate(cinek_bitmap_class bitmapClass, uint16_t numStates,
+    SpriteTemplate(cinek_bitmap_atlas bitmapClass, uint16_t numStates,
                    const Allocator& allocator=Allocator());
     /** Destructor */
     ~SpriteTemplate();
@@ -45,7 +45,7 @@ public:
     /**
      * @return Returns the bitmap class for bitmaps used in the sprite.
      */
-    cinek_bitmap_class getBitmapClass() const {
+    cinek_bitmap_atlas getBitmapClass() const {
         return _bitmapClass;
     }
  
@@ -111,7 +111,7 @@ public:
 
 private:
     Allocator _allocator;
-    cinek_bitmap_class _bitmapClass;
+    cinek_bitmap_atlas _bitmapClass;
 
     //  state table containing animation lists mapped to state.
     ObjectPool<State> _statePool;

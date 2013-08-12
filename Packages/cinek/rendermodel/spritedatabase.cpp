@@ -47,7 +47,7 @@ cinek_rendermodel_anim_id SpriteDatabase::findAnimationIDByName(const char* anim
 }
 
 SpriteTemplate* SpriteDatabase::createOrModifyTemplateFromName(const char* name,
-        cinek_bitmap_class classId,
+        cinek_bitmap_atlas classId,
         uint16_t numStates)
 {
     //  check if a sprite of that name exists, if so use that sprite's id,

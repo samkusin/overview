@@ -75,7 +75,7 @@ public:
      *                   memory.
      */
     SpriteTemplate* createOrModifyTemplateFromName(const char* name,
-        cinek_bitmap_class classId,
+        cinek_bitmap_atlas classId,
         uint16_t numStates);
     /**
      * Maps animation state name to a numeric ID.  Numeric IDs are used
