@@ -96,12 +96,12 @@ SpriteTemplate::Animation::Animation(SpriteTemplate::State* state) :
 }
 cinek_bitmap_index SpriteTemplate::Animation::getFrame(uint16_t index) const
 {
-    return _state ? _state->getFrame(index) : kCinekBitmapIndex_Null;
+    return _state ? _state->getFrame(index) : kCinekBitmapIndex_Invalid;
 }
         
 cinek_bitmap_index SpriteTemplate::Animation::getFrameByTime(cinek_time timeValue) const
 {
-    return _state ? _state->getFrameByTime(timeValue) : kCinekBitmapIndex_Null;
+    return _state ? _state->getFrameByTime(timeValue) : kCinekBitmapIndex_Invalid;
 }
 
 cinek_bitmap_index SpriteTemplate::Animation::getFrameCount() const
@@ -141,13 +141,13 @@ SpriteTemplate::SpriteTemplate(SpriteTemplate&& other) :
     _statePool(std::move(other._statePool)),
     _states(std::move(other._states))
 {
-    other._bitmapClass = kCinekBitmapAtlas_Null;
+    other._bitmapClass = kCinekBitmapAtlas_Invalid;
 }
 
 SpriteTemplate& SpriteTemplate::operator=(SpriteTemplate&& other)
 {
     _bitmapClass = other._bitmapClass;
-    other._bitmapClass = kCinekBitmapAtlas_Null;
+    other._bitmapClass = kCinekBitmapAtlas_Invalid;
     _statePool = std::move(other._statePool);
     _states = std::move(other._states);
     return *this;

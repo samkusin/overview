@@ -41,9 +41,9 @@ typedef uint16_t cinek_bitmap_atlas;
 typedef uint16_t cinek_bitmap_index;
 
 /** Define for an invalid bitmap class value. */
-#define kCinekBitmapAtlas_Null      ((cinek_bitmap_atlas)0)
+#define kCinekBitmapAtlas_Invalid      ((cinek_bitmap_atlas)-1)
 /** Define for a null bitmap index. */
-#define kCinekBitmapIndex_Null      ((cinek_bitmap_index)0)
+#define kCinekBitmapIndex_Invalid      ((cinek_bitmap_index)-1)
 
 /** Identifies a bitmap from its components. */
 typedef struct cinek_bitmap_t

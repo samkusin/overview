@@ -19,6 +19,7 @@ set( PROJECT_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/ckdebug.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ckpool.h
     ${CMAKE_CURRENT_SOURCE_DIR}/cktimer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ckfspath.h
 )
 
 set( PROJECT_SOURCES
@@ -26,6 +27,7 @@ set( PROJECT_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/ckdebug.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ckpool.c
     ${CMAKE_CURRENT_SOURCE_DIR}/cktimer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/ckfspath.c
 )
 
 # Targets

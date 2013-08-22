@@ -7,7 +7,7 @@
  *          Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#include "SpriteDatabaseJSONSerializer.hpp"
+#include "SpriteDatabaseLoader.hpp"
 #include "Engine/Debug.hpp"
 #include "Engine/StreamBufRapidJson.hpp"
 #include "rapidjson/document.h"
@@ -19,15 +19,13 @@
 namespace cinekine {
     namespace ovengine {
 
-SpriteDatabaseJSONSerializer::SpriteDatabaseJSONSerializer(rendermodel::SpriteDatabase& database) :
+SpriteDatabaseLoader::SpriteDatabaseLoader(rendermodel::SpriteDatabase& database) :
     _db(database)
 {
 
 }
 
-bool SpriteDatabaseJSONSerializer::unserialize(std::streambuf& instream,
-        std::function<cinek_bitmap_class(const char*)>& getBitmapClassCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_class, const char*)>& getBitmapIndexCb)
+bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
 {
     typedef rapidjson::GenericDocument<rapidjson::UTF8<> > Document;
     typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
@@ -117,7 +115,7 @@ bool SpriteDatabaseJSONSerializer::unserialize(std::streambuf& instream,
             }
    
             // create the template.
-            cinek_bitmap_class bitmapClass = getBitmapClassCb(sprite["class"].GetString());
+            cinek_bitmap_atlas bitmapClass = _atlasRequest(sprite["class"].GetString());
             rendermodel::SpriteTemplate* spriteTemplate = _db.createOrModifyTemplateFromName(name, bitmapClass, stateCount);
             if (spriteTemplate == nullptr)
             {
@@ -173,7 +171,7 @@ bool SpriteDatabaseJSONSerializer::unserialize(std::streambuf& instream,
                         const Value& frame = frames[frameIndex];
                         if (frame.IsString())
                         {
-                            cinek_bitmap_index bitmapIndex = getBitmapIndexCb(bitmapClass, frame.GetString());
+                            cinek_bitmap_index bitmapIndex = _indexRequest(bitmapClass, frame.GetString());
                             animation.setFrame(frameIndex, bitmapIndex);
                         }
                     }

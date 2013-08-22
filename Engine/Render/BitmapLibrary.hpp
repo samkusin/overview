@@ -1,14 +1,59 @@
 //
-//  BitmapStore.h
+//  BitmapLibrary.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 8/10/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef __Overview__BitmapStore__
-#define __Overview__BitmapStore__
+#ifndef Overview_Renderer_BitmapLibrary_hpp
+#define Overview_Renderer_BitmapLibrary_hpp
 
-#include <iostream>
+#include "BitmapAtlas.hpp"
 
-#endif /* defined(__Overview__BitmapStore__) */
+#include "cinek/rendermodel/types.h"
+#include "cinek/cpp/ckmemorypool.hpp"
+#include "cinek/cpp/ckstring.hpp"
+
+#include <unordered_map>
+#include <functional>
+
+namespace cinekine {
+    namespace ovengine {
+    
+    class Renderer;
+    
+    //  A BitmapLibrary contains one or more BitmapAtlases
+    //      Applications request atlas objects from a library.
+    class BitmapLibrary
+    {
+        CK_CLASS_NON_COPYABLE(BitmapLibrary);
+
+    public:
+        BitmapLibrary(Renderer& renderer, const char* bitmapAtlasDir);
+        ~BitmapLibrary();
+        
+        //  Returns a handle to an existing or newly loaded bitmap atlas.  Returns a null handle on failure.
+        cinek_bitmap_atlas loadAtlas(const char* atlasName);
+        //  Unloads the specified atlas.
+        void unloadAtlas(cinek_bitmap_atlas handle);
+        //  Returns an atlas given its handle, or null on failure.  This pointer will become invalid if
+        //  unloadAtlas is called.
+        const BitmapAtlas* getAtlas(cinek_bitmap_atlas handle) const;
+
+    private:
+        Renderer& _renderer;
+        typedef std::unordered_map<cinek_bitmap_atlas, BitmapAtlas,
+                                    std::hash<cinek_bitmap_atlas>,
+                                    std::equal_to<cinek_bitmap_atlas>,
+                                    std_allocator<std::pair<cinek_bitmap_atlas, BitmapAtlas>>> AtlasMap;
+
+        string _atlasDir;
+        AtlasMap _atlasMap;
+        cinek_bitmap_atlas _nextAtlasHandle;
+    };
+    
+    }   // namespace ovengine
+}   // namespace cinekine
+
+#endif

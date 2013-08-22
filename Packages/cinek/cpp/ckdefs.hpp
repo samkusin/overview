@@ -78,4 +78,16 @@
 /**@}*/
 #endif
 
+namespace cinekine
+{
+    /** Get the minimum value between v1 and v2 */
+    template<typename T> T min(T v1, T v2) {
+        return v1 < v2 ? v1 : v2;
+    }
+    /** Get the maximum value between v1 and v2. */
+    template<typename T> T max(T v1, T v2) {
+        return v1 > v2 ? v1 : v2;
+    }
+}
+
 #endif
