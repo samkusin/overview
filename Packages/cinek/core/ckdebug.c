@@ -31,6 +31,7 @@ g_cinek_logProvider =
             &stdlog,
             &stdlog,
             &stdlog,
+            &stdlog,
             &stdlogerr
         },
         &stdlogflush
@@ -43,11 +44,13 @@ g_cinek_logProvider =
 static void stdlog(void* context, const char* sourceId, const char* fmt, va_list args)
 {
     vfprintf(stdout, fmt, args);
+    fputc('\n', stdout);
 }
 
 static void stdlogerr(void* context, const char* sourceId, const char* fmt, va_list args)
 {
     vfprintf(stderr, fmt, args);
+    fputc('\n', stdout);
 }
 
 static void stdlogflush(void* context)

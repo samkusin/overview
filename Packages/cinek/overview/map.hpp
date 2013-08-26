@@ -21,7 +21,7 @@ namespace cinekine {
     namespace overview {
 
 /** Defines a grid of tiles */
-typedef Grid<cinek_ov_tile> Tilemap;
+typedef Grid<cinek_tile> Tilemap;
 /** Defines a tilemap section */
 typedef GridContainer<Tilemap> TilemapContainer;
 

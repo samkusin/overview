@@ -11,10 +11,7 @@
 #ifndef Overview_SpriteDatabaseLoader_hpp
 #define Overview_SpriteDatabaseLoader_hpp
 
-#include "cinek/rendermodel/types.h"
-
-#include <functional>
-#include <streambuf>
+#include "BitmapDatabaseLoader.hpp"
 
 namespace cinekine {
     namespace rendermodel {
@@ -26,7 +23,7 @@ namespace cinekine {
      * @class SpriteDatabaseLoader
      * @brief Handles unserialization of a SpriteDatabase 
      */
-    class SpriteDatabaseLoader
+    class SpriteDatabaseLoader : public BitmapDatabaseLoader
     {
     public:
         /**
@@ -43,22 +40,8 @@ namespace cinekine {
          */
         bool unserialize(std::streambuf& instream);
 
-        /** @param requestCb    Delegate method, function issued to request a bitmap 
-            atlas from a renderer. */
-        void onBitmapAtlasRequest(std::function<cinek_bitmap_atlas(const char*)>& requestCb) {
-            _atlasRequest = requestCb;
-        }
-        /** @param requestCb    Delegate method, function issued to request a bitmap
-            index from a renderer. */
-        void onBitmapIndexRequest(std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)>& requestCb) {
-            _indexRequest = requestCb;
-        }
-
     private:
         rendermodel::SpriteDatabase& _db;
-        
-        std::function<cinek_bitmap_atlas(const char*)> _atlasRequest;
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _indexRequest;
     };
 
     }   // namespace ovengine

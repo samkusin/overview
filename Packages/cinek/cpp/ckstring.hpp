@@ -25,8 +25,6 @@ namespace cinekine {
 typedef std_allocator<char> string_allocator;
 /** A standard C++ string object using the default string allocator. */
 typedef std::basic_string<char, std::char_traits<char>, string_allocator > string;
-/** A string object using the scratch allocator. */
-typedef std::basic_string<char, std::char_traits<char>, string_allocator> string_scratch;
 /** A standard C++ stringstream using string_allocator. */
 typedef std::basic_stringstream<char, std::char_traits<char>, string_allocator > stringstream;
 /** A standard C++ istringstream using string_allocator. */

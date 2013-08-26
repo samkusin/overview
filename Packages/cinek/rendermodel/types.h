@@ -21,6 +21,7 @@ typedef enum cinek_pixel_format_t
 {
     kCinekPixelFormat_Unknown,
     kCinekPixelFormat_RGBA8888,
+    kCinekPixelFormat_RGBA4444,
     kCinekPixelFormat_RGB888,
     kCinekPixelFormat_RGBA5551,
     kCinekPixelFormat_RGB565
@@ -62,6 +63,9 @@ typedef struct cinek_bitmap_uvs_t
     float v1;   /**< The lower bottom V coord of a bitmap. */
 }
 cinek_bitmap_uvs;
+
+/** Identifies a tile on the tile map. */
+typedef uint16_t cinek_tile;
 
 /** Identifies a sprite by key ID. */
 typedef uint32_t cinek_sprite_template_id;

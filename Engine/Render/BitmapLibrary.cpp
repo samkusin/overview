@@ -15,6 +15,8 @@
 #include "SDL_image.h"
 #include "SDL_render.h"
 
+#include "cinek/core/ckfspath.h"
+
 
 namespace cinekine {
     namespace ovengine {
@@ -23,7 +25,7 @@ namespace cinekine {
         _renderer(renderer),
         _atlasDir(bitmapAtlasDir),
         _atlasMap( std_allocator<AtlasMap::allocator_type >(_renderer.getAllocator()) ),
-        _nextAtlasHandle(1)
+        _nextAtlasHandle(0)
     {
     }
     
@@ -39,8 +41,9 @@ namespace cinekine {
 
         //  loads an atlas database.  using the unserializer, construct and build the
         //  atlas.  on success, add it to our atlas map.
-        string_scratch atlasPath("bitmaps/", atlasName);
-        FileStreamBuf atlasFile(atlasPath.c_str());
+        char path[MAX_PATH];
+        snprintf(path, sizeof(path), "bitmaps/%s.json", atlasName);
+        FileStreamBuf atlasFile(path);
         
         if (!atlasFile)
             return kCinekBitmapAtlas_Invalid;
@@ -50,7 +53,7 @@ namespace cinekine {
         cinek_bitmap_atlas atlasHandle = kCinekBitmapAtlas_Invalid;
         OVENGINE_LOG_INFO("Loading atlas '%s'...", atlasName);
         
-        atlasLoader.onImageLoadRequest([&atlas, &atlasHandle, atlasName, this](const char* textureName,
+        atlasLoader.onImageLoadRequest([&atlas, &atlasHandle, atlasName, &path, this](const char* textureName,
                                                                       uint16_t w, uint16_t h,
                                                                       cinek_pixel_format format,
                                                                       size_t bitmapCount) -> bool
@@ -60,8 +63,8 @@ namespace cinekine {
                     OVENGINE_LOG_WARN("Ignoring image load request for '%s' since atlas was already created.", textureName);
                     return true;
                 }
-                string_scratch imagePath("textures/", textureName);
-                SDL_Texture* bitmapTexture = IMG_LoadTexture(_renderer.getSDLRenderer(), imagePath.c_str());
+                snprintf(path, sizeof(path), "textures/%s", textureName);
+                SDL_Texture* bitmapTexture = IMG_LoadTexture(_renderer.getSDLRenderer(), path);
                 if (!bitmapTexture)
                 {
                     return false;
@@ -75,7 +78,7 @@ namespace cinekine {
                 return true;
             }
         );
-        atlasLoader.onNewFrameRequest([&atlas, this](const BitmapInfo& bitmapInfo)
+        atlasLoader.onNewFrameRequest([&atlas, this](BitmapInfo& bitmapInfo)
             {
                 const char* bitmapName = bitmapInfo.name.c_str();
                 if (!atlas)
@@ -84,7 +87,7 @@ namespace cinekine {
                     return;
                 }
                 OVENGINE_LOG_TRACE("Adding bitmap '%s' to atlas.", bitmapName);
-                atlas->addBitmap(bitmapName, bitmapInfo.x, bitmapInfo.y, bitmapInfo.w, bitmapInfo.h);
+                atlas->addBitmap(std::move(bitmapInfo));
             }
         );
 

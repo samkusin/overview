@@ -60,9 +60,9 @@ namespace cinekine {
         }
     };
     
-    cinek_bitmap_index BitmapAtlas::addBitmap(const char* name, int x, int y, int w, int h)
+    cinek_bitmap_index BitmapAtlas::addBitmap(BitmapInfo&& info)
     {
-        cinek_bitmap_index index = getBitmapIndex(name);
+        cinek_bitmap_index index = getBitmapIndex(info.name.c_str());
        
         BitmapInfo* bitmap = nullptr;
         if (index == kCinekBitmapIndex_Invalid)
@@ -75,11 +75,7 @@ namespace cinekine {
         {
             bitmap = _bitmaps[index];
         }
-        bitmap->x = x;
-        bitmap->y = y;
-        bitmap->w = w;
-        bitmap->h = h;
-        bitmap->name = name;
+        *bitmap = std::move(info);
 
         return index;
     }

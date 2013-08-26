@@ -40,7 +40,7 @@ Map::Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator) :
     _tilemaps.reserve(layerCount);
     for (int32_t i = 0; i < layerCount; ++i)
     {
-        _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, std_allocator<cinek_ov_tile>(allocator)});
+        _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, std_allocator<cinek_tile>(allocator)});
     }
 }
 

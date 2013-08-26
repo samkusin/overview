@@ -175,5 +175,15 @@
 #define TODO(_x_) DO_PRAGMA( message("TODO: " #_x_ ) )
 /**@}*/
 
+#ifndef MAX_PATH
+/**@{*/
+/**
+ * \def MAX_PATH
+ * The suggested maximum length of a pathname.
+ */
+#define MAX_PATH 256
+/**@}*/
+#endif
+
 /* CINEK_DEFS_H */
 #endif

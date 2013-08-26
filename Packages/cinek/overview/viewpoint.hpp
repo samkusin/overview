@@ -28,7 +28,7 @@ struct ViewpointTilemap
     /** The viewpoint's underlying tilemap container. */
     TilemapContainer tilemap;
     /** Defines a window within the container. */
-    cinek_ov_tilemap_rect margin;
+    cinek_tilemap_rect margin;
     /** Default constructor. */
     ViewpointTilemap(): tilemap(), margin{0,0,0,0} {}
 };

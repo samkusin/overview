@@ -19,6 +19,8 @@ namespace cinekine {
     struct BitmapInfo
     {
         uint16_t x, y, w, h;
+        uint16_t offX, offY;
+        uint16_t srcW, srcH;
         string name;
         BitmapInfo(const Allocator& allocator=Allocator()): name(string_allocator(allocator)) {}
     };

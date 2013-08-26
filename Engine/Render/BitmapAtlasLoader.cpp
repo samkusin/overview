@@ -9,7 +9,7 @@
 #include "BitmapAtlasLoader.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Engine/StreamBufRapidJson.hpp"
+#include "Engine/Utils/StreamBufRapidJson.hpp"
 
 #include "rapidjson/document.h"
 
@@ -55,6 +55,10 @@ namespace cinekine {
             {
                 pixelFormat = kCinekPixelFormat_RGBA8888;
             }
+            else if (!strcmp(format, "RGBA4444"))
+            {
+                pixelFormat = kCinekPixelFormat_RGBA4444;
+            }
             else if (!strcmp(format, "RGBA5551"))
             {
                 pixelFormat = kCinekPixelFormat_RGBA5551;
@@ -88,11 +92,17 @@ namespace cinekine {
                     continue;
                 }
                 const Value& frameRect = frame["frame"];
+                const Value& sourceSize = frame["sourceSize"];
+                const Value& spriteSourceSize = frame["spriteSourceSize"];
                 BitmapInfo info;
                 info.x = frameRect["x"].GetUint();
                 info.y = frameRect["y"].GetUint();
                 info.w = frameRect["w"].GetUint();
                 info.h = frameRect["h"].GetUint();
+                info.offX = spriteSourceSize["x"].GetUint();
+                info.offY = spriteSourceSize["y"].GetUint();
+                info.srcW = sourceSize["w"].GetUint();
+                info.srcH = sourceSize["h"].GetUint();
                 info.name = frame["filename"].GetString();
                 _newFrameRequest(info);
             }

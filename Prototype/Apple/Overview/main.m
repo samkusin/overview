@@ -16,7 +16,8 @@ extern int OverviewSDLMain(int argc, char* argv[]);
 int main(int argc, char *argv[])
 {
     int result = 0;
-    if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
+    SDL_SetMainReady();
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) >= 0)
     {
         result = OverviewSDLMain(argc, argv);
         SDL_Quit();

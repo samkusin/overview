@@ -22,7 +22,7 @@ SpriteDatabase::SpriteDatabase(size_t initTemplateLimit, const Allocator& alloca
 {
 }
 
-const SpriteTemplate* SpriteDatabase::findTemplate(cinek_sprite_template_id id)
+const SpriteTemplate* SpriteDatabase::findTemplate(cinek_sprite_template_id id) const
 {
     auto it = _idToTemplates.find(id);
     if (it == _idToTemplates.end())
@@ -30,7 +30,7 @@ const SpriteTemplate* SpriteDatabase::findTemplate(cinek_sprite_template_id id)
     return it->second;
 }
 
-cinek_sprite_template_id SpriteDatabase::findTemplateIDByName(const char* templateName)
+cinek_sprite_template_id SpriteDatabase::findTemplateIDByName(const char* templateName) const
 {
     auto it = _nameToIds.find(templateName);
     if (it == _nameToIds.end())
@@ -38,7 +38,7 @@ cinek_sprite_template_id SpriteDatabase::findTemplateIDByName(const char* templa
     return it->second;
 }
 
-cinek_rendermodel_anim_id SpriteDatabase::findAnimationIDByName(const char* animationName)
+cinek_rendermodel_anim_id SpriteDatabase::findAnimationIDByName(const char* animationName) const
 {
     auto it = _nameToAnimIds.find(animationName);
     if (it == _nameToAnimIds.end())

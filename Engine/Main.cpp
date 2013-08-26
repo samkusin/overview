@@ -6,9 +6,13 @@
  *  Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#include "Controller.hpp"
 #include "Debug.hpp"
+#include "Director.hpp"
 #include "Render/Renderer.hpp"
+#include "Render/BitmapLibrary.hpp"
+#include "Model/Theater.hpp"
+#include "Model/SpriteDatabaseLoader.hpp"
+#include "Model/TileDatabaseLoader.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -34,13 +38,53 @@ int OverviewSDLMain(int argc, char* argv[])
     }
 
     Allocator allocator;
-    ovengine::Controller controller(allocator);
+    
     ovengine::Renderer::InitParameters rendererInitParams;
     rendererInitParams.bitmapAtlasDir = "bitmaps";
     ovengine::Renderer renderer(window, rendererInitParams, allocator);
+    
+    ovengine::Theater theater(allocator);
+    
+    //  setup theater <-> renderer interaction (producer?  director?
 
+    //  handle sprite -> bitmap loading.
+    theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([&renderer] (const char* atlasName) -> cinek_bitmap_atlas
+        {
+            return renderer.getBitmapLibrary().loadAtlas(atlasName);
+        }
+    );
+    
+    theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&renderer] (cinek_bitmap_atlas atlas,
+                                                                        const char* name) -> cinek_bitmap_index
+        {
+            const ovengine::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
+            if (!bitmapAtlas)
+                return kCinekBitmapIndex_Invalid;
+            return bitmapAtlas->getBitmapIndex(name);
+        }
+    );
+    //  handle tile -> bitmap loading.
+    theater.getTileDatabaseLoader().onBitmapAtlasRequest([&renderer] (const char* atlasName) -> cinek_bitmap_atlas
+        {
+            return renderer.getBitmapLibrary().loadAtlas(atlasName);
+        }
+    );
+    theater.getTileDatabaseLoader().onBitmapIndexRequest([&renderer] (cinek_bitmap_atlas atlas,
+                                                                        const char* name) -> cinek_bitmap_index
+        {
+           const ovengine::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
+           if (!bitmapAtlas)
+               return kCinekBitmapIndex_Invalid;
+           return bitmapAtlas->getBitmapIndex(name);
+        }
+    );
+
+    
+    //  startup the simulation specific Director.
+    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
+    
     bool active = true;
-       
+    
     while (active)
     {
         SDL_Event e;
@@ -51,12 +95,14 @@ int OverviewSDLMain(int argc, char* argv[])
             }
         }
         
+        director->update();
+        
         renderer.begin();
         
         renderer.end();
     }
-   
-    SDL_Quit();
+    
+    ovengine::DestroyDirector(director);
    
     return 0;
 }

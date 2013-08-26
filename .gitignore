@@ -10,6 +10,8 @@
 # to include any modules in the repository.
 #
 
+Prototype-Data/
+
 *.sublime-project
 *.sublime-workspace
 build/

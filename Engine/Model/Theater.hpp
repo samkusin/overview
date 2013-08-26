@@ -1,13 +1,13 @@
 //
-//  Controller.hpp
+//  Theater.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 8/10/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Controller_hpp
-#define Overview_Controller_hpp
+#ifndef Overview_Theater_hpp
+#define Overview_Theater_hpp
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -15,21 +15,24 @@ namespace cinekine {
     namespace ovengine {
     
     class SpriteDatabaseLoader;
+    class TileDatabaseLoader;
+    class TheaterClient;
 
-    //  The Controller drives execution of the Application.
-    class Controller
+    //  The Theater drives execution of the Application.
+    class Theater
     {
-        CK_CLASS_NON_COPYABLE(Controller);
+        CK_CLASS_NON_COPYABLE(Theater);
 
     public:
-        Controller(const Allocator& allocator);
-        ~Controller();
+        Theater(const Allocator& allocator);
+        ~Theater();
         
+        TheaterClient& getClient();
         SpriteDatabaseLoader& getSpriteDatabaseLoader();
+        TileDatabaseLoader& getTileDatabaseLoader();
 
     private:
         Allocator _allocator;
-
         class Impl;
         unique_ptr<Impl> _impl;
     };

@@ -30,11 +30,11 @@ namespace cinekine {
 
     public:
         FileStreamBuf(const char* pathname, std::ios_base::openmode mode = std::ios_base::in,
-                  size_t bufferSize=1024,
+                  size_t bufferSize=4096,
                   const Allocator& allocator=Allocator());
         ~FileStreamBuf();
         bool operator!() const {
-            return isOpen();
+            return !isOpen();
         }
         bool isOpen() const {
             return _fileHandle != nullptr;

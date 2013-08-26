@@ -1,5 +1,5 @@
 /**
- * @file    rendermodel/spritedatabaseserializer_json.cpp
+ * @file    Model/SpriteDatabaseLoader.cpp
  *
  * Container for SpriteTemplates.
  *
@@ -9,7 +9,7 @@
 
 #include "SpriteDatabaseLoader.hpp"
 #include "Engine/Debug.hpp"
-#include "Engine/StreamBufRapidJson.hpp"
+#include "Engine/Utils/StreamBufRapidJson.hpp"
 #include "rapidjson/document.h"
 
 #include "cinek/rendermodel/spritetemplate.hpp"

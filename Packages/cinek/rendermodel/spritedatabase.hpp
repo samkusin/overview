@@ -49,21 +49,21 @@ public:
      * @param  id The Sprite Template ID
      * @return    Pointer to the Sprite Template (or NULL.)
      */
-    const SpriteTemplate* findTemplate(cinek_sprite_template_id id);
+    const SpriteTemplate* findTemplate(cinek_sprite_template_id id) const;
     /**
      * Returns a SpriteTemplate ID given its name.
      * 
      * @param  templateName SpriteTemplate name.
      * @return              The ID or kCinekSpriteTemplate_Null.
      */
-    cinek_sprite_template_id findTemplateIDByName(const char* templateName);
+    cinek_sprite_template_id findTemplateIDByName(const char* templateName) const;
     /**
      * Returns the animation ID given its state name.
      * 
      * @param  animationName Animation state name.
      * @return               Numeric ID for the animation state name.
      */
-    cinek_rendermodel_anim_id findAnimationIDByName(const char* animationName);
+    cinek_rendermodel_anim_id findAnimationIDByName(const char* animationName) const;
     /**
      * Creates a SpriteTemplate.
      * 

@@ -47,13 +47,13 @@ namespace cinekine {
             _loadImageRequest = requestCb;
         }
         /** @param requestCb    Delegate method issued when registering a bitmap frame */
-        void onNewFrameRequest(std::function<void(const BitmapInfo& info)> requestCb) {
+        void onNewFrameRequest(std::function<void(BitmapInfo& info)> requestCb) {
             _newFrameRequest = requestCb;
         }
         
     private:        
         std::function<bool(const char*, uint16_t, uint16_t, cinek_pixel_format, size_t)> _loadImageRequest;
-        std::function<void(const BitmapInfo& info)> _newFrameRequest;
+        std::function<void(BitmapInfo& info)> _newFrameRequest;
     };
         
     }   // namespace ovengine

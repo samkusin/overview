@@ -42,7 +42,7 @@ namespace cinekine {
         }
 
         //  use to build the atlas.
-        cinek_bitmap_index addBitmap(const char* name, int x, int y, int w, int h);
+        cinek_bitmap_index addBitmap(BitmapInfo&& info);
 
         //  use to retrieve bitmap information.
         cinek_bitmap_index getBitmapIndex(const char* name) const;
