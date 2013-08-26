@@ -52,12 +52,20 @@ public:
         ::new(p) T(std::forward<Args>(args)...);
         return p;
 	}
+    /**
+     * Destroys an instance of T allocated via newItem.
+     * @param item The item to delete.
+     */
+    template<typename T> void deleteItem(T* item) {
+        item->~T();
+        free(item);
+    }
 	/**
 	 * Allocates an array of T.
 	 * @param  count Number of items in array.
 	 * @return       A pointer to the array
 	 */
-	template<typename T, class... Args> T* allocItems(size_t count) {
+	template<typename T> T* allocItems(size_t count) {
         T* p = reinterpret_cast<T*>(alloc(sizeof(T)*count));
 		return p;
 	}
@@ -68,14 +76,6 @@ public:
 	void free(void* ptr) {
 		(*_callbacks.free)(_callbacks.context, ptr);
 	}
-    /**
-     * Destroys an instance of T allocated via newItem.
-     * @param item The item to delete.
-     */
-    template<typename T> void deleteItem(T* item) {
-        item->~T();
-        free(item);
-    }
 
 private:
 	cinek_memory_callbacks _callbacks;

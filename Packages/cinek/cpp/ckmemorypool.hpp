@@ -113,7 +113,7 @@ namespace cinekine {
         while( last != first )
         {
             --last;
-            allocator.deleteItem<T>(last);
+            last->~T();
         }
     }
 
