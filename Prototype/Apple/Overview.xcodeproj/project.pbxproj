@@ -36,6 +36,7 @@
 		37F6A44317CAD46500C9EE1C /* bitmaps in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44017CAD46500C9EE1C /* bitmaps */; };
 		37F6A44417CAD46500C9EE1C /* data in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44117CAD46500C9EE1C /* data */; };
 		37F6A44517CAD46500C9EE1C /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44217CAD46500C9EE1C /* textures */; };
+		37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F6A44717CBCE0F00C9EE1C /* GameView.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -101,6 +102,10 @@
 		37F6A44017CAD46500C9EE1C /* bitmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bitmaps; path = "../../../Prototype-Data/Built/bitmaps"; sourceTree = "<group>"; };
 		37F6A44117CAD46500C9EE1C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = "../../../Prototype-Data/Built/data"; sourceTree = "<group>"; };
 		37F6A44217CAD46500C9EE1C /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = "../../../Prototype-Data/Built/textures"; sourceTree = "<group>"; };
+		37F6A44617CBC6FF00C9EE1C /* View.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = View.hpp; path = ../../Engine/View.hpp; sourceTree = "<group>"; };
+		37F6A44717CBCE0F00C9EE1C /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../GameView.cpp; sourceTree = "<group>"; };
+		37F6A44817CBCE0F00C9EE1C /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../GameView.hpp; sourceTree = "<group>"; };
+		37F6A44D17CBF1C100C9EE1C /* Common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Common.hpp; path = ../Common.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +153,9 @@
 			children = (
 				37E76A0D17C6EC34009EAA97 /* Overview.cpp */,
 				37E76A0E17C6EC34009EAA97 /* Overview.hpp */,
+				37F6A44717CBCE0F00C9EE1C /* GameView.cpp */,
+				37F6A44817CBCE0F00C9EE1C /* GameView.hpp */,
+				37F6A44D17CBF1C100C9EE1C /* Common.hpp */,
 			);
 			name = Prototype;
 			sourceTree = "<group>";
@@ -163,6 +171,7 @@
 				37E11EBA17B5AAEE00665306 /* Main.cpp */,
 				3762602D17B860A90028ECA5 /* Defines.hpp */,
 				37E76A1017C6EEF5009EAA97 /* Director.hpp */,
+				37F6A44617CBC6FF00C9EE1C /* View.hpp */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -367,6 +376,7 @@
 				37E76A0A17C6D274009EAA97 /* Theater.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
 				37F6A42817C9A78E00C9EE1C /* TileDatabaseLoader.cpp in Sources */,
+				37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

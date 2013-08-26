@@ -9,6 +9,40 @@
 #ifndef Overview_View_hpp
 #define Overview_View_hpp
 
+#include <memory>
+
+namespace cinekine {
+    namespace overview {
+        class Viewpoint;
+    }
+}
+
+namespace cinekine {
+    namespace ovengine {
+    
+    class Renderer;
+    
+    //  The View renders a Viewpoint drives execution of the simulation based on an external application controller
+    //  Currently the Engine only initializes and destroys the Director object
+    class View
+    {
+    public:
+        virtual ~View() {}
+        
+        //  When a new viewpoint is set by the Director.
+        virtual void onViewpointSet(uint32_t viewpointId, std::shared_ptr<overview::Viewpoint>& viewpoint) = 0;
+        //  Executes rendering code specific to the View implementation.
+        virtual void render() = 0;
+    };
+    
+    //  must be defined by the implementing application.
+    View* CreateView(Renderer& cli);
+    //  must be defined by the implementing application - destroys the View created by
+    //  CreateView
+    void DestroyView(View* view);
+        
+    }   // namespace ovengine
+}   // namespace cinekine
 
 
 #endif

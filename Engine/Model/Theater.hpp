@@ -10,6 +10,13 @@
 #define Overview_Theater_hpp
 
 #include "cinek/cpp/ckalloc.hpp"
+#include <functional>
+
+namespace cinekine {
+    namespace overview {
+        class Viewpoint;
+    }
+}
 
 namespace cinekine {    
     namespace ovengine {
@@ -30,6 +37,9 @@ namespace cinekine {
         TheaterClient& getClient();
         SpriteDatabaseLoader& getSpriteDatabaseLoader();
         TileDatabaseLoader& getTileDatabaseLoader();
+        
+        //  The Theater is attempting to publish a viewpoint with a given ID to the renderer.
+        void onViewpointSet(std::function<void(uint32_t, std::shared_ptr<overview::Viewpoint>& viewpoint)> setCb);
 
     private:
         Allocator _allocator;

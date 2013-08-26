@@ -9,9 +9,15 @@
 #ifndef Overview_Overview_hpp
 #define Overview_Overview_hpp
 
+#include "Common.hpp"
 #include "Engine/Director.hpp"
 
+#include "cinek/overview/stage.hpp"
+
 namespace cinekine {
+    namespace overview {
+        class Viewpoint;
+    }
     namespace ovengine {
         class TheaterClient;
     }
@@ -30,6 +36,10 @@ namespace cinekine {
         
     private:
         ovengine::TheaterClient& _theaterCLI;
+        Allocator _allocator;
+
+        overview::Stage _stage;
+        std::shared_ptr<overview::Viewpoint> _mainViewpoint;
     };
     
     }

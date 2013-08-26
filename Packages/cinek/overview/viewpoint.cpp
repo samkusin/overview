@@ -17,7 +17,7 @@ namespace cinekine {
     namespace overview {
 
 
-Viewpoint::Viewpoint(std::shared_ptr<Map>& map, 
+Viewpoint::Viewpoint(std::shared_ptr<Map> map, 
                 const cinek_ov_pos& position,
                 const cinek_ov_map_bounds& bounds
             ) :

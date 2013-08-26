@@ -8,6 +8,7 @@
 
 #include "Debug.hpp"
 #include "Director.hpp"
+#include "GameView.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/BitmapLibrary.hpp"
 #include "Model/Theater.hpp"
@@ -45,8 +46,8 @@ int OverviewSDLMain(int argc, char* argv[])
     
     ovengine::Theater theater(allocator);
     
-    //  setup theater <-> renderer interaction (producer?  director?
-
+    //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
+    //
     //  handle sprite -> bitmap loading.
     theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([&renderer] (const char* atlasName) -> cinek_bitmap_atlas
         {
@@ -78,10 +79,23 @@ int OverviewSDLMain(int argc, char* argv[])
            return bitmapAtlas->getBitmapIndex(name);
         }
     );
-
+    
+    //  startup the simulation specific View.
+    ovengine::View* view = cinekine::ovengine::CreateView(renderer);
+    
+    //  handle viewpoint sets by Theater.
+    theater.onViewpointSet([&view] (uint32_t viewpointId, std::shared_ptr<overview::Viewpoint>& viewpoint)
+        {
+            if (view)
+            {
+                view->onViewpointSet(viewpointId, viewpoint);
+            }
+        }
+    );
     
     //  startup the simulation specific Director.
     ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
+    
     
     bool active = true;
     
@@ -98,12 +112,15 @@ int OverviewSDLMain(int argc, char* argv[])
         director->update();
         
         renderer.begin();
-        
+        view->render();
         renderer.end();
     }
     
     ovengine::DestroyDirector(director);
-   
+    director = nullptr;
+    ovengine::DestroyView(view);
+    view = nullptr;
+
     return 0;
 }
 

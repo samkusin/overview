@@ -16,8 +16,7 @@
 
 #include "cinek/rendermodel/spritedatabase.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
-
-#include "cinek/core/ckfspath.h"
+#include "cinek/overview/viewpoint.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -32,14 +31,19 @@ namespace cinekine {
         
         virtual void loadSpriteDatabase(const char* spriteDbName);
         virtual void loadTileDatabase(const char* tileDbName);
+        virtual void setViewpoint(uint32_t viewpointId,
+                                  std::shared_ptr<overview::Viewpoint>& viewpoint);
+        virtual void clearViewpoint(uint32_t viewpointId);
         
     private:
         Allocator& _allocator;
+        
         rendermodel::TileDatabase _tileDb;
-        rendermodel::SpriteDatabase _spriteDb;
-
         TileDatabaseLoader _tileDbLoader;
+        rendermodel::SpriteDatabase _spriteDb;
         SpriteDatabaseLoader _spriteDbLoader;
+        
+        std::function<void(uint32_t, std::shared_ptr<overview::Viewpoint>&)> _onViewpointSet;
     };
     
     ////////////////////////////////////////////////////////////////////////////
@@ -78,6 +82,18 @@ namespace cinekine {
         
         _tileDbLoader.unserialize(dbStream);
     }
+    
+    void Theater::Impl::setViewpoint(uint32_t viewpointId,
+                                     std::shared_ptr<overview::Viewpoint>& viewpoint)
+    {
+        _onViewpointSet(viewpointId, viewpoint);
+    }
+    
+    void Theater::Impl::clearViewpoint(uint32_t viewpointId)
+    {
+        std::shared_ptr<overview::Viewpoint> nilViewpoint;
+        _onViewpointSet(viewpointId, nilViewpoint);
+    }
 
     ////////////////////////////////////////////////////////////////////////////
         
@@ -104,6 +120,12 @@ namespace cinekine {
     {
         return *_impl;
     }
+    
+    void Theater::onViewpointSet(std::function<void(uint32_t, std::shared_ptr<overview::Viewpoint>& viewpoint)> setCb)
+    {
+        _impl->_onViewpointSet = setCb;
+    }
+
         
     }   // namespace ovengine
 }   // namespace cinekine

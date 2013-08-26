@@ -56,7 +56,7 @@ public:
      * @param position  The center-point map position of the viewpoint.
      * @param bounds    The initial bounds for the viewpoint.
      */
-    Viewpoint(std::shared_ptr<Map>& map, 
+    Viewpoint(std::shared_ptr<Map> map, 
                 const cinek_ov_pos& position,
                 const cinek_ov_map_bounds& bounds
                 );

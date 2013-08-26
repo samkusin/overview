@@ -22,7 +22,7 @@ typedef struct cinek_ov_map_bounds_t
 {
     uint16_t xUnits;    /**< Number of units/tiles on the x axis. */
     uint16_t yUnits;    /**< Number of units/tiles on the y axis. */
-    int16_t zUp;        /**< Number of tile layers on the +s axis. */
+    int16_t zUp;        /**< Number of tile layers on the +z axis. */
     int16_t zDown;      /**< Number of tile layers on the -z axis. */
 }
 cinek_ov_map_bounds;

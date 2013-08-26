@@ -27,7 +27,7 @@ namespace cinekine {
     //  must be defined by the implementing application.
     Director* CreateDirector(TheaterClient& cli);
     //  must be defined by the implementing application - destroys the Director created by
-    //  OVEngine_CreateDirector
+    //  CreateDirector
     void DestroyDirector(Director* director);
         
     }   // namespace ovengine
