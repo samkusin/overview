@@ -9,12 +9,14 @@
 #ifndef Overview_TheaterClient_hpp
 #define Overview_TheaterClient_hpp
 
+#include "cinek/overview/maptypes.h"
+
 #include <memory>
 
 namespace cinekine {
     namespace overview {
         class Viewpoint;
-        class Stage;
+        class Map;
     }
 }
 
@@ -40,20 +42,21 @@ namespace cinekine {
          */
         virtual void loadTileDatabase(const char* tileDbName) = 0;
         /**
-         *  Sets the target view's Viewpoint. The ID passed in is passed on to the Renderer,
-         *  allowing Views to access multiple Viewpoints.
-         *  @param viewpointId  The Viewpoint ID (a constant shared between the client and the
-         *                      renderer.
-         *  @param viewpoint    The Viewpoint shared_ptr object to set.
+         *  Sets the target view's Map.
+         *  @param map      The Map shared_ptr object to set.
+         *  @param viewPos  The initial view position on the map.
          */
-        virtual void setViewpoint(uint32_t viewpointId,
-                                  std::shared_ptr<overview::Viewpoint>& viewpoint) = 0;
+        virtual void setViewMap(std::shared_ptr<overview::Map> map,
+                                const cinek_ov_pos& viewPos) = 0;
         /**
-         *  Clears the target View's Viewpoint.
-         *  @param viewpointId  The Viewpoint ID (a constant shared between the client and the
-         *                      renderer.
+         *  Publishes an update to the current view position on the map.
+         *  @param pos  The position in map cordinates.
          */
-        virtual void clearViewpoint(uint32_t viewpointId) = 0;
+        virtual void setViewPos(const cinek_ov_pos& pos) = 0;
+        /**
+         *  Clears the target View's Map reference.
+         */
+        virtual void clearViewMap() = 0;
     };
         
     }   // namespace ovengine

@@ -49,6 +49,8 @@ struct ViewpointTilemap
 class Viewpoint 
 {
 public:
+    /** Empty Viewpoint constructor. */
+    Viewpoint() = default;
     /**
      * Creates a viewpoint for the specified map.  The viewpoint is centered at 
      * (0,0,0) on the map.
@@ -61,7 +63,23 @@ public:
                 const cinek_ov_map_bounds& bounds
                 );
     /** Destructor */
-    virtual ~Viewpoint();
+    virtual ~Viewpoint() = default;
+    /**
+     * Copy constructor.
+     * @param other The Viewpoint to copy resources from.
+     */
+    Viewpoint(const Viewpoint& other) = default;
+
+    /**
+     * Move constructor.
+     * @param other The Viewpoint to move resources from.
+     */
+    Viewpoint(Viewpoint&& other);
+    /**
+     * Move operator.
+     * @param other The Viewpoint to move resources from.
+     */
+    Viewpoint& operator=(Viewpoint&& other);
 
     /**
      * Returns a Tilemap container for the specified layer.

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3761333317D54EA200AEB84E /* SpriteDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */; };
+		3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */; };
+		3761333F17D5516B00AEB84E /* Theater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333C17D5516B00AEB84E /* Theater.cpp */; };
 		3762602617B704A10028ECA5 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762602417B704A10028ECA5 /* Renderer.cpp */; };
 		3762602C17B734F80028ECA5 /* BitmapLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */; };
 		3762603817B8883F0028ECA5 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762603617B8883F0028ECA5 /* BitmapAtlas.cpp */; };
@@ -15,7 +18,6 @@
 		37D969F817C85A1A001C0B9C /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F617C85A1A001C0B9C /* libSDL2.a */; };
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
 		37E11EBF17B5AAEE00665306 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E11EBA17B5AAEE00665306 /* Main.cpp */; };
-		37E11EC017B5AAEE00665306 /* SpriteDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E11EBC17B5AAEE00665306 /* SpriteDatabaseLoader.cpp */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
 		37E11EC517B5AC2700665306 /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC217B5AC2700665306 /* libkazmath.a */; };
 		37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */; };
@@ -25,14 +27,12 @@
 		37E6802517C8392400FF3C97 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6802017C8392400FF3C97 /* ForceFeedback.framework */; };
 		37E6802617C8392400FF3C97 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6802117C8392400FF3C97 /* IOKit.framework */; };
 		37E76A0417C585C8009EAA97 /* FileStreamBuf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0217C585C8009EAA97 /* FileStreamBuf.cpp */; };
-		37E76A0A17C6D274009EAA97 /* Theater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0817C6D274009EAA97 /* Theater.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A951780EA2C009116E7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F64A941780EA2C009116E7 /* Cocoa.framework */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
 		37F64AA11780EA2C009116E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.m */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
 		37F64AC31780EF04009116E7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F64AC21780EF04009116E7 /* OpenGL.framework */; };
-		37F6A42817C9A78E00C9EE1C /* TileDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F6A42617C9A78E00C9EE1C /* TileDatabaseLoader.cpp */; };
 		37F6A44317CAD46500C9EE1C /* bitmaps in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44017CAD46500C9EE1C /* bitmaps */; };
 		37F6A44417CAD46500C9EE1C /* data in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44117CAD46500C9EE1C /* data */; };
 		37F6A44517CAD46500C9EE1C /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44217CAD46500C9EE1C /* textures */; };
@@ -52,6 +52,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpriteDatabaseLoader.cpp; path = ../../Engine/SpriteDatabaseLoader.cpp; sourceTree = "<group>"; };
+		3761333017D54EA200AEB84E /* SpriteDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SpriteDatabaseLoader.hpp; path = ../../Engine/SpriteDatabaseLoader.hpp; sourceTree = "<group>"; };
+		3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileDatabaseLoader.cpp; path = ../../Engine/TileDatabaseLoader.cpp; sourceTree = "<group>"; };
+		3761333217D54EA200AEB84E /* TileDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TileDatabaseLoader.hpp; path = ../../Engine/TileDatabaseLoader.hpp; sourceTree = "<group>"; };
+		3761333917D54F3000AEB84E /* BitmapDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapDatabaseLoader.hpp; path = ../../Engine/BitmapDatabaseLoader.hpp; sourceTree = "<group>"; };
+		3761333C17D5516B00AEB84E /* Theater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Theater.cpp; path = ../../Engine/Theater.cpp; sourceTree = "<group>"; };
+		3761333D17D5516B00AEB84E /* Theater.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Theater.hpp; path = ../../Engine/Theater.hpp; sourceTree = "<group>"; };
+		3761333E17D5516B00AEB84E /* TheaterClient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TheaterClient.hpp; path = ../../Engine/TheaterClient.hpp; sourceTree = "<group>"; };
 		3762602417B704A10028ECA5 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Renderer.cpp; path = ../../Engine/Render/Renderer.cpp; sourceTree = "<group>"; };
 		3762602517B704A10028ECA5 /* Renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Renderer.hpp; path = ../../Engine/Render/Renderer.hpp; sourceTree = "<group>"; };
 		3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapLibrary.cpp; path = ../../Engine/Render/BitmapLibrary.cpp; sourceTree = "<group>"; };
@@ -67,8 +75,6 @@
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		37E11EB817B5AAEE00665306 /* Debug.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Debug.hpp; path = ../../Engine/Debug.hpp; sourceTree = "<group>"; };
 		37E11EBA17B5AAEE00665306 /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Engine/Main.cpp; sourceTree = "<group>"; };
-		37E11EBC17B5AAEE00665306 /* SpriteDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpriteDatabaseLoader.cpp; sourceTree = "<group>"; };
-		37E11EBD17B5AAEE00665306 /* SpriteDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SpriteDatabaseLoader.hpp; sourceTree = "<group>"; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
 		37E11EC217B5AC2700665306 /* libkazmath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libkazmath.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libkazmath.a"; sourceTree = "<group>"; };
 		37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -80,12 +86,9 @@
 		37E76A0217C585C8009EAA97 /* FileStreamBuf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileStreamBuf.cpp; path = ../../Engine/Stream/FileStreamBuf.cpp; sourceTree = "<group>"; };
 		37E76A0317C585C8009EAA97 /* FileStreamBuf.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FileStreamBuf.hpp; path = ../../Engine/Stream/FileStreamBuf.hpp; sourceTree = "<group>"; };
 		37E76A0717C6D264009EAA97 /* StreamBufRapidJson.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StreamBufRapidJson.hpp; path = ../../Engine/Utils/StreamBufRapidJson.hpp; sourceTree = "<group>"; };
-		37E76A0817C6D274009EAA97 /* Theater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Theater.cpp; sourceTree = "<group>"; };
-		37E76A0917C6D274009EAA97 /* Theater.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Theater.hpp; sourceTree = "<group>"; };
 		37E76A0D17C6EC34009EAA97 /* Overview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Overview.cpp; path = ../Overview.cpp; sourceTree = "<group>"; };
 		37E76A0E17C6EC34009EAA97 /* Overview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Overview.hpp; path = ../Overview.hpp; sourceTree = "<group>"; };
 		37E76A1017C6EEF5009EAA97 /* Director.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Director.hpp; path = ../../Engine/Director.hpp; sourceTree = "<group>"; };
-		37E76A1117C6F82C009EAA97 /* TheaterClient.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TheaterClient.hpp; sourceTree = "<group>"; };
 		37F64A911780EA2C009116E7 /* Overview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Overview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37F64A941780EA2C009116E7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		37F64A971780EA2C009116E7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -96,9 +99,6 @@
 		37F64AA41780EA2D009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		37F64AC21780EF04009116E7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		37F64ACD1780F295009116E7 /* Settings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Settings.xcconfig; sourceTree = "<group>"; };
-		37F6A42417C9A61C00C9EE1C /* BitmapDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BitmapDatabaseLoader.hpp; sourceTree = "<group>"; };
-		37F6A42617C9A78E00C9EE1C /* TileDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileDatabaseLoader.cpp; sourceTree = "<group>"; };
-		37F6A42717C9A78E00C9EE1C /* TileDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileDatabaseLoader.hpp; sourceTree = "<group>"; };
 		37F6A44017CAD46500C9EE1C /* bitmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bitmaps; path = "../../../Prototype-Data/Built/bitmaps"; sourceTree = "<group>"; };
 		37F6A44117CAD46500C9EE1C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = "../../../Prototype-Data/Built/data"; sourceTree = "<group>"; };
 		37F6A44217CAD46500C9EE1C /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = "../../../Prototype-Data/Built/textures"; sourceTree = "<group>"; };
@@ -166,30 +166,21 @@
 				37E76A0617C6D256009EAA97 /* Utils */,
 				37F5F0E117C3DBF50033275C /* Stream */,
 				3762602017B6DBCC0028ECA5 /* Render */,
-				37E11EBB17B5AAEE00665306 /* Model */,
 				37E11EB817B5AAEE00665306 /* Debug.hpp */,
 				37E11EBA17B5AAEE00665306 /* Main.cpp */,
 				3762602D17B860A90028ECA5 /* Defines.hpp */,
 				37E76A1017C6EEF5009EAA97 /* Director.hpp */,
 				37F6A44617CBC6FF00C9EE1C /* View.hpp */,
+				3761333C17D5516B00AEB84E /* Theater.cpp */,
+				3761333D17D5516B00AEB84E /* Theater.hpp */,
+				3761333E17D5516B00AEB84E /* TheaterClient.hpp */,
+				3761333917D54F3000AEB84E /* BitmapDatabaseLoader.hpp */,
+				3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */,
+				3761333017D54EA200AEB84E /* SpriteDatabaseLoader.hpp */,
+				3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */,
+				3761333217D54EA200AEB84E /* TileDatabaseLoader.hpp */,
 			);
 			name = Engine;
-			sourceTree = "<group>";
-		};
-		37E11EBB17B5AAEE00665306 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				37E76A0817C6D274009EAA97 /* Theater.cpp */,
-				37E76A0917C6D274009EAA97 /* Theater.hpp */,
-				37E76A1117C6F82C009EAA97 /* TheaterClient.hpp */,
-				37F6A42417C9A61C00C9EE1C /* BitmapDatabaseLoader.hpp */,
-				37E11EBC17B5AAEE00665306 /* SpriteDatabaseLoader.cpp */,
-				37E11EBD17B5AAEE00665306 /* SpriteDatabaseLoader.hpp */,
-				37F6A42617C9A78E00C9EE1C /* TileDatabaseLoader.cpp */,
-				37F6A42717C9A78E00C9EE1C /* TileDatabaseLoader.hpp */,
-			);
-			name = Model;
-			path = ../../Engine/Model;
 			sourceTree = "<group>";
 		};
 		37E76A0617C6D256009EAA97 /* Utils */ = {
@@ -367,16 +358,16 @@
 			files = (
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
 				37E11EBF17B5AAEE00665306 /* Main.cpp in Sources */,
-				37E11EC017B5AAEE00665306 /* SpriteDatabaseLoader.cpp in Sources */,
 				3762602617B704A10028ECA5 /* Renderer.cpp in Sources */,
 				3762602C17B734F80028ECA5 /* BitmapLibrary.cpp in Sources */,
 				3762603817B8883F0028ECA5 /* BitmapAtlas.cpp in Sources */,
 				3772261817C177AB00F7E9EA /* BitmapAtlasLoader.cpp in Sources */,
 				37E76A0417C585C8009EAA97 /* FileStreamBuf.cpp in Sources */,
-				37E76A0A17C6D274009EAA97 /* Theater.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
-				37F6A42817C9A78E00C9EE1C /* TileDatabaseLoader.cpp in Sources */,
 				37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */,
+				3761333317D54EA200AEB84E /* SpriteDatabaseLoader.cpp in Sources */,
+				3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */,
+				3761333F17D5516B00AEB84E /* Theater.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

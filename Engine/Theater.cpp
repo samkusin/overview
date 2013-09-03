@@ -16,7 +16,7 @@
 
 #include "cinek/rendermodel/spritedatabase.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
-#include "cinek/overview/viewpoint.hpp"
+#include "cinek/overview/map.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -31,9 +31,9 @@ namespace cinekine {
         
         virtual void loadSpriteDatabase(const char* spriteDbName);
         virtual void loadTileDatabase(const char* tileDbName);
-        virtual void setViewpoint(uint32_t viewpointId,
-                                  std::shared_ptr<overview::Viewpoint>& viewpoint);
-        virtual void clearViewpoint(uint32_t viewpointId);
+        virtual void setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos);
+        virtual void setViewPos(const cinek_ov_pos& pos);
+        virtual void clearViewMap();
         
     private:
         Allocator& _allocator;
@@ -43,7 +43,8 @@ namespace cinekine {
         rendermodel::SpriteDatabase _spriteDb;
         SpriteDatabaseLoader _spriteDbLoader;
         
-        std::function<void(uint32_t, std::shared_ptr<overview::Viewpoint>&)> _onViewpointSet;
+        std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> _onViewMapSet;
+        std::function<void(const cinek_ov_pos&)> _ovViewPosSet;
     };
     
     ////////////////////////////////////////////////////////////////////////////
@@ -83,16 +84,20 @@ namespace cinekine {
         _tileDbLoader.unserialize(dbStream);
     }
     
-    void Theater::Impl::setViewpoint(uint32_t viewpointId,
-                                     std::shared_ptr<overview::Viewpoint>& viewpoint)
+    void Theater::Impl::setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos)
     {
-        _onViewpointSet(viewpointId, viewpoint);
+        _onViewMapSet(map, pos);
     }
     
-    void Theater::Impl::clearViewpoint(uint32_t viewpointId)
+    void Theater::Impl::setViewPos(const cinek_ov_pos &pos)
     {
-        std::shared_ptr<overview::Viewpoint> nilViewpoint;
-        _onViewpointSet(viewpointId, nilViewpoint);
+        _ovViewPosSet(pos);
+    }
+    
+    void Theater::Impl::clearViewMap()
+    {
+        std::shared_ptr<overview::Map> nilMap;
+        _onViewMapSet(nilMap, {0,0,0});
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -121,9 +126,24 @@ namespace cinekine {
         return *_impl;
     }
     
-    void Theater::onViewpointSet(std::function<void(uint32_t, std::shared_ptr<overview::Viewpoint>& viewpoint)> setCb)
+    const rendermodel::TileDatabase& Theater::getTileDatabase() const
     {
-        _impl->_onViewpointSet = setCb;
+        return _impl->_tileDb;       
+    }
+    
+    const rendermodel::SpriteDatabase& Theater::getSpriteDatabase() const
+    {
+        return _impl->_spriteDb;
+    }
+    
+    void Theater::onViewMapSet(std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> setCb)
+    {
+        _impl->_onViewMapSet = setCb;
+    }
+    
+    void Theater::onViewPosSet(std::function<void(const cinek_ov_pos&)> setCb)
+    {
+        _impl->_ovViewPosSet = setCb;
     }
 
         

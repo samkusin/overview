@@ -339,7 +339,7 @@ Grid<Value, Allocator>& Grid<Value, Allocator>::operator=(Grid&& grid) noexcept 
 template<typename Value, class Allocator>
 const Value& Grid<Value, Allocator>::at(uint32_t row, uint32_t col) const
 {
-    const Value* rowData = atRow(row);
+    const Value* rowData = _data + (_colCount * row);
     return *(rowData + col);
 }
 

@@ -30,6 +30,13 @@ cinek_ov_map_bounds;
 /** Defines a location on the map */
 typedef kmVec3 cinek_ov_pos;
 
+/** Defines a boundary box (min/max) */
+typedef struct cinek_ov_bounds {
+    cinek_ov_pos min;
+    cinek_ov_pos max;
+}
+cinek_ov_bounds;
+
 /** Defines a tiled region within the tilemap. */
 typedef struct cinek_tilemap_rect_t
 {

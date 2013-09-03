@@ -20,6 +20,9 @@
 namespace cinekine {
     namespace rendermodel {
 
+/** Defines a tile based on bitmap atlas and index. */
+typedef std::pair<cinek_bitmap_atlas, cinek_bitmap_index> TileInfo;
+
 /**
  * @class TileDatabase
  * @brief A store for Tile records.
@@ -58,9 +61,6 @@ public:
      */    
     void mapTileToBitmap(cinek_tile tile, cinek_bitmap_atlas atlas,
                          cinek_bitmap_index index);
-
-    /** Defines a tile based on bitmap atlas and index. */
-    typedef std::pair<cinek_bitmap_atlas, cinek_bitmap_index> TileInfo;
 
     /**
      * @param  tile The tile info to retrieve.

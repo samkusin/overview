@@ -10,11 +10,16 @@
 #define Overview_Theater_hpp
 
 #include "cinek/cpp/ckalloc.hpp"
+#include "cinek/overview/maptypes.h"
 #include <functional>
 
 namespace cinekine {
+    namespace rendermodel {
+        class TileDatabase;
+        class SpriteDatabase;
+    }
     namespace overview {
-        class Viewpoint;
+        class Map;
     }
 }
 
@@ -38,8 +43,13 @@ namespace cinekine {
         SpriteDatabaseLoader& getSpriteDatabaseLoader();
         TileDatabaseLoader& getTileDatabaseLoader();
         
+        const rendermodel::TileDatabase& getTileDatabase() const;
+        const rendermodel::SpriteDatabase& getSpriteDatabase() const;
+        
         //  The Theater is attempting to publish a viewpoint with a given ID to the renderer.
-        void onViewpointSet(std::function<void(uint32_t, std::shared_ptr<overview::Viewpoint>& viewpoint)> setCb);
+        void onViewMapSet(std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> setCb);
+        //  Called on updates to the map view position.
+        void onViewPosSet(std::function<void(const cinek_ov_pos&)> setCb);
 
     private:
         Allocator _allocator;

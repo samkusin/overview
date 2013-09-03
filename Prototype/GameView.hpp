@@ -12,6 +12,14 @@
 #include "Common.hpp"
 #include "Engine/View.hpp"
 
+#include "cinek/cpp/ckalloc.hpp"
+
+namespace cinekine {
+    namespace overview {
+        class Viewpoint;
+    }
+}
+
 namespace cinekine {
     namespace prototype {
         
@@ -21,13 +29,25 @@ namespace cinekine {
         GameView(ovengine::Renderer& renderer);
         virtual ~GameView();
         
-        virtual void onViewpointSet(uint32_t viewpointId, std::shared_ptr<overview::Viewpoint>& viewpoint);
+        virtual void onMapSet(std::shared_ptr<overview::Map>& Map,
+                              const cinek_ov_pos& pos);
+        virtual void onMapSetPosition(const cinek_ov_pos& pos);
+    
         virtual void render();
+        
+    private:
+        //  precalculates values used for rendering the local view
+        void setupWorldSpace(const cinek_ov_pos& worldPos);
+        //  utilities
+        cinek_ov_pos xlatMapToWorldPos(const cinek_ov_pos& pos);
+        cinek_ov_pos xlatWorldToMapPos(const cinek_ov_pos& pos);
         
     private:
         ovengine::Renderer& _renderer;
         
-        std::shared_ptr<overview::Viewpoint> _mainViewpoint;
+        std::shared_ptr<overview::Map> _map;
+        cinek_ov_bounds _worldViewBounds;
+        cinek_ov_map_bounds _mapViewBounds;
     };
         
     }

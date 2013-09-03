@@ -10,6 +10,7 @@
 #define Overview_RenderTypes_hpp
 
 #include "cinek/rendermodel/types.h"
+#include "cinek/overview/maptypes.h"
 #include "cinek/cpp/ckstring.hpp"
 
 namespace cinekine {
@@ -24,7 +25,7 @@ namespace cinekine {
         string name;
         BitmapInfo(const Allocator& allocator=Allocator()): name(string_allocator(allocator)) {}
     };
-        
+    
     }   // namespace ovengine
 }   // namespace cinekine
 

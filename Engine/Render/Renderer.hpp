@@ -20,6 +20,8 @@
 namespace cinekine {
     namespace ovengine {
     
+    class Theater;
+    
     //  The top-level Renderer object
     //      The Renderer handles drawing to the display.
     class Renderer
@@ -31,7 +33,8 @@ namespace cinekine {
             const char* bitmapAtlasDir;
         };
         
-        Renderer(SDL_Window* window, const InitParameters& initParams,
+        Renderer(Theater& theater,
+                 SDL_Window* window, const InitParameters& initParams,
                  const Allocator& allocator);
         ~Renderer();
         
@@ -54,9 +57,14 @@ namespace cinekine {
         Allocator& getAllocator() {
             return _allocator;
         }
+        
+        Theater& getTheater() {
+            return _theater;
+        }
 
     private:
         Allocator _allocator;
+        Theater& _theater;
         SDL_Renderer* _renderer;
         BitmapLibrary _bitmapLibrary;
     };

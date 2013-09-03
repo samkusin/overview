@@ -1,5 +1,5 @@
 /**
- * @file    Model/SpriteDatabaseLoader.cpp
+ * @file    SpriteDatabaseLoader.cpp
  *
  * Container for SpriteTemplates.
  *

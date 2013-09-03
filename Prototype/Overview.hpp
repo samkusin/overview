@@ -39,7 +39,8 @@ namespace cinekine {
         Allocator _allocator;
 
         overview::Stage _stage;
-        std::shared_ptr<overview::Viewpoint> _mainViewpoint;
+        cinek_ov_pos _viewPos;
+        uint32_t _cycle;
     };
     
     }

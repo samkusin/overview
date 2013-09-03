@@ -7,7 +7,7 @@
 //
 
 #include "Overview.hpp"
-#include "Engine/Model/TheaterClient.hpp"
+#include "Engine/TheaterClient.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -38,29 +38,52 @@ namespace cinekine {
     Overview::Overview(ovengine::TheaterClient& cli) :
         _theaterCLI(cli),
         _allocator(),
-        _stage({ 32, 32, 0, 0 }, _allocator)
+        _stage({ 17, 17, 0, 0 }, _allocator),
+        _cycle(0)
     {
         _theaterCLI.loadTileDatabase("dungeontiles");
         _theaterCLI.loadSpriteDatabase("sprites");
         
-        cinek_ov_pos pos = { 0, 0, 0 };
-        cinek_ov_map_bounds bounds = { 14, 16, 0, 0 };
+        std::shared_ptr<overview::Map> map = _stage.getMapPtr();
+        const cinek_ov_map_bounds& bounds = map->getMapBounds();
+        _viewPos = { bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f };
         
-        _mainViewpoint = std::allocate_shared<overview::Viewpoint>(std_allocator<overview::Viewpoint>(_allocator),
-                                                                   _stage.getMapPtr(),
-                                                                   pos,
-                                                                   bounds);
-        
-        _theaterCLI.setViewpoint(kViewpoint_Main, _mainViewpoint);
+        //  prepopulate map.
+        overview::Tilemap* tilemap = map->getTilemapAtZ(0);
+        for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
+        {
+            overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
+            while (tileRow.first != tileRow.second)
+            {
+                *(tileRow.first) = 0x0000;
+                ++tileRow.first;
+            }
+        }
+                
+        _theaterCLI.setViewMap(map, _viewPos);
     }
     
     Overview::~Overview()
     {
-        _theaterCLI.clearViewpoint(kViewpoint_Main);
+        _theaterCLI.clearViewMap();
     }
     
     void Overview::update()
     {
+        /*std::shared_ptr<overview::Map> map = _stage.getMapPtr();
+        //  prepopulate map.
+        overview::Tilemap* tilemap = map->getTilemapAtZ(0);
+        for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
+        {
+            overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
+            while (tileRow.first != tileRow.second)
+            {
+                *(tileRow.first) = _cycle % 3;
+                ++tileRow.first;
+            }
+        }
+        */
+        ++_cycle;
 
     }
 

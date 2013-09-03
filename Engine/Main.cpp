@@ -11,9 +11,9 @@
 #include "GameView.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/BitmapLibrary.hpp"
-#include "Model/Theater.hpp"
-#include "Model/SpriteDatabaseLoader.hpp"
-#include "Model/TileDatabaseLoader.hpp"
+#include "Theater.hpp"
+#include "SpriteDatabaseLoader.hpp"
+#include "TileDatabaseLoader.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -39,56 +39,30 @@ int OverviewSDLMain(int argc, char* argv[])
     }
 
     Allocator allocator;
+   
+    ovengine::Theater theater(allocator);
     
     ovengine::Renderer::InitParameters rendererInitParams;
     rendererInitParams.bitmapAtlasDir = "bitmaps";
-    ovengine::Renderer renderer(window, rendererInitParams, allocator);
-    
-    ovengine::Theater theater(allocator);
-    
-    //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
-    //
-    //  handle sprite -> bitmap loading.
-    theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([&renderer] (const char* atlasName) -> cinek_bitmap_atlas
-        {
-            return renderer.getBitmapLibrary().loadAtlas(atlasName);
-        }
-    );
-    
-    theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&renderer] (cinek_bitmap_atlas atlas,
-                                                                        const char* name) -> cinek_bitmap_index
-        {
-            const ovengine::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
-            if (!bitmapAtlas)
-                return kCinekBitmapIndex_Invalid;
-            return bitmapAtlas->getBitmapIndex(name);
-        }
-    );
-    //  handle tile -> bitmap loading.
-    theater.getTileDatabaseLoader().onBitmapAtlasRequest([&renderer] (const char* atlasName) -> cinek_bitmap_atlas
-        {
-            return renderer.getBitmapLibrary().loadAtlas(atlasName);
-        }
-    );
-    theater.getTileDatabaseLoader().onBitmapIndexRequest([&renderer] (cinek_bitmap_atlas atlas,
-                                                                        const char* name) -> cinek_bitmap_index
-        {
-           const ovengine::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
-           if (!bitmapAtlas)
-               return kCinekBitmapIndex_Invalid;
-           return bitmapAtlas->getBitmapIndex(name);
-        }
-    );
+    ovengine::Renderer renderer(theater, window, rendererInitParams, allocator);
     
     //  startup the simulation specific View.
     ovengine::View* view = cinekine::ovengine::CreateView(renderer);
     
     //  handle viewpoint sets by Theater.
-    theater.onViewpointSet([&view] (uint32_t viewpointId, std::shared_ptr<overview::Viewpoint>& viewpoint)
+    theater.onViewMapSet([&view] (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
         {
             if (view)
             {
-                view->onViewpointSet(viewpointId, viewpoint);
+                view->onMapSet(map, pos);
+            }
+        }
+    );
+    theater.onViewPosSet([&view] (const cinek_ov_pos& pos)
+        {
+            if (view)
+            {
+                view->onMapSetPosition(pos);
             }
         }
     );

@@ -9,11 +9,13 @@
 #ifndef Overview_View_hpp
 #define Overview_View_hpp
 
+#include "Render/RenderTypes.hpp"
+
 #include <memory>
 
 namespace cinekine {
     namespace overview {
-        class Viewpoint;
+        class Map;
     }
 }
 
@@ -30,7 +32,11 @@ namespace cinekine {
         virtual ~View() {}
         
         //  When a new viewpoint is set by the Director.
-        virtual void onViewpointSet(uint32_t viewpointId, std::shared_ptr<overview::Viewpoint>& viewpoint) = 0;
+        virtual void onMapSet(std::shared_ptr<overview::Map>& map,
+                              const cinek_ov_pos& pos) = 0;
+        //  When a controller updates the current viewpoint center
+        virtual void onMapSetPosition(const cinek_ov_pos& pos) = 0;
+
         //  Executes rendering code specific to the View implementation.
         virtual void render() = 0;
     };
