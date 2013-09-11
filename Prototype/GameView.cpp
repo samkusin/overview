@@ -75,9 +75,7 @@ namespace cinekine {
     //  precalculates values used for rendering the local view
     void GameView::setupWorldSpace(const cinek_ov_pos& worldPos)
     {
-        SDL_Renderer* sdlRenderer = _renderer.getSDLRenderer();
-        SDL_Rect viewportRect;
-        SDL_RenderGetViewport(sdlRenderer, &viewportRect);
+        SDL_Rect viewportRect = _renderer.getViewport();
 
         //  calculate view anchor
         _worldViewBounds.min.x = worldPos.x - viewportRect.w / 2;
@@ -112,9 +110,7 @@ namespace cinekine {
     //
     void GameView::render()
     {
-        SDL_Renderer* sdlRenderer = _renderer.getSDLRenderer();
-        SDL_Rect viewportRect;
-        SDL_RenderGetViewport(sdlRenderer, &viewportRect);
+        SDL_Rect viewportRect = _renderer.getViewport();
         
         const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
         const rendermodel::TileDatabase& tileDb = _renderer.getTheater().getTileDatabase();
@@ -123,12 +119,6 @@ namespace cinekine {
         //
         int32_t worldY = _worldViewBounds.min.y;
         int32_t worldEndY = _worldViewBounds.max.y;
-    
-        //  bitmap store
-        //
-        const ovengine::BitmapLibrary& bitmapLibrary = _renderer.getBitmapLibrary();
-        const ovengine::BitmapAtlas* bitmapAtlas = nullptr;
-        cinek_bitmap_atlas currentAtlas = kCinekBitmapAtlas_Invalid;
     
         //  left to right
         //  top to bottom
@@ -165,34 +155,9 @@ namespace cinekine {
                     mapPos.x >= 0.f && mapPos.x < mapBounds.xUnits)
                 {
                     cinek_tile tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
-                    const rendermodel::TileInfo& tileInfo = tileDb.getTileInfo(tile);
+                    const cinek_bitmap& tileInfo = tileDb.getTileInfo(tile);
                     
-                    //  select current atlas to render from.
-                    if (currentAtlas != tileInfo.first)
-                    {
-                        currentAtlas = tileInfo.first;
-                        bitmapAtlas = bitmapLibrary.getAtlas(tileInfo.first);
-                    }
-                    if (bitmapAtlas)
-                    {
-                        SDL_Texture* sdlTexture;
-                        const ovengine::BitmapInfo* bitmapInfo = bitmapAtlas->getBitmapFromIndex(tileInfo.second,
-                                                                                                 &sdlTexture);
-                        if (bitmapInfo)
-                        {
-                            SDL_Rect srcRect;
-                            SDL_Rect destRect;
-                            srcRect.x = bitmapInfo->x;
-                            srcRect.y = bitmapInfo->y;
-                            srcRect.w = bitmapInfo->w;
-                            srcRect.h = bitmapInfo->h;
-                            destRect.x = screenOX + bitmapInfo->offX;
-                            destRect.y = screenOY - bitmapInfo->srcH + bitmapInfo->offY;
-                            destRect.w = bitmapInfo->w;
-                            destRect.h = bitmapInfo->h;
-                            SDL_RenderCopy(sdlRenderer, sdlTexture, &srcRect, &destRect);
-                        }
-                    }
+                    _renderer.drawBitmap(tileInfo, screenOX, screenOY);
                 }
                 worldX += TILE_WIDTH;
             }

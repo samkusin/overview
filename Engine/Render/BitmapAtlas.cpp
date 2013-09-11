@@ -15,12 +15,12 @@ namespace cinekine {
 
         //  Contains bitmaps mapped by name
         
-    BitmapAtlas::BitmapAtlas(const char* name, SDL_Texture* texture,
+    BitmapAtlas::BitmapAtlas(const char* name, unique_ptr<Texture>& texture,
                              size_t bitmapCount,
                              const Allocator& allocator) :
         _allocator(allocator),
         _name(name, string_allocator(_allocator)),
-        _texture(texture),
+        _texture(std::move(texture)),
         _bitmapPool(bitmapCount, _allocator),
         _bitmaps(std_allocator<BitmapInfo*>(_allocator))
     {
@@ -28,30 +28,28 @@ namespace cinekine {
     }
     
     BitmapAtlas::BitmapAtlas(BitmapAtlas&& other) :
-        _texture(other._texture),
+        _texture(std::move(other._texture)),
         _bitmapPool(std::move(other._bitmapPool)),
         _bitmaps(std::move(other._bitmaps))
     {
-        other._texture = nullptr;
     }
     
     BitmapAtlas& BitmapAtlas::operator=(BitmapAtlas&& other)
     {
-        _texture = other._texture;
+        _texture = std::move(other._texture);
         _bitmapPool = std::move(other._bitmapPool);
         _bitmaps = std::move(other._bitmaps);
-        other._texture = nullptr;
         return *this;
     }
     
-    BitmapAtlas::~BitmapAtlas()
+   /* BitmapAtlas::~BitmapAtlas()
     {
         if (_texture)
         {
             SDL_DestroyTexture(_texture);
         }
     }
-    
+    */
     struct BitmapAtlasBitmap_Comparator
     {
         bool operator()(const BitmapInfo* bitmap, const string& name) const
@@ -91,12 +89,10 @@ namespace cinekine {
         return kCinekBitmapIndex_Invalid;
     }
     
-    const BitmapInfo* BitmapAtlas::getBitmapFromIndex(cinek_bitmap_index index,
-                                                      SDL_Texture** texture) const
+    const BitmapInfo* BitmapAtlas::getBitmapFromIndex(cinek_bitmap_index index) const
     {
         if (index >= _bitmaps.size())
             return nullptr;
-        *texture = _texture;
         return _bitmaps[index];
     }
         

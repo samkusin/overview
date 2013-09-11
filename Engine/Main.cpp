@@ -31,7 +31,7 @@ int OverviewSDLMain(int argc, char* argv[])
     SDL_Window* window = SDL_CreateWindow("Overview Engine",
                                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                1024, 768,
-                               SDL_WINDOW_SHOWN);
+                               SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if (!window)
     {
         OVENGINE_LOG_ERROR("SDL Failed to initialize window : %s", SDL_GetError());

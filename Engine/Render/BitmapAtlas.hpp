@@ -10,11 +10,10 @@
 #define Overview_Renderer_BitmapAtlas_hpp
 
 #include "RenderTypes.hpp"
+#include "Texture.hpp"
 
 #include "cinek/cpp/ckmemorypool.hpp"
 #include "cinek/cpp/ckstring.hpp"
-
-#include "SDL_render.h"
 
 #include <vector>
 
@@ -32,13 +31,18 @@ namespace cinekine {
 
     public:
         //  The BitmapAtlas takes ownership of the SDL_Texture passed in.
-        BitmapAtlas(const char* name, SDL_Texture* texture, size_t bitmapCount, const Allocator& allocator);
+        BitmapAtlas(const char* name, unique_ptr<Texture>& texture,
+                    size_t bitmapCount, const Allocator& allocator);
         BitmapAtlas(BitmapAtlas&& other);
         BitmapAtlas& operator=(BitmapAtlas&& other);
-        ~BitmapAtlas();
+        ~BitmapAtlas() = default;
         
         const char* getName() const {
             return _name.c_str();
+        }
+        
+        const Texture& getTexture() const {
+            return *_texture;
         }
 
         //  use to build the atlas.
@@ -46,12 +50,12 @@ namespace cinekine {
 
         //  use to retrieve bitmap information.
         cinek_bitmap_index getBitmapIndex(const char* name) const;
-        const BitmapInfo* getBitmapFromIndex(cinek_bitmap_index index, SDL_Texture** texture) const;
+        const BitmapInfo* getBitmapFromIndex(cinek_bitmap_index index) const;
     
     private:
         Allocator _allocator;
         string _name;
-        SDL_Texture* _texture;
+        unique_ptr<Texture> _texture;
         ObjectPool<BitmapInfo> _bitmapPool;
         std::vector<BitmapInfo*, std_allocator<BitmapInfo*>> _bitmaps;
     };

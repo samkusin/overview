@@ -16,3 +16,5 @@ set( CINEKSDK_EXT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext"
     CACHE FILEPATH "Path to directory containing external packages needed to build projects." )
 
 add_subdirectory( cinek )
+
+add_subdirectory( gui )

@@ -91,8 +91,11 @@ namespace cinekine {
                 {
                     const Value::Member& tile =  *tileIt;
                     cinek_tile tileIndex = (cinek_tile)(tile.value.GetUint());
-                    cinek_bitmap_index bitmapIndexId = this->_indexRequest(bitmapAtlasId, tile.name.GetString());
-                    _db.mapTileToBitmap(tileAtlasId+tileIndex, bitmapAtlasId, bitmapIndexId);
+                    cinek_bitmap tileBitmap = {
+                        bitmapAtlasId,
+                        this->_indexRequest(bitmapAtlasId, tile.name.GetString())
+                    };
+                    _db.mapTileToBitmap(tileAtlasId+tileIndex, tileBitmap);
                 }
             }
         }

@@ -12,8 +12,8 @@ namespace cinekine {
     namespace rendermodel {
 
     TileDatabase::TileDatabase(uint16_t tileLimit, const Allocator& allocator) :
-        _tiles(tileLimit, TileInfo(kCinekBitmapAtlas_Invalid, kCinekBitmapIndex_Invalid),
-               std_allocator<TileInfo>(allocator))
+        _tiles(tileLimit, cinek_bitmap { kCinekBitmapAtlas_Invalid, kCinekBitmapIndex_Invalid },
+               std_allocator<cinek_bitmap>(allocator))
     {
     }
     TileDatabase::TileDatabase(TileDatabase&& other) :
@@ -26,13 +26,11 @@ namespace cinekine {
         _tiles.clear();
     }
    
-    void TileDatabase::mapTileToBitmap(cinek_tile tile,
-                                       cinek_bitmap_atlas atlas,
-                                       cinek_bitmap_index index)
+    void TileDatabase::mapTileToBitmap(cinek_tile tile, const cinek_bitmap& bitmap)
     {
         if (tile >= _tiles.size())
             return;
-        _tiles[tile] = TileInfo(atlas, index);
+        _tiles[tile] = bitmap;
     }
         
     }   // namespace rendermodel

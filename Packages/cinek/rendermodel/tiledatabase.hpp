@@ -20,9 +20,6 @@
 namespace cinekine {
     namespace rendermodel {
 
-/** Defines a tile based on bitmap atlas and index. */
-typedef std::pair<cinek_bitmap_atlas, cinek_bitmap_index> TileInfo;
-
 /**
  * @class TileDatabase
  * @brief A store for Tile records.
@@ -55,24 +52,22 @@ public:
     /**
      * Maps a tile atlas to a bitmap atlas.
      * 
-     * @param tile  The tile index to map bitmap info to.
-     * @param atlas The bitmap atlas used for the specified tile.
-     * @param index The bitmap index into the atlas used for the specified tile.
+     * @param tile   The tile index to map bitmap info to.
+     * @param bitmap The bitmap atlas and index used for the specified tile.
      */    
-    void mapTileToBitmap(cinek_tile tile, cinek_bitmap_atlas atlas,
-                         cinek_bitmap_index index);
+    void mapTileToBitmap(cinek_tile tile, const cinek_bitmap& bitmap);
 
     /**
      * @param  tile The tile info to retrieve.
      * @return A TileInfo pair object containing bitmap atlas and index.
      */
-    const TileInfo& getTileInfo(cinek_tile tile) const {
+    const cinek_bitmap& getTileInfo(cinek_tile tile) const {
         CK_ASSERT(tile < _tiles.size());
         return _tiles.at(tile);
     }
 
 private:
-    std::vector< TileInfo, std_allocator<TileInfo> > _tiles;
+    std::vector< cinek_bitmap, std_allocator<cinek_bitmap> > _tiles;
 };
 
     }   // namespace rendermodel

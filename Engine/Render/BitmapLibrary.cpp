@@ -64,12 +64,12 @@ namespace cinekine {
                     return true;
                 }
                 snprintf(path, sizeof(path), "textures/%s", textureName);
-                SDL_Texture* bitmapTexture = IMG_LoadTexture(_renderer.getSDLRenderer(), path);
-                if (!bitmapTexture)
+                unique_ptr<Texture> texture = _renderer.loadTexture(path);
+                if (!texture)
                 {
                     return false;
                 }
-                BitmapAtlas tempAtlas(atlasName, bitmapTexture, bitmapCount, _renderer.getAllocator());
+                BitmapAtlas tempAtlas(atlasName, texture, bitmapCount, _renderer.getAllocator());
                 
                 auto result = _atlasMap.emplace(_nextAtlasHandle, std::move(tempAtlas));
                 atlas = &(*result.first).second;

@@ -17,11 +17,13 @@ set( PROJECT_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/sprite.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/spritetemplate.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/spritedatabase.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tiledatabase.hpp
 )
 
 set( PROJECT_SOURCES 
     ${CMAKE_CURRENT_SOURCE_DIR}/spritetemplate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/spritedatabase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tiledatabase.cpp
 )
 
 # Targets

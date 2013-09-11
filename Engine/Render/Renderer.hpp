@@ -21,6 +21,7 @@ namespace cinekine {
     namespace ovengine {
     
     class Theater;
+    class Texture;
     
     //  The top-level Renderer object
     //      The Renderer handles drawing to the display.
@@ -40,7 +41,8 @@ namespace cinekine {
         
         void begin();
         void end();
-
+        
+        
         //  returns subsystems.
         const BitmapLibrary& getBitmapLibrary() const {
             return _bitmapLibrary;
@@ -48,25 +50,38 @@ namespace cinekine {
         BitmapLibrary& getBitmapLibrary() {
             return _bitmapLibrary;
         }
-
-        //  returns the SDL renderer object (owned by the Renderer.)
-        SDL_Renderer* getSDLRenderer() {
-            return _renderer;
-        }
         
+        //  Functions
+        //  creates a texture
+        unique_ptr<Texture> loadTexture(const char* pathname);
+        //  draws a bitmap onto the current screen.
+        void drawBitmap(const cinek_bitmap& bitmap, int32_t x, int32_t y);
+        //  returns the current viewport rect
+        SDL_Rect getViewport() const;
+        
+        //  Supporting methods
         Allocator& getAllocator() {
             return _allocator;
         }
-        
         Theater& getTheater() {
             return _theater;
+        }
+        //  Access to SDL system renderer
+        SDL_Renderer* getSDLRenderer() const {
+            return _renderer;
         }
 
     private:
         Allocator _allocator;
         Theater& _theater;
+        SDL_Window* _mainWindow;
         SDL_Renderer* _renderer;
+        SDL_Rect _viewRect;
         BitmapLibrary _bitmapLibrary;
+        
+        //  rendering state (TODO, split into a separate object?)
+        cinek_bitmap_atlas _currentAtlasIndex;
+        const BitmapAtlas* _currentAtlas;
     };
         
         

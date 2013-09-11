@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3743188D17DFEA510050509F /* SDLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3743188B17DFEA510050509F /* SDLTexture.cpp */; };
 		3761333317D54EA200AEB84E /* SpriteDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */; };
 		3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */; };
 		3761333F17D5516B00AEB84E /* Theater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333C17D5516B00AEB84E /* Theater.cpp */; };
@@ -14,6 +15,7 @@
 		3762602C17B734F80028ECA5 /* BitmapLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */; };
 		3762603817B8883F0028ECA5 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762603617B8883F0028ECA5 /* BitmapAtlas.cpp */; };
 		3772261817C177AB00F7E9EA /* BitmapAtlasLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3772261617C177AB00F7E9EA /* BitmapAtlasLoader.cpp */; };
+		37AD87E217D83D5B00CCE524 /* libimgui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD87E117D83D5B00CCE524 /* libimgui.a */; };
 		37D969F717C85A1A001C0B9C /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F517C85A1A001C0B9C /* libSDL2_image.a */; };
 		37D969F817C85A1A001C0B9C /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F617C85A1A001C0B9C /* libSDL2.a */; };
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
@@ -52,6 +54,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3743188817DFC0B30050509F /* Texture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Texture.hpp; path = ../../Engine/Render/Texture.hpp; sourceTree = "<group>"; };
+		3743188B17DFEA510050509F /* SDLTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SDLTexture.cpp; path = ../../Engine/Render/SDL/SDLTexture.cpp; sourceTree = "<group>"; };
+		3743188C17DFEA510050509F /* SDLTexture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SDLTexture.hpp; path = ../../Engine/Render/SDL/SDLTexture.hpp; sourceTree = "<group>"; };
 		3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpriteDatabaseLoader.cpp; path = ../../Engine/SpriteDatabaseLoader.cpp; sourceTree = "<group>"; };
 		3761333017D54EA200AEB84E /* SpriteDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SpriteDatabaseLoader.hpp; path = ../../Engine/SpriteDatabaseLoader.hpp; sourceTree = "<group>"; };
 		3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileDatabaseLoader.cpp; path = ../../Engine/TileDatabaseLoader.cpp; sourceTree = "<group>"; };
@@ -70,6 +75,7 @@
 		3772261617C177AB00F7E9EA /* BitmapAtlasLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapAtlasLoader.cpp; path = ../../Engine/Render/BitmapAtlasLoader.cpp; sourceTree = "<group>"; };
 		3772261717C177AB00F7E9EA /* BitmapAtlasLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapAtlasLoader.hpp; path = ../../Engine/Render/BitmapAtlasLoader.hpp; sourceTree = "<group>"; };
 		3772261917C18D5700F7E9EA /* RenderTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RenderTypes.hpp; path = ../../Engine/Render/RenderTypes.hpp; sourceTree = "<group>"; };
+		37AD87E117D83D5B00CCE524 /* libimgui.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libimgui.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libimgui.a"; sourceTree = "<group>"; };
 		37D969F517C85A1A001C0B9C /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../../../../lib/libSDL2_image.a; sourceTree = "<group>"; };
 		37D969F617C85A1A001C0B9C /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../../../lib/libSDL2.a; sourceTree = "<group>"; };
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
@@ -113,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37AD87E217D83D5B00CCE524 /* libimgui.a in Frameworks */,
 				37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */,
 				37D969F717C85A1A001C0B9C /* libSDL2_image.a in Frameworks */,
 				37D969F817C85A1A001C0B9C /* libSDL2.a in Frameworks */,
@@ -132,9 +139,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3743188A17DFEA350050509F /* SDL */ = {
+			isa = PBXGroup;
+			children = (
+				3743188B17DFEA510050509F /* SDLTexture.cpp */,
+				3743188C17DFEA510050509F /* SDLTexture.hpp */,
+			);
+			name = SDL;
+			sourceTree = "<group>";
+		};
 		3762602017B6DBCC0028ECA5 /* Render */ = {
 			isa = PBXGroup;
 			children = (
+				3743188A17DFEA350050509F /* SDL */,
 				3762602417B704A10028ECA5 /* Renderer.cpp */,
 				3762602517B704A10028ECA5 /* Renderer.hpp */,
 				3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */,
@@ -144,6 +161,7 @@
 				3772261617C177AB00F7E9EA /* BitmapAtlasLoader.cpp */,
 				3772261717C177AB00F7E9EA /* BitmapAtlasLoader.hpp */,
 				3772261917C18D5700F7E9EA /* RenderTypes.hpp */,
+				3743188817DFC0B30050509F /* Texture.hpp */,
 			);
 			name = Render;
 			sourceTree = "<group>";
@@ -270,6 +288,7 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				37AD87E117D83D5B00CCE524 /* libimgui.a */,
 				37D969F917C85A55001C0B9C /* libiconv.dylib */,
 				37D969F517C85A1A001C0B9C /* libSDL2_image.a */,
 				37D969F617C85A1A001C0B9C /* libSDL2.a */,
@@ -368,6 +387,7 @@
 				3761333317D54EA200AEB84E /* SpriteDatabaseLoader.cpp in Sources */,
 				3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */,
 				3761333F17D5516B00AEB84E /* Theater.cpp in Sources */,
+				3743188D17DFEA510050509F /* SDLTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +503,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../lib\"",
+					"\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -500,6 +521,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../lib\"",
+					"\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
