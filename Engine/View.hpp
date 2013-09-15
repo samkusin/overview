@@ -9,7 +9,7 @@
 #ifndef Overview_View_hpp
 #define Overview_View_hpp
 
-#include "Render/RenderTypes.hpp"
+#include "cinek/overview/maptypes.h"
 
 #include <memory>
 

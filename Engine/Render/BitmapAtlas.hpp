@@ -9,16 +9,26 @@
 #ifndef Overview_Renderer_BitmapAtlas_hpp
 #define Overview_Renderer_BitmapAtlas_hpp
 
-#include "RenderTypes.hpp"
 #include "Texture.hpp"
 
 #include "cinek/cpp/ckmemorypool.hpp"
 #include "cinek/cpp/ckstring.hpp"
+#include "cinek/rendermodel/types.h"
 
 #include <vector>
 
 namespace cinekine {
     namespace ovengine {
+    
+    //  Information used to render a bitmap.
+    struct BitmapInfo
+    {
+        uint16_t x, y, w, h;
+        uint16_t offX, offY;
+        uint16_t srcW, srcH;
+        string name;
+        BitmapInfo(const Allocator& allocator=Allocator()): name(string_allocator(allocator)) {}
+    };
     
     //  Contains bitmaps mapped by name to index
     //  Indices remain valid for the duration of the atlas object.  This is because

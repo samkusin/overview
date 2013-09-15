@@ -9,7 +9,7 @@
 #ifndef Overview_BitmapAtlasLoader_hpp
 #define Overview_BitmapAtlasLoader_hpp
 
-#include "RenderTypes.hpp"
+#include "BitmapAtlas.hpp"
 
 #include <functional>
 #include <streambuf>

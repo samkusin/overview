@@ -1,10 +1,11 @@
-//
-//  tiledatabase.cpp
-//  ovpackages
-//
-//  Created by Samir Sinha on 8/24/13.
-//
-//
+/**
+ * @file    rendermodel/tiledatabase.cpp
+ *
+ * Container for Tiles
+ *
+ * @note    Created by Samir Sinha on 7/4/13.
+ *          Copyright (c) 2013 Cinekine. All rights reserved.
+ */
 
 #include "tiledatabase.hpp"
 

@@ -17,4 +17,3 @@ set( CINEKSDK_EXT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext"
 
 add_subdirectory( cinek )
 
-add_subdirectory( gui )

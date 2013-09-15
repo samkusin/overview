@@ -15,6 +15,9 @@
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
 
+#define ck_imgui_allocator cinekine::std_allocator
+#include "UI/IMGUIFrame.hpp"
+
 #include "cinek/cpp/ckalloc.hpp"
 
 #include "SDL.h"
@@ -39,8 +42,9 @@ int OverviewSDLMain(int argc, char* argv[])
     }
 
     Allocator allocator;
-   
     ovengine::Theater theater(allocator);
+    
+    imgui::Frame imguiFrame({ 0, 0, 1024, 768 }, 128);
     
     ovengine::Renderer::InitParameters rendererInitParams;
     rendererInitParams.bitmapAtlasDir = "bitmaps";
@@ -70,11 +74,11 @@ int OverviewSDLMain(int argc, char* argv[])
     //  startup the simulation specific Director.
     ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
     
-    
+    //  main loop
     bool active = true;
-    
     while (active)
     {
+        //  event dispatch
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
@@ -83,10 +87,17 @@ int OverviewSDLMain(int argc, char* argv[])
             }
         }
         
+        //  update the director
+        imgui::Input imguiInput;
+        imguiFrame.begin(imguiInput);
+        
         director->update();
+        
+        imguiFrame.end();
         
         renderer.begin();
         view->render();
+        //  TODO: render imguiDrawCommands
         renderer.end();
     }
     

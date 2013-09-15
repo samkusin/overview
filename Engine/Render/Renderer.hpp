@@ -51,11 +51,6 @@ namespace cinekine {
             return _bitmapLibrary;
         }
         
-        //  Functions
-        //  creates a texture
-        unique_ptr<Texture> loadTexture(const char* pathname);
-        //  draws a bitmap onto the current screen.
-        void drawBitmap(const cinek_bitmap& bitmap, int32_t x, int32_t y);
         //  returns the current viewport rect
         SDL_Rect getViewport() const;
         
@@ -66,6 +61,17 @@ namespace cinekine {
         Theater& getTheater() {
             return _theater;
         }
+        
+        // Resource Management
+        //
+        //  Creates a texture
+        unique_ptr<Texture> loadTexture(const char* pathname);
+        
+        // Drawing
+        //
+        //  Draws a bitmap onto the current screen.
+        void drawBitmap(const cinek_bitmap& bitmap, int32_t x, int32_t y);
+        
         //  Access to SDL system renderer
         SDL_Renderer* getSDLRenderer() const {
             return _renderer;
