@@ -45,6 +45,7 @@ namespace cinekine {
 
     GameView::GameView(ovengine::Renderer& renderer) :
         _renderer(renderer),
+        _pen(renderer),
         _worldViewBounds({{0,0,0},{0,0,0}})
     {
         
@@ -75,7 +76,7 @@ namespace cinekine {
     //  precalculates values used for rendering the local view
     void GameView::setupWorldSpace(const cinek_ov_pos& worldPos)
     {
-        SDL_Rect viewportRect = _renderer.getViewport();
+        SDL_Rect viewportRect = _pen.getViewport();
 
         //  calculate view anchor
         _worldViewBounds.min.x = worldPos.x - viewportRect.w / 2;
@@ -110,7 +111,7 @@ namespace cinekine {
     //
     void GameView::render()
     {
-        SDL_Rect viewportRect = _renderer.getViewport();
+        SDL_Rect viewportRect = _pen.getViewport();
         
         const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
         const rendermodel::TileDatabase& tileDb = _renderer.getTheater().getTileDatabase();
@@ -156,8 +157,8 @@ namespace cinekine {
                 {
                     cinek_tile tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
                     const cinek_bitmap& tileInfo = tileDb.getTileInfo(tile);
-                    
-                    _renderer.drawBitmap(tileInfo, screenOX, screenOY);
+                    _pen.setBitmapAtlas(tileInfo.bmpAtlas);
+                    _pen.drawBitmap(tileInfo.bmpIndex, screenOX, screenOY);
                 }
                 worldX += TILE_WIDTH;
             }

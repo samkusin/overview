@@ -1,0 +1,51 @@
+//
+//  Font.cpp
+//  Overview
+//
+//  Created by Samir Sinha on 9/15/13.
+//  Copyright (c) 2013 Cinekine. All rights reserved.
+//
+
+#include "Font.hpp"
+
+namespace cinekine {
+    namespace ovengine {
+    
+Font::Font(unique_ptr<Texture>& texture,
+           std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>>&& bakedChars,
+           int32_t height,
+           int32_t minCharCode, int32_t undefinedCharCode) :
+    _texture(std::move(texture)),
+    _bakedChars(std::move(bakedChars)),
+    _height(height),
+    _minChar(minCharCode),
+    _undefinedChar(undefinedCharCode)
+{
+}
+
+Font::Font(Font&& other) :
+    _texture(std::move(other._texture)),
+    _bakedChars(std::move(other._bakedChars)),
+    _height(other._height),
+    _minChar(other._minChar),
+    _undefinedChar(other._minChar)
+{
+    other._height = 0;
+    other._minChar = 0;
+    other._undefinedChar = 0;
+}
+
+Font& Font::operator=(Font&& other)
+{
+    _texture = std::move(other._texture);
+    _bakedChars = std::move(other._bakedChars);
+    _height = other._height;
+    _minChar = other._minChar;
+    _undefinedChar = other._undefinedChar;
+    other._height = other._minChar = other._undefinedChar = 0;
+    
+    return *this;
+}
+    
+    }   // namespace ovengine
+}   // namespace cinekine

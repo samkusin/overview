@@ -8,11 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		3743188D17DFEA510050509F /* SDLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3743188B17DFEA510050509F /* SDLTexture.cpp */; };
+		3751FD8C17E7D51400E19AC4 /* Stylus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751FD8A17E7D51400E19AC4 /* Stylus.cpp */; };
 		3761333317D54EA200AEB84E /* SpriteDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */; };
 		3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */; };
 		3761333F17D5516B00AEB84E /* Theater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333C17D5516B00AEB84E /* Theater.cpp */; };
 		3761602217E524FA00841467 /* IMGUIFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761601F17E524FA00841467 /* IMGUIFrame.cpp */; };
 		3761602417E65CAB00841467 /* Templates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602317E65CAB00841467 /* Templates.cpp */; };
+		3761602617E67B6600841467 /* DroidSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3761602517E67B6600841467 /* DroidSans.ttf */; };
+		3761602B17E69A6C00841467 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602717E69A6C00841467 /* Font.cpp */; };
+		3761602C17E69A6C00841467 /* FontLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602917E69A6C00841467 /* FontLibrary.cpp */; };
 		3762602617B704A10028ECA5 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762602417B704A10028ECA5 /* Renderer.cpp */; };
 		3762602C17B734F80028ECA5 /* BitmapLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */; };
 		3762603817B8883F0028ECA5 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762603617B8883F0028ECA5 /* BitmapAtlas.cpp */; };
@@ -59,6 +63,8 @@
 		3743188817DFC0B30050509F /* Texture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Texture.hpp; path = ../../Engine/Render/Texture.hpp; sourceTree = "<group>"; };
 		3743188B17DFEA510050509F /* SDLTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SDLTexture.cpp; path = ../../Engine/Render/SDL/SDLTexture.cpp; sourceTree = "<group>"; };
 		3743188C17DFEA510050509F /* SDLTexture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SDLTexture.hpp; path = ../../Engine/Render/SDL/SDLTexture.hpp; sourceTree = "<group>"; };
+		3751FD8A17E7D51400E19AC4 /* Stylus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stylus.cpp; path = ../../Engine/Render/Stylus.cpp; sourceTree = "<group>"; };
+		3751FD8B17E7D51400E19AC4 /* Stylus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Stylus.hpp; path = ../../Engine/Render/Stylus.hpp; sourceTree = "<group>"; };
 		3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpriteDatabaseLoader.cpp; path = ../../Engine/SpriteDatabaseLoader.cpp; sourceTree = "<group>"; };
 		3761333017D54EA200AEB84E /* SpriteDatabaseLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SpriteDatabaseLoader.hpp; path = ../../Engine/SpriteDatabaseLoader.hpp; sourceTree = "<group>"; };
 		3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileDatabaseLoader.cpp; path = ../../Engine/TileDatabaseLoader.cpp; sourceTree = "<group>"; };
@@ -71,6 +77,11 @@
 		3761602017E524FA00841467 /* IMGUIFrame.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUIFrame.hpp; path = ../../Engine/UI/IMGUIFrame.hpp; sourceTree = "<group>"; };
 		3761602117E524FA00841467 /* IMGUITypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUITypes.hpp; path = ../../Engine/UI/IMGUITypes.hpp; sourceTree = "<group>"; };
 		3761602317E65CAB00841467 /* Templates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Templates.cpp; path = ../../Engine/Templates.cpp; sourceTree = "<group>"; };
+		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
+		3761602717E69A6C00841467 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Font.cpp; path = ../../Engine/Render/Font.cpp; sourceTree = "<group>"; };
+		3761602817E69A6C00841467 /* Font.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Font.hpp; path = ../../Engine/Render/Font.hpp; sourceTree = "<group>"; };
+		3761602917E69A6C00841467 /* FontLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontLibrary.cpp; path = ../../Engine/Render/FontLibrary.cpp; sourceTree = "<group>"; };
+		3761602A17E69A6C00841467 /* FontLibrary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FontLibrary.hpp; path = ../../Engine/Render/FontLibrary.hpp; sourceTree = "<group>"; };
 		3762602417B704A10028ECA5 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Renderer.cpp; path = ../../Engine/Render/Renderer.cpp; sourceTree = "<group>"; };
 		3762602517B704A10028ECA5 /* Renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Renderer.hpp; path = ../../Engine/Render/Renderer.hpp; sourceTree = "<group>"; };
 		3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapLibrary.cpp; path = ../../Engine/Render/BitmapLibrary.cpp; sourceTree = "<group>"; };
@@ -167,6 +178,12 @@
 			isa = PBXGroup;
 			children = (
 				3743188A17DFEA350050509F /* SDL */,
+				3751FD8A17E7D51400E19AC4 /* Stylus.cpp */,
+				3751FD8B17E7D51400E19AC4 /* Stylus.hpp */,
+				3761602717E69A6C00841467 /* Font.cpp */,
+				3761602817E69A6C00841467 /* Font.hpp */,
+				3761602917E69A6C00841467 /* FontLibrary.cpp */,
+				3761602A17E69A6C00841467 /* FontLibrary.hpp */,
 				3762602417B704A10028ECA5 /* Renderer.cpp */,
 				3762602517B704A10028ECA5 /* Renderer.hpp */,
 				3762602A17B734F80028ECA5 /* BitmapLibrary.cpp */,
@@ -317,6 +334,7 @@
 		37F6A43F17CAD44800C9EE1C /* Built */ = {
 			isa = PBXGroup;
 			children = (
+				3761602517E67B6600841467 /* DroidSans.ttf */,
 				37F6A44017CAD46500C9EE1C /* bitmaps */,
 				37F6A44117CAD46500C9EE1C /* data */,
 				37F6A44217CAD46500C9EE1C /* textures */,
@@ -376,6 +394,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3761602617E67B6600841467 /* DroidSans.ttf in Resources */,
 				37F6A44317CAD46500C9EE1C /* bitmaps in Resources */,
 				37F6A44417CAD46500C9EE1C /* data in Resources */,
 				37F6A44517CAD46500C9EE1C /* textures in Resources */,
@@ -406,6 +425,9 @@
 				3743188D17DFEA510050509F /* SDLTexture.cpp in Sources */,
 				3761602217E524FA00841467 /* IMGUIFrame.cpp in Sources */,
 				3761602417E65CAB00841467 /* Templates.cpp in Sources */,
+				3761602B17E69A6C00841467 /* Font.cpp in Sources */,
+				3761602C17E69A6C00841467 /* FontLibrary.cpp in Sources */,
+				3751FD8C17E7D51400E19AC4 /* Stylus.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,7 @@
 #define Overview_Renderer_hpp
 
 #include "BitmapLibrary.hpp"
+#include "FontLibrary.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 #include "cinek/cpp/ckstring.hpp"
@@ -39,10 +40,21 @@ namespace cinekine {
                  const Allocator& allocator);
         ~Renderer();
         
-        void begin();
-        void end();
-        
-        
+        ///////////////////////////////////////////////////////////////////////
+        //  returns supersystems
+        const Theater& getTheater() const {
+            return _theater;
+        }
+        Theater& getTheater() {
+            return _theater;
+        }
+        const Allocator& getAllocator() const {
+            return _allocator;
+        }
+        Allocator& getAllocator() {
+            return _allocator;
+        }
+        ///////////////////////////////////////////////////////////////////////
         //  returns subsystems.
         const BitmapLibrary& getBitmapLibrary() const {
             return _bitmapLibrary;
@@ -50,28 +62,24 @@ namespace cinekine {
         BitmapLibrary& getBitmapLibrary() {
             return _bitmapLibrary;
         }
-        
-        //  returns the current viewport rect
-        SDL_Rect getViewport() const;
-        
-        //  Supporting methods
-        Allocator& getAllocator() {
-            return _allocator;
+        const FontLibrary& getFontLibrary() const {
+            return _fontLibrary;
         }
-        Theater& getTheater() {
-            return _theater;
+        FontLibrary& getFontLibrary() {
+            return _fontLibrary;
         }
-        
+        ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
         //  Creates a texture
         unique_ptr<Texture> loadTexture(const char* pathname);
-        
-        // Drawing
+        ///////////////////////////////////////////////////////////////////////
+        //  Renderer Draw State
         //
-        //  Draws a bitmap onto the current screen.
-        void drawBitmap(const cinek_bitmap& bitmap, int32_t x, int32_t y);
-        
+        void begin();
+        void end();
+        ///////////////////////////////////////////////////////////////////////
+        //  To be moved to subclass of Renderer when needed (SDL version)
         //  Access to SDL system renderer
         SDL_Renderer* getSDLRenderer() const {
             return _renderer;
@@ -84,10 +92,12 @@ namespace cinekine {
         SDL_Renderer* _renderer;
         SDL_Rect _viewRect;
         BitmapLibrary _bitmapLibrary;
+        FontLibrary _fontLibrary;
         
         //  rendering state (TODO, split into a separate object?)
         cinek_bitmap_atlas _currentAtlasIndex;
         const BitmapAtlas* _currentAtlas;
+        uint32_t _currentFont;
     };
         
         

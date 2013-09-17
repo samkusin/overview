@@ -1,5 +1,5 @@
 //
-//  Texture.hpp
+//  Render/Texture.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 9/10/13.

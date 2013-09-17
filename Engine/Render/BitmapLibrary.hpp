@@ -30,7 +30,7 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(BitmapLibrary);
 
     public:
-        BitmapLibrary(Renderer& renderer, const char* bitmapAtlasDir);
+        BitmapLibrary(Renderer& renderer);
         ~BitmapLibrary();
         
         //  Returns a handle to an existing or newly loaded bitmap atlas.  Returns a null handle on failure.
@@ -48,7 +48,6 @@ namespace cinekine {
                                     std::equal_to<cinek_bitmap_atlas>,
                                     std_allocator<std::pair<cinek_bitmap_atlas, BitmapAtlas>>> AtlasMap;
 
-        string _atlasDir;
         AtlasMap _atlasMap;
         cinek_bitmap_atlas _nextAtlasHandle;
     };

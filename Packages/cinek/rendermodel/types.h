@@ -49,7 +49,7 @@ typedef uint16_t cinek_bitmap_index;
 /** Identifies a bitmap from its components. */
 typedef struct cinek_bitmap_t
 {
-    cinek_bitmap_atlas bmpClass;
+    cinek_bitmap_atlas bmpAtlas;
     cinek_bitmap_index bmpIndex;
 }
 cinek_bitmap;

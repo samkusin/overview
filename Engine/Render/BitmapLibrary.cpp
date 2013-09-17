@@ -21,9 +21,8 @@
 namespace cinekine {
     namespace ovengine {
     
-    BitmapLibrary::BitmapLibrary(Renderer& renderer, const char* bitmapAtlasDir) :
+    BitmapLibrary::BitmapLibrary(Renderer& renderer) :
         _renderer(renderer),
-        _atlasDir(bitmapAtlasDir),
         _atlasMap( std_allocator<AtlasMap::allocator_type >(_renderer.getAllocator()) ),
         _nextAtlasHandle(0)
     {
