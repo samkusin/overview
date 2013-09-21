@@ -11,6 +11,7 @@
 #include "GameView.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/BitmapLibrary.hpp"
+#include "Render/FontLibrary.hpp"
 #include "Theater.hpp"
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
@@ -46,65 +47,74 @@ int OverviewSDLMain(int argc, char* argv[])
     imgui::Frame imguiFrame({ 0, 0, 1024, 768 }, 128);
     
     ovengine::Renderer::InitParameters rendererInitParams;
-    ovengine::Renderer renderer(theater, window, rendererInitParams, allocator);
+    ovengine::Renderer renderer(theater, rendererInitParams, window, allocator);
     
-    //  startup the simulation specific View.
-    ovengine::View* view = cinekine::ovengine::CreateView(renderer);
-    
-    //  handle viewpoint sets by Theater.
-    theater.onViewMapSet([&view] (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
-        {
-            if (view)
-            {
-                view->onMapSet(map, pos);
-            }
-        }
-    );
-    theater.onViewPosSet([&view] (const cinek_ov_pos& pos)
-        {
-            if (view)
-            {
-                view->onMapSetPosition(pos);
-            }
-        }
-    );
-    
-    //  startup the simulation specific Director.
-    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
-    
-    //  main loop
-    bool active = true;
-    while (active)
+    if (renderer &&
+        renderer.getFontLibrary().loadFont(ovengine::kFontHandle_Default, "DroidSans.ttf", 16))
     {
-        //  event dispatch
-        SDL_Event e;
-        if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
-                active = false;
-                continue;
+        //  startup the simulation specific View.
+        ovengine::View* view = cinekine::ovengine::CreateView(renderer);
+        
+        //  handle viewpoint sets by Theater.
+        theater.onViewMapSet([&view] (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
+            {
+                if (view)
+                {
+                    view->onMapSet(map, pos);
+                }
             }
+        );
+        theater.onViewPosSet([&view] (const cinek_ov_pos& pos)
+            {
+                if (view)
+                {
+                    view->onMapSetPosition(pos);
+                }
+            }
+        );
+        
+        //  startup the simulation specific Director.
+        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
+        
+        //  main loop
+        bool active = true;
+        while (active)
+        {
+            //  event dispatch
+            SDL_Event e;
+            if (SDL_PollEvent(&e)) {
+                if (e.type == SDL_QUIT) {
+                    active = false;
+                    continue;
+                }
+            }
+            
+            //  update the director
+            imgui::Input imguiInput;
+            imguiFrame.begin(imguiInput);
+            
+            director->update();
+            
+            imguiFrame.end();
+            
+            renderer.begin();
+            view->render();
+            size_t commandCount;
+            const imgui::DrawCommand* drawCommands = imguiFrame.getDrawCommandQueue(&commandCount);
+            //  TODO: render imguiDrawCommands
+            renderer.end();
         }
         
-        //  update the director
-        imgui::Input imguiInput;
-        imguiFrame.begin(imguiInput);
-        
-        director->update();
-        
-        imguiFrame.end();
-        
-        renderer.begin();
-        view->render();
-        size_t commandCount;
-        const imgui::DrawCommand* drawCommands = imguiFrame.getDrawCommandQueue(&commandCount);
-        //  TODO: render imguiDrawCommands
-        renderer.end();
+        ovengine::DestroyDirector(director);
+        director = nullptr;
+        ovengine::DestroyView(view);
+        view = nullptr;
     }
-    
-    ovengine::DestroyDirector(director);
-    director = nullptr;
-    ovengine::DestroyView(view);
-    view = nullptr;
+    else
+    {
+        OVENGINE_LOG_ERROR("Failed to initialize renderer.");
+        return 1;
+    }
 
     return 0;
 }

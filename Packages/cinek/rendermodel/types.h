@@ -24,7 +24,8 @@ typedef enum cinek_pixel_format_t
     kCinekPixelFormat_RGBA4444,
     kCinekPixelFormat_RGB888,
     kCinekPixelFormat_RGBA5551,
-    kCinekPixelFormat_RGB565
+    kCinekPixelFormat_RGB565,
+    kCinekPixelFormat_A8            /**< 8-bit Alpha, assuming RGB of white. */
 }
 cinek_pixel_format;
 

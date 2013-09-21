@@ -18,7 +18,9 @@
 namespace cinekine {
     namespace ovengine {
 
-    Renderer::Renderer(Theater& theater, SDL_Window* window, const InitParameters& initParams,
+    Renderer::Renderer(Theater& theater,
+                       const InitParameters& initParams,
+                       SDL_Window* window,
                        const Allocator& allocator) :
         _allocator(allocator),
         _theater(theater),
@@ -29,6 +31,9 @@ namespace cinekine {
         _renderer = SDL_CreateRenderer(window, -1,
                                        SDL_RENDERER_ACCELERATED |
                                        SDL_RENDERER_PRESENTVSYNC);
+        if (!_renderer)
+            return;
+        
         //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
         //
         //  handle sprite -> bitmap loading.
@@ -76,6 +81,14 @@ namespace cinekine {
         // TODO - perhaps we need a make_unique_ptr (C++11 version) to confirm that the allocator
         //  creating the item is also used to delete the item.
         unique_ptr<Texture> texture(_allocator.newItem<SDLTexture>(*this, pathname), _allocator);
+        return std::move(texture);
+    }
+
+    unique_ptr<Texture> Renderer::createTextureFromBuffer(uint16_t w, uint16_t h,
+            cinek_pixel_format format,
+            const uint8_t* bytes, uint16_t stride)
+    {
+        unique_ptr<Texture> texture(_allocator.newItem<SDLTexture>(*this, w, h, format, bytes, stride), _allocator);
         return std::move(texture);
     }
     

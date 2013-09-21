@@ -165,6 +165,14 @@ namespace cinekine {
             worldY += TILE_HEIGHT/2;
             ++rowCount;
         }
+        
+        _pen.setFont(ovengine::kFontHandle_Default);
+        SDL_Color color;
+        color.r = 255;
+        color.g = 0;
+        color.b = 0;
+        color.a = 255;
+        _pen.drawText("Welcome to the overview 2D project by Samir Sinha", 20, 160, color);
     }
         
     }

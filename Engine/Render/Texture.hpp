@@ -9,7 +9,7 @@
 #ifndef Overview_Renderer_Texture_hpp
 #define Overview_Renderer_Texture_hpp
 
-#include "cinek/cpp/ckdefs.hpp"
+#include "cinek/rendermodel/types.h"
 
 namespace cinekine {
     namespace ovengine {
@@ -18,6 +18,9 @@ namespace cinekine {
     {
     public:
         virtual ~Texture() {}
+        // used to evaluate Texture validity.  Best used when evaluating
+        // whether a texture was succesfully created. 
+        virtual operator bool() const = 0;
     };
     
     

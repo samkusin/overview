@@ -14,7 +14,6 @@
 		3761333F17D5516B00AEB84E /* Theater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333C17D5516B00AEB84E /* Theater.cpp */; };
 		3761602217E524FA00841467 /* IMGUIFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761601F17E524FA00841467 /* IMGUIFrame.cpp */; };
 		3761602417E65CAB00841467 /* Templates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602317E65CAB00841467 /* Templates.cpp */; };
-		3761602617E67B6600841467 /* DroidSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3761602517E67B6600841467 /* DroidSans.ttf */; };
 		3761602B17E69A6C00841467 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602717E69A6C00841467 /* Font.cpp */; };
 		3761602C17E69A6C00841467 /* FontLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602917E69A6C00841467 /* FontLibrary.cpp */; };
 		3762602617B704A10028ECA5 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762602417B704A10028ECA5 /* Renderer.cpp */; };
@@ -22,6 +21,7 @@
 		3762603817B8883F0028ECA5 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3762603617B8883F0028ECA5 /* BitmapAtlas.cpp */; };
 		3772261817C177AB00F7E9EA /* BitmapAtlasLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3772261617C177AB00F7E9EA /* BitmapAtlasLoader.cpp */; };
 		37AD87E217D83D5B00CCE524 /* libimgui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD87E117D83D5B00CCE524 /* libimgui.a */; };
+		37D1EC6517ED3FB900CA1008 /* stb.c in Sources */ = {isa = PBXBuildFile; fileRef = 37D1EC6317ED3FB900CA1008 /* stb.c */; };
 		37D969F717C85A1A001C0B9C /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F517C85A1A001C0B9C /* libSDL2_image.a */; };
 		37D969F817C85A1A001C0B9C /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F617C85A1A001C0B9C /* libSDL2.a */; };
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
@@ -41,9 +41,6 @@
 		37F64AA11780EA2C009116E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.m */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
 		37F64AC31780EF04009116E7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F64AC21780EF04009116E7 /* OpenGL.framework */; };
-		37F6A44317CAD46500C9EE1C /* bitmaps in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44017CAD46500C9EE1C /* bitmaps */; };
-		37F6A44417CAD46500C9EE1C /* data in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44117CAD46500C9EE1C /* data */; };
-		37F6A44517CAD46500C9EE1C /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 37F6A44217CAD46500C9EE1C /* textures */; };
 		37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F6A44717CBCE0F00C9EE1C /* GameView.cpp */; };
 /* End PBXBuildFile section */
 
@@ -92,6 +89,10 @@
 		3772261617C177AB00F7E9EA /* BitmapAtlasLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapAtlasLoader.cpp; path = ../../Engine/Render/BitmapAtlasLoader.cpp; sourceTree = "<group>"; };
 		3772261717C177AB00F7E9EA /* BitmapAtlasLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapAtlasLoader.hpp; path = ../../Engine/Render/BitmapAtlasLoader.hpp; sourceTree = "<group>"; };
 		37AD87E117D83D5B00CCE524 /* libimgui.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libimgui.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libimgui.a"; sourceTree = "<group>"; };
+		37D1EC6117ED3FB900CA1008 /* Math.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Math.hpp; path = ../../Engine/Utils/Math.hpp; sourceTree = "<group>"; };
+		37D1EC6317ED3FB900CA1008 /* stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb.c; sourceTree = "<group>"; };
+		37D1EC6417ED3FB900CA1008 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_truetype.h; sourceTree = "<group>"; };
+		37D1EC6617EE33BD00CA1008 /* RenderTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RenderTypes.hpp; path = ../../Engine/Render/RenderTypes.hpp; sourceTree = "<group>"; };
 		37D969F517C85A1A001C0B9C /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../../../../lib/libSDL2_image.a; sourceTree = "<group>"; };
 		37D969F617C85A1A001C0B9C /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../../../lib/libSDL2.a; sourceTree = "<group>"; };
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
@@ -193,6 +194,7 @@
 				3772261617C177AB00F7E9EA /* BitmapAtlasLoader.cpp */,
 				3772261717C177AB00F7E9EA /* BitmapAtlasLoader.hpp */,
 				3743188817DFC0B30050509F /* Texture.hpp */,
+				37D1EC6617EE33BD00CA1008 /* RenderTypes.hpp */,
 			);
 			name = Render;
 			sourceTree = "<group>";
@@ -207,6 +209,16 @@
 				37F6A44D17CBF1C100C9EE1C /* Common.hpp */,
 			);
 			name = Prototype;
+			sourceTree = "<group>";
+		};
+		37D1EC6217ED3FB900CA1008 /* stb */ = {
+			isa = PBXGroup;
+			children = (
+				37D1EC6317ED3FB900CA1008 /* stb.c */,
+				37D1EC6417ED3FB900CA1008 /* stb_truetype.h */,
+			);
+			name = stb;
+			path = ../../Engine/Utils/stb;
 			sourceTree = "<group>";
 		};
 		37E11EB717B5AAD600665306 /* Engine */ = {
@@ -237,6 +249,8 @@
 		37E76A0617C6D256009EAA97 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				37D1EC6217ED3FB900CA1008 /* stb */,
+				37D1EC6117ED3FB900CA1008 /* Math.hpp */,
 				37E76A0717C6D264009EAA97 /* StreamBufRapidJson.hpp */,
 			);
 			name = Utils;
@@ -394,10 +408,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3761602617E67B6600841467 /* DroidSans.ttf in Resources */,
-				37F6A44317CAD46500C9EE1C /* bitmaps in Resources */,
-				37F6A44417CAD46500C9EE1C /* data in Resources */,
-				37F6A44517CAD46500C9EE1C /* textures in Resources */,
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
 			);
@@ -428,6 +438,7 @@
 				3761602B17E69A6C00841467 /* Font.cpp in Sources */,
 				3761602C17E69A6C00841467 /* FontLibrary.cpp in Sources */,
 				3751FD8C17E7D51400E19AC4 /* Stylus.cpp in Sources */,
+				37D1EC6517ED3FB900CA1008 /* stb.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

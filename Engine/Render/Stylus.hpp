@@ -10,9 +10,7 @@
 #define Overview_Renderer_Stylus_hpp
 
 #include "Font.hpp"
-
-#include "cinek/rendermodel/types.h"
-#include "SDL_rect.h"
+#include "RenderTypes.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -29,11 +27,12 @@ namespace cinekine {
 
         //  returns the current viewport rect
         SDL_Rect getViewport() const;
-        //  set drawing resources
+        //  Bitmap methods
         void setBitmapAtlas(cinek_bitmap_atlas atlas);
-        void setFont(FontHandle fontHandle);
-        //  Draws a bitmap onto the current screen.
         void drawBitmap(cinek_bitmap_index bitmapIndex, int32_t x, int32_t y);
+        //  Draw text
+        void setFont(FontHandle fontHandle);
+        void drawText(const char* text, int32_t x, int32_t y, const SDL_Color& color);
 
     private:
         Renderer& _renderer;

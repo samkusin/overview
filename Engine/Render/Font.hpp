@@ -18,31 +18,40 @@
 
 namespace cinekine {
     namespace ovengine {
-   
-    typedef uint32_t FontHandle;
-    const FontHandle kFontHandle_Invalid = (FontHandle)(-1);
 
+    //  Fonts 
     class Font
     {
         Font& operator=(const Font&) = delete;
 
     public:
+        typedef std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>> BakedChars;
         Font(unique_ptr<Texture>& texture,
-            std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>>&& bakedChars,
-            int32_t height,
-            int32_t minCharCode, int32_t undefinedCharCode);
+             BakedChars&& bakedChars,
+             int32_t height,
+             int32_t minCharCode, int32_t undefinedCharCode);
         Font() = default;
         ~Font() = default;
 
         Font(Font&& other);
         Font& operator=(Font&& other);
-
+        
+        operator bool() const {
+            return (_texture != nullptr);
+        }
+        
         const stbtt_bakedchar& getChar(int32_t c) const;
         const Texture& getTexture() const {
             return *_texture;
         }
         int32_t getHeight() const {
             return _height;
+        }
+        int32_t getMinCodepoint() const {
+            return _minChar;
+        }
+        int32_t getMaxCodepoint() const {
+            return _minChar + (int32_t)_bakedChars.size() - 1;
         }
 
     private:

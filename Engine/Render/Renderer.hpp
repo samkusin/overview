@@ -36,9 +36,14 @@ namespace cinekine {
         };
         
         Renderer(Theater& theater,
-                 SDL_Window* window, const InitParameters& initParams,
+                 const InitParameters& initParams,
+                 SDL_Window* window,
                  const Allocator& allocator);
-        ~Renderer();
+        virtual ~Renderer();
+        
+        operator bool() const {
+            return _renderer != NULL;
+        }
         
         ///////////////////////////////////////////////////////////////////////
         //  returns supersystems
@@ -71,8 +76,14 @@ namespace cinekine {
         ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
-        //  Creates a texture
+        //  Creates a renderable texture from a file source
         unique_ptr<Texture> loadTexture(const char* pathname);
+        //  Creates a renderable texture from a byte array.  The width and height
+        //  and stride are *source* buffer values.  The final texture width, height
+        //  and format depend on the Renderer implementation and platform.
+        unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
+            cinek_pixel_format format,
+            const uint8_t* bytes, uint16_t stride);
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Draw State
         //
@@ -93,14 +104,9 @@ namespace cinekine {
         SDL_Rect _viewRect;
         BitmapLibrary _bitmapLibrary;
         FontLibrary _fontLibrary;
-        
-        //  rendering state (TODO, split into a separate object?)
-        cinek_bitmap_atlas _currentAtlasIndex;
-        const BitmapAtlas* _currentAtlas;
-        uint32_t _currentFont;
     };
-        
-        
+    
+
     }   // namespace ovengine
 }   // namespace cinekine
 

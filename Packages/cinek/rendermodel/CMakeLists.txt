@@ -20,7 +20,7 @@ set( PROJECT_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/tiledatabase.hpp
 )
 
-set( PROJECT_SOURCES 
+set( PROJECT_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/spritetemplate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/spritedatabase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tiledatabase.cpp

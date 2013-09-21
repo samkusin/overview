@@ -11,6 +11,8 @@
 
 #include "../Texture.hpp"
 
+#include "cinek/cpp/ckdefs.hpp"
+
 #include "SDL_render.h"
 
 namespace cinekine {
@@ -24,8 +26,15 @@ namespace cinekine {
 
     public:
         SDLTexture(Renderer& renderer, const char *pathname);
+        SDLTexture(Renderer& renderer, uint16_t w, uint16_t h,
+            cinek_pixel_format format,
+            const uint8_t* bytes, uint16_t stride);
         SDLTexture(SDLTexture&& other);
         virtual ~SDLTexture();
+
+        virtual operator bool() const {
+            return _texture!=NULL;
+        }
         
         SDL_Texture* getSDLTexture() const {
             return _texture;

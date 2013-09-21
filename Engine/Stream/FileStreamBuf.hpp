@@ -33,12 +33,17 @@ namespace cinekine {
                   size_t bufferSize=4096,
                   const Allocator& allocator=Allocator());
         ~FileStreamBuf();
-        bool operator!() const {
-            return !isOpen();
+        //  Used to check whether file opened.
+        operator bool() const {
+            return isOpen();
         }
         bool isOpen() const {
             return _fileHandle != nullptr;
         }
+        //  get the remaining number of characters to read before starving the file stream.
+        //  this will be the file size if the stream hasn't been consumed by the caller.
+        size_t availableChars() const;
+
     protected:
         std::streambuf* setbuf(char* s, std::streamsize n);
         virtual int overflow(int c=EOF);
@@ -51,6 +56,7 @@ namespace cinekine {
         void* _fileHandle;
         std::ios_base::openmode _mode;
         size_t _bufferSize;
+        size_t _totalSize;
         char_type* _buffer;
     };
     

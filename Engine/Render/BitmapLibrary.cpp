@@ -62,7 +62,7 @@ namespace cinekine {
                     OVENGINE_LOG_WARN("Ignoring image load request for '%s' since atlas was already created.", textureName);
                     return true;
                 }
-                snprintf(path, sizeof(path), "textures/%s", textureName);
+                snprintf(path, sizeof(path), "bitmaps/textures/%s", textureName);
                 unique_ptr<Texture> texture = _renderer.loadTexture(path);
                 if (!texture)
                 {

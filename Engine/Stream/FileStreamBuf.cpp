@@ -29,6 +29,7 @@ namespace cinekine {
         _fileHandle(nullptr),
         _mode(mode),
         _bufferSize(bufferSize),
+        _totalSize(0),
         _buffer( (char*)_allocator.alloc(sizeof(char_type) * _bufferSize) )
     {
         char fmode[4] = { 0,0,0,0 };        
@@ -66,6 +67,10 @@ namespace cinekine {
             fmode[1] = 'b';
         }
         _fileHandle = reinterpret_cast<void*>(SDL_RWFromFile(pathname, fmode));
+        if (_fileHandle)
+        {
+            _totalSize = SDL_RWsize((SDL_RWops*)_fileHandle);
+        }
     }
     
     FileStreamBuf::~FileStreamBuf()
@@ -81,6 +86,14 @@ namespace cinekine {
             _allocator.free(_buffer);
             _buffer = nullptr;
         }
+    }
+    
+    size_t FileStreamBuf::availableChars() const
+    {
+        if (!_fileHandle)
+            return 0;
+        size_t remaining = (size_t)(_totalSize - SDL_RWtell((SDL_RWops*)_fileHandle));
+        return remaining;
     }
     
     //  TODO - support substituting an external buffer?  Also support unbuffered IO (destroying the buffer.)
@@ -131,7 +144,7 @@ namespace cinekine {
             
             setg(eback(), eback() + putbackLen, eback() + putbackLen + readCount/sizeof(char_type));
         }
-        return (int)*gptr();
+        return (int)((unsigned char)*gptr());
     }
         
     //  TBD - this is an abbrieviated version of the clang filebuf impl.
