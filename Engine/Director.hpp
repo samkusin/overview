@@ -10,6 +10,10 @@
 #define Overview_Director_hpp
 
 namespace cinekine {
+    namespace imgui {
+        class ClientInterface;
+    }
+
     namespace ovengine {
     
     class TheaterClient;
@@ -20,12 +24,15 @@ namespace cinekine {
     {
     public:
         virtual ~Director() {}
- 
+
+        /**
+         * Updates the director - called once per frame.
+         */
         virtual void update() = 0;
     };
 
     //  must be defined by the implementing application.
-    Director* CreateDirector(TheaterClient& cli);
+    Director* CreateDirector(TheaterClient& cli, imgui::ClientInterface& imgui);
     //  must be defined by the implementing application - destroys the Director created by
     //  CreateDirector
     void DestroyDirector(Director* director);

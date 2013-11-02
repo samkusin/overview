@@ -16,14 +16,15 @@
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
 
+#include "UI/IMGUIGfx.hpp"
 #include "UI/IMGUIFrame.hpp"
+#include "IMGUIView.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
 #include "SDL.h"
 
 using namespace cinekine;
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,9 +44,7 @@ int OverviewSDLMain(int argc, char* argv[])
 
     Allocator allocator;
     ovengine::Theater theater(allocator);
-    
-    imgui::Frame imguiFrame({ 0, 0, 1024, 768 }, 128);
-    
+        
     ovengine::Renderer::InitParameters rendererInitParams;
     ovengine::Renderer renderer(theater, rendererInitParams, window, allocator);
     
@@ -72,9 +71,18 @@ int OverviewSDLMain(int argc, char* argv[])
                 }
             }
         );
+
+        //  IMGUI view
+        cinekine::ovengine::IMGUIView imguiView(renderer);
+        imgui::Style imguiStyle;
+        imgui::Allocator imguiAllocator;
+        imgui::Gfx imguiGfx(512, 16*1024, imguiAllocator);
+        imgui::Frame imguiFrame(imguiGfx, { 0, 0, 1024, 768 }, imguiStyle, imguiAllocator);
+
         
         //  startup the simulation specific Director.
-        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
+        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient(),
+                                                                          imguiFrame);
         
         //  main loop
         bool active = true;
@@ -89,19 +97,20 @@ int OverviewSDLMain(int argc, char* argv[])
                 }
             }
             
-            //  update the director
+            ///////////////////////////////////////////////////////////////////
             imgui::Input imguiInput;
+            imguiGfx.clearCommandQueue();
             imguiFrame.begin(imguiInput);
             
             director->update();
-            
+
             imguiFrame.end();
-            
+            ///////////////////////////////////////////////////////////////////
             renderer.begin();
+            
             view->render();
-            size_t commandCount;
-            const imgui::DrawCommand* drawCommands = imguiFrame.getDrawCommandQueue(&commandCount);
-            //  TODO: render imguiDrawCommands
+            imguiView.render(imguiGfx.getCommandQueue());
+            
             renderer.end();
         }
         

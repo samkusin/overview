@@ -15,11 +15,13 @@
 
 namespace cinekine {
     namespace ovengine {
-    
-        typedef uint32_t FontHandle;
-        const FontHandle kFontHandle_Invalid = (FontHandle)(-1);
-        const FontHandle kFontHandle_Default = (FontHandle)(0);
-        
+
+    typedef uint32_t FontHandle;
+    /** An invalid font handle */
+    const FontHandle kFontHandle_Invalid = (FontHandle)(-1);
+    /** The 'default' found */
+    const FontHandle kFontHandle_Default = (FontHandle)(0);
+
     }   // namespace ovengine
 }   // namespace cinekine
 

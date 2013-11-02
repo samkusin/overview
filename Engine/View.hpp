@@ -30,7 +30,7 @@ namespace cinekine {
     {
     public:
         virtual ~View() {}
-        
+
         //  When a new viewpoint is set by the Director.
         virtual void onMapSet(std::shared_ptr<overview::Map>& map,
                               const cinek_ov_pos& pos) = 0;

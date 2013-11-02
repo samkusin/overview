@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		373C428317F3E12200CABCF6 /* IMGUIView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C428117F3E12200CABCF6 /* IMGUIView.cpp */; };
 		3743188D17DFEA510050509F /* SDLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3743188B17DFEA510050509F /* SDLTexture.cpp */; };
 		3751FD8C17E7D51400E19AC4 /* Stylus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751FD8A17E7D51400E19AC4 /* Stylus.cpp */; };
 		3761333317D54EA200AEB84E /* SpriteDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761332F17D54EA100AEB84E /* SpriteDatabaseLoader.cpp */; };
 		3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333117D54EA200AEB84E /* TileDatabaseLoader.cpp */; };
 		3761333F17D5516B00AEB84E /* Theater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761333C17D5516B00AEB84E /* Theater.cpp */; };
-		3761602217E524FA00841467 /* IMGUIFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761601F17E524FA00841467 /* IMGUIFrame.cpp */; };
 		3761602417E65CAB00841467 /* Templates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602317E65CAB00841467 /* Templates.cpp */; };
 		3761602B17E69A6C00841467 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602717E69A6C00841467 /* Font.cpp */; };
 		3761602C17E69A6C00841467 /* FontLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3761602917E69A6C00841467 /* FontLibrary.cpp */; };
@@ -28,6 +28,8 @@
 		37E11EBF17B5AAEE00665306 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E11EBA17B5AAEE00665306 /* Main.cpp */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
 		37E11EC517B5AC2700665306 /* libkazmath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC217B5AC2700665306 /* libkazmath.a */; };
+		37E5CE7B1800EC8F000AD359 /* IMGUIFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E5CE761800EC8F000AD359 /* IMGUIFrame.cpp */; };
+		37E5CE7C1800EC8F000AD359 /* IMGUIGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E5CE781800EC8F000AD359 /* IMGUIGfx.cpp */; };
 		37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */; };
 		37E6802217C8392400FF3C97 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801D17C8392400FF3C97 /* AudioUnit.framework */; };
 		37E6802317C8392400FF3C97 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801E17C8392400FF3C97 /* Carbon.framework */; };
@@ -57,6 +59,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		373C428117F3E12200CABCF6 /* IMGUIView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMGUIView.cpp; path = ../../Engine/IMGUIView.cpp; sourceTree = "<group>"; };
+		373C428217F3E12200CABCF6 /* IMGUIView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUIView.hpp; path = ../../Engine/IMGUIView.hpp; sourceTree = "<group>"; };
 		3743188817DFC0B30050509F /* Texture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Texture.hpp; path = ../../Engine/Render/Texture.hpp; sourceTree = "<group>"; };
 		3743188B17DFEA510050509F /* SDLTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SDLTexture.cpp; path = ../../Engine/Render/SDL/SDLTexture.cpp; sourceTree = "<group>"; };
 		3743188C17DFEA510050509F /* SDLTexture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SDLTexture.hpp; path = ../../Engine/Render/SDL/SDLTexture.hpp; sourceTree = "<group>"; };
@@ -70,9 +74,6 @@
 		3761333C17D5516B00AEB84E /* Theater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Theater.cpp; path = ../../Engine/Theater.cpp; sourceTree = "<group>"; };
 		3761333D17D5516B00AEB84E /* Theater.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Theater.hpp; path = ../../Engine/Theater.hpp; sourceTree = "<group>"; };
 		3761333E17D5516B00AEB84E /* TheaterClient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TheaterClient.hpp; path = ../../Engine/TheaterClient.hpp; sourceTree = "<group>"; };
-		3761601F17E524FA00841467 /* IMGUIFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMGUIFrame.cpp; path = ../../Engine/UI/IMGUIFrame.cpp; sourceTree = "<group>"; };
-		3761602017E524FA00841467 /* IMGUIFrame.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUIFrame.hpp; path = ../../Engine/UI/IMGUIFrame.hpp; sourceTree = "<group>"; };
-		3761602117E524FA00841467 /* IMGUITypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUITypes.hpp; path = ../../Engine/UI/IMGUITypes.hpp; sourceTree = "<group>"; };
 		3761602317E65CAB00841467 /* Templates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Templates.cpp; path = ../../Engine/Templates.cpp; sourceTree = "<group>"; };
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
 		3761602717E69A6C00841467 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Font.cpp; path = ../../Engine/Render/Font.cpp; sourceTree = "<group>"; };
@@ -100,6 +101,12 @@
 		37E11EBA17B5AAEE00665306 /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Engine/Main.cpp; sourceTree = "<group>"; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
 		37E11EC217B5AC2700665306 /* libkazmath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libkazmath.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libkazmath.a"; sourceTree = "<group>"; };
+		37E5CE751800EC8F000AD359 /* IMGUIClient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUIClient.hpp; path = ../../UI/IMGUIClient.hpp; sourceTree = "<group>"; };
+		37E5CE761800EC8F000AD359 /* IMGUIFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMGUIFrame.cpp; path = ../../UI/IMGUIFrame.cpp; sourceTree = "<group>"; };
+		37E5CE771800EC8F000AD359 /* IMGUIFrame.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUIFrame.hpp; path = ../../UI/IMGUIFrame.hpp; sourceTree = "<group>"; };
+		37E5CE781800EC8F000AD359 /* IMGUIGfx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMGUIGfx.cpp; path = ../../UI/IMGUIGfx.cpp; sourceTree = "<group>"; };
+		37E5CE791800EC8F000AD359 /* IMGUIGfx.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUIGfx.hpp; path = ../../UI/IMGUIGfx.hpp; sourceTree = "<group>"; };
+		37E5CE7A1800EC8F000AD359 /* IMGUITypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMGUITypes.hpp; path = ../../UI/IMGUITypes.hpp; sourceTree = "<group>"; };
 		37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		37E6801D17C8392400FF3C97 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		37E6801E17C8392400FF3C97 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -165,16 +172,6 @@
 			name = SDL;
 			sourceTree = "<group>";
 		};
-		375DC17117E16D17006B814D /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				3761601F17E524FA00841467 /* IMGUIFrame.cpp */,
-				3761602017E524FA00841467 /* IMGUIFrame.hpp */,
-				3761602117E524FA00841467 /* IMGUITypes.hpp */,
-			);
-			name = UI;
-			sourceTree = "<group>";
-		};
 		3762602017B6DBCC0028ECA5 /* Render */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,13 +221,14 @@
 		37E11EB717B5AAD600665306 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				375DC17117E16D17006B814D /* UI */,
 				37E76A0617C6D256009EAA97 /* Utils */,
 				37F5F0E117C3DBF50033275C /* Stream */,
 				3762602017B6DBCC0028ECA5 /* Render */,
 				37E11EB817B5AAEE00665306 /* Debug.hpp */,
-				37E11EBA17B5AAEE00665306 /* Main.cpp */,
 				3762602D17B860A90028ECA5 /* Defines.hpp */,
+				37E11EBA17B5AAEE00665306 /* Main.cpp */,
+				373C428117F3E12200CABCF6 /* IMGUIView.cpp */,
+				373C428217F3E12200CABCF6 /* IMGUIView.hpp */,
 				37E76A1017C6EEF5009EAA97 /* Director.hpp */,
 				37F6A44617CBC6FF00C9EE1C /* View.hpp */,
 				3761333C17D5516B00AEB84E /* Theater.cpp */,
@@ -244,6 +242,19 @@
 				3761602317E65CAB00841467 /* Templates.cpp */,
 			);
 			name = Engine;
+			sourceTree = "<group>";
+		};
+		37E5CE741800EC6C000AD359 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				37E5CE751800EC8F000AD359 /* IMGUIClient.hpp */,
+				37E5CE761800EC8F000AD359 /* IMGUIFrame.cpp */,
+				37E5CE771800EC8F000AD359 /* IMGUIFrame.hpp */,
+				37E5CE781800EC8F000AD359 /* IMGUIGfx.cpp */,
+				37E5CE791800EC8F000AD359 /* IMGUIGfx.hpp */,
+				37E5CE7A1800EC8F000AD359 /* IMGUITypes.hpp */,
+			);
+			name = UI;
 			sourceTree = "<group>";
 		};
 		37E76A0617C6D256009EAA97 /* Utils */ = {
@@ -272,6 +283,7 @@
 				37F64A9A1780EA2C009116E7 /* Client */,
 				37B1FE661789F68F00C38E18 /* Prototype */,
 				37E11EB717B5AAD600665306 /* Engine */,
+				37E5CE741800EC6C000AD359 /* UI */,
 				37F64ACC1780F041009116E7 /* Libraries */,
 				37F64A931780EA2C009116E7 /* Frameworks */,
 				37F64A921780EA2C009116E7 /* Products */,
@@ -433,12 +445,14 @@
 				3761333417D54EA200AEB84E /* TileDatabaseLoader.cpp in Sources */,
 				3761333F17D5516B00AEB84E /* Theater.cpp in Sources */,
 				3743188D17DFEA510050509F /* SDLTexture.cpp in Sources */,
-				3761602217E524FA00841467 /* IMGUIFrame.cpp in Sources */,
 				3761602417E65CAB00841467 /* Templates.cpp in Sources */,
 				3761602B17E69A6C00841467 /* Font.cpp in Sources */,
 				3761602C17E69A6C00841467 /* FontLibrary.cpp in Sources */,
 				3751FD8C17E7D51400E19AC4 /* Stylus.cpp in Sources */,
 				37D1EC6517ED3FB900CA1008 /* stb.c in Sources */,
+				373C428317F3E12200CABCF6 /* IMGUIView.cpp in Sources */,
+				37E5CE7B1800EC8F000AD359 /* IMGUIFrame.cpp in Sources */,
+				37E5CE7C1800EC8F000AD359 /* IMGUIGfx.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
