@@ -11,6 +11,7 @@
 #
 
 Prototype-Data/
+Packages/
 
 *.sublime-project
 *.sublime-workspace
