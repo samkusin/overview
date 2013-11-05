@@ -12,7 +12,7 @@
 #include "BitmapLibrary.hpp"
 #include "SDL/SDLTexture.hpp"
 
-#include "SDL_render.h"
+#include "SDL2/SDL_render.h"
 
 namespace cinekine {
     namespace ovengine {    

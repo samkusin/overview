@@ -15,8 +15,8 @@
 #include "cinek/cpp/ckalloc.hpp"
 #include "cinek/cpp/ckstring.hpp"
 
-#include "SDL_video.h"
-#include "SDL_render.h"
+#include "SDL2/SDL_video.h"
+#include "SDL2/SDL_render.h"
 
 namespace cinekine {
     namespace ovengine {

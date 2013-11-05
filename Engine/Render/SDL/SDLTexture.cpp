@@ -12,8 +12,8 @@
 
 #include "Engine/Debug.hpp"
 
-#include "SDL_image.h"
-#include "SDL_pixels.h"
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_pixels.h"
 
 namespace cinekine {
     namespace ovengine {

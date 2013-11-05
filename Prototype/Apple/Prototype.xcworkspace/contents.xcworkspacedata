@@ -4,7 +4,4 @@
    <FileRef
       location = "group:Overview.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:../../Packages/build-xcode/ovpackages.xcodeproj">
-   </FileRef>
 </Workspace>

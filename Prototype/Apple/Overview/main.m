@@ -7,7 +7,7 @@
 //
 
 #include <Cocoa/Cocoa.h>
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 //  The main loop for an Overview SDL based application
 extern int OverviewSDLMain(int argc, char* argv[]);

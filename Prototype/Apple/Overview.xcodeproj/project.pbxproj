@@ -46,6 +46,30 @@
 		37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F6A44717CBCE0F00C9EE1C /* GameView.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		37DBB1651828854400982C0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37DBB15C1828854300982C0F /* overviewsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49A19BC943944E6BAE31EDAF;
+			remoteInfo = ck;
+		};
+		37DBB1671828854400982C0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37DBB15C1828854300982C0F /* overviewsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 874EB53A12A04FF2AC5767EC;
+			remoteInfo = ckUI;
+		};
+		37DBB1691828854400982C0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37DBB15C1828854300982C0F /* overviewsdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C14E80A775994A57B67A3011;
+			remoteInfo = ckOVEngine;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		37CEF196179F9AD1007AB3A6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -97,6 +121,7 @@
 		37D969F517C85A1A001C0B9C /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = ../../../../lib/libSDL2_image.a; sourceTree = "<group>"; };
 		37D969F617C85A1A001C0B9C /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../../../lib/libSDL2.a; sourceTree = "<group>"; };
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		37DBB15C1828854300982C0F /* overviewsdk.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = overviewsdk.xcodeproj; path = "../../build-xcode/overviewsdk.xcodeproj"; sourceTree = "<group>"; };
 		37E11EB817B5AAEE00665306 /* Debug.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Debug.hpp; path = ../../Engine/Debug.hpp; sourceTree = "<group>"; };
 		37E11EBA17B5AAEE00665306 /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Engine/Main.cpp; sourceTree = "<group>"; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
@@ -218,6 +243,16 @@
 			path = ../../Engine/Utils/stb;
 			sourceTree = "<group>";
 		};
+		37DBB15D1828854300982C0F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				37DBB1661828854400982C0F /* libck.a */,
+				37DBB1681828854400982C0F /* libckUI.a */,
+				37DBB16A1828854400982C0F /* libckOVEngine.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		37E11EB717B5AAD600665306 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
@@ -287,6 +322,7 @@
 				37F64ACC1780F041009116E7 /* Libraries */,
 				37F64A931780EA2C009116E7 /* Frameworks */,
 				37F64A921780EA2C009116E7 /* Products */,
+				37DBB15C1828854300982C0F /* overviewsdk.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -408,12 +444,42 @@
 			mainGroup = 37F64A881780EA2C009116E7;
 			productRefGroup = 37F64A921780EA2C009116E7 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 37DBB15D1828854300982C0F /* Products */;
+					ProjectRef = 37DBB15C1828854300982C0F /* overviewsdk.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				37F64A901780EA2C009116E7 /* Overview */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		37DBB1661828854400982C0F /* libck.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libck.a;
+			remoteRef = 37DBB1651828854400982C0F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		37DBB1681828854400982C0F /* libckUI.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libckUI.a;
+			remoteRef = 37DBB1671828854400982C0F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		37DBB16A1828854400982C0F /* libckOVEngine.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libckOVEngine.a;
+			remoteRef = 37DBB1691828854400982C0F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		37F64A8F1780EA2C009116E7 /* Resources */ = {
@@ -564,10 +630,14 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"$(PACKAGES_ROOT)/include",
+					../..,
+				);
 				INFOPLIST_FILE = "Overview/Overview-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../lib\"",
+					"$(PACKAGES_ROOT)/lib",
 					"\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -582,10 +652,14 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"$(PACKAGES_ROOT)/include",
+					../..,
+				);
 				INFOPLIST_FILE = "Overview/Overview-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../lib\"",
+					"$(PACKAGES_ROOT)/lib",
 					"\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

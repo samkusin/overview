@@ -10,8 +10,8 @@
 #define Overview_RenderTypes_hpp
 
 #include "cinek/rendermodel/types.h"
-#include "SDL_rect.h"
-#include "SDL_pixels.h"
+#include "SDL2/SDL_rect.h"
+#include "SDL2/SDL_pixels.h"
 
 namespace cinekine {
     namespace ovengine {
