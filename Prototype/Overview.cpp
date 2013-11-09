@@ -50,7 +50,7 @@ namespace cinekine {
         
         std::shared_ptr<overview::Map> map = _stage.getMapPtr();
         const cinek_ov_map_bounds& bounds = map->getMapBounds();
-        _viewPos = { bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f };
+        _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
         
         //  prepopulate map.
         overview::Tilemap* tilemap = map->getTilemapAtZ(0);

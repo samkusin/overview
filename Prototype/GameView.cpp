@@ -46,7 +46,7 @@ namespace cinekine {
     GameView::GameView(ovengine::Renderer& renderer) :
         _renderer(renderer),
         _pen(renderer),
-        _worldViewBounds({{0,0,0},{0,0,0}})
+        _worldViewBounds()
     {
         
     }
@@ -138,7 +138,7 @@ namespace cinekine {
                 worldEndX += TILE_WIDTH/2;
             }
             
-            cinek_ov_pos worldTilePos = { (float)worldX, (float)worldY, 0 };
+            cinek_ov_pos worldTilePos { (float)worldX, (float)worldY, 0 };
             while (worldX <= worldEndX)
             {
                 worldTilePos.x = worldX;

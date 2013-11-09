@@ -23,7 +23,7 @@ if( NOT CINEK_CXX_EXCEPTIONS )
     set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
 endif( )
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_EXT_PACKAGE_DIR}/include" )
 
 # Build Library
 # Define project sources and includes for the parent (if any at this level)

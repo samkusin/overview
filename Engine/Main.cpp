@@ -8,7 +8,7 @@
 
 #include "Debug.hpp"
 #include "Director.hpp"
-#include "GameView.hpp"
+#include "View.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/BitmapLibrary.hpp"
 #include "Render/FontLibrary.hpp"

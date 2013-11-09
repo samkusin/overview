@@ -4,4 +4,7 @@
    <FileRef
       location = "group:Overview.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:../../build-xcode/overviewsdk.xcodeproj">
+   </FileRef>
 </Workspace>

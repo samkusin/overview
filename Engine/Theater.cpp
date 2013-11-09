@@ -97,7 +97,7 @@ namespace cinekine {
     void Theater::Impl::clearViewMap()
     {
         std::shared_ptr<overview::Map> nilMap;
-        _onViewMapSet(nilMap, {0,0,0});
+        _onViewMapSet(nilMap, glm::vec3());
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@
 #include "BitmapAtlasLoader.hpp"
 #include "Renderer.hpp"
 #include "Engine/Stream/FileStreamBuf.hpp"
-#include "Debug.hpp"
+#include "../Debug.hpp"
 
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_render.h"
