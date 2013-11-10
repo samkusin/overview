@@ -23,6 +23,7 @@ namespace cinekine {
     namespace ovengine {
     
     class Renderer;
+    class Theater;
     
     //  The View renders a Viewpoint drives execution of the simulation based on an external application controller
     //  Currently the Engine only initializes and destroys the Director object
@@ -42,7 +43,7 @@ namespace cinekine {
     };
     
     //  must be defined by the implementing application.
-    View* CreateView(Renderer& cli);
+    View* CreateView(Theater& theater, Renderer& cli);
     //  must be defined by the implementing application - destroys the View created by
     //  CreateView
     void DestroyView(View* view);

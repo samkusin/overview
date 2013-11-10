@@ -52,8 +52,8 @@ namespace cinekine {
     Theater::Impl::Impl(Allocator& allocator) :
         _allocator(allocator),
         _tileDb(1024, allocator),
-        _spriteDb(1024, allocator),
         _tileDbLoader(_tileDb),
+        _spriteDb(1024, allocator),
         _spriteDbLoader(_spriteDb)
     {
     }

@@ -7,10 +7,8 @@
 //
 
 #include "Renderer.hpp"
-#include "SDL/SDLTexture.hpp"
 
 #include "Engine/Defines.hpp"
-#include "Engine/Theater.hpp"
 #include "Engine/SpriteDatabaseLoader.hpp"
 #include "Engine/TileDatabaseLoader.hpp"
 
@@ -18,88 +16,18 @@
 namespace cinekine {
     namespace ovengine {
 
-    Renderer::Renderer(Theater& theater,
-                       const InitParameters& initParams,
+    Renderer::Renderer(const InitParameters& initParams,
                        SDL_Window* window,
                        const Allocator& allocator) :
         _allocator(allocator),
-        _theater(theater),
-        _renderer(NULL),
+        _mainWindow(window),
         _bitmapLibrary(*this),
         _fontLibrary(*this, 10 /* TODO make this font limit configurable. */)
-    {
-        _renderer = SDL_CreateRenderer(window, -1,
-                                       SDL_RENDERER_ACCELERATED |
-                                       SDL_RENDERER_PRESENTVSYNC);
-        if (!_renderer)
-            return;
-        
-        //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
-        //
-        //  handle sprite -> bitmap loading.
-        theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([this]
-            (const char* atlasName) -> cinek_bitmap_atlas
-            {
-                return this->getBitmapLibrary().loadAtlas(atlasName);
-            }
-        );
-        
-        theater.getSpriteDatabaseLoader().onBitmapIndexRequest([this]
-            ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-            {
-                 const ovengine::BitmapAtlas* bitmapAtlas = this->getBitmapLibrary().getAtlas(atlas);
-                 if (!bitmapAtlas)
-                     return kCinekBitmapIndex_Invalid;
-                 return bitmapAtlas->getBitmapIndex(name);
-            }
-        );
-        //  handle tile -> bitmap loading.
-        theater.getTileDatabaseLoader().onBitmapAtlasRequest([this]
-            (const char* atlasName) -> cinek_bitmap_atlas
-            {
-                return this->getBitmapLibrary().loadAtlas(atlasName);
-            }
-        );
-        theater.getTileDatabaseLoader().onBitmapIndexRequest([this]
-            (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-            {
-               const ovengine::BitmapAtlas* bitmapAtlas = this->getBitmapLibrary().getAtlas(atlas);
-               if (!bitmapAtlas)
-                   return kCinekBitmapIndex_Invalid;
-               return bitmapAtlas->getBitmapIndex(name);
-            }
-        );
+    {    
     }
     
     Renderer::~Renderer()
     {
-        SDL_DestroyRenderer(_renderer);
-    }
-
-    unique_ptr<Texture> Renderer::loadTexture(const char* pathname)
-    {
-        // TODO - perhaps we need a make_unique_ptr (C++11 version) to confirm that the allocator
-        //  creating the item is also used to delete the item.
-        unique_ptr<Texture> texture(_allocator.newItem<SDLTexture>(*this, pathname), _allocator);
-        return std::move(texture);
-    }
-
-    unique_ptr<Texture> Renderer::createTextureFromBuffer(uint16_t w, uint16_t h,
-            cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride)
-    {
-        unique_ptr<Texture> texture(_allocator.newItem<SDLTexture>(*this, w, h, format, bytes, stride), _allocator);
-        return std::move(texture);
-    }
-    
-    void Renderer::begin()
-    {
-        SDL_RenderClear(_renderer);
-    }
-        
-    void Renderer::end()
-    {
-        SDL_RenderPresent(_renderer);
     }
         
     }   // namespace ovengine

@@ -31,28 +31,38 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_EXT_PACKAGE_DIR}/
 set( PROJECT_C_SOURCES 
      ${CMAKE_CURRENT_SOURCE_DIR}/Utils/stb/stb.c )
 
-set( PROJECT_PLATFORM_INCLUDES
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.hpp )
+# Utils
+#
+set( PROJECT_UTIL_INCLUDES 
+     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/stb/stb_truetype.h
+     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Math.hpp 
+     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/StreamBufRapidJson.hpp )
 
-set( PROJECT_SOURCES
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.cpp
+set( PROJECT_UTIL_SOURCES )
+
+source_group( Utils FILES ${PROJECT_UTIL_INCLUDES} ${PROJECT_UTIL_SOURCES} )
+
+# Stream
+#
+set( PROJECT_STREAM_INCLUDES 
+     ${CMAKE_CURRENT_SOURCE_DIR}/Stream/FileStreamBuf.hpp )
+set( PROJECT_STREAM_SOURCES 
+     ${CMAKE_CURRENT_SOURCE_DIR}/Stream/FileStreamBuf.cpp )
+
+source_group( Stream FILES ${PROJECT_STREAM_INCLUDES} ${PROJECT_STREAM_SOURCES} )
+
+# Renderer
+#
+set( PROJECT_RENDER_SOURCES 
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlas.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlasLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapLibrary.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/Font.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/FontLibrary.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/Stylus.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Stream/FileStreamBuf.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.cpp )
 
-set( PROJECT_INCLUDES 
-     ${PROJECT_PLATFORM_INCLUDES}
+set( PROJECT_RENDER_INCLUDES 
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlas.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlasLoader.hpp
@@ -61,11 +71,39 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/FontLibrary.hpp 
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/Stylus.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/Texture.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Stream/FileStreamBuf.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/stb/stb_truetype.h
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Math.hpp 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/StreamBufRapidJson.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.hpp )
+
+source_group( Render FILES ${PROJECT_RENDER_INCLUDES} ${PROJECT_RENDER_SOURCES} )
+
+set( PROJECT_RENDER_SDL_INCLUDES
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLRenderer.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.hpp )
+
+set( PROJECT_RENDER_SDL_SOURCES
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLRenderer.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.cpp )
+
+source_group( Render\\SDL FILES ${PROJECT_RENDER_SDL_INCLUDES} ${PROJECT_RENDER_SDL_SOURCES} )
+
+# Main
+#
+set( PROJECT_SOURCES
+     ${PROJECT_UTIL_SOURCES}
+     ${PROJECT_STREAM_SOURCES}
+     ${PROJECT_RENDER_SOURCES}
+     ${PROJECT_RENDER_SDL_SOURCES} 
+     ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
+
+set( PROJECT_INCLUDES 
+     ${PROJECT_UTIL_INCLUDES}
+     ${PROJECT_STREAM_INCLUDES}
+     ${PROJECT_RENDER_INCLUDES}
+     ${PROJECT_RENDER_SDL_INCLUDES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp

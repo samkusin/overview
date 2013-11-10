@@ -16,7 +16,6 @@
 #include "cinek/cpp/ckstring.hpp"
 
 #include "SDL2/SDL_video.h"
-#include "SDL2/SDL_render.h"
 
 namespace cinekine {
     namespace ovengine {
@@ -35,24 +34,15 @@ namespace cinekine {
             const char* bitmapAtlasDir;
         };
         
-        Renderer(Theater& theater,
-                 const InitParameters& initParams,
+        Renderer(const InitParameters& initParams,
                  SDL_Window* window,
                  const Allocator& allocator);
         virtual ~Renderer();
         
-        operator bool() const {
-            return _renderer != NULL;
-        }
+        virtual operator bool() const = 0;
         
         ///////////////////////////////////////////////////////////////////////
         //  returns supersystems
-        const Theater& getTheater() const {
-            return _theater;
-        }
-        Theater& getTheater() {
-            return _theater;
-        }
         const Allocator& getAllocator() const {
             return _allocator;
         }
@@ -73,34 +63,27 @@ namespace cinekine {
         FontLibrary& getFontLibrary() {
             return _fontLibrary;
         }
+
         ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
         //  Creates a renderable texture from a file source
-        unique_ptr<Texture> loadTexture(const char* pathname);
+        virtual unique_ptr<Texture> loadTexture(const char* pathname) = 0;
         //  Creates a renderable texture from a byte array.  The width and height
         //  and stride are *source* buffer values.  The final texture width, height
         //  and format depend on the Renderer implementation and platform.
-        unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
+        virtual unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
             cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride);
+            const uint8_t* bytes, uint16_t stride) = 0;
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Draw State
         //
-        void begin();
-        void end();
-        ///////////////////////////////////////////////////////////////////////
-        //  To be moved to subclass of Renderer when needed (SDL version)
-        //  Access to SDL system renderer
-        SDL_Renderer* getSDLRenderer() const {
-            return _renderer;
-        }
+        virtual void begin() = 0;
+        virtual void end() = 0;
 
     private:
         Allocator _allocator;
-        Theater& _theater;
         SDL_Window* _mainWindow;
-        SDL_Renderer* _renderer;
         SDL_Rect _viewRect;
         BitmapLibrary _bitmapLibrary;
         FontLibrary _fontLibrary;

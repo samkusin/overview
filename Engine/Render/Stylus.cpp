@@ -12,7 +12,7 @@
 #include "BitmapLibrary.hpp"
 #include "SDL/SDLTexture.hpp"
 
-#include "SDL2/SDL_render.h"
+#include "SDL/SDLRenderer.hpp"
 
 namespace cinekine {
     namespace ovengine {    
@@ -33,7 +33,7 @@ namespace cinekine {
     SDL_Rect Stylus::getViewport() const
     {
         SDL_Rect viewportRect;
-        SDL_RenderGetViewport(_renderer.getSDLRenderer(), &viewportRect);
+        SDL_RenderGetViewport(((SDLRenderer&)_renderer).getSDLRenderer(), &viewportRect);
         return viewportRect;
     }
 
@@ -66,7 +66,7 @@ namespace cinekine {
             destRect.y = y - bitmapInfo->srcH + bitmapInfo->offY;
             destRect.w = bitmapInfo->w;
             destRect.h = bitmapInfo->h;
-            SDL_RenderCopy(_renderer.getSDLRenderer(), sdlTexture, &srcRect, &destRect);
+            SDL_RenderCopy(((SDLRenderer&)_renderer).getSDLRenderer(), sdlTexture, &srcRect, &destRect);
         }
     }
     
@@ -81,7 +81,7 @@ namespace cinekine {
         if (!font)
             return;
 
-        SDL_Renderer* sdlRenderer = _renderer.getSDLRenderer();
+        SDL_Renderer* sdlRenderer = ((SDLRenderer&)_renderer).getSDLRenderer();
 
         const SDLTexture& texture = static_cast<const SDLTexture&>(font->getTexture());
         SDL_Texture* sdlTexture = texture.getSDLTexture();
@@ -89,7 +89,7 @@ namespace cinekine {
         SDL_SetTextureColorMod(sdlTexture, color.r, color.g, color.b);
         SDL_SetTextureAlphaMod(sdlTexture, color.a);
     
-        const int32_t kOX = x;      // used for tab stops
+        //const int32_t kOX = x;      // used for tab stops
         const char* curtext = text;
         
         while (*curtext)

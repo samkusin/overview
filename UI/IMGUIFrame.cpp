@@ -73,7 +73,7 @@ void Frame::end()
 
 bool Frame::beginScrollArea(const Rect& rect, int32_t scrollPos)
 {
-    const Style& style = _styleStack.back();
+    //const Style& style = _styleStack.back();
 
     ++_nextAreaId;
     _nextWidgetId = 0;

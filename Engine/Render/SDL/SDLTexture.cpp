@@ -8,7 +8,7 @@
 
 #include "SDLTexture.hpp"
 // TODO - move into SDL/SDLRenderer.hpp
-#include "../Renderer.hpp"
+#include "SDLRenderer.hpp"
 
 #include "Engine/Debug.hpp"
 
@@ -74,7 +74,7 @@ namespace cinekine {
         _renderer(renderer),
         _texture(NULL)
     {
-        _texture =  IMG_LoadTexture(_renderer.getSDLRenderer(), pathname);
+        _texture =  IMG_LoadTexture(((SDLRenderer&)_renderer).getSDLRenderer(), pathname);
     }
 
     SDLTexture::SDLTexture(Renderer& renderer, uint16_t w, uint16_t h,
@@ -100,7 +100,7 @@ namespace cinekine {
         if (sdlPixelFormat == SDL_PIXELFORMAT_UNKNOWN)
             return;
 
-        _texture = SDL_CreateTexture(_renderer.getSDLRenderer(),
+        _texture = SDL_CreateTexture(((SDLRenderer&)_renderer).getSDLRenderer(),
             sdlPixelFormat,
             SDL_TEXTUREACCESS_STATIC,
             w, h);

@@ -19,6 +19,9 @@ namespace cinekine {
     namespace overview {
         class Viewpoint;
     }
+    namespace ovengine {
+        class Theater;
+    }
 }
 
 namespace cinekine {
@@ -27,7 +30,7 @@ namespace cinekine {
     class GameView: public ovengine::View
     {
     public:
-        GameView(ovengine::Renderer& renderer);
+        GameView(ovengine::Theater& theater, ovengine::Renderer& renderer);
         virtual ~GameView();
         
         virtual void onMapSet(std::shared_ptr<overview::Map>& Map,
@@ -44,6 +47,7 @@ namespace cinekine {
         cinek_ov_pos xlatWorldToMapPos(const cinek_ov_pos& pos);
         
     private:
+        ovengine::Theater& _theater;
         ovengine::Renderer& _renderer;
         ovengine::Stylus _pen;
         

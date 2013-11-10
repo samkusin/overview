@@ -19,10 +19,10 @@
 namespace cinekine {
     namespace ovengine {
         //  must be defined by the implementing application.
-        View* CreateView(Renderer& cli)
+        View* CreateView(Theater& theater, Renderer& cli)
         {
             Allocator allocator;
-            return allocator.newItem<prototype::GameView>(cli);
+            return allocator.newItem<prototype::GameView>(theater, cli);
         }
 
         //  must be defined by the implementing application - destroys the View created by
@@ -43,7 +43,8 @@ namespace cinekine {
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
-    GameView::GameView(ovengine::Renderer& renderer) :
+    GameView::GameView(ovengine::Theater& theater, ovengine::Renderer& renderer) :
+        _theater(theater),
         _renderer(renderer),
         _pen(renderer),
         _worldViewBounds()
@@ -114,7 +115,7 @@ namespace cinekine {
         SDL_Rect viewportRect = _pen.getViewport();
         
         const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
-        const rendermodel::TileDatabase& tileDb = _renderer.getTheater().getTileDatabase();
+        const rendermodel::TileDatabase& tileDb = _theater.getTileDatabase();
 
         //  pick all tiles within the view bounds:
         //

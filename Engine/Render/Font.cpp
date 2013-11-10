@@ -17,18 +17,18 @@ Font::Font(unique_ptr<Texture>& texture,
            int32_t minCharCode, int32_t undefinedCharCode) :
     _texture(std::move(texture)),
     _bakedChars(std::move(bakedChars)),
-    _height(height),
     _minChar(minCharCode),
-    _undefinedChar(undefinedCharCode)
+    _undefinedChar(undefinedCharCode),
+    _height(height)
 {
 }
 
 Font::Font(Font&& other) :
     _texture(std::move(other._texture)),
     _bakedChars(std::move(other._bakedChars)),
-    _height(other._height),
     _minChar(other._minChar),
-    _undefinedChar(other._minChar)
+    _undefinedChar(other._minChar),
+    _height(other._height)
 {
     other._height = 0;
     other._minChar = 0;
