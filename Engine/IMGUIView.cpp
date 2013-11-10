@@ -12,7 +12,7 @@
 namespace cinekine {
     namespace ovengine {
 
-    IMGUIView::IMGUIView(Renderer& renderer) :
+    IMGUIView::IMGUIView(glx::Renderer& renderer) :
         _renderer(renderer)
     {
 

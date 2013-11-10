@@ -10,7 +10,7 @@
 #include "SDLTexture.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     SDLRenderer::SDLRenderer(const Renderer::InitParameters& initParams,
                        SDL_Window* window,
@@ -54,5 +54,5 @@ namespace cinekine {
         SDL_RenderPresent(_renderer);
     }
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

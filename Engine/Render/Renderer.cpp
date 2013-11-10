@@ -14,7 +14,7 @@
 
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     Renderer::Renderer(const InitParameters& initParams,
                        SDL_Window* window,
@@ -30,5 +30,5 @@ namespace cinekine {
     {
     }
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

@@ -16,7 +16,7 @@
 #include "SDL2/SDL_render.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     class Renderer;
     
@@ -45,7 +45,7 @@ namespace cinekine {
         SDL_Texture* _texture;
     };
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

@@ -18,7 +18,7 @@
 #include "SDL2/SDL_video.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     class Theater;
     class Texture;
@@ -90,7 +90,7 @@ namespace cinekine {
     };
     
 
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

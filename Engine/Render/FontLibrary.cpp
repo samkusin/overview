@@ -8,13 +8,13 @@
 
 #include "FontLibrary.hpp"
 #include "Renderer.hpp"
-#include "Engine/Debug.hpp"
-#include "Engine/Utils/Math.hpp"
-#include "Engine/Utils/stb/stb_truetype.h"
+#include "RenderDebug.hpp"
+#include "RenderUtils.hpp"
+#include "External/stb/stb_truetype.h"
 #include "Engine/Stream/FileStreamBuf.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
 //  Modified form of stbtt_BakeFontBitmap
 //  
@@ -115,8 +115,8 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
 {
     if (slot >= _fonts.size())
     {
-        OVENGINE_LOG_ERROR("Failed to load slot [%u].  Font '%s' not found.",
-                           slot, fontname);
+        RENDER_LOG_ERROR("Failed to load slot [%u].  Font '%s' not found.",
+                          slot, fontname);
         return false;
     }
     //  clear out the slot first to release some resources.
@@ -138,10 +138,10 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
     char fontPath[MAX_PATH];
     snprintf(fontPath, sizeof(fontPath), "static/%s", fontname);
 
-    FileStreamBuf ttfStream(fontPath, std::ios_base::in | std::ios_base::binary);
+    ovengine::FileStreamBuf ttfStream(fontPath, std::ios_base::in | std::ios_base::binary);
     if (!ttfStream)
     {
-        OVENGINE_LOG_ERROR("Failed to load font %s in slot [%u]", fontname, slot);
+        RENDER_LOG_ERROR("Failed to load font %s in slot [%u]", fontname, slot);
         return false;
     }
     size_t fileSize = ttfStream.availableChars();
@@ -159,8 +159,8 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
         //  we must calculate our font atlas coords using the same texture dimensions as
         //  the generated SDL texture.  so make sure our dimensions play nice with (the vast
         //  majority) of renderers.
-        bufferWidth = powerOf2(bufferWidth);
-        bufferHeight = powerOf2(bufferHeight);
+        bufferWidth = glx::powerOf2(bufferWidth);
+        bufferHeight = glx::powerOf2(bufferHeight);
 
         //  allocate our target buffer - it will be used to generate the texture
         uint8_t* buffer = (uint8_t*)_renderer.getAllocator().alloc(bufferWidth*bufferHeight);
@@ -180,7 +180,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
             _renderer.getAllocator().free(buffer);
 
             Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);
-            OVENGINE_LOG_INFO("Font %s loaded in slot [%u]: texture:(%u,%u), height: %d, codepoint:[%x,%x].",
+            RENDER_LOG_INFO("Font %s loaded in slot [%u]: texture:(%u,%u), height: %d, codepoint:[%x,%x].",
                               fontname, slot,
                               bufferWidth, bufferHeight,
                               font.getHeight(), font.getMinCodepoint(), font.getMaxCodepoint());
@@ -189,8 +189,8 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
     }
     else
     {
-        OVENGINE_LOG_ERROR("Failed to load font %s in slot [%u] - unable to read data (read: %u/%u bytes).",
-                           fontname, slot, readCount, fileSize);
+        RENDER_LOG_ERROR("Failed to load font %s in slot [%u] - unable to read data (read: %u/%u bytes).",
+                         fontname, slot, readCount, fileSize);
     }
     _renderer.getAllocator().free(sourceData);
     return readCount == fileSize;
@@ -202,10 +202,10 @@ void FontLibrary::unloadFont(FontHandle slot)
         return;
     if (_fonts[slot])
     {
-        OVENGINE_LOG_INFO("Unloaded font slot [%u].", slot);
+        RENDER_LOG_INFO("Unloaded font slot [%u].", slot);
         _fonts[slot] = Font();
     }
 }   
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

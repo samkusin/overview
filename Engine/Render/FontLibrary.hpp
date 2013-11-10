@@ -16,7 +16,7 @@
 #include <vector>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     class Renderer;
     class Font;
@@ -45,7 +45,7 @@ namespace cinekine {
         std::vector<Font, std_allocator<Font>> _fonts;
     };
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

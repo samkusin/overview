@@ -11,7 +11,7 @@
 #include <cstring>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
         //  Contains bitmaps mapped by name
         
@@ -96,5 +96,5 @@ namespace cinekine {
         return _bitmaps[index];
     }
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

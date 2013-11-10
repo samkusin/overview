@@ -30,7 +30,7 @@ namespace cinekine {
     class GameView: public ovengine::View
     {
     public:
-        GameView(ovengine::Theater& theater, ovengine::Renderer& renderer);
+        GameView(ovengine::Theater& theater, glx::Renderer& renderer);
         virtual ~GameView();
         
         virtual void onMapSet(std::shared_ptr<overview::Map>& Map,
@@ -48,8 +48,8 @@ namespace cinekine {
         
     private:
         ovengine::Theater& _theater;
-        ovengine::Renderer& _renderer;
-        ovengine::Stylus _pen;
+        glx::Renderer& _renderer;
+        glx::Stylus _pen;
         
         std::shared_ptr<overview::Map> _map;
         cinek_ov_bounds _worldViewBounds;

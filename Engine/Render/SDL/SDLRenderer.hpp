@@ -14,7 +14,7 @@
 #include "SDL2/SDL_render.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     //  The top-level Renderer object
     //      The Renderer handles drawing to the display.
@@ -59,7 +59,7 @@ namespace cinekine {
     };
     
 
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

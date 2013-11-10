@@ -14,7 +14,7 @@
 #include "SDL2/SDL_pixels.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     typedef uint32_t FontHandle;
     /** An invalid font handle */
@@ -22,7 +22,7 @@ namespace cinekine {
     /** The 'default' found */
     const FontHandle kFontHandle_Default = (FontHandle)(0);
 
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

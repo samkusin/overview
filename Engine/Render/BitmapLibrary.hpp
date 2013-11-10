@@ -19,7 +19,7 @@
 #include <functional>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     class Renderer;
     
@@ -52,7 +52,7 @@ namespace cinekine {
         cinek_bitmap_atlas _nextAtlasHandle;
     };
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

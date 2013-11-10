@@ -34,15 +34,15 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 {    
     Allocator allocator;
 
-    ovengine::Renderer::InitParameters rendererInitParams;
-    ovengine::SDLRenderer renderer(rendererInitParams, window, allocator);
+    glx::Renderer::InitParameters rendererInitParams;
+    glx::SDLRenderer renderer(rendererInitParams, window, allocator);
 
     if (!renderer)
     {
         OVENGINE_LOG_ERROR("Failed to initialize renderer.");
         return 1;
     }
-    if (!renderer.getFontLibrary().loadFont(ovengine::kFontHandle_Default, "DroidSans.ttf", 16))
+    if (!renderer.getFontLibrary().loadFont(glx::kFontHandle_Default, "DroidSans.ttf", 16))
     {
         OVENGINE_LOG_ERROR("Failed to load system font.");
         return 1;
@@ -63,7 +63,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&renderer]
         ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
         {
-             const ovengine::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
+             const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
              if (!bitmapAtlas)
                  return kCinekBitmapIndex_Invalid;
              return bitmapAtlas->getBitmapIndex(name);
@@ -79,7 +79,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     theater.getTileDatabaseLoader().onBitmapIndexRequest([&renderer]
         (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
         {
-           const ovengine::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
+           const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
            if (!bitmapAtlas)
                return kCinekBitmapIndex_Invalid;
            return bitmapAtlas->getBitmapIndex(name);

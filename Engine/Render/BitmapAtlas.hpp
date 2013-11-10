@@ -18,7 +18,7 @@
 #include <vector>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     //  Information used to render a bitmap.
     struct BitmapInfo
@@ -70,7 +70,7 @@ namespace cinekine {
         std::vector<BitmapInfo*, std_allocator<BitmapInfo*>> _bitmaps;
     };
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

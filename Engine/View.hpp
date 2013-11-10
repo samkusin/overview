@@ -17,12 +17,14 @@ namespace cinekine {
     namespace overview {
         class Map;
     }
+    namespace glx {
+        class Renderer;
+    }
 }
 
 namespace cinekine {
     namespace ovengine {
     
-    class Renderer;
     class Theater;
     
     //  The View renders a Viewpoint drives execution of the simulation based on an external application controller
@@ -43,7 +45,7 @@ namespace cinekine {
     };
     
     //  must be defined by the implementing application.
-    View* CreateView(Theater& theater, Renderer& cli);
+    View* CreateView(Theater& theater, glx::Renderer& cli);
     //  must be defined by the implementing application - destroys the View created by
     //  CreateView
     void DestroyView(View* view);

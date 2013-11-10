@@ -13,7 +13,7 @@
 #include "RenderTypes.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     class BitmapAtlas;    
     class Renderer;
@@ -41,7 +41,7 @@ namespace cinekine {
         FontHandle _fontHandle;
     };
 
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 

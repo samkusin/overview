@@ -19,7 +19,7 @@
 namespace cinekine {
     namespace ovengine {
         //  must be defined by the implementing application.
-        View* CreateView(Theater& theater, Renderer& cli)
+        View* CreateView(Theater& theater, glx::Renderer& cli)
         {
             Allocator allocator;
             return allocator.newItem<prototype::GameView>(theater, cli);
@@ -43,7 +43,7 @@ namespace cinekine {
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
-    GameView::GameView(ovengine::Theater& theater, ovengine::Renderer& renderer) :
+    GameView::GameView(ovengine::Theater& theater, glx::Renderer& renderer) :
         _theater(theater),
         _renderer(renderer),
         _pen(renderer),
@@ -167,7 +167,7 @@ namespace cinekine {
             ++rowCount;
         }
         
-        _pen.setFont(ovengine::kFontHandle_Default);
+        _pen.setFont(glx::kFontHandle_Default);
         SDL_Color color;
         color.r = 255;
         color.g = 0;

@@ -1,19 +1,18 @@
 //
-//  Utils/Math.hpp
+//  Render/Utils.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 9/18/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Utils_Math_hpp
-#define Overview_Utils_Math_hpp
+#ifndef Overview_Render_Utils_hpp
+#define Overview_Render_Utils_hpp
 
 #include <cstdint>
-#include "kazmath/kazmath.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
     // 

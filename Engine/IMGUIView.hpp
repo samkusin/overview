@@ -12,9 +12,10 @@
 #include "UI/IMGUITypes.hpp"
 
 namespace cinekine {
+    namespace glx {
+        class Renderer;
+    }
     namespace ovengine {
-
-    class Renderer;
 
     //  The IMGUIView is responsible for translating imgui DrawCommands
     //  to Renderer calls.  It belongs to the ovengine namespace since
@@ -24,13 +25,13 @@ namespace cinekine {
     class IMGUIView
     {
     public:
-        IMGUIView(Renderer& renderer);
+        IMGUIView(glx::Renderer& renderer);
         ~IMGUIView();
 
         void render(const imgui::DrawCommands& drawCommands);
 
     private:
-        Renderer& _renderer;
+        glx::Renderer& _renderer;
     };
 
     }   // namespace ovengine

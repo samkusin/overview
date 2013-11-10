@@ -12,7 +12,7 @@
 #include "cinek/rendermodel/types.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
         
     class Texture
     {
@@ -24,7 +24,7 @@ namespace cinekine {
     };
     
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

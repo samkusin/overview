@@ -15,7 +15,7 @@
 #include <streambuf>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
         
     /**
      * @class BitmapAtlasLoader
@@ -56,7 +56,7 @@ namespace cinekine {
         std::function<void(BitmapInfo& info)> _newFrameRequest;
     };
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

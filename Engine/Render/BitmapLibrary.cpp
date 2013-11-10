@@ -10,7 +10,7 @@
 #include "BitmapAtlasLoader.hpp"
 #include "Renderer.hpp"
 #include "Engine/Stream/FileStreamBuf.hpp"
-#include "../Debug.hpp"
+#include "RenderDebug.hpp"
 
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_render.h"
@@ -19,7 +19,7 @@
 
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
     BitmapLibrary::BitmapLibrary(Renderer& renderer) :
         _renderer(renderer),
@@ -42,7 +42,7 @@ namespace cinekine {
         //  atlas.  on success, add it to our atlas map.
         char path[MAX_PATH];
         snprintf(path, sizeof(path), "bitmaps/%s.json", atlasName);
-        FileStreamBuf atlasFile(path);
+        ovengine::FileStreamBuf atlasFile(path);
         
         if (!atlasFile)
             return kCinekBitmapAtlas_Invalid;
@@ -50,7 +50,7 @@ namespace cinekine {
         BitmapAtlasLoader atlasLoader;
         BitmapAtlas* atlas = nullptr;
         cinek_bitmap_atlas atlasHandle = kCinekBitmapAtlas_Invalid;
-        OVENGINE_LOG_INFO("Loading atlas '%s'...", atlasName);
+        RENDER_LOG_INFO("Loading atlas '%s'...", atlasName);
         
         atlasLoader.onImageLoadRequest([&atlas, &atlasHandle, atlasName, &path, this](const char* textureName,
                                                                       uint16_t w, uint16_t h,
@@ -59,7 +59,7 @@ namespace cinekine {
             {
                 if (atlas)
                 {
-                    OVENGINE_LOG_WARN("Ignoring image load request for '%s' since atlas was already created.", textureName);
+                    RENDER_LOG_WARN("Ignoring image load request for '%s' since atlas was already created.", textureName);
                     return true;
                 }
                 snprintf(path, sizeof(path), "bitmaps/textures/%s", textureName);
@@ -82,10 +82,10 @@ namespace cinekine {
                 const char* bitmapName = bitmapInfo.name.c_str();
                 if (!atlas)
                 {
-                    OVENGINE_LOG_ERROR("Bitmap '%s' ignored.  Atlas hasn't been created.", bitmapName);
+                    RENDER_LOG_ERROR("Bitmap '%s' ignored.  Atlas hasn't been created.", bitmapName);
                     return;
                 }
-                OVENGINE_LOG_TRACE("Adding bitmap '%s' to atlas.", bitmapName);
+                RENDER_LOG_TRACE("Adding bitmap '%s' to atlas.", bitmapName);
                 atlas->addBitmap(std::move(bitmapInfo));
             }
         );
@@ -109,5 +109,5 @@ namespace cinekine {
         return it != _atlasMap.end() ? &it->second : nullptr;
     }
 
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

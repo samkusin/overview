@@ -10,13 +10,13 @@
 // TODO - move into SDL/SDLRenderer.hpp
 #include "SDLRenderer.hpp"
 
-#include "Engine/Debug.hpp"
+#include "../RenderDebug.hpp"
 
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_pixels.h"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     static uint32_t convertToSDLPixelFormat(cinek_pixel_format pixelFormat)
     {
@@ -143,7 +143,7 @@ namespace cinekine {
         
         if (updateResult < 0)
         {
-            OVENGINE_LOG_ERROR("SDLTexture::SDLTexture - UpdateTexture failed: %s", SDL_GetError());
+            RENDER_LOG_ERROR("SDLTexture::SDLTexture - UpdateTexture failed: %s", SDL_GetError());
             SDL_DestroyTexture(_texture);
             _texture = NULL;
         }
@@ -164,5 +164,5 @@ namespace cinekine {
         other._texture = NULL;
     }
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

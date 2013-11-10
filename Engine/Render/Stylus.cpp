@@ -15,7 +15,7 @@
 #include "SDL/SDLRenderer.hpp"
 
 namespace cinekine {
-    namespace ovengine {    
+    namespace glx {    
       
     Stylus::Stylus(Renderer& renderer) :
         _renderer(renderer),
@@ -53,7 +53,7 @@ namespace cinekine {
         
         const SDLTexture& texture = (SDLTexture&)_atlas->getTexture();
         SDL_Texture* sdlTexture = texture.getSDLTexture();
-        const ovengine::BitmapInfo* bitmapInfo = _atlas->getBitmapFromIndex(bitmapIndex);
+        const glx::BitmapInfo* bitmapInfo = _atlas->getBitmapFromIndex(bitmapIndex);
         if (bitmapInfo)
         {
             SDL_Rect srcRect;
@@ -130,6 +130,6 @@ namespace cinekine {
         }
     }
 
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 

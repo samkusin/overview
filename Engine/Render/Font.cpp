@@ -9,7 +9,7 @@
 #include "Font.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
     
 Font::Font(unique_ptr<Texture>& texture,
            std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>>&& bakedChars,
@@ -47,5 +47,5 @@ Font& Font::operator=(Font&& other)
     return *this;
 }
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine

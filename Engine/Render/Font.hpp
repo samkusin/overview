@@ -10,14 +10,14 @@
 #define Overview_Renderer_Font_hpp
 
 #include "Texture.hpp"
-#include "Engine/Utils/stb/stb_truetype.h"
+#include "External/stb/stb_truetype.h"
 
 #include "cinek/cpp/ckalloc.hpp"
 
 #include <vector>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     //  Fonts 
     class Font
@@ -68,7 +68,7 @@ namespace cinekine {
         return _bakedChars[normalizedCh];
     }
     
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
 
 #endif

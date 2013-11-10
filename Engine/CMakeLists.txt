@@ -28,14 +28,10 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_EXT_PACKAGE_DIR}/
 # Build Library
 # Define project sources and includes for the parent (if any at this level)
 #
-set( PROJECT_C_SOURCES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/stb/stb.c )
 
 # Utils
 #
 set( PROJECT_UTIL_INCLUDES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/stb/stb_truetype.h
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Math.hpp 
      ${CMAKE_CURRENT_SOURCE_DIR}/Utils/StreamBufRapidJson.hpp )
 
 set( PROJECT_UTIL_SOURCES )
@@ -62,8 +58,11 @@ set( PROJECT_RENDER_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/Stylus.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.cpp )
 
-set( PROJECT_RENDER_INCLUDES 
+set( PROJECT_RENDER_INCLUDES
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderDefines.hpp 
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderDebug.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderUtils.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlas.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlasLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapLibrary.hpp
@@ -75,6 +74,20 @@ set( PROJECT_RENDER_INCLUDES
 
 source_group( Render FILES ${PROJECT_RENDER_INCLUDES} ${PROJECT_RENDER_SOURCES} )
 
+# External Packages for the Renderer
+#
+set( PROJECT_RENDER_EXTERNAL_STB_SOURCES
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/External/stb/stb.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Render/External/stb/stb_truetype.h )
+
+source_group( Render\\External\\stb FILES ${PROJECT_RENDER_EXTERNAL_STB_SOURCES} )
+
+set( PROJECT_RENDER_EXTERNAL_SOURCES )
+
+source_group( Render\\External FILES ${PROJECT_RENDER_EXTERNAL_SOURCES} )
+
+# Backend Implementations
+#
 set( PROJECT_RENDER_SDL_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLRenderer.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.hpp )
@@ -91,6 +104,8 @@ set( PROJECT_SOURCES
      ${PROJECT_UTIL_SOURCES}
      ${PROJECT_STREAM_SOURCES}
      ${PROJECT_RENDER_SOURCES}
+     ${PROJECT_RENDER_EXTERNAL_SOURCES}
+     ${PROJECT_RENDER_EXTERNAL_STB_SOURCES}
      ${PROJECT_RENDER_SDL_SOURCES} 
      ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
@@ -115,5 +130,5 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp )
 
 add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} ${PROJECT_C_SOURCES} )
-set_source_files_properties( ${PROJECT_SOURCES} PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
-set_source_files_properties( ${PROJECT_C_SOURCES} PROPERTIES COMPILE_FLAGS "-Wall -std=c99" )
+set_target_properties( ckOVEngine PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
+

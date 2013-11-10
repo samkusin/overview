@@ -8,7 +8,7 @@
 
 #include "BitmapAtlasLoader.hpp"
 
-#include "Engine/Debug.hpp"
+#include "RenderDebug.hpp"
 #include "Engine/Utils/StreamBufRapidJson.hpp"
 
 #include "rapidjson/document.h"
@@ -16,7 +16,7 @@
 #include <cstring>
 
 namespace cinekine {
-    namespace ovengine {
+    namespace glx {
 
     bool BitmapAtlasLoader::unserialize(std::streambuf& instream)
     {
@@ -30,7 +30,7 @@ namespace cinekine {
         
         if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
         {
-            OVENGINE_LOG_ERROR("BitmapAtlasLoader - failed to parse.");
+            RENDER_LOG_ERROR("BitmapAtlasLoader - failed to parse.");
             return false;
         }
         
@@ -42,7 +42,7 @@ namespace cinekine {
             const Value& meta = jsonDoc["meta"];
             if (!meta.HasMember("image") || !meta.HasMember("size") || !meta.HasMember("format"))
             {
-                OVENGINE_LOG_ERROR("BitmapAtlasLoader - no image information found.");
+                RENDER_LOG_ERROR("BitmapAtlasLoader - no image information found.");
                 return false;
             }
             cinek_pixel_format pixelFormat = kCinekPixelFormat_Unknown;
@@ -71,7 +71,7 @@ namespace cinekine {
             const char* imageName = meta["image"].GetString();
             if (!_loadImageRequest(imageName, size["w"].GetUint(), size["h"].GetUint(), pixelFormat, frameCount))
             {
-                OVENGINE_LOG_ERROR("BitmapAtlasLoader - failed to load image '%s'", imageName);
+                RENDER_LOG_ERROR("BitmapAtlasLoader - failed to load image '%s'", imageName);
                 return false;
             }
         }
@@ -88,7 +88,7 @@ namespace cinekine {
                 const Value& frame = *it;
                 if (!frame.HasMember("filename") || !frame.HasMember("frame"))
                 {
-                    OVENGINE_LOG_WARN("BitmapAtlasLoader - Invalid frame definition.  Skipping...");
+                    RENDER_LOG_WARN("BitmapAtlasLoader - Invalid frame definition.  Skipping...");
                     continue;
                 }
                 const Value& frameRect = frame["frame"];
@@ -112,5 +112,5 @@ namespace cinekine {
     }
             
         
-    }   // namespace ovengine
+    }   // namespace glx
 }   // namespace cinekine
