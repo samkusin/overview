@@ -21,7 +21,7 @@ namespace cinekine {
     class SDLRenderer: public Renderer
     {
     public:        
-        SDLRenderer(const Renderer::InitParameters& initParams,
+        SDLRenderer(const RendererInitParameters& initParams,
                  SDL_Window* window,
                  const Allocator& allocator);
         virtual ~SDLRenderer();

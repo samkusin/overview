@@ -12,7 +12,7 @@
 namespace cinekine {
     namespace glx {
 
-    SDLRenderer::SDLRenderer(const Renderer::InitParameters& initParams,
+    SDLRenderer::SDLRenderer(const RendererInitParameters& initParams,
                        SDL_Window* window,
                        const Allocator& allocator) :
         Renderer(initParams, window, allocator),

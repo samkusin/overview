@@ -17,24 +17,25 @@
 
 #include "SDL2/SDL_video.h"
 
+
 namespace cinekine {
     namespace glx {
     
     class Theater;
     class Texture;
-    
+   
+    //  Extra parameters for initializing the renderer.
+    struct RendererInitParameters
+    {
+        const char* bitmapAtlasDir;
+    };
+
     //  The top-level Renderer object
     //      The Renderer handles drawing to the display.
     class Renderer
     {
-    public:
-        //  Extra parameters for initializing the renderer.
-        struct InitParameters
-        {
-            const char* bitmapAtlasDir;
-        };
-        
-        Renderer(const InitParameters& initParams,
+    public:    
+        Renderer(const RendererInitParameters& initParams,
                  SDL_Window* window,
                  const Allocator& allocator);
         virtual ~Renderer();

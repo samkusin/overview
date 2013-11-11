@@ -13,6 +13,11 @@ if ( NOT DEFINED CINEK_EXT_PACKAGE_DIR )
          CACHE FILEPATH "The path to external packages used by the SDK for compilation." )
 endif( )
 
+if ( NOT DEFINED CINEK_SDK_ROOT_DIR )
+     set( CINEK_SDK_ROOT_DIR ""
+          CACHE FILEPATH "The path to the CineK SDK root folder." )
+endif( ) 
+
 option( CINEK_CXX_EXCEPTIONS 
     "Enable C++ exception handling" OFF 
 )
@@ -23,29 +28,11 @@ if( NOT CINEK_CXX_EXCEPTIONS )
     set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
 endif( )
 
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_EXT_PACKAGE_DIR}/include" )
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_SDK_ROOT_DIR}" "${CINEK_EXT_PACKAGE_DIR}/include" )
 
 # Build Library
 # Define project sources and includes for the parent (if any at this level)
 #
-
-# Utils
-#
-set( PROJECT_UTIL_INCLUDES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/StreamBufRapidJson.hpp )
-
-set( PROJECT_UTIL_SOURCES )
-
-source_group( Utils FILES ${PROJECT_UTIL_INCLUDES} ${PROJECT_UTIL_SOURCES} )
-
-# Stream
-#
-set( PROJECT_STREAM_INCLUDES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Stream/FileStreamBuf.hpp )
-set( PROJECT_STREAM_SOURCES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Stream/FileStreamBuf.cpp )
-
-source_group( Stream FILES ${PROJECT_STREAM_INCLUDES} ${PROJECT_STREAM_SOURCES} )
 
 # Renderer
 #
@@ -101,8 +88,6 @@ source_group( Render\\SDL FILES ${PROJECT_RENDER_SDL_INCLUDES} ${PROJECT_RENDER_
 # Main
 #
 set( PROJECT_SOURCES
-     ${PROJECT_UTIL_SOURCES}
-     ${PROJECT_STREAM_SOURCES}
      ${PROJECT_RENDER_SOURCES}
      ${PROJECT_RENDER_EXTERNAL_SOURCES}
      ${PROJECT_RENDER_EXTERNAL_STB_SOURCES}
@@ -115,8 +100,6 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES 
-     ${PROJECT_UTIL_INCLUDES}
-     ${PROJECT_STREAM_INCLUDES}
      ${PROJECT_RENDER_INCLUDES}
      ${PROJECT_RENDER_SDL_INCLUDES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp

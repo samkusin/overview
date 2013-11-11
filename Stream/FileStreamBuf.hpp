@@ -14,8 +14,7 @@
 #include "cinek/cpp/ckalloc.hpp"
 
 namespace cinekine {
-    namespace ovengine {
-        
+
     //  An implementation of std::streambuf specialized for the OGE allowing access
     //  to filedata from multiple sources.
     //
@@ -60,7 +59,6 @@ namespace cinekine {
         char_type* _buffer;
     };
     
-    }   // namespace ovengine
 }   // namespace cinekine
 
 

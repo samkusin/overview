@@ -13,8 +13,11 @@ endif( )
 
 #   Global build setup
 #
-set( CINEK_EXT_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Packages"
+set( CINEK_EXT_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External"
      CACHE FILEPATH "Path to directory containing external packages needed to build projects" )
+
+set( CINEK_SDK_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
+     CACHE FILEPATH "The path to the CineK SDK root folder." )
 
 set( CINEK_CXX_EXCEPTIONS OFF CACHE BOOL "Disable C++ exception handling where applicable" )
 
@@ -25,6 +28,7 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} 
 #   Libraries to build
 #
 add_subdirectory( cinek )
+add_subdirectory( Stream )
 add_subdirectory( UI )
 add_subdirectory( Engine )
 

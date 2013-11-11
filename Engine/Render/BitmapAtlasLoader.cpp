@@ -9,7 +9,7 @@
 #include "BitmapAtlasLoader.hpp"
 
 #include "RenderDebug.hpp"
-#include "Engine/Utils/StreamBufRapidJson.hpp"
+#include "Stream/StreamBufRapidJson.hpp"
 
 #include "rapidjson/document.h"
 
@@ -23,7 +23,7 @@ namespace cinekine {
         typedef rapidjson::GenericDocument<rapidjson::UTF8<> > Document;
         typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
         
-        rapidjson::StdStreamBuf jsonStream(instream);
+        RapidJsonStdStreamBuf jsonStream(instream);
         
         Document jsonDoc;
         jsonDoc.ParseStream<0>(jsonStream);

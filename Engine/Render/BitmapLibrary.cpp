@@ -9,8 +9,8 @@
 #include "BitmapLibrary.hpp"
 #include "BitmapAtlasLoader.hpp"
 #include "Renderer.hpp"
-#include "Engine/Stream/FileStreamBuf.hpp"
 #include "RenderDebug.hpp"
+#include "Stream/FileStreamBuf.hpp"
 
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_render.h"
@@ -42,7 +42,7 @@ namespace cinekine {
         //  atlas.  on success, add it to our atlas map.
         char path[MAX_PATH];
         snprintf(path, sizeof(path), "bitmaps/%s.json", atlasName);
-        ovengine::FileStreamBuf atlasFile(path);
+        FileStreamBuf atlasFile(path);
         
         if (!atlasFile)
             return kCinekBitmapAtlas_Invalid;

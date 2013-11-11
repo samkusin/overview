@@ -34,7 +34,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 {    
     Allocator allocator;
 
-    glx::Renderer::InitParameters rendererInitParams;
+    glx::RendererInitParameters rendererInitParams;
     glx::SDLRenderer renderer(rendererInitParams, window, allocator);
 
     if (!renderer)

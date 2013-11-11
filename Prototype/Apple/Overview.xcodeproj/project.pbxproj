@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		376C6510182F028C001E8BBF /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 376C650E182F028C001E8BBF /* libckOVEngine.a */; };
-		376C6511182F028C001E8BBF /* libckUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 376C650F182F028C001E8BBF /* libckUI.a */; };
+		370905851830589800679E4F /* libckStream.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 370905841830589800679E4F /* libckStream.a */; };
+		3725BE801830537400B42E49 /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3725BE7E1830537400B42E49 /* libckOVEngine.a */; };
+		3725BE811830537400B42E49 /* libckUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3725BE7F1830537400B42E49 /* libckUI.a */; };
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
 		37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */; };
@@ -39,11 +40,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		370905841830589800679E4F /* libckStream.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckStream.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckStream.a"; sourceTree = "<group>"; };
+		3725BE7E1830537400B42E49 /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckOVEngine.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
+		3725BE7F1830537400B42E49 /* libckUI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckUI.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckUI.a"; sourceTree = "<group>"; };
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
-		376C6506182EF966001E8BBF /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libckOVEngine.a; path = "../../build-xcode/Engine/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
-		376C6507182EF966001E8BBF /* libckUI.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libckUI.a; path = "../../build-xcode/UI/Debug/libckUI.a"; sourceTree = "<group>"; };
-		376C650E182F028C001E8BBF /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckOVEngine.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
-		376C650F182F028C001E8BBF /* libckUI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckUI.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckUI.a"; sourceTree = "<group>"; };
 		37AD87E117D83D5B00CCE524 /* libimgui.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libimgui.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libimgui.a"; sourceTree = "<group>"; };
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
@@ -79,8 +79,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				376C6510182F028C001E8BBF /* libckOVEngine.a in Frameworks */,
-				376C6511182F028C001E8BBF /* libckUI.a in Frameworks */,
+				370905851830589800679E4F /* libckStream.a in Frameworks */,
+				3725BE801830537400B42E49 /* libckOVEngine.a in Frameworks */,
+				3725BE811830537400B42E49 /* libckUI.a in Frameworks */,
 				37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */,
 				37E6802217C8392400FF3C97 /* AudioUnit.framework in Frameworks */,
 				37E6802317C8392400FF3C97 /* Carbon.framework in Frameworks */,
@@ -112,8 +113,6 @@
 		37F64A881780EA2C009116E7 = {
 			isa = PBXGroup;
 			children = (
-				376C650E182F028C001E8BBF /* libckOVEngine.a */,
-				376C650F182F028C001E8BBF /* libckUI.a */,
 				37F64ACD1780F295009116E7 /* Settings.xcconfig */,
 				37F64A9A1780EA2C009116E7 /* Client */,
 				37B1FE661789F68F00C38E18 /* Prototype */,
@@ -180,8 +179,9 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				376C6506182EF966001E8BBF /* libckOVEngine.a */,
-				376C6507182EF966001E8BBF /* libckUI.a */,
+				370905841830589800679E4F /* libckStream.a */,
+				3725BE7E1830537400B42E49 /* libckOVEngine.a */,
+				3725BE7F1830537400B42E49 /* libckUI.a */,
 				37AD87E117D83D5B00CCE524 /* libimgui.a */,
 				37D969F917C85A55001C0B9C /* libiconv.dylib */,
 				37E11EC117B5AC2700665306 /* libck.a */,

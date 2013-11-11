@@ -16,7 +16,7 @@
 namespace cinekine {
     namespace glx {
 
-    Renderer::Renderer(const InitParameters& initParams,
+    Renderer::Renderer(const RendererInitParameters& initParams,
                        SDL_Window* window,
                        const Allocator& allocator) :
         _allocator(allocator),

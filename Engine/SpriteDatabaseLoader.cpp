@@ -9,7 +9,7 @@
 
 #include "SpriteDatabaseLoader.hpp"
 #include "Engine/Debug.hpp"
-#include "Engine/Utils/StreamBufRapidJson.hpp"
+#include "Stream/StreamBufRapidJson.hpp"
 #include "rapidjson/document.h"
 
 #include "cinek/rendermodel/spritetemplate.hpp"
@@ -30,7 +30,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
     typedef rapidjson::GenericDocument<rapidjson::UTF8<> > Document;
     typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
 
-    rapidjson::StdStreamBuf jsonStream(instream);
+    RapidJsonStdStreamBuf jsonStream(instream);
     
     Document jsonDoc;
     jsonDoc.ParseStream<0>(jsonStream);

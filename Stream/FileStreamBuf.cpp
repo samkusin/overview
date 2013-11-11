@@ -11,7 +11,6 @@
 #include "SDL2/SDL_rwops.h"
 
 namespace cinekine {
-    namespace ovengine {
 
     //  Initializes the stream buffer with the contents of the file specified.
     //  Uses SDL to read from/write to files
@@ -182,5 +181,4 @@ namespace cinekine {
         return 0;
     }
     
-    }   // namespace ovengine
 }   // namespace cinekine

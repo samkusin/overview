@@ -10,8 +10,8 @@
 #include "Renderer.hpp"
 #include "RenderDebug.hpp"
 #include "RenderUtils.hpp"
+#include "Stream/FileStreamBuf.hpp"
 #include "External/stb/stb_truetype.h"
-#include "Engine/Stream/FileStreamBuf.hpp"
 
 namespace cinekine {
     namespace glx {
@@ -138,7 +138,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
     char fontPath[MAX_PATH];
     snprintf(fontPath, sizeof(fontPath), "static/%s", fontname);
 
-    ovengine::FileStreamBuf ttfStream(fontPath, std::ios_base::in | std::ios_base::binary);
+    FileStreamBuf ttfStream(fontPath, std::ios_base::in | std::ios_base::binary);
     if (!ttfStream)
     {
         RENDER_LOG_ERROR("Failed to load font %s in slot [%u]", fontname, slot);

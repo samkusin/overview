@@ -12,7 +12,7 @@
 #include "TileDatabaseLoader.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Engine/Stream/FileStreamBuf.hpp"
+#include "Stream/FileStreamBuf.hpp"
 
 #include "cinek/rendermodel/spritedatabase.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
