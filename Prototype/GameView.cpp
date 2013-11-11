@@ -7,7 +7,7 @@
 //
 
 #include "GameView.hpp"
-#include "Engine/Render/Renderer.hpp"
+#include "Graphics/Renderer.hpp"
 #include "Engine/Debug.hpp"
 #include "Engine/Theater.hpp"
 

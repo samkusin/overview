@@ -11,7 +11,7 @@
 
 #include "Common.hpp"
 #include "Engine/View.hpp"
-#include "Engine/Render/Stylus.hpp"
+#include "Graphics/Stylus.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 

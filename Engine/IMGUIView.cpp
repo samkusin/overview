@@ -7,7 +7,7 @@
 //
 
 #include "IMGUIView.hpp"
-#include "Render/Renderer.hpp"
+#include "Graphics/Renderer.hpp"
 
 namespace cinekine {
     namespace ovengine {

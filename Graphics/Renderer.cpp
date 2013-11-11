@@ -7,11 +7,7 @@
 //
 
 #include "Renderer.hpp"
-
-#include "Engine/Defines.hpp"
-#include "Engine/SpriteDatabaseLoader.hpp"
-#include "Engine/TileDatabaseLoader.hpp"
-
+#include "RenderDefines.hpp"
 
 namespace cinekine {
     namespace glx {

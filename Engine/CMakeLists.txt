@@ -33,65 +33,9 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_SDK_ROOT_DIR}" "$
 # Build Library
 # Define project sources and includes for the parent (if any at this level)
 #
-
-# Renderer
-#
-set( PROJECT_RENDER_SOURCES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlas.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlasLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapLibrary.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Font.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/FontLibrary.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Stylus.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.cpp )
-
-set( PROJECT_RENDER_INCLUDES
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderDefines.hpp 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderTypes.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderDebug.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/RenderUtils.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlas.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapAtlasLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/BitmapLibrary.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Font.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/FontLibrary.hpp 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Stylus.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Texture.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/Renderer.hpp )
-
-source_group( Render FILES ${PROJECT_RENDER_INCLUDES} ${PROJECT_RENDER_SOURCES} )
-
-# External Packages for the Renderer
-#
-set( PROJECT_RENDER_EXTERNAL_STB_SOURCES
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/External/stb/stb.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/External/stb/stb_truetype.h )
-
-source_group( Render\\External\\stb FILES ${PROJECT_RENDER_EXTERNAL_STB_SOURCES} )
-
-set( PROJECT_RENDER_EXTERNAL_SOURCES )
-
-source_group( Render\\External FILES ${PROJECT_RENDER_EXTERNAL_SOURCES} )
-
-# Backend Implementations
-#
-set( PROJECT_RENDER_SDL_INCLUDES
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLRenderer.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.hpp )
-
-set( PROJECT_RENDER_SDL_SOURCES
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLRenderer.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Render/SDL/SDLTexture.cpp )
-
-source_group( Render\\SDL FILES ${PROJECT_RENDER_SDL_INCLUDES} ${PROJECT_RENDER_SDL_SOURCES} )
-
 # Main
 #
 set( PROJECT_SOURCES
-     ${PROJECT_RENDER_SOURCES}
-     ${PROJECT_RENDER_EXTERNAL_SOURCES}
-     ${PROJECT_RENDER_EXTERNAL_STB_SOURCES}
-     ${PROJECT_RENDER_SDL_SOURCES} 
      ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
@@ -100,8 +44,6 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES 
-     ${PROJECT_RENDER_INCLUDES}
-     ${PROJECT_RENDER_SDL_INCLUDES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp
@@ -112,6 +54,6 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp )
 
-add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} ${PROJECT_C_SOURCES} )
+add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
 set_target_properties( ckOVEngine PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
 
