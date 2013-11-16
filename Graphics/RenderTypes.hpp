@@ -1,6 +1,6 @@
 //
 //  RenderTypes.hpp
-//  Overview
+//  Graphics
 //
 //  Created by Samir Sinha on 9/21/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
@@ -10,12 +10,14 @@
 #define Overview_RenderTypes_hpp
 
 #include "cinek/rendermodel/types.h"
-#include "SDL2/SDL_rect.h"
-#include "SDL2/SDL_pixels.h"
 
 namespace cinekine {
     namespace glx {
 
+    /**< Defines a RGBA quad */
+    typedef cinek_rgba_color RGBAColor;
+
+    /** Identifies a loaded font */
     typedef uint32_t FontHandle;
     /** An invalid font handle */
     const FontHandle kFontHandle_Invalid = (FontHandle)(-1);

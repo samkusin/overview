@@ -23,7 +23,7 @@ option( CINEK_CXX_EXCEPTIONS
 )
 
 # Setup compile options
-set( PROJECT_COMPILE_FLAGS "-Wall -std=c++11 -stdlib=libc++" )
+set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
 if( NOT CINEK_CXX_EXCEPTIONS )
     set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
 endif( )
@@ -72,7 +72,6 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapLibrary.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Font.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Stylus.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.cpp )
 
 set( PROJECT_INCLUDES
@@ -81,12 +80,13 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderDebug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderUtils.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Rect.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Style.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapAtlas.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapAtlasLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Font.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp 
-     ${CMAKE_CURRENT_SOURCE_DIR}/Stylus.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Texture.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp )
 

@@ -11,7 +11,6 @@
 
 #include "Common.hpp"
 #include "Engine/View.hpp"
-#include "Graphics/Stylus.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -49,7 +48,6 @@ namespace cinekine {
     private:
         ovengine::Theater& _theater;
         glx::Renderer& _renderer;
-        glx::Stylus _pen;
         
         std::shared_ptr<overview::Map> _map;
         cinek_ov_bounds _worldViewBounds;

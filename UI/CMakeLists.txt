@@ -18,7 +18,7 @@ option( CINEK_CXX_EXCEPTIONS
 )
 
 # Setup compile options
-set( PROJECT_COMPILE_FLAGS "-std=c99 -Wall -std=c++11 -stdlib=libc++" )
+set( PROJECT_COMPILE_FLAGS "-std=c++11 -Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
 if( NOT CINEK_CXX_EXCEPTIONS )
     set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti" )
 endif( )

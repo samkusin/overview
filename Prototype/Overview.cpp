@@ -74,12 +74,6 @@ namespace cinekine {
     
     void Overview::update()
     {
-        _imguiCLI.beginScrollArea({ 20, 20, 384, 384 }, _scrollPos1);
-        _imguiCLI.separator();
-        _imguiCLI.separatorLine();
-        _imguiCLI.label("This is a label.");
-        _scrollPos1 = _imguiCLI.endScrollArea();
-
         /*std::shared_ptr<overview::Map> map = _stage.getMapPtr();
         //  prepopulate map.
         overview::Tilemap* tilemap = map->getTilemapAtZ(0);

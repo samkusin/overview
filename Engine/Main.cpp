@@ -18,7 +18,6 @@
 
 #include "UI/IMGUIGfx.hpp"
 #include "UI/IMGUIFrame.hpp"
-#include "IMGUIView.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -108,7 +107,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     );
 
     //  IMGUI view
-    cinekine::ovengine::IMGUIView imguiView(renderer);
     imgui::Style imguiStyle;
     imgui::Allocator imguiAllocator;
     imgui::Gfx imguiGfx(512, 16*1024, imguiAllocator);
@@ -140,9 +138,10 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         imguiFrame.end();
         ///////////////////////////////////////////////////////////////////
         renderer.begin();
+        renderer.clear({0,0,0,255});
         
         view->render();
-        imguiView.render(imguiGfx.getCommandQueue());
+        //imguiView.render(imguiGfx.getCommandQueue());
         
         renderer.end();
     }

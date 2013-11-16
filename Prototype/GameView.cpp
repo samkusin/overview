@@ -46,7 +46,6 @@ namespace cinekine {
     GameView::GameView(ovengine::Theater& theater, glx::Renderer& renderer) :
         _theater(theater),
         _renderer(renderer),
-        _pen(renderer),
         _worldViewBounds()
     {
         
@@ -77,14 +76,14 @@ namespace cinekine {
     //  precalculates values used for rendering the local view
     void GameView::setupWorldSpace(const cinek_ov_pos& worldPos)
     {
-        SDL_Rect viewportRect = _pen.getViewport();
+        glx::Rect viewportRect = _renderer.getViewport();
 
         //  calculate view anchor
-        _worldViewBounds.min.x = worldPos.x - viewportRect.w / 2;
-        _worldViewBounds.min.y = worldPos.y - viewportRect.h / 2;
+        _worldViewBounds.min.x = worldPos.x - viewportRect.width() / 2;
+        _worldViewBounds.min.y = worldPos.y - viewportRect.height() / 2;
         _worldViewBounds.min.z = 0;
-        _worldViewBounds.max.x = worldPos.x + viewportRect.w / 2;
-        _worldViewBounds.max.y = worldPos.y + viewportRect.h / 2;
+        _worldViewBounds.max.x = worldPos.x + viewportRect.width() / 2;
+        _worldViewBounds.max.y = worldPos.y + viewportRect.height() / 2;
         _worldViewBounds.max.z = 0;
     }
         
@@ -112,7 +111,7 @@ namespace cinekine {
     //
     void GameView::render()
     {
-        SDL_Rect viewportRect = _pen.getViewport();
+        glx::Rect viewportRect = _renderer.getViewport();
         
         const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
         const rendermodel::TileDatabase& tileDb = _theater.getTileDatabase();
@@ -126,8 +125,8 @@ namespace cinekine {
         //  top to bottom
         const overview::Tilemap* tilemap = _map->getTilemapAtZ(0);
         int32_t rowCount = 0;
-        const int32_t kScreenViewLeft = (viewportRect.w - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
-        const int32_t kScreenViewTop = (viewportRect.h - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
+        const int32_t kScreenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
+        const int32_t kScreenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
        
         while (worldY <= worldEndY)
         {
@@ -158,8 +157,8 @@ namespace cinekine {
                 {
                     cinek_tile tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
                     const cinek_bitmap& tileInfo = tileDb.getTileInfo(tile);
-                    _pen.setBitmapAtlas(tileInfo.bmpAtlas);
-                    _pen.drawBitmap(tileInfo.bmpIndex, screenOX, screenOY);
+                    _renderer.setBitmapAtlas(tileInfo.bmpAtlas);
+                    _renderer.drawBitmapFromAtlas(tileInfo.bmpIndex, screenOX, screenOY, 1.0f);
                 }
                 worldX += TILE_WIDTH;
             }
@@ -167,13 +166,10 @@ namespace cinekine {
             ++rowCount;
         }
         
-        _pen.setFont(glx::kFontHandle_Default);
-        SDL_Color color;
-        color.r = 255;
-        color.g = 0;
-        color.b = 0;
-        color.a = 255;
-        _pen.drawText("Welcome to the overview 2D project by Samir Sinha", 20, 160, color);
+        glx::Style style;
+        style.textColor = { 255,0,0,255 };
+        style.textFont = glx::kFontHandle_Default;
+        _renderer.drawText("Welcome to the overview 2D project by Samir Sinha", 20, 160, style);
     }
         
     }

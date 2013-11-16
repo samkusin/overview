@@ -16,7 +16,6 @@ namespace cinekine {
                        SDL_Window* window,
                        const Allocator& allocator) :
         _allocator(allocator),
-        _mainWindow(window),
         _bitmapLibrary(*this),
         _fontLibrary(*this, 10 /* TODO make this font limit configurable. */)
     {    

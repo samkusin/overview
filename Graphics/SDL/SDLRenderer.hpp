@@ -47,6 +47,26 @@ namespace cinekine {
         void begin();
         void end();
 
+        virtual Rect getViewport() const;
+
+        //  Specialized clear method, which clears the current rendering target
+        virtual void clear(const RGBAColor& color);
+        //  Draws a rectangle
+        virtual void drawRect(const Rect& rect, const Style& style);
+        //  Draws a rectangle with four rounded corners (left-top, right-top,
+        //      right-bottom, left-bottom)
+        virtual void drawRoundedRect(const Rect& rect,
+                                     const std::array<int32_t, 4>& radii,
+                                     const Style& style);
+        //  Draws text
+        virtual void drawText(const char* text, int32_t x, int32_t y,
+                              const Style& style);
+        //  Sets the current bitmap atlas
+        virtual void setBitmapAtlas(cinek_bitmap_atlas atlas);
+        //  Draws a bitmap from the current atlas with alpha
+        virtual void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
+                                         int32_t x, int32_t y, float alpha);
+
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Implementation Specific Accessors
         //  Access to SDL system renderer
@@ -56,6 +76,7 @@ namespace cinekine {
 
     private:
         SDL_Renderer* _renderer;
+        cinek_bitmap_atlas _currentAtlas;
     };
     
 

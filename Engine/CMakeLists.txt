@@ -23,7 +23,7 @@ option( CINEK_CXX_EXCEPTIONS
 )
 
 # Setup compile options
-set( PROJECT_COMPILE_FLAGS "-Wall -std=c++11 -stdlib=libc++" )
+set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
 if( NOT CINEK_CXX_EXCEPTIONS )
     set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
 endif( )
@@ -36,7 +36,6 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_SDK_ROOT_DIR}" "$
 # Main
 #
 set( PROJECT_SOURCES
-     ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
@@ -51,7 +50,6 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TheaterClient.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/IMGUIView.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp )
 
 add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )

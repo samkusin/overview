@@ -1,6 +1,6 @@
 //
 //  Renderer.hpp
-//  Overview
+//  Graphics
 //
 //  Created by Samir Sinha on 8/10/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
@@ -9,11 +9,13 @@
 #ifndef Overview_Renderer_hpp
 #define Overview_Renderer_hpp
 
+#include "RenderTypes.hpp"
 #include "BitmapLibrary.hpp"
 #include "FontLibrary.hpp"
+#include "Rect.hpp"
+#include "Style.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckstring.hpp"
 
 #include "SDL2/SDL_video.h"
 
@@ -23,7 +25,7 @@ namespace cinekine {
     
     class Theater;
     class Texture;
-   
+
     //  Extra parameters for initializing the renderer.
     struct RendererInitParameters
     {
@@ -76,16 +78,42 @@ namespace cinekine {
         virtual unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
             cinek_pixel_format format,
             const uint8_t* bytes, uint16_t stride) = 0;
+
         ///////////////////////////////////////////////////////////////////////
-        //  Renderer Draw State
-        //
+        //  Housekeeping methods, used to mark the beginning and end of a render
+        //  frame.
+        //  
+        //  begins a rendering frame
         virtual void begin() = 0;
+        //  ends a rendering frame
         virtual void end() = 0;
+
+        //  the current view rectangle as represented in screen coordinates
+        virtual Rect getViewport() const = 0;
+    
+        ///////////////////////////////////////////////////////////////////////
+        //  Renderer Drawing Methods
+        //  All rendering methods act on the current target.
+        //  
+        //  Specialized clear method, which clears the current rendering target
+        virtual void clear(const RGBAColor& color) = 0;
+        //  Draws a rectangle
+        virtual void drawRect(const Rect& rect, const Style& style) = 0;
+        //  Draws a rectangle with four rounded corners (left-top, right-top,
+        //      right-bottom, left-bottom)
+        virtual void drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
+                                     const Style& style) = 0;
+        //  Draws text
+        virtual void drawText(const char* text, int32_t x, int32_t y,
+                              const Style& style) = 0;
+        //  Sets the current bitmap atlas
+        virtual void setBitmapAtlas(cinek_bitmap_atlas atlas) = 0;
+        //  Draws a bitmap from the current atlas with alpha
+        virtual void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
+                                         int32_t x, int32_t y, float alpha) = 0;
 
     private:
         Allocator _allocator;
-        SDL_Window* _mainWindow;
-        SDL_Rect _viewRect;
         BitmapLibrary _bitmapLibrary;
         FontLibrary _fontLibrary;
     };
