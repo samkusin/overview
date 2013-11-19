@@ -91,21 +91,73 @@ namespace cinekine {
             return GL_INVALID_VALUE;           
         }
 
-        attachShaders(program, GL_VERTEX_SHADER, jsonDoc["vertex"]);
+        bool success = attachShaders(program, GL_VERTEX_SHADER, jsonDoc["vertex"]);
         if (hasGeometryShaders)
         {
-            attachShaders(program, GL_GEOMETRY_SHADER, jsonDoc["geometry"]);
+            success = success && attachShaders(program, GL_GEOMETRY_SHADER, jsonDoc["geometry"]);
         }
-        attachShaders(program, GL_FRAGMENT_SHADER, jsonDoc["fragment"]);
-
-        //  link stage - fixup locations here if specified in program file
-        glLinkProgram(program);
-        if (GLError("GLShaderLibrary.loadProgram.glLinkProgram"))
+        success = success && attachShaders(program, GL_FRAGMENT_SHADER, jsonDoc["fragment"]);
+        if (success)
         {
-            glDeleteProgram(program);
-            program = 0;
+            if (jsonDoc.HasMember("inputs") && jsonDoc["inputs"].IsObject())
+            {
+                //  link stage - fixup locations here if specified in program file
+                const Value& binds = jsonDoc["inputs"];
+                for (Value::ConstMemberIterator it = binds.MemberBegin(), itEnd = binds.MemberEnd();
+                     it != itEnd;
+                     ++it)
+                {
+                    const Value::Member& bind = *it;
+                    const char* name = bind.name.GetString();
+                    if (bind.value.IsUint())
+                    {
+                        glBindAttribLocation(program, bind.value.GetUint(), name);
+                        RENDER_LOG_DEBUG("GLShaderLibrary.loadProgram - input %s=>%u",
+                                         name, bind.value.GetUint());
+                    }
+                    else
+                    {
+                        RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - input %s must be a uint",
+                                         name);
+                    }
+                }
+            }
+            if (jsonDoc.HasMember("outputs") && jsonDoc["outputs"].IsObject())
+            {
+                //  link stage - fixup locations here if specified in program file
+                const Value& binds = jsonDoc["outputs"];
+                for (Value::ConstMemberIterator it = binds.MemberBegin(), itEnd = binds.MemberEnd();
+                     it != itEnd;
+                     ++it)
+                {
+                    const Value::Member& bind = *it;
+                    const char* name = bind.name.GetString();
+                    if (bind.value.IsUint())
+                    {
+                        glBindFragDataLocation(program, bind.value.GetUint(), name);
+                        RENDER_LOG_DEBUG("GLShaderLibrary.loadProgram - output %s=>%u",
+                                         name, bind.value.GetUint());
+                    }
+                    else
+                    {
+                        RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - output %s must be a uint",
+                                         name);
+                    }
+                }
+            }
+            
+            glLinkProgram(program);
+            if (!GLError("GLShaderLibrary.loadProgram.glLinkProgram"))
+            {
+                RENDER_LOG_INFO("GLShaderLibrary.loadProgram - program %s linked", programFilename);
+                return program;
+            }
         }
-        return program;
+
+
+        glDeleteProgram(program);
+        RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - program %s build failed", programFilename);
+        return 0;
     }
     
     void GLShaderLibrary::loadShaders(GLShaderLoader& loader, GLenum shaderType, const Value& shaderJSONArray)
@@ -135,6 +187,10 @@ namespace cinekine {
                     {
                         _shaderNameToHandle.insert( {shaderName.GetString(),shader} );
                     }
+                    else
+                    {
+                        RENDER_LOG_WARN("GLShaderLibrary.loadShaders - failed to load %s", shaderName.GetString());
+                    }
                 }
                 
             }
@@ -153,7 +209,7 @@ namespace cinekine {
                 auto it = _shaderNameToHandle.find(shaderName.GetString());
                 if (it == _shaderNameToHandle.end())
                 {
-                    RENDER_LOG_ERROR("GLShaderLibrary.linkShaders - could not find shader %s", shaderName.GetString());
+                    RENDER_LOG_ERROR("GLShaderLibrary.linkShaders - shader %s not found", shaderName.GetString());
                     return false;
                 }
                 else
@@ -172,6 +228,9 @@ namespace cinekine {
 
     void GLShaderLibrary::unloadProgram(GLuint program)
     {
+        if (!program)
+            return;
+
         GLint currentProgram;
         glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
         if (program == (GLuint)currentProgram)

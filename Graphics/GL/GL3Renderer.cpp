@@ -19,9 +19,10 @@ namespace cinekine {
                              const Allocator& allocator) :
         Renderer(initParams, allocator),
         _window(window),
-        _currentAtlas(kCinekBitmapAtlas_Invalid),
         _glContext(NULL),
-        _shaderLibrary("static/shaders", allocator)
+        _shaderLibrary("static/shaders", allocator),
+        _currentAtlas(kCinekBitmapAtlas_Invalid),
+        _standardShader(0)
     {
         _glContext = SDL_GL_CreateContext(_window);
         if (!_glContext)
@@ -29,10 +30,12 @@ namespace cinekine {
             RENDER_LOG_ERROR("GL3Renderer: failed to obtain a GL context: %s", SDL_GetError());
             return;
         }
+        _standardShader = _shaderLibrary.loadProgram("standard.json");
     }
     
     GL3Renderer::~GL3Renderer()
     {
+        _shaderLibrary.unloadProgram(_standardShader);
         if (_glContext)
         {
             SDL_GL_DeleteContext(_glContext);

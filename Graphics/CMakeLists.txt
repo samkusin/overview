@@ -97,6 +97,7 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderDebug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderUtils.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/JSON.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Rect.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Style.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapAtlas.hpp

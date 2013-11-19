@@ -65,9 +65,11 @@ namespace cinekine {
 
     private:
         SDL_Window* _window;
-        cinek_bitmap_atlas _currentAtlas;
         SDL_GLContext _glContext;
         GLShaderLibrary _shaderLibrary;
+
+        cinek_bitmap_atlas _currentAtlas;
+        GLuint _standardShader;
     };
     
 
