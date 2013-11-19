@@ -1,13 +1,13 @@
 //
-//  Renderer.hpp
+//  SDL/Renderer.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 8/10/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_SDL_SDLRenderer_hpp
-#define Overview_SDL_SDLRenderer_hpp
+#ifndef CK_Graphics_SDL_Renderer_hpp
+#define CK_Graphics_SDL_Renderer_hpp
 
 #include "../Renderer.hpp"
 

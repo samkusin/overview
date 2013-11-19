@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Renderer_Texture_hpp
-#define Overview_Renderer_Texture_hpp
+#ifndef CK_Graphics_Texture_hpp
+#define CK_Graphics_Texture_hpp
 
 #include "cinek/rendermodel/types.h"
 

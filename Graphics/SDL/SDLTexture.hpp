@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Renderer_SDL_Texture_hpp
-#define Overview_Renderer_SDL_Texture_hpp
+#ifndef CK_Graphics_SDL_Texture_hpp
+#define CK_Graphics_SDL_Texture_hpp
 
 #include "../Texture.hpp"
 

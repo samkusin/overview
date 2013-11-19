@@ -1,120 +1,99 @@
 //
-//  Renderer.cpp
+//  GL/GL3Renderer.cpp
 //  Overview
 //
 //  Created by Samir Sinha on 8/10/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#include "SDLRenderer.hpp"
-#include "SDLTexture.hpp"
+#include "GL3Renderer.hpp"
+#include "GL3Texture.hpp"
 
-#include "SDL2/SDL_rect.h"
+#include "../RenderDebug.hpp"
 
 namespace cinekine {
     namespace glx {
 
-    SDLRenderer::SDLRenderer(const RendererInitParameters& initParams,
-                       SDL_Window* window,
-                       const Allocator& allocator) :
+    GL3Renderer::GL3Renderer(const RendererInitParameters& initParams,
+                             SDL_Window* window,
+                             const Allocator& allocator) :
         Renderer(initParams, allocator),
-        _renderer(NULL),
-        _currentAtlas(kCinekBitmapAtlas_Invalid)
+        _window(window),
+        _currentAtlas(kCinekBitmapAtlas_Invalid),
+        _glContext(NULL),
+        _shaderLibrary("static/shaders", allocator)
     {
-        _renderer = SDL_CreateRenderer(window, -1,
-                                       SDL_RENDERER_ACCELERATED |
-                                       SDL_RENDERER_PRESENTVSYNC);
+        _glContext = SDL_GL_CreateContext(_window);
+        if (!_glContext)
+        {
+            RENDER_LOG_ERROR("GL3Renderer: failed to obtain a GL context: %s", SDL_GetError());
+            return;
+        }
     }
     
-    SDLRenderer::~SDLRenderer()
+    GL3Renderer::~GL3Renderer()
     {
-        SDL_DestroyRenderer(_renderer);
+        if (_glContext)
+        {
+            SDL_GL_DeleteContext(_glContext);
+            _glContext = NULL;
+        }
     }
 
-    unique_ptr<Texture> SDLRenderer::loadTexture(const char* pathname)
+    unique_ptr<Texture> GL3Renderer::loadTexture(const char* pathname)
     {
         // TODO - perhaps we need a make_unique_ptr (C++11 version) to confirm that the allocator
         //  creating the item is also used to delete the item.
-        unique_ptr<Texture> texture(getAllocator().newItem<SDLTexture>(*this, pathname), getAllocator());
+        unique_ptr<Texture> texture(getAllocator().newItem<GL3Texture>(*this, pathname), getAllocator());
         return std::move(texture);
     }
 
-    unique_ptr<Texture> SDLRenderer::createTextureFromBuffer(uint16_t w, uint16_t h,
+    unique_ptr<Texture> GL3Renderer::createTextureFromBuffer(uint16_t w, uint16_t h,
             cinek_pixel_format format,
             const uint8_t* bytes, uint16_t stride)
     {
-        unique_ptr<Texture> texture(getAllocator().newItem<SDLTexture>(*this, w, h, format, bytes, stride), getAllocator());
+        unique_ptr<Texture> texture(getAllocator().newItem<GL3Texture>(*this, w, h, format, bytes, stride), getAllocator());
         return std::move(texture);
     }
     
-    void SDLRenderer::begin()
+    void GL3Renderer::begin()
     {
-        SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
+        
     }
         
-    void SDLRenderer::end()
+    void GL3Renderer::end()
     {
-        SDL_RenderPresent(_renderer);
+        SDL_GL_SwapWindow(_window);
     }
 
-    Rect SDLRenderer::getViewport() const
+    Rect GL3Renderer::getViewport() const
     {
-        SDL_Rect viewportRect;
-        SDL_RenderGetViewport(_renderer, &viewportRect);
-        return Rect(viewportRect.x, viewportRect.y,
-                    viewportRect.x + viewportRect.w-1, viewportRect.y + viewportRect.h-1);
+        return Rect(0,0,1,1);
     }
 
-    void SDLRenderer::clear(const RGBAColor& color)
+    void GL3Renderer::clear(const RGBAColor& color)
     {
-        SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
-        SDL_RenderClear(_renderer);
+        
     }
 
-    void SDLRenderer::drawRect(const Rect& rect, const Style& style)
+    void GL3Renderer::drawRect(const Rect& rect, const Style& style)
     {
         drawRoundedRect(rect, {0,0,0,0}, style);
     }
 
-    void SDLRenderer::drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
+    void GL3Renderer::drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
                                       const Style& style)
     {
-        //  fill rect first, then overlay the border
-        SDL_Rect sdlRect;
-        sdlRect.x = rect.left;
-        sdlRect.y = rect.top;
-        sdlRect.w = (rect.right - rect.left)+1;
-        sdlRect.h = (rect.bottom - rect.top)+1;
-        if (style.fillMethod != kFillMethod_NoFill)
-        {
-            SDL_BlendMode blendMode = SDL_BLENDMODE_BLEND;
-            SDL_SetRenderDrawBlendMode(_renderer, blendMode);
-            SDL_SetRenderDrawColor(_renderer,
-                    style.fillColor.r, 
-                    style.fillColor.g,
-                    style.fillColor.b,
-                    style.fillColor.a);
-            SDL_RenderFillRect(_renderer, &sdlRect);
-        }
-        if (style.lineMethod != kLineMethod_NoLine)
-        {
-            SDL_BlendMode blendMode = SDL_BLENDMODE_BLEND;
-            SDL_SetRenderDrawBlendMode(_renderer, blendMode);
-            SDL_SetRenderDrawColor(_renderer,
-                style.lineColor.r, 
-                style.lineColor.g,
-                style.lineColor.b,
-                style.lineColor.a);
-            SDL_RenderDrawRect(_renderer, &sdlRect); 
-        }
+      
     }
 
-    void SDLRenderer::drawText(const char* text, int32_t x, int32_t y,
+    void GL3Renderer::drawText(const char* text, int32_t x, int32_t y,
                                const Style& style)
     {
         const Font* font = getFontLibrary().getFont(style.textFont);
         if (!font)
             return;
+        /*
 
         SDL_Renderer* sdlRenderer = _renderer;
 
@@ -133,16 +112,14 @@ namespace cinekine {
             int c = (unsigned char)*curtext;
             if (c == '\t')
             {
-            /*
-                for (int i = 0; i < 4; ++i)
-                {
-                    if (x < g_tabStops[i]+ox)
-                    {
-                        x = g_tabStops[i]+ox;
-                        break;
-                    }
-                }
-            */
+            //    for (int i = 0; i < 4; ++i)
+            //    {
+            //        if (x < g_tabStops[i]+ox)
+            //        {
+            //            x = g_tabStops[i]+ox;
+            //            break;
+            //        }
+            //    }
             }
             else
             {
@@ -164,20 +141,21 @@ namespace cinekine {
             }
             ++curtext;
         }
+        */
     }
 
-    void SDLRenderer::setBitmapAtlas(cinek_bitmap_atlas atlas)
+    void GL3Renderer::setBitmapAtlas(cinek_bitmap_atlas atlas)
     {
         _currentAtlas = atlas;
     }
 
-    void SDLRenderer::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
+    void GL3Renderer::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
                                           int32_t x, int32_t y, float alpha)
     {
         const BitmapAtlas* atlas = getBitmapLibrary().getAtlas(_currentAtlas); 
         if (!atlas)
             return;
-        
+        /*
         const SDLTexture& texture = (SDLTexture&)atlas->getTexture();
         SDL_Texture* sdlTexture = texture.getSDLTexture();
         const glx::BitmapInfo* bitmapInfo = atlas->getBitmapFromIndex(bitmapIndex);
@@ -198,6 +176,7 @@ namespace cinekine {
             SDL_SetTextureAlphaMod(sdlTexture, (uint8_t)(alpha*255));
             SDL_RenderCopy(_renderer, sdlTexture, &srcRect, &destRect);
         }
+        */
     }
         
     }   // namespace glx

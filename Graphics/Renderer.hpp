@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Renderer_hpp
-#define Overview_Renderer_hpp
+#ifndef CK_Graphics_Renderer_hpp
+#define CK_Graphics_Renderer_hpp
 
 #include "RenderTypes.hpp"
 #include "BitmapLibrary.hpp"
@@ -38,7 +38,6 @@ namespace cinekine {
     {
     public:    
         Renderer(const RendererInitParameters& initParams,
-                 SDL_Window* window,
                  const Allocator& allocator);
         virtual ~Renderer();
         

@@ -12,9 +12,6 @@
 #include "RenderDebug.hpp"
 #include "Stream/FileStreamBuf.hpp"
 
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_render.h"
-
 #include "cinek/core/ckfspath.h"
 
 

@@ -13,7 +13,6 @@ namespace cinekine {
     namespace glx {
 
     Renderer::Renderer(const RendererInitParameters& initParams,
-                       SDL_Window* window,
                        const Allocator& allocator) :
         _allocator(allocator),
         _bitmapLibrary(*this),

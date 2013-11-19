@@ -9,7 +9,10 @@
 #include "Debug.hpp"
 #include "Director.hpp"
 #include "View.hpp"
-#include "Graphics/SDL/SDLRenderer.hpp"
+
+//#include "Graphics/SDL/SDLRenderer.hpp"
+#include "Graphics/GL/GL3Renderer.hpp"
+
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 #include "Theater.hpp"
@@ -34,7 +37,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     Allocator allocator;
 
     glx::RendererInitParameters rendererInitParams;
-    glx::SDLRenderer renderer(rendererInitParams, window, allocator);
+    glx::GL3Renderer renderer(rendererInitParams, window, allocator);
+    //glx::SDLRenderer renderer(rendererInitParams, window, allocator);
 
     if (!renderer)
     {

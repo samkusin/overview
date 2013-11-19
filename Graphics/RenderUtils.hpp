@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Render_Utils_hpp
-#define Overview_Render_Utils_hpp
+#ifndef CK_Graphics_Utils_hpp
+#define CK_Graphics_Utils_hpp
 
 #include <cstdint>
 

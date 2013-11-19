@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Renderer_Font_hpp
-#define Overview_Renderer_Font_hpp
+#ifndef CK_Graphics_Font_hpp
+#define CK_Graphics_Font_hpp
 
 #include "Texture.hpp"
 #include "External/stb/stb_truetype.h"

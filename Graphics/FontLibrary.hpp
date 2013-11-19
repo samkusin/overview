@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Renderer_FontLibrary_hpp
-#define Overview_Renderer_FontLibrary_hpp
+#ifndef CK_Graphics_FontLibrary_hpp
+#define CK_Graphics_FontLibrary_hpp
 
 #include "Font.hpp"
 #include "RenderTypes.hpp"

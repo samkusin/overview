@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_BitmapAtlasLoader_hpp
-#define Overview_BitmapAtlasLoader_hpp
+#ifndef CK_Graphics_BitmapAtlasLoader_hpp
+#define CK_Graphics_BitmapAtlasLoader_hpp
 
 #include "BitmapAtlas.hpp"
 

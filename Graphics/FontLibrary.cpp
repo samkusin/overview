@@ -136,7 +136,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
     uint16_t bufferHeight = kBottomLimit;
     
     char fontPath[MAX_PATH];
-    snprintf(fontPath, sizeof(fontPath), "static/%s", fontname);
+    snprintf(fontPath, sizeof(fontPath), "static/fonts/%s", fontname);
 
     FileStreamBuf ttfStream(fontPath, std::ios_base::in | std::ios_base::binary);
     if (!ttfStream)

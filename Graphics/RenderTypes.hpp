@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_RenderTypes_hpp
-#define Overview_RenderTypes_hpp
+#ifndef CK_Graphics_RenderTypes_hpp
+#define CK_Graphics_RenderTypes_hpp
 
 #include "cinek/rendermodel/types.h"
 
