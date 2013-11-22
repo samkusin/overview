@@ -31,7 +31,7 @@ namespace cinekine {
     {
         for (auto& atlas : _atlasMap)
         {
-            if (!strcmp(atlas.second.getName(), atlasName))
+            if (!strcmp(atlas.second->getName(), atlasName))
                 return atlas.first;
         }
 
@@ -49,7 +49,7 @@ namespace cinekine {
         cinek_bitmap_atlas atlasHandle = kCinekBitmapAtlas_Invalid;
         RENDER_LOG_INFO("Loading atlas '%s'...", atlasName);
         
-        atlasLoader.onImageLoadRequest([&atlas, &atlasHandle, atlasName, &path, this](const char* textureName,
+        atlasLoader.onImageLoadRequest([&atlas, &atlasHandle, &atlasName, &path, this](const char* textureName,
                                                                       uint16_t w, uint16_t h,
                                                                       cinek_pixel_format format,
                                                                       size_t bitmapCount) -> bool
@@ -65,10 +65,34 @@ namespace cinekine {
                 {
                     return false;
                 }
-                BitmapAtlas tempAtlas(atlasName, texture, bitmapCount, _renderer.getAllocator());
-                
-                auto result = _atlasMap.emplace(_nextAtlasHandle, std::move(tempAtlas));
-                atlas = &(*result.first).second;
+
+                /**
+                 * @todo (LOW) Use allocate_shared instead?
+                 * Odd compile error when passing atlasName as a const char* (conversion to a 
+                 * const char* && occurs, which fails.)  This code isn't in a time-crticial
+                 * section, so the dual allocation would not be an issue.
+                 */
+                Allocator& allocator = _renderer.getAllocator();
+                atlas = allocator.newItem<BitmapAtlas>(atlasName, 
+                                                       texture,
+                                                       bitmapCount,
+                                                       allocator);
+                std::shared_ptr<BitmapAtlas> atlasPtr(atlas,
+                                                      SharedPtrDeleter<BitmapAtlas>(allocator), 
+                                                      BitmapAtlasAllocator(allocator));
+                /*
+                                    std::allocate_shared<BitmapAtlas, BitmapAtlasAllocator,
+                                        const char* const, 
+                                        unique_ptr<Texture>&,
+                                        size_t,
+                                        const Allocator&>
+                                    (
+                                        BitmapAtlasAllocator(_renderer.getAllocator()),
+                                        atlasName, texture, bitmapCount, _renderer.getAllocator()
+                                    ); 
+                */
+                _atlasMap.emplace(_nextAtlasHandle, atlasPtr);
+                //atlas = (*result.first).second.get();
                 atlasHandle = _nextAtlasHandle;
                 ++_nextAtlasHandle;
                 return true;
@@ -100,10 +124,10 @@ namespace cinekine {
         }
     }
     
-    const BitmapAtlas* BitmapLibrary::getAtlas(cinek_bitmap_atlas handle) const
+    std::shared_ptr<BitmapAtlas> BitmapLibrary::getAtlas(cinek_bitmap_atlas handle) const
     {
         auto it = _atlasMap.find(handle);
-        return it != _atlasMap.end() ? &it->second : nullptr;
+        return it != _atlasMap.end() ? it->second : std::shared_ptr<BitmapAtlas>();
     }
 
     }   // namespace glx

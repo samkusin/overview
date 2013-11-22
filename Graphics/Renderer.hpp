@@ -76,20 +76,26 @@ namespace cinekine {
         //  and format depend on the Renderer implementation and platform.
         virtual unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
             cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride) = 0;
-
-        ///////////////////////////////////////////////////////////////////////
-        //  Housekeeping methods, used to mark the beginning and end of a render
-        //  frame.
-        //  
-        //  begins a rendering frame
+            const uint8_t* bytes) = 0;
+  
+        /**
+         *  Call at the start of rendering a frame
+         */
         virtual void begin() = 0;
-        //  ends a rendering frame
-        virtual void end() = 0;
-
-        //  the current view rectangle as represented in screen coordinates
+        /**
+         *  Display the rendered frame
+         */
+        virtual void display() = 0;
+        /**
+         * @return Returns the current viewport rect
+         */
         virtual Rect getViewport() const = 0;
-    
+        /**
+         * Sets the current rendering viewport
+         * @param rect Rectangle using client coordinates (i.e. the window's client area)
+         */
+        virtual void setViewport(const Rect& rect) = 0;
+
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Drawing Methods
         //  All rendering methods act on the current target.

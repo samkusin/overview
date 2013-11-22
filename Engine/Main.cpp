@@ -66,7 +66,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&renderer]
         ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
         {
-             const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
+             const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas).get();
              if (!bitmapAtlas)
                  return kCinekBitmapIndex_Invalid;
              return bitmapAtlas->getBitmapIndex(name);
@@ -82,7 +82,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     theater.getTileDatabaseLoader().onBitmapIndexRequest([&renderer]
         (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
         {
-           const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas);
+           const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas).get();
            if (!bitmapAtlas)
                return kCinekBitmapIndex_Invalid;
            return bitmapAtlas->getBitmapIndex(name);
@@ -142,12 +142,12 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         imguiFrame.end();
         ///////////////////////////////////////////////////////////////////
         renderer.begin();
-        renderer.clear({0,0,0,255});
+        renderer.clear(glx::RGBAColor(0,0,0,255));
         
         view->render();
         //imguiView.render(imguiGfx.getCommandQueue());
         
-        renderer.end();
+        renderer.display();
     }
     
     ovengine::DestroyDirector(director);

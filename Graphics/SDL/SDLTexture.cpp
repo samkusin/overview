@@ -40,7 +40,7 @@ namespace cinekine {
     }
     
     //  convert this alpha-only format to the target SDL pixel format
-    static bool pixelsA8toFormat(uint16_t w, uint16_t h, const uint8_t* in, uint16_t stride,
+    static bool pixelsA8toFormat(uint16_t w, uint16_t h, const uint8_t* in,
                                  uint8_t* out, size_t outSize, SDL_PixelFormat* outFormat)
     {
         //  validate our output buffer is the right size
@@ -65,23 +65,43 @@ namespace cinekine {
                     dest >>= 8;
                 }
             }
-            source += stride;
+            source += w;
         }
         return true;
     }
       
     SDLTexture::SDLTexture(Renderer& renderer, const char* pathname) :
         _renderer(renderer),
-        _texture(NULL)
+        _texture(NULL),
+        _width(0),
+        _height(0)
     {
         _texture =  IMG_LoadTexture(((SDLRenderer&)_renderer).getSDLRenderer(), pathname);
+        if (_texture)
+        {
+            uint32_t format;
+            int access, w, h;
+            if (SDL_QueryTexture(_texture, &format, &access, &w, &h) < 0)
+            {
+                RENDER_LOG_ERROR("SDLTexture - %s", SDL_GetError());
+                SDL_DestroyTexture(_texture);
+                _texture = NULL;
+            }
+            else
+            {
+                _width = (uint32_t)w;
+                _height = (uint32_t)h;
+            }
+        }
     }
 
     SDLTexture::SDLTexture(Renderer& renderer, uint16_t w, uint16_t h,
             cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride) :
+            const uint8_t* bytes) :
         _renderer(renderer),
-        _texture(NULL)
+        _texture(NULL),
+        _width(w),
+        _height(h)
     {
         uint32_t sdlPixelFormat = SDL_PIXELFORMAT_UNKNOWN;
         //  certain input formats are not supported by SDL - convert to
@@ -97,7 +117,7 @@ namespace cinekine {
             sdlPixelFormat = convertToSDLPixelFormat(format);
             break;
         }
-        if (sdlPixelFormat == SDL_PIXELFORMAT_UNKNOWN)
+        if (sdlPixelFormat == SDL_PIXELFORMAT_UNKNOWN || sourcePixelFormat == kCinekPixelFormat_Unknown)
             return;
 
         _texture = SDL_CreateTexture(((SDLRenderer&)_renderer).getSDLRenderer(),
@@ -112,33 +132,26 @@ namespace cinekine {
         //  copy pixels to our texture.  for non-SDL formats, must create
         //  a temporary buffer to stuff our translated data to for upload
         //
-        if (sourcePixelFormat != kCinekPixelFormat_Unknown)
+        SDL_PixelFormat* sdlPf = SDL_AllocFormat(sdlPixelFormat);
+        if (sdlPf)
         {
-            SDL_PixelFormat* sdlPf = SDL_AllocFormat(sdlPixelFormat);
-            if (sdlPf)
+            size_t bufferSize = sdlPf->BytesPerPixel * w * h;
+            void *buffer = renderer.getAllocator().alloc(bufferSize);
+            if (buffer)
             {
-                size_t bufferSize = sdlPf->BytesPerPixel * w * h;
-                void *buffer = renderer.getAllocator().alloc(bufferSize);
-                if (buffer)
+                bool converted = false;
+                if (sourcePixelFormat == kCinekPixelFormat_A8)
                 {
-                    bool converted = false;
-                    if (sourcePixelFormat == kCinekPixelFormat_A8)
-                    {
-                        //  alpha texture
-                        converted = pixelsA8toFormat(w, h, bytes, stride, (uint8_t*)buffer, bufferSize, sdlPf);
-                    }
-                    if (converted)
-                    {
-                        updateResult = SDL_UpdateTexture(_texture, NULL, buffer, sdlPf->BytesPerPixel * w);
-                    }
-                    renderer.getAllocator().free(buffer);
+                    //  alpha texture
+                    converted = pixelsA8toFormat(w, h, bytes, (uint8_t*)buffer, bufferSize, sdlPf);
                 }
-                SDL_FreeFormat(sdlPf);
+                if (converted)
+                {
+                    updateResult = SDL_UpdateTexture(_texture, NULL, buffer, sdlPf->BytesPerPixel * w);
+                }
+                renderer.getAllocator().free(buffer);
             }
-        }
-        else
-        {
-            updateResult = SDL_UpdateTexture(_texture, NULL, bytes, stride);
+            SDL_FreeFormat(sdlPf);
         }
         
         if (updateResult < 0)

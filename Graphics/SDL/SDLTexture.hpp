@@ -28,7 +28,7 @@ namespace cinekine {
         SDLTexture(Renderer& renderer, const char *pathname);
         SDLTexture(Renderer& renderer, uint16_t w, uint16_t h,
             cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride);
+            const uint8_t* bytes);
         SDLTexture(SDLTexture&& other);
         virtual ~SDLTexture();
 
@@ -39,10 +39,20 @@ namespace cinekine {
         SDL_Texture* getSDLTexture() const {
             return _texture;
         }
+
+        virtual uint32_t width() const {
+            return _width;
+        }
+        virtual uint32_t height() const {
+            return _height;
+        }
         
     private:
         Renderer& _renderer;
         SDL_Texture* _texture;
+        // while we could use SDL_QueryTexture, these values are cached for
+        // to prevent frequent calls to SDL
+        uint32_t _width, _height;
     };
         
     }   // namespace glx

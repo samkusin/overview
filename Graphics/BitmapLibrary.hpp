@@ -12,7 +12,7 @@
 #include "BitmapAtlas.hpp"
 
 #include "cinek/rendermodel/types.h"
-#include "cinek/cpp/ckmemorypool.hpp"
+#include "cinek/cpp/ckalloc.hpp"
 #include "cinek/cpp/ckstring.hpp"
 
 #include <unordered_map>
@@ -39,14 +39,15 @@ namespace cinekine {
         void unloadAtlas(cinek_bitmap_atlas handle);
         //  Returns an atlas given its handle, or null on failure.  This pointer will become invalid if
         //  unloadAtlas is called.
-        const BitmapAtlas* getAtlas(cinek_bitmap_atlas handle) const;
+        std::shared_ptr<BitmapAtlas> getAtlas(cinek_bitmap_atlas handle) const;
 
     private:
         Renderer& _renderer;
-        typedef std::unordered_map<cinek_bitmap_atlas, BitmapAtlas,
+        typedef std::unordered_map<cinek_bitmap_atlas, std::shared_ptr<BitmapAtlas>,
                                     std::hash<cinek_bitmap_atlas>,
                                     std::equal_to<cinek_bitmap_atlas>,
-                                    std_allocator<std::pair<cinek_bitmap_atlas, BitmapAtlas>>> AtlasMap;
+                                    std_allocator<std::pair<cinek_bitmap_atlas, std::shared_ptr<BitmapAtlas>>>
+                                  > AtlasMap;
 
         AtlasMap _atlasMap;
         cinek_bitmap_atlas _nextAtlasHandle;

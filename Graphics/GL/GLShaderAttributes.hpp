@@ -21,49 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
  * 
- * @file    GL/GLShaderLoader.hpp
+ * @file    GL/GLShaderAttributes.hpp
  * @author  Samir Sinha
- * @date    11/18/2013
- * @brief   Utility class to load GL style shaders
+ * @date    11/19/2013
+ * @brief   Fixed locations for shader attributes used by the renderer
  * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_GL_GLShaderLoader_hpp
-#define CK_Graphics_GL_GLShaderLoader_hpp
-
-#include "GLUtils.hpp"
-
-#include "cinek/cpp/ckstring.hpp"
-
-#include <vector>
+#ifndef CK_Graphics_GL_GLShaderAttributes_hpp
+#define CK_Graphics_GL_GLShaderAttributes_hpp
 
 namespace cinekine {
     namespace glx {
 
-    /**
-     * @class GLShaderLoader
-     * @brief Loads and builds GLSL compliant shaders
-     */
-    class GLShaderLoader
-    {
-    public:
-        GLShaderLoader() = default;
-        ~GLShaderLoader() = default;
+    /** Vertex Position attribute location */
+    const int kGL_ShaderVertexAttrPos = 0;
+    /** Vertex UV attribute location */
+    const int kGL_ShaderVertexAttrUVs = 1;
+    /** Vertex Color attribute location */
+    const int kGL_ShaderVertexAttrColor = 2;
+    /** Fragment color output location */
+    const int kGL_ShaderFragDataColor = 0;
 
-        /**
-         * Loads a shader from the specified source file
-         * @param  pathname Pathname of the source file
-         * @param  type     GL shader type (GL_VERTEX_SHADER, etc)
-         * @return          GL shader resource
-         */
-        GLuint load(const char* pathname, GLenum type);
-
-    private:
-        std::vector<char, std_allocator<char>> _log;
-    };
+    /** The projection matrix uniform attribute name */
+    const char* kGL_ShaderUniformProjectionMat = "projectionMat";
+    /** The texture (unit 0) sampler */
+    const char* kGL_ShaderUniformTextureSampler0 = "textureSampler0";
+    /** The color mode (0=textured,1=alpha mask,2=pass-through) */
+    const char* kGL_ShaderUniformColorBlendMode = "colorBlendMode";
+    /** Is vertex color enabled */
+    const char* kGL_ShaderUniformVertexColorEnabled = "vertexColorOn";
 
     }   // namespace glx
 }   // namespace cinekine
 
-#endif
 
+#endif

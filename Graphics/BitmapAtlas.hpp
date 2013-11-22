@@ -40,7 +40,7 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(BitmapAtlas);
 
     public:
-        //  The BitmapAtlas takes ownership of the SDL_Texture passed in.
+        //  The BitmapAtlas takes ownership of the Texture passed in.
         BitmapAtlas(const char* name, unique_ptr<Texture>& texture,
                     size_t bitmapCount, const Allocator& allocator);
         BitmapAtlas(BitmapAtlas&& other);
@@ -61,7 +61,7 @@ namespace cinekine {
         //  use to retrieve bitmap information.
         cinek_bitmap_index getBitmapIndex(const char* name) const;
         const BitmapInfo* getBitmapFromIndex(cinek_bitmap_index index) const;
-    
+
     private:
         Allocator _allocator;
         string _name;
@@ -70,6 +70,9 @@ namespace cinekine {
         std::vector<BitmapInfo*, std_allocator<BitmapInfo*>> _bitmaps;
     };
     
+    //  used for shared_ptr custom allocation
+    typedef std_allocator<BitmapAtlas> BitmapAtlasAllocator;
+
     }   // namespace glx
 }   // namespace cinekine
 

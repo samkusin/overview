@@ -128,6 +128,8 @@ namespace cinekine {
         const int32_t kScreenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
         const int32_t kScreenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
        
+        cinek_bitmap_atlas currentAtlas = kCinekBitmapAtlas_Invalid;
+       
         while (worldY <= worldEndY)
         {
             int32_t worldX = _worldViewBounds.min.x;
@@ -157,7 +159,11 @@ namespace cinekine {
                 {
                     cinek_tile tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
                     const cinek_bitmap& tileInfo = tileDb.getTileInfo(tile);
-                    _renderer.setBitmapAtlas(tileInfo.bmpAtlas);
+                    if (currentAtlas != tileInfo.bmpAtlas)
+                    {
+                        _renderer.setBitmapAtlas(tileInfo.bmpAtlas);
+                        currentAtlas = tileInfo.bmpAtlas;
+                    }
                     _renderer.drawBitmapFromAtlas(tileInfo.bmpIndex, screenOX, screenOY, 1.0f);
                 }
                 worldX += TILE_WIDTH;
@@ -167,7 +173,7 @@ namespace cinekine {
         }
         
         glx::Style style;
-        style.textColor = { 255,0,0,255 };
+        style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
         _renderer.drawText("Welcome to the overview 2D project by Samir Sinha", 20, 160, style);
     }

@@ -11,11 +11,15 @@
 
 #include "cinek/rendermodel/types.h"
 
+//  commonly used glm headers
+#include "glm/gtc/type_precision.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 namespace cinekine {
     namespace glx {
 
     /**< Defines a RGBA quad */
-    typedef cinek_rgba_color RGBAColor;
+    typedef glm::u8vec4 RGBAColor;
 
     /** Identifies a loaded font */
     typedef uint32_t FontHandle;

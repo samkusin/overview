@@ -54,15 +54,16 @@ source_group( External FILES ${PROJECT_EXTERNAL_SOURCES} )
 set( PROJECT_GL_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLUtils.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Renderer.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLibrary.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.hpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderAttributes.hpp )
 
 set( PROJECT_GL_SOURCES
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLibrary.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Renderer.cpp 
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.cpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLibrary.cpp )
 
 source_group( GL FILES ${PROJECT_GL_INCLUDES} ${PROJECT_GL_SOURCES} )
 

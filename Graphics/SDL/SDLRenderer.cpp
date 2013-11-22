@@ -19,7 +19,7 @@ namespace cinekine {
                        const Allocator& allocator) :
         Renderer(initParams, allocator),
         _renderer(NULL),
-        _currentAtlas(kCinekBitmapAtlas_Invalid)
+        _currentAtlas()
     {
         _renderer = SDL_CreateRenderer(window, -1,
                                        SDL_RENDERER_ACCELERATED |
@@ -41,9 +41,9 @@ namespace cinekine {
 
     unique_ptr<Texture> SDLRenderer::createTextureFromBuffer(uint16_t w, uint16_t h,
             cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride)
+            const uint8_t* bytes)
     {
-        unique_ptr<Texture> texture(getAllocator().newItem<SDLTexture>(*this, w, h, format, bytes, stride), getAllocator());
+        unique_ptr<Texture> texture(getAllocator().newItem<SDLTexture>(*this, w, h, format, bytes), getAllocator());
         return std::move(texture);
     }
     
@@ -52,7 +52,7 @@ namespace cinekine {
         SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
     }
         
-    void SDLRenderer::end()
+    void SDLRenderer::display()
     {
         SDL_RenderPresent(_renderer);
     }
@@ -63,6 +63,16 @@ namespace cinekine {
         SDL_RenderGetViewport(_renderer, &viewportRect);
         return Rect(viewportRect.x, viewportRect.y,
                     viewportRect.x + viewportRect.w-1, viewportRect.y + viewportRect.h-1);
+    }
+
+    void SDLRenderer::setViewport(const Rect& rect)
+    {
+        SDL_Rect viewportRect;
+        viewportRect.x = rect.left;
+        viewportRect.y = rect.top;
+        viewportRect.w = rect.width();
+        viewportRect.h = rect.height();
+        SDL_RenderSetViewport(_renderer, &viewportRect);
     }
 
     void SDLRenderer::clear(const RGBAColor& color)
@@ -168,19 +178,20 @@ namespace cinekine {
 
     void SDLRenderer::setBitmapAtlas(cinek_bitmap_atlas atlas)
     {
-        _currentAtlas = atlas;
+        _currentAtlas = getBitmapLibrary().getAtlas(atlas);
     }
 
     void SDLRenderer::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
                                           int32_t x, int32_t y, float alpha)
     {
-        const BitmapAtlas* atlas = getBitmapLibrary().getAtlas(_currentAtlas); 
-        if (!atlas)
+        if (!_currentAtlas)
             return;
+
+        const BitmapAtlas& atlas = *_currentAtlas.get();
         
-        const SDLTexture& texture = (SDLTexture&)atlas->getTexture();
+        const SDLTexture& texture = (SDLTexture&)atlas.getTexture();
         SDL_Texture* sdlTexture = texture.getSDLTexture();
-        const glx::BitmapInfo* bitmapInfo = atlas->getBitmapFromIndex(bitmapIndex);
+        const glx::BitmapInfo* bitmapInfo = atlas.getBitmapFromIndex(bitmapIndex);
         if (bitmapInfo)
         {
             SDL_Rect srcRect;

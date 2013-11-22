@@ -166,6 +166,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
         uint8_t* buffer = (uint8_t*)_renderer.getAllocator().alloc(bufferWidth*bufferHeight);
         if (buffer)
         {
+            memset(buffer, 0, bufferWidth*bufferHeight);
             //  bake into buffer - just crib the code from stbtt_BakeFontBitmap for now.
             Font::BakedChars bakedChars;
             bakeFontToBuffer(sourceData, 0, height,
@@ -176,7 +177,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
             //  create font using baskedChars/texture and add to library
             unique_ptr<Texture> texture = _renderer.createTextureFromBuffer(bufferWidth, bufferHeight,
                                                                   kCinekPixelFormat_A8,
-                                                                  buffer, bufferWidth);
+                                                                  buffer);
             _renderer.getAllocator().free(buffer);
 
             Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);

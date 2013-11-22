@@ -40,14 +40,14 @@ namespace cinekine {
         //  and format depend on the Renderer implementation and platform.
         unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
             cinek_pixel_format format,
-            const uint8_t* bytes, uint16_t stride);
+            const uint8_t* bytes);
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Draw State
         //
-        void begin();
-        void end();
-
+        virtual void begin();
+        virtual void display();
         virtual Rect getViewport() const;
+        virtual void setViewport(const Rect& rect);
 
         //  Specialized clear method, which clears the current rendering target
         virtual void clear(const RGBAColor& color);
@@ -76,7 +76,7 @@ namespace cinekine {
 
     private:
         SDL_Renderer* _renderer;
-        cinek_bitmap_atlas _currentAtlas;
+        std::shared_ptr<BitmapAtlas> _currentAtlas;
     };
     
 
