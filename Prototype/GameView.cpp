@@ -175,7 +175,7 @@ namespace cinekine {
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
-        _renderer.drawText("Welcome to the overview 2D project by Samir Sinha", 20, 160, style);
+        _renderer.drawText("Welcome to the overview 2D project by Samir Sinha. Lorem Ipsum, Factum, totum, kitean, vesuvius erupts, al bundy, homer, stark, avatar, spoony", 20, 160, style);
     }
         
     }

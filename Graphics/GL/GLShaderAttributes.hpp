@@ -44,13 +44,9 @@ namespace cinekine {
     const int kGL_ShaderFragDataColor = 0;
 
     /** The projection matrix uniform attribute name */
-    const char* kGL_ShaderUniformProjectionMat = "projectionMat";
+    const char* const kGL_ShaderUniformProjectionMat = "projectionMat";
     /** The texture (unit 0) sampler */
-    const char* kGL_ShaderUniformTextureSampler0 = "textureSampler0";
-    /** The color mode (0=textured,1=alpha mask,2=pass-through) */
-    const char* kGL_ShaderUniformColorBlendMode = "colorBlendMode";
-    /** Is vertex color enabled */
-    const char* kGL_ShaderUniformVertexColorEnabled = "vertexColorOn";
+    const char* const kGL_ShaderUniformTextureSampler0 = "textureSampler0";
 
     }   // namespace glx
 }   // namespace cinekine

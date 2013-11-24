@@ -57,13 +57,15 @@ set( PROJECT_GL_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLibrary.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderAttributes.hpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderAttributes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLVertexBatch.hpp )
 
 set( PROJECT_GL_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Renderer.cpp 
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLibrary.cpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLibrary.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLVertexBatch.cpp )
 
 source_group( GL FILES ${PROJECT_GL_INCLUDES} ${PROJECT_GL_SOURCES} )
 

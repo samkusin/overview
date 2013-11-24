@@ -179,13 +179,22 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
                                                                   kCinekPixelFormat_A8,
                                                                   buffer);
             _renderer.getAllocator().free(buffer);
-
-            Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);
-            RENDER_LOG_INFO("Font %s loaded in slot [%u]: texture:(%u,%u), height: %d, codepoint:[%x,%x].",
-                              fontname, slot,
-                              bufferWidth, bufferHeight,
-                              font.getHeight(), font.getMinCodepoint(), font.getMaxCodepoint());
-            _fonts[slot] = std::move(font);
+            
+            if (texture)
+            {
+                Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);
+                RENDER_LOG_INFO("Font %s loaded in slot [%u]: texture:(%u,%u), height: %d, codepoint:[%x,%x].",
+                                fontname, slot,
+                                bufferWidth, bufferHeight,
+                                font.getHeight(), font.getMinCodepoint(), font.getMaxCodepoint());
+                _fonts[slot] = std::move(font);
+            }
+            else
+            {
+                RENDER_LOG_ERROR("Failed to load font %s in slot [%u] - unable to initialize texture.",
+                                 fontname, slot);
+                return false;
+            }
         }
     }
     else

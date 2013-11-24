@@ -143,7 +143,7 @@ namespace cinekine {
             glTexImage2D(GL_TEXTURE_2D, 0, glFormat.internalFormat, width, height, 0,
                             glFormat.format, glFormat.type,
                             bytes);
-            if (GLError("GL3Texture.glTexImage2D - pathname"))
+            if (GLError("GL3Texture.createTexture - glTexImage2D"))
             {
                 glBindTexture(GL_TEXTURE_2D, 0);
                 glDeleteTextures(1, &_texture);

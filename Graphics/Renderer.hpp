@@ -95,13 +95,16 @@ namespace cinekine {
          * @param rect Rectangle using client coordinates (i.e. the window's client area)
          */
         virtual void setViewport(const Rect& rect) = 0;
+        /**
+         * Clears the entire client region (entire screen if fullscreen)
+         * @param color A RGBA color value.
+         */
+        virtual void clear(const RGBAColor& color) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Drawing Methods
         //  All rendering methods act on the current target.
         //  
-        //  Specialized clear method, which clears the current rendering target
-        virtual void clear(const RGBAColor& color) = 0;
         //  Draws a rectangle
         virtual void drawRect(const Rect& rect, const Style& style) = 0;
         //  Draws a rectangle with four rounded corners (left-top, right-top,

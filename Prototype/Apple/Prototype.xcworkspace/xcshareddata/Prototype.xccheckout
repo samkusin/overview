@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>134C9519-B26F-4897-9780-6BA070DA9AE9</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Prototype</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>75828D33-4138-479A-A904-D7C6E8B19CD5</key>
+		<string>ssh://cinekine.com//home/git/cinekine/overview.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Prototype/Apple/Prototype.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>75828D33-4138-479A-A904-D7C6E8B19CD5</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://cinekine.com//home/git/cinekine/overview.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>75828D33-4138-479A-A904-D7C6E8B19CD5</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>75828D33-4138-479A-A904-D7C6E8B19CD5</string>
+			<key>IDESourceControlWCCName</key>
+			<string>overview</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -10,6 +10,7 @@
 #define CK_Graphics_RenderTypes_hpp
 
 #include "cinek/rendermodel/types.h"
+#include "cinek/cpp/ckdefs.hpp"
 
 //  commonly used glm headers
 #include "glm/gtc/type_precision.hpp"

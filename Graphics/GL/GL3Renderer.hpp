@@ -33,16 +33,16 @@
 
 #include "Graphics/Renderer.hpp"
 #include "GLShaderLibrary.hpp"
-
+#include "GLVertexBatch.hpp"
+ 
 #include "SDL2/SDL_video.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
-#include <vector>
 
 namespace cinekine {
     namespace glx {
-
+    
     //  The OpenGL 3.x Renderer
     //
     class GL3Renderer: public Renderer
@@ -95,28 +95,63 @@ namespace cinekine {
         SDL_GLContext _glContext;
         GLShaderLibrary _shaderLibrary;
         GLuint _standardShader;
-        GLint  _projectionMatUniform;
-        GLint  _texSamplerUniform;
-        GLint  _vertexColorOn;
-        GLint  _colorBlendMode;
+        GLuint _textShader;
 
-        static const size_t kTriQuadVertexCount = 6;
-        static const size_t kQuadVertexCount = 4;
-        static const size_t kTextCacheCharCount = 80;
-        std::vector<glm::vec2, std_allocator<glm::vec2>> _vertCache;
-        std::vector<glm::vec2, std_allocator<glm::vec2>> _uvCache;
-        std::vector<glm::vec4, std_allocator<glm::vec4>> _colorCache;
+        static const size_t kBatchLimit = 2048;
+        GLVertexBatch _textBatch;
+        GLVertexBatch _bitmapBatch;
+        
+        struct BatchState
+        {
+            enum Mode
+            {
+                kNone,
+                kText,
+                kBitmap
+            };
+            Mode mode;
+            union
+            {
+                FontHandle fontHandle;
+                cinek_bitmap_atlas atlasId;
+            };
+            BatchState(Mode m=kNone): mode(m) {}
+            static BatchState makeText(FontHandle handle) {
+                BatchState state(kText);
+                state.fontHandle = handle;
+                return state;
+            }
+            static BatchState makeBitmap(cinek_bitmap_atlas id) {
+                BatchState state(kBitmap);
+                state.atlasId = id;
+                return state;
+            }
+            bool operator==(const BatchState& s) const;
+            void clear() { mode = kNone; }
+        };
+        BatchState _batchState;
 
-        GLuint  _bitmapVAO;
-        GLuint  _bitmapVBO[2];
-        GLuint  _textVAO;
-        GLuint  _textVBO[3];
-
+        const Font* _currentFont;
         std::shared_ptr<BitmapAtlas> _currentAtlas;
+        cinek_bitmap_atlas _currentAtlasId;
         glm::mat4 _projectionMat;
-        bool _setAtlasGLTexture;
+        
+    private:
+        GLVertexBatch* obtainBatch(const BatchState& state);
+        void flushBatch();
     };
     
+    inline bool GL3Renderer::BatchState::operator==(const GL3Renderer::BatchState& s) const
+    {
+        if (mode == s.mode)
+        {
+            if (s.mode == kText && fontHandle == s.fontHandle)
+                return true;
+            else if (s.mode == kBitmap && atlasId == s.atlasId)
+                return true;
+        }
+        return false;
+    }
 
     }   // namespace glx
 }   // namespace cinekine

@@ -21,58 +21,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
  * 
- * @file    GL/GL3Texture.hpp
+ * @file    GL/GLVertexBatch.hpp
  * @author  Samir Sinha
- * @date    11/16/2013
- * @brief   A GL3 compatible texture object
+ * @date    11/22/2013
+ * @brief   A GL compatible vertex batch processor (2D)
  * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_GL_GL3_Texture_hpp
-#define CK_Graphics_GL_GL3_Texture_hpp
+#ifndef CK_Graphics_GL_VertexBatch_hpp
+#define CK_Graphics_GL_VertexBatch_hpp
 
-#include "Graphics/Texture.hpp"
 #include "GLUtils.hpp"
+#include "cinek/cpp/ckalloc.hpp"
+#include <vector>
 
 namespace cinekine {
     namespace glx {
     
-    class Renderer;
-    
-    class GL3Texture: public Texture
+    class GLVertexBatch
     {
-        CK_CLASS_NON_COPYABLE(GL3Texture);
-
+        CK_CLASS_NON_COPYABLE(GLVertexBatch);
+        
     public:
-        GL3Texture(Renderer& renderer, const char *pathname);
-        GL3Texture(Renderer& renderer, uint16_t w, uint16_t h,
-            cinek_pixel_format format,
-            const uint8_t* bytes);
-        GL3Texture(GL3Texture&& other);
-        virtual ~GL3Texture();
+        GLVertexBatch();
+        GLVertexBatch(GLVertexBatch&& other);
+        GLVertexBatch(GLenum mode, size_t count, const Allocator& allocator);
+        ~GLVertexBatch();
+        
+        GLVertexBatch& operator=(GLVertexBatch&& other);
+        
+        void draw();
 
-        virtual operator bool() const {
-            return _texture!=0;
+        size_t size() const {
+            return _pos.size();
         }
-        GLuint getTextureId() const {
-            return _texture;
+        bool full() const {
+            return _pos.size() == _pos.capacity();
         }
-        virtual uint32_t width() const {
-            return _width;
-        }
-        virtual uint32_t height() const {
-            return _height;
-        }
+        
+        void pushPos(float&& x, float&& y);
+        void pushUV(float&& u, float&& v);
+        void pushColor(const glm::vec4& color);
 
     private:
-        GLuint createTexture(uint32_t w, uint32_t h,
-                             cinek_pixel_format format,
-                             const uint8_t* bytes);
-        Renderer& _renderer;
-        GLuint _texture;
-        uint32_t _width, _height;
+        void deleteBuffers();
+        GLenum _mode;
+        GLuint _vao;
+        GLuint _vboPos;
+        GLuint _vboUV;
+        GLuint _vboColor;
+        size_t _primCount;
+
+        std::vector<glm::vec2, std_allocator<glm::vec2>> _pos;
+        std::vector<glm::vec2, std_allocator<glm::vec2>> _uv;
+        std::vector<glm::vec4, std_allocator<glm::vec4>> _color;
     };
-        
+
     }   // namespace glx
 }   // namespace cinekine
 

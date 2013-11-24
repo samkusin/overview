@@ -9,9 +9,10 @@
 #ifndef CK_Graphics_GL_Utils_hpp
 #define CK_Graphics_GL_Utils_hpp
 
-#include "cinek/cpp/ckdefs.hpp"
+#include "Graphics/RenderDebug.hpp"
+#include "Graphics/RenderTypes.hpp"
 
-#include "../RenderDebug.hpp"
+#include "cinek/core/cktypes.h"
 
 #ifdef CK_TARGET_OSX
 #include <OpenGL/gl3.h>
@@ -26,7 +27,7 @@ namespace cinekine {
         GLenum glErr = glGetError();
         if (glErr == GL_NO_ERROR)
             return false;
-        RENDER_LOG_ERROR( "%s : GL error %d", context, glErr );
+        RENDER_LOG_ERROR( "%s : GL error 0x%x", context, glErr );
         return true;
     }
 

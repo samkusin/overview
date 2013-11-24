@@ -10,7 +10,7 @@
 #include "Director.hpp"
 #include "View.hpp"
 
-//#include "Graphics/SDL/SDLRenderer.hpp"
+#include "Graphics/SDL/SDLRenderer.hpp"
 #include "Graphics/GL/GL3Renderer.hpp"
 
 #include "Graphics/BitmapLibrary.hpp"
