@@ -10,10 +10,7 @@
 #define CK_Graphics_Renderer_hpp
 
 #include "RenderTypes.hpp"
-#include "BitmapLibrary.hpp"
-#include "FontLibrary.hpp"
 #include "Rect.hpp"
-#include "Style.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -32,8 +29,11 @@ namespace cinekine {
         const char* bitmapAtlasDir;
     };
 
-    //  The top-level Renderer object
-    //      The Renderer handles drawing to the display.
+    /**
+     * @class Renderer
+     * @brief The base interface for all platform-specific rendering
+     *        implementations.
+     */
     class Renderer
     {
     public:    
@@ -51,21 +51,7 @@ namespace cinekine {
         Allocator& getAllocator() {
             return _allocator;
         }
-        ///////////////////////////////////////////////////////////////////////
-        //  returns subsystems.
-        const BitmapLibrary& getBitmapLibrary() const {
-            return _bitmapLibrary;
-        }
-        BitmapLibrary& getBitmapLibrary() {
-            return _bitmapLibrary;
-        }
-        const FontLibrary& getFontLibrary() const {
-            return _fontLibrary;
-        }
-        FontLibrary& getFontLibrary() {
-            return _fontLibrary;
-        }
-
+       
         ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
@@ -100,30 +86,20 @@ namespace cinekine {
          * @param color A RGBA color value.
          */
         virtual void clear(const RGBAColor& color) = 0;
+        /**
+         * [drawTextureRect description]
+         * @param texture [description]
+         * @param source  [description]
+         * @param dest    [description]
+         * @param color   [description]
+         */
+        virtual void drawTextureRect(const Texture& texture,
+                                     const Rect& source, const Rect& dest,
+                                     const RGBAColor& color) = 0;
 
-        ///////////////////////////////////////////////////////////////////////
-        //  Renderer Drawing Methods
-        //  All rendering methods act on the current target.
-        //  
-        //  Draws a rectangle
-        virtual void drawRect(const Rect& rect, const Style& style) = 0;
-        //  Draws a rectangle with four rounded corners (left-top, right-top,
-        //      right-bottom, left-bottom)
-        virtual void drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
-                                     const Style& style) = 0;
-        //  Draws text
-        virtual void drawText(const char* text, int32_t x, int32_t y,
-                              const Style& style) = 0;
-        //  Sets the current bitmap atlas
-        virtual void setBitmapAtlas(cinek_bitmap_atlas atlas) = 0;
-        //  Draws a bitmap from the current atlas with alpha
-        virtual void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
-                                         int32_t x, int32_t y, float alpha) = 0;
 
     private:
         Allocator _allocator;
-        BitmapLibrary _bitmapLibrary;
-        FontLibrary _fontLibrary;
     };
     
 

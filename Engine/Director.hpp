@@ -10,10 +10,6 @@
 #define Overview_Director_hpp
 
 namespace cinekine {
-    namespace imgui {
-        class ClientInterface;
-    }
-
     namespace ovengine {
     
     class TheaterClient;
@@ -32,7 +28,7 @@ namespace cinekine {
     };
 
     //  must be defined by the implementing application.
-    Director* CreateDirector(TheaterClient& cli, imgui::ClientInterface& imgui);
+    Director* CreateDirector(TheaterClient& cli);
     //  must be defined by the implementing application - destroys the Director created by
     //  CreateDirector
     void DestroyDirector(Director* director);

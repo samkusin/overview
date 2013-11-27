@@ -10,6 +10,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Engine/Debug.hpp"
 #include "Engine/Theater.hpp"
+#include "Graphics/Graphics2D.hpp"
 
 #include "cinek/overview/map.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
@@ -19,10 +20,10 @@
 namespace cinekine {
     namespace ovengine {
         //  must be defined by the implementing application.
-        View* CreateView(Theater& theater, glx::Renderer& cli)
+        View* CreateView(Theater& theater, glx::Renderer& cli, const ViewComponents& viewComponents)
         {
             Allocator allocator;
-            return allocator.newItem<prototype::GameView>(theater, cli);
+            return allocator.newItem<prototype::GameView>(theater, cli, viewComponents);
         }
 
         //  must be defined by the implementing application - destroys the View created by
@@ -43,9 +44,11 @@ namespace cinekine {
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
-    GameView::GameView(ovengine::Theater& theater, glx::Renderer& renderer) :
+    GameView::GameView(ovengine::Theater& theater, glx::Renderer& renderer,
+                       const ovengine::ViewComponents& components) :
         _theater(theater),
         _renderer(renderer),
+        _graphics(renderer, *components.bitmapLibrary,  *components.fontLibrary),
         _worldViewBounds()
     {
         
@@ -161,10 +164,10 @@ namespace cinekine {
                     const cinek_bitmap& tileInfo = tileDb.getTileInfo(tile);
                     if (currentAtlas != tileInfo.bmpAtlas)
                     {
-                        _renderer.setBitmapAtlas(tileInfo.bmpAtlas);
+                        _graphics.setBitmapAtlas(tileInfo.bmpAtlas);
                         currentAtlas = tileInfo.bmpAtlas;
                     }
-                    _renderer.drawBitmapFromAtlas(tileInfo.bmpIndex, screenOX, screenOY, 1.0f);
+                    _graphics.drawBitmapFromAtlas(tileInfo.bmpIndex, screenOX, screenOY, 1.0f);
                 }
                 worldX += TILE_WIDTH;
             }
@@ -175,7 +178,8 @@ namespace cinekine {
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
-        _renderer.drawText("Welcome to the overview 2D project by Samir Sinha. Lorem Ipsum, Factum, totum, kitean, vesuvius erupts, al bundy, homer, stark, avatar, spoony", 20, 160, style);
+        _graphics.drawText("Welcome to the overview 2D project by Samir Sinha. Lorem Ipsum, Factum, totum, kitean, vesuvius erupts, al bundy, homer, stark, avatar, spoony",
+                            20, 160, style);
     }
         
     }

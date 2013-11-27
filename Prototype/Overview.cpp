@@ -8,7 +8,6 @@
 
 #include "Overview.hpp"
 #include "Engine/TheaterClient.hpp"
-#include "UI/IMGUIClient.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -18,11 +17,10 @@
 namespace cinekine {
     namespace ovengine {
     
-    ovengine::Director* CreateDirector(TheaterClient& cli,
-                                       imgui::ClientInterface& imgui)
+    ovengine::Director* CreateDirector(TheaterClient& cli)
     {
         Allocator allocator;
-        return allocator.newItem<prototype::Overview>(cli, imgui);
+        return allocator.newItem<prototype::Overview>(cli);
     }
     
     void DestroyDirector(ovengine::Director* director)
@@ -37,10 +35,8 @@ namespace cinekine {
 namespace cinekine {
     namespace prototype {
 
-    Overview::Overview(ovengine::TheaterClient& cli,
-                       imgui::ClientInterface& imgui) :
+    Overview::Overview(ovengine::TheaterClient& cli) :
         _theaterCLI(cli),
-        _imguiCLI(imgui),
         _allocator(),
         _stage({ 17, 17, 0, 0 }, _allocator),
         _scrollPos1(0)

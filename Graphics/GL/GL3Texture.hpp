@@ -54,7 +54,7 @@ namespace cinekine {
         virtual operator bool() const {
             return _texture!=0;
         }
-        GLuint getTextureId() const {
+        GLuint textureID() const {
             return _texture;
         }
         virtual uint32_t width() const {
@@ -64,6 +64,17 @@ namespace cinekine {
             return _height;
         }
 
+        //  used for selecting the shader to use for rendering ops
+        enum SamplerFormat
+        {
+            kFormatNone,
+            kFormatRGBA,
+            kFormatRed
+        };
+        SamplerFormat samplerFormat() const {
+            return _samplerFormat;
+        }
+
     private:
         GLuint createTexture(uint32_t w, uint32_t h,
                              cinek_pixel_format format,
@@ -71,6 +82,7 @@ namespace cinekine {
         Renderer& _renderer;
         GLuint _texture;
         uint32_t _width, _height;
+        SamplerFormat _samplerFormat;
     };
         
     }   // namespace glx

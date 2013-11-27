@@ -32,6 +32,7 @@
 #define CK_Graphics_GL_GL3Renderer_hpp
 
 #include "Graphics/Renderer.hpp"
+#include "GL3Texture.hpp"
 #include "GLShaderLibrary.hpp"
 #include "GLVertexBatch.hpp"
  
@@ -39,9 +40,12 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#include <vector>
 
 namespace cinekine {
     namespace glx {
+
+    class Texture;
     
     //  The OpenGL 3.x Renderer
     //
@@ -66,29 +70,15 @@ namespace cinekine {
             cinek_pixel_format format,
             const uint8_t* bytes);
 
-        ///////////////////////////////////////////////////////////////////////
-        //  Housekeeping methods, used to mark the beginning and end of a render
-        //  frame.
-        //  
         virtual void begin();
         virtual void display();
         virtual Rect getViewport() const;
         virtual void setViewport(const Rect& rect);
         
-        ///////////////////////////////////////////////////////////////////////
-        //  Renderer Drawing Methods
-        //  All rendering methods act on the current target.
-        //  
         virtual void clear(const RGBAColor& color);
-        virtual void drawRect(const Rect& rect, const Style& style);
-        virtual void drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
-                                     const Style& style);
-        virtual void drawText(const char* text, int32_t x, int32_t y,
-                              const Style& style);
-        virtual void setBitmapAtlas(cinek_bitmap_atlas atlas);
-
-        virtual void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
-                                         int32_t x, int32_t y, float alpha);
+        virtual void drawTextureRect(const Texture& texture,
+                                     const Rect& source, const Rect& dest,
+                                     const RGBAColor& color);
 
     private:
         SDL_Window* _window;
@@ -97,60 +87,34 @@ namespace cinekine {
         GLuint _standardShader;
         GLuint _textShader;
 
-        static const size_t kBatchLimit = 2048;
-        GLVertexBatch _textBatch;
-        GLVertexBatch _bitmapBatch;
+        // Vertex batches used for batched rendering
+        std::vector<GLVertexBatch, std_allocator<GLVertexBatch>> _batch;
+        uint32_t _batchIndex;
         
         struct BatchState
         {
-            enum Mode
-            {
-                kNone,
-                kText,
-                kBitmap
-            };
-            Mode mode;
-            union
-            {
-                FontHandle fontHandle;
-                cinek_bitmap_atlas atlasId;
-            };
-            BatchState(Mode m=kNone): mode(m) {}
-            static BatchState makeText(FontHandle handle) {
-                BatchState state(kText);
-                state.fontHandle = handle;
-                return state;
-            }
-            static BatchState makeBitmap(cinek_bitmap_atlas id) {
-                BatchState state(kBitmap);
-                state.atlasId = id;
-                return state;
-            }
+            GLuint textureId;
+            GL3Texture::SamplerFormat textureSamplerFormat;
+            BatchState(): textureId(0), textureSamplerFormat(GL3Texture::kFormatNone) {}
+            BatchState(const GL3Texture& texture):
+                textureId(texture.textureID()),
+                textureSamplerFormat(texture.samplerFormat()) {}
+           
             bool operator==(const BatchState& s) const;
-            void clear() { mode = kNone; }
+            void clear() { textureId = 0; }
         };
         BatchState _batchState;
 
-        const Font* _currentFont;
-        std::shared_ptr<BitmapAtlas> _currentAtlas;
-        cinek_bitmap_atlas _currentAtlasId;
         glm::mat4 _projectionMat;
         
     private:
-        GLVertexBatch* obtainBatch(const BatchState& state);
-        void flushBatch();
+        GLVertexBatch& obtainBatch(const BatchState& state);
+        GLVertexBatch& flushBatch();
     };
     
     inline bool GL3Renderer::BatchState::operator==(const GL3Renderer::BatchState& s) const
     {
-        if (mode == s.mode)
-        {
-            if (s.mode == kText && fontHandle == s.fontHandle)
-                return true;
-            else if (s.mode == kBitmap && atlasId == s.atlasId)
-                return true;
-        }
-        return false;
+        return textureId == s.textureId;
     }
 
     }   // namespace glx

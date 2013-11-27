@@ -13,14 +13,13 @@
 #include "Graphics/SDL/SDLRenderer.hpp"
 #include "Graphics/GL/GL3Renderer.hpp"
 
+#include "Graphics/Graphics2D.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
+
 #include "Theater.hpp"
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
-
-#include "UI/IMGUIGfx.hpp"
-#include "UI/IMGUIFrame.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -45,7 +44,12 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         OVENGINE_LOG_ERROR("Failed to initialize renderer.");
         return 1;
     }
-    if (!renderer.getFontLibrary().loadFont(glx::kFontHandle_Default, "DroidSans.ttf", 16))
+
+    glx::BitmapLibrary bitmapLibrary(renderer);
+    glx::FontLibrary fontLibrary(renderer, 10);
+    glx::Graphics2D(renderer, bitmapLibrary, fontLibrary);
+
+    if (!fontLibrary.loadFont(glx::kFontHandle_Default, "DroidSans.ttf", 16))
     {
         OVENGINE_LOG_ERROR("Failed to load system font.");
         return 1;
@@ -56,33 +60,33 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
     //
     //  handle sprite -> bitmap loading.
-    theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([&renderer]
+    theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([&bitmapLibrary]
         (const char* atlasName) -> cinek_bitmap_atlas
         {
-            return renderer.getBitmapLibrary().loadAtlas(atlasName);
+            return bitmapLibrary.loadAtlas(atlasName);
         }
     );
     
-    theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&renderer]
+    theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&bitmapLibrary]
         ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
         {
-             const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas).get();
+             const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
              if (!bitmapAtlas)
                  return kCinekBitmapIndex_Invalid;
              return bitmapAtlas->getBitmapIndex(name);
         }
     );
     //  handle tile -> bitmap loading.
-    theater.getTileDatabaseLoader().onBitmapAtlasRequest([&renderer]
+    theater.getTileDatabaseLoader().onBitmapAtlasRequest([&bitmapLibrary]
         (const char* atlasName) -> cinek_bitmap_atlas
         {
-            return renderer.getBitmapLibrary().loadAtlas(atlasName);
+            return bitmapLibrary.loadAtlas(atlasName);
         }
     );
-    theater.getTileDatabaseLoader().onBitmapIndexRequest([&renderer]
+    theater.getTileDatabaseLoader().onBitmapIndexRequest([&bitmapLibrary]
         (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
         {
-           const glx::BitmapAtlas* bitmapAtlas = renderer.getBitmapLibrary().getAtlas(atlas).get();
+           const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
            if (!bitmapAtlas)
                return kCinekBitmapIndex_Invalid;
            return bitmapAtlas->getBitmapIndex(name);
@@ -90,7 +94,10 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     );
    
     //  startup the simulation specific View.
-    ovengine::View* view = cinekine::ovengine::CreateView(theater, renderer);
+    ovengine::ViewComponents viewComponents;
+    viewComponents.fontLibrary = &fontLibrary;
+    viewComponents.bitmapLibrary = &bitmapLibrary;
+    ovengine::View* view = cinekine::ovengine::CreateView(theater, renderer, viewComponents);
     
     //  handle viewpoint sets by Theater.
     theater.onViewMapSet([&view] (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
@@ -110,15 +117,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         }
     );
 
-    //  IMGUI view
-    imgui::Style imguiStyle;
-    imgui::Allocator imguiAllocator;
-    imgui::Gfx imguiGfx(512, 16*1024, imguiAllocator);
-    imgui::Frame imguiFrame(imguiGfx, { 0, 0, 1024, 768 }, imguiStyle, imguiAllocator);
-
     //  startup the simulation specific Director.
-    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient(),
-                                                                      imguiFrame);
+    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
     //  main loop
     bool active = true;
     while (active)
@@ -133,19 +133,14 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         }
         
         ///////////////////////////////////////////////////////////////////
-        imgui::Input imguiInput;
-        imguiGfx.clearCommandQueue();
-        imguiFrame.begin(imguiInput);
         
         director->update();
 
-        imguiFrame.end();
         ///////////////////////////////////////////////////////////////////
         renderer.begin();
         renderer.clear(glx::RGBAColor(0,0,0,255));
         
         view->render();
-        //imguiView.render(imguiGfx.getCommandQueue());
         
         renderer.display();
     }

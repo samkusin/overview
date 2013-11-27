@@ -11,6 +11,7 @@
 
 #include "Common.hpp"
 #include "Engine/View.hpp"
+#include "Graphics/Graphics2D.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -29,7 +30,8 @@ namespace cinekine {
     class GameView: public ovengine::View
     {
     public:
-        GameView(ovengine::Theater& theater, glx::Renderer& renderer);
+        GameView(ovengine::Theater& theater, glx::Renderer& renderer,
+                 const ovengine::ViewComponents& components);
         virtual ~GameView();
         
         virtual void onMapSet(std::shared_ptr<overview::Map>& Map,
@@ -48,6 +50,7 @@ namespace cinekine {
     private:
         ovengine::Theater& _theater;
         glx::Renderer& _renderer;
+        glx::Graphics2D _graphics;
         
         std::shared_ptr<overview::Map> _map;
         cinek_ov_bounds _worldViewBounds;

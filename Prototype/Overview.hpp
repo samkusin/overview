@@ -21,9 +21,6 @@ namespace cinekine {
     namespace ovengine {
         class TheaterClient;
     }
-    namespace imgui {
-        class ClientInterface;
-    }
 }
 
 namespace cinekine {
@@ -32,14 +29,13 @@ namespace cinekine {
     class Overview: public ovengine::Director
     {
     public:
-        Overview(ovengine::TheaterClient& cli, imgui::ClientInterface& imgui);
+        Overview(ovengine::TheaterClient& cli);
         virtual ~Overview();
 
         virtual void update();
         
     private:
         ovengine::TheaterClient& _theaterCLI;
-        imgui::ClientInterface& _imguiCLI;
         Allocator _allocator;
 
         overview::Stage _stage;

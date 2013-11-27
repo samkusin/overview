@@ -9,7 +9,7 @@
 #ifndef CK_Graphics_SDL_Renderer_hpp
 #define CK_Graphics_SDL_Renderer_hpp
 
-#include "../Renderer.hpp"
+#include "Graphics/Renderer.hpp"
 
 #include "SDL2/SDL_render.h"
 
@@ -51,21 +51,10 @@ namespace cinekine {
 
         //  Specialized clear method, which clears the current rendering target
         virtual void clear(const RGBAColor& color);
-        //  Draws a rectangle
-        virtual void drawRect(const Rect& rect, const Style& style);
-        //  Draws a rectangle with four rounded corners (left-top, right-top,
-        //      right-bottom, left-bottom)
-        virtual void drawRoundedRect(const Rect& rect,
-                                     const std::array<int32_t, 4>& radii,
-                                     const Style& style);
-        //  Draws text
-        virtual void drawText(const char* text, int32_t x, int32_t y,
-                              const Style& style);
-        //  Sets the current bitmap atlas
-        virtual void setBitmapAtlas(cinek_bitmap_atlas atlas);
-        //  Draws a bitmap from the current atlas with alpha
-        virtual void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
-                                         int32_t x, int32_t y, float alpha);
+    
+        virtual void drawTextureRect(const Texture& texture,
+                                     const Rect& source, const Rect& dest,
+                                     const RGBAColor& color);
 
         ///////////////////////////////////////////////////////////////////////
         //  Renderer Implementation Specific Accessors
@@ -76,7 +65,6 @@ namespace cinekine {
 
     private:
         SDL_Renderer* _renderer;
-        std::shared_ptr<BitmapAtlas> _currentAtlas;
     };
     
 

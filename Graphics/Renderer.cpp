@@ -14,9 +14,7 @@ namespace cinekine {
 
     Renderer::Renderer(const RendererInitParameters& initParams,
                        const Allocator& allocator) :
-        _allocator(allocator),
-        _bitmapLibrary(*this),
-        _fontLibrary(*this, 10 /* TODO make this font limit configurable. */)
+        _allocator(allocator)
     {    
     }
     

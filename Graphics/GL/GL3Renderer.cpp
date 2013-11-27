@@ -26,12 +26,9 @@ namespace cinekine {
         _shaderLibrary("static/shaders/gl3", allocator),
         _standardShader(0),
         _textShader(0),
-        _textBatch(),
-        _bitmapBatch(),
+        _batch(std_allocator<GLVertexBatch>(allocator)),
+        _batchIndex(0),
         _batchState(),
-        _currentFont(nullptr),
-        _currentAtlas(),
-        _currentAtlasId(kCinekBitmapAtlas_Invalid),
         _projectionMat()
     {
         _glContext = SDL_GL_CreateContext(_window);
@@ -56,9 +53,14 @@ namespace cinekine {
         glUseProgram(_standardShader);
 
         // Default GL State Setup
-        //
-        _textBatch = std::move(GLVertexBatch(GL_TRIANGLES, kBatchLimit*2, getAllocator()));
-        _bitmapBatch = std::move(GLVertexBatch(GL_TRIANGLES, kBatchLimit*2, getAllocator()));
+        const size_t kBatchLimit = 16;
+        const size_t kBatchPrimLimit = 2048;
+        
+        _batch.reserve(kBatchLimit);
+        while (_batch.size() != _batch.capacity())
+        {
+            _batch.emplace_back(GL_TRIANGLES, kBatchPrimLimit, getAllocator());
+        }
 
         //  orthographic projection 
         int w, h;
@@ -77,9 +79,8 @@ namespace cinekine {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-        
-        _textBatch = std::move(GLVertexBatch());
-        _bitmapBatch = std::move(GLVertexBatch());
+
+        _batch.clear();
 
         if (_glContext)
         {
@@ -121,12 +122,6 @@ namespace cinekine {
     {
         flushBatch();
 
-        /**
-         * @todo - we may not need _currentAtlas to be a shared_ptr if it's only valid
-         * during the frame.
-         */
-        _currentAtlas = nullptr;
-        _currentFont = nullptr;
         _batchState.clear();
         
         SDL_GL_SwapWindow(_window);
@@ -150,241 +145,112 @@ namespace cinekine {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    void GL3Renderer::drawRect(const Rect& rect, const Style& style)
+    void GL3Renderer::drawTextureRect(const Texture& texture,
+                                      const Rect& source, const Rect& dest,
+                                      const RGBAColor& color)
     {
-        drawRoundedRect(rect, {0,0,0,0}, style);
-    }
+        const GL3Texture& gltexture = static_cast<const GL3Texture&>(texture);
+        GLVertexBatch& batch = obtainBatch(BatchState(gltexture));
+          
+        float tWscale = 1.0f/(float)texture.width();
+        float tHscale = 1.0f/(float)texture.height();
 
-    void GL3Renderer::drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
-                                      const Style& style)
-    {
-      
-    }
-
-    void GL3Renderer::drawText(const char* text, int32_t x, int32_t y,
-                               const Style& style)
-    {
-        GLVertexBatch* batch = obtainBatch(BatchState::makeText(style.textFont));
-        if (!batch || !_currentFont)
-            return;
-
-        const GL3Texture& texture = (const GL3Texture&)_currentFont->getTexture();
-        const RGBAColor& color = style.textColor;
-        glm::vec4 colorF = glm::vec4(color.r/255.0f, color.g/255.0f, color.b/255.0f, color.a/255.0f);
-
-        const char* curtext = text;
-        const size_t kDrawLimit = 65536;
-        //int32_t ox = x;
-        do
-        {
-            int c = (unsigned char)*curtext;
-            if (c == '\t')
-            {
-            //    for (int i = 0; i < 4; ++i)
-            //    {
-            //        if (x < g_tabStops[i]+ox)
-            //        {
-            //            x = g_tabStops[i]+ox;
-            //            break;
-            //        }
-            //    }
-            }
-            else
-            {
-                if (batch->full())
-                {
-                    flushBatch();
-                }
-                if (!c)
-        /* BREAK */ break;
-
-                const stbtt_bakedchar& bakedChar = _currentFont->getChar(c);
-                /* @todo Insert our uvs from a GLFont instead of using stbtt_bakedchar */
-                batch->pushUV(bakedChar.x0/(float)texture.width(), bakedChar.y1/(float)texture.height());
-                batch->pushUV(bakedChar.x0/(float)texture.width(), bakedChar.y0/(float)texture.height());
-                batch->pushUV(bakedChar.x1/(float)texture.width(), bakedChar.y1/(float)texture.height());
-                batch->pushUV(bakedChar.x1/(float)texture.width(), bakedChar.y1/(float)texture.height());
-                batch->pushUV(bakedChar.x0/(float)texture.width(), bakedChar.y0/(float)texture.height());
-                batch->pushUV(bakedChar.x1/(float)texture.width(), bakedChar.y0/(float)texture.height());
-                batch->pushPos((float)(x+bakedChar.xoff), (float)(y+bakedChar.yoff+bakedChar.y1-bakedChar.y0));
-                batch->pushPos((float)(x+bakedChar.xoff), (float)(y+bakedChar.yoff));
-                batch->pushPos((float)(x+bakedChar.xoff+bakedChar.x1-bakedChar.x0),
-                                        (float)(y+bakedChar.yoff+bakedChar.y1-bakedChar.y0));
-                batch->pushPos((float)(x+bakedChar.xoff+bakedChar.x1-bakedChar.x0),
-                                        (float)(y+bakedChar.yoff+bakedChar.y1-bakedChar.y0));
-                batch->pushPos((float)(x+bakedChar.xoff), (float)(y+bakedChar.yoff));
-                batch->pushPos((float)(x+bakedChar.xoff+bakedChar.x1-bakedChar.x0),
-                                        (float)(y+bakedChar.yoff));
-                batch->pushColor(colorF);
-                batch->pushColor(colorF);
-                batch->pushColor(colorF);
-                batch->pushColor(colorF);
-                batch->pushColor(colorF);
-                batch->pushColor(colorF);
-                x += bakedChar.xadvance;
-            }
-            ++curtext;
-        }
-        while ((curtext - text) < kDrawLimit);
+        batch.pushUV(source.left*tWscale, source.bottom*tHscale);
+        batch.pushUV(source.left*tWscale, source.top*tHscale);
+        batch.pushUV(source.right*tWscale, source.top*tHscale);
+        batch.pushUV(source.right*tWscale, source.top*tHscale);
+        batch.pushUV(source.right*tWscale, source.bottom*tHscale);
+        batch.pushUV(source.left*tWscale, source.bottom*tHscale);
         
-        if (batch->full())
-        {
-            flushBatch();
-        }
-    }
+        batch.pushPos((float)dest.left, (float)dest.bottom);
+        batch.pushPos((float)dest.left, (float)dest.top);
+        batch.pushPos((float)dest.right, (float)dest.top);
+        batch.pushPos((float)dest.right, (float)dest.top);
+        batch.pushPos((float)dest.right, (float)dest.bottom);
+        batch.pushPos((float)dest.left, (float)dest.bottom);
 
-    void GL3Renderer::setBitmapAtlas(cinek_bitmap_atlas atlas)
-    {
-        _currentAtlasId = atlas;
-    }
-
-    void GL3Renderer::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
-                                          int32_t x, int32_t y, float alpha)
-    {
-        GLVertexBatch* batch = obtainBatch(BatchState::makeBitmap(_currentAtlasId));
-        if (!batch || !_currentAtlas)
-            return;
-
-        /** 
-         * @todo Have a GLBitmapInfo that contains normalized UVs.
-         */
-        const glx::BitmapInfo* bitmapInfo = _currentAtlas->getBitmapFromIndex(bitmapIndex);
-        if (!bitmapInfo)
-        {
-            RENDER_LOG_WARN("GL3Renderer.drawBitmapFromAtlas - bitmap %d not found in current atlas", bitmapIndex);
-            return;
-        }
-        //  suboptimal - see todo.
-        const GL3Texture& texture = static_cast<const GL3Texture&>(_currentAtlas->getTexture());
+        const glm::vec4 colorF = glm::vec4(color.r/255.0f,
+                                           color.g/255.0f,
+                                           color.b/255.0f,
+                                           color.a/255.0f);
+        batch.pushColor(colorF);
+        batch.pushColor(colorF);
+        batch.pushColor(colorF);
+        batch.pushColor(colorF);
+        batch.pushColor(colorF);
+        batch.pushColor(colorF);
         
-        batch->pushUV(bitmapInfo->x/(float)texture.width(), (bitmapInfo->y+bitmapInfo->h)/(float)texture.height());
-        batch->pushUV(bitmapInfo->x/(float)texture.width(), bitmapInfo->y/(float)texture.height());
-        batch->pushUV((bitmapInfo->x+bitmapInfo->w)/(float)texture.width(), bitmapInfo->y/(float)texture.height());
-        batch->pushUV((bitmapInfo->x+bitmapInfo->w)/(float)texture.width(), bitmapInfo->y/(float)texture.height());
-        batch->pushUV((bitmapInfo->x+bitmapInfo->w)/(float)texture.width(), (bitmapInfo->y+bitmapInfo->h)/(float)texture.height());
-        batch->pushUV(bitmapInfo->x/(float)texture.width(), (bitmapInfo->y+bitmapInfo->h)/(float)texture.height());
-        
-        batch->pushPos((float)(x + bitmapInfo->offX), (float)(y - bitmapInfo->srcH + bitmapInfo->offY + bitmapInfo->h));
-        batch->pushPos((float)(x + bitmapInfo->offX), (float)(y - bitmapInfo->srcH + bitmapInfo->offY));
-        batch->pushPos((float)(x + bitmapInfo->offX + bitmapInfo->w), (float)(y - bitmapInfo->srcH + bitmapInfo->offY));
-        batch->pushPos((float)(x + bitmapInfo->offX + bitmapInfo->w), (float)(y - bitmapInfo->srcH + bitmapInfo->offY));
-        batch->pushPos((float)(x + bitmapInfo->offX + bitmapInfo->w), (float)(y - bitmapInfo->srcH + bitmapInfo->offY + bitmapInfo->h));
-        batch->pushPos((float)(x + bitmapInfo->offX), (float)(y - bitmapInfo->srcH + bitmapInfo->offY + bitmapInfo->h));
-        
-        const glm::vec4 color = glm::vec4(1.0f,1.0f,1.0f,alpha);
-        batch->pushColor(color);
-        batch->pushColor(color);
-        batch->pushColor(color);
-        batch->pushColor(color);
-        batch->pushColor(color);
-        batch->pushColor(color);
-        
-        if (batch->full())
+        if (batch.full())
         {
             flushBatch();
         }
     }
     
-    
-    GLVertexBatch* GL3Renderer::obtainBatch(const BatchState& state)
+    GLVertexBatch& GL3Renderer::obtainBatch(const BatchState& state)
     {
         //  determine if we need to render the current batch, i.e. any changes in state
-        if (state == _batchState)
+        GLVertexBatch& batch = _batch[_batchIndex % _batch.capacity()];
+        if (state == _batchState && !batch.full())
         {
-            if (_batchState.mode == BatchState::kText && !_textBatch.full())
-                return &_textBatch;
-            else if (_batchState.mode == BatchState::kBitmap && !_bitmapBatch.full())
-                return &_bitmapBatch;
+            return batch; 
         }
         
-        flushBatch();
+        GLVertexBatch& nextbatch = flushBatch();
         
         _batchState = state;
-        
-        GLVertexBatch* batch = nullptr;
-
-        switch( _batchState.mode )
-        {
-            case BatchState::kText:
-                _currentFont = getFontLibrary().getFont(_batchState.fontHandle);
-                if (_currentFont)
-                {
-                    batch = &_textBatch;
-                }
-                break;
-            case BatchState::kBitmap:
-                _currentAtlas = getBitmapLibrary().getAtlas(_batchState.atlasId);
-                if (_currentAtlas)
-                {
-                    batch = &_bitmapBatch;
-                }
-                break;
-            default:
-                break;
-        };
-        
-        if (!batch)
-        {
-            RENDER_LOG_WARN("GL3Renderer.setBatch - error setting batch state (%d)", _batchState.mode);
-        }
-        
-        return batch;
+        return nextbatch;
     }
     
-    void GL3Renderer::flushBatch()
+    GLVertexBatch& GL3Renderer::flushBatch()
     {
-        GLVertexBatch* batch = nullptr;
-        const GL3Texture* texture = nullptr;
+        GLVertexBatch& batch = _batch[_batchIndex % _batch.capacity()];
+        GLuint texture = _batchState.textureId;
         GLuint program = 0;
 
-        switch (_batchState.mode)
+        //  select program based on texture format
+        switch (_batchState.textureSamplerFormat)
         {
-            case BatchState::kBitmap:
-                if (_currentAtlas)
-                {
-                    texture = (const GL3Texture *)&_currentAtlas->getTexture();
-                }
+            case GL3Texture::kFormatRGBA:
                 program = _standardShader;
-                batch = &_bitmapBatch;
                 break;
-            case BatchState::kText:
-                if (_currentFont)
-                {
-                    texture = (const GL3Texture *)&_currentFont->getTexture();
-                }
+            case GL3Texture::kFormatRed:
                 program = _textShader;
-                batch = &_textBatch;
                 break;
             default:
-                return;
-        };
+                break;
+        }
         
         if (texture)
         {
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+            glBindTexture(GL_TEXTURE_2D, texture);
         }
+        if (program)
+        {
+            glUseProgram(program);
        
-        glUseProgram(program);
-        
-        GLint projectionMatUniform = glGetUniformLocation(program, kGL_ShaderUniformProjectionMat);
-        if (projectionMatUniform < 0)
-        {
-            // required
-            RENDER_LOG_WARN("GL3Renderer.flushBatch - selected shader does not have a uniform: %s",
-                            kGL_ShaderUniformProjectionMat);
-        }
-        GLint texSamplerUniform = glGetUniformLocation(program, kGL_ShaderUniformTextureSampler0);
-        if (texSamplerUniform < 0)
-        {
-            RENDER_LOG_WARN("GL3Renderer.flushBatch - selected shader does not have a uniform: %s",
-                            kGL_ShaderUniformTextureSampler0);
+            GLint projectionMatUniform = glGetUniformLocation(program, kGL_ShaderUniformProjectionMat);
+            if (projectionMatUniform < 0)
+            {
+                // required
+                RENDER_LOG_WARN("GL3Renderer.flushBatch - selected shader does not have a uniform: %s",
+                                kGL_ShaderUniformProjectionMat);
+            }
+            GLint texSamplerUniform = glGetUniformLocation(program, kGL_ShaderUniformTextureSampler0);
+            if (texSamplerUniform < 0)
+            {
+                RENDER_LOG_WARN("GL3Renderer.flushBatch - selected shader does not have a uniform: %s",
+                                kGL_ShaderUniformTextureSampler0);
+            }
+            
+            glUniformMatrix4fv(projectionMatUniform, 1, GL_FALSE, glm::value_ptr(_projectionMat));
+            glUniform1i(texSamplerUniform, 0);
         }
             
-        glUniformMatrix4fv(projectionMatUniform, 1, GL_FALSE, glm::value_ptr(_projectionMat));
-        glUniform1i(texSamplerUniform, 0);
-            
-        batch->draw();
+        batch.draw();
+
+        ++_batchIndex;
+        return _batch[_batchIndex % _batch.capacity()];
     }
         
     }   // namespace glx

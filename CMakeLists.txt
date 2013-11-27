@@ -30,7 +30,6 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} 
 add_subdirectory( cinek )
 add_subdirectory( Stream )
 add_subdirectory( Graphics )
-add_subdirectory( UI )
 add_subdirectory( Engine )
 
 #   Build the remaining source in one sweep as an executable - all source from subdirectories is included in the

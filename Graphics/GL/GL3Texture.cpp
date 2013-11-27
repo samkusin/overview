@@ -95,7 +95,8 @@ namespace cinekine {
         _renderer(renderer),
         _texture(0),
         _width(0),
-        _height(0)
+        _height(0),
+        _samplerFormat(kFormatNone)
     {
         SDL_Surface* sdlSurface = IMG_Load(pathname);
         if (!sdlSurface)
@@ -155,6 +156,8 @@ namespace cinekine {
                 glBindTexture(GL_TEXTURE_2D, 0);
                 _width = (uint32_t)width;
                 _height = (uint32_t)height;
+                _samplerFormat = format == kCinekPixelFormat_A8 ? kFormatRed : kFormatRGBA;
+            
                 return _texture;
             }
         }

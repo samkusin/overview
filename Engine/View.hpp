@@ -19,6 +19,8 @@ namespace cinekine {
     }
     namespace glx {
         class Renderer;
+        class FontLibrary;
+        class BitmapLibrary;
     }
 }
 
@@ -26,9 +28,20 @@ namespace cinekine {
     namespace ovengine {
     
     class Theater;
+
+    /**
+     * @struct ViewComponents
+     * @brief  External components used by the View
+     */
+    struct ViewComponents
+    {
+        glx::FontLibrary* fontLibrary;
+        glx::BitmapLibrary* bitmapLibrary;
+    };
     
-    //  The View renders a Viewpoint drives execution of the simulation based on an external application controller
-    //  Currently the Engine only initializes and destroys the Director object
+    //  The View renders a Viewpoint drives execution of the simulation based on 
+    //  an external application controller.  Currently the Engine only initializes
+    //  and destroys the Director object.
     class View
     {
     public:
@@ -45,7 +58,7 @@ namespace cinekine {
     };
     
     //  must be defined by the implementing application.
-    View* CreateView(Theater& theater, glx::Renderer& cli);
+    View* CreateView(Theater& theater, glx::Renderer& cli, const ViewComponents& viewComponents);
     //  must be defined by the implementing application - destroys the View created by
     //  CreateView
     void DestroyView(View* view);

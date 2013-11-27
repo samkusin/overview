@@ -18,8 +18,7 @@ namespace cinekine {
                        SDL_Window* window,
                        const Allocator& allocator) :
         Renderer(initParams, allocator),
-        _renderer(NULL),
-        _currentAtlas()
+        _renderer(NULL)
     {
         _renderer = SDL_CreateRenderer(window, -1,
                                        SDL_RENDERER_ACCELERATED |
@@ -81,135 +80,29 @@ namespace cinekine {
         SDL_RenderClear(_renderer);
     }
 
-    void SDLRenderer::drawRect(const Rect& rect, const Style& style)
+    void SDLRenderer::drawTextureRect(const Texture& texture,
+                                      const Rect& source, const Rect& dest,
+                                      const RGBAColor& color)
     {
-        drawRoundedRect(rect, {0,0,0,0}, style);
-    }
-
-    void SDLRenderer::drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
-                                      const Style& style)
-    {
-        //  fill rect first, then overlay the border
-        SDL_Rect sdlRect;
-        sdlRect.x = rect.left;
-        sdlRect.y = rect.top;
-        sdlRect.w = (rect.right - rect.left)+1;
-        sdlRect.h = (rect.bottom - rect.top)+1;
-        if (style.fillMethod != kFillMethod_NoFill)
-        {
-            SDL_BlendMode blendMode = SDL_BLENDMODE_BLEND;
-            SDL_SetRenderDrawBlendMode(_renderer, blendMode);
-            SDL_SetRenderDrawColor(_renderer,
-                    style.fillColor.r, 
-                    style.fillColor.g,
-                    style.fillColor.b,
-                    style.fillColor.a);
-            SDL_RenderFillRect(_renderer, &sdlRect);
-        }
-        if (style.lineMethod != kLineMethod_NoLine)
-        {
-            SDL_BlendMode blendMode = SDL_BLENDMODE_BLEND;
-            SDL_SetRenderDrawBlendMode(_renderer, blendMode);
-            SDL_SetRenderDrawColor(_renderer,
-                style.lineColor.r, 
-                style.lineColor.g,
-                style.lineColor.b,
-                style.lineColor.a);
-            SDL_RenderDrawRect(_renderer, &sdlRect); 
-        }
-    }
-
-    void SDLRenderer::drawText(const char* text, int32_t x, int32_t y,
-                               const Style& style)
-    {
-        const Font* font = getFontLibrary().getFont(style.textFont);
-        if (!font)
-            return;
-
-        SDL_Renderer* sdlRenderer = _renderer;
-
-        const SDLTexture& texture = static_cast<const SDLTexture&>(font->getTexture());
-        SDL_Texture* sdlTexture = texture.getSDLTexture();
-        SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
-        const RGBAColor& color = style.textColor;
-        SDL_SetTextureColorMod(sdlTexture, color.r, color.g, color.b);
-        SDL_SetTextureAlphaMod(sdlTexture, color.a);
-    
-        //const int32_t kOX = x;      // used for tab stops
-        const char* curtext = text;
-        
-        while (*curtext)
-        {
-            int c = (unsigned char)*curtext;
-            if (c == '\t')
-            {
-            /*
-                for (int i = 0; i < 4; ++i)
-                {
-                    if (x < g_tabStops[i]+ox)
-                    {
-                        x = g_tabStops[i]+ox;
-                        break;
-                    }
-                }
-            */
-            }
-            else
-            {
-                const stbtt_bakedchar& bakedChar = font->getChar(c);
-                SDL_Rect src;
-                SDL_Rect dest;
-                
-                src.x = bakedChar.x0;
-                src.y = bakedChar.y0;
-                src.w = bakedChar.x1 - bakedChar.x0;
-                src.h = bakedChar.y1 - bakedChar.y0;
-                dest.x = x + bakedChar.xoff;
-                dest.y = y + bakedChar.yoff;
-                dest.w = src.w;
-                dest.h = src.h;
-                
-                SDL_RenderCopy(sdlRenderer, sdlTexture, &src, &dest);
-                x += bakedChar.xadvance;
-            }
-            ++curtext;
-        }
-    }
-
-    void SDLRenderer::setBitmapAtlas(cinek_bitmap_atlas atlas)
-    {
-        _currentAtlas = getBitmapLibrary().getAtlas(atlas);
-    }
-
-    void SDLRenderer::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
-                                          int32_t x, int32_t y, float alpha)
-    {
-        if (!_currentAtlas)
-            return;
-
-        const BitmapAtlas& atlas = *_currentAtlas.get();
-        
-        const SDLTexture& texture = (SDLTexture&)atlas.getTexture();
-        SDL_Texture* sdlTexture = texture.getSDLTexture();
-        const glx::BitmapInfo* bitmapInfo = atlas.getBitmapFromIndex(bitmapIndex);
-        if (bitmapInfo)
+        SDL_Texture* sdlTexture = ((const SDLTexture& )texture).getSDLTexture();
+        if (sdlTexture)
         {
             SDL_Rect srcRect;
             SDL_Rect destRect;
-            srcRect.x = bitmapInfo->x;
-            srcRect.y = bitmapInfo->y;
-            srcRect.w = bitmapInfo->w;
-            srcRect.h = bitmapInfo->h;
-            destRect.x = x + bitmapInfo->offX;
-            destRect.y = y - bitmapInfo->srcH + bitmapInfo->offY;
-            destRect.w = bitmapInfo->w;
-            destRect.h = bitmapInfo->h;
+            srcRect.x = source.left;
+            srcRect.y = source.top;
+            srcRect.w = source.width();
+            srcRect.h = source.height();
+            destRect.x = dest.left;
+            destRect.y = dest.top;
+            destRect.w = dest.width();
+            destRect.h = dest.height();
             SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
-            SDL_SetTextureColorMod(sdlTexture, 255, 255, 255);
-            SDL_SetTextureAlphaMod(sdlTexture, (uint8_t)(alpha*255));
+            SDL_SetTextureColorMod(sdlTexture, color.r, color.g, color.b);
+            SDL_SetTextureAlphaMod(sdlTexture, color.a);
             SDL_RenderCopy(_renderer, sdlTexture, &srcRect, &destRect);
-        }
+        }      
     }
-        
+
     }   // namespace glx
 }   // namespace cinekine
