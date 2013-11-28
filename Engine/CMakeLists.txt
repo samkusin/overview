@@ -45,7 +45,33 @@ if( NOT CINEK_CXX_EXCEPTIONS )
      endif( )
 endif( )
 
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.."
+set( CINEK_OVENGINE_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." )
+
+# Component options
+#
+option( CINEK_OVENGINE_ROCKET_UI "Use the ckRocket (libRocket) UI library" ON )
+
+# Define settings based on supplied options
+#
+if( CINEK_OVENGINE_ROCKET_UI )
+    include_directories( "${CINEK_OVENGINE_ROOT_DIR}/Rocket/Include" )
+    set( ROCKET_UI_COMPONENT_SOURCES
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.cpp )
+    set( ROCKET_UI_COMPONENT_INCLUDES
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.hpp )
+    source_group( Component\\Rocket FILES ${ROCKET_UI_COMPONENT_SOURCES} ${ROCKET_UI_COMPONENT_INCLUDES} )
+else( )
+    set( ROCKET_UI_COMPONENT_SOURCES )
+    set( ROCKET_UI_COMPONENT_INCLUDES )
+endif( )
+
+set( COMPONENT_SOURCES
+     ${ROCKET_UI_COMPONENT_SOURCES} )
+set( COMPONENT_INCLUDES
+     ${ROCKET_UI_COMPONENT_INCLUDES} )
+
+# setup build
+include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
                      "${CINEK_SDK_ROOT_DIR}"
                      "${CINEK_EXT_PACKAGE_DIR}/include" )
 
@@ -55,13 +81,15 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.."
 # Main
 #
 set( PROJECT_SOURCES
+     ${COMPONENT_SOURCES}
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
      #${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
-set( PROJECT_INCLUDES 
+set( PROJECT_INCLUDES
+     ${COMPONENT_INCLUDES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp

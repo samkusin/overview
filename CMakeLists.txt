@@ -34,7 +34,6 @@ add_subdirectory( cinek )
 add_subdirectory( Stream )
 add_subdirectory( Graphics )
 add_subdirectory( Engine )
-add_subdirectory( Rocket )
 
 #   Build the remaining source in one sweep as an executable - all source from 
 #   subdirectories is included in the final project.
