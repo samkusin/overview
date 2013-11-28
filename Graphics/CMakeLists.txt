@@ -23,9 +23,26 @@ option( CINEK_CXX_EXCEPTIONS
 )
 
 # Setup compile options
-set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
+#
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+  set( CINEK_CXX_COMPILER_CLANG TRUE )
+elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
+  set( CINEK_CXX_COMPILER_GNU TRUE )
+elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+  set( CINEK_CXX_COMPILER_MSVC TRUE )
+endif( )
+
+if( CINEK_CXX_COMPILER_CLANG )
+     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
+else( )
+     message( FATAL "Compiler not supported" )
+endif( )
 if( NOT CINEK_CXX_EXCEPTIONS )
-    set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
+     if( CINEK_CXX_COMPILER_CLANG OR CINEK_CXX_COMPILER_GNU )
+          set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
+     else( )
+          message( FATAL "Compiler not supported" )
+     endif( )
 endif( )
 
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_SDK_ROOT_DIR}" "${CINEK_EXT_PACKAGE_DIR}/include" )

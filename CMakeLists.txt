@@ -23,7 +23,10 @@ set( CINEK_CXX_EXCEPTIONS OFF CACHE BOOL "Disable C++ exception handling where a
 
 set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
 
-#   All subprojects ordered by dependency (i.e. Engine needs UI and cinek, and Prototype needs them all)
+set( CMAKE_PREFIX_PATH "${CINEK_EXT_PACKAGE_DIR}" ${CMAKE_PREFIX_PATH} )
+
+#   All subprojects ordered by dependency (i.e. Engine needs Rocket, Graphics,
+#   Stream and cinek), and Prototype needs them all)
 
 #   Libraries to build
 #
@@ -31,9 +34,10 @@ add_subdirectory( cinek )
 add_subdirectory( Stream )
 add_subdirectory( Graphics )
 add_subdirectory( Engine )
+add_subdirectory( Rocket )
 
-#   Build the remaining source in one sweep as an executable - all source from subdirectories is included in the
-#   final project.
+#   Build the remaining source in one sweep as an executable - all source from 
+#   subdirectories is included in the final project.
 #
 set( PROJECT_INCLUDES )
 set( PROJECT_SOURCES )

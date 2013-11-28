@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		370905851830589800679E4F /* libckStream.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 370905841830589800679E4F /* libckStream.a */; };
 		3725BE801830537400B42E49 /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3725BE7E1830537400B42E49 /* libckOVEngine.a */; };
+		378766701846C47B00FC4B12 /* libRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3787666E1846C47B00FC4B12 /* libRocket.a */; };
+		378766711846C47B00FC4B12 /* libRocketDebugger.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3787666F1846C47B00FC4B12 /* libRocketDebugger.a */; };
 		37C03B5B18305D770056417B /* libckGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C03B5A18305D770056417B /* libckGL.a */; };
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
@@ -43,6 +45,8 @@
 		370905841830589800679E4F /* libckStream.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckStream.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckStream.a"; sourceTree = "<group>"; };
 		3725BE7E1830537400B42E49 /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckOVEngine.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
+		3787666E1846C47B00FC4B12 /* libRocket.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRocket.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libRocket.a"; sourceTree = "<group>"; };
+		3787666F1846C47B00FC4B12 /* libRocketDebugger.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRocketDebugger.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libRocketDebugger.a"; sourceTree = "<group>"; };
 		37C03B5A18305D770056417B /* libckGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckGL.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckGL.a"; sourceTree = "<group>"; };
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
@@ -77,6 +81,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				378766701846C47B00FC4B12 /* libRocket.a in Frameworks */,
+				378766711846C47B00FC4B12 /* libRocketDebugger.a in Frameworks */,
 				37C03B5B18305D770056417B /* libckGL.a in Frameworks */,
 				370905851830589800679E4F /* libckStream.a in Frameworks */,
 				3725BE801830537400B42E49 /* libckOVEngine.a in Frameworks */,
@@ -177,11 +183,13 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				37C03B5A18305D770056417B /* libckGL.a */,
+				37E11EC117B5AC2700665306 /* libck.a */,
 				370905841830589800679E4F /* libckStream.a */,
+				37C03B5A18305D770056417B /* libckGL.a */,
+				3787666E1846C47B00FC4B12 /* libRocket.a */,
+				3787666F1846C47B00FC4B12 /* libRocketDebugger.a */,
 				3725BE7E1830537400B42E49 /* libckOVEngine.a */,
 				37D969F917C85A55001C0B9C /* libiconv.dylib */,
-				37E11EC117B5AC2700665306 /* libck.a */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -383,7 +391,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
-					"\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\"",
+					"\\\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\\\"",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"-lSDL2",
@@ -409,7 +418,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
-					"\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\"",
+					"\\\"$(SRCROOT)/../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug\\\"",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"-lSDL2",

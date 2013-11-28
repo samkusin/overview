@@ -23,12 +23,31 @@ option( CINEK_CXX_EXCEPTIONS
 )
 
 # Setup compile options
-set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
-if( NOT CINEK_CXX_EXCEPTIONS )
-    set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
+#
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+  set( CINEK_CXX_COMPILER_CLANG TRUE )
+elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
+  set( CINEK_CXX_COMPILER_GNU TRUE )
+elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+  set( CINEK_CXX_COMPILER_MSVC TRUE )
 endif( )
 
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.." "${CINEK_SDK_ROOT_DIR}" "${CINEK_EXT_PACKAGE_DIR}/include" )
+if( CINEK_CXX_COMPILER_CLANG )
+     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
+else( )
+     message( FATAL "Compiler not supported" )
+endif( )
+if( NOT CINEK_CXX_EXCEPTIONS )
+     if( CINEK_CXX_COMPILER_CLANG OR CINEK_CXX_COMPILER_GNU )
+          set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
+     else( )
+          message( FATAL "Compiler not supported" )
+     endif( )
+endif( )
+
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/.."
+                     "${CINEK_SDK_ROOT_DIR}"
+                     "${CINEK_EXT_PACKAGE_DIR}/include" )
 
 # Build Library
 # Define project sources and includes for the parent (if any at this level)
@@ -39,7 +58,7 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
+     #${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES 
