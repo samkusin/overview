@@ -13,6 +13,7 @@
 
 #include "cinek/cpp/ckmemorypool.hpp"
 #include "cinek/cpp/ckstring.hpp"
+#include "cinek/cpp/ckvector.hpp"
 #include "cinek/rendermodel/types.h"
 
 #include <vector>
@@ -67,7 +68,7 @@ namespace cinekine {
         string _name;
         unique_ptr<Texture> _texture;
         ObjectPool<BitmapInfo> _bitmapPool;
-        std::vector<BitmapInfo*, std_allocator<BitmapInfo*>> _bitmaps;
+        vector<BitmapInfo*> _bitmaps;
     };
     
     //  used for shared_ptr custom allocation

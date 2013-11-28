@@ -88,7 +88,7 @@ namespace cinekine {
         GLuint _textShader;
 
         // Vertex batches used for batched rendering
-        std::vector<GLVertexBatch, std_allocator<GLVertexBatch>> _batch;
+        vector<GLVertexBatch> _batch;
         uint32_t _batchIndex;
         
         struct BatchState

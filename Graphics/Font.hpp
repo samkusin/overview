@@ -13,8 +13,7 @@
 #include "External/stb/stb_truetype.h"
 
 #include "cinek/cpp/ckalloc.hpp"
-
-#include <vector>
+#include "cinek/cpp/ckvector.hpp" 
 
 namespace cinekine {
     namespace glx {
@@ -25,7 +24,7 @@ namespace cinekine {
         Font& operator=(const Font&) = delete;
 
     public:
-        typedef std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>> BakedChars;
+        typedef vector<stbtt_bakedchar> BakedChars;
         Font(unique_ptr<Texture>& texture,
              BakedChars&& bakedChars,
              int32_t height,
@@ -56,7 +55,7 @@ namespace cinekine {
 
     private:
         unique_ptr<Texture> _texture;
-        std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>> _bakedChars;
+        vector<stbtt_bakedchar> _bakedChars;
         int32_t _minChar, _undefinedChar;
         int32_t _height;
     };

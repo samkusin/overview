@@ -42,7 +42,7 @@ namespace cinekine {
 
     private:
         Renderer& _renderer;
-        std::vector<Font, std_allocator<Font>> _fonts;
+        vector<Font> _fonts;
     };
     
     }   // namespace glx

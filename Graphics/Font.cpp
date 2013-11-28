@@ -12,7 +12,7 @@ namespace cinekine {
     namespace glx {
     
 Font::Font(unique_ptr<Texture>& texture,
-           std::vector<stbtt_bakedchar, std_allocator<stbtt_bakedchar>>&& bakedChars,
+           vector<stbtt_bakedchar>&& bakedChars,
            int32_t height,
            int32_t minCharCode, int32_t undefinedCharCode) :
     _texture(std::move(texture)),

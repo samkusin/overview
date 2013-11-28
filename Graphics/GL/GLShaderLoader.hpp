@@ -34,8 +34,7 @@
 #include "GLUtils.hpp"
 
 #include "cinek/cpp/ckstring.hpp"
-
-#include <vector>
+#include "cinek/cpp/ckvector.hpp" 
 
 namespace cinekine {
     namespace glx {
@@ -59,7 +58,7 @@ namespace cinekine {
         GLuint load(const char* pathname, GLenum type);
 
     private:
-        std::vector<char, std_allocator<char>> _log;
+        vector<char> _log;
     };
 
     }   // namespace glx

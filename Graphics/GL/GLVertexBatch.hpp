@@ -33,8 +33,8 @@
 
 #include "GLUtils.hpp"
 #include "cinek/cpp/ckalloc.hpp"
-#include <vector>
-
+#include "cinek/cpp/ckvector.hpp"
+ 
 namespace cinekine {
     namespace glx {
     
@@ -72,9 +72,9 @@ namespace cinekine {
         GLuint _vboColor;
         size_t _primCount;
 
-        std::vector<glm::vec2, std_allocator<glm::vec2>> _pos;
-        std::vector<glm::vec2, std_allocator<glm::vec2>> _uv;
-        std::vector<glm::vec4, std_allocator<glm::vec4>> _color;
+        vector<glm::vec2> _pos;
+        vector<glm::vec2> _uv;
+        vector<glm::vec4> _color;
     };
 
     }   // namespace glx
