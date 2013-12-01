@@ -42,7 +42,11 @@ namespace cinekine {
         Renderer(const RendererInitParameters& initParams,
                  const Allocator& allocator);
         virtual ~Renderer() = default;
-        
+       
+        /**
+         * Used to verify that the renderer initialized
+         * @return True if the renderer initialized, or False on error
+         */
         virtual operator bool() const = 0;
         
         ///////////////////////////////////////////////////////////////////////

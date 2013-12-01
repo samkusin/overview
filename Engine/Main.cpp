@@ -17,11 +17,7 @@
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
-#include "Component/Rocket/RocketFileInterface.hpp"
-#include "Component/Rocket/RocketSystemInterface.hpp"
-#include "Component/Rocket/RocketRenderInterface.hpp"
-#include "Rocket/Core.h"
-#include "Rocket/Core/Input.h"
+#include "Component/Rocket/RocketUI.hpp"
 
 #include "Theater.hpp"
 #include "SpriteDatabaseLoader.hpp"
@@ -131,20 +127,16 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     //  startup the UI system
     //  
     //  Use Rocket (aka libRocket)
-    bool uiSystemInitialized = false;
+    ovengine::RocketUI ui(renderer, allocator);
 
-    ovengine::RocketSystemInterface rocketSystem;
-    ovengine::RocketFileInterface rocketFile("");
-    ovengine::RocketRenderInterface rocketRenderer(renderer);
-    
-    Rocket::Core::SetFileInterface(&rocketFile);
-    Rocket::Core::SetRenderInterface(&rocketRenderer);
-    Rocket::Core::SetSystemInterface(&rocketSystem);
-
-    uiSystemInitialized = Rocket::Core::Initialise();
-    
-    if (uiSystemInitialized)
+    // Demo Code
+    if (ui)
     {
+        if (!ui.loadInterface("static/ui/demo.rml"))
+        {
+            OVENGINE_LOG_ERROR("Failed to load UI document");           
+        }
+    
         //  startup the simulation specific Director.
         ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
         //  main loop
@@ -153,12 +145,14 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         {
             cinek_time currentTime = cinek_timer_get_time(systemTimer);
 
-            rocketSystem.setCurrentTime(currentTime / 1000.0f);
+            ui.update(currentTime);
 
             //  event dispatch
             SDL_Event e;
-            if (SDL_PollEvent(&e)) {
-                if (e.type == SDL_QUIT) {
+            if (SDL_PollEvent(&e)) 
+            {
+                if (e.type == SDL_QUIT)
+                {
                     active = false;
                     continue;
                 }
@@ -170,10 +164,11 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
             ///////////////////////////////////////////////////////////////////
             renderer.begin();
-            renderer.clear(glx::RGBAColor(0,0,0,255));
-            
+        
+            renderer.clear(glx::RGBAColor(0,0,0,255));    
             view->render();
-            
+            ui.render();
+
             renderer.display();
 
             //  update timers for the next frame's time values
@@ -182,8 +177,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         
         ovengine::DestroyDirector(director);
         director = nullptr;
-
-        Rocket::Core::Shutdown();
     }
     else
     {

@@ -47,6 +47,8 @@ namespace cinekine {
         RocketRenderInterface(glx::Renderer& renderer);
         virtual ~RocketRenderInterface();
 
+        glx::Rect getViewport() const;
+
         /// Called by Rocket when it wants to compile geometry it believes will be static for the forseeable future.
         /// If supported, this should be return a pointer to an optimised, application-specific version of the data. If
         /// not, do not override the function or return NULL; the simpler RenderGeometry() will be called instead.

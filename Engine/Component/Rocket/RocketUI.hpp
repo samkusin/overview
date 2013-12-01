@@ -20,59 +20,39 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
- * 
- * @file    GL/GL3Mesh.hpp
- * @author  Samir Sinha
- * @date    11/29/2013
- * @brief   GL3 specific mesh objects (VBO GL 3.2 based)
- * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_GL3_Mesh_hpp
-#define CK_Graphics_GL3_Mesh_hpp
+#ifndef Overview_Components_Rocket_UIComponent_hpp
+#define Overview_Components_Rocket_UIComponent_hpp
 
-#include "Graphics/Mesh.hpp"
-#include "Graphics/Texture.hpp"
-#include "GLUtils.hpp"
-
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/cpp/ckalloc.hpp"
 
 namespace cinekine {
     namespace glx {
-        
-    /**
-     * @class GL3Mesh
-     * @brief GL3 (OpenGL3.x VBO based) specific mesh objects
-     */
-    class GL3Mesh: public Mesh
+        class Renderer;
+    }
+
+    namespace ovengine {
+
+    class RocketUI
     {
     public:
-        GL3Mesh(TexturePtr& texture,
-                Mesh::Type meshType,
-                const cinekine::vector<glm::vec2>& vertsPos,
-                const cinekine::vector<glm::vec2>& vertsUV,
-                const cinekine::vector<glm::vec4>& vertsColor,
-                const cinekine::vector<uint16_t>& indices);
+        RocketUI(glx::Renderer& renderer, Allocator& allocator);
+        ~RocketUI();
 
-        virtual ~GL3Mesh();
-        /** @return Checks whether a Mesh was created successfully */ 
-        virtual operator bool() const {
-            return _indexCount != 0;
-        }
-        void draw() const;
+        operator bool() const;
+
+        void update(cinek_time currentTime);
+        void render();
+
+        bool loadInterface(const char* name);
 
     private:
-        TexturePtr _texture;
-        size_t _indexCount;
-        GLenum _mode;
-        GLuint _vao;
-        GLuint _vboPos;
-        GLuint _vboUV;
-        GLuint _vboColor;
-        GLuint _ibo;
+        class Impl;
+        unique_ptr<Impl> _impl;
     };
-    
-    }   // namespace glx
+
+    }   // namespace ovengine
 }   // namespace cinekine
 
 #endif

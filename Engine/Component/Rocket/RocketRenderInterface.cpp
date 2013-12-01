@@ -43,6 +43,11 @@ RocketRenderInterface::~RocketRenderInterface()
 {
 }
 
+glx::Rect RocketRenderInterface::getViewport() const
+{
+    return _renderer.getViewport();
+}
+
 void RocketRenderInterface::buildArrays(Rocket::Core::Vertex* pvertices, int num_vertices,
                                         int* pindices, int num_indices,
                                         vector<glm::vec2>& pos,

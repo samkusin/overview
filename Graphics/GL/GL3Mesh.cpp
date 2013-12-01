@@ -37,7 +37,7 @@ namespace cinekine {
                 const cinekine::vector<glm::vec4>& vertsColor,
                 const cinekine::vector<uint16_t>& indices) :
         _texture(texture),
-        _vertexCount(0),
+        _indexCount(0),
         _mode(0),
         _vao(0),
         _vboPos(0),
@@ -82,7 +82,7 @@ namespace cinekine {
         
         glBindVertexArray(0);
 
-        _vertexCount = vertsPos.size();
+        _indexCount = indices.size();
     }
 
     GL3Mesh::~GL3Mesh()
@@ -120,7 +120,7 @@ namespace cinekine {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glBindVertexArray(_vao);
-        glDrawElements(_mode, _vertexCount, GL_UNSIGNED_SHORT, NULL);
+        glDrawElements(_mode, _indexCount, GL_UNSIGNED_SHORT, NULL);
         glBindVertexArray(0);
     }
 
