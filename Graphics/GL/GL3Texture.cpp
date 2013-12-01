@@ -32,9 +32,9 @@ namespace cinekine {
         switch (sdlPixelFormat)
         {
         case SDL_PIXELFORMAT_ARGB8888:              // high order alpha, low order blue, 8-bit comp
-            return kCinekPixelFormat_RGBA8888;
+            return kCinekPixelFormat_ARGB8888;
         case SDL_PIXELFORMAT_ARGB1555:              // high order alpha (1-bit), low order blue, 5-bit
-            return kCinekPixelFormat_RGBA5551;
+            return kCinekPixelFormat_ARGB1555;
         default:
             break;
         }
@@ -46,13 +46,19 @@ namespace cinekine {
     {
         switch(ckFormat)
         {
-        case kCinekPixelFormat_RGBA8888:
+        case kCinekPixelFormat_ARGB8888:
             glFormat.internalFormat = GL_RGBA8;
             glFormat.format = GL_BGRA;
             glFormat.type = GL_UNSIGNED_INT_8_8_8_8_REV;
             glFormat.byteAlign = 4;
             break;
-        case kCinekPixelFormat_RGBA4444:
+        case kCinekPixelFormat_ABGR8888:
+            glFormat.internalFormat = GL_RGBA8;
+            glFormat.format = GL_RGBA;
+            glFormat.type = GL_UNSIGNED_BYTE;
+            glFormat.byteAlign = 4;
+            break;
+        case kCinekPixelFormat_ARGB4444:
             glFormat.internalFormat = GL_RGBA4;
             glFormat.format = GL_BGRA;
             glFormat.type = GL_UNSIGNED_SHORT_4_4_4_4_REV;
@@ -64,7 +70,7 @@ namespace cinekine {
             glFormat.type = GL_UNSIGNED_BYTE;
             glFormat.byteAlign = 1;
             break;
-        case kCinekPixelFormat_RGBA5551:
+        case kCinekPixelFormat_ARGB1555:
             glFormat.internalFormat = GL_RGB5_A1;
             glFormat.format = GL_BGRA;
             glFormat.type = GL_UNSIGNED_SHORT_1_5_5_5_REV;
@@ -109,7 +115,7 @@ namespace cinekine {
         SDL_FreeSurface(sdlSurface);
     }
 
-    GL3Texture::GL3Texture(Renderer& renderer, uint16_t w, uint16_t h,
+    GL3Texture::GL3Texture(Renderer& renderer, uint32_t w, uint32_t h,
             cinek_pixel_format format,
             const uint8_t* bytes) :
         _renderer(renderer),

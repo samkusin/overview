@@ -17,7 +17,7 @@
 /** @cond */
 
 #ifndef OVENGINE_LOG_SOURCE
-#define OVENGINE_LOG_SOURCE "render" 
+#define OVENGINE_LOG_SOURCE "ovengine" 
 #endif
 
 #define OVENGINE_LOG_TRACE(...) CK_LOG_TRACE(OVENGINE_LOG_SOURCE, __VA_ARGS__)

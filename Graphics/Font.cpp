@@ -11,11 +11,11 @@
 namespace cinekine {
     namespace glx {
     
-Font::Font(unique_ptr<Texture>& texture,
+Font::Font(TexturePtr& texture,
            vector<stbtt_bakedchar>&& bakedChars,
            int32_t height,
            int32_t minCharCode, int32_t undefinedCharCode) :
-    _texture(std::move(texture)),
+    _texture(texture),
     _bakedChars(std::move(bakedChars)),
     _minChar(minCharCode),
     _undefinedChar(undefinedCharCode),

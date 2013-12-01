@@ -8,6 +8,7 @@
 
 #include "SDLRenderer.hpp"
 #include "SDLTexture.hpp"
+#include "SDLMesh.hpp"
 
 #include "SDL2/SDL_rect.h"
 
@@ -30,20 +31,34 @@ namespace cinekine {
         SDL_DestroyRenderer(_renderer);
     }
 
-    unique_ptr<Texture> SDLRenderer::loadTexture(const char* pathname)
+    TexturePtr SDLRenderer::loadTexture(const char* pathname)
     {
-        // TODO - perhaps we need a make_unique_ptr (C++11 version) to confirm that the allocator
-        //  creating the item is also used to delete the item.
-        unique_ptr<Texture> texture(getAllocator().newItem<SDLTexture>(*this, pathname), getAllocator());
-        return std::move(texture);
+        Allocator& allocator = getAllocator();
+        return std::allocate_shared<SDLTexture,
+                                    std_allocator<SDLTexture>,
+                                    SDLRenderer&,
+                                    const char*>
+            (
+                std_allocator<SDLTexture>(allocator), *this, std::move(pathname)
+            );
     }
 
-    unique_ptr<Texture> SDLRenderer::createTextureFromBuffer(uint16_t w, uint16_t h,
-            cinek_pixel_format format,
-            const uint8_t* bytes)
+    TexturePtr SDLRenderer::createTextureFromBuffer(uint32_t w, uint32_t h,
+                                                    cinek_pixel_format format,
+                                                    const uint8_t* bytes)
     {
-        unique_ptr<Texture> texture(getAllocator().newItem<SDLTexture>(*this, w, h, format, bytes), getAllocator());
-        return std::move(texture);
+        Allocator& allocator = getAllocator();
+        return std::allocate_shared<SDLTexture,
+                                    std_allocator<SDLTexture>,
+                                    SDLRenderer&,
+                                    uint32_t, uint32_t,
+                                    cinek_pixel_format,
+                                    const uint8_t*>
+            (
+                std_allocator<SDLTexture>(allocator), *this,
+                                          std::move(w), std::move(h),
+                                          std::move(format), std::move(bytes)
+            );
     }
     
     void SDLRenderer::begin()
@@ -74,6 +89,26 @@ namespace cinekine {
         SDL_RenderSetViewport(_renderer, &viewportRect);
     }
 
+    void SDLRenderer::enableScissor()
+    {
+        //  handled by setScissorRect
+    }
+
+    void SDLRenderer::disableScissor()
+    {
+        SDL_RenderSetClipRect(_renderer, NULL);
+    }
+
+    void SDLRenderer::setScissor(const Rect& rect)
+    {
+        SDL_Rect sdlRect;
+        sdlRect.x = rect.left;
+        sdlRect.y = rect.top;
+        sdlRect.w = rect.width();
+        sdlRect.h = rect.height();
+        SDL_RenderSetClipRect(_renderer, &sdlRect);
+    }
+
     void SDLRenderer::clear(const RGBAColor& color)
     {
         SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
@@ -102,6 +137,41 @@ namespace cinekine {
             SDL_SetTextureAlphaMod(sdlTexture, color.a);
             SDL_RenderCopy(_renderer, sdlTexture, &srcRect, &destRect);
         }      
+    }
+
+
+    void SDLRenderer::drawMeshVertices(const Texture& texture, Mesh::Type meshType,
+                                       const cinekine::vector<glm::vec2>& vertsPos,
+                                       const cinekine::vector<glm::vec2>& vertsUV,
+                                       const cinekine::vector<glm::vec4>& vertsColor,
+                                       const cinekine::vector<ushort>& indices)
+    {
+        /**
+         * @todo SDL's accelerated renderer does not offer a uniform way to render
+         * a 2D mesh.  We must fall back to the underlying renderer.
+         *
+         * Windows and Linux support OpenGL 2.1 so that will likely be the reference
+         * renderer.
+         */
+    }
+
+    MeshPtr SDLRenderer::createMesh(TexturePtr& texture,
+                                    Mesh::Type meshType,
+                                    const cinekine::vector<glm::vec2>& vertsPos,
+                                    const cinekine::vector<glm::vec2>& vertsUV,
+                                    const cinekine::vector<glm::vec4>& vertsColor,
+                                    const cinekine::vector<ushort>& indices)
+    {
+        Allocator& allocator = getAllocator();
+        return std::allocate_shared<SDLMesh,
+                                    std_allocator<SDLMesh>>(std_allocator<SDLMesh>(allocator));
+    }
+
+    void SDLRenderer::drawMesh(const Mesh& mesh, const glm::vec2& position)
+    {
+        /**
+         * @todo See drawMeshVertices
+         */
     }
 
     }   // namespace glx

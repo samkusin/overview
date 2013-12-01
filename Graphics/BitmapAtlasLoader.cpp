@@ -53,15 +53,15 @@ namespace cinekine {
             }
             else if (!strcmp(format, "RGBA8888"))
             {
-                pixelFormat = kCinekPixelFormat_RGBA8888;
+                pixelFormat = kCinekPixelFormat_ARGB8888;
             }
             else if (!strcmp(format, "RGBA4444"))
             {
-                pixelFormat = kCinekPixelFormat_RGBA4444;
+                pixelFormat = kCinekPixelFormat_ARGB4444;
             }
             else if (!strcmp(format, "RGBA5551"))
             {
-                pixelFormat = kCinekPixelFormat_RGBA5551;
+                pixelFormat = kCinekPixelFormat_ARGB1555;
             }
             else if (!strcmp(format, "RGB565"))
             {

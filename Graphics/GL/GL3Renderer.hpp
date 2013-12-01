@@ -40,7 +40,9 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
-#include <vector>
+#include "cinek/cpp/ckvector.hpp"
+
+#include <array>
 
 namespace cinekine {
     namespace glx {
@@ -64,21 +66,40 @@ namespace cinekine {
         ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
-        virtual unique_ptr<Texture> loadTexture(const char* pathname);
+        virtual TexturePtr loadTexture(const char* pathname);
 
-        virtual unique_ptr<Texture> createTextureFromBuffer(uint16_t w, uint16_t h,
-            cinek_pixel_format format,
-            const uint8_t* bytes);
+        virtual TexturePtr createTextureFromBuffer(uint32_t w, uint32_t h,
+                                                   cinek_pixel_format format,
+                                                   const uint8_t* bytes);
 
         virtual void begin();
         virtual void display();
         virtual Rect getViewport() const;
         virtual void setViewport(const Rect& rect);
+        virtual void enableScissor();
+        virtual void disableScissor();
+        virtual void setScissor(const Rect& rect);
         
         virtual void clear(const RGBAColor& color);
         virtual void drawTextureRect(const Texture& texture,
                                      const Rect& source, const Rect& dest,
                                      const RGBAColor& color);
+
+        virtual void drawMeshVertices(const Texture& texture, Mesh::Type meshType,
+                                      const cinekine::vector<glm::vec2>& vertsPos,
+                                      const cinekine::vector<glm::vec2>& vertsUV,
+                                      const cinekine::vector<glm::vec4>& vertsColor,
+                                      const cinekine::vector<GLushort>& indices);
+
+        virtual MeshPtr createMesh(TexturePtr& texture,
+                                   Mesh::Type meshType,
+                                   const cinekine::vector<glm::vec2>& vertsPos,
+                                   const cinekine::vector<glm::vec2>& vertsUV,
+                                   const cinekine::vector<glm::vec4>& vertsColor,
+                                   const cinekine::vector<ushort>& indices);
+
+        virtual void drawMesh(const Mesh& mesh, const glm::vec2& position);
+
 
     private:
         SDL_Window* _window;
@@ -86,8 +107,15 @@ namespace cinekine {
         GLShaderLibrary _shaderLibrary;
         GLuint _standardShader;
         GLuint _textShader;
+        GLuint _currentShader;
+        GLint _projectionMatUniform;
+        GLint _texSamplerUniform;
+        GLint _positionUniform;
 
         // Vertex batches used for batched rendering
+        vector<glm::vec2> _vertsPos;
+        vector<glm::vec2> _vertsUV;
+        vector<glm::vec4> _vertsColor;
         vector<GLVertexBatch> _batch;
         uint32_t _batchIndex;
         
@@ -105,11 +133,14 @@ namespace cinekine {
         };
         BatchState _batchState;
 
+        GLuint _meshVBOs[4];
+
         glm::mat4 _projectionMat;
         
     private:
         GLVertexBatch& obtainBatch(const BatchState& state);
         GLVertexBatch& flushBatch();
+        void selectShader(GLuint shader, const glm::vec2& position);
     };
     
     inline bool GL3Renderer::BatchState::operator==(const GL3Renderer::BatchState& s) const

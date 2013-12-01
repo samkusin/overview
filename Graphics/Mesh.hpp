@@ -21,44 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
  * 
- * @file    Texture.hpp
+ * @file    Mesh.hpp
  * @author  Samir Sinha
- * @date    09/10/2013
- * @brief   A cross-platform Texture interface
+ * @date    11/29/2013
+ * @brief   Abstract inteface for renderer specific mesh objects
  * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_Texture_hpp
-#define CK_Graphics_Texture_hpp
+#ifndef CK_Graphics_Mesh_hpp
+#define CK_Graphics_Mesh_hpp
 
-#include "Graphics/Rect.hpp"
+
 #include "cinek/rendermodel/types.h"
-
 #include <memory>
 
 namespace cinekine {
     namespace glx {
         
     /**
-     * @class Texture
-     * @brief A cross-platform texture resource used by Renderer implementations.
+     * @class Mesh
+     * @brief Abstract interface for renderer specific mesh objects
      */
-    class Texture
+    class Mesh
     {
     public:
-        virtual ~Texture() {}
-        /** @return Checks whether texture exists or was created successfully */ 
+        /** Describes how the mesh is drawn by the renderer. */
+        enum Type
+        {
+            kTriangles              /**< Render as a list of triangles */
+        };
+    public:
+        virtual ~Mesh() {}
+        /** @return Checks whether a Mesh was created successfully */ 
         virtual operator bool() const = 0;
-    
-        /** @return The texture width in pixels */
-        virtual uint32_t width() const = 0;
-        /** @return The texture height in pixels */
-        virtual uint32_t height() const = 0;
     };
 
-    /** A Texture managed pointer */
-    typedef std::shared_ptr<Texture> TexturePtr;
-
+    /** A Mesh managed pointer */
+    typedef std::shared_ptr<Mesh> MeshPtr;
+    
     }   // namespace glx
 }   // namespace cinekine
 

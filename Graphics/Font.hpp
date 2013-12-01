@@ -25,7 +25,7 @@ namespace cinekine {
 
     public:
         typedef vector<stbtt_bakedchar> BakedChars;
-        Font(unique_ptr<Texture>& texture,
+        Font(TexturePtr& texture,
              BakedChars&& bakedChars,
              int32_t height,
              int32_t minCharCode, int32_t undefinedCharCode);
@@ -54,7 +54,7 @@ namespace cinekine {
         }
 
     private:
-        unique_ptr<Texture> _texture;
+        TexturePtr _texture;
         vector<stbtt_bakedchar> _bakedChars;
         int32_t _minChar, _undefinedChar;
         int32_t _height;

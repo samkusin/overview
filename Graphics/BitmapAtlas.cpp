@@ -15,12 +15,12 @@ namespace cinekine {
 
         //  Contains bitmaps mapped by name
         
-    BitmapAtlas::BitmapAtlas(const char* name, unique_ptr<Texture>& texture,
+    BitmapAtlas::BitmapAtlas(const char* name, TexturePtr& texture,
                              size_t bitmapCount,
                              const Allocator& allocator) :
         _allocator(allocator),
         _name(name, string_allocator(_allocator)),
-        _texture(std::move(texture)),
+        _texture(texture),
         _bitmapPool(bitmapCount, _allocator),
         _bitmaps(std_allocator<BitmapInfo*>(_allocator))
     {
@@ -42,14 +42,6 @@ namespace cinekine {
         return *this;
     }
     
-   /* BitmapAtlas::~BitmapAtlas()
-    {
-        if (_texture)
-        {
-            SDL_DestroyTexture(_texture);
-        }
-    }
-    */
     struct BitmapAtlasBitmap_Comparator
     {
         bool operator()(const BitmapInfo* bitmap, const string& name) const

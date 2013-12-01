@@ -43,17 +43,21 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(GLVertexBatch);
         
     public:
-        GLVertexBatch();
+        GLVertexBatch(GLenum mode,
+                      vector<glm::vec2>& pos,
+                      vector<glm::vec2>& uv,
+                      vector<glm::vec4>& color);
         GLVertexBatch(GLVertexBatch&& other);
-        GLVertexBatch(GLenum mode, size_t count, const Allocator& allocator);
         ~GLVertexBatch();
         
-        GLVertexBatch& operator=(GLVertexBatch&& other);
-        
+        void reset();
         void draw();
 
         size_t size() const {
             return _pos.size();
+        }
+        bool empty() const {
+            return _pos.empty();
         }
         bool full() const {
             return _pos.size() == _pos.capacity();
@@ -65,16 +69,16 @@ namespace cinekine {
 
     private:
         void deleteBuffers();
+        void bindVertices();
         GLenum _mode;
         GLuint _vao;
         GLuint _vboPos;
         GLuint _vboUV;
         GLuint _vboColor;
-        size_t _primCount;
 
-        vector<glm::vec2> _pos;
-        vector<glm::vec2> _uv;
-        vector<glm::vec4> _color;
+        vector<glm::vec2>& _pos;
+        vector<glm::vec2>& _uv;
+        vector<glm::vec4>& _color;
     };
 
     }   // namespace glx

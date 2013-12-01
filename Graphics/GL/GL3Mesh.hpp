@@ -21,70 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
  * 
- * @file    GL/GL3Texture.hpp
+ * @file    GL/GL3Mesh.hpp
  * @author  Samir Sinha
- * @date    11/16/2013
- * @brief   A GL3 compatible texture object
+ * @date    11/29/2013
+ * @brief   GL3 specific mesh objects (VBO GL 3.2 based)
  * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_GL_GL3_Texture_hpp
-#define CK_Graphics_GL_GL3_Texture_hpp
+#ifndef CK_Graphics_GL3_Mesh_hpp
+#define CK_Graphics_GL3_Mesh_hpp
 
+#include "Graphics/Mesh.hpp"
 #include "Graphics/Texture.hpp"
 #include "GLUtils.hpp"
 
+#include "cinek/cpp/ckvector.hpp"
+
 namespace cinekine {
     namespace glx {
-    
-    class Renderer;
-    
-    class GL3Texture: public Texture
+        
+    /**
+     * @class GL3Mesh
+     * @brief GL3 (OpenGL3.x VBO based) specific mesh objects
+     */
+    class GL3Mesh: public Mesh
     {
-        CK_CLASS_NON_COPYABLE(GL3Texture);
-
     public:
-        GL3Texture(Renderer& renderer, const char *pathname);
-        GL3Texture(Renderer& renderer, uint32_t w, uint32_t h,
-            cinek_pixel_format format,
-            const uint8_t* bytes);
-        GL3Texture(GL3Texture&& other);
-        virtual ~GL3Texture();
+        GL3Mesh(TexturePtr& texture,
+                Mesh::Type meshType,
+                const cinekine::vector<glm::vec2>& vertsPos,
+                const cinekine::vector<glm::vec2>& vertsUV,
+                const cinekine::vector<glm::vec4>& vertsColor,
+                const cinekine::vector<uint16_t>& indices);
 
+        virtual ~GL3Mesh();
+        /** @return Checks whether a Mesh was created successfully */ 
         virtual operator bool() const {
-            return _texture!=0;
+            return _vertexCount != 0;
         }
-        GLuint textureID() const {
-            return _texture;
-        }
-        virtual uint32_t width() const {
-            return _width;
-        }
-        virtual uint32_t height() const {
-            return _height;
-        }
-
-        //  used for selecting the shader to use for rendering ops
-        enum SamplerFormat
-        {
-            kFormatNone,
-            kFormatRGBA,
-            kFormatRed
-        };
-        SamplerFormat samplerFormat() const {
-            return _samplerFormat;
-        }
+        void draw() const;
 
     private:
-        GLuint createTexture(uint32_t w, uint32_t h,
-                             cinek_pixel_format format,
-                             const uint8_t* bytes);
-        Renderer& _renderer;
-        GLuint _texture;
-        uint32_t _width, _height;
-        SamplerFormat _samplerFormat;
+        TexturePtr _texture;
+        size_t _vertexCount;
+        GLenum _mode;
+        GLuint _vao;
+        GLuint _vboPos;
+        GLuint _vboUV;
+        GLuint _vboColor;
+        GLuint _ibo;
     };
-        
+    
     }   // namespace glx
 }   // namespace cinekine
 

@@ -45,6 +45,8 @@ namespace cinekine {
 
     /** The projection matrix uniform attribute name */
     const char* const kGL_ShaderUniformProjectionMat = "projectionMat";
+    /** The projection matrix uniform attribute name */
+    const char* const kGL_ShaderUniformPosition = "position";
     /** The texture (unit 0) sampler */
     const char* const kGL_ShaderUniformTextureSampler0 = "textureSampler0";
 

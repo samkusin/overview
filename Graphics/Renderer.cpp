@@ -17,10 +17,6 @@ namespace cinekine {
         _allocator(allocator)
     {    
     }
-    
-    Renderer::~Renderer()
-    {
-    }
         
     }   // namespace glx
 }   // namespace cinekine

@@ -26,7 +26,7 @@ namespace cinekine {
 
     public:
         SDLTexture(Renderer& renderer, const char *pathname);
-        SDLTexture(Renderer& renderer, uint16_t w, uint16_t h,
+        SDLTexture(Renderer& renderer, uint32_t w, uint32_t h,
             cinek_pixel_format format,
             const uint8_t* bytes);
         SDLTexture(SDLTexture&& other);
@@ -46,7 +46,7 @@ namespace cinekine {
         virtual uint32_t height() const {
             return _height;
         }
-        
+     
     private:
         Renderer& _renderer;
         SDL_Texture* _texture;

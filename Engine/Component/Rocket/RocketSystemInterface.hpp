@@ -20,46 +20,45 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
- * 
- * @file    Texture.hpp
- * @author  Samir Sinha
- * @date    09/10/2013
- * @brief   A cross-platform Texture interface
- * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_Texture_hpp
-#define CK_Graphics_Texture_hpp
+#ifndef Overview_Components_Rocket_SystemInterface_hpp
+#define Overview_Components_Rocket_SystemInterface_hpp
 
-#include "Graphics/Rect.hpp"
-#include "cinek/rendermodel/types.h"
-
-#include <memory>
+#include "Rocket/Core/SystemInterface.h"
+#include "cinek/core/cktimer.h"
 
 namespace cinekine {
-    namespace glx {
-        
-    /**
-     * @class Texture
-     * @brief A cross-platform texture resource used by Renderer implementations.
-     */
-    class Texture
+    namespace ovengine {
+
+    class RocketSystemInterface : public Rocket::Core::SystemInterface
     {
     public:
-        virtual ~Texture() {}
-        /** @return Checks whether texture exists or was created successfully */ 
-        virtual operator bool() const = 0;
-    
-        /** @return The texture width in pixels */
-        virtual uint32_t width() const = 0;
-        /** @return The texture height in pixels */
-        virtual uint32_t height() const = 0;
+        RocketSystemInterface();
+
+        void setCurrentTime(float seconds) { _currentTime = seconds; }
+   
+        /// Get the number of seconds elapsed since the start of the application.
+        /// @return Elapsed time, in seconds.
+        virtual float GetElapsedTime() { return _currentTime; }
+
+        /// Log the specified message.
+        /// @param[in] type Type of log message, ERROR, WARNING, etc.
+        /// @param[in] message Message to log.
+        /// @return True to continue execution, false to break into the debugger.
+        virtual bool LogMessage(Rocket::Core::Log::Type type, const Rocket::Core::String& message);
+
+        /// Activate keyboard (for touchscreen devices)
+        virtual void ActivateKeyboard();
+        
+        /// Deactivate keyboard (for touchscreen devices)
+        virtual void DeactivateKeyboard();
+
+    private:
+        float _currentTime;
     };
 
-    /** A Texture managed pointer */
-    typedef std::shared_ptr<Texture> TexturePtr;
-
-    }   // namespace glx
+    }   // namespace ovengine
 }   // namespace cinekine
 
 #endif

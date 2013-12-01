@@ -22,15 +22,21 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_RenderInterface_H
-#define Overview_Components_Rocket_RenderInterface_H
+#ifndef Overview_Components_Rocket_RenderInterface_hpp
+#define Overview_Components_Rocket_RenderInterface_hpp
 
 #include "Rocket/Core/RenderInterface.h"
+
+#include "Graphics/GL/GL3Texture.hpp"
+#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/cpp/ckvector.hpp"
+#include <unordered_map>
 
 namespace cinekine {
 
     namespace glx {
         class Renderer;
+        class Mesh;
     }
     
     namespace ovengine {
@@ -40,6 +46,27 @@ namespace cinekine {
     public:
         RocketRenderInterface(glx::Renderer& renderer);
         virtual ~RocketRenderInterface();
+
+        /// Called by Rocket when it wants to compile geometry it believes will be static for the forseeable future.
+        /// If supported, this should be return a pointer to an optimised, application-specific version of the data. If
+        /// not, do not override the function or return NULL; the simpler RenderGeometry() will be called instead.
+        /// @param[in] vertices The geometry's vertex data.
+        /// @param[in] num_vertices The number of vertices passed to the function.
+        /// @param[in] indices The geometry's index data.
+        /// @param[in] num_indices The number of indices passed to the function. This will always be a multiple of three.
+        /// @param[in] texture The texture to be applied to the geometry. This may be NULL, in which case the geometry is untextured.
+        /// @return The application-specific compiled geometry. Compiled geometry will be stored and rendered using RenderCompiledGeometry() in future calls, and released with ReleaseCompiledGeometry() when it is no longer needed.
+        virtual Rocket::Core::CompiledGeometryHandle CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices,
+                                                                     int* indices, int num_indices,
+                                                                     Rocket::Core::TextureHandle texture);
+        /// Called by Rocket when it wants to render application-compiled geometry.
+        /// @param[in] geometry The application-specific compiled geometry to render.
+        /// @param[in] translation The translation to apply to the geometry.
+        virtual void RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry,
+                                            const Rocket::Core::Vector2f& translation);
+        /// Called by Rocket when it wants to release application-compiled geometry.
+        /// @param[in] geometry The application-specific compiled geometry to release.
+        virtual void ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry);
 
         /// Called by Rocket when it wants to render geometry that the application does not wish to optimise. Note that
         /// Rocket renders everything as triangles.
@@ -98,12 +125,24 @@ namespace cinekine {
         /// Returns the number of pixels per inch.
         /// @returns The number of pixels per inch. The default implementation returns 100.
         virtual float GetPixelsPerInch();
-
-        /// Called when this render interface is released.
-        virtual void Release();
         
     private:
         glx::Renderer& _renderer;
+
+        template<class T> using ResourceMap = std::unordered_map<
+                                                    const T*, std::shared_ptr<T>, 
+                                                    std::hash<const T*>,
+                                                    std::equal_to<const T*>,
+                                                    std_allocator< std::pair<const T*, std::shared_ptr<T>> >
+                                                >;
+
+        ResourceMap<glx::Texture> _textures;
+        ResourceMap<glx::Mesh> _meshes;
+
+        void buildArrays(Rocket::Core::Vertex* pvertices, int num_vertices,
+                         int* pindices, int num_indices,
+                         vector<glm::vec2>& pos, vector<glm::vec2>& uvs, vector<glm::vec4>& colors,
+                         vector<uint16_t>& indices);
     };
 
     }   // namespace ovengine

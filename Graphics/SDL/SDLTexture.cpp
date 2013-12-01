@@ -22,13 +22,14 @@ namespace cinekine {
     {
         switch (pixelFormat)
         {
-        case kCinekPixelFormat_RGBA8888:
+        case kCinekPixelFormat_ARGB8888:
+        case kCinekPixelFormat_ABGR8888:
             return SDL_PIXELFORMAT_ARGB8888;
-        case kCinekPixelFormat_RGBA4444:
+        case kCinekPixelFormat_ARGB4444:
             return SDL_PIXELFORMAT_ARGB4444;
         case kCinekPixelFormat_RGB888:
             return SDL_PIXELFORMAT_RGB888;
-        case kCinekPixelFormat_RGBA5551:
+        case kCinekPixelFormat_ARGB1555:
             return SDL_PIXELFORMAT_ARGB1555;
         case kCinekPixelFormat_RGB565:
             return SDL_PIXELFORMAT_RGB565;
@@ -69,6 +70,37 @@ namespace cinekine {
         }
         return true;
     }
+
+    //  convert this alpha-only format to the target SDL pixel format
+    static bool pixelsABGR8888toFormat(uint16_t w, uint16_t h, const uint8_t* in,
+                                       uint8_t* out, size_t outSize, SDL_PixelFormat* outFormat)
+    {
+        //  validate our output buffer is the right size
+        size_t requiredOutSize = outFormat->BytesPerPixel * (w * h);
+        if (requiredOutSize > outSize)
+            return false;
+        
+        const uint8_t* source = in;
+        uint8_t* target = out;
+        for (uint16_t row = 0; row < h; ++row)
+        {
+            for (uint16_t col = 0; col < w; ++col)
+            {
+                //  inefficient, but this method should only be called during texture upload
+                uint32_t dest = SDL_MapRGBA(outFormat, *source, *(source+1), *(source+2), *(source+3));
+                uint8_t ctr = outFormat->BytesPerPixel;
+                while (ctr)
+                {
+                    *target = (uint8_t)dest;
+                    ++target;
+                    --ctr;
+                    dest >>= 8;
+                }
+                source += 4;
+            }
+        }
+        return true;
+    }
       
     SDLTexture::SDLTexture(Renderer& renderer, const char* pathname) :
         _renderer(renderer),
@@ -95,7 +127,7 @@ namespace cinekine {
         }
     }
 
-    SDLTexture::SDLTexture(Renderer& renderer, uint16_t w, uint16_t h,
+    SDLTexture::SDLTexture(Renderer& renderer, uint32_t w, uint32_t h,
             cinek_pixel_format format,
             const uint8_t* bytes) :
         _renderer(renderer),
@@ -113,18 +145,25 @@ namespace cinekine {
             sourcePixelFormat = format;
             sdlPixelFormat = SDL_PIXELFORMAT_ARGB8888;
             break;
+        case kCinekPixelFormat_ABGR8888:
+            sourcePixelFormat = format;
+            sdlPixelFormat = SDL_PIXELFORMAT_ARGB8888;
+            break;
         default:
             sdlPixelFormat = convertToSDLPixelFormat(format);
             break;
         }
-        if (sdlPixelFormat == SDL_PIXELFORMAT_UNKNOWN || sourcePixelFormat == kCinekPixelFormat_Unknown)
+        if (sdlPixelFormat == SDL_PIXELFORMAT_UNKNOWN)
             return;
 
         _texture = SDL_CreateTexture(((SDLRenderer&)_renderer).getSDLRenderer(),
             sdlPixelFormat,
             SDL_TEXTUREACCESS_STATIC,
             w, h);
+
         if (!_texture)
+            return;
+        if (!bytes)
             return;
         
         int updateResult = -1;
@@ -135,21 +174,34 @@ namespace cinekine {
         SDL_PixelFormat* sdlPf = SDL_AllocFormat(sdlPixelFormat);
         if (sdlPf)
         {
-            size_t bufferSize = sdlPf->BytesPerPixel * w * h;
-            void *buffer = renderer.getAllocator().alloc(bufferSize);
-            if (buffer)
+            if (sourcePixelFormat != kCinekPixelFormat_Unknown)
             {
-                bool converted = false;
-                if (sourcePixelFormat == kCinekPixelFormat_A8)
+                size_t bufferSize = sdlPf->BytesPerPixel * w * h;
+                void *buffer = renderer.getAllocator().alloc(bufferSize);
+                if (buffer)
                 {
-                    //  alpha texture
-                    converted = pixelsA8toFormat(w, h, bytes, (uint8_t*)buffer, bufferSize, sdlPf);
+                    bool doUpdate = false;
+                    switch (sourcePixelFormat)
+                    {
+                    case kCinekPixelFormat_A8:
+                        doUpdate = pixelsA8toFormat(w, h, bytes, (uint8_t*)buffer, bufferSize, sdlPf);
+                        break;
+                    case kCinekPixelFormat_ABGR8888:
+                        doUpdate = pixelsABGR8888toFormat(w, h, bytes, (uint8_t*)buffer, bufferSize, sdlPf);
+                        break;
+                    default:
+                        break;
+                    }
+                    if (doUpdate)
+                    {
+                        updateResult = SDL_UpdateTexture(_texture, NULL, buffer, sdlPf->BytesPerPixel * w);
+                    }
+                    renderer.getAllocator().free(buffer);
                 }
-                if (converted)
-                {
-                    updateResult = SDL_UpdateTexture(_texture, NULL, buffer, sdlPf->BytesPerPixel * w);
-                }
-                renderer.getAllocator().free(buffer);
+            }
+            else
+            {
+                updateResult = SDL_UpdateTexture(_texture, NULL, bytes, sdlPf->BytesPerPixel * w);
             }
             SDL_FreeFormat(sdlPf);
         }
@@ -176,6 +228,7 @@ namespace cinekine {
     {
         other._texture = NULL;
     }
-        
+
+
     }   // namespace glx
 }   // namespace cinekine

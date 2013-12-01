@@ -27,25 +27,11 @@
 
 namespace cinekine {
     namespace glx {
-   
-    GLVertexBatch::GLVertexBatch() :
-        _mode(0),
-        _vao(0),
-        _vboPos(0),
-        _vboUV(0),
-        _vboColor(0),
-        _primCount(0),
-        _pos(std_allocator<glm::vec2>()),
-        _uv(std_allocator<glm::vec2>()),
-        _color(std_allocator<glm::vec4>())
-    {
-            
-    }
 
     GLVertexBatch::GLVertexBatch(GLVertexBatch&& other) :
-        _pos(std::move(other._pos)),
-        _uv(std::move(other._uv)),
-        _color(std::move(other._color))
+        _pos(other._pos),
+        _uv(other._uv),
+        _color(other._color)
     {
         deleteBuffers();
         _mode = other._mode;
@@ -53,70 +39,48 @@ namespace cinekine {
         _vboPos = other._vboPos;
         _vboUV = other._vboUV;
         _vboColor = other._vboColor;
-        _primCount = other._primCount;
         other._mode = 0;
         other._vao = 0;
         other._vboPos = 0;
         other._vboUV = 0;
         other._vboColor = 0;
-        other._primCount = 0;
     }
     
-    GLVertexBatch::GLVertexBatch(GLenum mode, size_t count, const Allocator& allocator) :
+    GLVertexBatch::GLVertexBatch(GLenum mode,
+                      vector<glm::vec2>& pos,
+                      vector<glm::vec2>& uv,
+                      vector<glm::vec4>& color) :
         _mode(mode),
         _vao(0),
         _vboPos(0),
         _vboUV(0),
         _vboColor(0),
-        _primCount(count),
-        _pos(std_allocator<glm::vec2>(allocator)),
-        _uv(std_allocator<glm::vec2>(allocator)),
-        _color(std_allocator<glm::vec4>(allocator))
+        _pos(pos),
+        _uv(uv),
+        _color(color)
     {
-        size_t limit = 0;
-        if (mode == GL_TRIANGLES)
-        {
-            limit = _primCount * 3;
-        }
-        else if (mode == GL_POINTS)
-        {
-            limit = _primCount;
-        }
-        else if (mode == GL_LINES)
-        {
-            limit = _primCount * 2;
-        }
-        else if (mode == GL_LINE_STRIP)
-        {
-            limit = _primCount+1;
-        }
-        
-        _pos.reserve(limit);
-        _uv.reserve(limit);
-        _color.reserve(limit);
-        
         glGenVertexArrays(1, &_vao);
-        glBindVertexArray(_vao);
         
         glGenBuffers(1, &_vboPos);
         glGenBuffers(1, &_vboUV);
         glGenBuffers(1, &_vboColor);
         
+        glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vboPos);
         //glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STREAM_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, limit * sizeof(glm::vec2), NULL, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, _pos.capacity() * sizeof(glm::vec2), NULL, GL_STREAM_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrPos);
         glVertexAttribPointer(kGL_ShaderVertexAttrPos, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
         
         glBindBuffer(GL_ARRAY_BUFFER, _vboUV);
         //glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STREAM_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, limit * sizeof(glm::vec2), NULL, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, _uv.capacity() * sizeof(glm::vec2), NULL, GL_STREAM_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrUVs);
         glVertexAttribPointer(kGL_ShaderVertexAttrUVs, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
         glBindBuffer(GL_ARRAY_BUFFER, _vboColor);
         //glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STREAM_DRAW);
-        glBufferData(GL_ARRAY_BUFFER, limit * sizeof(glm::vec4), NULL, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, _color.capacity() * sizeof(glm::vec4), NULL, GL_STREAM_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrColor);
         glVertexAttribPointer(kGL_ShaderVertexAttrColor, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
         
@@ -126,28 +90,6 @@ namespace cinekine {
     GLVertexBatch::~GLVertexBatch()
     {
         deleteBuffers();
-    }
-    
-    GLVertexBatch& GLVertexBatch::operator=(GLVertexBatch&& other)
-    {
-        deleteBuffers();
-        
-        _pos = std::move(other._pos);
-        _uv = std::move(other._uv);
-        _color = std::move(other._color);
-        _mode = other._mode;
-        _vao = other._vao;
-        _vboPos = other._vboPos;
-        _vboUV = other._vboUV;
-        _vboColor = other._vboColor;
-        _primCount = other._primCount;
-        other._vao = 0;
-        other._vboPos = 0;
-        other._vboUV = 0;
-        other._vboColor = 0;
-        other._primCount = 0;
-        
-        return *this;
     }
     
     void GLVertexBatch::deleteBuffers()
@@ -173,6 +115,31 @@ namespace cinekine {
             _vboColor = 0;
         }
     }
+
+    void GLVertexBatch::reset()
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, _vboPos);
+        glBufferData(GL_ARRAY_BUFFER, _pos.capacity() * sizeof(glm::vec2), NULL, GL_STREAM_DRAW);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, _vboUV);
+        glBufferData(GL_ARRAY_BUFFER, _uv.capacity() * sizeof(glm::vec2), NULL, GL_STREAM_DRAW);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, _vboColor);
+        glBufferData(GL_ARRAY_BUFFER, _color.capacity() * sizeof(glm::vec4), NULL, GL_STREAM_DRAW);
+    }
+
+    void GLVertexBatch::bindVertices()
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, _vboPos);
+        //glBufferData(GL_ARRAY_BUFFER, _pos.size() * sizeof(glm::vec2), (GLvoid*)_pos.data(), GL_STREAM_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, _pos.size() * sizeof(glm::vec2), (GLvoid*)_pos.data());
+        glBindBuffer(GL_ARRAY_BUFFER, _vboUV);
+        //glBufferData(GL_ARRAY_BUFFER, _uv.size() * sizeof(glm::vec2), (GLvoid*)_uv.data(), GL_STREAM_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, _uv.size() * sizeof(glm::vec2), (GLvoid*)_uv.data());
+        glBindBuffer(GL_ARRAY_BUFFER, _vboColor);
+        //glBufferData(GL_ARRAY_BUFFER, _color.size() * sizeof(glm::vec4), (GLvoid*)_color.data(), GL_STREAM_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, _color.size() * sizeof(glm::vec4), (GLvoid*)_color.data());
+    }
         
     void GLVertexBatch::draw()
     {
@@ -180,23 +147,12 @@ namespace cinekine {
         {
             glBindVertexArray(_vao);
 
-            glBindBuffer(GL_ARRAY_BUFFER, _vboPos);
-            //glBufferData(GL_ARRAY_BUFFER, _pos.size() * sizeof(glm::vec2), (GLvoid*)_pos.data(), GL_STREAM_DRAW);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, _pos.size() * sizeof(glm::vec2), (GLvoid*)_pos.data());
-            glBindBuffer(GL_ARRAY_BUFFER, _vboUV);
-            //glBufferData(GL_ARRAY_BUFFER, _uv.size() * sizeof(glm::vec2), (GLvoid*)_uv.data(), GL_STREAM_DRAW);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, _uv.size() * sizeof(glm::vec2), (GLvoid*)_uv.data());
-            glBindBuffer(GL_ARRAY_BUFFER, _vboColor);
-            //glBufferData(GL_ARRAY_BUFFER, _color.size() * sizeof(glm::vec4), (GLvoid*)_color.data(), GL_STREAM_DRAW);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, _color.size() * sizeof(glm::vec4), (GLvoid*)_color.data());
+            bindVertices();
             
             glDrawArrays(_mode, 0, _pos.size());
        
             glBindVertexArray(0);
         }
-        _pos.clear();
-        _uv.clear();
-        _color.clear();
     }
 
     void GLVertexBatch::pushPos(float&& x, float&& y)

@@ -56,9 +56,14 @@ option( CINEK_OVENGINE_ROCKET_UI "Use the ckRocket (libRocket) UI library" ON )
 if( CINEK_OVENGINE_ROCKET_UI )
     include_directories( "${CINEK_OVENGINE_ROOT_DIR}/Rocket/Include" )
     set( ROCKET_UI_COMPONENT_SOURCES
-         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.cpp )
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketFileInterface.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketSystemInterface.cpp )
     set( ROCKET_UI_COMPONENT_INCLUDES
-         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.hpp )
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.hpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketFileInterface.hpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketSystemInterface.hpp )
+
     source_group( Component\\Rocket FILES ${ROCKET_UI_COMPONENT_SOURCES} ${ROCKET_UI_COMPONENT_INCLUDES} )
 else( )
     set( ROCKET_UI_COMPONENT_SOURCES )

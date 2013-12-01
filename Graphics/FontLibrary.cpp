@@ -175,12 +175,12 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
                              &bakedChars);
 
             //  create font using baskedChars/texture and add to library
-            unique_ptr<Texture> texture = _renderer.createTextureFromBuffer(bufferWidth, bufferHeight,
+            std::shared_ptr<Texture> texture = _renderer.createTextureFromBuffer(bufferWidth, bufferHeight,
                                                                   kCinekPixelFormat_A8,
                                                                   buffer);
             _renderer.getAllocator().free(buffer);
             
-            if (texture)
+            if (*texture)
             {
                 Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);
                 RENDER_LOG_INFO("Font %s loaded in slot [%u]: texture:(%u,%u), height: %d, codepoint:[%x,%x].",

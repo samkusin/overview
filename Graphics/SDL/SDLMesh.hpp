@@ -21,44 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
  * 
- * @file    Texture.hpp
+ * @file    SDL/SDLMesh.hpp
  * @author  Samir Sinha
- * @date    09/10/2013
- * @brief   A cross-platform Texture interface
+ * @date    11/29/2013
+ * @brief   SDL specific mesh objects (GL2)
  * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_Texture_hpp
-#define CK_Graphics_Texture_hpp
+#ifndef CK_Graphics_SDL_Mesh_hpp
+#define CK_Graphics_SDL_Mesh_hpp
 
-#include "Graphics/Rect.hpp"
-#include "cinek/rendermodel/types.h"
-
-#include <memory>
+#include "Graphics/Mesh.hpp"
 
 namespace cinekine {
     namespace glx {
         
     /**
-     * @class Texture
-     * @brief A cross-platform texture resource used by Renderer implementations.
+     * @class SDLMesh
+     * @brief SDL (OpenGL2) specific mesh objects
      */
-    class Texture
+    class SDLMesh: public Mesh
     {
     public:
-        virtual ~Texture() {}
-        /** @return Checks whether texture exists or was created successfully */ 
-        virtual operator bool() const = 0;
-    
-        /** @return The texture width in pixels */
-        virtual uint32_t width() const = 0;
-        /** @return The texture height in pixels */
-        virtual uint32_t height() const = 0;
+        SDLMesh();
+        virtual ~SDLMesh() = default;
+        /** @return Checks whether a Mesh was created successfully */ 
+        virtual operator bool() const {
+            return true;
+        }
     };
-
-    /** A Texture managed pointer */
-    typedef std::shared_ptr<Texture> TexturePtr;
-
+    
     }   // namespace glx
 }   // namespace cinekine
 

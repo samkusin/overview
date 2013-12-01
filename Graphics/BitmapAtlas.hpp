@@ -42,7 +42,7 @@ namespace cinekine {
 
     public:
         //  The BitmapAtlas takes ownership of the Texture passed in.
-        BitmapAtlas(const char* name, unique_ptr<Texture>& texture,
+        BitmapAtlas(const char* name, TexturePtr& texture,
                     size_t bitmapCount, const Allocator& allocator);
         BitmapAtlas(BitmapAtlas&& other);
         BitmapAtlas& operator=(BitmapAtlas&& other);
@@ -66,7 +66,7 @@ namespace cinekine {
     private:
         Allocator _allocator;
         string _name;
-        unique_ptr<Texture> _texture;
+        TexturePtr _texture;
         ObjectPool<BitmapInfo> _bitmapPool;
         vector<BitmapInfo*> _bitmaps;
     };

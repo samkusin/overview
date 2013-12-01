@@ -17,11 +17,18 @@
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
+#include "Component/Rocket/RocketFileInterface.hpp"
+#include "Component/Rocket/RocketSystemInterface.hpp"
+#include "Component/Rocket/RocketRenderInterface.hpp"
+#include "Rocket/Core.h"
+#include "Rocket/Core/Input.h"
+
 #include "Theater.hpp"
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
+#include "cinek/core/cktimer.h"
 
 #include "SDL2/SDL.h"
 
@@ -117,36 +124,72 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         }
     );
 
-    //  startup the simulation specific Director.
-    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
-    //  main loop
-    bool active = true;
-    while (active)
+    //  initialize a timer for the main loop
+    cinek_timer systemTimer = cinek_timer_create(32);
+    uint32_t systemTicks = SDL_GetTicks();
+
+    //  startup the UI system
+    //  
+    //  Use Rocket (aka libRocket)
+    bool uiSystemInitialized = false;
+
+    ovengine::RocketSystemInterface rocketSystem;
+    ovengine::RocketFileInterface rocketFile("");
+    ovengine::RocketRenderInterface rocketRenderer(renderer);
+    
+    Rocket::Core::SetFileInterface(&rocketFile);
+    Rocket::Core::SetRenderInterface(&rocketRenderer);
+    Rocket::Core::SetSystemInterface(&rocketSystem);
+
+    uiSystemInitialized = Rocket::Core::Initialise();
+    
+    if (uiSystemInitialized)
     {
-        //  event dispatch
-        SDL_Event e;
-        if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
-                active = false;
-                continue;
+        //  startup the simulation specific Director.
+        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
+        //  main loop
+        bool active = true;
+        while (active)
+        {
+            cinek_time currentTime = cinek_timer_get_time(systemTimer);
+
+            rocketSystem.setCurrentTime(currentTime / 1000.0f);
+
+            //  event dispatch
+            SDL_Event e;
+            if (SDL_PollEvent(&e)) {
+                if (e.type == SDL_QUIT) {
+                    active = false;
+                    continue;
+                }
             }
+            
+            ///////////////////////////////////////////////////////////////////
+            
+            director->update();
+
+            ///////////////////////////////////////////////////////////////////
+            renderer.begin();
+            renderer.clear(glx::RGBAColor(0,0,0,255));
+            
+            view->render();
+            
+            renderer.display();
+
+            //  update timers for the next frame's time values
+            cinek_timer_update(systemTimer, SDL_GetTicks() - systemTicks);
         }
         
-        ///////////////////////////////////////////////////////////////////
-        
-        director->update();
+        ovengine::DestroyDirector(director);
+        director = nullptr;
 
-        ///////////////////////////////////////////////////////////////////
-        renderer.begin();
-        renderer.clear(glx::RGBAColor(0,0,0,255));
-        
-        view->render();
-        
-        renderer.display();
+        Rocket::Core::Shutdown();
     }
-    
-    ovengine::DestroyDirector(director);
-    director = nullptr;
+    else
+    {
+        OVENGINE_LOG_ERROR("Failed to initialize UI system");
+    }
+
     ovengine::DestroyView(view);
     view = nullptr;
 

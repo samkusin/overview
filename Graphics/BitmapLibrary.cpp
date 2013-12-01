@@ -60,8 +60,8 @@ namespace cinekine {
                     return true;
                 }
                 snprintf(path, sizeof(path), "bitmaps/textures/%s", textureName);
-                unique_ptr<Texture> texture = _renderer.loadTexture(path);
-                if (!texture)
+                std::shared_ptr<Texture> texture = _renderer.loadTexture(path);
+                if (!(*texture))
                 {
                     return false;
                 }

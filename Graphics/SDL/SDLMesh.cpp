@@ -20,46 +20,16 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
- * 
- * @file    Texture.hpp
- * @author  Samir Sinha
- * @date    09/10/2013
- * @brief   A cross-platform Texture interface
- * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_Texture_hpp
-#define CK_Graphics_Texture_hpp
-
-#include "Graphics/Rect.hpp"
-#include "cinek/rendermodel/types.h"
-
-#include <memory>
+#include "SDLMesh.hpp"
 
 namespace cinekine {
     namespace glx {
-        
-    /**
-     * @class Texture
-     * @brief A cross-platform texture resource used by Renderer implementations.
-     */
-    class Texture
+
+    SDLMesh::SDLMesh()
     {
-    public:
-        virtual ~Texture() {}
-        /** @return Checks whether texture exists or was created successfully */ 
-        virtual operator bool() const = 0;
+    }
     
-        /** @return The texture width in pixels */
-        virtual uint32_t width() const = 0;
-        /** @return The texture height in pixels */
-        virtual uint32_t height() const = 0;
-    };
-
-    /** A Texture managed pointer */
-    typedef std::shared_ptr<Texture> TexturePtr;
-
     }   // namespace glx
 }   // namespace cinekine
-
-#endif
