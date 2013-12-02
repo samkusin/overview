@@ -165,7 +165,7 @@ namespace cinekine {
 
     bool RocketSDLInput::dispatchSDLEvent(const SDL_Event& event, Rocket::Core::Context* context)
     {
-        SDLMod modState = SDL_GetModState();
+        SDL_Keymod modState = SDL_GetModState();
         int keyMods = 0;
 
         if((modState & KMOD_SHIFT) == KMOD_SHIFT) {
@@ -178,11 +178,7 @@ namespace cinekine {
         if((modState & KMOD_ALT) == KMOD_ALT) {
             keyMods |= Rocket::Core::Input::KM_ALT;
         }
-        
-        if((modState & KMOD_META) == KMOD_META) {
-            keyMods |= Rocket::Core::Input::KM_META;
-        }
-        
+               
         if((modState & KMOD_NUM) == KMOD_NUM) {
             keyMods |= Rocket::Core::Input::KM_NUMLOCK;
         }
