@@ -52,7 +52,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     glx::FontLibrary fontLibrary(renderer, 10);
     glx::Graphics2D(renderer, bitmapLibrary, fontLibrary);
 
-    if (!fontLibrary.loadFont(glx::kFontHandle_Default, "DroidSans.ttf", 16))
+    if (!fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16))
     {
         OVENGINE_LOG_ERROR("Failed to load system font.");
         return 1;
@@ -129,16 +129,14 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     //  Use Rocket (aka libRocket)
     ovengine::RocketUI ui(renderer, allocator);
 
-    // Demo Code
     if (ui)
     {
-        if (!ui.loadInterface("static/ui/demo.rml"))
+        //  startup the simulation specific Director.
+        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
+        if (!ui.loadDocument("static/ui/demo.rml"))
         {
             OVENGINE_LOG_ERROR("Failed to load UI document");           
         }
-    
-        //  startup the simulation specific Director.
-        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
         //  main loop
         bool active = true;
         while (active)

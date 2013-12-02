@@ -47,7 +47,7 @@ namespace cinekine {
         void update(cinek_time currentTime);
         void render();
 
-        bool loadInterface(const char* name);
+        bool loadDocument(const char* name);
         void handleInput(const SDL_Event& event);
 
     private:

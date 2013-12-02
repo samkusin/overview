@@ -103,7 +103,7 @@ namespace cinekine {
             }
         }
 
-        bool loadInterface(const char* name)
+        bool loadDocument(const char* name)
         {
             Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument("static/ui/demo.rml");
             if (!uiDocument)
@@ -155,9 +155,9 @@ namespace cinekine {
         _impl->render();
     }
 
-    bool RocketUI::loadInterface(const char* name)
+    bool RocketUI::loadDocument(const char* name)
     {
-        return _impl->loadInterface(name);
+        return _impl->loadDocument(name);
     }
     
     void RocketUI::handleInput(const SDL_Event& event)

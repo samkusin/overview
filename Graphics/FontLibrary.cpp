@@ -111,12 +111,12 @@ FontLibrary::FontLibrary(Renderer& renderer, size_t fontLimit) :
     }
 }
     
-bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t height)
+bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t height)
 {
     if (slot >= _fonts.size())
     {
         RENDER_LOG_ERROR("Failed to load slot [%u].  Font '%s' not found.",
-                          slot, fontname);
+                          slot, pathname);
         return false;
     }
     //  clear out the slot first to release some resources.
@@ -135,13 +135,11 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
     uint16_t bufferWidth = kRightLimit;
     uint16_t bufferHeight = kBottomLimit;
     
-    char fontPath[MAX_PATH];
-    snprintf(fontPath, sizeof(fontPath), "static/fonts/%s", fontname);
 
-    FileStreamBuf ttfStream(fontPath, std::ios_base::in | std::ios_base::binary);
+    FileStreamBuf ttfStream(pathname, std::ios_base::in | std::ios_base::binary);
     if (!ttfStream)
     {
-        RENDER_LOG_ERROR("Failed to load font %s in slot [%u]", fontname, slot);
+        RENDER_LOG_ERROR("Failed to load font %s in slot [%u]", pathname, slot);
         return false;
     }
     size_t fileSize = ttfStream.availableChars();
@@ -184,7 +182,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
             {
                 Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);
                 RENDER_LOG_INFO("Font %s loaded in slot [%u]: texture:(%u,%u), height: %d, codepoint:[%x,%x].",
-                                fontname, slot,
+                                pathname, slot,
                                 bufferWidth, bufferHeight,
                                 font.getHeight(), font.getMinCodepoint(), font.getMaxCodepoint());
                 _fonts[slot] = std::move(font);
@@ -192,7 +190,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
             else
             {
                 RENDER_LOG_ERROR("Failed to load font %s in slot [%u] - unable to initialize texture.",
-                                 fontname, slot);
+                                 pathname, slot);
                 return false;
             }
         }
@@ -200,7 +198,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* fontname, uint16_t heigh
     else
     {
         RENDER_LOG_ERROR("Failed to load font %s in slot [%u] - unable to read data (read: %u/%u bytes).",
-                         fontname, slot, readCount, fileSize);
+                         pathname, slot, readCount, fileSize);
     }
     _renderer.getAllocator().free(sourceData);
     return readCount == fileSize;

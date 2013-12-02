@@ -31,7 +31,7 @@ namespace cinekine {
         FontLibrary(Renderer& renderer, size_t fontLimit);
         ~FontLibrary() = default;
         
-        bool loadFont(FontHandle slot, const char* fontname, uint16_t height);
+        bool loadFont(FontHandle slot, const char* pathname, uint16_t height);
         void unloadFont(FontHandle slot);
 
         const Font* getFont(FontHandle slot) const {
