@@ -149,13 +149,15 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
             //  event dispatch
             SDL_Event e;
-            if (SDL_PollEvent(&e)) 
+            while (SDL_PollEvent(&e)) 
             {
                 if (e.type == SDL_QUIT)
                 {
                     active = false;
                     continue;
                 }
+
+                ui.handleInput(e);
             }
             
             ///////////////////////////////////////////////////////////////////

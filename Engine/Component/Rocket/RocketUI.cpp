@@ -24,6 +24,7 @@
 
 #include "RocketUI.hpp"
 
+#include "RocketSDLInput.hpp"
 #include "RocketFileInterface.hpp"
 #include "RocketSystemInterface.hpp"
 #include "RocketRenderInterface.hpp"
@@ -43,6 +44,7 @@ namespace cinekine {
             _rocketFile(),
             _rocketRenderer(renderer),
             _coreInitialized(false),
+            _sdlInput(),
             _context(nullptr)
         {
             Rocket::Core::SetFileInterface(&_rocketFile);
@@ -112,6 +114,11 @@ namespace cinekine {
             return true;
         }
 
+        void handleInput(const SDL_Event& event)
+        {
+            _sdlInput.dispatchSDLEvent(event, _context);
+        }
+
     private:
         Allocator _allocator;
         RocketSystemInterface _rocketSystem;
@@ -119,6 +126,7 @@ namespace cinekine {
         RocketRenderInterface _rocketRenderer;
         bool _coreInitialized;
 
+        RocketSDLInput _sdlInput;
         Rocket::Core::Context *_context;
     };
 
@@ -151,7 +159,11 @@ namespace cinekine {
     {
         return _impl->loadInterface(name);
     }
-
+    
+    void RocketUI::handleInput(const SDL_Event& event)
+    {
+        return _impl->handleInput(event);
+    }
 
     }   // namespace ovengine
 }   // namespace cinekine

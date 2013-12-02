@@ -22,37 +22,38 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_UIComponent_hpp
-#define Overview_Components_Rocket_UIComponent_hpp
+#ifndef Overview_Components_Rocket_SDLInput_hpp
+#define Overview_Components_Rocket_SDLInput_hpp
+
 
 #include "cinek/cpp/ckalloc.hpp"
+#include "cinek/cpp/ckmap.hpp"
 
+#include "Rocket/Core/Input.h"
 #include "SDL2/SDL_events.h"
 
-namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
+#include <unordered_map>
 
+namespace Rocket {
+    namespace Core {
+        class Context;
+    }
+}
+
+namespace cinekine {
     namespace ovengine {
 
-    class RocketUI
+    class RocketSDLInput
     {
     public:
-        RocketUI(glx::Renderer& renderer, Allocator& allocator);
-        ~RocketUI();
+        RocketSDLInput();
 
-        operator bool() const;
-
-        void update(cinek_time currentTime);
-        void render();
-
-        bool loadInterface(const char* name);
-        void handleInput(const SDL_Event& event);
-
+        bool dispatchSDLEvent(const SDL_Event& event, Rocket::Core::Context* context);
+    
     private:
-        class Impl;
-        unique_ptr<Impl> _impl;
+        Rocket::Core::Input::KeyIdentifier translateSDLKey(SDL_Keysym key);
+
+        unordered_map<SDL_Keycode, Rocket::Core::Input::KeyIdentifier> _keyMap;
     };
 
     }   // namespace ovengine

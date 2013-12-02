@@ -59,11 +59,13 @@ if( CINEK_OVENGINE_ROCKET_UI )
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.cpp
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketFileInterface.cpp
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketSystemInterface.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketSDLInput.cpp
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketUI.cpp )
     set( ROCKET_UI_COMPONENT_INCLUDES
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketRenderInterface.hpp
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketFileInterface.hpp
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketSystemInterface.hpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketSDLInput.hpp
          ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket/RocketUI.hpp )
 
     source_group( Component\\Rocket FILES ${ROCKET_UI_COMPONENT_SOURCES} ${ROCKET_UI_COMPONENT_INCLUDES} )
