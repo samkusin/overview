@@ -22,18 +22,42 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Scene_hpp
-#define Overview_Scene_hpp
+#ifndef Overview_Components_UIComponentImpl_hpp
+#define Overview_Components_UIComponentImpl_hpp
+
+#include "Engine/UIComponent.hpp"
+#include "Engine/UIWindow.hpp"
+#include "Engine/UIClient.hpp"
+
+#include "cinek/cpp/ckalloc.hpp"
+
+#include "SDL2/SDL_events.h"
 
 namespace cinekine {
-    namespace prototype {
+    namespace glx {
+        class Renderer;
+    }
 
-    class Scene
+    namespace ovengine {
+
+    class UIComponent::Impl
     {
     public:
-        virtual ~Scene() = default;
+        virtual ~Impl() = default;
 
-        virtual void update() = 0;
+        virtual operator bool() const = 0;
+
+        virtual void update(cinek_time currentTime) = 0;
+        virtual void render() = 0;
+
+        virtual void handleInput(const SDL_Event& event) = 0;
+
+        /**
+         * Loads a UI window/controller identified by the named resource
+         * @param  name Resource name
+         * @return      Created UIWindow pointer
+         */
+        virtual UIWindow* createWindow(const char* name) = 0;
     };
 
     }   // namespace ovengine

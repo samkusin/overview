@@ -20,7 +20,7 @@
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
-#include "Component/Rocket/RocketUI.hpp"
+#include "UIComponent.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 #include "cinek/core/cktimer.h"
@@ -59,8 +59,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
     //  Startup the UI system
     //  
-    //  Use Rocket (aka libRocket)
-    ovengine::RocketUI ui(renderer, allocator);
+    ovengine::UIComponent ui(renderer, allocator);
     if (!ui)
     {
         OVENGINE_LOG_ERROR("Failed to initialize UI system");
@@ -140,17 +139,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     cinek_timer systemTimer = cinek_timer_create(32);
     uint32_t systemTicks = SDL_GetTicks();
 
-    /*
-    unique_ptr<ovengine::UIWindow> mainWindow = ui.createWindow("static/ui/main.rml");
-    if (mainWindow)
-    {
-        mainWindow->show();
-    }
-    else
-    {
-        OVENGINE_LOG_ERROR("Failed to load UI document");           
-    }
-    */
     //  main loop
     bool active = true;
     while (active)

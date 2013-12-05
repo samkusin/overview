@@ -22,21 +22,45 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Scene_hpp
-#define Overview_Scene_hpp
+#include "Component/UIComponentImpl.hpp"
+#include "Component/Rocket/RocketUI.hpp"
 
 namespace cinekine {
-    namespace prototype {
-
-    class Scene
+    namespace ovengine {
+   
+    UIComponent::UIComponent(glx::Renderer& renderer, Allocator& allocator) :
+        _impl(allocator.newItem<RocketUI>(renderer, allocator))
     {
-    public:
-        virtual ~Scene() = default;
+    }
 
-        virtual void update() = 0;
-    };
+    UIComponent::~UIComponent()
+    {
+    }
+
+    UIComponent::operator bool() const
+    {
+        return *(_impl.get());
+    }
+
+    void UIComponent::update(cinek_time currentTime)
+    {
+        _impl->update(currentTime);
+    }
+
+    void UIComponent::render()
+    {
+        _impl->render();
+    }
+    
+    void UIComponent::handleInput(const SDL_Event& event)
+    {
+        return _impl->handleInput(event);
+    }
+
+    unique_ptr<UIWindow> UIComponent::createWindow(const char* name)
+    {
+        return std::move(unique_ptr<UIWindow>(_impl->createWindow(name)));
+    }
 
     }   // namespace ovengine
 }   // namespace cinekine
-
-#endif

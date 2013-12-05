@@ -22,18 +22,29 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Scene_hpp
-#define Overview_Scene_hpp
+#ifndef Overview_Components_Rocket_ElementOverview_hpp
+#define Overview_Components_Rocket_ElementOverview_hpp
+
+#include "Rocket/Core/Element.h"
+#include "Rocket/Core/EventListener.h"
 
 namespace cinekine {
-    namespace prototype {
+    namespace ovengine {
 
-    class Scene
+    class RocketUI;
+    
+    class RocketElementOverview : 
+        public Rocket::Core::Element,
+        public Rocket::Core::EventListener
     {
     public:
-        virtual ~Scene() = default;
+        RocketElementOverview(const Rocket::Core::String& tag, const RocketUI& ui);
+        virtual ~RocketElementOverview();
+        
+        virtual void ProcessEvent(Rocket::Core::Event& event);
 
-        virtual void update() = 0;
+    private:
+        const RocketUI& _ui;
     };
 
     }   // namespace ovengine

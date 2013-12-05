@@ -34,7 +34,7 @@
 #include <functional> 
 
 namespace cinekine {
-    namespace ovengine {
+    namespace prototype {
 
     class SceneController
     {

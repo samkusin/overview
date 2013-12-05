@@ -25,26 +25,33 @@
 #ifndef Overview_InteractiveScene_hpp
 #define Overview_InteractiveScene_hpp
 
+#include "Scene.hpp"
 #include "cinek/cpp/ckalloc.hpp"
 
 namespace cinekine {
     namespace ovengine {
+        class UIWindow;
+    }
+    namespace prototype {
 
-    class UIWindow;
-
-    class InteractiveScene
+    class InteractiveScene : public Scene
     {
     public:
-        InteractiveScene(unique_ptr<UIWindow> window);
+        InteractiveScene(unique_ptr<ovengine::UIWindow> window);
         virtual ~InteractiveScene();
 
         void update();
+        
+    protected:
+        ovengine::UIWindow* window() {
+            return _window.get();
+        }
 
     private:
-        unique_ptr<UIWindow> _window;
+        unique_ptr<ovengine::UIWindow> _window;
     };
 
-    }   // namespace ovengine
+    }   // namespace prototype
 }   // namespace cinekine
 
 #endif

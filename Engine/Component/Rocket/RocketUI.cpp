@@ -24,10 +24,9 @@
 
 #include "RocketUI.hpp"
 #include "RocketUIWindow.hpp"
-#include "RocketSDLInput.hpp"
-#include "RocketFileInterface.hpp"
-#include "RocketSystemInterface.hpp"
-#include "RocketRenderInterface.hpp"
+
+#include "RocketUIElementInstancer.hpp"
+#include "./Elements/ElementOverview.hpp"
 
 #include "Rocket/Core.h"
 #include "Rocket/Core/Input.h"
@@ -35,151 +34,107 @@
 namespace cinekine {
     namespace ovengine {
 
-    class RocketUI::Impl
-    {
-    public:
-        Impl(glx::Renderer& renderer, Allocator& allocator) :
-            _allocator(allocator),
-            _rocketSystem(),
-            _rocketFile(),
-            _rocketRenderer(renderer),
-            _coreInitialized(false),
-            _sdlInput(),
-            _context(nullptr)
-        {
-            Rocket::Core::SetFileInterface(&_rocketFile);
-            Rocket::Core::SetRenderInterface(&_rocketRenderer);
-            Rocket::Core::SetSystemInterface(&_rocketSystem);
-
-            _coreInitialized = Rocket::Core::Initialise();
-            if (!_coreInitialized)
-                return;
-    
-            Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Bold.otf");
-            Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-BoldItalic.otf");
-            Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Italic.otf");
-            Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Roman.otf");
-
-            glx::Rect viewport = _rocketRenderer.getViewport();
-
-            _context = Rocket::Core::CreateContext( "default",
-                                                    Rocket::Core::Vector2i(viewport.width(), 
-                                                                           viewport.height())
-                                                  );
-        }
-
-        ~Impl()
-        {
-            if (_context)
-            {
-                _context->RemoveReference();
-                _context = nullptr;
-            }
-            if (_coreInitialized)
-            {
-                Rocket::Core::Shutdown();
-            }
-        }
-
-        operator bool() const
-        {
-            return _coreInitialized && _context;
-        }
-
-        void update(cinek_time currentTime)
-        {
-            _rocketSystem.setCurrentTime(currentTime/1000.0f);
-            if (_context)
-            {
-                _context->Update();
-            }
-        }
-
-        void render()
-        {
-            if (_context)
-            {
-                _context->Render();
-            }
-        }
-
-
-        void handleInput(const SDL_Event& event)
-        {
-            _sdlInput.dispatchSDLEvent(event, _context);
-        }
-
-        UIWindow* createWindow(const char* name)
-        {
-            /**
-             * @todo Move createWindow to a factory for UIWindow objects
-             */
-            if (_context)
-            {
-                Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument(name);
-                if (uiDocument)
-                {
-                    RocketUIWindow* windowImpl =
-                        _allocator.newItem<RocketUIWindow, Rocket::Core::ElementDocument*>(
-                            std::move(uiDocument)
-                        );
-                    if (windowImpl)
-                    {
-                        UIWindow* window = _allocator.newItem<UIWindow, const Allocator&, UIWindow::Impl*>(
-                                _allocator, windowImpl
-                            );
-                        return window;
-                    }
-                }
-            }
-            return nullptr;
-        } 
-
-    private:
-        Allocator _allocator;
-        RocketSystemInterface _rocketSystem;
-        RocketFileInterface _rocketFile;
-        RocketRenderInterface _rocketRenderer;
-        bool _coreInitialized;
-
-        RocketSDLInput _sdlInput;
-        Rocket::Core::Context *_context;
-    };
-
-
     RocketUI::RocketUI(glx::Renderer& renderer, Allocator& allocator) :
-        _impl(allocator.newItem<Impl>(renderer, allocator))
+        _allocator(allocator),
+        _rocketSystem(),
+        _rocketFile(),
+        _rocketRenderer(renderer),
+        _coreInitialized(false),
+        _sdlInput(),
+        _context(nullptr)
     {
+        Rocket::Core::SetFileInterface(&_rocketFile);
+        Rocket::Core::SetRenderInterface(&_rocketRenderer);
+        Rocket::Core::SetSystemInterface(&_rocketSystem);
+
+        _coreInitialized = Rocket::Core::Initialise();
+        if (!_coreInitialized)
+            return;
+
+        Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Bold.otf");
+        Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-BoldItalic.otf");
+        Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Italic.otf");
+        Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Roman.otf");
+
+        auto instancer = _allocator.newItem<RocketUIElementInstancer< RocketElementOverview >>(_allocator, *this);
+        Rocket::Core::Factory::RegisterElementInstancer("overview", instancer);
+        instancer->RemoveReference();
+
+        glx::Rect viewport = _rocketRenderer.getViewport();
+
+        _context = Rocket::Core::CreateContext( "default",
+                                                Rocket::Core::Vector2i(viewport.width(), 
+                                                                       viewport.height())
+                                              );
     }
 
     RocketUI::~RocketUI()
     {
+        if (_context)
+        {
+            _context->RemoveReference();
+            _context = nullptr;
+        }
+        if (_coreInitialized)
+        {
+            Rocket::Core::Shutdown();
+        }
     }
 
     RocketUI::operator bool() const
     {
-        return *(_impl.get());
+        return _coreInitialized && _context;
     }
 
     void RocketUI::update(cinek_time currentTime)
     {
-        _impl->update(currentTime);
+        _rocketSystem.setCurrentTime(currentTime/1000.0f);
+        if (_context)
+        {
+            _context->Update();
+        }
     }
 
     void RocketUI::render()
     {
-        _impl->render();
-    }
-    
-    void RocketUI::handleInput(const SDL_Event& event)
-    {
-        return _impl->handleInput(event);
+        if (_context)
+        {
+            _context->Render();
+        }
     }
 
-    unique_ptr<UIWindow> RocketUI::createWindow(const char* name)
+
+    void RocketUI::handleInput(const SDL_Event& event)
     {
-        return std::move(unique_ptr<UIWindow>(_impl->createWindow(name)));
+        _sdlInput.dispatchSDLEvent(event, _context);
     }
+
+    UIWindow* RocketUI::createWindow(const char* name)
+    {
+        /**
+         * @todo Move createWindow to a factory for UIWindow objects
+         */
+        if (_context)
+        {
+            Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument(name);
+            if (uiDocument)
+            {
+                RocketUIWindow* windowImpl =
+                    _allocator.newItem<RocketUIWindow, Rocket::Core::ElementDocument*>(
+                        std::move(uiDocument)
+                    );
+                if (windowImpl)
+                {
+                    UIWindow* window = _allocator.newItem<UIWindow, const Allocator&, UIWindow::Impl*>(
+                            _allocator, windowImpl
+                        );
+                    return window;
+                }
+            }
+        }
+        return nullptr;
+    } 
+
 
     }   // namespace ovengine
 }   // namespace cinekine

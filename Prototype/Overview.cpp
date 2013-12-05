@@ -14,6 +14,13 @@
 #include "cinek/overview/stage.hpp"
 #include "cinek/overview/viewpoint.hpp"
 
+#include "SceneController.hpp"
+#include "Scenes/GameScene.hpp"
+#include "Engine/UIClient.hpp"
+
+#include <memory>
+
+
 namespace cinekine {
     namespace ovengine {
     
@@ -44,6 +51,19 @@ namespace cinekine {
     {
         _theaterCLI.loadTileDatabase("dungeontiles");
         _theaterCLI.loadSpriteDatabase("sprites");
+        
+        _sceneController.add( "game",
+            [this]() -> std::shared_ptr<Scene>
+            {
+                unique_ptr<ovengine::UIWindow> window(_UICLI.createWindow("static/ui/main.rml"));
+                return std::allocate_shared<GameScene, std_allocator<GameScene>, unique_ptr<ovengine::UIWindow>>
+                        (
+                            std_allocator<GameScene>(_allocator),
+                            std::move(window)
+                        );
+            });
+        
+        _sceneController.next("game");
         
         std::shared_ptr<overview::Map> map = _stage.getMapPtr();
         const cinek_ov_map_bounds& bounds = map->getMapBounds();

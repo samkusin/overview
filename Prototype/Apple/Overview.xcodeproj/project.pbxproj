@@ -13,6 +13,7 @@
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
 		37DFA0941850108200382685 /* InteractiveScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA08F1850108200382685 /* InteractiveScene.cpp */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
+		37DFA099185012BA00382685 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA097185012BA00382685 /* GameScene.cpp */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
 		37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */; };
 		37E6802217C8392400FF3C97 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801D17C8392400FF3C97 /* AudioUnit.framework */; };
@@ -52,6 +53,8 @@
 		37DFA0911850108200382685 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = ../Scene.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../SceneController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
+		37DFA097185012BA00382685 /* GameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameScene.cpp; path = ../Scenes/GameScene.cpp; sourceTree = "<group>"; };
+		37DFA098185012BA00382685 /* GameScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameScene.hpp; path = ../Scenes/GameScene.hpp; sourceTree = "<group>"; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
 		37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		37E6801D17C8392400FF3C97 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -106,6 +109,7 @@
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
+				37DFA0961850123600382685 /* Scenes */,
 				37DFA08F1850108200382685 /* InteractiveScene.cpp */,
 				37DFA0901850108200382685 /* InteractiveScene.hpp */,
 				37DFA0911850108200382685 /* Scene.hpp */,
@@ -118,6 +122,15 @@
 				37F6A44D17CBF1C100C9EE1C /* Common.hpp */,
 			);
 			name = Prototype;
+			sourceTree = "<group>";
+		};
+		37DFA0961850123600382685 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				37DFA097185012BA00382685 /* GameScene.cpp */,
+				37DFA098185012BA00382685 /* GameScene.hpp */,
+			);
+			name = Scenes;
 			sourceTree = "<group>";
 		};
 		37F64A881780EA2C009116E7 = {
@@ -277,6 +290,7 @@
 				37DFA0941850108200382685 /* InteractiveScene.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
 				37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */,
+				37DFA099185012BA00382685 /* GameScene.cpp in Sources */,
 				37DFA0951850108200382685 /* SceneController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

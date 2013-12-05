@@ -26,7 +26,7 @@
 #include "Engine/Debug.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace prototype {
 
     SceneController::SceneController(const Allocator& allocator) : 
         _sceneMap(std_allocator<std::pair<string, SceneCreateFn>>(allocator)),

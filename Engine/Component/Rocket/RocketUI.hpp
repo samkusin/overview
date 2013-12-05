@@ -25,12 +25,13 @@
 #ifndef Overview_Components_Rocket_UIComponent_hpp
 #define Overview_Components_Rocket_UIComponent_hpp
 
-#include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
+#include "../UIComponentImpl.hpp"
+#include "RocketSDLInput.hpp"
+#include "RocketFileInterface.hpp"
+#include "RocketSystemInterface.hpp"
+#include "RocketRenderInterface.hpp"
 
-#include "cinek/cpp/ckalloc.hpp"
-
-#include "SDL2/SDL_events.h"
+#include "Rocket/Core.h"
 
 namespace cinekine {
     namespace glx {
@@ -39,7 +40,7 @@ namespace cinekine {
 
     namespace ovengine {
 
-    class RocketUI: public UIClient
+    class RocketUI: public UIComponent::Impl
     {
     public:
         RocketUI(glx::Renderer& renderer, Allocator& allocator);
@@ -57,11 +58,17 @@ namespace cinekine {
          * @param  name Resource name
          * @return      Created UIWindow pointer
          */
-        unique_ptr<UIWindow> createWindow(const char* name);
+        UIWindow* createWindow(const char* name);
 
     private:
-        class Impl;
-        unique_ptr<Impl> _impl;
+        Allocator _allocator;
+        RocketSystemInterface _rocketSystem;
+        RocketFileInterface _rocketFile;
+        RocketRenderInterface _rocketRenderer;
+        bool _coreInitialized;
+
+        RocketSDLInput _sdlInput;
+        Rocket::Core::Context *_context;
     };
 
     }   // namespace ovengine

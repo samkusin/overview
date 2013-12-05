@@ -10,8 +10,8 @@
 #define Overview_Overview_hpp
 
 #include "Common.hpp"
+#include "SceneController.hpp"
 #include "Engine/Director.hpp"
-#include "Engine/SceneController.hpp"
 
 #include "cinek/overview/stage.hpp"
 
@@ -40,7 +40,7 @@ namespace cinekine {
         ovengine::TheaterClient& _theaterCLI;
         ovengine::UIClient& _UICLI;
         Allocator _allocator;
-        ovengine::SceneController _sceneController;
+        SceneController _sceneController;
 
         overview::Stage _stage;
         cinek_ov_pos _viewPos;

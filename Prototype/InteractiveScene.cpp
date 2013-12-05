@@ -26,9 +26,9 @@
 #include "Engine/UIWindow.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace prototype {
 
-    InteractiveScene::InteractiveScene(unique_ptr<UIWindow> window) :
+    InteractiveScene::InteractiveScene(unique_ptr<ovengine::UIWindow> window) :
         _window(std::move(window))
     {
         _window->show();
