@@ -23,7 +23,7 @@
  */
 
 #include "RocketUI.hpp"
-
+#include "RocketUIWindow.hpp"
 #include "RocketSDLInput.hpp"
 #include "RocketFileInterface.hpp"
 #include "RocketSystemInterface.hpp"
@@ -103,21 +103,37 @@ namespace cinekine {
             }
         }
 
-        bool loadDocument(const char* name)
-        {
-            Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument("static/ui/demo.rml");
-            if (!uiDocument)
-                return false;
-
-            uiDocument->Show();
-            uiDocument->RemoveReference();
-            return true;
-        }
 
         void handleInput(const SDL_Event& event)
         {
             _sdlInput.dispatchSDLEvent(event, _context);
         }
+
+        UIWindow* createWindow(const char* name)
+        {
+            /**
+             * @todo Move createWindow to a factory for UIWindow objects
+             */
+            if (_context)
+            {
+                Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument(name);
+                if (uiDocument)
+                {
+                    RocketUIWindow* windowImpl =
+                        _allocator.newItem<RocketUIWindow, Rocket::Core::ElementDocument*>(
+                            std::move(uiDocument)
+                        );
+                    if (windowImpl)
+                    {
+                        UIWindow* window = _allocator.newItem<UIWindow, const Allocator&, UIWindow::Impl*>(
+                                _allocator, windowImpl
+                            );
+                        return window;
+                    }
+                }
+            }
+            return nullptr;
+        } 
 
     private:
         Allocator _allocator;
@@ -154,15 +170,15 @@ namespace cinekine {
     {
         _impl->render();
     }
-
-    bool RocketUI::loadDocument(const char* name)
-    {
-        return _impl->loadDocument(name);
-    }
     
     void RocketUI::handleInput(const SDL_Event& event)
     {
         return _impl->handleInput(event);
+    }
+
+    unique_ptr<UIWindow> RocketUI::createWindow(const char* name)
+    {
+        return std::move(unique_ptr<UIWindow>(_impl->createWindow(name)));
     }
 
     }   // namespace ovengine

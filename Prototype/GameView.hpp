@@ -39,6 +39,10 @@ namespace cinekine {
         virtual void onMapSetPosition(const cinek_ov_pos& pos);
     
         virtual void render();
+
+        virtual void onMouseButtonDown(MouseButton button, int32_t x, int32_t y);
+        virtual void onMouseButtonUp(MouseButton button, int32_t x, int32_t y);
+        virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y);
         
     private:
         //  precalculates values used for rendering the local view

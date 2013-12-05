@@ -22,49 +22,28 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_UIComponent_hpp
-#define Overview_Components_Rocket_UIComponent_hpp
-
-#include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
-
-#include "cinek/cpp/ckalloc.hpp"
-
-#include "SDL2/SDL_events.h"
+#include "RocketUIWindow.hpp"
 
 namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
-
     namespace ovengine {
 
-    class RocketUI: public UIClient
+    RocketUIWindow::RocketUIWindow(Rocket::Core::ElementDocument* document) :
+        _document(document)
     {
-    public:
-        RocketUI(glx::Renderer& renderer, Allocator& allocator);
-        ~RocketUI();
 
-        operator bool() const;
+    }
+    
+    RocketUIWindow::~RocketUIWindow()
+    {
+        _document->Close();
+        _document->RemoveReference();
+    }
 
-        void update(cinek_time currentTime);
-        void render();
+    void RocketUIWindow::show()
+    {
+         _document->Show();
+    }
 
-        void handleInput(const SDL_Event& event);
-
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        unique_ptr<UIWindow> createWindow(const char* name);
-
-    private:
-        class Impl;
-        unique_ptr<Impl> _impl;
-    };
 
     }   // namespace ovengine
 }   // namespace cinekine
-
-#endif

@@ -22,46 +22,39 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_UIComponent_hpp
-#define Overview_Components_Rocket_UIComponent_hpp
+#ifndef Overview_SceneController_hpp
+#define Overview_SceneController_hpp
 
-#include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
+#include "Scene.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
+#include "cinek/cpp/ckstring.hpp"
+#include "cinek/cpp/ckmap.hpp"
 
-#include "SDL2/SDL_events.h"
+#include <functional> 
 
 namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
-
     namespace ovengine {
 
-    class RocketUI: public UIClient
+    class SceneController
     {
     public:
-        RocketUI(glx::Renderer& renderer, Allocator& allocator);
-        ~RocketUI();
+        SceneController(const Allocator& allocator);
+        ~SceneController();
 
-        operator bool() const;
+        typedef std::function<std::shared_ptr<Scene>(void)> SceneCreateFn;
 
-        void update(cinek_time currentTime);
-        void render();
-
-        void handleInput(const SDL_Event& event);
-
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        unique_ptr<UIWindow> createWindow(const char* name);
+        //  add a scene provider - the provider will supply a Scene object that will
+        //  be managed by the Scenes collection during state changes
+        void add(const char* name, SceneCreateFn createFn);
+        //  advances to the next Scene
+        void next(const char* name);
+        //  updates the current Scene
+        void update();
 
     private:
-        class Impl;
-        unique_ptr<Impl> _impl;
+        unordered_map<string, SceneCreateFn> _sceneMap;
+        std::shared_ptr<Scene> _currentScene;
     };
 
     }   // namespace ovengine

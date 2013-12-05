@@ -55,6 +55,42 @@ namespace cinekine {
 
         //  Executes rendering code specific to the View implementation.
         virtual void render() = 0;
+
+        /** Mouse button constants */
+        enum MouseButton
+        {
+            kMouseButtonLeft,       /**< Left mouse button */
+            kMouseButtonRight       /**< Right mouse button */
+        };
+        /**
+         * Handles mouse down events within the view
+         * @param button Button index
+         * @param x      X coordinate within view
+         * @param y      Y coordinate within view
+         */
+        virtual void onMouseButtonDown(MouseButton button, int32_t x, int32_t y) = 0;
+        /**
+         * Handles mouse up events within the view
+         * @param button Button index
+         * @param x      X coordinate within view
+         * @param y      Y coordinatw within view
+         */
+        virtual void onMouseButtonUp(MouseButton button, int32_t x, int32_t y) = 0;
+
+        /** The area where the mouse move event occurred */
+        enum MouseRegion
+        {
+            kMouseRegionOver,       /**< Mouse motion within the view */
+            kMouseRegionEnter,      /**< Mouse entered view */
+            kMouseRegionExit        /**< Mouse exited view */
+        };
+        /**
+         * Mouse movement event
+         * @param region The mouse region where the motion occurred
+         * @param x      X coordinate within view
+         * @param y      Y coordinate within view
+         */
+        virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y) = 0;
     };
     
     //  must be defined by the implementing application.

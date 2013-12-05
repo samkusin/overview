@@ -17,10 +17,10 @@
 namespace cinekine {
     namespace ovengine {
     
-    ovengine::Director* CreateDirector(TheaterClient& cli)
+    ovengine::Director* CreateDirector(TheaterClient& cli, UIClient& uiCLI)
     {
         Allocator allocator;
-        return allocator.newItem<prototype::Overview>(cli);
+        return allocator.newItem<prototype::Overview>(cli, uiCLI);
     }
     
     void DestroyDirector(ovengine::Director* director)
@@ -35,11 +35,12 @@ namespace cinekine {
 namespace cinekine {
     namespace prototype {
 
-    Overview::Overview(ovengine::TheaterClient& cli) :
+    Overview::Overview(ovengine::TheaterClient& cli, ovengine::UIClient& uiCLI) :
         _theaterCLI(cli),
+        _UICLI(uiCLI),
         _allocator(),
-        _stage({ 17, 17, 0, 0 }, _allocator),
-        _scrollPos1(0)
+        _sceneController(_allocator),
+        _stage({ 17, 17, 0, 0 }, _allocator)
     {
         _theaterCLI.loadTileDatabase("dungeontiles");
         _theaterCLI.loadSpriteDatabase("sprites");
@@ -70,6 +71,8 @@ namespace cinekine {
     
     void Overview::update()
     {
+        _sceneController.update();
+        
         /*std::shared_ptr<overview::Map> map = _stage.getMapPtr();
         //  prepopulate map.
         overview::Tilemap* tilemap = map->getTilemapAtZ(0);

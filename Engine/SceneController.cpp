@@ -22,49 +22,53 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_UIComponent_hpp
-#define Overview_Components_Rocket_UIComponent_hpp
-
-#include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
-
-#include "cinek/cpp/ckalloc.hpp"
-
-#include "SDL2/SDL_events.h"
+#include "SceneController.hpp"
+#include "Debug.hpp"
 
 namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
-
     namespace ovengine {
 
-    class RocketUI: public UIClient
+    SceneController::SceneController(const Allocator& allocator) : 
+        _sceneMap(std_allocator<std::pair<string, SceneCreateFn>>(allocator)),
+        _currentScene()
     {
-    public:
-        RocketUI(glx::Renderer& renderer, Allocator& allocator);
-        ~RocketUI();
 
-        operator bool() const;
+    }
+    
+    SceneController::~SceneController()
+    {   
+    }
 
-        void update(cinek_time currentTime);
-        void render();
+    void SceneController::add(const char* name, SceneCreateFn createFn)
+    {
+        _sceneMap[string(name)] = createFn;
+    }
+    
+    void SceneController::next(const char* name)
+    {
+        auto sceneIt = _sceneMap.find(string(name));
+        if (sceneIt == _sceneMap.end())
+        {
+            OVENGINE_LOG_ERROR("SceneController.next - scene '%s' not found", name);
+            return;
+        }
+        std::shared_ptr<Scene> nextScene = (*sceneIt).second();
+        if (!nextScene)
+        {
+            OVENGINE_LOG_ERROR("SceneController.next - scene '%s' creation failed", name);
+            return;
+        }
+        _currentScene = nextScene;
+    }
 
-        void handleInput(const SDL_Event& event);
-
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        unique_ptr<UIWindow> createWindow(const char* name);
-
-    private:
-        class Impl;
-        unique_ptr<Impl> _impl;
-    };
+    void SceneController::update()
+    {
+        if (_currentScene)
+        {
+            _currentScene->update();
+        }
+    }
 
     }   // namespace ovengine
 }   // namespace cinekine
 
-#endif

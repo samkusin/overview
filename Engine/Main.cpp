@@ -9,6 +9,9 @@
 #include "Debug.hpp"
 #include "Director.hpp"
 #include "View.hpp"
+#include "Theater.hpp"
+#include "SpriteDatabaseLoader.hpp"
+#include "TileDatabaseLoader.hpp"
 
 #include "Graphics/SDL/SDLRenderer.hpp"
 #include "Graphics/GL/GL3Renderer.hpp"
@@ -18,10 +21,6 @@
 #include "Graphics/FontLibrary.hpp"
 
 #include "Component/Rocket/RocketUI.hpp"
-
-#include "Theater.hpp"
-#include "SpriteDatabaseLoader.hpp"
-#include "TileDatabaseLoader.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 #include "cinek/core/cktimer.h"
@@ -58,6 +57,17 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         return 1;
     }
 
+    //  Startup the UI system
+    //  
+    //  Use Rocket (aka libRocket)
+    ovengine::RocketUI ui(renderer, allocator);
+    if (!ui)
+    {
+        OVENGINE_LOG_ERROR("Failed to initialize UI system");
+        return 1;
+    }
+
+    //  Startup the Theater MODEL
     ovengine::Theater theater(allocator);
             
     //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
@@ -95,15 +105,17 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
            return bitmapAtlas->getBitmapIndex(name);
         }
     );
-   
-    //  startup the simulation specific View.
+
+    
+    //  startup the simulation specific VIEW.
     ovengine::ViewComponents viewComponents;
     viewComponents.fontLibrary = &fontLibrary;
     viewComponents.bitmapLibrary = &bitmapLibrary;
     ovengine::View* view = cinekine::ovengine::CreateView(theater, renderer, viewComponents);
-    
-    //  handle viewpoint sets by Theater.
-    theater.onViewMapSet([&view] (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
+
+    //  handle viewpoint sets by Theater MODEL to VIEW interaction
+    theater.onViewMapSet([&view]
+        (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
         {
             if (view)
             {
@@ -111,7 +123,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
             }
         }
     );
-    theater.onViewPosSet([&view] (const cinek_ov_pos& pos)
+    theater.onViewPosSet([&view]
+        (const cinek_ov_pos& pos)
         {
             if (view)
             {
@@ -120,68 +133,63 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         }
     );
 
+    //  Startup the Director CONTROLLER script (controls program flow )
+    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient(), ui);
+
     //  initialize a timer for the main loop
     cinek_timer systemTimer = cinek_timer_create(32);
     uint32_t systemTicks = SDL_GetTicks();
 
-    //  startup the UI system
-    //  
-    //  Use Rocket (aka libRocket)
-    ovengine::RocketUI ui(renderer, allocator);
-
-    if (ui)
+    /*
+    unique_ptr<ovengine::UIWindow> mainWindow = ui.createWindow("static/ui/main.rml");
+    if (mainWindow)
     {
-        //  startup the simulation specific Director.
-        ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient());
-        if (!ui.loadDocument("static/ui/demo.rml"))
-        {
-            OVENGINE_LOG_ERROR("Failed to load UI document");           
-        }
-        //  main loop
-        bool active = true;
-        while (active)
-        {
-            cinek_time currentTime = cinek_timer_get_time(systemTimer);
-
-            ui.update(currentTime);
-
-            //  event dispatch
-            SDL_Event e;
-            while (SDL_PollEvent(&e)) 
-            {
-                if (e.type == SDL_QUIT)
-                {
-                    active = false;
-                    continue;
-                }
-
-                ui.handleInput(e);
-            }
-            
-            ///////////////////////////////////////////////////////////////////
-            
-            director->update();
-
-            ///////////////////////////////////////////////////////////////////
-            renderer.begin();
-        
-            renderer.clear(glx::RGBAColor(0,0,0,255));    
-            view->render();
-            ui.render();
-
-            renderer.display();
-
-            //  update timers for the next frame's time values
-            cinek_timer_update(systemTimer, SDL_GetTicks() - systemTicks);
-        }
-        
-        ovengine::DestroyDirector(director);
-        director = nullptr;
+        mainWindow->show();
     }
     else
     {
-        OVENGINE_LOG_ERROR("Failed to initialize UI system");
+        OVENGINE_LOG_ERROR("Failed to load UI document");           
     }
+    */
+    //  main loop
+    bool active = true;
+    while (active)
+    {
+        cinek_time currentTime = cinek_timer_get_time(systemTimer);
+
+        ui.update(currentTime);
+
+        //  event dispatch
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) 
+        {
+            if (e.type == SDL_QUIT)
+            {
+                active = false;
+                continue;
+            }
+
+            ui.handleInput(e);
+        }
+        
+        ///////////////////////////////////////////////////////////////////
+        director->update();
+
+        ///////////////////////////////////////////////////////////////////
+        renderer.begin();
+    
+        renderer.clear(glx::RGBAColor(0,0,0,255));    
+        view->render();
+        ui.render();
+
+        renderer.display();
+
+        //  update timers for the next frame's time values
+        cinek_timer_update(systemTimer, SDL_GetTicks() - systemTicks);
+    }
+   
+    ovengine::DestroyDirector(director);
+    director = nullptr;
 
     ovengine::DestroyView(view);
     view = nullptr;

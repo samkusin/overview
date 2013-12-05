@@ -19,49 +19,36 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
+ *
+ * @file    UIWindowImpl.hpp
+ * @author  Samir Sinha
+ * @date    12/4/2013
+ * @brief   Base interface for all UIWindow implementations
+ * @copyright Cinekine
  */
 
-#ifndef Overview_Components_Rocket_UIComponent_hpp
-#define Overview_Components_Rocket_UIComponent_hpp
+#ifndef Overview_Components_UIWindowImpl_hpp
+#define Overview_Components_UIWindowImpl_hpp
 
 #include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
-
-#include "cinek/cpp/ckalloc.hpp"
-
-#include "SDL2/SDL_events.h"
 
 namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
-
     namespace ovengine {
 
-    class RocketUI: public UIClient
+    /**
+     * @class UIWindow::Impl
+     * @brief Internal interface for all UIWindow implementations
+     */
+    class UIWindow::Impl
     {
     public:
-        RocketUI(glx::Renderer& renderer, Allocator& allocator);
-        ~RocketUI();
-
-        operator bool() const;
-
-        void update(cinek_time currentTime);
-        void render();
-
-        void handleInput(const SDL_Event& event);
+        virtual ~Impl() {}
 
         /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
+         * Shows the window
          */
-        unique_ptr<UIWindow> createWindow(const char* name);
-
-    private:
-        class Impl;
-        unique_ptr<Impl> _impl;
+        virtual void show() = 0;
     };
 
     }   // namespace ovengine
