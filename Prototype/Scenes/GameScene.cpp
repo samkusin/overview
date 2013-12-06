@@ -11,8 +11,9 @@
 namespace cinekine {
     namespace prototype {
         
-    GameScene::GameScene(unique_ptr<ovengine::UIWindow> window) :
-        InteractiveScene(std::move(window))
+    GameScene::GameScene(ovengine::WindowComponentClient& windowClient) :
+        _windowClient(windowClient),
+        _window(_windowClient.createWindow("static/ui/main.rml"))
     {
         
     }

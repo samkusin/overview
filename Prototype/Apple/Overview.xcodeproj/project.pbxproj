@@ -11,7 +11,6 @@
 		3725BE801830537400B42E49 /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3725BE7E1830537400B42E49 /* libckOVEngine.a */; };
 		37C03B5B18305D770056417B /* libckGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C03B5A18305D770056417B /* libckGL.a */; };
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
-		37DFA0941850108200382685 /* InteractiveScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA08F1850108200382685 /* InteractiveScene.cpp */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
 		37DFA099185012BA00382685 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA097185012BA00382685 /* GameScene.cpp */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
@@ -48,8 +47,6 @@
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
 		37C03B5A18305D770056417B /* libckGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckGL.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libckGL.a"; sourceTree = "<group>"; };
 		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
-		37DFA08F1850108200382685 /* InteractiveScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InteractiveScene.cpp; path = ../InteractiveScene.cpp; sourceTree = "<group>"; };
-		37DFA0901850108200382685 /* InteractiveScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InteractiveScene.hpp; path = ../InteractiveScene.hpp; sourceTree = "<group>"; };
 		37DFA0911850108200382685 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = ../Scene.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../SceneController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
@@ -110,8 +107,6 @@
 			isa = PBXGroup;
 			children = (
 				37DFA0961850123600382685 /* Scenes */,
-				37DFA08F1850108200382685 /* InteractiveScene.cpp */,
-				37DFA0901850108200382685 /* InteractiveScene.hpp */,
 				37DFA0911850108200382685 /* Scene.hpp */,
 				37DFA0921850108200382685 /* SceneController.cpp */,
 				37DFA0931850108200382685 /* SceneController.hpp */,
@@ -287,7 +282,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
-				37DFA0941850108200382685 /* InteractiveScene.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
 				37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */,
 				37DFA099185012BA00382685 /* GameScene.cpp in Sources */,

@@ -51,7 +51,7 @@ namespace cinekine {
         virtual void show() = 0;
     };
 
-    typedef unique_ptr<Window> WindowPtr;
+    typedef std::shared_ptr<Window> WindowPtr;
 
     }   // namespace ovengine
 }   // namespace cinekine

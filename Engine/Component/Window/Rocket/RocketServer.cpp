@@ -120,9 +120,12 @@ namespace cinekine {
             if (uiDocument)
             {
                 //  create our window and views
-                WindowPtr windowImpl(_allocator.newItem<RocketUIWindow>(uiDocument), _allocator);
-
-                return std::move(windowImpl);
+                return std::allocate_shared<RocketUIWindow, std_allocator<RocketUIWindow>,
+                                            Rocket::Core::ElementDocument*>
+                                    (
+                                        std_allocator<RocketUIWindow>(_allocator),
+                                        std::move(uiDocument)
+                                    );
             }
         }
         return WindowPtr();

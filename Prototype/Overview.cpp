@@ -16,7 +16,7 @@
 
 #include "SceneController.hpp"
 #include "Scenes/GameScene.hpp"
-#include "Engine/UIClient.hpp"
+#include "Engine/Component/Window/WindowComponentClient.hpp"
 
 #include <memory>
 
@@ -55,11 +55,11 @@ namespace cinekine {
         _sceneController.add( "game",
             [this]() -> std::shared_ptr<Scene>
             {
-                unique_ptr<ovengine::UIWindow> window(_UICLI.createWindow("static/ui/main.rml"));
-                return std::allocate_shared<GameScene, std_allocator<GameScene>, unique_ptr<ovengine::UIWindow>>
+                return std::allocate_shared<GameScene, std_allocator<GameScene>,
+                                            ovengine::WindowComponentClient&>
                         (
                             std_allocator<GameScene>(_allocator),
-                            std::move(window)
+                            _UICLI
                         );
             });
         
