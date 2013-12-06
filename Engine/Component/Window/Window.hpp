@@ -19,29 +19,39 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
+ *
+ * @file    Window.hpp
+ * @author  Samir Sinha
+ * @date    12/4/2013
+ * @brief   Base interface for all UIWindow implementations
+ * @copyright Cinekine
  */
 
-#ifndef Overview_Components_Rocket_UIWindow_hpp
-#define Overview_Components_Rocket_UIWindow_hpp
+#ifndef Overview_Components_Window_hpp
+#define Overview_Components_Window_hpp
 
-#include "Engine/Component/UIWindowImpl.hpp"
-#include "Rocket/Core/ElementDocument.h"
+#include "cinek/cpp/ckalloc.hpp"
 
 namespace cinekine {
     namespace ovengine {
 
-    class RocketUIWindow : public UIWindow::Impl
+    /**
+     * @class Window
+     * @brief Internal interface for all Window implementations
+     */
+    class Window
     {
     public:
-        RocketUIWindow(Rocket::Core::ElementDocument* document);
-        virtual ~RocketUIWindow();
+        virtual ~Window() {}
 
-        virtual void show();
-
-    private:
-        Rocket::Core::ElementDocument* _document;
+        /**
+         * Shows the window
+         */
+        virtual void show() = 0;
     };
+
+    typedef unique_ptr<Window> WindowPtr;
 
     }   // namespace ovengine
 }   // namespace cinekine

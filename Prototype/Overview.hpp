@@ -31,14 +31,14 @@ namespace cinekine {
     class Overview: public ovengine::Director
     {
     public:
-        Overview(ovengine::TheaterClient& cli, ovengine::UIClient& uiCLI);
+        Overview(ovengine::TheaterClient& cli, ovengine::WindowComponentClient& uiCLI);
         virtual ~Overview();
 
         virtual void update();
         
     private:
         ovengine::TheaterClient& _theaterCLI;
-        ovengine::UIClient& _UICLI;
+        ovengine::WindowComponentClient& _UICLI;
         Allocator _allocator;
         SceneController _sceneController;
 

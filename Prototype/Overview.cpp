@@ -24,10 +24,10 @@
 namespace cinekine {
     namespace ovengine {
     
-    ovengine::Director* CreateDirector(TheaterClient& cli, UIClient& uiCLI)
+    ovengine::Director* CreateDirector(TheaterClient& cli, WindowComponentClient& windowCLI)
     {
         Allocator allocator;
-        return allocator.newItem<prototype::Overview>(cli, uiCLI);
+        return allocator.newItem<prototype::Overview>(cli, windowCLI);
     }
     
     void DestroyDirector(ovengine::Director* director)
@@ -42,7 +42,7 @@ namespace cinekine {
 namespace cinekine {
     namespace prototype {
 
-    Overview::Overview(ovengine::TheaterClient& cli, ovengine::UIClient& uiCLI) :
+    Overview::Overview(ovengine::TheaterClient& cli, ovengine::WindowComponentClient& uiCLI) :
         _theaterCLI(cli),
         _UICLI(uiCLI),
         _allocator(),

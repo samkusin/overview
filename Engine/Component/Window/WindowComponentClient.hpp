@@ -22,47 +22,29 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_UIComponent_hpp
-#define Overview_Components_UIComponent_hpp
+#ifndef Overview_WindowComponentClient_hpp
+#define Overview_WindowComponentClient_hpp
 
-#include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
-
-#include "cinek/cpp/ckalloc.hpp"
-
-#include "SDL2/SDL_events.h"
+#include "Window.hpp"
 
 namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
-
     namespace ovengine {
 
-    class UIComponent : public UIClient
+    class WindowComponentClient
     {
     public:
-        class Impl;
-        UIComponent(glx::Renderer& renderer, Allocator& allocator);
-        ~UIComponent();
-
-        operator bool() const;
-
-        void update(cinek_time currentTime);
-        void render();
-
-        void handleInput(const SDL_Event& event);
+        virtual ~WindowComponentClient() {}
 
         /**
          * Loads a UI window/controller identified by the named resource
          * @param  name Resource name
-         * @return      Created UIWindow pointer
+         * @param  createFn The creation delegate takes two parameters: the
+         *                  class of view and the ID string.  The object
+         *                  returned will be shared between the client and the
+         *                  document's element
+         * @return          Created Window pointer
          */
-        unique_ptr<UIWindow> createWindow(const char* name);
-
-    private:
-
-        unique_ptr<Impl> _impl;
+        virtual WindowPtr createWindow(const char* name) = 0;
     };
 
     }   // namespace ovengine

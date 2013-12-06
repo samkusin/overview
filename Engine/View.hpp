@@ -28,6 +28,7 @@ namespace cinekine {
     namespace ovengine {
     
     class Theater;
+    class ViewImpl;
 
     /**
      * @struct ViewComponents
@@ -37,6 +38,14 @@ namespace cinekine {
     {
         glx::FontLibrary* fontLibrary;
         glx::BitmapLibrary* bitmapLibrary;
+    };
+    /**
+     * @enum The types of views for a view factory delegate to construct
+     */
+    enum ViewType
+    {
+        /** An Overview (Game-style) View of type class OverView */
+        kViewType_Overview
     };
     
     //  The View renders a Viewpoint drives execution of the simulation based on 

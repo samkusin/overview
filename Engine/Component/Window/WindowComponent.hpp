@@ -22,12 +22,10 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_UIComponentImpl_hpp
-#define Overview_Components_UIComponentImpl_hpp
+#ifndef Overview_Components_WindowComponent_hpp
+#define Overview_Components_WindowComponent_hpp
 
-#include "Engine/UIComponent.hpp"
-#include "Engine/UIWindow.hpp"
-#include "Engine/UIClient.hpp"
+#include "WindowComponentClient.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -37,13 +35,15 @@ namespace cinekine {
     namespace glx {
         class Renderer;
     }
+}
 
+namespace cinekine {
     namespace ovengine {
 
-    class UIComponent::Impl
+    class WindowComponent: public WindowComponentClient
     {
     public:
-        virtual ~Impl() = default;
+        virtual ~WindowComponent() = default;
 
         virtual operator bool() const = 0;
 
@@ -51,14 +51,22 @@ namespace cinekine {
         virtual void render() = 0;
 
         virtual void handleInput(const SDL_Event& event) = 0;
-
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        virtual UIWindow* createWindow(const char* name) = 0;
     };
+
+    /** Handle to a WindowComponent */
+    typedef unique_ptr<WindowComponent> WindowComponentPtr;
+
+    /**
+     * Creates a Window Component based on the specified identifier
+     * @param  name      Component name
+     * @param  renderer  Renderer interface
+     * @param  allocator Memory allocator used by the component
+     * @return           Shared reference to a WindowComponent
+     */
+    WindowComponentPtr createWindowComponent(const char* name,
+                                             glx::Renderer& renderer,
+                                             const Allocator& allocator);
+
 
     }   // namespace ovengine
 }   // namespace cinekine

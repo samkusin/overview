@@ -101,7 +101,7 @@ namespace cinekine {
         
     Theater::Theater(const Allocator& allocator) :
         _allocator(allocator),
-        _impl(_allocator.newItem<Impl>(_allocator), SharedPtrDeleter<Impl>(_allocator))
+        _impl(_allocator.newItem<Impl>(_allocator), _allocator)
     {
         
     }

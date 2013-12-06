@@ -22,26 +22,29 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_UIWindow_hpp
-#define Overview_UIWindow_hpp
+#ifndef Overview_Components_Rocket_ElementOverview_hpp
+#define Overview_Components_Rocket_ElementOverview_hpp
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "Rocket/Core/Element.h"
+#include "Rocket/Core/EventListener.h"
 
 namespace cinekine {
     namespace ovengine {
 
-    class UIWindow
+    class RocketServer;
+    
+    class RocketElementOverview : 
+        public Rocket::Core::Element,
+        public Rocket::Core::EventListener
     {
     public:
-        class Impl;
-        UIWindow(const Allocator& allocator, Impl* impl);
-
-        ~UIWindow();
-
-        void show();
+        RocketElementOverview(const Rocket::Core::String& tag, const RocketServer& ui);
+        virtual ~RocketElementOverview();
+        
+        virtual void ProcessEvent(Rocket::Core::Event& event);
 
     private:
-        unique_ptr<Impl> _impl;
+        const RocketServer& _ui;
     };
 
     }   // namespace ovengine

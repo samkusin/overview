@@ -33,13 +33,13 @@
 namespace cinekine {
     namespace ovengine {
 
-    class RocketUI;
+    class RocketServer;
 
     template<typename T>
     class RocketUIElementInstancer: public Rocket::Core::ElementInstancer
     {
     public:
-    	RocketUIElementInstancer(const Allocator& allocator, const RocketUI& ui);
+    	RocketUIElementInstancer(const Allocator& allocator, const RocketServer& ui);
 		virtual ~RocketUIElementInstancer() = default;
 	
 		Rocket::Core::Element* InstanceElement(Rocket::Core::Element* parent,
@@ -51,14 +51,14 @@ namespace cinekine {
 		void Release();
 
 	private:
-		const RocketUI& _ui;
+		const RocketServer& _ui;
 		Allocator _allocator;
 	};
 
 
 	template<typename T>
 	RocketUIElementInstancer<T>::RocketUIElementInstancer(const Allocator& allocator,
-														  const RocketUI& ui) :
+														  const RocketServer& ui) :
 		_ui(ui),
 		_allocator(allocator)
 	{

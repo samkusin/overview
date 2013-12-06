@@ -22,45 +22,29 @@
  * THE SOFTWARE. 
  */
 
-#include "Component/UIComponentImpl.hpp"
-#include "Component/Rocket/RocketUI.hpp"
+#include "ElementOverview.hpp"
+#include "../RocketServer.hpp"
 
 namespace cinekine {
     namespace ovengine {
-   
-    UIComponent::UIComponent(glx::Renderer& renderer, Allocator& allocator) :
-        _impl(allocator.newItem<RocketUI>(renderer, allocator))
-    {
-    }
 
-    UIComponent::~UIComponent()
+    RocketElementOverview::RocketElementOverview(const Rocket::Core::String& tag,
+                                                 const RocketServer& ui) :
+        Rocket::Core::Element(tag),
+        _ui(ui)
     {
-    }
 
-    UIComponent::operator bool() const
-    {
-        return *(_impl.get());
-    }
-
-    void UIComponent::update(cinek_time currentTime)
-    {
-        _impl->update(currentTime);
-    }
-
-    void UIComponent::render()
-    {
-        _impl->render();
     }
     
-    void UIComponent::handleInput(const SDL_Event& event)
+    RocketElementOverview::~RocketElementOverview()
     {
-        return _impl->handleInput(event);
     }
 
-    unique_ptr<UIWindow> UIComponent::createWindow(const char* name)
+    void RocketElementOverview::ProcessEvent(Rocket::Core::Event& event)
     {
-        return std::move(unique_ptr<UIWindow>(_impl->createWindow(name)));
+        Rocket::Core::Element::ProcessEvent(event);
     }
+
 
     }   // namespace ovengine
 }   // namespace cinekine

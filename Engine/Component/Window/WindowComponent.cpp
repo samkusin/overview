@@ -22,32 +22,31 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_ElementOverview_hpp
-#define Overview_Components_Rocket_ElementOverview_hpp
+#include "WindowComponent.hpp"
 
-#include "Rocket/Core/Element.h"
-#include "Rocket/Core/EventListener.h"
+#include "./Rocket/RocketServer.hpp"
+
+#include <cstring>
 
 namespace cinekine {
     namespace ovengine {
 
-    class RocketUI;
-    
-    class RocketElementOverview : 
-        public Rocket::Core::Element,
-        public Rocket::Core::EventListener
+    WindowComponentPtr createWindowComponent(const char* name,
+                                             glx::Renderer& renderer,
+                                             const Allocator& allocator)
     {
-    public:
-        RocketElementOverview(const Rocket::Core::String& tag, const RocketUI& ui);
-        virtual ~RocketElementOverview();
-        
-        virtual void ProcessEvent(Rocket::Core::Event& event);
-
-    private:
-        const RocketUI& _ui;
-    };
+        Allocator alloc(allocator);
+        if (!strcmp(name, "rocket"))
+        {
+            WindowComponentPtr ptr(alloc.newItem<RocketServer, glx::Renderer&, const Allocator&>(
+                                        renderer,
+                                        allocator),
+                                        allocator
+                                  );
+            return std::move(ptr);
+        }
+        return WindowComponentPtr();
+    }
 
     }   // namespace ovengine
 }   // namespace cinekine
-
-#endif

@@ -22,27 +22,29 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_UIClient_hpp
-#define Overview_UIClient_hpp
+#ifndef Overview_Window_hpp
+#define Overview_Window_hpp
 
-#include "Engine/UIWindow.hpp"
-
+#include "./Component/WindowImpl.hpp"
 #include "cinek/cpp/ckalloc.hpp"
 
 namespace cinekine {
     namespace ovengine {
 
-    class UIClient
+    /**
+     * @class Window
+     * @brief Interface to a Window resource
+     */
+    class Window
     {
     public:
-        virtual ~UIClient() {}
+        Window(WindowImplPtr impl);
+        ~Window();
 
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        virtual unique_ptr<UIWindow> createWindow(const char* name) = 0;
+        void show();
+
+    private:
+        WindowImplPtr _impl;
     };
 
     }   // namespace ovengine

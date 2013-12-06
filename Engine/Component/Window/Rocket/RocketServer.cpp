@@ -22,7 +22,7 @@
  * THE SOFTWARE. 
  */
 
-#include "RocketUI.hpp"
+#include "RocketServer.hpp"
 #include "RocketUIWindow.hpp"
 
 #include "RocketUIElementInstancer.hpp"
@@ -34,7 +34,7 @@
 namespace cinekine {
     namespace ovengine {
 
-    RocketUI::RocketUI(glx::Renderer& renderer, Allocator& allocator) :
+    RocketServer::RocketServer(glx::Renderer& renderer, const Allocator& allocator) :
         _allocator(allocator),
         _rocketSystem(),
         _rocketFile(),
@@ -68,7 +68,7 @@ namespace cinekine {
                                               );
     }
 
-    RocketUI::~RocketUI()
+    RocketServer::~RocketServer()
     {
         if (_context)
         {
@@ -81,12 +81,12 @@ namespace cinekine {
         }
     }
 
-    RocketUI::operator bool() const
+    RocketServer::operator bool() const
     {
         return _coreInitialized && _context;
     }
 
-    void RocketUI::update(cinek_time currentTime)
+    void RocketServer::update(cinek_time currentTime)
     {
         _rocketSystem.setCurrentTime(currentTime/1000.0f);
         if (_context)
@@ -95,7 +95,7 @@ namespace cinekine {
         }
     }
 
-    void RocketUI::render()
+    void RocketServer::render()
     {
         if (_context)
         {
@@ -104,12 +104,12 @@ namespace cinekine {
     }
 
 
-    void RocketUI::handleInput(const SDL_Event& event)
+    void RocketServer::handleInput(const SDL_Event& event)
     {
         _sdlInput.dispatchSDLEvent(event, _context);
     }
 
-    UIWindow* RocketUI::createWindow(const char* name)
+    WindowPtr RocketServer::createWindow(const char* name)
     {
         /**
          * @todo Move createWindow to a factory for UIWindow objects
@@ -119,20 +119,13 @@ namespace cinekine {
             Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument(name);
             if (uiDocument)
             {
-                RocketUIWindow* windowImpl =
-                    _allocator.newItem<RocketUIWindow, Rocket::Core::ElementDocument*>(
-                        std::move(uiDocument)
-                    );
-                if (windowImpl)
-                {
-                    UIWindow* window = _allocator.newItem<UIWindow, const Allocator&, UIWindow::Impl*>(
-                            _allocator, windowImpl
-                        );
-                    return window;
-                }
+                //  create our window and views
+                WindowPtr windowImpl(_allocator.newItem<RocketUIWindow>(uiDocument), _allocator);
+
+                return std::move(windowImpl);
             }
         }
-        return nullptr;
+        return WindowPtr();
     } 
 
 

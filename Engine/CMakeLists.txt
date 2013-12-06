@@ -51,11 +51,15 @@ set( CINEK_OVENGINE_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." )
 #
 option( CINEK_OVENGINE_ROCKET_UI "Use the ckRocket (libRocket) UI library" ON )
 
+set( OVENGINE_COMP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Component" )
+
 # Define settings based on supplied options
 #
+set( OVENGINE_COMP_WINDOW_SOURCE_DIR "${OVENGINE_COMP_SOURCE_DIR}/Window" )
+
 if( CINEK_OVENGINE_ROCKET_UI )
-    include_directories( "${CINEK_OVENGINE_ROOT_DIR}/Rocket/Include" )
-    set( ROCKET_UI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Component/Rocket )
+    include_directories( "${CINEK_EXT_PACKAGE_DIR}/Rocket/Include" )
+    set( ROCKET_UI_SOURCE_DIR ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/Rocket )
     set( ROCKET_UI_COMPONENT_SOURCES
          ${ROCKET_UI_SOURCE_DIR}/Elements/ElementOverview.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketRenderInterface.cpp
@@ -63,7 +67,7 @@ if( CINEK_OVENGINE_ROCKET_UI )
          ${ROCKET_UI_SOURCE_DIR}/RocketSystemInterface.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSDLInput.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketUIWindow.cpp
-         ${ROCKET_UI_SOURCE_DIR}/RocketUI.cpp )
+         ${ROCKET_UI_SOURCE_DIR}/RocketServer.cpp )
     set( ROCKET_UI_COMPONENT_INCLUDES
          ${ROCKET_UI_SOURCE_DIR}/Elements/ElementOverview.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketRenderInterface.hpp
@@ -72,20 +76,24 @@ if( CINEK_OVENGINE_ROCKET_UI )
          ${ROCKET_UI_SOURCE_DIR}/RocketUIElementInstancer.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketUIWindow.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSDLInput.hpp
-         ${ROCKET_UI_SOURCE_DIR}/RocketUI.hpp )
+         ${ROCKET_UI_SOURCE_DIR}/RocketServer.hpp )
 
-    source_group( Component\\Rocket FILES ${ROCKET_UI_COMPONENT_SOURCES} ${ROCKET_UI_COMPONENT_INCLUDES} )
+    source_group( Component\\Window\\Rocket FILES ${ROCKET_UI_COMPONENT_SOURCES} ${ROCKET_UI_COMPONENT_INCLUDES} )
 else( )
     set( ROCKET_UI_COMPONENT_SOURCES )
     set( ROCKET_UI_COMPONENT_INCLUDES )
 endif( )
 
 set( COMPONENT_SOURCES
-     ${ROCKET_UI_COMPONENT_SOURCES} )
+     ${ROCKET_UI_COMPONENT_SOURCES}
+     ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponent.cpp )
 set( COMPONENT_INCLUDES
      ${ROCKET_UI_COMPONENT_INCLUDES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/Component/UIComponentImpl.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Component/UIWindowImpl.hpp )
+     ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponentClient.hpp
+     ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponent.hpp
+     ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/Window.hpp )
+
+source_group( Component\\Window FILES ${COMPONENT_SOURCES} ${COMPONENT_INCLUDES} )
 
 # setup build
 include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
@@ -103,8 +111,6 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
      #${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/UIWindow.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/UIComponent.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES
@@ -116,9 +122,6 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TheaterClient.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/UIWindow.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/UIComponent.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/UIClient.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp )
 
 add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )

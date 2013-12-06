@@ -20,7 +20,7 @@
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
-#include "UIComponent.hpp"
+#include "Component/Window/WindowComponent.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 #include "cinek/core/cktimer.h"
@@ -58,9 +58,13 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     }
 
     //  Startup the UI system
-    //  
-    ovengine::UIComponent ui(renderer, allocator);
-    if (!ui)
+    //
+    ovengine::WindowComponentPtr windowComponent = ovengine::createWindowComponent(
+                                                "rocket",
+                                                renderer,
+                                                allocator
+                                         );
+    if (!windowComponent)
     {
         OVENGINE_LOG_ERROR("Failed to initialize UI system");
         return 1;
@@ -133,7 +137,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     );
 
     //  Startup the Director CONTROLLER script (controls program flow )
-    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient(), ui);
+    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient(), *windowComponent);
 
     //  initialize a timer for the main loop
     cinek_timer systemTimer = cinek_timer_create(32);
@@ -145,7 +149,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     {
         cinek_time currentTime = cinek_timer_get_time(systemTimer);
 
-        ui.update(currentTime);
+        windowComponent->update(currentTime);
 
         //  event dispatch
         SDL_Event e;
@@ -157,7 +161,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
                 continue;
             }
 
-            ui.handleInput(e);
+            windowComponent->handleInput(e);
         }
         
         ///////////////////////////////////////////////////////////////////
@@ -168,7 +172,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     
         renderer.clear(glx::RGBAColor(0,0,0,255));    
         view->render();
-        ui.render();
+        windowComponent->render();
 
         renderer.display();
 

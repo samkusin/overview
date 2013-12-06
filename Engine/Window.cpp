@@ -22,56 +22,25 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_UIComponent_hpp
-#define Overview_Components_Rocket_UIComponent_hpp
-
-#include "../UIComponentImpl.hpp"
-#include "RocketSDLInput.hpp"
-#include "RocketFileInterface.hpp"
-#include "RocketSystemInterface.hpp"
-#include "RocketRenderInterface.hpp"
-
-#include "Rocket/Core.h"
+#include "Window.hpp"
 
 namespace cinekine {
-    namespace glx {
-        class Renderer;
-    }
-
     namespace ovengine {
 
-    class RocketUI: public UIComponent::Impl
+    Window::Window(WindowImplPtr impl) :
+        _impl(std::move(impl))
     {
-    public:
-        RocketUI(glx::Renderer& renderer, Allocator& allocator);
-        ~RocketUI();
+    }
+    
+    Window::~Window()
+    {
+    }
 
-        operator bool() const;
-
-        void update(cinek_time currentTime);
-        void render();
-
-        void handleInput(const SDL_Event& event);
-
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        UIWindow* createWindow(const char* name);
-
-    private:
-        Allocator _allocator;
-        RocketSystemInterface _rocketSystem;
-        RocketFileInterface _rocketFile;
-        RocketRenderInterface _rocketRenderer;
-        bool _coreInitialized;
-
-        RocketSDLInput _sdlInput;
-        Rocket::Core::Context *_context;
-    };
+    void Window::show()
+    {
+        _impl->show();
+    }
 
     }   // namespace ovengine
 }   // namespace cinekine
 
-#endif
