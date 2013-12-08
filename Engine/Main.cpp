@@ -8,8 +8,9 @@
 
 #include "Debug.hpp"
 #include "Director.hpp"
-#include "View.hpp"
 #include "Theater.hpp"
+#include "View.hpp"
+
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
 
@@ -40,110 +41,43 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     glx::RendererInitParameters rendererInitParams;
     glx::GL3Renderer renderer(rendererInitParams, window, allocator);
     //glx::SDLRenderer renderer(rendererInitParams, window, allocator);
-
     if (!renderer)
     {
         OVENGINE_LOG_ERROR("Failed to initialize renderer.");
         return 1;
     }
 
-    glx::BitmapLibrary bitmapLibrary(renderer);
-    glx::FontLibrary fontLibrary(renderer, 10);
-    glx::Graphics2D(renderer, bitmapLibrary, fontLibrary);
-
+    //  debug font
+    glx::FontLibrary fontLibrary(renderer, 2);
     if (!fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16))
     {
         OVENGINE_LOG_ERROR("Failed to load system font.");
         return 1;
     }
 
+    //  Startup the Theater MODEL
+    ovengine::Theater theater(allocator);
+
     //  Startup the UI system
-    //
-    ovengine::WindowComponentPtr windowComponent = ovengine::createWindowComponent(
-                                                "rocket",
-                                                renderer,
-                                                allocator
-                                         );
+    ovengine::WindowComponentPtr windowComponent =
+                                ovengine::createWindowComponent(
+                                        "rocket",
+                                        renderer,
+                                        allocator);
     if (!windowComponent)
     {
         OVENGINE_LOG_ERROR("Failed to initialize UI system");
         return 1;
     }
-
-    //  Startup the Theater MODEL
-    ovengine::Theater theater(allocator);
-            
-    //  Setup Theater <-> Renderer interaction (Director <-> View by proxy)
-    //
-    //  handle sprite -> bitmap loading.
-    theater.getSpriteDatabaseLoader().onBitmapAtlasRequest([&bitmapLibrary]
-        (const char* atlasName) -> cinek_bitmap_atlas
-        {
-            return bitmapLibrary.loadAtlas(atlasName);
-        }
-    );
-    
-    theater.getSpriteDatabaseLoader().onBitmapIndexRequest([&bitmapLibrary]
-        ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-        {
-             const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
-             if (!bitmapAtlas)
-                 return kCinekBitmapIndex_Invalid;
-             return bitmapAtlas->getBitmapIndex(name);
-        }
-    );
-    //  handle tile -> bitmap loading.
-    theater.getTileDatabaseLoader().onBitmapAtlasRequest([&bitmapLibrary]
-        (const char* atlasName) -> cinek_bitmap_atlas
-        {
-            return bitmapLibrary.loadAtlas(atlasName);
-        }
-    );
-    theater.getTileDatabaseLoader().onBitmapIndexRequest([&bitmapLibrary]
-        (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-        {
-           const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
-           if (!bitmapAtlas)
-               return kCinekBitmapIndex_Invalid;
-           return bitmapAtlas->getBitmapIndex(name);
-        }
-    );
-
-    
-    //  startup the simulation specific VIEW.
-    ovengine::ViewComponents viewComponents;
-    viewComponents.fontLibrary = &fontLibrary;
-    viewComponents.bitmapLibrary = &bitmapLibrary;
-    ovengine::View* view = cinekine::ovengine::CreateView(theater, renderer, viewComponents);
-
-    //  handle viewpoint sets by Theater MODEL to VIEW interaction
-    theater.onViewMapSet([&view]
-        (std::shared_ptr<overview::Map>& map, const cinek_ov_pos& pos)
-        {
-            if (view)
-            {
-                view->onMapSet(map, pos);
-            }
-        }
-    );
-    theater.onViewPosSet([&view]
-        (const cinek_ov_pos& pos)
-        {
-            if (view)
-            {
-                view->onMapSetPosition(pos);
-            }
-        }
-    );
-
+ 
     //  Startup the Director CONTROLLER script (controls program flow )
-    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getClient(), *windowComponent);
-
-    //  initialize a timer for the main loop
-    cinek_timer systemTimer = cinek_timer_create(32);
-    uint32_t systemTicks = SDL_GetTicks();
+    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getCLI(),
+                                            *windowComponent,
+                                            renderer);
 
     //  main loop
+    cinek_timer systemTimer = cinek_timer_create(32);
+    uint32_t systemTicks = SDL_GetTicks();
     bool active = true;
     while (active)
     {
@@ -171,7 +105,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         renderer.begin();
     
         renderer.clear(glx::RGBAColor(0,0,0,255));    
-        view->render();
         windowComponent->render();
 
         renderer.display();
@@ -182,9 +115,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
    
     ovengine::DestroyDirector(director);
     director = nullptr;
-
-    ovengine::DestroyView(view);
-    view = nullptr;
 
     return 0;
 }

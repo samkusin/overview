@@ -22,29 +22,28 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_WindowComponentClient_hpp
-#define Overview_WindowComponentClient_hpp
+#ifndef Overview_WindowComponentCLI_hpp
+#define Overview_WindowComponentCLI_hpp
 
-#include "Window.hpp"
+#include "./Window.hpp"
+#include "Engine/ViewCreate.hpp"
 
 namespace cinekine {
     namespace ovengine {
 
-    class WindowComponentClient
+    class WindowComponentCLI
     {
     public:
-        virtual ~WindowComponentClient() {}
+        virtual ~WindowComponentCLI() {}
 
         /**
          * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @param  createFn The creation delegate takes two parameters: the
-         *                  class of view and the ID string.  The object
-         *                  returned will be shared between the client and the
-         *                  document's element
-         * @return          Created Window pointer
+         * @param  name           Resource name
+         * @param  createDelegate View creation delegate
+         * @return                Created Window pointer
          */
-        virtual WindowPtr createWindow(const char* name) = 0;
+        virtual WindowPtr createWindow(const char* name,
+                                       ViewCreateFn createDelegate) = 0;
     };
 
     }   // namespace ovengine

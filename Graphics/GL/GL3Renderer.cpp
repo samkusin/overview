@@ -284,7 +284,7 @@ namespace cinekine {
                                     const cinekine::vector<glm::vec2>& vertsPos,
                                     const cinekine::vector<glm::vec2>& vertsUV,
                                     const cinekine::vector<glm::vec4>& vertsColor,
-                                    const cinekine::vector<ushort>& indices)
+                                    const cinekine::vector<uint16_t>& indices)
     {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Mesh> mesh = std::allocate_shared<GL3Mesh,
@@ -294,7 +294,7 @@ namespace cinekine {
                                                           const vector<glm::vec2>&,
                                                           const vector<glm::vec2>&,
                                                           const vector<glm::vec4>&,
-                                                          const vector<ushort>& >
+                                                          const vector<uint16_t>& >
             (
                 std_allocator<GL3Mesh>(allocator),
                 texture,

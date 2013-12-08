@@ -1,7 +1,9 @@
-/**
- * The MIT License (MIT)
+/*
+ * This source file is part of libRocket, the HTML/CSS Interface Middleware
  *
- * Copyright (c) 2013 Cinekine Media
+ * For the latest information, see http://www.librocket.com
+ *
+ * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +21,40 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
+ *
  */
 
-#include "InteractiveScene.hpp"
-#include "UIWindow.hpp"
+#include "./RocketElementInstancers.hpp"
+#include "./Elements/ElementOverview.hpp"
 
 namespace cinekine {
     namespace ovengine {
 
-    InteractiveScene::InteractiveScene(unique_ptr<UIWindow> window) :
-        _window(std::move(window))
+    RocketOverviewElementInstancer::RocketOverviewElementInstancer(const Allocator& allocator) :
+        _allocator(allocator),
+        _viewCreateFn()
     {
-        _window->show();
+    }
+
+    Rocket::Core::Element* RocketOverviewElementInstancer::InstanceElement(
+                                    Rocket::Core::Element* /*parent*/,
+                                    const Rocket::Core::String& tag,
+                                    const Rocket::Core::XMLAttributes& /*attributes*/)
+    {
+        std::shared_ptr<View> view = _viewCreateFn("","");
+        return _allocator.newItem<RocketElementOverview, const Rocket::Core::String&>(tag, view);
+    }
+
+    void RocketOverviewElementInstancer::ReleaseElement(Rocket::Core::Element* element)
+    {
+        _allocator.deleteItem(element);
+    }
+
+    void RocketOverviewElementInstancer::Release()
+    {
+        _allocator.deleteItem(this);    
     }
     
-    InteractiveScene::~InteractiveScene()
-    {
-    }
-
-    void InteractiveScene::update()
-    {
-
-    }
-
     }   // namespace ovengine
 }   // namespace cinekine
-

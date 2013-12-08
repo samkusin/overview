@@ -35,7 +35,7 @@
 namespace cinekine {
 
     namespace glx {
-        class Renderer;
+        class RendererCLI;
         class Mesh;
     }
     
@@ -44,7 +44,7 @@ namespace cinekine {
     class RocketRenderInterface : public Rocket::Core::RenderInterface
     {
     public:
-        RocketRenderInterface(glx::Renderer& renderer);
+        RocketRenderInterface(glx::RendererCLI& renderer, Allocator& allocator);
         virtual ~RocketRenderInterface();
 
         glx::Rect getViewport() const;
@@ -129,7 +129,7 @@ namespace cinekine {
         virtual float GetPixelsPerInch();
         
     private:
-        glx::Renderer& _renderer;
+        glx::RendererCLI& _renderer;
 
         template<class T> using ResourceMap = std::unordered_map<
                                                     const T*, std::shared_ptr<T>, 

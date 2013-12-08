@@ -28,7 +28,13 @@
 namespace cinekine {
     namespace prototype {
 
-    SceneController::SceneController(const Allocator& allocator) : 
+    SceneController::SceneController(ovengine::TheaterCLI& theater,
+                                     ovengine::WindowComponentCLI& ui,
+                                     glx::RendererCLI& renderer,
+                                     const Allocator& allocator) :
+        _theater(theater),
+        _ui(ui),
+        _renderer(renderer),
         _sceneMap(std_allocator<std::pair<string, SceneCreateFn>>(allocator)),
         _currentScene()
     {

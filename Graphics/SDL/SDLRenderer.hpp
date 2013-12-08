@@ -63,14 +63,14 @@ namespace cinekine {
                                       const cinekine::vector<glm::vec2>& vertsPos,
                                       const cinekine::vector<glm::vec2>& vertsUV,
                                       const cinekine::vector<glm::vec4>& vertsColor,
-                                      const cinekine::vector<ushort>& indices);
+                                      const cinekine::vector<uint16_t>& indices);
 
         virtual MeshPtr createMesh(TexturePtr& texture,
                                    Mesh::Type meshType,
                                    const cinekine::vector<glm::vec2>& vertsPos,
                                    const cinekine::vector<glm::vec2>& vertsUV,
                                    const cinekine::vector<glm::vec4>& vertsColor,
-                                   const cinekine::vector<ushort>& indices);
+                                   const cinekine::vector<uint16_t>& indices);
 
         virtual void drawMesh(const Mesh& mesh, const glm::vec2& position);
 

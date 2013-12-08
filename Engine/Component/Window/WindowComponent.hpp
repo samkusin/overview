@@ -25,7 +25,7 @@
 #ifndef Overview_Components_WindowComponent_hpp
 #define Overview_Components_WindowComponent_hpp
 
-#include "WindowComponentClient.hpp"
+#include "WindowComponentCLI.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
@@ -33,14 +33,14 @@
 
 namespace cinekine {
     namespace glx {
-        class Renderer;
+        class RendererCLI;
     }
 }
 
 namespace cinekine {
     namespace ovengine {
 
-    class WindowComponent: public WindowComponentClient
+    class WindowComponent: public WindowComponentCLI
     {
     public:
         virtual ~WindowComponent() = default;
@@ -64,7 +64,7 @@ namespace cinekine {
      * @return           Shared reference to a WindowComponent
      */
     WindowComponentPtr createWindowComponent(const char* name,
-                                             glx::Renderer& renderer,
+                                             glx::RendererCLI& renderer,
                                              const Allocator& allocator);
 
 

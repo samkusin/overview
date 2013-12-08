@@ -13,6 +13,7 @@
 		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
 		37DFA099185012BA00382685 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA097185012BA00382685 /* GameScene.cpp */; };
+		37DFA09D1852D29A00382685 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA09B1852D29A00382685 /* GameView.cpp */; };
 		37E11EC417B5AC2700665306 /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E11EC117B5AC2700665306 /* libck.a */; };
 		37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */; };
 		37E6802217C8392400FF3C97 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801D17C8392400FF3C97 /* AudioUnit.framework */; };
@@ -26,7 +27,6 @@
 		37F64AA11780EA2C009116E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.m */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
 		37F64AC31780EF04009116E7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F64AC21780EF04009116E7 /* OpenGL.framework */; };
-		37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F6A44717CBCE0F00C9EE1C /* GameView.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,6 +52,8 @@
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
 		37DFA097185012BA00382685 /* GameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameScene.cpp; path = ../Scenes/GameScene.cpp; sourceTree = "<group>"; };
 		37DFA098185012BA00382685 /* GameScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameScene.hpp; path = ../Scenes/GameScene.hpp; sourceTree = "<group>"; };
+		37DFA09B1852D29A00382685 /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Views/GameView.cpp; sourceTree = "<group>"; };
+		37DFA09C1852D29A00382685 /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Views/GameView.hpp; sourceTree = "<group>"; };
 		37E11EC117B5AC2700665306 /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../../../Library/Developer/Xcode/DerivedData/Prototype-bhjifdfppopnzneokqtygxtwaxkk/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
 		37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		37E6801D17C8392400FF3C97 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -74,9 +76,6 @@
 		37F6A44017CAD46500C9EE1C /* bitmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bitmaps; path = "../../../Prototype-Data/Built/bitmaps"; sourceTree = "<group>"; };
 		37F6A44117CAD46500C9EE1C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = "../../../Prototype-Data/Built/data"; sourceTree = "<group>"; };
 		37F6A44217CAD46500C9EE1C /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = "../../../Prototype-Data/Built/textures"; sourceTree = "<group>"; };
-		37F6A44717CBCE0F00C9EE1C /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../GameView.cpp; sourceTree = "<group>"; };
-		37F6A44817CBCE0F00C9EE1C /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../GameView.hpp; sourceTree = "<group>"; };
-		37F6A44D17CBF1C100C9EE1C /* Common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Common.hpp; path = ../Common.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,15 +105,13 @@
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
+				37DFA09A1852D27D00382685 /* Views */,
 				37DFA0961850123600382685 /* Scenes */,
 				37DFA0911850108200382685 /* Scene.hpp */,
 				37DFA0921850108200382685 /* SceneController.cpp */,
 				37DFA0931850108200382685 /* SceneController.hpp */,
 				37E76A0D17C6EC34009EAA97 /* Overview.cpp */,
 				37E76A0E17C6EC34009EAA97 /* Overview.hpp */,
-				37F6A44717CBCE0F00C9EE1C /* GameView.cpp */,
-				37F6A44817CBCE0F00C9EE1C /* GameView.hpp */,
-				37F6A44D17CBF1C100C9EE1C /* Common.hpp */,
 			);
 			name = Prototype;
 			sourceTree = "<group>";
@@ -126,6 +123,15 @@
 				37DFA098185012BA00382685 /* GameScene.hpp */,
 			);
 			name = Scenes;
+			sourceTree = "<group>";
+		};
+		37DFA09A1852D27D00382685 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				37DFA09B1852D29A00382685 /* GameView.cpp */,
+				37DFA09C1852D29A00382685 /* GameView.hpp */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		37F64A881780EA2C009116E7 = {
@@ -283,9 +289,9 @@
 			files = (
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
-				37F6A44917CBCE0F00C9EE1C /* GameView.cpp in Sources */,
 				37DFA099185012BA00382685 /* GameScene.cpp in Sources */,
 				37DFA0951850108200382685 /* SceneController.cpp in Sources */,
+				37DFA09D1852D29A00382685 /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

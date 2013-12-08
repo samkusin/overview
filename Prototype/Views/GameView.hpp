@@ -9,18 +9,23 @@
 #ifndef Overview_GameView_hpp
 #define Overview_GameView_hpp
 
-#include "Common.hpp"
 #include "Engine/View.hpp"
 #include "Graphics/Graphics2D.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
+#include "cinek/overview/maptypes.h"
 
 namespace cinekine {
-    namespace overview {
-        class Viewpoint;
-    }
     namespace ovengine {
-        class Theater;
+        class TheaterCLI;
+    }
+    namespace glx {
+        class RendererCLI;
+        class FontLibrary;
+        class BitmapLibrary;
+    }
+    namespace overview {
+        class Map;
     }
 }
 
@@ -30,13 +35,14 @@ namespace cinekine {
     class GameView: public ovengine::View
     {
     public:
-        GameView(ovengine::Theater& theater, glx::Renderer& renderer,
-                 const ovengine::ViewComponents& components);
+        GameView(ovengine::TheaterCLI& theater,
+                    glx::RendererCLI& renderer,
+                    glx::FontLibrary& fontLibrary,
+                    glx::BitmapLibrary& bitmapLibrary);
         virtual ~GameView();
         
-        virtual void onMapSet(std::shared_ptr<overview::Map>& Map,
-                              const cinek_ov_pos& pos);
-        virtual void onMapSetPosition(const cinek_ov_pos& pos);
+        void setMap(std::shared_ptr<overview::Map>& Map, const cinek_ov_pos& pos);
+        void setMapPosition(const cinek_ov_pos& pos);
     
         virtual void render();
 
@@ -52,8 +58,8 @@ namespace cinekine {
         cinek_ov_pos xlatWorldToMapPos(const cinek_ov_pos& pos);
         
     private:
-        ovengine::Theater& _theater;
-        glx::Renderer& _renderer;
+        ovengine::TheaterCLI& _theater;
+        glx::RendererCLI& _renderer;
         glx::Graphics2D _graphics;
         
         std::shared_ptr<overview::Map> _map;

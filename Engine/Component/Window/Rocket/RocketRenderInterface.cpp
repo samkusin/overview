@@ -23,7 +23,7 @@
  */
 
 #include "RocketRenderInterface.hpp"
-#include "Graphics/Renderer.hpp"
+#include "Graphics/RendererCLI.hpp"
 #include "Engine/Debug.hpp"
 
 #include "cinek/cpp/ckvector.hpp"
@@ -32,10 +32,11 @@ namespace cinekine {
     namespace ovengine {
 
 
-RocketRenderInterface::RocketRenderInterface(glx::Renderer& renderer) :
+RocketRenderInterface::RocketRenderInterface(glx::RendererCLI& renderer,
+                                             Allocator& allocator) :
     _renderer(renderer),
-    _textures(std_allocator<ResourceMap<glx::Texture>::value_type>(renderer.getAllocator())),
-    _meshes(std_allocator<ResourceMap<glx::Mesh>::value_type>(renderer.getAllocator()))
+    _textures(std_allocator<ResourceMap<glx::Texture>::value_type>(allocator)),
+    _meshes(std_allocator<ResourceMap<glx::Mesh>::value_type>(allocator))
 {
 }
 

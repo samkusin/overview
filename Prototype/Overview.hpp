@@ -9,19 +9,16 @@
 #ifndef Overview_Overview_hpp
 #define Overview_Overview_hpp
 
-#include "Common.hpp"
 #include "SceneController.hpp"
 #include "Engine/Director.hpp"
 
-#include "cinek/overview/stage.hpp"
-
 namespace cinekine {
-    namespace overview {
-        class Viewpoint;
+    namespace glx {
+        class RendererCLI;
     }
     namespace ovengine {
-        class TheaterClient;
-        class UIController;
+        class TheaterCLI;
+        class WindowComponentCLI;
     }
 }
 
@@ -31,19 +28,16 @@ namespace cinekine {
     class Overview: public ovengine::Director
     {
     public:
-        Overview(ovengine::TheaterClient& cli, ovengine::WindowComponentClient& uiCLI);
+        Overview(ovengine::TheaterCLI& theaterCLI,
+                 ovengine::WindowComponentCLI& uiCLI,
+                 glx::RendererCLI& rendererCLI);
         virtual ~Overview();
 
         virtual void update();
         
     private:
-        ovengine::TheaterClient& _theaterCLI;
-        ovengine::WindowComponentClient& _UICLI;
         Allocator _allocator;
         SceneController _sceneController;
-
-        overview::Stage _stage;
-        cinek_ov_pos _viewPos;
     };
     
     }

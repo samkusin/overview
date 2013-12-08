@@ -29,9 +29,9 @@ namespace cinekine {
     namespace ovengine {
 
     RocketElementOverview::RocketElementOverview(const Rocket::Core::String& tag,
-                                                 const RocketServer& ui) :
+                                                 std::shared_ptr<View> view) :
         Rocket::Core::Element(tag),
-        _ui(ui)
+        _view(view)
     {
 
     }
@@ -43,6 +43,14 @@ namespace cinekine {
     void RocketElementOverview::ProcessEvent(Rocket::Core::Event& event)
     {
         Rocket::Core::Element::ProcessEvent(event);
+    }
+
+    void RocketElementOverview::OnRender()
+    {
+        if (_view)
+        {
+            _view->render();
+        }
     }
 
 

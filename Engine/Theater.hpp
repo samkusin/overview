@@ -28,7 +28,7 @@ namespace cinekine {
     
     class SpriteDatabaseLoader;
     class TileDatabaseLoader;
-    class TheaterClient;
+    class TheaterCLI;
 
     //  The Theater drives execution of the Application.
     class Theater
@@ -39,18 +39,8 @@ namespace cinekine {
         Theater(const Allocator& allocator);
         ~Theater();
         
-        TheaterClient& getClient();
-        SpriteDatabaseLoader& getSpriteDatabaseLoader();
-        TileDatabaseLoader& getTileDatabaseLoader();
+        TheaterCLI& getCLI();
         
-        const rendermodel::TileDatabase& getTileDatabase() const;
-        const rendermodel::SpriteDatabase& getSpriteDatabase() const;
-        
-        //  The Theater is attempting to publish a viewpoint with a given ID to the renderer.
-        void onViewMapSet(std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> setCb);
-        //  Called on updates to the map view position.
-        void onViewPosSet(std::function<void(const cinek_ov_pos&)> setCb);
-
     private:
         Allocator _allocator;
         class Impl;

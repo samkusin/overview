@@ -31,7 +31,17 @@
 #include "cinek/cpp/ckstring.hpp"
 #include "cinek/cpp/ckmap.hpp"
 
-#include <functional> 
+#include <functional>
+
+namespace cinekine {
+    namespace glx {
+        class RendererCLI;
+    }
+    namespace ovengine {
+        class TheaterCLI;
+        class WindowComponentCLI;
+    }
+}
 
 namespace cinekine {
     namespace prototype {
@@ -39,7 +49,10 @@ namespace cinekine {
     class SceneController
     {
     public:
-        SceneController(const Allocator& allocator);
+        SceneController(ovengine::TheaterCLI& theater,
+                        ovengine::WindowComponentCLI& ui,
+                        glx::RendererCLI& renderer,
+                        const Allocator& allocator);
         ~SceneController();
 
         typedef std::function<std::shared_ptr<Scene>(void)> SceneCreateFn;
@@ -52,7 +65,18 @@ namespace cinekine {
         //  updates the current Scene
         void update();
 
+        ovengine::TheaterCLI& theater() { return _theater; }
+        const ovengine::TheaterCLI& theater() const { return _theater; }
+        ovengine::WindowComponentCLI& ui() { return _ui; }
+        const ovengine::WindowComponentCLI& ui() const { return _ui; }
+        glx::RendererCLI& renderer() { return _renderer; }
+        const glx::RendererCLI& renderer() const { return _renderer; }
+
     private:
+        ovengine::TheaterCLI& _theater;
+        ovengine::WindowComponentCLI& _ui;
+        glx::RendererCLI& _renderer;
+
         unordered_map<string, SceneCreateFn> _sceneMap;
         std::shared_ptr<Scene> _currentScene;
     };

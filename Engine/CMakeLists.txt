@@ -62,6 +62,7 @@ if( CINEK_OVENGINE_ROCKET_UI )
     set( ROCKET_UI_SOURCE_DIR ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/Rocket )
     set( ROCKET_UI_COMPONENT_SOURCES
          ${ROCKET_UI_SOURCE_DIR}/Elements/ElementOverview.cpp
+         ${ROCKET_UI_SOURCE_DIR}/RocketElementInstancers.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketRenderInterface.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketFileInterface.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSystemInterface.cpp
@@ -70,10 +71,10 @@ if( CINEK_OVENGINE_ROCKET_UI )
          ${ROCKET_UI_SOURCE_DIR}/RocketServer.cpp )
     set( ROCKET_UI_COMPONENT_INCLUDES
          ${ROCKET_UI_SOURCE_DIR}/Elements/ElementOverview.hpp
+         ${ROCKET_UI_SOURCE_DIR}/RocketElementInstancers.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketRenderInterface.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketFileInterface.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSystemInterface.hpp
-         ${ROCKET_UI_SOURCE_DIR}/RocketUIElementInstancer.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketUIWindow.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSDLInput.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketServer.hpp )
@@ -89,7 +90,7 @@ set( COMPONENT_SOURCES
      ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponent.cpp )
 set( COMPONENT_INCLUDES
      ${ROCKET_UI_COMPONENT_INCLUDES}
-     ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponentClient.hpp
+     ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponentCLI.hpp
      ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/WindowComponent.hpp
      ${OVENGINE_COMP_WINDOW_SOURCE_DIR}/Window.hpp )
 
@@ -121,7 +122,7 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/TheaterClient.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/TheaterCLI.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp )
 
 add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )

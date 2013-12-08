@@ -7,12 +7,13 @@
 //
 
 #include "Theater.hpp"
-#include "TheaterClient.hpp"
+#include "TheaterCLI.hpp"
 #include "SpriteDatabaseLoader.hpp"
 #include "TileDatabaseLoader.hpp"
+#include "Debug.hpp"
 
-#include "Engine/Debug.hpp"
 #include "Stream/FileStreamBuf.hpp"
+#include "Graphics/BitmapLibrary.hpp"
 
 #include "cinek/rendermodel/spritedatabase.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
@@ -21,7 +22,7 @@
 namespace cinekine {
     namespace ovengine {
     
-    class Theater::Impl: public TheaterClient
+    class Theater::Impl: public TheaterCLI
     {
         friend class Theater;
 
@@ -29,8 +30,10 @@ namespace cinekine {
         Impl(Allocator& allocator);
         ~Impl();
         
-        virtual void loadSpriteDatabase(const char* spriteDbName);
-        virtual void loadTileDatabase(const char* tileDbName);
+        virtual void loadSpriteDatabase(const char* spriteDbName, glx::BitmapLibrary& bitmapLibrary);
+        virtual void loadTileDatabase(const char* tileDbName, glx::BitmapLibrary& bitmapLibrary);
+        const rendermodel::TileDatabase& tileDatabase() const;
+        const rendermodel::SpriteDatabase& spriteDatabase() const;
         virtual void setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos);
         virtual void setViewPos(const cinek_ov_pos& pos);
         virtual void clearViewMap();
@@ -59,26 +62,70 @@ namespace cinekine {
     {
     }
     
-    void Theater::Impl::loadSpriteDatabase(const char* spriteDbName)
+    void Theater::Impl::loadSpriteDatabase(const char* spriteDbName,
+                                           glx::BitmapLibrary& bitmapLibrary)
     {
         char imagePath[MAX_PATH];
         snprintf(imagePath, sizeof(imagePath), "data/%s.json", spriteDbName);
         FileStreamBuf dbStream(imagePath);
         if (!dbStream)
             return;
+
+        _spriteDbLoader.onBitmapAtlasRequest([&bitmapLibrary]
+            (const char* atlasName) -> cinek_bitmap_atlas
+            {
+                return bitmapLibrary.loadAtlas(atlasName);
+            }
+        );
+        _spriteDbLoader.onBitmapIndexRequest([&bitmapLibrary]
+            ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+            {
+                 const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
+                 if (!bitmapAtlas)
+                     return kCinekBitmapIndex_Invalid;
+                 return bitmapAtlas->getBitmapIndex(name);
+            }
+        );
         
         _spriteDbLoader.unserialize(dbStream);
     }
 
-    void Theater::Impl::loadTileDatabase(const char* tileDbName)
+    void Theater::Impl::loadTileDatabase(const char* tileDbName,
+                                         glx::BitmapLibrary& bitmapLibrary)
     {
         char imagePath[MAX_PATH];
         snprintf(imagePath, sizeof(imagePath), "data/%s.json", tileDbName);
         FileStreamBuf dbStream(imagePath);
         if (!dbStream)
             return;
+
+        _tileDbLoader.onBitmapAtlasRequest([&bitmapLibrary]
+            (const char* atlasName) -> cinek_bitmap_atlas
+            {
+                return bitmapLibrary.loadAtlas(atlasName);
+            }
+        );
+        _tileDbLoader.onBitmapIndexRequest([&bitmapLibrary]
+            (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+            {
+               const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
+               if (!bitmapAtlas)
+                   return kCinekBitmapIndex_Invalid;
+               return bitmapAtlas->getBitmapIndex(name);
+            }
+        );
         
         _tileDbLoader.unserialize(dbStream);
+    }
+
+    const rendermodel::TileDatabase& Theater::Impl::tileDatabase() const
+    {
+        return _tileDb;       
+    }
+    
+    const rendermodel::SpriteDatabase& Theater::Impl::spriteDatabase() const
+    {
+        return _spriteDb;
     }
     
     void Theater::Impl::setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos)
@@ -108,41 +155,10 @@ namespace cinekine {
     
     Theater::~Theater() = default;
     
-    SpriteDatabaseLoader& Theater::getSpriteDatabaseLoader()
-    {
-        return _impl->_spriteDbLoader;
-    }
-    
-    TileDatabaseLoader& Theater::getTileDatabaseLoader()
-    {
-        return _impl->_tileDbLoader;
-    }
-
-    TheaterClient& Theater::getClient()
+    TheaterCLI& Theater::getCLI()
     {
         return *_impl;
     }
-    
-    const rendermodel::TileDatabase& Theater::getTileDatabase() const
-    {
-        return _impl->_tileDb;       
-    }
-    
-    const rendermodel::SpriteDatabase& Theater::getSpriteDatabase() const
-    {
-        return _impl->_spriteDb;
-    }
-    
-    void Theater::onViewMapSet(std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> setCb)
-    {
-        _impl->_onViewMapSet = setCb;
-    }
-    
-    void Theater::onViewPosSet(std::function<void(const cinek_ov_pos&)> setCb)
-    {
-        _impl->_ovViewPosSet = setCb;
-    }
-
         
     }   // namespace ovengine
 }   // namespace cinekine

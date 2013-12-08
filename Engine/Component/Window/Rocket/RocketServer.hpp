@@ -31,6 +31,7 @@
 #include "RocketFileInterface.hpp"
 #include "RocketSystemInterface.hpp"
 #include "RocketRenderInterface.hpp"
+#include "RocketElementInstancers.hpp"
 
 #include "Rocket/Core.h"
 
@@ -46,7 +47,7 @@ namespace cinekine {
     class RocketServer: public WindowComponent
     {
     public:
-        RocketServer(glx::Renderer& renderer, const Allocator& allocator);
+        RocketServer(glx::RendererCLI& renderer, const Allocator& allocator);
         ~RocketServer();
 
         operator bool() const;
@@ -56,12 +57,7 @@ namespace cinekine {
 
         void handleInput(const SDL_Event& event);
 
-        /**
-         * Loads a UI window/controller identified by the named resource
-         * @param  name Resource name
-         * @return      Created UIWindow pointer
-         */
-        WindowPtr createWindow(const char* name);
+        WindowPtr createWindow(const char* name, ViewCreateFn createFn);
 
     private:
         Allocator _allocator;
@@ -72,6 +68,8 @@ namespace cinekine {
 
         RocketSDLInput _sdlInput;
         Rocket::Core::Context *_context;
+
+        RocketOverviewElementInstancer* _overviewElementInstancer;
     };
 
     }   // namespace ovengine

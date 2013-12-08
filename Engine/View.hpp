@@ -1,66 +1,48 @@
-//
-//  View.hpp
-//  Overview
-//
-//  Created by Samir Sinha on 8/26/13.
-//  Copyright (c) 2013 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2013 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE. 
+ */
 
 #ifndef Overview_View_hpp
 #define Overview_View_hpp
 
-#include "cinek/overview/maptypes.h"
+#include "./ViewCreate.hpp"
 
-#include <memory>
-
-namespace cinekine {
-    namespace overview {
-        class Map;
-    }
-    namespace glx {
-        class Renderer;
-        class FontLibrary;
-        class BitmapLibrary;
-    }
-}
+#include "cinek/core/cktypes.h"
+#include "cinek/cpp/ckalloc.hpp"
 
 namespace cinekine {
     namespace ovengine {
-    
+
     class Theater;
-    class ViewImpl;
 
     /**
-     * @struct ViewComponents
-     * @brief  External components used by the View
+     * @class ViewShared
+     * @brief External component/server calls to View objects
      */
-    struct ViewComponents
-    {
-        glx::FontLibrary* fontLibrary;
-        glx::BitmapLibrary* bitmapLibrary;
-    };
-    /**
-     * @enum The types of views for a view factory delegate to construct
-     */
-    enum ViewType
-    {
-        /** An Overview (Game-style) View of type class OverView */
-        kViewType_Overview
-    };
-    
-    //  The View renders a Viewpoint drives execution of the simulation based on 
-    //  an external application controller.  Currently the Engine only initializes
-    //  and destroys the Director object.
     class View
     {
     public:
         virtual ~View() {}
-
-        //  When a new viewpoint is set by the Director.
-        virtual void onMapSet(std::shared_ptr<overview::Map>& map,
-                              const cinek_ov_pos& pos) = 0;
-        //  When a controller updates the current viewpoint center
-        virtual void onMapSetPosition(const cinek_ov_pos& pos) = 0;
 
         //  Executes rendering code specific to the View implementation.
         virtual void render() = 0;
@@ -77,14 +59,14 @@ namespace cinekine {
          * @param x      X coordinate within view
          * @param y      Y coordinate within view
          */
-        virtual void onMouseButtonDown(MouseButton button, int32_t x, int32_t y) = 0;
+        virtual void onMouseButtonDown(MouseButton button, int32_t x, int32_t y) {}
         /**
          * Handles mouse up events within the view
          * @param button Button index
          * @param x      X coordinate within view
          * @param y      Y coordinatw within view
          */
-        virtual void onMouseButtonUp(MouseButton button, int32_t x, int32_t y) = 0;
+        virtual void onMouseButtonUp(MouseButton button, int32_t x, int32_t y) {}
 
         /** The area where the mouse move event occurred */
         enum MouseRegion
@@ -99,17 +81,12 @@ namespace cinekine {
          * @param x      X coordinate within view
          * @param y      Y coordinate within view
          */
-        virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y) = 0;
+        virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y) {}
     };
-    
-    //  must be defined by the implementing application.
-    View* CreateView(Theater& theater, glx::Renderer& cli, const ViewComponents& viewComponents);
-    //  must be defined by the implementing application - destroys the View created by
-    //  CreateView
-    void DestroyView(View* view);
+
+  
         
     }   // namespace ovengine
 }   // namespace cinekine
-
 
 #endif

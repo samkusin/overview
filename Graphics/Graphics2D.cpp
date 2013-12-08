@@ -23,7 +23,7 @@
  */
 
 #include "Graphics2D.hpp"
-#include "Renderer.hpp"
+#include "RendererCLI.hpp"
 #include "BitmapLibrary.hpp"
 #include "FontLibrary.hpp"
 #include "Style.hpp"
@@ -32,7 +32,7 @@
 namespace cinekine {
     namespace glx {
  
-    Graphics2D::Graphics2D(Renderer& renderer, BitmapLibrary& bitmapLibrary, 
+    Graphics2D::Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary, 
                            FontLibrary& fontLibrary) :
                 _renderer(renderer),
                 _bitmapLibrary(bitmapLibrary),
@@ -62,7 +62,7 @@ namespace cinekine {
     void Graphics2D::drawText(const char* text, int32_t x, int32_t y,
                               const Style& style)
     {
-        const Font* font = _fontLibrary.getFont(style.textFont);
+        const Font& font = _fontLibrary.getFont(style.textFont);
         if (!font)
             return;
     
@@ -77,13 +77,13 @@ namespace cinekine {
             }
             else
             {
-                const stbtt_bakedchar& bakedChar = font->getChar(c);
+                const stbtt_bakedchar& bakedChar = font.getChar(c);
                 Rect src(bakedChar.x0, bakedChar.y0, bakedChar.x1, bakedChar.y1);
                 Rect dest = Rect::rectFromDimensions(x+bakedChar.xoff,
                                                      y+bakedChar.yoff,
                                                      src.width(), src.height());
                 
-                _renderer.drawTextureRect(font->getTexture(), src, dest, style.textColor);
+                _renderer.drawTextureRect(font.getTexture(), src, dest, style.textColor);
                 x += bakedChar.xadvance;
             }
             ++curtext;

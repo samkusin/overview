@@ -22,11 +22,9 @@
  * THE SOFTWARE. 
  */
 
-#include "RocketServer.hpp"
-#include "RocketUIWindow.hpp"
-
-#include "RocketUIElementInstancer.hpp"
-#include "./Elements/ElementOverview.hpp"
+#include "./RocketServer.hpp"
+#include "./RocketUIWindow.hpp"
+#include "./RocketElementInstancers.hpp"
 
 #include "Rocket/Core.h"
 #include "Rocket/Core/Input.h"
@@ -34,14 +32,15 @@
 namespace cinekine {
     namespace ovengine {
 
-    RocketServer::RocketServer(glx::Renderer& renderer, const Allocator& allocator) :
+    RocketServer::RocketServer(glx::RendererCLI& renderer, const Allocator& allocator) :
         _allocator(allocator),
         _rocketSystem(),
         _rocketFile(),
-        _rocketRenderer(renderer),
+        _rocketRenderer(renderer, _allocator),
         _coreInitialized(false),
         _sdlInput(),
-        _context(nullptr)
+        _context(nullptr),
+        _overviewElementInstancer(nullptr)
     {
         Rocket::Core::SetFileInterface(&_rocketFile);
         Rocket::Core::SetRenderInterface(&_rocketRenderer);
@@ -56,12 +55,17 @@ namespace cinekine {
         Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Italic.otf");
         Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Roman.otf");
 
-        auto instancer = _allocator.newItem<RocketUIElementInstancer< RocketElementOverview >>(_allocator, *this);
-        Rocket::Core::Factory::RegisterElementInstancer("overview", instancer);
-        instancer->RemoveReference();
+        /**
+         * @todo use allocator instead of new/delete - this may require a refactor of how libRocket 
+         * allocates memory
+         */
+        _overviewElementInstancer = _allocator.newItem<RocketOverviewElementInstancer, const Allocator&>
+                                        (
+                                            _allocator
+                                        );
+        Rocket::Core::Factory::RegisterElementInstancer("overview", _overviewElementInstancer);
 
         glx::Rect viewport = _rocketRenderer.getViewport();
-
         _context = Rocket::Core::CreateContext( "default",
                                                 Rocket::Core::Vector2i(viewport.width(), 
                                                                        viewport.height())
@@ -74,6 +78,11 @@ namespace cinekine {
         {
             _context->RemoveReference();
             _context = nullptr;
+        }
+        if (_overviewElementInstancer)
+        {
+            _overviewElementInstancer->RemoveReference();
+            _overviewElementInstancer = nullptr;
         }
         if (_coreInitialized)
         {
@@ -109,18 +118,21 @@ namespace cinekine {
         _sdlInput.dispatchSDLEvent(event, _context);
     }
 
-    WindowPtr RocketServer::createWindow(const char* name)
+    WindowPtr RocketServer::createWindow(const char* name,
+                                         ViewCreateFn createDelegate)
     {
         /**
          * @todo Move createWindow to a factory for UIWindow objects
          */
+        WindowPtr ptr;
         if (_context)
         {
+            _overviewElementInstancer->setViewRequestDelegate(createDelegate);
             Rocket::Core::ElementDocument *uiDocument = _context->LoadDocument(name);
             if (uiDocument)
             {
                 //  create our window and views
-                return std::allocate_shared<RocketUIWindow, std_allocator<RocketUIWindow>,
+                ptr = std::allocate_shared<RocketUIWindow, std_allocator<RocketUIWindow>,
                                             Rocket::Core::ElementDocument*>
                                     (
                                         std_allocator<RocketUIWindow>(_allocator),
@@ -128,7 +140,7 @@ namespace cinekine {
                                     );
             }
         }
-        return WindowPtr();
+        return ptr;
     } 
 
 

@@ -22,37 +22,33 @@
  * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Rocket_ElementOverview_hpp
-#define Overview_Components_Rocket_ElementOverview_hpp
+#ifndef Overview_ViewCreate_hpp
+#define Overview_ViewCreate_hpp
 
-#include "Engine/View.hpp"
+#include "cinek/core/cktypes.h"
+#include "cinek/cpp/ckalloc.hpp"
 
-#include "Rocket/Core/Element.h"
-#include "Rocket/Core/EventListener.h"
+#include <functional>
+
+namespace cinekine {
+    namespace glx {
+        class Renderer;
+        class FontLibrary;
+        class BitmapLibrary;
+    }
+    namespace ovengine {
+        class Theater;
+        class View;
+    }
+}
 
 namespace cinekine {
     namespace ovengine {
 
-    class RocketServer;
-    
-    class RocketElementOverview : 
-        public Rocket::Core::Element,
-        public Rocket::Core::EventListener
-    {
-    public:
-        RocketElementOverview(const Rocket::Core::String& tag,
-                              std::shared_ptr<View> view);
-        virtual ~RocketElementOverview();
+    /** Delegate for creating View objects based on class and ID */
+    typedef std::function<std::shared_ptr<View>(const char* /* viewClass */,
+                                                const char* /* viewId */)> ViewCreateFn;
         
-        virtual void ProcessEvent(Rocket::Core::Event& event);
-
-    protected:
-        virtual void OnRender();
-
-    private:
-        std::shared_ptr<View> _view;
-    };
-
     }   // namespace ovengine
 }   // namespace cinekine
 

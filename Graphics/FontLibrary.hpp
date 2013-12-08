@@ -18,7 +18,7 @@
 namespace cinekine {
     namespace glx {
     
-    class Renderer;
+    class RendererCLI;
     class Font;
 
     //  A FontLibrary contains a set of fonts.
@@ -28,20 +28,23 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(FontLibrary);
 
     public:
-        FontLibrary(Renderer& renderer, size_t fontLimit);
+        FontLibrary(RendererCLI& renderer, size_t fontLimit,
+                    const Allocator& allocator=Allocator());
         ~FontLibrary() = default;
         
         bool loadFont(FontHandle slot, const char* pathname, uint16_t height);
         void unloadFont(FontHandle slot);
 
-        const Font* getFont(FontHandle slot) const {
+        const Font& getFont(FontHandle slot) const {
             if (slot >= _fonts.size())
-                return nullptr;
-            return &_fonts[slot];
+                return _nullfont;
+            return _fonts[slot];
         }
 
     private:
-        Renderer& _renderer;
+        static const Font _nullfont;
+        Allocator _allocator;
+        RendererCLI& _renderer;
         vector<Font> _fonts;
     };
     

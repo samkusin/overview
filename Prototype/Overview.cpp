@@ -7,16 +7,11 @@
 //
 
 #include "Overview.hpp"
-#include "Engine/TheaterClient.hpp"
 
 #include "cinek/cpp/ckalloc.hpp"
 
-#include "cinek/overview/stage.hpp"
-#include "cinek/overview/viewpoint.hpp"
-
 #include "SceneController.hpp"
 #include "Scenes/GameScene.hpp"
-#include "Engine/Component/Window/WindowComponentClient.hpp"
 
 #include <memory>
 
@@ -24,10 +19,12 @@
 namespace cinekine {
     namespace ovengine {
     
-    ovengine::Director* CreateDirector(TheaterClient& cli, WindowComponentClient& windowCLI)
+    ovengine::Director* CreateDirector(TheaterCLI& theaterCLI,
+                                       WindowComponentCLI& windowCLI,
+                                       glx::RendererCLI& rendererCLI)
     {
         Allocator allocator;
-        return allocator.newItem<prototype::Overview>(cli, windowCLI);
+        return allocator.newItem<prototype::Overview>(theaterCLI, windowCLI, rendererCLI);
     }
     
     void DestroyDirector(ovengine::Director* director)
@@ -42,71 +39,33 @@ namespace cinekine {
 namespace cinekine {
     namespace prototype {
 
-    Overview::Overview(ovengine::TheaterClient& cli, ovengine::WindowComponentClient& uiCLI) :
-        _theaterCLI(cli),
-        _UICLI(uiCLI),
+    Overview::Overview(ovengine::TheaterCLI& theaterCLI,
+                       ovengine::WindowComponentCLI& uiCLI,
+                       glx::RendererCLI& rendererCLI) :
         _allocator(),
-        _sceneController(_allocator),
-        _stage({ 17, 17, 0, 0 }, _allocator)
+        _sceneController(theaterCLI, uiCLI, rendererCLI, _allocator)
     {
-        _theaterCLI.loadTileDatabase("dungeontiles");
-        _theaterCLI.loadSpriteDatabase("sprites");
-        
         _sceneController.add( "game",
             [this]() -> std::shared_ptr<Scene>
             {
                 return std::allocate_shared<GameScene, std_allocator<GameScene>,
-                                            ovengine::WindowComponentClient&>
+                                            SceneController&>
                         (
                             std_allocator<GameScene>(_allocator),
-                            _UICLI
+                            _sceneController
                         );
             });
         
         _sceneController.next("game");
-        
-        std::shared_ptr<overview::Map> map = _stage.getMapPtr();
-        const cinek_ov_map_bounds& bounds = map->getMapBounds();
-        _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
-        
-        //  prepopulate map.
-        overview::Tilemap* tilemap = map->getTilemapAtZ(0);
-        for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
-        {
-            overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
-            while (tileRow.first != tileRow.second)
-            {
-                *(tileRow.first) = 0x0000;
-                ++tileRow.first;
-            }
-        }
-                
-        _theaterCLI.setViewMap(map, _viewPos);
     }
     
     Overview::~Overview()
     {
-        _theaterCLI.clearViewMap();
     }
     
     void Overview::update()
     {
-        _sceneController.update();
-        
-        /*std::shared_ptr<overview::Map> map = _stage.getMapPtr();
-        //  prepopulate map.
-        overview::Tilemap* tilemap = map->getTilemapAtZ(0);
-        for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
-        {
-            overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
-            while (tileRow.first != tileRow.second)
-            {
-                *(tileRow.first) = _cycle % 3;
-                ++tileRow.first;
-            }
-        }
-        */
- 
+        _sceneController.update(); 
     }
 
     

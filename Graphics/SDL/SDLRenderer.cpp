@@ -144,7 +144,7 @@ namespace cinekine {
                                        const cinekine::vector<glm::vec2>& vertsPos,
                                        const cinekine::vector<glm::vec2>& vertsUV,
                                        const cinekine::vector<glm::vec4>& vertsColor,
-                                       const cinekine::vector<ushort>& indices)
+                                       const cinekine::vector<uint16_t>& indices)
     {
         /**
          * @todo SDL's accelerated renderer does not offer a uniform way to render
@@ -160,7 +160,7 @@ namespace cinekine {
                                     const cinekine::vector<glm::vec2>& vertsPos,
                                     const cinekine::vector<glm::vec2>& vertsUV,
                                     const cinekine::vector<glm::vec4>& vertsColor,
-                                    const cinekine::vector<ushort>& indices)
+                                    const cinekine::vector<uint16_t>& indices)
     {
         Allocator& allocator = getAllocator();
         return std::allocate_shared<SDLMesh,

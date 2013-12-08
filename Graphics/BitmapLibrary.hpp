@@ -21,7 +21,7 @@
 namespace cinekine {
     namespace glx {
     
-    class Renderer;
+    class RendererCLI;
     
     //  A BitmapLibrary contains one or more BitmapAtlases
     //      Applications request atlas objects from a library.
@@ -30,7 +30,7 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(BitmapLibrary);
 
     public:
-        BitmapLibrary(Renderer& renderer);
+        BitmapLibrary(RendererCLI& renderer, const Allocator& allocator=Allocator());
         ~BitmapLibrary();
         
         //  Returns a handle to an existing or newly loaded bitmap atlas.  Returns a null handle on failure.
@@ -42,7 +42,8 @@ namespace cinekine {
         std::shared_ptr<BitmapAtlas> getAtlas(cinek_bitmap_atlas handle) const;
 
     private:
-        Renderer& _renderer;
+        Allocator _allocator;
+        RendererCLI& _renderer;
         typedef std::unordered_map<cinek_bitmap_atlas, std::shared_ptr<BitmapAtlas>,
                                     std::hash<cinek_bitmap_atlas>,
                                     std::equal_to<cinek_bitmap_atlas>,

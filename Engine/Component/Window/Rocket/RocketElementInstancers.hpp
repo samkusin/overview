@@ -28,19 +28,23 @@
 #ifndef Overview_Components_Rocket_UIElementInstancer_hpp
 #define Overview_Components_Rocket_UIElementInstancer_hpp
 
+#include "Engine/Component/Window/Window.hpp"
+#include "Engine/ViewCreate.hpp"
+
 #include "Rocket/Core/ElementInstancer.h"
 
 namespace cinekine {
     namespace ovengine {
 
-    class RocketServer;
-
-    template<typename T>
-    class RocketUIElementInstancer: public Rocket::Core::ElementInstancer
+    class RocketOverviewElementInstancer: public Rocket::Core::ElementInstancer
     {
     public:
-    	RocketUIElementInstancer(const Allocator& allocator, const RocketServer& ui);
-		virtual ~RocketUIElementInstancer() = default;
+    	RocketOverviewElementInstancer(const Allocator& allocator);
+		virtual ~RocketOverviewElementInstancer() = default;
+
+		void setViewRequestDelegate(ViewCreateFn viewCreateFn) {
+			_viewCreateFn = viewCreateFn;
+		}
 	
 		Rocket::Core::Element* InstanceElement(Rocket::Core::Element* parent,
 										 const Rocket::Core::String& tag,
@@ -51,40 +55,10 @@ namespace cinekine {
 		void Release();
 
 	private:
-		const RocketServer& _ui;
 		Allocator _allocator;
+		ViewCreateFn _viewCreateFn;
 	};
 
-
-	template<typename T>
-	RocketUIElementInstancer<T>::RocketUIElementInstancer(const Allocator& allocator,
-														  const RocketServer& ui) :
-		_ui(ui),
-		_allocator(allocator)
-	{
-	}
-
-	template<typename T>
-	Rocket::Core::Element* RocketUIElementInstancer<T>::InstanceElement(
-									Rocket::Core::Element* /*parent*/,
-									const Rocket::Core::String& tag,
-									const Rocket::Core::XMLAttributes& /*attributes*/)
-	{
-		return _allocator.newItem<T, const Rocket::Core::String&>(tag, _ui);
-	}
-
-	template<typename T>
-	void RocketUIElementInstancer<T>::ReleaseElement(Rocket::Core::Element* element)
-	{
-		_allocator.deleteItem(element);
-	}
-
-	template<typename T>
-	void RocketUIElementInstancer<T>::Release()
-	{
-		_allocator.deleteItem(this);	
-	}
-	
 	}	// namespace ovengine
 }	// namespace cinekine
 

@@ -7,7 +7,7 @@
 //
 
 #include "FontLibrary.hpp"
-#include "Renderer.hpp"
+#include "RendererCLI.hpp"
 #include "RenderDebug.hpp"
 #include "RenderUtils.hpp"
 #include "Stream/FileStreamBuf.hpp"
@@ -93,9 +93,14 @@ static uint16_t bakeFontToBuffer(const unsigned char *data,
 }
 
 
-FontLibrary::FontLibrary(Renderer& renderer, size_t fontLimit) :
+const Font FontLibrary::_nullfont = {};
+
+
+FontLibrary::FontLibrary(RendererCLI& renderer, size_t fontLimit,
+                         const Allocator& allocator) :
+    _allocator(allocator),
     _renderer(renderer),
-    _fonts(std_allocator<Font>(_renderer.getAllocator()))
+    _fonts(std_allocator<Font>(_allocator))
 {
     //  TODO - make reserve size configurable
     //  NOTE, we're using this method to prepopulate the font library
@@ -104,8 +109,8 @@ FontLibrary::FontLibrary(Renderer& renderer, size_t fontLimit) :
     //  have a move constructor for Font (hence why push_back works.
     //  
     //  Is this really the case?  Isn't there a better way to do this in C++11?
-    _fonts.reserve(10);
-    while (_fonts.size() < 10)
+    _fonts.reserve(fontLimit);
+    while (_fonts.size() < fontLimit)
     {
         _fonts.push_back(Font());
     }
@@ -143,7 +148,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
         return false;
     }
     size_t fileSize = ttfStream.availableChars();
-    uint8_t* sourceData = (uint8_t*)_renderer.getAllocator().alloc(fileSize);
+    uint8_t* sourceData = (uint8_t*)_allocator.alloc(fileSize);
     if (!sourceData)
         return false;
     size_t readCount = ttfStream.sgetn((char*)sourceData, fileSize);
@@ -161,7 +166,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
         bufferHeight = glx::powerOf2(bufferHeight);
 
         //  allocate our target buffer - it will be used to generate the texture
-        uint8_t* buffer = (uint8_t*)_renderer.getAllocator().alloc(bufferWidth*bufferHeight);
+        uint8_t* buffer = (uint8_t*)_allocator.alloc(bufferWidth*bufferHeight);
         if (buffer)
         {
             memset(buffer, 0, bufferWidth*bufferHeight);
@@ -176,7 +181,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
             std::shared_ptr<Texture> texture = _renderer.createTextureFromBuffer(bufferWidth, bufferHeight,
                                                                   kCinekPixelFormat_A8,
                                                                   buffer);
-            _renderer.getAllocator().free(buffer);
+            _allocator.free(buffer);
             
             if (*texture)
             {
@@ -200,7 +205,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
         RENDER_LOG_ERROR("Failed to load font %s in slot [%u] - unable to read data (read: %u/%u bytes).",
                          pathname, slot, readCount, fileSize);
     }
-    _renderer.getAllocator().free(sourceData);
+    _allocator.free(sourceData);
     return readCount == fileSize;
 }
 

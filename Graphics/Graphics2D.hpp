@@ -39,7 +39,7 @@
 namespace cinekine {
     namespace glx {
 
-    class Renderer;
+    class RendererCLI;
     class BitmapLibrary;
     class BitmapAtlas;
     class FontLibrary;
@@ -53,7 +53,7 @@ namespace cinekine {
     class Graphics2D
     {
     public:
-        Graphics2D(Renderer& renderer, BitmapLibrary& bitmapLibrary, 
+        Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary, 
                    FontLibrary& fontLibrary);
         ~Graphics2D();
 
@@ -73,7 +73,7 @@ namespace cinekine {
                                  int32_t x, int32_t y, float alpha);
     
     private:
-        Renderer& _renderer;
+        RendererCLI& _renderer;
         BitmapLibrary& _bitmapLibrary;
         FontLibrary& _fontLibrary;
         std::shared_ptr<BitmapAtlas> _currentAtlas;

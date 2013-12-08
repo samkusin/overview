@@ -7,34 +7,17 @@
 //
 
 #include "GameView.hpp"
-#include "Graphics/Renderer.hpp"
+#include "Graphics/RendererCLI.hpp"
 #include "Engine/Debug.hpp"
-#include "Engine/Theater.hpp"
+#include "Engine/TheaterCLI.hpp"
 #include "Graphics/Graphics2D.hpp"
+#include "Graphics/FontLibrary.hpp"
+#include "Graphics/BitmapLibrary.hpp"
 
 #include "cinek/overview/map.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
 
 /////////////////////////////////////////////////////////////
-
-namespace cinekine {
-    namespace ovengine {
-        //  must be defined by the implementing application.
-        View* CreateView(Theater& theater, glx::Renderer& cli, const ViewComponents& viewComponents)
-        {
-            Allocator allocator;
-            return allocator.newItem<prototype::GameView>(theater, cli, viewComponents);
-        }
-
-        //  must be defined by the implementing application - destroys the View created by
-        //  CreateView
-        void DestroyView(View* view)
-        {
-            Allocator allocator;
-            allocator.deleteItem(view);
-        }
-    }
-}
 
 namespace cinekine {
     namespace prototype {
@@ -44,11 +27,13 @@ namespace cinekine {
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
-    GameView::GameView(ovengine::Theater& theater, glx::Renderer& renderer,
-                       const ovengine::ViewComponents& components) :
+    GameView::GameView(ovengine::TheaterCLI& theater,
+                       glx::RendererCLI& renderer,
+                       glx::FontLibrary& fontLibrary,
+                       glx::BitmapLibrary& bitmapLibrary) :
         _theater(theater),
         _renderer(renderer),
-        _graphics(renderer, *components.bitmapLibrary,  *components.fontLibrary),
+        _graphics(renderer, bitmapLibrary, fontLibrary),
         _worldViewBounds()
     {
         
@@ -61,8 +46,7 @@ namespace cinekine {
     
     //  A new viewpoint has been initialized by our controller.  Replace our reference with the new one.
     //
-    void GameView::onMapSet(std::shared_ptr<overview::Map> &map,
-                            const cinek_ov_pos& pos)
+    void GameView::setMap(std::shared_ptr<overview::Map> &map, const cinek_ov_pos& pos)
     {
         _map = map;
         if (_map)
@@ -71,7 +55,7 @@ namespace cinekine {
         }
     }
     
-    void GameView::onMapSetPosition(const cinek_ov_pos& pos)
+    void GameView::setMapPosition(const cinek_ov_pos& pos)
     {
         setupWorldSpace(xlatMapToWorldPos(pos));
     }
@@ -117,7 +101,7 @@ namespace cinekine {
         glx::Rect viewportRect = _renderer.getViewport();
         
         const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
-        const rendermodel::TileDatabase& tileDb = _theater.getTileDatabase();
+        const rendermodel::TileDatabase& tileDb = _theater.tileDatabase();
 
         //  pick all tiles within the view bounds:
         //

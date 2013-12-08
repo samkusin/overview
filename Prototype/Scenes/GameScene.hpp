@@ -10,20 +10,51 @@
 #define Overview_Scenes_GameScene_hpp
 
 #include "Scene.hpp"
-#include "Engine/Component/Window/WindowComponentClient.hpp"
+#include "Engine/Component/Window/WindowComponentCLI.hpp"
+#include "Graphics/BitmapLibrary.hpp"
+#include "Graphics/FontLibrary.hpp"
+
+#include "cinek/overview/stage.hpp"
+#include "cinek/cpp/ckalloc.hpp"
+
+namespace cinekine {
+    namespace glx {
+        class RendererCLI;
+    }
+    namespace ovengine {
+        class TheaterCLI;
+        class WindowComponentCLI;
+    }
+}
 
 namespace cinekine {
     namespace prototype {
+
+    class SceneController;
+    class GameView;
     
     class GameScene : public Scene
     {
     public:
-        GameScene(ovengine::WindowComponentClient& windowClient);
+        GameScene(SceneController& sceneController);
         
         virtual void update();
 
     private:
-        ovengine::WindowComponentClient& _windowClient;
+        Allocator _allocator;
+        SceneController& _sceneController;
+        ovengine::TheaterCLI& _theater;
+        ovengine::WindowComponentCLI& _ui;
+        glx::RendererCLI& _renderer;
+
+        glx::BitmapLibrary _bitmapLibrary;
+        glx::FontLibrary _fontLibrary;
+
+        overview::Stage _stage;
+        cinek_ov_pos _viewPos;
+
+        std::shared_ptr<GameView> _gameView;
+
         ovengine::WindowPtr _window;
     };
         

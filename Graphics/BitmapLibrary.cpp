@@ -8,7 +8,7 @@
 
 #include "BitmapLibrary.hpp"
 #include "BitmapAtlasLoader.hpp"
-#include "Renderer.hpp"
+#include "RendererCLI.hpp"
 #include "RenderDebug.hpp"
 #include "Stream/FileStreamBuf.hpp"
 
@@ -18,9 +18,10 @@
 namespace cinekine {
     namespace glx {
     
-    BitmapLibrary::BitmapLibrary(Renderer& renderer) :
+    BitmapLibrary::BitmapLibrary(RendererCLI& renderer, const Allocator& allocator) :
+        _allocator(allocator),
         _renderer(renderer),
-        _atlasMap( std_allocator<AtlasMap::allocator_type >(_renderer.getAllocator()) ),
+        _atlasMap( std_allocator<AtlasMap::allocator_type >(_allocator) ),
         _nextAtlasHandle(0)
     {
     }
@@ -72,14 +73,13 @@ namespace cinekine {
                  * const char* && occurs, which fails.)  This code isn't in a time-crticial
                  * section, so the dual allocation would not be an issue.
                  */
-                Allocator& allocator = _renderer.getAllocator();
-                atlas = allocator.newItem<BitmapAtlas>(atlasName, 
-                                                       texture,
-                                                       bitmapCount,
-                                                       allocator);
+                atlas = _allocator.newItem<BitmapAtlas>(atlasName, 
+                                                        texture,
+                                                        bitmapCount,
+                                                        _allocator);
                 std::shared_ptr<BitmapAtlas> atlasPtr(atlas,
-                                                      SharedPtrDeleter<BitmapAtlas>(allocator), 
-                                                      BitmapAtlasAllocator(allocator));
+                                                      SharedPtrDeleter<BitmapAtlas>(_allocator), 
+                                                      BitmapAtlasAllocator(_allocator));
                 /*
                                     std::allocate_shared<BitmapAtlas, BitmapAtlasAllocator,
                                         const char* const, 

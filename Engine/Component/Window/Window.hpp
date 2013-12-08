@@ -33,6 +33,8 @@
 
 #include "cinek/cpp/ckalloc.hpp"
 
+#include <functional>
+
 namespace cinekine {
     namespace ovengine {
 

@@ -32,17 +32,21 @@ namespace cinekine {
     namespace ovengine {
 
     WindowComponentPtr createWindowComponent(const char* name,
-                                             glx::Renderer& renderer,
+                                             glx::RendererCLI& renderer,
                                              const Allocator& allocator)
     {
         Allocator alloc(allocator);
         if (!strcmp(name, "rocket"))
         {
-            WindowComponentPtr ptr(alloc.newItem<RocketServer, glx::Renderer&, const Allocator&>(
+            WindowComponentPtr ptr(alloc.newItem<RocketServer, glx::RendererCLI&, const Allocator&>(
                                         renderer,
                                         allocator),
                                         allocator
                                   );
+            if (!(*ptr))
+            {
+                ptr.reset();
+            }
             return std::move(ptr);
         }
         return WindowComponentPtr();
