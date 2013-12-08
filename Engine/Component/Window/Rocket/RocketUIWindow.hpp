@@ -28,20 +28,33 @@
 #include "Engine/Component/Window/Window.hpp"
 
 #include "Rocket/Core/ElementDocument.h"
+#include "Rocket/Core/EventListener.h"
 
 namespace cinekine {
     namespace ovengine {
 
-    class RocketUIWindow : public Window
+    class RocketSDLInputMap;
+
+    class RocketUIWindow :
+        public Window,
+        public Rocket::Core::EventListener
     {
     public:
-        RocketUIWindow(Rocket::Core::ElementDocument* document);
+        RocketUIWindow(Rocket::Core::ElementDocument* document,
+                       const RocketSDLInputMap& inputMapper);
         virtual ~RocketUIWindow();
 
         virtual void show();
+        virtual void setEventListener(WindowEventListener* listener) {
+            _eventListener = listener;
+        }
+
+        virtual void ProcessEvent(Rocket::Core::Event& event);
 
     private:
         Rocket::Core::ElementDocument* _document;
+        WindowEventListener* _eventListener;
+        const RocketSDLInputMap& _inputMap;
     };
 
     }   // namespace ovengine

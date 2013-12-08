@@ -66,6 +66,7 @@ if( CINEK_OVENGINE_ROCKET_UI )
          ${ROCKET_UI_SOURCE_DIR}/RocketRenderInterface.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketFileInterface.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSystemInterface.cpp
+         ${ROCKET_UI_SOURCE_DIR}/RocketSDLInputMap.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSDLInput.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketUIWindow.cpp
          ${ROCKET_UI_SOURCE_DIR}/RocketServer.cpp )
@@ -76,6 +77,7 @@ if( CINEK_OVENGINE_ROCKET_UI )
          ${ROCKET_UI_SOURCE_DIR}/RocketFileInterface.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSystemInterface.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketUIWindow.hpp
+         ${ROCKET_UI_SOURCE_DIR}/RocketSDLInputMap.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketSDLInput.hpp
          ${ROCKET_UI_SOURCE_DIR}/RocketServer.hpp )
 

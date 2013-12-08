@@ -19,61 +19,40 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @file    Window.hpp
- * @author  Samir Sinha
- * @date    12/4/2013
- * @brief   Base interface for all UIWindow implementations
- * @copyright Cinekine
+ * THE SOFTWARE. 
  */
 
-#ifndef Overview_Components_Window_hpp
-#define Overview_Components_Window_hpp
+#ifndef Overview_Components_Rocket_SDLInputMap_hpp
+#define Overview_Components_Rocket_SDLInputMap_hpp
 
 #include "cinek/cpp/ckalloc.hpp"
+#include "cinek/cpp/ckmap.hpp"
 
-#include "SDL2/SDL_keycode.h"
-
-#include <functional>
+#include "Rocket/Core/Input.h"
+#include "SDL2/SDL_keyboard.h"
 
 namespace cinekine {
     namespace ovengine {
 
-    /**
-     * @class WindowEventListener
-     * @brief A listener for Window events
-     */
-    class WindowEventListener
+    class RocketSDLInputMap
     {
     public:
-        virtual ~WindowEventListener() {}
+        RocketSDLInputMap();
 
-        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod) {}
-        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod) {}
+        Rocket::Core::Input::KeyIdentifier translateSDLKey(SDL_Keysym key) const;
+        
+        struct SDLKey
+        {
+            SDL_Keycode code;
+            uint16_t mod;
+        };
+
+        SDLKey translateRocketKey(Rocket::Core::Input::KeyIdentifier key, uint16_t mod) const;
+        
+    private:
+        unordered_map<SDL_Keycode, Rocket::Core::Input::KeyIdentifier> _keyMap;
+        unordered_map<uint32_t, SDL_Keycode> _keyMapToSDL;
     };
-
-    /**
-     * @class Window
-     * @brief Interface for all Window implementations
-     */
-    class Window
-    {
-    public:
-        virtual ~Window() {}
-
-        /**
-         * Shows the window
-         */
-        virtual void show() = 0;
-        /**
-         * Sets the listener for Window events
-         * @param listener The object listening for events
-         */
-        virtual void setEventListener(WindowEventListener* listener) = 0;
-    };
-
-    typedef std::shared_ptr<Window> WindowPtr;
 
     }   // namespace ovengine
 }   // namespace cinekine

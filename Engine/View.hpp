@@ -51,7 +51,8 @@ namespace cinekine {
         enum MouseButton
         {
             kMouseButtonLeft,       /**< Left mouse button */
-            kMouseButtonRight       /**< Right mouse button */
+            kMouseButtonRight,      /**< Right mouse button */
+            kMouseButtonCenter      /**< Center mouse button */
         };
         /**
          * Handles mouse down events within the view

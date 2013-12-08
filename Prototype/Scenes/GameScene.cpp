@@ -52,6 +52,7 @@ namespace cinekine {
                     return _gameView;
                 }
             );
+        _window->setEventListener(this);
         _window->show();
 
         std::shared_ptr<overview::Map> map = _stage.getMapPtr();
@@ -71,6 +72,16 @@ namespace cinekine {
         }
 
         _gameView->setMap(map, _viewPos);
+    }
+
+    void GameScene::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
+    {
+
+    }
+
+    void GameScene::onKeyUp(SDL_Keycode keycode, uint16_t keymod)
+    {
+        
     }
     
     void GameScene::update()

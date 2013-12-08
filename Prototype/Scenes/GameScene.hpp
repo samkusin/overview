@@ -24,6 +24,7 @@ namespace cinekine {
     namespace ovengine {
         class TheaterCLI;
         class WindowComponentCLI;
+        class WindowEventListener;
     }
 }
 
@@ -33,12 +34,18 @@ namespace cinekine {
     class SceneController;
     class GameView;
     
-    class GameScene : public Scene
+    class GameScene :
+        public Scene,
+        public ovengine::WindowEventListener
     {
     public:
         GameScene(SceneController& sceneController);
         
         virtual void update();
+
+    protected:
+        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod);
+        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod);
 
     private:
         Allocator _allocator;

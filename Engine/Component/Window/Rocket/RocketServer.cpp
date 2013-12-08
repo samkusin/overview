@@ -133,10 +133,12 @@ namespace cinekine {
             {
                 //  create our window and views
                 ptr = std::allocate_shared<RocketUIWindow, std_allocator<RocketUIWindow>,
-                                            Rocket::Core::ElementDocument*>
+                                            Rocket::Core::ElementDocument*,
+                                            const RocketSDLInputMap&>
                                     (
                                         std_allocator<RocketUIWindow>(_allocator),
-                                        std::move(uiDocument)
+                                        std::move(uiDocument),
+                                        _sdlInput
                                     );
             }
         }

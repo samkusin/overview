@@ -33,7 +33,7 @@ namespace cinekine {
         Rocket::Core::Element(tag),
         _view(view)
     {
-
+     //   AddEventListener("mousedown", this, true);
     }
     
     RocketElementOverview::~RocketElementOverview()
@@ -43,6 +43,53 @@ namespace cinekine {
     void RocketElementOverview::ProcessEvent(Rocket::Core::Event& event)
     {
         Rocket::Core::Element::ProcessEvent(event);
+
+        if (!_view)
+            return;
+
+        if (event == "mousemove" || event == "mouseover" || event == "mouseout")
+        {
+            int32_t mx = event.GetParameter("mouse_x", 0);
+            int32_t my = event.GetParameter("mouse_y", 0);
+            View::MouseRegion region = View::kMouseRegionOver;
+            if (event == "mouseover")
+                region = View::kMouseRegionEnter;
+            else if (event == "mouseout")
+                region = View::kMouseRegionExit;
+   
+            _view->onMouseMove(region, mx, my);
+        }
+        else if (event == "mousedown" || event == "mouseup")
+        {
+            int32_t mx = event.GetParameter("mouse_x", 0);
+            int32_t my = event.GetParameter("mouse_y", 0);
+            int32_t mb = event.GetParameter("button", -1);
+            if (mb >= 0)
+            {
+                View::MouseButton button = View::kMouseButtonLeft;
+                if (mb == 1)
+                {
+                    button = View::kMouseButtonRight;
+                }
+                else if (mb == 2)
+                {
+                    button = View::kMouseButtonCenter;
+                }
+                else if (mb > 2)
+                {
+                    //  unhandled
+                    return;
+                }
+                if (event == "mousedown")
+                {
+                    _view->onMouseButtonDown(button, mx, my);
+                }
+                else
+                {
+                    _view->onMouseButtonUp(button, mx, my);
+                }
+            }   
+        }
     }
 
     void RocketElementOverview::OnRender()
