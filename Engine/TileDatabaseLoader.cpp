@@ -14,6 +14,8 @@
 
 #include "cinek/rendermodel/tiledatabase.hpp"
 
+#include <cstring>
+
 
 namespace cinekine {
     namespace ovengine {
@@ -90,12 +92,38 @@ namespace cinekine {
                      ++tileIt)
                 {
                     const Value::Member& tile =  *tileIt;
-                    cinek_tile tileIndex = (cinek_tile)(tile.value.GetUint());
-                    cinek_bitmap tileBitmap = {
-                        bitmapAtlasId,
-                        this->_indexRequest(bitmapAtlasId, tile.name.GetString())
+                    cinek_tile tileIndex;
+                    if (tile.value.IsObject())
+                    {
+                        const Value& tileData = tile.value;
+                        for (auto tileDataIt = tileData.MemberBegin(), tileDataItEnd = tileData.MemberEnd();
+                             tileDataIt != tileDataItEnd;
+                             ++tileDataIt)
+                        {
+                            const Value::Member& tileAttr = *tileDataIt;
+                            if (!strcmp(tileAttr.name.GetString(), "bitmap"))
+                            {
+                                tileIndex = tileAttr.value.GetUint();
+                            }
+                        }
+                    }
+                    else if (tile.value.IsUint())
+                    {
+                        tileIndex = (cinek_tile)(tile.value.GetUint());
+                    }
+                    else
+                    {
+                        OVENGINE_LOG_ERROR("TileDatabaseLoader - Tile Atlas %s, bitmap %s has no mapping.",
+                                           member.name.GetString(),
+                                           tile.name.GetString());
+                        continue;
+                    }
+                    cinek_tile_info tileInfo= {
+                        { bitmapAtlasId, this->_indexRequest(bitmapAtlasId, tile.name.GetString()) },
+                        0,
+                        NULL
                     };
-                    _db.mapTileToBitmap(tileAtlasId+tileIndex, tileBitmap);
+                    _db.mapTileToInfo(tileAtlasId+tileIndex, tileInfo);
                 }
             }
         }

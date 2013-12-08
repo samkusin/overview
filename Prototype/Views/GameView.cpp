@@ -145,8 +145,8 @@ namespace cinekine {
                     mapPos.x >= 0.f && mapPos.x < mapBounds.xUnits)
                 {
                     cinek_tile tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
-                    const cinek_bitmap& tileInfo = tileDb.getTileInfo(tile);
-                    if (currentAtlas != tileInfo.bmpAtlas)
+                    const cinek_tile_info& tileInfo = tileDb.getTileInfo(tile);
+                    if (currentAtlas != tileInfo.bitmap.bmpAtlas)
                     {
                         _graphics.setBitmapAtlas(tileInfo.bmpAtlas);
                         currentAtlas = tileInfo.bmpAtlas;
