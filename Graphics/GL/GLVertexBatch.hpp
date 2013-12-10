@@ -43,15 +43,15 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(GLVertexBatch);
         
     public:
-        GLVertexBatch(GLenum mode,
+        GLVertexBatch(GLenum usage,
                       vector<glm::vec2>& pos,
                       vector<glm::vec2>& uv,
                       vector<glm::vec4>& color);
         GLVertexBatch(GLVertexBatch&& other);
         ~GLVertexBatch();
         
-        void reset();
-        void draw();
+        //void reset();
+        void draw(GLenum mode);
 
         size_t size() const {
             return _pos.size();
@@ -62,19 +62,38 @@ namespace cinekine {
         bool full() const {
             return _pos.size() == _pos.capacity();
         }
+        size_t available() const {
+            return _pos.capacity() - _pos.size();
+        }
         
-        void pushPos(float&& x, float&& y);
-        void pushUV(float&& u, float&& v);
-        void pushColor(const glm::vec4& color);
+        void pushPos(float x, float y) {
+            _pos.emplace_back(x, y);
+        }
+        void pushPos(const vector<glm::vec2>& posv) {
+            _pos.insert(_pos.end(), posv.begin(), posv.end());
+        }
+        void pushUV(float u, float v) {
+            _uv.emplace_back(u, v);
+        }
+        void pushUV(const vector<glm::vec2>& uvv) {
+            _uv.insert(_uv.end(), uvv.begin(), uvv.end());
+        }
+        void pushColor(const glm::vec4& color) {
+            _color.emplace_back(color);
+        }
+        void pushColor(const vector<glm::vec4>& color) {
+            _color.insert(_color.end(), color.begin(), color.end());
+        }
 
     private:
         void deleteBuffers();
         void bindVertices();
-        GLenum _mode;
+        GLenum _usage;
         GLuint _vao;
         GLuint _vboPos;
         GLuint _vboUV;
         GLuint _vboColor;
+        size_t _capacity;
 
         vector<glm::vec2>& _pos;
         vector<glm::vec2>& _uv;

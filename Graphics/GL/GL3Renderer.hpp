@@ -121,15 +121,20 @@ namespace cinekine {
         
         struct BatchState
         {
+            Mesh::Type drawMode;
             GLuint textureId;
             GL3Texture::SamplerFormat textureSamplerFormat;
-            BatchState(): textureId(0), textureSamplerFormat(GL3Texture::kFormatNone) {}
-            BatchState(const GL3Texture& texture):
+            BatchState(): drawMode(Mesh::kUndefined),
+                          textureId(0),
+                          textureSamplerFormat(GL3Texture::kFormatNone) {}
+            BatchState(Mesh::Type mode, const GL3Texture& texture):
+                drawMode(mode),
                 textureId(texture.textureID()),
-                textureSamplerFormat(texture.samplerFormat()) {}
+                textureSamplerFormat(texture.samplerFormat())
+                {}
            
             bool operator==(const BatchState& s) const;
-            void clear() { textureId = 0; }
+            void clear() { textureId = 0; drawMode = Mesh::kUndefined;}
         };
         BatchState _batchState;
 
@@ -138,14 +143,14 @@ namespace cinekine {
         glm::mat4 _projectionMat;
         
     private:
-        GLVertexBatch& obtainBatch(const BatchState& state);
+        GLVertexBatch& obtainBatch(const BatchState& state, size_t vertexRequest);
         GLVertexBatch& flushBatch();
         void selectShader(GLuint shader, const glm::vec2& position);
     };
     
     inline bool GL3Renderer::BatchState::operator==(const GL3Renderer::BatchState& s) const
     {
-        return textureId == s.textureId;
+        return textureId == s.textureId && drawMode == s.drawMode;
     }
 
     }   // namespace glx

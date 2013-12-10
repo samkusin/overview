@@ -48,6 +48,7 @@ namespace cinekine {
         /** Describes how the mesh is drawn by the renderer. */
         enum Type
         {
+            kUndefined,             /**< Undefined */
             kTriangles,             /**< Render as a list of triangles */
             kTriangleFan            /**< Render as a 'fan' of triangles */
         };

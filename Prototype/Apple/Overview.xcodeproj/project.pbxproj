@@ -157,10 +157,6 @@
 		37F64A931780EA2C009116E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				374F619E1856F57100F391AA /* libck.a */,
-				374F619F1856F57200F391AA /* libckGL.a */,
-				374F61A01856F57200F391AA /* libckOVEngine.a */,
-				374F61A11856F57200F391AA /* libckStream.a */,
 				37E6801D17C8392400FF3C97 /* AudioUnit.framework */,
 				37E6801E17C8392400FF3C97 /* Carbon.framework */,
 				37E6801F17C8392400FF3C97 /* CoreAudio.framework */,
@@ -207,6 +203,10 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				374F619E1856F57100F391AA /* libck.a */,
+				374F619F1856F57200F391AA /* libckGL.a */,
+				374F61A01856F57200F391AA /* libckOVEngine.a */,
+				374F61A11856F57200F391AA /* libckStream.a */,
 				37D969F917C85A55001C0B9C /* libiconv.dylib */,
 			);
 			name = Libraries;

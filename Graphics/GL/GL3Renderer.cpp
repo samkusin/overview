@@ -77,7 +77,7 @@ namespace cinekine {
 
         while (_batch.size() != _batch.capacity())
         {
-            _batch.emplace_back(GL_TRIANGLES, _vertsPos, _vertsUV, _vertsColor);
+            _batch.emplace_back(GL_STREAM_DRAW, _vertsPos, _vertsUV, _vertsColor);
         }
 
         glGenBuffers(4, _meshVBOs);
@@ -202,7 +202,7 @@ namespace cinekine {
                                       const RGBAColor& color)
     {
         const GL3Texture& gltexture = static_cast<const GL3Texture&>(texture);
-        GLVertexBatch& batch = obtainBatch(BatchState(gltexture));
+        GLVertexBatch& batch = obtainBatch(BatchState(Mesh::kTriangles, gltexture), 6);
           
         float tWscale = 1.0f/(float)texture.width();
         float tHscale = 1.0f/(float)texture.height();
@@ -231,11 +231,6 @@ namespace cinekine {
         batch.pushColor(colorF);
         batch.pushColor(colorF);
         batch.pushColor(colorF);
-        
-        if (batch.full())
-        {
-            flushBatch();
-        }
     }
 
     void GL3Renderer::drawMeshVertices(const Texture& texture, Mesh::Type meshType,
@@ -244,39 +239,68 @@ namespace cinekine {
                                        const cinekine::vector<glm::vec4>& vertsColor,
                                        const cinekine::vector<GLushort>& indices)
     {
-        flushBatch();
+        //  just push the vertices up - this code will orphan buffers (depending on driver impl)
+        //  this should be a call of last resort.  the rule is mesh first, then streaming tris before
+        //  deciding to use this method
+        //
+        GLenum drawMode;
+        if (meshType == Mesh::kTriangles)
+            drawMode = GL_TRIANGLES;
+        else if (meshType == Mesh::kTriangleFan)
+            drawMode = GL_TRIANGLE_FAN;
+        else
+            return;
 
-        if (texture)
+        const GL3Texture& glTexture = static_cast<const GL3Texture&>(texture);
+        GLuint textureId = 0;
+        if (glTexture)
         {
-            const GL3Texture& glTexture = static_cast<const GL3Texture&>(texture);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, glTexture.textureID());
+            textureId = glTexture.textureID();
         }
-
-        selectShader(_standardShader, glm::vec2());
-
+        else
+        {
+            //  use backup stock texture for flat shading?
+            CK_ASSERT(false);
+            return;
+        }
+        
+        //  draw plain vertices or a true mesh (with vertex indices)
         glBindBuffer(GL_ARRAY_BUFFER, _meshVBOs[0]);
         glBufferData(GL_ARRAY_BUFFER, vertsPos.size() * sizeof(glm::vec2), vertsPos.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrPos);
         glVertexAttribPointer(kGL_ShaderVertexAttrPos, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, _meshVBOs[1]);
         glBufferData(GL_ARRAY_BUFFER, vertsUV.size() * sizeof(glm::vec2), vertsUV.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrUVs);
         glVertexAttribPointer(kGL_ShaderVertexAttrUVs, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
+        
         glBindBuffer(GL_ARRAY_BUFFER, _meshVBOs[2]);
-        glBufferData(GL_ARRAY_BUFFER, vertsColor.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertsColor.size() * sizeof(glm::vec4), vertsColor.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrColor);
         glVertexAttribPointer(kGL_ShaderVertexAttrColor, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        
+        if (!indices.empty())
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshVBOs[3]);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
+        }
+        
+        selectShader(this->_standardShader, glm::vec2());
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshVBOs[3]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(ushort), indices.data(), GL_STATIC_DRAW);
-
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, NULL);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        if (textureId)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureId);
+        }
+        if (indices.empty())
+        {
+            glDrawArrays(drawMode, 0, vertsPos.size());
+        }
+        else
+        {
+            glDrawElements(drawMode, indices.size(), GL_UNSIGNED_SHORT, NULL);
+        }
     }
 
     MeshPtr GL3Renderer::createMesh(TexturePtr& texture,
@@ -315,11 +339,18 @@ namespace cinekine {
         glMesh.draw();
     }
     
-    GLVertexBatch& GL3Renderer::obtainBatch(const BatchState& state)
+    GLVertexBatch& GL3Renderer::obtainBatch(const BatchState& state, size_t vertexRequest)
     {
         //  determine if we need to render the current batch, i.e. any changes in state
         GLVertexBatch& batch = _batch[_batchIndex % _batch.capacity()];
-        if (state == _batchState && !batch.full())
+        if (_batchState.drawMode == Mesh::kUndefined)
+        {
+            // start of frame
+            _batchState = state;
+            return batch;
+        }
+    
+        if (state == _batchState && batch.available() >= vertexRequest)
         {
             return batch; 
         }
@@ -335,7 +366,7 @@ namespace cinekine {
         GLVertexBatch& batch = _batch[_batchIndex % _batch.capacity()];
         if (_batch.empty())
             return batch;
-
+        
         GLuint texture = _batchState.textureId;
         GLuint program = 0;
 
@@ -352,6 +383,19 @@ namespace cinekine {
                 break;
         }
         
+        GLenum drawMode = GL_POINTS;
+        if (_batchState.drawMode == Mesh::kTriangles)
+        {
+            drawMode = GL_TRIANGLES;
+        }
+        else if (_batchState.drawMode == Mesh::kTriangleFan)
+        {
+            drawMode = GL_TRIANGLE_FAN;
+        }
+        else
+        {
+            RENDER_LOG_WARN("GL3Renderer.flushBatch Undefined draw mode (%d) specified", _batchState.drawMode);
+        }
         if (texture)
         {
             glActiveTexture(GL_TEXTURE0);
@@ -361,9 +405,10 @@ namespace cinekine {
         {
            selectShader(program, glm::vec2());
         }
-            
-        batch.draw();
-
+        
+        batch.draw(drawMode);
+        
+        //  wipe the scratchpad vertex vectors used to upload data into the current GLVertexBatch
         _vertsPos.clear();
         _vertsUV.clear();
         _vertsColor.clear();

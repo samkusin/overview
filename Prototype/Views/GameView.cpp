@@ -148,10 +148,10 @@ namespace cinekine {
                     const cinek_tile_info& tileInfo = tileDb.getTileInfo(tile);
                     if (currentAtlas != tileInfo.bitmap.bmpAtlas)
                     {
-                        _graphics.setBitmapAtlas(tileInfo.bmpAtlas);
-                        currentAtlas = tileInfo.bmpAtlas;
+                        _graphics.setBitmapAtlas(tileInfo.bitmap.bmpAtlas);
+                        currentAtlas = tileInfo.bitmap.bmpAtlas;
                     }
-                    _graphics.drawBitmapFromAtlas(tileInfo.bmpIndex, screenOX, screenOY, 1.0f);
+                    _graphics.drawBitmapFromAtlas(tileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
                 }
                 worldX += TILE_WIDTH;
             }
