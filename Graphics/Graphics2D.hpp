@@ -59,10 +59,14 @@ namespace cinekine {
 
         //  Draws a rectangle
         void drawRect(const Rect& rect, const Style& style);
-        //  Draws a rectangle with four rounded corners (left-top, right-top,
-        //      right-bottom, left-bottom)
-        void drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
-                             const Style& style);
+        /**
+         * Draws a convex polygon given an array of vertices
+         * @param vertices    The polygon's vertices
+         * @param numVertices The vertex count
+         * @param style       The draw style
+         */
+        void drawPolygon(const glm::ivec2* vertices, size_t numVertices,
+                         const Style& style);
         //  Draws text
         void drawText(const char* text, int32_t x, int32_t y,
                       const Style& style);

@@ -29,6 +29,8 @@
 #include "Style.hpp"
 #include "Rect.hpp"
 
+#include "glm/glm.hpp"
+
 namespace cinekine {
     namespace glx {
  
@@ -50,11 +52,19 @@ namespace cinekine {
     //  Draws a rectangle
     void Graphics2D::drawRect(const Rect& rect, const Style& style)
     {
-
+        glm::ivec2 verts[4];
+        verts[0].x = rect.left;
+        verts[0].y = rect.top;
+        verts[1].x = rect.right;
+        verts[1].y = rect.top;
+        verts[2].x = rect.right;
+        verts[2].y = rect.bottom;
+        verts[3].x = rect.left;
+        verts[3].y = rect.bottom;
+        drawPolygon(verts, 4, style);
     }
-    
-    void Graphics2D::drawRoundedRect(const Rect& rect, const std::array<int32_t, 4>& radii,
-                                     const Style& style)
+
+    void Graphics2D::drawPolygon(const glm::ivec2* vertices, size_t numVertices, const Style& style)
     {
 
     }

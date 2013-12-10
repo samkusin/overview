@@ -48,7 +48,8 @@ namespace cinekine {
         /** Describes how the mesh is drawn by the renderer. */
         enum Type
         {
-            kTriangles              /**< Render as a list of triangles */
+            kTriangles,             /**< Render as a list of triangles */
+            kTriangleFan            /**< Render as a 'fan' of triangles */
         };
     public:
         virtual ~Mesh() {}

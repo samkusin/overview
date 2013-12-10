@@ -9,7 +9,7 @@
 # We do this to allow building of modules inside this folder without the need
 # to include any modules in the repository.
 #
-
+.svn/
 Prototype-Data/
 External/
 

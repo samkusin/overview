@@ -47,9 +47,8 @@ namespace cinekine {
     {
         switch (meshType)
         {
-        case Mesh::Type::kTriangles:
-            _mode = GL_TRIANGLES;
-            break;
+        case Mesh::Type::kTriangles:        _mode = GL_TRIANGLES;       break;
+        case Mesh::Type::kTriangleFan:      _mode = GL_TRIANGLE_FAN;    break;
         default:
             RENDER_LOG_ERROR("GL3Mesh - unsupported mode %d", _mode);
             return;
