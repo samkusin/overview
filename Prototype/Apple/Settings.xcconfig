@@ -6,5 +6,4 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-PACKAGES_ROOT = "~/Documents/Development/cinekine/proj/overview/External"
-
+PACKAGES_ROOT = "/Users/samir/Development/cinekine/overview/External"
