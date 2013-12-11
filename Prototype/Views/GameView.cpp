@@ -167,6 +167,20 @@ namespace cinekine {
         _graphics.drawText("Welcome to the overview 2D project by Samir Sinha.",
                             20, 160, style);
         _graphics.drawRect(glx::Rect(100,100,200,200), style);
+
+        glm::ivec2 polyVerts[5];
+        polyVerts[0].x = 300;
+        polyVerts[0].y = 100;
+        polyVerts[1].x = 375;
+        polyVerts[1].y = 175;
+        polyVerts[2].x = 340;
+        polyVerts[2].y = 250;
+        polyVerts[3].x = 260;
+        polyVerts[3].y = 250;
+        polyVerts[4].x = 225;
+        polyVerts[4].y = 175;
+        style.fillColor = glx::RGBAColor(255,0,0,255);
+        _graphics.drawPolygon(polyVerts, 5, style);
     }
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)

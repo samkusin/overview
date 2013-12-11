@@ -90,6 +90,8 @@ namespace cinekine {
         vector<glm::vec2> _polyVertsPos;
         vector<glm::vec2> _polyVertsUV;
         vector<glm::vec4> _polyVertsColor;
+
+        void clearPolyBuffer();
     };
 
     }   // namespace glx

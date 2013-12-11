@@ -240,7 +240,7 @@ namespace cinekine {
     {
         //  stream the vertices onto a batch.
         const GL3Texture& gltexture = static_cast<const GL3Texture&>(texture);
-        GLVertexBatch& batch = obtainBatch(BatchState(Mesh::kTriangles, gltexture), vertsPos.size());
+        GLVertexBatch& batch = obtainBatch(BatchState(meshType, gltexture), vertsPos.size());
         batch.pushPos(vertsPos);
         batch.pushUV(vertsUV);
         batch.pushColor(vertsColor);

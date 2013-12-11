@@ -62,6 +62,12 @@ namespace cinekine {
 
     }
 
+    void Graphics2D::clearPolyBuffer()
+    {
+        _polyVertsColor.clear();
+        _polyVertsPos.clear();
+        _polyVertsUV.clear();     
+    }
     
     //  Draws a rectangle
     void Graphics2D::drawRect(const Rect& rect, const Style& style)
@@ -97,15 +103,40 @@ namespace cinekine {
                                _polyVertsPos,
                                _polyVertsUV,
                                _polyVertsColor);
-
         _polyVertsColor.clear();
         _polyVertsPos.clear();
-        _polyVertsUV.clear();
+        _polyVertsUV.clear();  
     }
 
     void Graphics2D::drawPolygon(const glm::ivec2* vertices, size_t numVertices, const Style& style)
     {
+        //  manually build a fan (convex polygons only of course)
+        if (numVertices < 3)
+            return;
+        for (size_t i = 0; i < numVertices; ++i)
+        {
+            _polyVertsPos.emplace_back((float)vertices[i].x, (float)vertices[i].y);
+            _polyVertsUV.emplace_back(0.0f, 0.0f);
+        }
+        if (style.fillMethod != kFillMethod_NoFill)
+        {
+            glm::vec4 color(style.fillColor.r/255.0f,
+                            style.fillColor.g/255.0f,
+                            style.fillColor.b/255.0f,
+                            style.fillColor.a/255.0f);
+            for (size_t c = 0; c < numVertices; ++c)
+            {
+                _polyVertsColor.emplace_back(color);
+            }
+        }
+        _renderer.drawVertices(*_solidTexture, Mesh::kTriangleFan,
+                               _polyVertsPos,
+                               _polyVertsUV,
+                               _polyVertsColor);
 
+        _polyVertsColor.clear();
+        _polyVertsPos.clear();
+        _polyVertsUV.clear();  
     }
     
     void Graphics2D::drawText(const char* text, int32_t x, int32_t y,
