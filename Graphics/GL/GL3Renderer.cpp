@@ -233,6 +233,19 @@ namespace cinekine {
         batch.pushColor(colorF);
     }
 
+    void GL3Renderer::drawVertices(const Texture& texture, Mesh::Type meshType,
+                                   const cinekine::vector<glm::vec2>& vertsPos,
+                                   const cinekine::vector<glm::vec2>& vertsUV,
+                                   const cinekine::vector<glm::vec4>& vertsColor)
+    {
+        //  stream the vertices onto a batch.
+        const GL3Texture& gltexture = static_cast<const GL3Texture&>(texture);
+        GLVertexBatch& batch = obtainBatch(BatchState(Mesh::kTriangles, gltexture), vertsPos.size());
+        batch.pushPos(vertsPos);
+        batch.pushUV(vertsUV);
+        batch.pushColor(vertsColor);
+    }
+
     void GL3Renderer::drawMeshVertices(const Texture& texture, Mesh::Type meshType,
                                        const cinekine::vector<glm::vec2>& vertsPos,
                                        const cinekine::vector<glm::vec2>& vertsUV,
@@ -279,12 +292,9 @@ namespace cinekine {
         glBufferData(GL_ARRAY_BUFFER, vertsColor.size() * sizeof(glm::vec4), vertsColor.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrColor);
         glVertexAttribPointer(kGL_ShaderVertexAttrColor, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        
-        if (!indices.empty())
-        {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshVBOs[3]);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
-        }
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshVBOs[3]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
         
         selectShader(this->_standardShader, glm::vec2());
 
@@ -293,14 +303,7 @@ namespace cinekine {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, textureId);
         }
-        if (indices.empty())
-        {
-            glDrawArrays(drawMode, 0, vertsPos.size());
-        }
-        else
-        {
-            glDrawElements(drawMode, indices.size(), GL_UNSIGNED_SHORT, NULL);
-        }
+        glDrawElements(drawMode, indices.size(), GL_UNSIGNED_SHORT, NULL);
     }
 
     MeshPtr GL3Renderer::createMesh(TexturePtr& texture,

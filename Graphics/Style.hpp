@@ -23,8 +23,7 @@ namespace cinekine {
     enum LineMethod
     {
         kLineMethod_NoLine,     /**< No line is drawn */
-        kLineMethod_Solid,      /**< Solid line is drawn */
-        kLineMethod_Dotted      /**< Dotted line is drawn */
+        kLineMethod_Solid       /**< Solid line is drawn */
     };
 
     /**

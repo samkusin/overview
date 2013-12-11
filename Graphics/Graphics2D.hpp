@@ -33,6 +33,9 @@
 
 #include "RenderTypes.hpp"
 #include "Style.hpp"
+#include "Texture.hpp"
+
+#include "cinek/cpp/ckvector.hpp"
 
 #include <memory>
 
@@ -43,6 +46,7 @@ namespace cinekine {
     class BitmapLibrary;
     class BitmapAtlas;
     class FontLibrary;
+    class Texture;
     struct Style;
     struct Rect;
 
@@ -81,6 +85,11 @@ namespace cinekine {
         BitmapLibrary& _bitmapLibrary;
         FontLibrary& _fontLibrary;
         std::shared_ptr<BitmapAtlas> _currentAtlas;
+        TexturePtr _solidTexture;
+
+        vector<glm::vec2> _polyVertsPos;
+        vector<glm::vec2> _polyVertsUV;
+        vector<glm::vec4> _polyVertsColor;
     };
 
     }   // namespace glx

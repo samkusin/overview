@@ -85,6 +85,11 @@ namespace cinekine {
                                      const Rect& source, const Rect& dest,
                                      const RGBAColor& color);
 
+        virtual void drawVertices(const Texture& texture, Mesh::Type meshType,
+                                  const cinekine::vector<glm::vec2>& vertsPos,
+                                  const cinekine::vector<glm::vec2>& vertsUV,
+                                  const cinekine::vector<glm::vec4>& vertsColor);
+
         virtual void drawMeshVertices(const Texture& texture, Mesh::Type meshType,
                                       const cinekine::vector<glm::vec2>& vertsPos,
                                       const cinekine::vector<glm::vec2>& vertsUV,

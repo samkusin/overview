@@ -98,7 +98,7 @@ namespace cinekine {
          */
         virtual void setScissor(const Rect& rect) = 0;
         /**
-         * Draws a texture to the current rendering target
+         * Streams a texture region to the current rendering target
          * 
          * @param texture Texture object to render
          * @param source  The source rectangle within the texture to render
@@ -110,7 +110,19 @@ namespace cinekine {
         virtual void drawTextureRect(const Texture& texture,
                                      const Rect& source, const Rect& dest,
                                      const RGBAColor& color) = 0;
-
+        /**
+         * Streams vertices to the current rendering target.
+         * 
+         * @param texture    Texture to render
+         * @param meshType   How to render the vertices (i.e. triangles,lines)
+         * @param vertsPos   Position vertices to render.  
+         * @param vertsUV    UV vertices to render
+         * @param vertsColor Color vertices to render
+         */
+        virtual void drawVertices(const Texture& texture, Mesh::Type meshType,
+                                  const cinekine::vector<glm::vec2>& vertsPos,
+                                  const cinekine::vector<glm::vec2>& vertsUV,
+                                  const cinekine::vector<glm::vec4>& vertsColor) = 0;
         /**
          * Draws a 2D mesh to the current rendering target from the source
          * texture.  All vertex vectors passed to drawMesh must be of the

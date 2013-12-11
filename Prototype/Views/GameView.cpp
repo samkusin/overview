@@ -162,8 +162,11 @@ namespace cinekine {
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
+        style.fillMethod = glx::kFillMethod_SolidFill;
+        style.fillColor = glx::RGBAColor(0,0,255,255);
         _graphics.drawText("Welcome to the overview 2D project by Samir Sinha.",
                             20, 160, style);
+        _graphics.drawRect(glx::Rect(100,100,200,200), style);
     }
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)

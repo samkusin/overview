@@ -39,8 +39,22 @@ namespace cinekine {
                 _renderer(renderer),
                 _bitmapLibrary(bitmapLibrary),
                 _fontLibrary(fontLibrary),
-                _currentAtlas()
+                _currentAtlas(),
+                _polyVertsPos(std_allocator<glm::vec2>()),
+                _polyVertsUV(std_allocator<glm::vec2>()),
+                _polyVertsColor(std_allocator<glm::vec4>())
     {
+        /** 
+         * @todo Evaluate whether we can customize this - 32 verts is plenty for
+         *       most cases though, where 
+         */
+        _polyVertsPos.reserve(32);
+        _polyVertsUV.reserve(32);
+        _polyVertsColor.reserve(32);
+
+        //  build pattern texture for fills
+        uint8_t solid = 255;
+        _solidTexture = _renderer.createTextureFromBuffer(1,1, kCinekPixelFormat_A8, &solid);
     }
 
     Graphics2D::~Graphics2D()
@@ -52,16 +66,41 @@ namespace cinekine {
     //  Draws a rectangle
     void Graphics2D::drawRect(const Rect& rect, const Style& style)
     {
-        glm::ivec2 verts[4];
-        verts[0].x = rect.left;
-        verts[0].y = rect.top;
-        verts[1].x = rect.right;
-        verts[1].y = rect.top;
-        verts[2].x = rect.right;
-        verts[2].y = rect.bottom;
-        verts[3].x = rect.left;
-        verts[3].y = rect.bottom;
-        drawPolygon(verts, 4, style);
+        _polyVertsPos.emplace_back((float)rect.left, (float)rect.top);
+        _polyVertsPos.emplace_back((float)rect.right, (float)rect.top);
+        _polyVertsPos.emplace_back((float)rect.left, (float)rect.bottom);
+        _polyVertsPos.emplace_back((float)rect.right, (float)rect.top);
+        _polyVertsPos.emplace_back((float)rect.right, (float)rect.bottom);
+        _polyVertsPos.emplace_back((float)rect.left, (float)rect.bottom);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+
+        if (style.fillMethod != kFillMethod_NoFill)
+        {
+            glm::vec4 color(style.fillColor.r/255.0f,
+                            style.fillColor.g/255.0f,
+                            style.fillColor.b/255.0f,
+                            style.fillColor.a/255.0f);
+            _polyVertsColor.emplace_back(color);
+            _polyVertsColor.emplace_back(color);
+            _polyVertsColor.emplace_back(color);
+            _polyVertsColor.emplace_back(color);
+            _polyVertsColor.emplace_back(color);
+            _polyVertsColor.emplace_back(color);
+        }        
+
+        _renderer.drawVertices(*_solidTexture, Mesh::kTriangles,
+                               _polyVertsPos,
+                               _polyVertsUV,
+                               _polyVertsColor);
+
+        _polyVertsColor.clear();
+        _polyVertsPos.clear();
+        _polyVertsUV.clear();
     }
 
     void Graphics2D::drawPolygon(const glm::ivec2* vertices, size_t numVertices, const Style& style)

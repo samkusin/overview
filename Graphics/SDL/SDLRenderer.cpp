@@ -139,6 +139,20 @@ namespace cinekine {
         }      
     }
 
+    void SDLRenderer::drawVertices(const Texture& texture, Mesh::Type meshType,
+                                   const cinekine::vector<glm::vec2>& vertsPos,
+                                   const cinekine::vector<glm::vec2>& vertsUV,
+                                   const cinekine::vector<glm::vec4>& vertsColor)
+    {
+        /**
+         * @todo SDL's accelerated renderer does not offer a uniform way to render
+         * arbitrary verts.  We must fall back to the underlying renderer.
+         *
+         * Windows and Linux support OpenGL 2.1 so that will likely be the reference
+         * renderer.
+         */        
+    }
+
 
     void SDLRenderer::drawMeshVertices(const Texture& texture, Mesh::Type meshType,
                                        const cinekine::vector<glm::vec2>& vertsPos,
