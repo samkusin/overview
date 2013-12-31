@@ -144,7 +144,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                                        name, stateName);
                     continue;
                 }
-                if (state.HasMember("frames") && states["frames"].IsArray() &&states["frames"].Size())
+                if (state.HasMember("frames") && state["frames"].IsArray() &&state["frames"].Size())
                 {
                     const Value& frames = state["frames"];
                     uint16_t frameCount = frames.Size();
@@ -162,7 +162,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                     }
 
                     //  initialize the state animation.
-                    rendermodel::SpriteTemplate::Animation animation = spriteTemplate->createAnimation(
+                    rendermodel::SpriteAnimation* animation = spriteTemplate->createAnimation(
                                             animId,
                                             frameCount,
                                             duration);
@@ -172,7 +172,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                         if (frame.IsString())
                         {
                             cinek_bitmap_index bitmapIndex = _indexRequest(bitmapClass, frame.GetString());
-                            animation.setFrame(frameIndex, bitmapIndex);
+                            animation->setFrame(frameIndex, bitmapIndex);
                         }
                     }
                 }

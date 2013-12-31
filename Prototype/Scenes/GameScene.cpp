@@ -34,7 +34,7 @@ namespace cinekine {
         _window()
     {
         _theater.loadTileDatabase("dungeontiles", _bitmapLibrary);
-        _theater.loadSpriteDatabase("sprites", _bitmapLibrary);
+        _theater.loadSpriteDatabase("commonsprites", _bitmapLibrary);
         _gameView = std::allocate_shared<GameView,
                                          std_allocator<GameView>,
                                          ovengine::TheaterCLI&,

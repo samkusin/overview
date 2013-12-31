@@ -159,6 +159,7 @@ namespace cinekine {
             ++rowCount;
         }
         
+        /*
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
@@ -181,6 +182,7 @@ namespace cinekine {
         polyVerts[4].y = 175;
         style.fillColor = glx::RGBAColor(255,0,0,255);
         _graphics.drawPolygon(polyVerts, 5, style);
+        */
     }
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)
