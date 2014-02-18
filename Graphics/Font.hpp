@@ -12,8 +12,8 @@
 #include "Texture.hpp"
 #include "External/stb/stb_truetype.h"
 
-#include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckvector.hpp" 
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/vector.hpp" 
 
 namespace cinekine {
     namespace glx {

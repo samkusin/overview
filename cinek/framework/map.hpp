@@ -19,63 +19,32 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @file    Window.hpp
+ * THE SOFTWARE. 
+ * 
+ * @file    cinek/framework/map.hpp
  * @author  Samir Sinha
- * @date    12/4/2013
- * @brief   Base interface for all UIWindow implementations
+ * @date    1/6/2013
+ * @brief   Customized std::map container with allocator
  * @copyright Cinekine
  */
 
-#ifndef Overview_Components_Window_hpp
-#define Overview_Components_Window_hpp
+#ifndef CINEK_MAP_HPP
+#define CINEK_MAP_HPP
 
 #include "cinek/framework/allocator.hpp"
 
-#include "SDL2/SDL_keycode.h"
-
-#include <functional>
+#include <unordered_map>
 
 namespace cinekine {
-    namespace ovengine {
 
-    /**
-     * @class WindowEventListener
-     * @brief A listener for Window events
-     */
-    class WindowEventListener
-    {
-    public:
-        virtual ~WindowEventListener() {}
+//  Std types using the overview allocator.
+//
+/** An allocator for string memory. */
+template<typename Key, typename Value>
+    using unordered_map = std::unordered_map<Key, Value,
+                                             std::hash<Key>, std::equal_to<Key>,
+                                             std_allocator<std::pair<const Key, Value>>>;
 
-        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod) {}
-        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod) {}
-    };
-
-    /**
-     * @class Window
-     * @brief Interface for all Window implementations
-     */
-    class Window
-    {
-    public:
-        virtual ~Window() {}
-
-        /**
-         * Shows the window
-         */
-        virtual void show() = 0;
-        /**
-         * Sets the listener for Window events
-         * @param listener The object listening for events
-         */
-        virtual void setEventListener(WindowEventListener* listener) = 0;
-    };
-
-    typedef std::shared_ptr<Window> WindowPtr;
-
-    }   // namespace ovengine
-}   // namespace cinekine
+} /* cinekine */
 
 #endif

@@ -27,9 +27,9 @@
 
 #include "Scene.hpp"
 
-#include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckstring.hpp"
-#include "cinek/cpp/ckmap.hpp"
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/string.hpp"
+#include "cinek/framework/map.hpp"
 
 #include <functional>
 

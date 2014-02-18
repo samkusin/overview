@@ -27,7 +27,7 @@
 
 #include "WindowComponentCLI.hpp"
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 
 #include "SDL2/SDL_events.h"
 

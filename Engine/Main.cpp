@@ -23,7 +23,7 @@
 
 #include "Component/Window/WindowComponent.hpp"
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 #include "cinek/core/cktimer.h"
 
 #include "SDL2/SDL.h"

@@ -12,8 +12,8 @@
 #include "BitmapAtlas.hpp"
 
 #include "cinek/rendermodel/types.h"
-#include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckstring.hpp"
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/string.hpp"
 
 #include <unordered_map>
 #include <functional>

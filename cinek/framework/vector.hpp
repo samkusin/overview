@@ -21,48 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE. 
  * 
- * @file    GL/GLShaderLoader.hpp
+ * @file    cinek/framework/vector.hpp
  * @author  Samir Sinha
- * @date    11/18/2013
- * @brief   Utility class to load GL style shaders
+ * @date    1/6/2013
+ * @brief   std::vector with a custom allocator
  * @copyright Cinekine
  */
 
-#ifndef CK_Graphics_GL_GLShaderLoader_hpp
-#define CK_Graphics_GL_GLShaderLoader_hpp
 
-#include "GLUtils.hpp"
+#ifndef CINEK_VECTOR_HPP
+#define CINEK_VECTOR_HPP
 
-#include "cinek/framework/string.hpp"
-#include "cinek/framework/vector.hpp" 
+#include "cinek/framework/allocator.hpp"
+
+#include <vector>
 
 namespace cinekine {
-    namespace glx {
 
-    /**
-     * @class GLShaderLoader
-     * @brief Loads and builds GLSL compliant shaders
-     */
-    class GLShaderLoader
-    {
-    public:
-        GLShaderLoader() = default;
-        ~GLShaderLoader() = default;
+//  Std types using the overview allocator.
+//
+/** An allocator for string memory. */
+template<typename T>
+    using vector = std::vector<T, std_allocator<T>>;
 
-        /**
-         * Loads a shader from the specified source file
-         * @param  pathname Pathname of the source file
-         * @param  type     GL shader type (GL_VERTEX_SHADER, etc)
-         * @return          GL shader resource
-         */
-        GLuint load(const char* pathname, GLenum type);
-
-    private:
-        vector<char> _log;
-    };
-
-    }   // namespace glx
-}   // namespace cinekine
+} /* cinekine */
 
 #endif
-

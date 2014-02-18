@@ -12,7 +12,7 @@
 #include "Engine/View.hpp"
 #include "Graphics/Graphics2D.hpp"
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 #include "cinek/overview/maptypes.h"
 
 namespace cinekine {

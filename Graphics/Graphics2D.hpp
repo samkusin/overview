@@ -35,7 +35,7 @@
 #include "Style.hpp"
 #include "Texture.hpp"
 
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/vector.hpp"
 
 #include <memory>
 

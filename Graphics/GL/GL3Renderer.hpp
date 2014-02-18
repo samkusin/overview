@@ -40,7 +40,7 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/vector.hpp"
 
 #include <array>
 

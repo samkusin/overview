@@ -28,8 +28,8 @@
 #include "Rocket/Core/RenderInterface.h"
 
 #include "Graphics/GL/GL3Texture.hpp"
-#include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/vector.hpp"
 #include <unordered_map>
 
 namespace cinekine {

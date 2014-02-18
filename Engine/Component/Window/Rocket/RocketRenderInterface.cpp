@@ -26,7 +26,7 @@
 #include "Graphics/RendererCLI.hpp"
 #include "Engine/Debug.hpp"
 
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/vector.hpp"
 
 namespace cinekine {
     namespace ovengine {

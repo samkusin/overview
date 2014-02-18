@@ -133,7 +133,7 @@ namespace cinekine {
             else
             {
                 //  save the last few characters off so they are at the tail end of our new get buffer
-                putbackLen = min<size_t>((egptr()-gptr())/2, 32);
+                putbackLen = std::min<size_t>((egptr()-gptr())/2, 32);
             }
             memmove(eback(), egptr() - putbackLen, putbackLen*sizeof(char_type));
             size_t readCount = SDL_RWread(reinterpret_cast<SDL_RWops*>(_fileHandle), eback() + putbackLen,

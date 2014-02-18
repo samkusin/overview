@@ -6,4 +6,4 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"

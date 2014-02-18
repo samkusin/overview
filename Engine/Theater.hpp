@@ -9,7 +9,7 @@
 #ifndef Overview_Theater_hpp
 #define Overview_Theater_hpp
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 #include "cinek/overview/maptypes.h"
 #include <functional>
 

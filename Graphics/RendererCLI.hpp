@@ -36,7 +36,7 @@
 #include "Mesh.hpp"
 #include "Texture.hpp"
 
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/vector.hpp"
 
 namespace cinekine {
     namespace glx {

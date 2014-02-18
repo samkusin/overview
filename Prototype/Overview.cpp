@@ -8,7 +8,7 @@
 
 #include "Overview.hpp"
 
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 
 #include "SceneController.hpp"
 #include "Scenes/GameScene.hpp"

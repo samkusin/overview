@@ -11,7 +11,7 @@
 
 #include "Font.hpp"
 #include "RenderTypes.hpp"
-#include "cinek/cpp/ckstring.hpp"
+#include "cinek/framework/string.hpp"
 
 #include <vector>
 

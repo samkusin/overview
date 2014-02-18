@@ -15,7 +15,7 @@
 #include "Graphics/FontLibrary.hpp"
 
 #include "cinek/overview/stage.hpp"
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 
 namespace cinekine {
     namespace glx {

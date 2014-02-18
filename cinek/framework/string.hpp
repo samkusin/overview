@@ -19,63 +19,41 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @file    Window.hpp
+ * THE SOFTWARE. 
+ * 
+ * @file    cinek/framework/string.hpp
  * @author  Samir Sinha
- * @date    12/4/2013
- * @brief   Base interface for all UIWindow implementations
+ * @date    1/6/2013
+ * @brief   std::string with custom allocators
  * @copyright Cinekine
  */
 
-#ifndef Overview_Components_Window_hpp
-#define Overview_Components_Window_hpp
+
+#ifndef CINEK_STRING_HPP
+#define CINEK_STRING_HPP
 
 #include "cinek/framework/allocator.hpp"
 
-#include "SDL2/SDL_keycode.h"
+#include <string>
+#include <sstream>
+#include <cstring>
 
-#include <functional>
 
 namespace cinekine {
-    namespace ovengine {
 
-    /**
-     * @class WindowEventListener
-     * @brief A listener for Window events
-     */
-    class WindowEventListener
-    {
-    public:
-        virtual ~WindowEventListener() {}
+//  Std types using the overview allocator.
+//
+/** An allocator for string memory. */
+typedef std_allocator<char> string_allocator;
+/** A standard C++ string object using the default string allocator. */
+typedef std::basic_string<char, std::char_traits<char>, string_allocator > string;
+/** A standard C++ stringstream using string_allocator. */
+typedef std::basic_stringstream<char, std::char_traits<char>, string_allocator > stringstream;
+/** A standard C++ istringstream using string_allocator. */
+typedef std::basic_istringstream<char, std::char_traits<char>, string_allocator > istringstream;
+/** A standard C++ ostringstream using string_allocator. */
+typedef std::basic_ostringstream<char, std::char_traits<char>, string_allocator > ostringstream;
 
-        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod) {}
-        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod) {}
-    };
-
-    /**
-     * @class Window
-     * @brief Interface for all Window implementations
-     */
-    class Window
-    {
-    public:
-        virtual ~Window() {}
-
-        /**
-         * Shows the window
-         */
-        virtual void show() = 0;
-        /**
-         * Sets the listener for Window events
-         * @param listener The object listening for events
-         */
-        virtual void setEventListener(WindowEventListener* listener) = 0;
-    };
-
-    typedef std::shared_ptr<Window> WindowPtr;
-
-    }   // namespace ovengine
-}   // namespace cinekine
+} /* cinekine */
 
 #endif

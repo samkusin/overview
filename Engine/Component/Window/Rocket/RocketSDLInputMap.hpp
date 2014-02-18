@@ -25,8 +25,8 @@
 #ifndef Overview_Components_Rocket_SDLInputMap_hpp
 #define Overview_Components_Rocket_SDLInputMap_hpp
 
-#include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckmap.hpp"
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/map.hpp"
 
 #include "Rocket/Core/Input.h"
 #include "SDL2/SDL_keyboard.h"

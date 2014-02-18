@@ -32,8 +32,8 @@
 #define CK_Graphics_GL_VertexBatch_hpp
 
 #include "GLUtils.hpp"
-#include "cinek/cpp/ckalloc.hpp"
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/vector.hpp"
  
 namespace cinekine {
     namespace glx {

@@ -28,7 +28,7 @@
 #include "./ViewCreate.hpp"
 
 #include "cinek/core/cktypes.h"
-#include "cinek/cpp/ckalloc.hpp"
+#include "cinek/framework/allocator.hpp"
 
 namespace cinekine {
     namespace ovengine {

@@ -35,7 +35,7 @@
 #include "Graphics/Texture.hpp"
 #include "GLUtils.hpp"
 
-#include "cinek/cpp/ckvector.hpp"
+#include "cinek/framework/vector.hpp"
 
 namespace cinekine {
     namespace glx {
