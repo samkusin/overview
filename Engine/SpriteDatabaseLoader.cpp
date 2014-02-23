@@ -149,7 +149,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                     const Value& frames = state["frames"];
                     uint16_t frameCount = frames.Size();
                     
-                    cinek_time duration;
+                    uint32_t duration;
                     if (state.HasMember("duration"))
                     {
                         duration = state["duration"].GetUint();

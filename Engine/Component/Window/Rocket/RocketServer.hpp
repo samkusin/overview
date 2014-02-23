@@ -52,7 +52,7 @@ namespace cinekine {
 
         operator bool() const;
 
-        void update(cinek_time currentTime);
+        void update(uint32_t currentTime);
         void render();
 
         void handleInput(const SDL_Event& event);

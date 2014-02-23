@@ -47,7 +47,7 @@ namespace cinekine {
 
         virtual operator bool() const = 0;
 
-        virtual void update(cinek_time currentTime) = 0;
+        virtual void update(uint32_t currentTime) = 0;
         virtual void render() = 0;
 
         virtual void handleInput(const SDL_Event& event) = 0;

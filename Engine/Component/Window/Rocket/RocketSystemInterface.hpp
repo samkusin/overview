@@ -26,7 +26,6 @@
 #define Overview_Components_Rocket_SystemInterface_hpp
 
 #include "Rocket/Core/SystemInterface.h"
-#include "cinek/core/cktimer.h"
 
 namespace cinekine {
     namespace ovengine {

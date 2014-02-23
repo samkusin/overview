@@ -24,7 +24,6 @@
 #include "Component/Window/WindowComponent.hpp"
 
 #include "cinek/framework/allocator.hpp"
-#include "cinek/core/cktimer.h"
 
 #include "SDL2/SDL.h"
 
@@ -76,14 +75,12 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
                                             renderer);
 
     //  main loop
-    cinek_timer systemTimer = cinek_timer_create(32);
-    uint32_t systemTicks = SDL_GetTicks();
+
     bool active = true;
     while (active)
     {
-        cinek_time currentTime = cinek_timer_get_time(systemTimer);
-
-        windowComponent->update(currentTime);
+        uint32_t systemTicks = SDL_GetTicks();
+        windowComponent->update(systemTicks);
 
         //  event dispatch
         SDL_Event e;
@@ -108,9 +105,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         windowComponent->render();
 
         renderer.display();
-
-        //  update timers for the next frame's time values
-        cinek_timer_update(systemTimer, SDL_GetTicks() - systemTicks);
     }
    
     ovengine::DestroyDirector(director);

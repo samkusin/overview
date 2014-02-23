@@ -95,7 +95,7 @@ namespace cinekine {
         return _coreInitialized && _context;
     }
 
-    void RocketServer::update(cinek_time currentTime)
+    void RocketServer::update(uint32_t currentTime)
     {
         _rocketSystem.setCurrentTime(currentTime/1000.0f);
         if (_context)
