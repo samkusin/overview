@@ -9,12 +9,11 @@
 #ifndef CK_Graphics_RenderTypes_hpp
 #define CK_Graphics_RenderTypes_hpp
 
-#include "cinek/rendermodel/types.h"
-#include "cinek/framework/defs.hpp"
+#include <cinek/framework/types.hpp>
 
 //  commonly used glm headers
-#include "glm/gtc/type_precision.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtc/type_precision.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace cinekine {
     namespace glx {

@@ -11,7 +11,7 @@
 
 #include "../Texture.hpp"
 
-#include "cinek/framework/defs.hpp"
+#include <cinek/framework/types.hpp>
 
 #include "SDL2/SDL_render.h"
 

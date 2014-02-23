@@ -25,6 +25,7 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} 
 
 set( CMAKE_PREFIX_PATH "${CINEK_EXT_PACKAGE_DIR}" ${CMAKE_PREFIX_PATH} )
 
+
 #   All subprojects ordered by dependency (i.e. Engine needs Rocket, Graphics,
 #   Stream and cinek), and Prototype needs them all)
 
