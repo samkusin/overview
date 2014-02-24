@@ -12,7 +12,7 @@
 #include "Graphics/JSON.hpp"
 #include "Stream/FileStreamBuf.hpp"
 
-#include "cinek/core/ckfspath.h"
+#include <cinek/framework/string.hpp>
 
 namespace cinekine {
     namespace glx {
@@ -39,12 +39,11 @@ namespace cinekine {
 
     GLuint GLShaderLibrary::loadProgram(const char *programFilename)
     {
-        char filePath[MAX_PATH];
-        cinek_path_join(filePath, sizeof(filePath), _shaderRootDir.c_str(), programFilename);
+        string filePath = directoryPath({_shaderRootDir}).append(programFilename);
 
-        RENDER_LOG_INFO("GLShaderLibrary.loadProgram - loading program %s", programFilename);
+        RENDER_LOG_INFO("GLShaderLibrary.loadProgram - loading program %s", filePath.c_str());
 
-        FileStreamBuf instream(filePath);
+        FileStreamBuf instream(filePath.c_str());
         if (!instream)
         {
             RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - failed to load program");
@@ -160,12 +159,12 @@ namespace cinekine {
         return 0;
     }
     
-    void GLShaderLibrary::loadShaders(GLShaderLoader& loader, GLenum shaderType, const Value& shaderJSONArray)
+    void GLShaderLibrary::loadShaders(GLShaderLoader& loader, GLenum shaderType,
+                                      const Value& shaderJSONArray)
     {
         /**
          * @todo Clean up file path generation so we don't add to the stack
          */
-        char filePath[MAX_PATH];
         for (Value::ConstValueIterator it = shaderJSONArray.Begin(), itEnd = shaderJSONArray.End();
                  it != itEnd;
                  ++it)
@@ -176,12 +175,10 @@ namespace cinekine {
                 auto it = _shaderNameToHandle.find(shaderName.GetString());
                 if (it == _shaderNameToHandle.end())
                 {
-                    RENDER_LOG_INFO("GLShaderLibrary.loadShaders - loading shader %s", shaderName.GetString());
-                    GLuint shader = loader.load( cinek_path_join(filePath,
-                                                                 sizeof(filePath),
-                                                                 _shaderRootDir.c_str(),
-                                                                 shaderName.GetString()),
-                                                shaderType );
+                    string filePath = directoryPath({_shaderRootDir}).append(shaderName.GetString());
+                    RENDER_LOG_INFO("GLShaderLibrary.loadShaders - loading shader %s",
+                                    shaderName.GetString());
+                    GLuint shader = loader.load(filePath.c_str(),shaderType);
 
                     if (shader != 0)
                     {
@@ -189,7 +186,8 @@ namespace cinekine {
                     }
                     else
                     {
-                        RENDER_LOG_WARN("GLShaderLibrary.loadShaders - failed to load %s", shaderName.GetString());
+                        RENDER_LOG_WARN("GLShaderLibrary.loadShaders - failed to load %s",
+                                        shaderName.GetString());
                     }
                 }
                 

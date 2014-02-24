@@ -10,7 +10,7 @@
 #ifndef CK_Graphics_Debug_hpp
 #define CK_Graphics_Debug_hpp
 
-#include "cinek/core/ckdebug.h"
+#include <cinek/framework/debug.hpp>
 
 /*****************************************************************************/
 

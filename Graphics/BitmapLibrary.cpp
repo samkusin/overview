@@ -12,8 +12,6 @@
 #include "RenderDebug.hpp"
 #include "Stream/FileStreamBuf.hpp"
 
-#include "cinek/core/ckfspath.h"
-
 
 namespace cinekine {
     namespace glx {

@@ -25,8 +25,8 @@
 #ifndef Overview_ViewCreate_hpp
 #define Overview_ViewCreate_hpp
 
-#include "cinek/core/cktypes.h"
-#include "cinek/framework/allocator.hpp"
+#include <cinek/framework/types.hpp>
+#include <cinek/framework/allocator.hpp>
 
 #include <functional>
 

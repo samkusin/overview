@@ -12,7 +12,7 @@
 #include "Graphics/RenderDebug.hpp"
 #include "Graphics/RenderTypes.hpp"
 
-#include "cinek/core/cktypes.h"
+#include <cinek/framework/types.hpp>
 
 #ifdef CK_TARGET_OSX
 #include <OpenGL/gl3.h>

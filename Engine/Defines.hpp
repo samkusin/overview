@@ -9,7 +9,7 @@
 #ifndef Overview_Defines_hpp
 #define Overview_Defines_hpp
 
-#include "cinek/core/cktypes.h"
+#include <cinek/framework/types.hpp>
 
 namespace cinekine {
     namespace ovengine {

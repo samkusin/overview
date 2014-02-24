@@ -9,7 +9,7 @@
 #ifndef CK_Graphics_Render_Rect_hpp
 #define CK_Graphics_Render_Rect_hpp
 
-#include "cinek/core/cktypes.h"
+#include <cinek/framework/types.hpp>
 #include <array>
 
 namespace cinekine {

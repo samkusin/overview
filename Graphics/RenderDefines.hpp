@@ -9,7 +9,7 @@
 #ifndef CK_Graphics_RenderDefines_hpp
 #define CK_Graphics_RenderDefines_hpp
 
-#include "cinek/core/cktypes.h"
+#include <cinek/framework/types.hpp>
 
 namespace cinekine {
     namespace glx {
