@@ -30,7 +30,7 @@
 #include "Graphics/GL/GL3Texture.hpp"
 #include "cinek/framework/allocator.hpp"
 #include "cinek/framework/vector.hpp"
-#include <unordered_map>
+#include "cinek/framework/map.hpp"
 
 namespace cinekine {
 
@@ -131,15 +131,8 @@ namespace cinekine {
     private:
         glx::RendererCLI& _renderer;
 
-        template<class T> using ResourceMap = std::unordered_map<
-                                                    const T*, std::shared_ptr<T>, 
-                                                    std::hash<const T*>,
-                                                    std::equal_to<const T*>,
-                                                    std_allocator< std::pair<const T*, std::shared_ptr<T>> >
-                                                >;
-
-        ResourceMap<glx::Texture> _textures;
-        ResourceMap<glx::Mesh> _meshes;
+        unordered_map<glx::Texture*, std::shared_ptr<glx::Texture>> _textures;
+        unordered_map<glx::Mesh*, std::shared_ptr<glx::Mesh>> _meshes;
 
         void buildArrays(Rocket::Core::Vertex* pvertices, int num_vertices,
                          int* pindices, int num_indices,

@@ -77,7 +77,7 @@ namespace cinekine {
         std::unordered_map<string, GLuint,
             std::hash<string>,
             std::equal_to<string>,
-            std_allocator<std::pair<string, GLuint>> > _shaderNameToHandle;  
+            std_allocator<std::pair<const string,GLuint>> > _shaderNameToHandle;
         std::set<GLuint, std::less<GLuint>, std_allocator<GLuint>> _programSet;
     };
     

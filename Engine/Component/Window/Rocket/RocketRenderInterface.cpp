@@ -35,8 +35,8 @@ namespace cinekine {
 RocketRenderInterface::RocketRenderInterface(glx::RendererCLI& renderer,
                                              Allocator& allocator) :
     _renderer(renderer),
-    _textures(std_allocator<ResourceMap<glx::Texture>::value_type>(allocator)),
-    _meshes(std_allocator<ResourceMap<glx::Mesh>::value_type>(allocator))
+    _textures(std_allocator<std::pair<const glx::Texture*, std::shared_ptr<glx::Texture>>>(allocator)),
+    _meshes(std_allocator<std::pair<const glx::Mesh*, std::shared_ptr<glx::Mesh>>>(allocator))
 {
 }
 
@@ -98,7 +98,7 @@ Rocket::Core::CompiledGeometryHandle RocketRenderInterface::CompileGeometry(
     auto mesh = _renderer.createMesh((*textureIt).second,
                                      glx::Mesh::kTriangles,
                                      pos, uvs, colors, vindices);
-    const glx::Mesh* pmesh = mesh.get();
+    glx::Mesh* pmesh = mesh.get();
     _meshes.emplace(pmesh, mesh);
 
     return reinterpret_cast<Rocket::Core::CompiledGeometryHandle>(pmesh);
@@ -107,13 +107,13 @@ Rocket::Core::CompiledGeometryHandle RocketRenderInterface::CompileGeometry(
 void RocketRenderInterface::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry,
                                                    const Rocket::Core::Vector2f& translation)
 {
-    const glx::Mesh* pmesh = reinterpret_cast<const glx::Mesh*>(geometry);
+    glx::Mesh* pmesh = reinterpret_cast<glx::Mesh*>(geometry);
     _renderer.drawMesh(*pmesh, glm::vec2(translation.x, translation.y));
 }
 
 void RocketRenderInterface::ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry)
 {
-    const glx::Mesh* pmesh = reinterpret_cast<const glx::Mesh*>(geometry);
+    glx::Mesh* pmesh = reinterpret_cast<glx::Mesh*>(geometry);
     _meshes.erase(pmesh);
 }
 
@@ -168,7 +168,7 @@ bool RocketRenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_han
     auto texture = _renderer.loadTexture(source.CString());
     if (!(*texture))
         return false;
-    const glx::Texture* ptexture = texture.get();
+    glx::Texture* ptexture = texture.get();
     _textures.emplace(ptexture, texture);
 
     texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(ptexture);
@@ -189,7 +189,7 @@ bool RocketRenderInterface::GenerateTexture(Rocket::Core::TextureHandle& texture
     if (!(*texture))
         return false;
    
-    const glx::Texture* ptexture = texture.get();
+    glx::Texture* ptexture = texture.get();
     _textures.emplace(ptexture, texture);
     texture_handle = reinterpret_cast<Rocket::Core::TextureHandle>(ptexture);
 
@@ -198,7 +198,7 @@ bool RocketRenderInterface::GenerateTexture(Rocket::Core::TextureHandle& texture
 
 void RocketRenderInterface::ReleaseTexture(Rocket::Core::TextureHandle texture)
 {
-    const glx::Texture* ptexture = reinterpret_cast<const glx::Texture*>(texture);
+    glx::Texture* ptexture = reinterpret_cast<glx::Texture*>(texture);
     _textures.erase(ptexture);
 }
 
