@@ -21,7 +21,7 @@
 
 namespace cinekine {
     namespace prototype {
-    
+
     const int32_t TILE_WIDTH = 64;
     const int32_t TILE_HEIGHT = 32;
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
@@ -36,14 +36,14 @@ namespace cinekine {
         _graphics(renderer, bitmapLibrary, fontLibrary),
         _worldViewBounds()
     {
-        
+
     }
-    
+
     GameView::~GameView()
     {
-        
+
     }
-    
+
     //  A new viewpoint has been initialized by our controller.  Replace our reference with the new one.
     //
     void GameView::setMap(std::shared_ptr<overview::Map> &map, const cinek_ov_pos& pos)
@@ -54,12 +54,12 @@ namespace cinekine {
             setupWorldSpace(xlatMapToWorldPos(pos));
         }
     }
-    
+
     void GameView::setMapPosition(const cinek_ov_pos& pos)
     {
         setupWorldSpace(xlatMapToWorldPos(pos));
     }
-    
+
     //  precalculates values used for rendering the local view
     void GameView::setupWorldSpace(const cinek_ov_pos& worldPos)
     {
@@ -73,7 +73,7 @@ namespace cinekine {
         _worldViewBounds.max.y = worldPos.y + viewportRect.height() / 2;
         _worldViewBounds.max.z = 0;
     }
-        
+
     //  converts map coordinates to our "global" rendering coordinate system
     //  called "world" for the purposes of this view.
     cinek_ov_pos GameView::xlatMapToWorldPos(const cinek_ov_pos& pos)
@@ -84,7 +84,7 @@ namespace cinekine {
         worldPos.z = pos.z;
         return worldPos;
     }
-    
+
     cinek_ov_pos GameView::xlatWorldToMapPos(const cinek_ov_pos& pos)
     {
         cinek_ov_pos mapPos;
@@ -93,13 +93,13 @@ namespace cinekine {
         mapPos.z = pos.z;
         return mapPos;
     }
-    
+
     //  Main render pipeline
     //
     void GameView::render()
     {
         glx::Rect viewportRect = _renderer.getViewport();
-        
+
         const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
         const rendermodel::TileDatabase& tileDb = _theater.tileDatabase();
 
@@ -107,38 +107,38 @@ namespace cinekine {
         //
         int32_t worldY = _worldViewBounds.min.y;
         int32_t worldEndY = _worldViewBounds.max.y;
-    
+
         //  left to right
         //  top to bottom
         const overview::Tilemap* tilemap = _map->getTilemapAtZ(0);
         int32_t rowCount = 0;
         const int32_t kScreenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
         const int32_t kScreenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
-       
+
         cinek_bitmap_atlas currentAtlas = kCinekBitmapAtlas_Invalid;
-       
+
         while (worldY <= worldEndY)
         {
             int32_t worldX = _worldViewBounds.min.x;
             int32_t worldEndX = _worldViewBounds.max.x;
             if (rowCount & 1)
             {
-                worldX -= TILE_WIDTH/2;
-                worldEndX += TILE_WIDTH/2;
+                worldX -= TILE_HALFWIDTH;
+                worldEndX += TILE_HALFWIDTH;
             }
-            
+
             cinek_ov_pos worldTilePos { (float)worldX, (float)worldY, 0 };
             while (worldX <= worldEndX)
             {
                 worldTilePos.x = worldX;
-                
+
                 //  determine tile lower left origin as the tile anchor for drawing.
                 float tileWorldOX = worldTilePos.x - TILE_WIDTH*0.5f;
                 float tileWorldOY = worldTilePos.y + TILE_HEIGHT*0.5f;
-                
+
                 int32_t screenOX = tileWorldOX - _worldViewBounds.min.x + kScreenViewLeft;
                 int32_t screenOY = tileWorldOY - _worldViewBounds.min.y + kScreenViewTop;
-                
+
                 //  find world tile from X,Y
                 cinek_ov_pos mapPos = xlatWorldToMapPos(worldTilePos);
                 if (mapPos.y >= 0.f && mapPos.y < mapBounds.yUnits &&
@@ -155,10 +155,10 @@ namespace cinekine {
                 }
                 worldX += TILE_WIDTH;
             }
-            worldY += TILE_HEIGHT/2;
+            worldY += TILE_HALFHEIGHT;
             ++rowCount;
         }
-        
+
         /*
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
@@ -189,7 +189,7 @@ namespace cinekine {
     {
 
     }
-    
+
     void GameView::onMouseButtonUp(MouseButton button, int32_t x, int32_t y)
     {
 
@@ -198,6 +198,6 @@ namespace cinekine {
     void GameView::onMouseMove(MouseRegion region, int32_t x, int32_t y)
     {
     }
-    
+
     }
 }

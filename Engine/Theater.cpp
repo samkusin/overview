@@ -21,7 +21,7 @@
 
 namespace cinekine {
     namespace ovengine {
-    
+
     class Theater::Impl: public TheaterCLI
     {
         friend class Theater;
@@ -29,7 +29,7 @@ namespace cinekine {
     public:
         Impl(Allocator& allocator);
         ~Impl();
-        
+
         virtual void loadSpriteDatabase(const char* spriteDbName, glx::BitmapLibrary& bitmapLibrary);
         virtual void loadTileDatabase(const char* tileDbName, glx::BitmapLibrary& bitmapLibrary);
         const rendermodel::TileDatabase& tileDatabase() const;
@@ -37,19 +37,19 @@ namespace cinekine {
         virtual void setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos);
         virtual void setViewPos(const cinek_ov_pos& pos);
         virtual void clearViewMap();
-        
+
     private:
         rendermodel::TileDatabase _tileDb;
         TileDatabaseLoader _tileDbLoader;
         rendermodel::SpriteDatabase _spriteDb;
         SpriteDatabaseLoader _spriteDbLoader;
-        
+
         std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> _onViewMapSet;
         std::function<void(const cinek_ov_pos&)> _ovViewPosSet;
     };
-    
+
     ////////////////////////////////////////////////////////////////////////////
-    
+
     Theater::Impl::Impl(Allocator& allocator) :
         _tileDb(1024, allocator),
         _tileDbLoader(_tileDb),
@@ -57,11 +57,11 @@ namespace cinekine {
         _spriteDbLoader(_spriteDb)
     {
     }
-    
+
     Theater::Impl::~Impl()
     {
     }
-    
+
     void Theater::Impl::loadSpriteDatabase(const char* spriteDbName,
                                            glx::BitmapLibrary& bitmapLibrary)
     {
@@ -86,7 +86,7 @@ namespace cinekine {
                  return bitmapAtlas->getBitmapIndex(name);
             }
         );
-        
+
         _spriteDbLoader.unserialize(dbStream);
     }
 
@@ -114,30 +114,30 @@ namespace cinekine {
                return bitmapAtlas->getBitmapIndex(name);
             }
         );
-        
+
         _tileDbLoader.unserialize(dbStream);
     }
 
     const rendermodel::TileDatabase& Theater::Impl::tileDatabase() const
     {
-        return _tileDb;       
+        return _tileDb;
     }
-    
+
     const rendermodel::SpriteDatabase& Theater::Impl::spriteDatabase() const
     {
         return _spriteDb;
     }
-    
+
     void Theater::Impl::setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos)
     {
         _onViewMapSet(map, pos);
     }
-    
+
     void Theater::Impl::setViewPos(const cinek_ov_pos &pos)
     {
         _ovViewPosSet(pos);
     }
-    
+
     void Theater::Impl::clearViewMap()
     {
         std::shared_ptr<overview::Map> nilMap;
@@ -145,20 +145,20 @@ namespace cinekine {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-        
+
     Theater::Theater(const Allocator& allocator) :
         _allocator(allocator),
         _impl(_allocator.newItem<Impl>(_allocator), _allocator)
     {
-        
+
     }
-    
+
     Theater::~Theater() = default;
-    
+
     TheaterCLI& Theater::getCLI()
     {
         return *_impl;
     }
-        
+
     }   // namespace ovengine
 }   // namespace cinekine

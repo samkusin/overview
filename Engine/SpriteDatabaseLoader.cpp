@@ -31,16 +31,16 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
     typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
 
     RapidJsonStdStreamBuf jsonStream(instream);
-    
+
     Document jsonDoc;
     jsonDoc.ParseStream<0>(jsonStream);
-    
+
     if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
     {
         OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - failed to parse.");
         return false;
     }
-    
+
     //  add or append to the states table.
     if (jsonDoc.HasMember("states"))
     {
@@ -49,7 +49,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
             OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Invalid states entry in sprite database (not an object.)");
             return false;
         }
-        
+
         const Value& states = jsonDoc["states"];
         for (Value::ConstMemberIterator it = states.MemberBegin(), itEnd = states.MemberEnd();
              it != itEnd;
@@ -73,7 +73,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
     }
 
     //  add or append to the sprites table.
-    
+
     if (jsonDoc.HasMember("sprites") )
     {
         if (!jsonDoc["sprites"].IsObject())
@@ -105,7 +105,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                 OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) has no states entry.", name);
                 continue;
             }
-            
+
             const Value& states = sprite["states"];
             uint16_t stateCount = states.MemberEnd() - states.MemberBegin();
             if (!stateCount)
@@ -113,7 +113,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                 OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) has a zero state count.", name);
                 continue;
             }
-   
+
             // create the template.
             cinek_bitmap_atlas bitmapClass = _atlasRequest(sprite["class"].GetString());
             rendermodel::SpriteTemplate* spriteTemplate = _db.createOrModifyTemplateFromName(name, bitmapClass, stateCount);
@@ -148,7 +148,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                 {
                     const Value& frames = state["frames"];
                     uint16_t frameCount = frames.Size();
-                    
+
                     uint32_t duration;
                     if (state.HasMember("duration"))
                     {
@@ -183,7 +183,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream)
                     continue;
                 }
             }
-                
+
         }
     }
 

@@ -66,7 +66,7 @@ namespace cinekine {
             overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
             while (tileRow.first != tileRow.second)
             {
-                *(tileRow.first) = 0x0000;
+                *(tileRow.first) = 0x0002;
                 ++tileRow.first;
             }
         }

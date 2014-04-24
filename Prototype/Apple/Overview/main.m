@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
     int result = 0;
     SDL_SetMainReady();
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) >= 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) >= 0)
     {
         // Request an OpenGL 3.2 context for maximum non-fixed pipeline OSX compatibility (10.7+)
         // This must occur before SDL window creation so that OpenGL is properly initialized with

@@ -367,7 +367,7 @@ namespace cinekine {
     GLVertexBatch& GL3Renderer::flushBatch()
     {
         GLVertexBatch& batch = _batch[_batchIndex % _batch.capacity()];
-        if (_batch.empty())
+        if (batch.empty())
             return batch;
         
         GLuint texture = _batchState.textureId;

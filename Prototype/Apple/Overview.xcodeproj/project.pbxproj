@@ -7,26 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		374931411904A707002C7DE3 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931401904A707002C7DE3 /* libiconv.dylib */; };
+		374931431904A71F002C7DE3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931421904A71F002C7DE3 /* Carbon.framework */; };
+		374931451904A72E002C7DE3 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931441904A72E002C7DE3 /* OpenGL.framework */; };
+		374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931461904A73B002C7DE3 /* Cocoa.framework */; };
+		374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931481904A75B002C7DE3 /* IOKit.framework */; };
 		374F61A21856F57200F391AA /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F619E1856F57100F391AA /* libck.a */; };
 		374F61A31856F57200F391AA /* libckGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F619F1856F57200F391AA /* libckGL.a */; };
 		374F61A41856F57200F391AA /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F61A01856F57200F391AA /* libckOVEngine.a */; };
 		374F61A51856F57200F391AA /* libckStream.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F61A11856F57200F391AA /* libckStream.a */; };
-		37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D969F917C85A55001C0B9C /* libiconv.dylib */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
 		37DFA099185012BA00382685 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA097185012BA00382685 /* GameScene.cpp */; };
 		37DFA09D1852D29A00382685 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA09B1852D29A00382685 /* GameView.cpp */; };
-		37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */; };
-		37E6802217C8392400FF3C97 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801D17C8392400FF3C97 /* AudioUnit.framework */; };
-		37E6802317C8392400FF3C97 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801E17C8392400FF3C97 /* Carbon.framework */; };
-		37E6802417C8392400FF3C97 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6801F17C8392400FF3C97 /* CoreAudio.framework */; };
-		37E6802517C8392400FF3C97 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6802017C8392400FF3C97 /* ForceFeedback.framework */; };
-		37E6802617C8392400FF3C97 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6802117C8392400FF3C97 /* IOKit.framework */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
-		37F64A951780EA2C009116E7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F64A941780EA2C009116E7 /* Cocoa.framework */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
 		37F64AA11780EA2C009116E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.m */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
-		37F64AC31780EF04009116E7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F64AC21780EF04009116E7 /* OpenGL.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,12 +38,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		374931401904A707002C7DE3 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
+		374931421904A71F002C7DE3 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
+		374931441904A72E002C7DE3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		374931461904A73B002C7DE3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		374F619E1856F57100F391AA /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
 		374F619F1856F57200F391AA /* libckGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckGL.a"; sourceTree = "<group>"; };
 		374F61A01856F57200F391AA /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
 		374F61A11856F57200F391AA /* libckStream.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckStream.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckStream.a"; sourceTree = "<group>"; };
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
-		37D969F917C85A55001C0B9C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		37DFA0911850108200382685 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = ../Scene.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../SceneController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
@@ -55,23 +55,13 @@
 		37DFA098185012BA00382685 /* GameScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameScene.hpp; path = ../Scenes/GameScene.hpp; sourceTree = "<group>"; };
 		37DFA09B1852D29A00382685 /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Views/GameView.cpp; sourceTree = "<group>"; };
 		37DFA09C1852D29A00382685 /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Views/GameView.hpp; sourceTree = "<group>"; };
-		37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		37E6801D17C8392400FF3C97 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
-		37E6801E17C8392400FF3C97 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		37E6801F17C8392400FF3C97 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		37E6802017C8392400FF3C97 /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
-		37E6802117C8392400FF3C97 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		37E76A0D17C6EC34009EAA97 /* Overview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Overview.cpp; path = ../Overview.cpp; sourceTree = "<group>"; };
 		37E76A0E17C6EC34009EAA97 /* Overview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Overview.hpp; path = ../Overview.hpp; sourceTree = "<group>"; };
 		37F64A911780EA2C009116E7 /* Overview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Overview.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		37F64A941780EA2C009116E7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		37F64A971780EA2C009116E7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		37F64A991780EA2C009116E7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37F64A9C1780EA2C009116E7 /* Overview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Overview-Info.plist"; sourceTree = "<group>"; };
 		37F64A9E1780EA2C009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		37F64AA01780EA2C009116E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		37F64AA41780EA2D009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		37F64AC21780EF04009116E7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		37F64ACD1780F295009116E7 /* Settings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Settings.xcconfig; sourceTree = "<group>"; };
 		37F6A44017CAD46500C9EE1C /* bitmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bitmaps; path = "../../../Prototype-Data/Built/bitmaps"; sourceTree = "<group>"; };
 		37F6A44117CAD46500C9EE1C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = "../../../Prototype-Data/Built/data"; sourceTree = "<group>"; };
@@ -87,15 +77,11 @@
 				374F61A31856F57200F391AA /* libckGL.a in Frameworks */,
 				374F61A41856F57200F391AA /* libckOVEngine.a in Frameworks */,
 				374F61A51856F57200F391AA /* libckStream.a in Frameworks */,
-				37D969FA17C85A55001C0B9C /* libiconv.dylib in Frameworks */,
-				37E6802217C8392400FF3C97 /* AudioUnit.framework in Frameworks */,
-				37E6802317C8392400FF3C97 /* Carbon.framework in Frameworks */,
-				37E6802417C8392400FF3C97 /* CoreAudio.framework in Frameworks */,
-				37E6802517C8392400FF3C97 /* ForceFeedback.framework in Frameworks */,
-				37E6802617C8392400FF3C97 /* IOKit.framework in Frameworks */,
-				37F64AC31780EF04009116E7 /* OpenGL.framework in Frameworks */,
-				37E6801C17C838FE00FF3C97 /* AudioToolbox.framework in Frameworks */,
-				37F64A951780EA2C009116E7 /* Cocoa.framework in Frameworks */,
+				374931411904A707002C7DE3 /* libiconv.dylib in Frameworks */,
+				374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */,
+				374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */,
+				374931431904A71F002C7DE3 /* Carbon.framework in Frameworks */,
+				374931451904A72E002C7DE3 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,14 +143,10 @@
 		37F64A931780EA2C009116E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				37E6801D17C8392400FF3C97 /* AudioUnit.framework */,
-				37E6801E17C8392400FF3C97 /* Carbon.framework */,
-				37E6801F17C8392400FF3C97 /* CoreAudio.framework */,
-				37E6802017C8392400FF3C97 /* ForceFeedback.framework */,
-				37E6802117C8392400FF3C97 /* IOKit.framework */,
-				37E6801B17C838FE00FF3C97 /* AudioToolbox.framework */,
-				37F64AC21780EF04009116E7 /* OpenGL.framework */,
-				37F64A941780EA2C009116E7 /* Cocoa.framework */,
+				374931481904A75B002C7DE3 /* IOKit.framework */,
+				374931461904A73B002C7DE3 /* Cocoa.framework */,
+				374931441904A72E002C7DE3 /* OpenGL.framework */,
+				374931421904A71F002C7DE3 /* Carbon.framework */,
 				37F64A961780EA2C009116E7 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -173,8 +155,6 @@
 		37F64A961780EA2C009116E7 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				37F64A971780EA2C009116E7 /* AppKit.framework */,
-				37F64A991780EA2C009116E7 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -203,11 +183,11 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				374931401904A707002C7DE3 /* libiconv.dylib */,
 				374F619E1856F57100F391AA /* libck.a */,
 				374F619F1856F57200F391AA /* libckGL.a */,
 				374F61A01856F57200F391AA /* libckOVEngine.a */,
 				374F61A11856F57200F391AA /* libckStream.a */,
-				37D969F917C85A55001C0B9C /* libiconv.dylib */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -420,7 +400,7 @@
 					"$(PACKAGES_ROOT)/lib/libfreetype.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -443,13 +423,13 @@
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
 				);
 				OTHER_LDFLAGS = (
-					"-lSDL2",
-					"-lSDL2_image",
-					"-lRocket",
-					"-lfreetype",
+					"$(PACKAGES_ROOT)/lib/libSDL2.a",
+					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
+					"$(PACKAGES_ROOT)/lib/libRocket_d.a",
+					"$(PACKAGES_ROOT)/lib/libfreetype.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

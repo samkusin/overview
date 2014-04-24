@@ -10,7 +10,7 @@
 
 #include "Engine/Debug.hpp"
 #include "Stream/StreamBufRapidJson.hpp"
-#include "rapidjson/document.h"
+#include "Engine/JsonUtilities.hpp"
 
 #include "cinek/rendermodel/tiledatabase.hpp"
 
@@ -19,119 +19,180 @@
 
 namespace cinekine {
     namespace ovengine {
-        
-    TileDatabaseLoader::TileDatabaseLoader(rendermodel::TileDatabase& database) :
-        _db(database)
+
+static uint16_t parseFlagsToUint(const JsonValue& flagsDef, const char* flags)
+{
+    uint16_t result = 0;
+
+    const char* end = flags + strlen(flags);
+    const char* current = flags;
+    while (current < end)
     {
-        
-    }
-    
-    bool TileDatabaseLoader::unserialize(std::streambuf& instream)
-    {
-        typedef rapidjson::GenericDocument<rapidjson::UTF8<> > Document;
-        typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
-        
-        RapidJsonStdStreamBuf jsonStream(instream);
-        
-        Document jsonDoc;
-        jsonDoc.ParseStream<0>(jsonStream);
-        
-        if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
+        const char* next = strchr(current, ',');
+        if (!next)
+            next = end;
+        size_t slen = next - current;
+        if (slen)
         {
-            OVENGINE_LOG_ERROR("TileDatabaseLoader - failed to parse.");
-            return false;
-        }
-        
-        //  determine tilemask - this becomes the tile limit.
-        cinek_tile tileMask = 0x03ff;
-        
-        if (jsonDoc.HasMember("mask") && jsonDoc["mask"].IsString())
-        {
-            cinek_tile newMask = strtoul(jsonDoc["mask"].GetString(), NULL, 16);
-            if (newMask == 0)
-                tileMask = newMask;
-        }
-        
-        //  generate tile atlas map
-        if (jsonDoc.HasMember("atlases") && jsonDoc["atlases"].IsObject())
-        {
-            const Value& atlases = jsonDoc["atlases"];
-            for (auto it = atlases.MemberBegin(), itEnd = atlases.MemberEnd();
-                 it != itEnd;
-                 ++it)
+            for (auto memberIt = flagsDef.MemberBegin(), memberItEnd = flagsDef.MemberEnd();
+                 memberIt != memberItEnd;
+                 ++memberIt)
             {
-                const Value::Member& member = *it;
-                if (!member.value.IsObject())
+                const auto& member = *memberIt;
+                if (!strncmp(current, member.name.GetString(), slen))
                 {
-                    OVENGINE_LOG_ERROR("TileDatabaseLoader - Tile Atlas %s entry is not an object.", member.name.GetString());
-                    continue;
-                }
-                const Value& atlas = member.value;
-                if (!member.value.HasMember("tileAtlas") || !atlas["tileAtlas"].IsUint())
-                {
-                    OVENGINE_LOG_ERROR("TileDatabaseLoader - Tile Atlas %s index is not an integer.",
-                                       member.name.GetString());
-                    continue;
-                }
-                if (!atlas.HasMember("tiles") || !atlas["tiles"].IsObject())
-                {
-                    OVENGINE_LOG_ERROR("TileDatabaseLoader - Tile Atlas %s index has no tile map entry.",
-                                       member.name.GetString());
-                    continue;
-                }
-    
-                cinek_bitmap_atlas bitmapAtlasId = _atlasRequest(member.name.GetString());
-                if (bitmapAtlasId == kCinekBitmapAtlas_Invalid)
-                {
-                    continue;
-                }
-                uint8_t tileAtlasId = atlas["tileAtlas"].GetUint();           
-                const Value& tiles = atlas["tiles"];
-                for (auto tileIt = tiles.MemberBegin(), tileItEnd = tiles.MemberEnd();
-                     tileIt != tileItEnd;
-                     ++tileIt)
-                {
-                    const Value::Member& tile =  *tileIt;
-                    cinek_tile tileIndex;
-                    if (tile.value.IsObject())
-                    {
-                        const Value& tileData = tile.value;
-                        for (auto tileDataIt = tileData.MemberBegin(), tileDataItEnd = tileData.MemberEnd();
-                             tileDataIt != tileDataItEnd;
-                             ++tileDataIt)
-                        {
-                            const Value::Member& tileAttr = *tileDataIt;
-                            if (!strcmp(tileAttr.name.GetString(), "bitmap"))
-                            {
-                                tileIndex = tileAttr.value.GetUint();
-                            }
-                        }
-                    }
-                    else if (tile.value.IsUint())
-                    {
-                        tileIndex = (cinek_tile)(tile.value.GetUint());
-                    }
-                    else
-                    {
-                        OVENGINE_LOG_ERROR("TileDatabaseLoader - Tile Atlas %s, bitmap %s has no mapping.",
-                                           member.name.GetString(),
-                                           tile.name.GetString());
-                        continue;
-                    }
-                    cinek_tile_info tileInfo= {
-                        { bitmapAtlasId, this->_indexRequest(bitmapAtlasId, tile.name.GetString()) },
-                        0,
-                        NULL
-                    };
-                    _db.mapTileToInfo(tileAtlasId+tileIndex, tileInfo);
+                    result |= parseUint(member.value);
+                    break;
                 }
             }
         }
-        
 
-        return true;
+        current = next + 1;
     }
-        
-        
+
+    return result;
+}
+
+TileDatabaseLoader::TileDatabaseLoader(rendermodel::TileDatabase& database) :
+    _db(database)
+{
+
+}
+
+bool TileDatabaseLoader::unserialize(std::streambuf& instream)
+{
+    RapidJsonStdStreamBuf jsonStream(instream);
+
+    JsonDocument jsonDoc;
+    jsonDoc.ParseStream<0>(jsonStream);
+
+    if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
+    {
+        OVENGINE_LOG_ERROR("TileDatabaseLoader - failed to parse.");
+        return false;
+    }
+
+    const auto& classes = jsonDoc["classes"];
+    const auto& flags = jsonDoc["flags"];
+    const auto& categories = jsonDoc["categories"];
+
+    if (classes.IsNull() || !classes.IsObject())
+    {
+        OVENGINE_LOG_ERROR("TileDatabaseLoader - no classes entry found.");
+        return false;
+    }
+    if (flags.IsNull() || !flags.IsObject())
+    {
+        OVENGINE_LOG_ERROR("TileDatabaseLoader - no flags found.");
+        return false;
+    }
+    if (categories.IsNull() || !categories.IsObject())
+    {
+        OVENGINE_LOG_ERROR("TileDatabaseLoader - no categories found.");
+        return false;
+    }
+
+    for (auto it = categories.MemberBegin(), itEnd = categories.MemberEnd();
+         it != itEnd;
+         ++it)
+    {
+        const auto& member = *it;
+        const char* categoryName = member.name.GetString();
+        if (!member.value.IsObject())
+        {
+            OVENGINE_LOG_ERROR("TileDatabaseLoader - "
+                               "Tile Category %s is not an object.",categoryName);
+            continue;
+        }
+
+        const auto& category = member.value;
+        uint8_t categoryIndex = parseUint(category["index"]);
+        if (!categoryIndex)
+        {
+            OVENGINE_LOG_ERROR("TileDatabaseLoader - Category %s has no index",
+                                categoryName);
+            continue;
+        }
+
+        const auto& tiles = category["tiles"];
+        if (tiles.IsNull() && !tiles.IsObject())
+        {
+            OVENGINE_LOG_ERROR("TileDatabaseLoader - "
+                               "Tile Category %s index has no tile map entry.",
+                               categoryName);
+            continue;
+        }
+
+        cinek_bitmap_atlas bitmapAtlasId = _atlasRequest(categoryName);
+        if (bitmapAtlasId == kCinekBitmapAtlas_Invalid)
+        {
+            continue;
+        }
+
+        for (auto tileIt = tiles.MemberBegin(), tileItEnd = tiles.MemberEnd();
+             tileIt != tileItEnd;
+             ++tileIt)
+        {
+            const auto& tile =  *tileIt;
+            cinek_tile tileIndex;
+            uint8_t tileClass = 0;
+            uint16_t tileFlags = 0;
+            if (tile.value.IsObject())
+            {
+                const auto& tileData = tile.value;
+                for (auto tileDataIt = tileData.MemberBegin(),
+                          tileDataItEnd = tileData.MemberEnd();
+                     tileDataIt != tileDataItEnd;
+                     ++tileDataIt)
+                {
+                    const auto& tileAttr = *tileDataIt;
+                    const char* tileAttrName = tileAttr.name.GetString();
+                    if (!strcmp(tileAttrName, "index"))
+                    {
+                        tileIndex = parseUint(tileAttr.value);
+                    }
+                    else if (!strcmp(tileAttrName, "class"))
+                    {
+                        auto& className = classes[tileAttr.value.GetString()];
+                        if (!className.IsNull())
+                        {
+                            tileClass = parseUint(className);
+                        }
+                    }
+                    else if (!strcmp(tileAttrName, "flags"))
+                    {
+                        const char* flagsStr = tileAttr.value.GetString();
+                        tileFlags = parseFlagsToUint(flags, flagsStr);
+                    }
+                }
+            }
+            else if (tile.value.IsUint())
+            {
+                tileIndex = (cinek_tile)(tile.value.GetUint());
+            }
+            else
+            {
+                OVENGINE_LOG_ERROR("TileDatabaseLoader - "
+                                   "Tile Category %s, bitmap %s has no mapping.",
+                                   categoryName,
+                                   tile.name.GetString());
+                continue;
+            }
+            cinek_tile_info tileInfo= {
+                {
+                    bitmapAtlasId,
+                    this->_indexRequest(bitmapAtlasId, tile.name.GetString())
+                },
+                categoryIndex,
+                tileClass,
+                tileFlags
+            };
+            _db.mapTileToInfo(tileIndex, tileInfo);
+        }
+    }
+
+    return true;
+}
+
     }   // namespace ovengine
 }   // namespace cinekine
