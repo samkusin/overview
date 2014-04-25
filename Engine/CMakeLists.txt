@@ -110,7 +110,6 @@ include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
 #
 set( PROJECT_SOURCES
      ${COMPONENT_SOURCES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
@@ -122,7 +121,6 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp

@@ -12,7 +12,7 @@
 #include "TileDatabaseLoader.hpp"
 #include "Debug.hpp"
 
-#include "Stream/FileStreamBuf.hpp"
+#include "Framework/FileStreamBuf.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 
 #include "cinek/rendermodel/spritedatabase.hpp"

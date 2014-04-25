@@ -15,7 +15,7 @@
 		374F61A21856F57200F391AA /* libck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F619E1856F57100F391AA /* libck.a */; };
 		374F61A31856F57200F391AA /* libckGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F619F1856F57200F391AA /* libckGL.a */; };
 		374F61A41856F57200F391AA /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F61A01856F57200F391AA /* libckOVEngine.a */; };
-		374F61A51856F57200F391AA /* libckStream.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F61A11856F57200F391AA /* libckStream.a */; };
+		378865CB190A164800445B89 /* libcKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 378865CA190A164800445B89 /* libcKFramework.a */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
 		37DFA099185012BA00382685 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA097185012BA00382685 /* GameScene.cpp */; };
 		37DFA09D1852D29A00382685 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA09B1852D29A00382685 /* GameView.cpp */; };
@@ -46,8 +46,8 @@
 		374F619E1856F57100F391AA /* libck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libck.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libck.a"; sourceTree = "<group>"; };
 		374F619F1856F57200F391AA /* libckGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckGL.a"; sourceTree = "<group>"; };
 		374F61A01856F57200F391AA /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
-		374F61A11856F57200F391AA /* libckStream.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckStream.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckStream.a"; sourceTree = "<group>"; };
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
+		378865CA190A164800445B89 /* libcKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libcKFramework.a"; sourceTree = "<group>"; };
 		37DFA0911850108200382685 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = ../Scene.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../SceneController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
@@ -74,9 +74,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				374F61A21856F57200F391AA /* libck.a in Frameworks */,
+				378865CB190A164800445B89 /* libcKFramework.a in Frameworks */,
 				374F61A31856F57200F391AA /* libckGL.a in Frameworks */,
 				374F61A41856F57200F391AA /* libckOVEngine.a in Frameworks */,
-				374F61A51856F57200F391AA /* libckStream.a in Frameworks */,
 				374931411904A707002C7DE3 /* libiconv.dylib in Frameworks */,
 				374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */,
 				374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */,
@@ -185,9 +185,9 @@
 			children = (
 				374931401904A707002C7DE3 /* libiconv.dylib */,
 				374F619E1856F57100F391AA /* libck.a */,
+				378865CA190A164800445B89 /* libcKFramework.a */,
 				374F619F1856F57200F391AA /* libckGL.a */,
 				374F61A01856F57200F391AA /* libckOVEngine.a */,
-				374F61A11856F57200F391AA /* libckStream.a */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -392,6 +392,7 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
+					"/Users/samir/Development/cinekine/overview/build-xcode/Framework/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
@@ -421,6 +422,7 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
+					"/Users/samir/Development/cinekine/overview/build-xcode/Framework/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",

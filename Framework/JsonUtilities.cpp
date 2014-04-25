@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Engine/JsonUtilities.hpp"
+#include "JsonUtilities.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinekine {
 
     int32_t parseInt(const JsonValue& value, int32_t defaultVal)
     {
@@ -27,4 +27,4 @@ namespace cinekine { namespace ovengine {
         return defaultVal;
     }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace cinekine */

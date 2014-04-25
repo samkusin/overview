@@ -9,7 +9,7 @@
 #include "BitmapAtlasLoader.hpp"
 
 #include "RenderDebug.hpp"
-#include "Stream/StreamBufRapidJson.hpp"
+#include "Framework/StreamBufRapidJson.hpp"
 
 #include "rapidjson/document.h"
 
@@ -22,18 +22,18 @@ namespace cinekine {
     {
         typedef rapidjson::GenericDocument<rapidjson::UTF8<> > Document;
         typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
-        
+
         RapidJsonStdStreamBuf jsonStream(instream);
-        
+
         Document jsonDoc;
         jsonDoc.ParseStream<0>(jsonStream);
-        
+
         if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
         {
             RENDER_LOG_ERROR("BitmapAtlasLoader - failed to parse.");
             return false;
         }
-        
+
         size_t frameCount = (jsonDoc.HasMember("frames") && jsonDoc["frames"].IsArray()) ? jsonDoc["frames"].Size() : 16;
 
         //  parse metadata
@@ -80,7 +80,7 @@ namespace cinekine {
         if (frameCount)
         {
             const Value& frames = jsonDoc["frames"];
-            
+
             for (Value::ConstValueIterator it = frames.Begin(), itEnd = frames.End();
                  it != itEnd;
                  ++it)
@@ -110,7 +110,7 @@ namespace cinekine {
 
         return true;
     }
-            
-        
+
+
     }   // namespace glx
 }   // namespace cinekine

@@ -9,8 +9,8 @@
 #include "TileDatabaseLoader.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Stream/StreamBufRapidJson.hpp"
-#include "Engine/JsonUtilities.hpp"
+#include "Framework/StreamBufRapidJson.hpp"
+#include "Framework/JsonUtilities.hpp"
 
 #include "cinek/rendermodel/tiledatabase.hpp"
 

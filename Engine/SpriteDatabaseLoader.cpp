@@ -9,7 +9,7 @@
 
 #include "SpriteDatabaseLoader.hpp"
 #include "Engine/Debug.hpp"
-#include "Stream/StreamBufRapidJson.hpp"
+#include "Framework/StreamBufRapidJson.hpp"
 #include "rapidjson/document.h"
 
 #include "cinek/rendermodel/spritetemplate.hpp"

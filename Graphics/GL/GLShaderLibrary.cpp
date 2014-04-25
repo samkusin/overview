@@ -9,8 +9,9 @@
 #include "GLShaderLibrary.hpp"
 #include "GLShaderLoader.hpp"
 #include "Graphics/RenderDebug.hpp"
-#include "Graphics/JSON.hpp"
-#include "Stream/FileStreamBuf.hpp"
+#include "Framework/JsonUtilities.hpp"
+#include "Framework/FileStreamBuf.hpp"
+#include "Framework/StreamBufRapidJson.hpp"
 
 #include <cinek/framework/string.hpp>
 
@@ -24,7 +25,7 @@ namespace cinekine {
         _programSet(std_allocator<GLuint>(allocator))
     {
     }
-    
+
     GLShaderLibrary::~GLShaderLibrary()
     {
         for (auto program: _programSet)
@@ -51,10 +52,10 @@ namespace cinekine {
         }
 
         RapidJsonStdStreamBuf jsonStream(instream);
-        Document jsonDoc;
+        JsonDocument jsonDoc;
 
         jsonDoc.ParseStream<0>(jsonStream);
-        
+
         if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
         {
             RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - failed to parse program");
@@ -80,14 +81,14 @@ namespace cinekine {
         if (hasGeometryShaders)
         {
             loadShaders(shaderLoader, GL_GEOMETRY_SHADER, jsonDoc["geometry"]);
-        } 
+        }
 
         //  attempt to create program using our script
         GLuint program = glCreateProgram();
         if (!program)
         {
             RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - failed to create program");
-            return GL_INVALID_VALUE;           
+            return GL_INVALID_VALUE;
         }
 
         bool success = attachShaders(program, GL_VERTEX_SHADER, jsonDoc["vertex"]);
@@ -101,12 +102,12 @@ namespace cinekine {
             if (jsonDoc.HasMember("inputs") && jsonDoc["inputs"].IsObject())
             {
                 //  link stage - fixup locations here if specified in program file
-                const Value& binds = jsonDoc["inputs"];
-                for (Value::ConstMemberIterator it = binds.MemberBegin(), itEnd = binds.MemberEnd();
+                const auto& binds = jsonDoc["inputs"];
+                for (auto it = binds.MemberBegin(), itEnd = binds.MemberEnd();
                      it != itEnd;
                      ++it)
                 {
-                    const Value::Member& bind = *it;
+                    const auto& bind = *it;
                     const char* name = bind.name.GetString();
                     if (bind.value.IsUint())
                     {
@@ -124,12 +125,12 @@ namespace cinekine {
             if (jsonDoc.HasMember("outputs") && jsonDoc["outputs"].IsObject())
             {
                 //  link stage - fixup locations here if specified in program file
-                const Value& binds = jsonDoc["outputs"];
-                for (Value::ConstMemberIterator it = binds.MemberBegin(), itEnd = binds.MemberEnd();
+                const auto& binds = jsonDoc["outputs"];
+                for (auto it = binds.MemberBegin(), itEnd = binds.MemberEnd();
                      it != itEnd;
                      ++it)
                 {
-                    const Value::Member& bind = *it;
+                    const auto& bind = *it;
                     const char* name = bind.name.GetString();
                     if (bind.value.IsUint())
                     {
@@ -144,7 +145,7 @@ namespace cinekine {
                     }
                 }
             }
-            
+
             glLinkProgram(program);
             if (!GLError("GLShaderLibrary.loadProgram.glLinkProgram"))
             {
@@ -158,18 +159,18 @@ namespace cinekine {
         RENDER_LOG_ERROR("GLShaderLibrary.loadProgram - program %s build failed", programFilename);
         return 0;
     }
-    
+
     void GLShaderLibrary::loadShaders(GLShaderLoader& loader, GLenum shaderType,
-                                      const Value& shaderJSONArray)
+                                      const JsonValue& shaderJSONArray)
     {
         /**
          * @todo Clean up file path generation so we don't add to the stack
          */
-        for (Value::ConstValueIterator it = shaderJSONArray.Begin(), itEnd = shaderJSONArray.End();
+        for (auto it = shaderJSONArray.Begin(), itEnd = shaderJSONArray.End();
                  it != itEnd;
                  ++it)
         {
-            const Value& shaderName = *it;
+            const auto& shaderName = *it;
             if (shaderName.IsString())
             {
                 auto it = _shaderNameToHandle.find(shaderName.GetString());
@@ -190,18 +191,18 @@ namespace cinekine {
                                         shaderName.GetString());
                     }
                 }
-                
+
             }
         }
     }
 
-    bool GLShaderLibrary::attachShaders(GLuint program, GLenum shaderType, const Value& shaderJSONArray)
+    bool GLShaderLibrary::attachShaders(GLuint program, GLenum shaderType, const JsonValue& shaderJSONArray)
     {
-        for (Value::ConstValueIterator it = shaderJSONArray.Begin(), itEnd = shaderJSONArray.End();
+        for (auto it = shaderJSONArray.Begin(), itEnd = shaderJSONArray.End();
                  it != itEnd;
                  ++it)
         {
-            const Value& shaderName = *it;
+            const auto& shaderName = *it;
             if (shaderName.IsString())
             {
                 auto it = _shaderNameToHandle.find(shaderName.GetString());
@@ -244,7 +245,7 @@ namespace cinekine {
             RENDER_LOG_INFO("GLShaderLibrary - Shader %u unloaded", program);
         }
     }
-    
+
 
     }   // namespace glx
 }   // namespace cinekine

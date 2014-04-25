@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 
-project( CKStream )
+project( CKFramework )
 
 ###############################################################################
 # CMake custom variables used to set up the build process.  All subtargets
@@ -18,8 +18,8 @@ if ( NOT DEFINED CINEK_SDK_ROOT_DIR )
           CACHE FILEPATH "The path to the CineK SDK root folder." )
 endif( )
 
-option( CINEK_CXX_EXCEPTIONS 
-    "Enable C++ exception handling" OFF 
+option( CINEK_CXX_EXCEPTIONS
+    "Enable C++ exception handling" OFF
 )
 
 # Setup compile options
@@ -53,20 +53,22 @@ include_directories( "${CINEK_SDK_ROOT_DIR}" "${CINEK_EXT_PACKAGE_DIR}/include" 
 
 # Stream
 #
-set( PROJECT_STREAM_INCLUDES 
+set( PROJECT_STREAM_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/StreamBufRapidJson.hpp )
-set( PROJECT_STREAM_SOURCES 
-     ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.cpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/StreamBufRapidJson.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.hpp )
+set( PROJECT_STREAM_SOURCES
+     ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.cpp )
 
 # Main
 #
 set( PROJECT_SOURCES
      ${PROJECT_STREAM_SOURCES} )
 
-set( PROJECT_INCLUDES 
+set( PROJECT_INCLUDES
      ${PROJECT_STREAM_INCLUDES} )
 
-add_library( ckStream STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
-set_target_properties( ckStream PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
+add_library( cKFramework STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
+set_target_properties( cKFramework PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
 

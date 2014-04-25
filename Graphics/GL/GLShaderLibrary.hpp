@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    GL/GLShaderLibrary.hpp
  * @author  Samir Sinha
  * @date    11/16/2013
@@ -32,7 +32,7 @@
 #define CK_Graphics_GL_GLShaderLibrary_hpp
 
 #include "GLUtils.hpp"
-#include "Graphics/JSON.hpp"
+#include "Framework/JsonUtilities.hpp"
 
 #include "cinek/framework/allocator.hpp"
 #include "cinek/framework/string.hpp"
@@ -48,13 +48,13 @@ namespace cinekine {
     /**
      * @class GLShaderLibrary
      * @brief An OpenGL Shader loader and housekeeper
-     */    
+     */
     class GLShaderLibrary
     {
-    public:    
+    public:
         GLShaderLibrary(const char* shaderDir, const Allocator& allocator);
         virtual ~GLShaderLibrary();
-        
+
         /**
          * Loads a GL shader program using the supplied JSON resource.
          * The shader sources are loaded and linked using the description JSON
@@ -69,8 +69,8 @@ namespace cinekine {
         void unloadProgram(GLuint program);
 
     private:
-        void loadShaders(GLShaderLoader& loader, GLenum shaderType, const Value& shaderJSONArray);
-        bool attachShaders(GLuint program, GLenum shaderType, const Value& shaderJSONArray);
+        void loadShaders(GLShaderLoader& loader, GLenum shaderType, const JsonValue& shaderJSONArray);
+        bool attachShaders(GLuint program, GLenum shaderType, const JsonValue& shaderJSONArray);
 
         Allocator _allocator;
         string _shaderRootDir;
@@ -80,7 +80,7 @@ namespace cinekine {
             std_allocator<std::pair<const string,GLuint>> > _shaderNameToHandle;
         std::set<GLuint, std::less<GLuint>, std_allocator<GLuint>> _programSet;
     };
-    
+
 
     }   // namespace glx
 }   // namespace cinekine

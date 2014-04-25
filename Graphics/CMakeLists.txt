@@ -16,10 +16,10 @@ endif( )
 if ( NOT DEFINED CINEK_SDK_ROOT_DIR )
      set( CINEK_SDK_ROOT_DIR ""
           CACHE FILEPATH "The path to the CineK SDK root folder." )
-endif( ) 
+endif( )
 
-option( CINEK_CXX_EXCEPTIONS 
-    "Enable C++ exception handling" OFF 
+option( CINEK_CXX_EXCEPTIONS
+    "Enable C++ exception handling" OFF
 )
 
 # Setup compile options
@@ -79,7 +79,7 @@ set( PROJECT_GL_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLVertexBatch.hpp )
 
 set( PROJECT_GL_SOURCES
-     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Renderer.cpp 
+     ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Renderer.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Texture.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GL3Mesh.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/GL/GLShaderLoader.cpp
@@ -118,18 +118,17 @@ set( PROJECT_SOURCES
 set( PROJECT_INCLUDES
      ${PROJECT_GL_INCLUDES}
      ${PROJECT_SDL_INCLUDES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/RenderDefines.hpp 
+     ${CMAKE_CURRENT_SOURCE_DIR}/RenderDefines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderDebug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/RenderUtils.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/JSON.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Rect.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Style.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapAtlas.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapAtlasLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/BitmapLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Font.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp 
+     ${CMAKE_CURRENT_SOURCE_DIR}/FontLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Texture.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Mesh.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.hpp

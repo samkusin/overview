@@ -10,23 +10,23 @@
 #include "RendererCLI.hpp"
 #include "RenderDebug.hpp"
 #include "RenderUtils.hpp"
-#include "Stream/FileStreamBuf.hpp"
+#include "Framework/FileStreamBuf.hpp"
 #include "External/stb/stb_truetype.h"
 
 namespace cinekine {
     namespace glx {
 
 //  Modified form of stbtt_BakeFontBitmap
-//  
+//
 //  if pixels is null, the minimum rect width and height encompassing the
 //      font is returned via 'pw' and 'ph'. in this case, pw and ph should
-//      contain maximum values (i.e. we can limit a font to within a 
+//      contain maximum values (i.e. we can limit a font to within a
 //      texture of size 'pw' x 'ph')
 //  if pixels is not null, the font is rendered into the pixel buffer of
 //      size pw x ph
-//  
+//
 //  returned is the last glyph character code rendered.
-//  
+//
 static uint16_t bakeFontToBuffer(const unsigned char *data,
     int offset,                     // font location (use offset=0 for plain .ttf)
     uint16_t height,                // height of font in pixels
@@ -34,7 +34,7 @@ static uint16_t bakeFontToBuffer(const unsigned char *data,
     int firstChar, int lastChar,    // characters to bake
     Font::BakedChars* chardata)
 {
-    //  determine dimensions on first pass.  
+    //  determine dimensions on first pass.
     uint16_t right = 1;
     uint16_t bottom = 1;
     uint16_t x = right, y = bottom;
@@ -46,7 +46,7 @@ static uint16_t bakeFontToBuffer(const unsigned char *data,
     {
         chardata->reserve(kNumChars);
     }
-    
+
     stbtt_fontinfo f;
     stbtt_InitFont(&f, data, offset);
     float scale = stbtt_ScaleForPixelHeight(&f, (float)height);
@@ -57,7 +57,7 @@ static uint16_t bakeFontToBuffer(const unsigned char *data,
         int advance, lsb, x0, y0, x1, y1;
         stbtt_GetGlyphHMetrics(&f, g, &advance, &lsb);
         stbtt_GetGlyphBitmapBox(&f, g, scale,scale, &x0,&y0,&x1,&y1);
-      
+
         uint16_t gw = (uint16_t)(x1-x0);
         uint16_t gh = (uint16_t)(y1-y0);
         if (x + gw + 1 >= *pw)
@@ -107,7 +107,7 @@ FontLibrary::FontLibrary(RendererCLI& renderer, size_t fontLimit,
     //  since Font objects have their copy constructor disabled.  Vector initialization
     //  requires that the Vector object have a copy constructor enabled, though we already
     //  have a move constructor for Font (hence why push_back works.
-    //  
+    //
     //  Is this really the case?  Isn't there a better way to do this in C++11?
     _fonts.reserve(fontLimit);
     while (_fonts.size() < fontLimit)
@@ -115,7 +115,7 @@ FontLibrary::FontLibrary(RendererCLI& renderer, size_t fontLimit,
         _fonts.push_back(Font());
     }
 }
-    
+
 bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t height)
 {
     if (slot >= _fonts.size())
@@ -131,7 +131,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
     //  ingest a ttf binary using stbtt
     //  we'll need to precalculate the desired texture size and prefer a 'reasonably'
     //  dimensioned 2d rectangular GL-compliant texture.
-    //  
+    //
     const int kMinCharCode = 32;
     const int kMaxCharCode = 255;
     const uint16_t kRightLimit = 512;
@@ -139,7 +139,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
 
     uint16_t bufferWidth = kRightLimit;
     uint16_t bufferHeight = kBottomLimit;
-    
+
 
     FileStreamBuf ttfStream(pathname, std::ios_base::in | std::ios_base::binary);
     if (!ttfStream)
@@ -182,7 +182,7 @@ bool FontLibrary::loadFont(FontHandle slot, const char* pathname, uint16_t heigh
                                                                   kCinekPixelFormat_A8,
                                                                   buffer);
             _allocator.free(buffer);
-            
+
             if (*texture)
             {
                 Font font(texture, std::move(bakedChars), height, kMinCharCode, kMinCharCode);
@@ -218,7 +218,7 @@ void FontLibrary::unloadFont(FontHandle slot)
         RENDER_LOG_INFO("Unloaded font slot [%u].", slot);
         _fonts[slot] = Font();
     }
-}   
-    
+}
+
     }   // namespace glx
 }   // namespace cinekine

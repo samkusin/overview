@@ -10,12 +10,12 @@
 #include "BitmapAtlasLoader.hpp"
 #include "RendererCLI.hpp"
 #include "RenderDebug.hpp"
-#include "Stream/FileStreamBuf.hpp"
+#include "Framework/FileStreamBuf.hpp"
 
 
 namespace cinekine {
     namespace glx {
-    
+
     BitmapLibrary::BitmapLibrary(RendererCLI& renderer, const Allocator& allocator) :
         _allocator(allocator),
         _renderer(renderer),
@@ -23,7 +23,7 @@ namespace cinekine {
         _nextAtlasHandle(0)
     {
     }
-    
+
     BitmapLibrary::~BitmapLibrary() = default;
 
     cinek_bitmap_atlas BitmapLibrary::loadAtlas(const char* atlasName)
@@ -39,15 +39,15 @@ namespace cinekine {
         char path[MAX_PATH];
         snprintf(path, sizeof(path), "bitmaps/%s.json", atlasName);
         FileStreamBuf atlasFile(path);
-        
+
         if (!atlasFile)
             return kCinekBitmapAtlas_Invalid;
-        
+
         BitmapAtlasLoader atlasLoader;
         BitmapAtlas* atlas = nullptr;
         cinek_bitmap_atlas atlasHandle = kCinekBitmapAtlas_Invalid;
         RENDER_LOG_INFO("Loading atlas '%s'...", atlasName);
-        
+
         atlasLoader.onImageLoadRequest([&atlas, &atlasHandle, &atlasName, &path, this](const char* textureName,
                                                                       uint16_t w, uint16_t h,
                                                                       cinek_pixel_format format,
@@ -67,27 +67,27 @@ namespace cinekine {
 
                 /**
                  * @todo (LOW) Use allocate_shared instead?
-                 * Odd compile error when passing atlasName as a const char* (conversion to a 
+                 * Odd compile error when passing atlasName as a const char* (conversion to a
                  * const char* && occurs, which fails.)  This code isn't in a time-crticial
                  * section, so the dual allocation would not be an issue.
                  */
-                atlas = _allocator.newItem<BitmapAtlas>(atlasName, 
+                atlas = _allocator.newItem<BitmapAtlas>(atlasName,
                                                         texture,
                                                         bitmapCount,
                                                         _allocator);
                 std::shared_ptr<BitmapAtlas> atlasPtr(atlas,
-                                                      SharedPtrDeleter<BitmapAtlas>(_allocator), 
+                                                      SharedPtrDeleter<BitmapAtlas>(_allocator),
                                                       BitmapAtlasAllocator(_allocator));
                 /*
                                     std::allocate_shared<BitmapAtlas, BitmapAtlasAllocator,
-                                        const char* const, 
+                                        const char* const,
                                         unique_ptr<Texture>&,
                                         size_t,
                                         const Allocator&>
                                     (
                                         BitmapAtlasAllocator(_renderer.getAllocator()),
                                         atlasName, texture, bitmapCount, _renderer.getAllocator()
-                                    ); 
+                                    );
                 */
                 _atlasMap.emplace(_nextAtlasHandle, atlasPtr);
                 //atlas = (*result.first).second.get();
@@ -110,7 +110,7 @@ namespace cinekine {
         );
 
         atlasLoader.unserialize(atlasFile);
-        
+
         return atlasHandle;
     }
 
@@ -121,7 +121,7 @@ namespace cinekine {
             _atlasMap.erase(handle);
         }
     }
-    
+
     std::shared_ptr<BitmapAtlas> BitmapLibrary::getAtlas(cinek_bitmap_atlas handle) const
     {
         auto it = _atlasMap.find(handle);
