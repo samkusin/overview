@@ -10,11 +10,11 @@
 #include "Graphics/RendererCLI.hpp"
 #include "Engine/Debug.hpp"
 #include "Engine/TheaterCLI.hpp"
+#include "Engine/Map.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/FontLibrary.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 
-#include "cinek/overview/map.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
 
 /////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace cinekine {
 
     //  A new viewpoint has been initialized by our controller.  Replace our reference with the new one.
     //
-    void GameView::setMap(std::shared_ptr<overview::Map> &map, const cinek_ov_pos& pos)
+    void GameView::setMap(std::shared_ptr<ovengine::Map> &map, const cinek_ov_pos& pos)
     {
         _map = map;
         if (_map)
@@ -110,7 +110,7 @@ namespace cinekine {
 
         //  left to right
         //  top to bottom
-        const overview::Tilemap* tilemap = _map->getTilemapAtZ(0);
+        const ovengine::Tilemap* tilemap = _map->getTilemapAtZ(0);
         int32_t rowCount = 0;
         const int32_t kScreenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
         const int32_t kScreenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;

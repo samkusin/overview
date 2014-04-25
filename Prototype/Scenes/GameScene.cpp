@@ -12,15 +12,15 @@
 #include "../Views/GameView.hpp"
 
 #include "Engine/TheaterCLI.hpp"
+#include "Engine/Map.hpp"
 
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
-#include "cinek/overview/map.hpp"
 
 namespace cinekine {
     namespace prototype {
-        
+
     GameScene::GameScene(SceneController& sceneController) :
         _allocator(),
         _sceneController(sceneController),
@@ -29,7 +29,7 @@ namespace cinekine {
         _renderer(_sceneController.renderer()),
         _bitmapLibrary(_renderer, _allocator),
         _fontLibrary(_renderer, 1, _allocator),
-        _stage({ 17, 17, 0, 0 }, _allocator),
+        _map(),
         _gameView(),
         _window()
     {
@@ -45,7 +45,7 @@ namespace cinekine {
                                 std_allocator<GameView>(_allocator),
                                 _theater, _renderer, _fontLibrary, _bitmapLibrary
                             );
-       
+
         _window = _ui.createWindow("static/ui/main.rml",
                 [this](const char* className, const char* idName)
                 {
@@ -55,15 +55,25 @@ namespace cinekine {
         _window->setEventListener(this);
         _window->show();
 
-        std::shared_ptr<overview::Map> map = _stage.getMapPtr();
-        const cinek_ov_map_bounds& bounds = map->getMapBounds();
+        cinek_ov_map_bounds bounds = { 17, 17, 0, 0 };
+
+        _map = std::allocate_shared<ovengine::Map,
+                                    std_allocator<ovengine::Map>,
+                                    const cinek_ov_map_bounds&,
+                                    const Allocator&>
+                            (
+                                std_allocator<ovengine::Map>(_allocator),
+                                bounds,
+                                _allocator
+                            );
+
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
-        
+
         //  prepopulate map.
-        overview::Tilemap* tilemap = map->getTilemapAtZ(0);
+        ovengine::Tilemap* tilemap = _map->getTilemapAtZ(0);
         for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
         {
-            overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
+            ovengine::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
             while (tileRow.first != tileRow.second)
             {
                 *(tileRow.first) = 0x0002;
@@ -71,7 +81,7 @@ namespace cinekine {
             }
         }
 
-        _gameView->setMap(map, _viewPos);
+        _gameView->setMap(_map, _viewPos);
     }
 
     void GameScene::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
@@ -81,11 +91,11 @@ namespace cinekine {
 
     void GameScene::onKeyUp(SDL_Keycode keycode, uint16_t keymod)
     {
-        
+
     }
-    
+
     void GameScene::update()
-    {    
+    {
         /*std::shared_ptr<overview::Map> map = _stage.getMapPtr();
         //  prepopulate map.
         overview::Tilemap* tilemap = map->getTilemapAtZ(0);
@@ -98,8 +108,8 @@ namespace cinekine {
                 ++tileRow.first;
             }
         }
-        */  
+        */
     }
-        
+
     }   // namespace ovengine
 }   // namespace cinekine

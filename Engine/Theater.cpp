@@ -17,7 +17,6 @@
 
 #include "cinek/rendermodel/spritedatabase.hpp"
 #include "cinek/rendermodel/tiledatabase.hpp"
-#include "cinek/overview/map.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -34,18 +33,12 @@ namespace cinekine {
         virtual void loadTileDatabase(const char* tileDbName, glx::BitmapLibrary& bitmapLibrary);
         const rendermodel::TileDatabase& tileDatabase() const;
         const rendermodel::SpriteDatabase& spriteDatabase() const;
-        virtual void setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos);
-        virtual void setViewPos(const cinek_ov_pos& pos);
-        virtual void clearViewMap();
 
     private:
         rendermodel::TileDatabase _tileDb;
         TileDatabaseLoader _tileDbLoader;
         rendermodel::SpriteDatabase _spriteDb;
         SpriteDatabaseLoader _spriteDbLoader;
-
-        std::function<void(std::shared_ptr<overview::Map>&, const cinek_ov_pos&)> _onViewMapSet;
-        std::function<void(const cinek_ov_pos&)> _ovViewPosSet;
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -126,22 +119,6 @@ namespace cinekine {
     const rendermodel::SpriteDatabase& Theater::Impl::spriteDatabase() const
     {
         return _spriteDb;
-    }
-
-    void Theater::Impl::setViewMap(std::shared_ptr<overview::Map> map, const cinek_ov_pos& pos)
-    {
-        _onViewMapSet(map, pos);
-    }
-
-    void Theater::Impl::setViewPos(const cinek_ov_pos &pos)
-    {
-        _ovViewPosSet(pos);
-    }
-
-    void Theater::Impl::clearViewMap()
-    {
-        std::shared_ptr<overview::Map> nilMap;
-        _onViewMapSet(nilMap, glm::vec3());
     }
 
     ////////////////////////////////////////////////////////////////////////////

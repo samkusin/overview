@@ -11,10 +11,10 @@
 
 #include "Scene.hpp"
 #include "Engine/Component/Window/WindowComponentCLI.hpp"
+#include "Engine/Map.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
-#include "cinek/overview/stage.hpp"
 #include "cinek/framework/allocator.hpp"
 
 namespace cinekine {
@@ -33,14 +33,14 @@ namespace cinekine {
 
     class SceneController;
     class GameView;
-    
+
     class GameScene :
         public Scene,
         public ovengine::WindowEventListener
     {
     public:
         GameScene(SceneController& sceneController);
-        
+
         virtual void update();
 
     protected:
@@ -57,14 +57,14 @@ namespace cinekine {
         glx::BitmapLibrary _bitmapLibrary;
         glx::FontLibrary _fontLibrary;
 
-        overview::Stage _stage;
+        std::shared_ptr<ovengine::Map> _map;
         cinek_ov_pos _viewPos;
 
         std::shared_ptr<GameView> _gameView;
 
         ovengine::WindowPtr _window;
     };
-        
+
     }   // namespace ovengine
 }   // namespace cinekine
 

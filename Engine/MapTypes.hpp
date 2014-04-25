@@ -1,5 +1,5 @@
 /**
- * \file    overview/maptypes.h
+ * \file    Engine/MapTypes.h
  *
  * Contains map specific types and type interfaces.
  *
@@ -10,14 +10,16 @@
 #ifndef CINEK_OVERVIEW_MAP_TYPES_H
 #define CINEK_OVERVIEW_MAP_TYPES_H
 
-#include "cinek/overview/types.h"
+#include <cinek/framework/types.hpp>
+#include <cinek/rendermodel/types.h>
+
 #include "glm/glm.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** Defines the XYZ bounds of a map. */  
+/** Defines the XYZ bounds of a map. */
 typedef struct cinek_ov_map_bounds_t
 {
     uint16_t xUnits;    /**< Number of units/tiles on the x axis. */

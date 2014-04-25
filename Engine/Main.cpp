@@ -23,7 +23,7 @@
 
 #include "Component/Window/WindowComponent.hpp"
 
-#include "cinek/framework/allocator.hpp"
+#include <cinek/framework/allocator.hpp>
 
 #include "SDL2/SDL.h"
 
@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
-{    
+{
     Allocator allocator;
 
     glx::RendererInitParameters rendererInitParams;
@@ -68,7 +68,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         OVENGINE_LOG_ERROR("Failed to initialize UI system");
         return 1;
     }
- 
+
     //  Startup the Director CONTROLLER script (controls program flow )
     ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getCLI(),
                                             *windowComponent,
@@ -84,7 +84,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
         //  event dispatch
         SDL_Event e;
-        while (SDL_PollEvent(&e)) 
+        while (SDL_PollEvent(&e))
         {
             if (e.type == SDL_QUIT)
             {
@@ -94,19 +94,19 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
             windowComponent->handleInput(e);
         }
-        
+
         ///////////////////////////////////////////////////////////////////
         director->update();
 
         ///////////////////////////////////////////////////////////////////
         renderer.begin();
-    
-        renderer.clear(glx::RGBAColor(0,0,0,255));    
+
+        renderer.clear(glx::RGBAColor(0,0,0,255));
         windowComponent->render();
 
         renderer.display();
     }
-   
+
     ovengine::DestroyDirector(director);
     director = nullptr;
 

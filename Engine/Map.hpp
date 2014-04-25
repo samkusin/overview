@@ -1,5 +1,5 @@
 /**
- * \file    overview/map.hpp
+ * \file    Engine/Map.hpp
  *
  * Shared map data object containing terrain and prop objects.
  *
@@ -10,14 +10,15 @@
 #ifndef CINEK_OVERVIEW_MAP_HPP
 #define CINEK_OVERVIEW_MAP_HPP
 
-#include "cinek/overview/maptypes.h"
-#include "cinek/overview/grid.hpp"
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/vector.hpp"
+#include "MapTypes.hpp"
+#include "Grid.hpp"
+
+#include <cinek/framework/allocator.hpp>
+#include <cinek/framework/vector.hpp>
 
 
 namespace cinekine {
-    namespace overview {
+    namespace ovengine {
 
 /** Defines a grid of tiles */
 typedef Grid<cinek_tile> Tilemap;
@@ -29,19 +30,19 @@ typedef GridContainer<Tilemap> TilemapContainer;
  * @brief Contains map data for display and interaction by a game simulation.
  *
  * A map is comprised of a terrain grid of tiles, and a quad-tree of props.
- * 
+ *
  * Ownership rules:
  * - Map owns its QuadTree
- * - Map owns 
+ * - Map owns
  */
-class Map 
+class Map
 {
     CK_CLASS_NON_COPYABLE(Map);
 
 public:
-    /** 
+    /**
      *  Constructor that creates an empty map with specified dimensions.
-     *  
+     *
      *  @param  bounds  Map x,y and z bounds.
      */
     Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator = Allocator());
@@ -54,7 +55,7 @@ public:
      * Retrieve map coordinate bounds.
      * Can be used to calculate an index into a tile array.
      * @return  Reference to the map bounds structure.
-     */ 
+     */
     const cinek_ov_map_bounds& getMapBounds() const {
         return _bounds;
     }
@@ -78,13 +79,13 @@ private:
     vector<Tilemap> _tilemaps;
 };
 
-/** 
- * Allocator used for shared Map objects.  Maps are typically shared amongst 
+/**
+ * Allocator used for shared Map objects.  Maps are typically shared amongst
  * objects in the Overview framework.
  */
 typedef std_allocator<Map> MapAllocator;
 
-    } /* overview */ 
+    } /* overview */
 } /* cinekine */
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * \file    overview/map.cpp
+ * \file    Engine/Map.cpp
  *
  * Shared map data object containing terrain and prop objects.
  *
@@ -7,12 +7,12 @@
  *          Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#include "cinek/overview/map.hpp"
-#include "cinek/overview/debug.hpp"
+#include "Map.hpp"
+#include "Debug.hpp"
 
 
 namespace cinekine {
-    namespace overview {
+    namespace ovengine {
 
 Map::Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator) :
     _bounds(bounds),
@@ -28,7 +28,7 @@ Map::Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator) :
     }
     if (!_bounds.xUnits || !_bounds.yUnits)
     {
-        OV_LOG_ERROR("[Map::Map]", "Invalid bounds specified (%u x %u)", _bounds.xUnits, _bounds.yUnits);
+        OVENGINE_LOG_ERROR("Map - Invalid bounds specified (%u x %u)", _bounds.xUnits, _bounds.yUnits);
         _bounds.xUnits = 1;
         _bounds.yUnits = 1;
     }
@@ -59,8 +59,8 @@ const Tilemap* Map::getTilemapAtZ(int16_t z) const
 {
     if (z < _bounds.zDown || z > _bounds.zUp)
         return nullptr;
-    return &_tilemaps[z - _bounds.zDown];    
+    return &_tilemaps[z - _bounds.zDown];
 }
 
-    } /* overview */ 
+    } /* overview */
 } /* cinekine */

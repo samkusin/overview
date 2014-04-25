@@ -12,8 +12,8 @@
 #include "Framework/StreamBufRapidJson.hpp"
 #include "rapidjson/document.h"
 
-#include "cinek/rendermodel/spritetemplate.hpp"
-#include "cinek/rendermodel/spritedatabase.hpp"
+#include <cinek/rendermodel/spritetemplate.hpp>
+#include <cinek/rendermodel/spritedatabase.hpp>
 
 
 namespace cinekine {

@@ -10,7 +10,7 @@
 #define Overview_Theater_hpp
 
 #include "cinek/framework/allocator.hpp"
-#include "cinek/overview/maptypes.h"
+
 #include <functional>
 
 namespace cinekine {
@@ -18,14 +18,11 @@ namespace cinekine {
         class TileDatabase;
         class SpriteDatabase;
     }
-    namespace overview {
-        class Map;
-    }
 }
 
-namespace cinekine {    
+namespace cinekine {
     namespace ovengine {
-    
+
     class SpriteDatabaseLoader;
     class TileDatabaseLoader;
     class TheaterCLI;
@@ -38,16 +35,16 @@ namespace cinekine {
     public:
         Theater(const Allocator& allocator);
         ~Theater();
-        
+
         TheaterCLI& getCLI();
-        
+
     private:
         Allocator _allocator;
         class Impl;
         unique_ptr<Impl> _impl;
     };
-        
-        
+
+
     }   // namespace ovengine
 }   // namespace cinekine
 
