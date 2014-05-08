@@ -46,14 +46,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         return 1;
     }
 
-    //  debug font
-    glx::FontLibrary fontLibrary(renderer, 2);
-    if (!fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16))
-    {
-        OVENGINE_LOG_ERROR("Failed to load system font.");
-        return 1;
-    }
-
     //  Startup the Theater MODEL
     ovengine::Theater theater(allocator);
 

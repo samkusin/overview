@@ -37,7 +37,7 @@ namespace cinekine {
         //  loads an atlas database.  using the unserializer, construct and build the
         //  atlas.  on success, add it to our atlas map.
         char path[MAX_PATH];
-        snprintf(path, sizeof(path), "bitmaps/%s.json", atlasName);
+        snprintf(path, sizeof(path), "%s.json", atlasName);
         FileStreamBuf atlasFile(path);
 
         if (!atlasFile)
@@ -58,7 +58,7 @@ namespace cinekine {
                     RENDER_LOG_WARN("Ignoring image load request for '%s' since atlas was already created.", textureName);
                     return true;
                 }
-                snprintf(path, sizeof(path), "bitmaps/textures/%s", textureName);
+                snprintf(path, sizeof(path), "%s", textureName);
                 std::shared_ptr<Texture> texture = _renderer.loadTexture(path);
                 if (!(*texture))
                 {

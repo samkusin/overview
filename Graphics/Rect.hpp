@@ -51,7 +51,7 @@ namespace cinekine {
 
     inline Rect Rect::rectFromDimensions(int32_t x, int32_t y, int32_t w, int32_t h)
     {
-        return Rect (x, y, x+w-1, y+h-1);
+        return Rect (x, y, x+w, y+h);
     }
 
     inline Rect::Rect(int32_t l, int32_t t, int32_t r, int32_t b) :
@@ -60,11 +60,11 @@ namespace cinekine {
     }
 
     inline int32_t Rect::width() const {
-        return (right-left)+1;
+        return (right-left);
     }
 
     inline int32_t Rect::height() const {
-        return (bottom-top)+1;
+        return (bottom-top);
     }
 
     }   // namespace glx

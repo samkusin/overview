@@ -33,8 +33,11 @@ namespace cinekine {
         _gameView(),
         _window()
     {
-        _theater.loadTileDatabase("dungeontiles", _bitmapLibrary);
-        _theater.loadSpriteDatabase("commonsprites", _bitmapLibrary);
+        //  debug font
+      
+        _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
+        _theater.loadTileDatabase("tiles_caves.json", _bitmapLibrary);
+        _theater.loadSpriteDatabase("sprites_common.json", _bitmapLibrary);
         _gameView = std::allocate_shared<GameView,
                                          std_allocator<GameView>,
                                          ovengine::TheaterCLI&,
@@ -55,7 +58,7 @@ namespace cinekine {
         _window->setEventListener(this);
         _window->show();
 
-        cinek_ov_map_bounds bounds = { 17, 17, 0, 0 };
+        cinek_ov_map_bounds bounds = { 9, 9, 0, 0 };
 
         _map = std::allocate_shared<ovengine::Map,
                                     std_allocator<ovengine::Map>,

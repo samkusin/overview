@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "Graphics2D.hpp"
@@ -33,8 +33,8 @@
 
 namespace cinekine {
     namespace glx {
- 
-    Graphics2D::Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary, 
+
+    Graphics2D::Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary,
                            FontLibrary& fontLibrary) :
                 _renderer(renderer),
                 _bitmapLibrary(bitmapLibrary),
@@ -44,9 +44,9 @@ namespace cinekine {
                 _polyVertsUV(std_allocator<glm::vec2>()),
                 _polyVertsColor(std_allocator<glm::vec4>())
     {
-        /** 
+        /**
          * @todo Evaluate whether we can customize this - 32 verts is plenty for
-         *       most cases though, where 
+         *       most cases though, where
          */
         _polyVertsPos.reserve(32);
         _polyVertsUV.reserve(32);
@@ -66,9 +66,9 @@ namespace cinekine {
     {
         _polyVertsColor.clear();
         _polyVertsPos.clear();
-        _polyVertsUV.clear();     
+        _polyVertsUV.clear();
     }
-    
+
     //  Draws a rectangle
     void Graphics2D::drawRect(const Rect& rect, const Style& style)
     {
@@ -97,7 +97,7 @@ namespace cinekine {
             _polyVertsColor.emplace_back(color);
             _polyVertsColor.emplace_back(color);
             _polyVertsColor.emplace_back(color);
-        }        
+        }
 
         _renderer.drawVertices(*_solidTexture, Mesh::kTriangles,
                                _polyVertsPos,
@@ -105,7 +105,7 @@ namespace cinekine {
                                _polyVertsColor);
         _polyVertsColor.clear();
         _polyVertsPos.clear();
-        _polyVertsUV.clear();  
+        _polyVertsUV.clear();
     }
 
     void Graphics2D::drawPolygon(const glm::ivec2* vertices, size_t numVertices, const Style& style)
@@ -136,18 +136,18 @@ namespace cinekine {
 
         _polyVertsColor.clear();
         _polyVertsPos.clear();
-        _polyVertsUV.clear();  
+        _polyVertsUV.clear();
     }
-    
+
     void Graphics2D::drawText(const char* text, int32_t x, int32_t y,
                               const Style& style)
     {
         const Font& font = _fontLibrary.getFont(style.textFont);
         if (!font)
             return;
-    
+
         const char* curtext = text;
-        
+
         while (*curtext)
         {
             int c = (unsigned char)*curtext;
@@ -162,20 +162,20 @@ namespace cinekine {
                 Rect dest = Rect::rectFromDimensions(x+bakedChar.xoff,
                                                      y+bakedChar.yoff,
                                                      src.width(), src.height());
-                
+
                 _renderer.drawTextureRect(font.getTexture(), src, dest, style.textColor);
                 x += bakedChar.xadvance;
             }
             ++curtext;
         }
     }
-    
+
     void Graphics2D::setBitmapAtlas(cinek_bitmap_atlas atlas)
     {
         _currentAtlas = _bitmapLibrary.getAtlas(atlas);
     }
-    
-    void Graphics2D::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
+
+    void Graphics2D::drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex,
                                          int32_t x, int32_t y, float alpha)
     {
         if (!_currentAtlas)
@@ -188,10 +188,10 @@ namespace cinekine {
             RGBAColor color(255,255,255,(uint8_t)(alpha*255));
             Rect srcRect(bitmapInfo->x, bitmapInfo->y,
                          bitmapInfo->x+bitmapInfo->w, bitmapInfo->y+bitmapInfo->h);
-            Rect destRect = Rect::rectFromDimensions(x + bitmapInfo->offX, 
-                                                     y - bitmapInfo->srcH + bitmapInfo->offY,
-                                                     bitmapInfo->w,
-                                                     bitmapInfo->h);
+            Rect destRect = Rect::rectFromDimensions(x + bitmapInfo->offX,
+                                                     y - bitmapInfo->srcH,
+                                                     bitmapInfo->srcW,
+                                                     bitmapInfo->srcH);
             _renderer.drawTextureRect(atlas.getTexture(), srcRect, destRect, color);
         }
     }

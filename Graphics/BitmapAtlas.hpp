@@ -20,7 +20,7 @@
 
 namespace cinekine {
     namespace glx {
-    
+
     //  Information used to render a bitmap.
     struct BitmapInfo
     {
@@ -30,7 +30,7 @@ namespace cinekine {
         string name;
         BitmapInfo(const Allocator& allocator=Allocator()): name(string_allocator(allocator)) {}
     };
-    
+
     //  Contains bitmaps mapped by name to index
     //  Indices remain valid for the duration of the atlas object.  This is because
     //  the renderer will frequently reference a bitmap by index.  Lookups must be quick O(1).
@@ -47,11 +47,11 @@ namespace cinekine {
         BitmapAtlas(BitmapAtlas&& other);
         BitmapAtlas& operator=(BitmapAtlas&& other);
         ~BitmapAtlas() = default;
-        
+
         const char* getName() const {
             return _name.c_str();
         }
-        
+
         const Texture& getTexture() const {
             return *_texture;
         }
@@ -70,7 +70,7 @@ namespace cinekine {
         ObjectPool<BitmapInfo> _bitmapPool;
         vector<BitmapInfo*> _bitmaps;
     };
-    
+
     //  used for shared_ptr custom allocation
     typedef std_allocator<BitmapAtlas> BitmapAtlasAllocator;
 

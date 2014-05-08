@@ -22,8 +22,8 @@
 namespace cinekine {
     namespace prototype {
 
-    const int32_t TILE_WIDTH = 64;
-    const int32_t TILE_HEIGHT = 32;
+    const int32_t TILE_WIDTH = 128;
+    const int32_t TILE_HEIGHT = 64;
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
@@ -133,8 +133,8 @@ namespace cinekine {
                 worldTilePos.x = worldX;
 
                 //  determine tile lower left origin as the tile anchor for drawing.
-                float tileWorldOX = worldTilePos.x - TILE_WIDTH*0.5f;
-                float tileWorldOY = worldTilePos.y + TILE_HEIGHT*0.5f;
+                float tileWorldOX = worldTilePos.x - TILE_HALFWIDTH;
+                float tileWorldOY = worldTilePos.y + TILE_HALFHEIGHT;
 
                 int32_t screenOX = tileWorldOX - _worldViewBounds.min.x + kScreenViewLeft;
                 int32_t screenOY = tileWorldOY - _worldViewBounds.min.y + kScreenViewTop;
@@ -159,7 +159,6 @@ namespace cinekine {
             ++rowCount;
         }
 
-        /*
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
@@ -167,6 +166,7 @@ namespace cinekine {
         style.fillColor = glx::RGBAColor(0,0,255,255);
         _graphics.drawText("Welcome to the overview 2D project by Samir Sinha.",
                             20, 160, style);
+        /*
         _graphics.drawRect(glx::Rect(100,100,200,200), style);
 
         glm::ivec2 polyVerts[5];

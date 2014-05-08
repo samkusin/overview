@@ -58,16 +58,16 @@ namespace cinekine {
     void Theater::Impl::loadSpriteDatabase(const char* spriteDbName,
                                            glx::BitmapLibrary& bitmapLibrary)
     {
-        char imagePath[MAX_PATH];
-        snprintf(imagePath, sizeof(imagePath), "data/%s.json", spriteDbName);
-        FileStreamBuf dbStream(imagePath);
+        FileStreamBuf dbStream(spriteDbName);
         if (!dbStream)
             return;
 
         _spriteDbLoader.onBitmapAtlasRequest([&bitmapLibrary]
             (const char* atlasName) -> cinek_bitmap_atlas
             {
-                return bitmapLibrary.loadAtlas(atlasName);
+                char path[MAX_PATH];
+                snprintf(path, sizeof(path), "textures/%s", atlasName);
+                return bitmapLibrary.loadAtlas(path);
             }
         );
         _spriteDbLoader.onBitmapIndexRequest([&bitmapLibrary]
@@ -86,16 +86,16 @@ namespace cinekine {
     void Theater::Impl::loadTileDatabase(const char* tileDbName,
                                          glx::BitmapLibrary& bitmapLibrary)
     {
-        char imagePath[MAX_PATH];
-        snprintf(imagePath, sizeof(imagePath), "data/%s.json", tileDbName);
-        FileStreamBuf dbStream(imagePath);
+        FileStreamBuf dbStream(tileDbName);
         if (!dbStream)
             return;
 
         _tileDbLoader.onBitmapAtlasRequest([&bitmapLibrary]
             (const char* atlasName) -> cinek_bitmap_atlas
             {
-                return bitmapLibrary.loadAtlas(atlasName);
+                char path[MAX_PATH];
+                snprintf(path, sizeof(path), "textures/%s", atlasName);
+                return bitmapLibrary.loadAtlas(path);
             }
         );
         _tileDbLoader.onBitmapIndexRequest([&bitmapLibrary]
