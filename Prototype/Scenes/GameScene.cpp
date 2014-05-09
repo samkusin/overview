@@ -58,7 +58,7 @@ namespace cinekine {
         _window->setEventListener(this);
         _window->show();
 
-        cinek_ov_map_bounds bounds = { 9, 9, 0, 0 };
+        cinek_ov_map_bounds bounds = { 9, 9, 1 };
 
         _map = std::allocate_shared<ovengine::Map,
                                     std_allocator<ovengine::Map>,
@@ -73,13 +73,13 @@ namespace cinekine {
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
 
         //  prepopulate map.
-        ovengine::Tilemap* tilemap = _map->getTilemapAtZ(0);
-        for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
+        auto* tilemap = _map->tilemapAtZ(0);
+        for (uint32_t row = 0; row < tilemap->rowCount(); ++row)
         {
             ovengine::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
             while (tileRow.first != tileRow.second)
             {
-                *(tileRow.first) = 0x0002;
+                tileRow.first->floor = 0x0002;
                 ++tileRow.first;
             }
         }

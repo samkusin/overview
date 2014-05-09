@@ -115,6 +115,7 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
      #${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES
@@ -129,7 +130,10 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TheaterCLI.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BuilderTypes.hpp
+ )
 
 add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
 set_target_properties( ckOVEngine PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )

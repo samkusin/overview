@@ -100,7 +100,7 @@ namespace cinekine {
     {
         glx::Rect viewportRect = _renderer.getViewport();
 
-        const cinek_ov_map_bounds& mapBounds = _map->getMapBounds();
+        const cinek_ov_map_bounds& mapBounds = _map->bounds();
         const rendermodel::TileDatabase& tileDb = _theater.tileDatabase();
 
         //  pick all tiles within the view bounds:
@@ -110,7 +110,7 @@ namespace cinekine {
 
         //  left to right
         //  top to bottom
-        const ovengine::Tilemap* tilemap = _map->getTilemapAtZ(0);
+        const auto* tilemap = _map->tilemapAtZ(0);
         int32_t rowCount = 0;
         const int32_t kScreenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
         const int32_t kScreenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
@@ -144,8 +144,8 @@ namespace cinekine {
                 if (mapPos.y >= 0.f && mapPos.y < mapBounds.yUnits &&
                     mapPos.x >= 0.f && mapPos.x < mapBounds.xUnits)
                 {
-                    cinek_tile tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
-                    const cinek_tile_info& tileInfo = tileDb.getTileInfo(tile);
+                    auto tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
+                    const auto& tileInfo = tileDb.tileInfo(tile.floor);
                     if (currentAtlas != tileInfo.bitmap.bmpAtlas)
                     {
                         _graphics.setBitmapAtlas(tileInfo.bitmap.bmpAtlas);

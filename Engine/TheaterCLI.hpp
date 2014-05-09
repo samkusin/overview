@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    TheaterCLI.hpp
  * @author  Samir Sinha
  * @date    8/22/2013
@@ -45,13 +45,13 @@ namespace cinekine {
 
 namespace cinekine {
     namespace ovengine {
-    
+
     //  The Client Interface (i.e to the Director object)
     class TheaterCLI
     {
     public:
         virtual ~TheaterCLI() {}
-        
+
         /**
          *  Loads data into the current SpriteDatabase.
          *  @param spriteDbName  The name of the DB (this translates to a JSON
@@ -61,7 +61,7 @@ namespace cinekine {
         virtual void loadSpriteDatabase(const char* spriteDbName,
                                         glx::BitmapLibrary& bitmapLibrary) = 0;
         /**
-         *  Loads a tile database (including bitmaps) into the global tile 
+         *  Loads a tile database (including bitmaps) into the global tile
          *  database.
          *  @param tileDbName    The name of the DB (this translates to a JSON
          *                       source file of the same name.
@@ -78,7 +78,7 @@ namespace cinekine {
          */
         virtual const rendermodel::SpriteDatabase& spriteDatabase() const = 0;
     };
-        
+
     }   // namespace ovengine
 }   // namespace cinekine
 

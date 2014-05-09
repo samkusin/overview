@@ -7,8 +7,8 @@
  *          Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#ifndef CINEK_OVERVIEW_MAP_HPP
-#define CINEK_OVERVIEW_MAP_HPP
+#ifndef Overview_Map_hpp
+#define Overview_Map_hpp
 
 #include "MapTypes.hpp"
 #include "Grid.hpp"
@@ -20,8 +20,10 @@
 namespace cinekine {
     namespace ovengine {
 
+typedef cinek_map_tile Tile;
+
 /** Defines a grid of tiles */
-typedef Grid<cinek_tile> Tilemap;
+typedef Grid<Tile> Tilemap;
 /** Defines a tilemap section */
 typedef GridContainer<Tilemap> TilemapContainer;
 
@@ -56,7 +58,7 @@ public:
      * Can be used to calculate an index into a tile array.
      * @return  Reference to the map bounds structure.
      */
-    const cinek_ov_map_bounds& getMapBounds() const {
+    const cinek_ov_map_bounds& bounds() const {
         return _bounds;
     }
 
@@ -65,13 +67,13 @@ public:
      * @param z     A z-value in the range [zDown, zUp]
      * @return      A pointer to a tile map.
      */
-    Tilemap* getTilemapAtZ(int16_t z);
+    Tilemap* tilemapAtZ(int16_t z);
     /**
      * Retrieve the const tilemap at the specified Z layer.
      * @param z     A z-value in the range [zDown, zUp]
      * @return      A const pointer to a tile map.
      */
-    const Tilemap* getTilemapAtZ(int16_t z) const;
+    const Tilemap* tilemapAtZ(int16_t z) const;
 
 private:
     //  grid xyz

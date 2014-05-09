@@ -24,8 +24,7 @@ typedef struct cinek_ov_map_bounds_t
 {
     uint16_t xUnits;    /**< Number of units/tiles on the x axis. */
     uint16_t yUnits;    /**< Number of units/tiles on the y axis. */
-    int16_t zUp;        /**< Number of tile layers on the +z axis. */
-    int16_t zDown;      /**< Number of tile layers on the -z axis. */
+    uint16_t zUnits;
 }
 cinek_ov_map_bounds;
 
@@ -49,8 +48,46 @@ typedef struct cinek_tilemap_rect_t
 }
 cinek_tilemap_rect;
 
+/**
+ * @struct  cinek_map_tile
+ * @brief   Represents a single tile
+ */
+typedef struct cinek_map_tile_t
+{
+    cinek_tile floor;
+    cinek_tile wall;
+}
+cinek_map_tile;
+
+
 #ifdef __cplusplus
 }
 #endif
+
+namespace cinekine { namespace ovengine {
+    typedef cinek_map_tile Tile;
+    typedef cinek_ov_map_bounds MapBounds;
+
+    enum
+    {
+        kTileDirection_N       = 0x0001,   /**< North */
+        kTileDirection_NE      = 0x0002,   /**< Northeast */
+        kTileDirection_E       = 0x0004,   /**< East */
+        kTileDirection_SE      = 0x0008,   /**< Southeast */
+        kTileDirection_S       = 0x0010,   /**< South */
+        kTileDirection_SW      = 0x0020,   /**< Southwest */
+        kTileDirection_W       = 0x0040,   /**< West */
+        kTileDirection_NW      = 0x0080,   /**< Northwest */
+        kTileDirection_Mask    = 0x00ff    /**< Bitmask defining direction */
+    };
+
+    enum
+    {
+        kTileRole_Wall          = 0x0100,
+        kTileRole_Corner        = 0x0200,
+        kTileRole_Floor         = 0x1000
+    };
+
+} }
 
 #endif /* CINEK_OVERVIEW_MAP_TYPES_H */
