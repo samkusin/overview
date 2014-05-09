@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#include "./GameScene.hpp"
+#include "GameScene.hpp"
+#include "GameView.hpp"
 
-#include "../SceneController.hpp"
-#include "../Views/GameView.hpp"
+#include "Prototype/SceneController.hpp"
 
 #include "Engine/TheaterCLI.hpp"
 #include "Engine/Map.hpp"

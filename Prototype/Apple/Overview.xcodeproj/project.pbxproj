@@ -16,9 +16,9 @@
 		374F61A31856F57200F391AA /* libckGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F619F1856F57200F391AA /* libckGL.a */; };
 		374F61A41856F57200F391AA /* libckOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F61A01856F57200F391AA /* libckOVEngine.a */; };
 		378865CB190A164800445B89 /* libcKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 378865CA190A164800445B89 /* libcKFramework.a */; };
+		37D11679191C9212008E27B5 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37D11675191C9212008E27B5 /* GameScene.cpp */; };
+		37D1167A191C9212008E27B5 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37D11677191C9212008E27B5 /* GameView.cpp */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
-		37DFA099185012BA00382685 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA097185012BA00382685 /* GameScene.cpp */; };
-		37DFA09D1852D29A00382685 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA09B1852D29A00382685 /* GameView.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
 		37F64AA11780EA2C009116E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.m */; };
@@ -48,13 +48,13 @@
 		374F61A01856F57200F391AA /* libckOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libckOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libckOVEngine.a"; sourceTree = "<group>"; };
 		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
 		378865CA190A164800445B89 /* libcKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libcKFramework.a"; sourceTree = "<group>"; };
+		37D11675191C9212008E27B5 /* GameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameScene.cpp; path = ../Game/GameScene.cpp; sourceTree = "<group>"; };
+		37D11676191C9212008E27B5 /* GameScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameScene.hpp; path = ../Game/GameScene.hpp; sourceTree = "<group>"; };
+		37D11677191C9212008E27B5 /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Game/GameView.cpp; sourceTree = "<group>"; };
+		37D11678191C9212008E27B5 /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Game/GameView.hpp; sourceTree = "<group>"; };
 		37DFA0911850108200382685 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = ../Scene.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../SceneController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
-		37DFA097185012BA00382685 /* GameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameScene.cpp; path = ../Scenes/GameScene.cpp; sourceTree = "<group>"; };
-		37DFA098185012BA00382685 /* GameScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameScene.hpp; path = ../Scenes/GameScene.hpp; sourceTree = "<group>"; };
-		37DFA09B1852D29A00382685 /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Views/GameView.cpp; sourceTree = "<group>"; };
-		37DFA09C1852D29A00382685 /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Views/GameView.hpp; sourceTree = "<group>"; };
 		37E76A0D17C6EC34009EAA97 /* Overview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Overview.cpp; path = ../Overview.cpp; sourceTree = "<group>"; };
 		37E76A0E17C6EC34009EAA97 /* Overview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Overview.hpp; path = ../Overview.hpp; sourceTree = "<group>"; };
 		37F64A911780EA2C009116E7 /* Overview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Overview.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,8 +91,7 @@
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
-				37DFA09A1852D27D00382685 /* Views */,
-				37DFA0961850123600382685 /* Scenes */,
+				37D11674191C9205008E27B5 /* Game */,
 				37DFA0911850108200382685 /* Scene.hpp */,
 				37DFA0921850108200382685 /* SceneController.cpp */,
 				37DFA0931850108200382685 /* SceneController.hpp */,
@@ -102,22 +101,15 @@
 			name = Prototype;
 			sourceTree = "<group>";
 		};
-		37DFA0961850123600382685 /* Scenes */ = {
+		37D11674191C9205008E27B5 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				37DFA097185012BA00382685 /* GameScene.cpp */,
-				37DFA098185012BA00382685 /* GameScene.hpp */,
+				37D11675191C9212008E27B5 /* GameScene.cpp */,
+				37D11676191C9212008E27B5 /* GameScene.hpp */,
+				37D11677191C9212008E27B5 /* GameView.cpp */,
+				37D11678191C9212008E27B5 /* GameView.hpp */,
 			);
-			name = Scenes;
-			sourceTree = "<group>";
-		};
-		37DFA09A1852D27D00382685 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				37DFA09B1852D29A00382685 /* GameView.cpp */,
-				37DFA09C1852D29A00382685 /* GameView.hpp */,
-			);
-			name = Views;
+			name = Game;
 			sourceTree = "<group>";
 		};
 		37F64A881780EA2C009116E7 = {
@@ -269,9 +261,9 @@
 			files = (
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
-				37DFA099185012BA00382685 /* GameScene.cpp in Sources */,
+				37D11679191C9212008E27B5 /* GameScene.cpp in Sources */,
 				37DFA0951850108200382685 /* SceneController.cpp in Sources */,
-				37DFA09D1852D29A00382685 /* GameView.cpp in Sources */,
+				37D1167A191C9212008E27B5 /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,8 +383,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/Framework/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
@@ -421,8 +411,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/Framework/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",

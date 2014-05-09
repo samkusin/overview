@@ -9,7 +9,7 @@
 #ifndef Overview_Scenes_GameScene_hpp
 #define Overview_Scenes_GameScene_hpp
 
-#include "Scene.hpp"
+#include "Prototype/Scene.hpp"
 #include "Engine/Component/Window/WindowComponentCLI.hpp"
 #include "Engine/Map.hpp"
 #include "Graphics/BitmapLibrary.hpp"

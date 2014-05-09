@@ -11,7 +11,7 @@
 #include "cinek/framework/allocator.hpp"
 
 #include "SceneController.hpp"
-#include "Scenes/GameScene.hpp"
+#include "Game/GameScene.hpp"
 
 #include <memory>
 
