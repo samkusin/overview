@@ -189,9 +189,9 @@ namespace cinekine {
             Rect srcRect(bitmapInfo->x, bitmapInfo->y,
                          bitmapInfo->x+bitmapInfo->w, bitmapInfo->y+bitmapInfo->h);
             Rect destRect = Rect::rectFromDimensions(x + bitmapInfo->offX,
-                                                     y - bitmapInfo->srcH,
-                                                     bitmapInfo->srcW,
-                                                     bitmapInfo->srcH);
+                                                     y - bitmapInfo->srcH + bitmapInfo->offY,
+                                                     bitmapInfo->offW,
+                                                     bitmapInfo->offH);
             _renderer.drawTextureRect(atlas.getTexture(), srcRect, destRect, color);
         }
     }

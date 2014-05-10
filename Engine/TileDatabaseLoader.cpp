@@ -39,7 +39,8 @@ static uint16_t parseFlagsToUint(const JsonValue& flagsDef, const char* flags)
                  ++memberIt)
             {
                 const auto& member = *memberIt;
-                if (!strncmp(current, member.name.GetString(), slen))
+                const char* flagStr = member.name.GetString();
+                if (!strncmp(current, flagStr, slen) && strlen(flagStr) == slen)
                 {
                     result |= parseUint(member.value);
                     break;

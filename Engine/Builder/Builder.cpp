@@ -65,9 +65,14 @@ namespace cinekine { namespace ovengine {
 
     Builder::Builder(Map& map,
                 const rendermodel::TileDatabase& tileTemplates,
-                uint32_t roomLimit) :
+                uint32_t roomLimit,
+                const Allocator& allocator) :
+        _allocator(allocator),
         _map(map),
-        _tileTemplates(tileTemplates)
+        _tileTemplates(tileTemplates),
+        _regions(std_allocator<Region>(_allocator)),
+        _segments(std_allocator<Segment>(_allocator)),
+        _connections(std_allocator<Connection>(_allocator))
     {
         _regions.reserve(roomLimit);
         _segments.reserve(roomLimit*8);
@@ -85,8 +90,9 @@ namespace cinekine { namespace ovengine {
 
     }
 
-    int Builder::makeRegion(const TileBrush& tileBrush,
-                    const vector<NewRegionInstruction>& instructions)
+    int Builder::makeRegion(const TileBrush& floorBrush,
+                            const TileBrush& wallBrush,
+                            const vector<NewRegionInstruction>& instructions)
     {
         //  Send a request for a new room within our entire map bounds
         //  the builder currently is pretty simple - it requests a room and then
@@ -128,7 +134,7 @@ namespace cinekine { namespace ovengine {
 
                 region->segments.push_back(segment);
 
-                paintBoxOntoMap(tileBrush, segment->box);
+                paintBoxOntoMap(floorBrush, wallBrush, segment->box);
             }
             else
             {
@@ -139,9 +145,10 @@ namespace cinekine { namespace ovengine {
         return regionIndex;
     }
 
-    int Builder::connectRegions(const TileBrush& tileBrush,
-                        int startRegionHandle, int endRegionHandle,
-                        const vector<MapPoint>& connectPoints)
+    int Builder::connectRegions(const TileBrush& floorBrush,
+                                const TileBrush& wallBrush,
+                                int startRegionHandle, int endRegionHandle,
+                                const vector<MapPoint>& connectPoints)
     {
         if (_connections.size() >= _connections.capacity())
             return -1;
@@ -175,11 +182,11 @@ namespace cinekine { namespace ovengine {
         for (auto& connectPoint : connectPoints)
         {
             const MapPoint* connectEndPoint = &connectPoint;
-            paintConnectionOntoMap(tileBrush, *connectStartPoint, *connectEndPoint);
+            paintConnectionOntoMap(floorBrush, wallBrush, *connectStartPoint, *connectEndPoint);
             connectStartPoint = connectEndPoint;
         }
 
-        paintConnectionOntoMap(tileBrush, *connectStartPoint, endPoint);
+        paintConnectionOntoMap(floorBrush, wallBrush, *connectStartPoint, endPoint);
 
         _connections.emplace_back();
         Connection& connection = _connections.back();
@@ -189,9 +196,10 @@ namespace cinekine { namespace ovengine {
         return (int)_connections.size()-1;
     }
 
-    void Builder::paintConnectionOntoMap(const TileBrush& brush,
-                    const MapPoint& p0,
-                    const MapPoint& p1)
+    void Builder::paintConnectionOntoMap(const TileBrush& floorBrush,
+                                         const TileBrush& wallBrush,
+                                         const MapPoint& p0,
+                                         const MapPoint& p1)
     {
         //  paint a hallway line using the desired plot method -
         //  by default, the method is orthogonal (half-rectangle) from p0 to p1
@@ -210,7 +218,7 @@ namespace cinekine { namespace ovengine {
 
         while (ptCurrent != p1)
         {
-            paintBoxOntoMap(brush, kHallBox + ptCurrent);
+            paintBoxOntoMap(floorBrush, wallBrush, kHallBox + ptCurrent);
             if (xy == 0)            // x dominant
             {
                 if (ptCurrent.x == p1.x)
@@ -233,7 +241,7 @@ namespace cinekine { namespace ovengine {
                     ptCurrent.y += delta.y;
                 }
             }
-            paintBoxOntoMap(brush, kHallBox + ptCurrent);
+            paintBoxOntoMap(floorBrush, wallBrush, kHallBox + ptCurrent);
         }
 
     }
@@ -243,12 +251,13 @@ namespace cinekine { namespace ovengine {
     //      - step 1, paint a rect of floor tiles
     //      - step 2, paint a rect of wall tiles
     //
-    void Builder::paintBoxOntoMap(const TileBrush& brush, const Box& box)
+    void Builder::paintBoxOntoMap(const TileBrush& floorBrush,
+                                  const TileBrush& wallBrush, const Box& box)
     {
         //  paint floor
         cinek_tile floorTileId = _tileTemplates.tileHandleFromDescriptor(
-                                        brush.tileCategoryId,
-                                        brush.tileClassId,
+                                        floorBrush.tileCategoryId,
+                                        floorBrush.tileClassId,
                                         kTileRole_Floor);
 
         Tile tile;
@@ -270,14 +279,14 @@ namespace cinekine { namespace ovengine {
         {
             for (uint32_t xPos = box.p0.x; xPos < box.p1.x; ++xPos)
             {
-                paintTileWalls(*tileMap, yPos, xPos, brush);
+                paintTileWalls(*tileMap, yPos, xPos, wallBrush);
             }
         }
         for (yPos = box.p0.y; yPos < box.p1.y; ++yPos)
         {
             for (uint32_t xPos = box.p0.x; xPos < box.p1.x; ++xPos)
             {
-                paintTileWallCorners(*tileMap, yPos, xPos, brush);
+                paintTileWallCorners(*tileMap, yPos, xPos, wallBrush);
             }
         }
     }

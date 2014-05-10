@@ -117,7 +117,7 @@ namespace cinekine {
 
         cinek_bitmap_atlas currentAtlas = kCinekBitmapAtlas_Invalid;
 
-        while (worldY <= worldEndY)
+        while (worldY <= worldEndY+TILE_HALFHEIGHT)
         {
             int32_t worldX = _worldViewBounds.min.x;
             int32_t worldEndX = _worldViewBounds.max.x;
@@ -144,14 +144,24 @@ namespace cinekine {
                 if (mapPos.y >= 0.f && mapPos.y < mapBounds.yUnits &&
                     mapPos.x >= 0.f && mapPos.x < mapBounds.xUnits)
                 {
-                    auto tile = tilemap->at((uint32_t)mapPos.x, (uint32_t)mapPos.y);
-                    const auto& tileInfo = tileDb.tileInfo(tile.floor);
-                    if (currentAtlas != tileInfo.bitmap.bmpAtlas)
+                    auto tile = tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
+                    const auto& floorTileInfo = tileDb.tileInfo(tile.floor);
+                    if (currentAtlas != floorTileInfo.bitmap.bmpAtlas)
                     {
-                        _graphics.setBitmapAtlas(tileInfo.bitmap.bmpAtlas);
-                        currentAtlas = tileInfo.bitmap.bmpAtlas;
+                        _graphics.setBitmapAtlas(floorTileInfo.bitmap.bmpAtlas);
+                        currentAtlas = floorTileInfo.bitmap.bmpAtlas;
                     }
-                    _graphics.drawBitmapFromAtlas(tileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
+                    _graphics.drawBitmapFromAtlas(floorTileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
+                    if (tile.wall)
+                    {
+                        const auto& wallTileInfo = tileDb.tileInfo(tile.wall);
+                        if (currentAtlas!= wallTileInfo.bitmap.bmpAtlas)
+                        {
+                            _graphics.setBitmapAtlas(wallTileInfo.bitmap.bmpAtlas);
+                            currentAtlas = wallTileInfo.bitmap.bmpAtlas;
+                        }
+                        _graphics.drawBitmapFromAtlas(wallTileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
+                    }
                 }
                 worldX += TILE_WIDTH;
             }

@@ -93,6 +93,7 @@ namespace cinekine {
                 }
                 const Value& frameRect = frame["frame"];
                 const Value& spriteSourceSize = frame["spriteSourceSize"];
+                const Value& sourceSize = frame["sourceSize"];
                 BitmapInfo info;
                 info.x = frameRect["x"].GetUint();
                 info.y = frameRect["y"].GetUint();
@@ -100,8 +101,10 @@ namespace cinekine {
                 info.h = frameRect["h"].GetUint();
                 info.offX = spriteSourceSize["x"].GetUint();
                 info.offY = spriteSourceSize["y"].GetUint();
-                info.srcW = spriteSourceSize["w"].GetUint();
-                info.srcH = spriteSourceSize["h"].GetUint();
+                info.offW = spriteSourceSize["w"].GetUint();
+                info.offH = spriteSourceSize["h"].GetUint();
+                info.srcW = sourceSize["w"].GetUint();
+                info.srcH = sourceSize["h"].GetUint();
                 info.name = frame["filename"].GetString();
                 _newFrameRequest(info);
             }

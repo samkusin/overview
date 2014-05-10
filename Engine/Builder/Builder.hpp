@@ -76,12 +76,16 @@ namespace cinekine { namespace ovengine {
     public:
         Builder(Map& map,
                 const rendermodel::TileDatabase& tileTemplates,
-                uint32_t roomLimit);
+                uint32_t roomLimit,
+                const Allocator& allocator);
+
         /// @return The region handle
-        int makeRegion(const TileBrush& brush,
-                    const vector<NewRegionInstruction>& instructions);
+        int makeRegion(const TileBrush& floorBrush,
+                       const TileBrush& wallBrush,
+                       const vector<NewRegionInstruction>& instructions);
         /// @return The connection handle
-        int connectRegions(const TileBrush& tileBrush,
+        int connectRegions(const TileBrush& floorBrush,
+                           const TileBrush& wallBrush,
                     int startRegionHandle, int endRegionHandle,
                     const vector<MapPoint>& connectPoints);
 
@@ -107,10 +111,12 @@ namespace cinekine { namespace ovengine {
             int regionB;
         };
 
-        void paintConnectionOntoMap(const TileBrush& brush,
-                    const MapPoint& p0,
-                    const MapPoint& p1);
-        void paintBoxOntoMap(const TileBrush& brush, const Box& box);
+        void paintConnectionOntoMap(const TileBrush& floorBrush,
+                                    const TileBrush& wallBrush,
+                                    const MapPoint& p0,
+                                    const MapPoint& p1);
+        void paintBoxOntoMap(const TileBrush& floorBrush, const TileBrush& wallBrush,
+                             const Box& box);
         void paintTileWalls(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
                     const TileBrush& brush);
         void paintTileWallCorners(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
@@ -119,6 +125,7 @@ namespace cinekine { namespace ovengine {
         bool tileWallsEqual(const Tile& tile, uint16_t roleFlags, uint8_t classId) const;
 
     private:
+        Allocator _allocator;
         Map& _map;
         const rendermodel::TileDatabase& _tileTemplates;
 

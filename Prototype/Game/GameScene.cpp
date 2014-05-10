@@ -8,6 +8,7 @@
 
 #include "GameScene.hpp"
 #include "GameView.hpp"
+#include "Architect.hpp"
 
 #include "Prototype/SceneController.hpp"
 
@@ -29,6 +30,7 @@ namespace cinekine {
         _renderer(_sceneController.renderer()),
         _bitmapLibrary(_renderer, _allocator),
         _fontLibrary(_renderer, 1, _allocator),
+        _architect(),
         _map(),
         _gameView(),
         _window()
@@ -58,7 +60,7 @@ namespace cinekine {
         _window->setEventListener(this);
         _window->show();
 
-        cinek_ov_map_bounds bounds = { 9, 9, 1 };
+        cinek_ov_map_bounds bounds = { 32, 32, 1 };
 
         _map = std::allocate_shared<ovengine::Map,
                                     std_allocator<ovengine::Map>,
@@ -69,6 +71,11 @@ namespace cinekine {
                                 bounds,
                                 _allocator
                             );
+        _architect = unique_ptr<Architect>(
+                        _allocator.newItem<Architect>(*_map,
+                                                      _theater.tileDatabase(),
+                                                      _allocator),
+                        _allocator);
 
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
 
@@ -99,19 +106,7 @@ namespace cinekine {
 
     void GameScene::update()
     {
-        /*std::shared_ptr<overview::Map> map = _stage.getMapPtr();
-        //  prepopulate map.
-        overview::Tilemap* tilemap = map->getTilemapAtZ(0);
-        for (uint32_t row = 0; row < tilemap->getRowCount(); ++row)
-        {
-            overview::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
-            while (tileRow.first != tileRow.second)
-            {
-                *(tileRow.first) = _cycle % 3;
-                ++tileRow.first;
-            }
-        }
-        */
+        _architect->update();
     }
 
     }   // namespace ovengine

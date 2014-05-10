@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     #endif
         SDL_Window* window = SDL_CreateWindow("Overview Engine",
                                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                              1024, 768,
+                                              1280, 720,
                                               SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
         if (window)
         {

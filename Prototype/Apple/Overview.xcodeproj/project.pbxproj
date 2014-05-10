@@ -18,6 +18,7 @@
 		378865CB190A164800445B89 /* libcKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 378865CA190A164800445B89 /* libcKFramework.a */; };
 		37D11679191C9212008E27B5 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37D11675191C9212008E27B5 /* GameScene.cpp */; };
 		37D1167A191C9212008E27B5 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37D11677191C9212008E27B5 /* GameView.cpp */; };
+		37D1167D191C975D008E27B5 /* Architect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37D1167B191C975D008E27B5 /* Architect.cpp */; };
 		37DFA0951850108200382685 /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* SceneController.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
@@ -52,6 +53,8 @@
 		37D11676191C9212008E27B5 /* GameScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameScene.hpp; path = ../Game/GameScene.hpp; sourceTree = "<group>"; };
 		37D11677191C9212008E27B5 /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Game/GameView.cpp; sourceTree = "<group>"; };
 		37D11678191C9212008E27B5 /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Game/GameView.hpp; sourceTree = "<group>"; };
+		37D1167B191C975D008E27B5 /* Architect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Architect.cpp; path = ../Game/Architect.cpp; sourceTree = "<group>"; };
+		37D1167C191C975D008E27B5 /* Architect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Architect.hpp; path = ../Game/Architect.hpp; sourceTree = "<group>"; };
 		37DFA0911850108200382685 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = ../Scene.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../SceneController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* SceneController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SceneController.hpp; path = ../SceneController.hpp; sourceTree = "<group>"; };
@@ -108,6 +111,8 @@
 				37D11676191C9212008E27B5 /* GameScene.hpp */,
 				37D11677191C9212008E27B5 /* GameView.cpp */,
 				37D11678191C9212008E27B5 /* GameView.hpp */,
+				37D1167B191C975D008E27B5 /* Architect.cpp */,
+				37D1167C191C975D008E27B5 /* Architect.hpp */,
 			);
 			name = Game;
 			sourceTree = "<group>";
@@ -264,6 +269,7 @@
 				37D11679191C9212008E27B5 /* GameScene.cpp in Sources */,
 				37DFA0951850108200382685 /* SceneController.cpp in Sources */,
 				37D1167A191C9212008E27B5 /* GameView.cpp in Sources */,
+				37D1167D191C975D008E27B5 /* Architect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

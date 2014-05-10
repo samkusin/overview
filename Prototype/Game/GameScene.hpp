@@ -10,6 +10,8 @@
 #define Overview_Scenes_GameScene_hpp
 
 #include "Prototype/Scene.hpp"
+#include "Prototype/Game/Architect.hpp"
+
 #include "Engine/Component/Window/WindowComponentCLI.hpp"
 #include "Engine/Map.hpp"
 #include "Graphics/BitmapLibrary.hpp"
@@ -56,8 +58,9 @@ namespace cinekine {
 
         glx::BitmapLibrary _bitmapLibrary;
         glx::FontLibrary _fontLibrary;
-
+        
         std::shared_ptr<ovengine::Map> _map;
+        unique_ptr<Architect> _architect;
         cinek_ov_pos _viewPos;
 
         std::shared_ptr<GameView> _gameView;
