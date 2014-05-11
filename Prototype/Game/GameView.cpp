@@ -34,7 +34,7 @@ namespace cinekine {
         _theater(theater),
         _renderer(renderer),
         _graphics(renderer, bitmapLibrary, fontLibrary),
-        _worldViewBounds()
+        _screenViewLeft(0), _screenViewTop(0)
     {
 
     }
@@ -66,12 +66,32 @@ namespace cinekine {
         glx::Rect viewportRect = _renderer.getViewport();
 
         //  calculate view anchor
+        //  this is the world bounds for our view,
         _worldViewBounds.min.x = worldPos.x - viewportRect.width() / 2;
         _worldViewBounds.min.y = worldPos.y - viewportRect.height() / 2;
         _worldViewBounds.min.z = 0;
         _worldViewBounds.max.x = worldPos.x + viewportRect.width() / 2;
         _worldViewBounds.max.y = worldPos.y + viewportRect.height() / 2;
         _worldViewBounds.max.z = 0;
+        
+        //  - now adjust to include some extra space around the viewport, which
+        //  is necessary when some tiles are larger than our standard tile size
+        _worldViewBounds.min.x -= TILE_WIDTH*2;
+        _worldViewBounds.min.y -= TILE_HEIGHT*2;
+        _worldViewBounds.max.x += TILE_WIDTH*2;
+        _worldViewBounds.max.y += TILE_HEIGHT*2;
+        
+        //  our bounds aligned to tile dimensions - this is used as the bounding rect
+        //  for drawing our isoworld
+        _worldViewAlignedBounds.min.x = TILE_WIDTH * floorf(_worldViewBounds.min.x/TILE_WIDTH);
+        _worldViewAlignedBounds.min.y = TILE_HEIGHT * floorf(_worldViewBounds.min.y/TILE_HEIGHT);
+        _worldViewAlignedBounds.min.z = 0;
+        _worldViewAlignedBounds.max.x = TILE_WIDTH * floorf(_worldViewBounds.max.x/TILE_WIDTH);
+        _worldViewAlignedBounds.max.y = TILE_HEIGHT * floorf(_worldViewBounds.max.y/TILE_HEIGHT);
+        _worldViewAlignedBounds.max.z = 0;
+        
+        _screenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
+        _screenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
     }
 
     //  converts map coordinates to our "global" rendering coordinate system
@@ -98,77 +118,9 @@ namespace cinekine {
     //
     void GameView::render()
     {
-        glx::Rect viewportRect = _renderer.getViewport();
-
-        const cinek_ov_map_bounds& mapBounds = _map->bounds();
-        const rendermodel::TileDatabase& tileDb = _theater.tileDatabase();
-
-        //  pick all tiles within the view bounds:
-        //
-        int32_t worldY = _worldViewBounds.min.y;
-        int32_t worldEndY = _worldViewBounds.max.y;
-
-        //  left to right
-        //  top to bottom
-        const auto* tilemap = _map->tilemapAtZ(0);
-        int32_t rowCount = 0;
-        const int32_t kScreenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
-        const int32_t kScreenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
-
-        cinek_bitmap_atlas currentAtlas = kCinekBitmapAtlas_Invalid;
-
-        while (worldY <= worldEndY+TILE_HALFHEIGHT)
-        {
-            int32_t worldX = _worldViewBounds.min.x;
-            int32_t worldEndX = _worldViewBounds.max.x;
-            if (rowCount & 1)
-            {
-                worldX -= TILE_HALFWIDTH;
-                worldEndX += TILE_HALFWIDTH;
-            }
-
-            cinek_ov_pos worldTilePos { (float)worldX, (float)worldY, 0 };
-            while (worldX <= worldEndX)
-            {
-                worldTilePos.x = worldX;
-
-                //  determine tile lower left origin as the tile anchor for drawing.
-                float tileWorldOX = worldTilePos.x - TILE_HALFWIDTH;
-                float tileWorldOY = worldTilePos.y + TILE_HALFHEIGHT;
-
-                int32_t screenOX = tileWorldOX - _worldViewBounds.min.x + kScreenViewLeft;
-                int32_t screenOY = tileWorldOY - _worldViewBounds.min.y + kScreenViewTop;
-
-                //  find world tile from X,Y
-                cinek_ov_pos mapPos = xlatWorldToMapPos(worldTilePos);
-                if (mapPos.y >= 0.f && mapPos.y < mapBounds.yUnits &&
-                    mapPos.x >= 0.f && mapPos.x < mapBounds.xUnits)
-                {
-                    auto tile = tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
-                    const auto& floorTileInfo = tileDb.tileInfo(tile.floor);
-                    if (currentAtlas != floorTileInfo.bitmap.bmpAtlas)
-                    {
-                        _graphics.setBitmapAtlas(floorTileInfo.bitmap.bmpAtlas);
-                        currentAtlas = floorTileInfo.bitmap.bmpAtlas;
-                    }
-                    _graphics.drawBitmapFromAtlas(floorTileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
-                    if (tile.wall)
-                    {
-                        const auto& wallTileInfo = tileDb.tileInfo(tile.wall);
-                        if (currentAtlas!= wallTileInfo.bitmap.bmpAtlas)
-                        {
-                            _graphics.setBitmapAtlas(wallTileInfo.bitmap.bmpAtlas);
-                            currentAtlas = wallTileInfo.bitmap.bmpAtlas;
-                        }
-                        _graphics.drawBitmapFromAtlas(wallTileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
-                    }
-                }
-                worldX += TILE_WIDTH;
-            }
-            worldY += TILE_HALFHEIGHT;
-            ++rowCount;
-        }
-
+        renderTileMapLayer(0, 0);
+        renderTileMapLayer(0, 1);
+        
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
@@ -193,6 +145,67 @@ namespace cinekine {
         style.fillColor = glx::RGBAColor(255,0,0,255);
         _graphics.drawPolygon(polyVerts, 5, style);
         */
+    }
+        
+    void GameView::renderTileMapLayer(int tileZ, int layer)
+    {
+        const cinek_ov_map_bounds& mapBounds = _map->bounds();
+        const rendermodel::TileDatabase& tileDb = _theater.tileDatabase();
+        
+        //  pick all tiles within the view bounds:
+        //
+        int32_t worldY = _worldViewAlignedBounds.min.y;
+        int32_t worldEndY = _worldViewAlignedBounds.max.y;
+        
+        //  left to right
+        //  top to bottom
+        const auto* tilemap = _map->tilemapAtZ(tileZ);
+        int32_t rowCount = 0;
+        
+        
+        cinek_bitmap_atlas currentAtlas = kCinekBitmapAtlas_Invalid;
+        
+        while (worldY <= worldEndY)
+        {
+            int32_t worldX = _worldViewAlignedBounds.min.x;
+            int32_t worldEndX = _worldViewAlignedBounds.max.x;
+            if (rowCount & 1)
+            {
+                worldX -= TILE_HALFWIDTH;
+                worldEndX += TILE_HALFWIDTH;
+            }
+            
+            cinek_ov_pos worldTilePos { (float)worldX, (float)worldY, 0 };
+            while (worldX <= worldEndX)
+            {
+                worldTilePos.x = worldX;
+                
+                //  our 2d draw anchor is the lower left of our isotile.
+                float tileLocalOX = worldTilePos.x - TILE_HALFWIDTH;
+                float tileLocalOY = worldTilePos.y + TILE_HEIGHT;
+                
+                int32_t screenOX = tileLocalOX - _worldViewBounds.min.x + _screenViewLeft;
+                int32_t screenOY = tileLocalOY - _worldViewBounds.min.y + _screenViewTop;
+                
+                //  find world tile from X,Y
+                cinek_ov_pos mapPos = xlatWorldToMapPos(worldTilePos);
+                if (mapPos.y >= 0.f && mapPos.y < mapBounds.yUnits &&
+                    mapPos.x >= 0.f && mapPos.x < mapBounds.xUnits)
+                {
+                    auto tile = tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
+                    const auto& floorTileInfo = tileDb.tileInfo(tile.layer[layer]);
+                    if (currentAtlas != floorTileInfo.bitmap.bmpAtlas)
+                    {
+                        _graphics.setBitmapAtlas(floorTileInfo.bitmap.bmpAtlas);
+                        currentAtlas = floorTileInfo.bitmap.bmpAtlas;
+                    }
+                    _graphics.drawBitmapFromAtlas(floorTileInfo.bitmap.bmpIndex, screenOX, screenOY, 1.0f);
+                }
+                worldX += TILE_WIDTH;
+            }
+            worldY += TILE_HALFHEIGHT;
+            ++rowCount;
+        }
     }
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)

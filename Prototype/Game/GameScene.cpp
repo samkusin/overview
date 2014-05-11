@@ -60,7 +60,7 @@ namespace cinekine {
         _window->setEventListener(this);
         _window->show();
 
-        cinek_ov_map_bounds bounds = { 32, 32, 1 };
+        cinek_ov_map_bounds bounds = { 16, 16, 1 };
 
         _map = std::allocate_shared<ovengine::Map,
                                     std_allocator<ovengine::Map>,
@@ -86,7 +86,7 @@ namespace cinekine {
             ovengine::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
             while (tileRow.first != tileRow.second)
             {
-                tileRow.first->floor = 0x0002;
+                tileRow.first->layer[0] = 0x0002;
                 ++tileRow.first;
             }
         }
@@ -96,7 +96,30 @@ namespace cinekine {
 
     void GameScene::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
     {
+        glm::vec3 newPos(0,0,0);
+        
+        const float kAdjX = 0.25f;
+        const float kAdjY = 0.25f;
+        
+        switch (keycode)
+        {
+        case SDLK_e:    newPos.y = -kAdjY; break;
+        case SDLK_z:    newPos.y = kAdjY; break;
+        case SDLK_q:    newPos.x = -kAdjX; break;
+        case SDLK_c:    newPos.x = kAdjX; break;
+        case SDLK_w:    newPos.x = -kAdjX; newPos.y = -kAdjY; break;
+        case SDLK_x:    newPos.x = kAdjX; newPos.y = kAdjY; break;
+        case SDLK_a:    newPos.x = -kAdjX; newPos.y = kAdjY; break;
+        case SDLK_d:    newPos.x = kAdjX; newPos.y = -kAdjY; break;
+        default:
+            break;
+        }
 
+        if (newPos.x || newPos.y || newPos.z)
+        {
+            _viewPos += newPos;
+            _gameView->setMapPosition(_viewPos);
+        }
     }
 
     void GameScene::onKeyUp(SDL_Keycode keycode, uint16_t keymod)

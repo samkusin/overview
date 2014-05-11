@@ -54,6 +54,8 @@ namespace cinekine {
         //  utilities
         cinek_ov_pos xlatMapToWorldPos(const cinek_ov_pos& pos);
         cinek_ov_pos xlatWorldToMapPos(const cinek_ov_pos& pos);
+        
+        void renderTileMapLayer(int tileZ, int layer);
 
     private:
         ovengine::TheaterCLI& _theater;
@@ -62,7 +64,9 @@ namespace cinekine {
 
         std::shared_ptr<ovengine::Map> _map;
         cinek_ov_bounds _worldViewBounds;
+        cinek_ov_bounds _worldViewAlignedBounds;
         cinek_ov_map_bounds _mapViewBounds;
+        int32_t _screenViewLeft, _screenViewTop;
     };
 
     }

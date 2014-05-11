@@ -261,8 +261,8 @@ namespace cinekine { namespace ovengine {
                                         kTileRole_Floor);
 
         Tile tile;
-        tile.floor = floorTileId;
-        tile.wall = 0;
+        tile.layer[0] = floorTileId;
+        tile.layer[1] = 0;
 
         cinekine::ovengine::Tilemap* tileMap = _map.tilemapAtZ(0);
         tileMap->fillWithValue(tile, box.p0.y, box.p0.x,
@@ -297,7 +297,7 @@ namespace cinekine { namespace ovengine {
                                 const TileBrush& brush)
     {
         const cinek_tile_info& thisFloorTemplate =
-            _tileTemplates.tileInfo(tileMap.at(tileY, tileX).floor);
+            _tileTemplates.tileInfo(tileMap.at(tileY, tileX).layer[0]);
 
         //  calculate wall masks, which are used to determine what wall tiles
         //  to display.
@@ -369,12 +369,12 @@ namespace cinekine { namespace ovengine {
                                                 wallRoleFlags);
 
         Tile& thisTile = tileMap.at(tileY, tileX);
-        thisTile.wall = wallTileHandle;
+        thisTile.layer[1] = wallTileHandle;
     }
 
     bool Builder::tileFloorsClassIdEqual(const Tile& tile, uint8_t thisClassId) const
     {
-        const cinek_tile_info& floorTemplate = _tileTemplates.tileInfo(tile.floor);
+        const cinek_tile_info& floorTemplate = _tileTemplates.tileInfo(tile.layer[0]);
         return floorTemplate.classIndex == thisClassId;
     }
 
@@ -385,7 +385,7 @@ namespace cinekine { namespace ovengine {
                     kTileDirection_S | kTileDirection_E;
 
         Tile& thisTile = tileMap.at(tileY, tileX);
-        if (thisTile.wall)
+        if (thisTile.layer[1])
         {
             // this tile already has a wall - no need to run tests
             return;
@@ -470,12 +470,12 @@ namespace cinekine { namespace ovengine {
                                                 brush.tileClassId,
                                                 wallRoleFlags);
 
-        thisTile.wall = wallTileHandle;
+        thisTile.layer[1] = wallTileHandle;
     }
 
     bool Builder::tileWallsEqual(const Tile& tile, uint16_t roleFlags, uint8_t classId) const
     {
-        const cinek_tile_info& wallTemplate = _tileTemplates.tileInfo(tile.wall);
+        const cinek_tile_info& wallTemplate = _tileTemplates.tileInfo(tile.layer[1]);
         return wallTemplate.classIndex == classId &&
               (wallTemplate.flags & roleFlags)==roleFlags;
     }

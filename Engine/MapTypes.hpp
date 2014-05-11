@@ -54,11 +54,9 @@ cinek_tilemap_rect;
  */
 typedef struct cinek_map_tile_t
 {
-    cinek_tile floor;
-    cinek_tile wall;
+    cinek_tile layer[2];
 }
 cinek_map_tile;
-
 
 #ifdef __cplusplus
 }
