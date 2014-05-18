@@ -77,8 +77,6 @@ namespace cinekine {
                                                       _allocator),
                         _allocator);
 
-        _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
-
         //  prepopulate map.
         auto* tilemap = _map->tilemapAtZ(0);
         for (uint32_t row = 0; row < tilemap->rowCount(); ++row)
@@ -90,7 +88,10 @@ namespace cinekine {
                 ++tileRow.first;
             }
         }
-
+        
+        //  add the avatar 
+        
+        _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
         _gameView->setMap(_map, _viewPos);
     }
 
