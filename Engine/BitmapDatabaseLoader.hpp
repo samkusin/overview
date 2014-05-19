@@ -16,41 +16,29 @@
 
 namespace cinekine {
     namespace ovengine {
+
+    /**
+     * @class BitmapDatabaseLoader
+     * @brief Handles unserialization of a BitmapDatabase, reporting new bitmaps
+     *        to listeners.
+     */
+    class BitmapDatabaseLoader
+    {
+    public:
+        virtual ~BitmapDatabaseLoader() {}
+
         /**
-         * @class BitmapDatabaseLoader
-         * @brief Handles unserialization of a BitmapDatabase, reporting new bitmaps
-         *        to listeners.
+         * Unserializes a database from the given document object.  Serialization
+         * events are dispatched via callbacks supplied by the caller via the delegate
+         * methods.
+         * @param instream              A JSON formatted stream.
+         * @return                      False if there is a parsing error.
          */
-        class BitmapDatabaseLoader
-        {
-        public:
-            BitmapDatabaseLoader() = default;
-            
-            /**
-             * Unserializes a database from the given document object.  Serialization
-             * events are dispatched via callbacks supplied by the caller via the delegate
-             * methods.
-             * @param instream              A JSON formatted stream.
-             * @return                      False if there is a parsing error.
-             */
-            virtual bool unserialize(std::streambuf& instream) = 0;
-            
-            /** @param requestCb    Delegate method, function issued to request a bitmap
-             atlas from a renderer. */
-            void onBitmapAtlasRequest(std::function<cinek_bitmap_atlas(const char*)> requestCb) {
-                _atlasRequest = requestCb;
-            }
-            /** @param requestCb    Delegate method, function issued to request a bitmap
-             index from a renderer. */
-            void onBitmapIndexRequest(std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> requestCb) {
-                _indexRequest = requestCb;
-            }
-            
-        protected:
-            std::function<cinek_bitmap_atlas(const char*)> _atlasRequest;
-            std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _indexRequest;
-        };
-        
+        virtual bool unserialize(std::streambuf& instream,
+                                 std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
+                                 std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb) = 0;
+    };
+
     }   // namespace ovengine
 }   // namespace cinekine
 

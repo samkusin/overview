@@ -126,6 +126,7 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/MapTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Map.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/BitmapDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp

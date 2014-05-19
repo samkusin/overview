@@ -62,25 +62,20 @@ namespace cinekine {
         if (!dbStream)
             return;
 
-        _spriteDbLoader.onBitmapAtlasRequest([&bitmapLibrary]
-            (const char* atlasName) -> cinek_bitmap_atlas
-            {
-                char path[MAX_PATH];
-                snprintf(path, sizeof(path), "textures/%s", atlasName);
-                return bitmapLibrary.loadAtlas(path);
-            }
-        );
-        _spriteDbLoader.onBitmapIndexRequest([&bitmapLibrary]
-            ( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-            {
-                 const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
-                 if (!bitmapAtlas)
-                     return kCinekBitmapIndex_Invalid;
-                 return bitmapAtlas->getBitmapIndex(name);
-            }
-        );
-
-        _spriteDbLoader.unserialize(dbStream);
+        _spriteDbLoader.unserialize(dbStream,
+                                [&bitmapLibrary](const char* atlasName) -> cinek_bitmap_atlas
+                                {
+                                    char path[MAX_PATH];
+                                    snprintf(path, sizeof(path), "textures/%s", atlasName);
+                                    return bitmapLibrary.loadAtlas(path);
+                                },
+                                [&bitmapLibrary]( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+                                {
+                                    const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
+                                    if (!bitmapAtlas)
+                                        return kCinekBitmapIndex_Invalid;
+                                    return bitmapAtlas->getBitmapIndex(name);
+                                });
     }
 
     void Theater::Impl::loadTileDatabase(const char* tileDbName,
@@ -90,25 +85,20 @@ namespace cinekine {
         if (!dbStream)
             return;
 
-        _tileDbLoader.onBitmapAtlasRequest([&bitmapLibrary]
-            (const char* atlasName) -> cinek_bitmap_atlas
-            {
-                char path[MAX_PATH];
-                snprintf(path, sizeof(path), "textures/%s", atlasName);
-                return bitmapLibrary.loadAtlas(path);
-            }
-        );
-        _tileDbLoader.onBitmapIndexRequest([&bitmapLibrary]
-            (cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-            {
-               const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
-               if (!bitmapAtlas)
-                   return kCinekBitmapIndex_Invalid;
-               return bitmapAtlas->getBitmapIndex(name);
-            }
-        );
-
-        _tileDbLoader.unserialize(dbStream);
+        _tileDbLoader.unserialize(dbStream,
+              [&bitmapLibrary](const char* atlasName) -> cinek_bitmap_atlas
+              {
+                  char path[MAX_PATH];
+                  snprintf(path, sizeof(path), "textures/%s", atlasName);
+                  return bitmapLibrary.loadAtlas(path);
+              },
+              [&bitmapLibrary](cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+              {
+                  const glx::BitmapAtlas* bitmapAtlas = bitmapLibrary.getAtlas(atlas).get();
+                  if (!bitmapAtlas)
+                      return kCinekBitmapIndex_Invalid;
+                  return bitmapAtlas->getBitmapIndex(name);
+              });
     }
 
     const rendermodel::TileDatabase& Theater::Impl::tileDatabase() const

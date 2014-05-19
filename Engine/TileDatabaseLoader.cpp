@@ -60,7 +60,9 @@ TileDatabaseLoader::TileDatabaseLoader(rendermodel::TileDatabase& database) :
 
 }
 
-bool TileDatabaseLoader::unserialize(std::streambuf& instream)
+bool TileDatabaseLoader::unserialize(std::streambuf& instream,
+                    std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
+                    std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb)
 {
     RapidJsonStdStreamBuf jsonStream(instream);
 
@@ -124,7 +126,7 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream)
             continue;
         }
 
-        cinek_bitmap_atlas bitmapAtlasId = _atlasRequest(categoryName);
+        cinek_bitmap_atlas bitmapAtlasId = atlasReqCb(categoryName);
         if (bitmapAtlasId == kCinekBitmapAtlas_Invalid)
         {
             continue;
@@ -182,7 +184,7 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream)
             cinek_tile_info tileInfo= {
                 {
                     bitmapAtlasId,
-                    this->_indexRequest(bitmapAtlasId, tile.name.GetString())
+                    bitmapReqCb(bitmapAtlasId, tile.name.GetString())
                 },
                 categoryIndex,
                 tileClass,
