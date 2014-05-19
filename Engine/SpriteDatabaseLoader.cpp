@@ -118,7 +118,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
 
             // create the template.
             cinek_bitmap_atlas bitmapClass = atlasReqCb(sprite["class"].GetString());
-            auto* spriteTemplate = _db.createOrModifyTemplateFromName(name, bitmapClass, stateCount);
+            auto* spriteTemplate = _db.createOrModifyFromName(name, bitmapClass, stateCount);
             if (spriteTemplate == nullptr)
             {
                 OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) failed to create template object.", name);
@@ -132,7 +132,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
             {
                 // get frame count per state - need this to define animations.
                 const char* stateName = stateIt->name.GetString();
-                cinek_rendermodel_anim_id animId = _db.findAnimationIDByName(stateName);
+                cinek_rendermodel_anim_id animId = _db.animationIDByName(stateName);
                 if (animId == kCinekAnimation_Null)
                 {
                     OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) has an invalid state (%s)",
