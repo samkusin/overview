@@ -25,11 +25,11 @@
 #ifndef Overview_Builder_Types_Hpp
 #define Overview_Builder_Types_Hpp
 
-#include "Engine/MapTypes.hpp"
+#include "Engine/Model/MapTypes.hpp"
+
+#include "glm/glm.hpp"
 
 #include <array>
-
-#include <glm/glm.hpp>
 
 namespace cinekine {
     namespace rendermodel {

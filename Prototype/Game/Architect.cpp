@@ -8,7 +8,7 @@
 
 #include "Architect.hpp"
 #include "Engine/Builder/BuilderTypes.hpp"
-#include "Engine/MapTypes.hpp"
+#include "Engine/Model/MapTypes.hpp"
 
 #include <cstdlib>
 

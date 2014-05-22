@@ -17,29 +17,27 @@ namespace cinekine {
         class RendererCLI;
     }
     namespace ovengine {
-        class TheaterCLI;
         class WindowComponentCLI;
     }
 }
 
 namespace cinekine {
     namespace prototype {
-    
+
     class Overview: public ovengine::Director
     {
     public:
-        Overview(ovengine::TheaterCLI& theaterCLI,
-                 ovengine::WindowComponentCLI& uiCLI,
+        Overview(ovengine::WindowComponentCLI& uiCLI,
                  glx::RendererCLI& rendererCLI);
         virtual ~Overview();
 
         virtual void update();
-        
+
     private:
         Allocator _allocator;
         SceneController _sceneController;
     };
-    
+
     }
 }
 

@@ -38,7 +38,7 @@ namespace cinekine {
         class RendererCLI;
     }
     namespace ovengine {
-        class TheaterCLI;
+        class Stage;
         class WindowComponentCLI;
     }
 }
@@ -49,8 +49,7 @@ namespace cinekine {
     class SceneController
     {
     public:
-        SceneController(ovengine::TheaterCLI& theater,
-                        ovengine::WindowComponentCLI& ui,
+        SceneController(ovengine::WindowComponentCLI& ui,
                         glx::RendererCLI& renderer,
                         const Allocator& allocator);
         ~SceneController();
@@ -65,15 +64,12 @@ namespace cinekine {
         //  updates the current Scene
         void update();
 
-        ovengine::TheaterCLI& theater() { return _theater; }
-        const ovengine::TheaterCLI& theater() const { return _theater; }
         ovengine::WindowComponentCLI& ui() { return _ui; }
         const ovengine::WindowComponentCLI& ui() const { return _ui; }
         glx::RendererCLI& renderer() { return _renderer; }
         const glx::RendererCLI& renderer() const { return _renderer; }
 
     private:
-        ovengine::TheaterCLI& _theater;
         ovengine::WindowComponentCLI& _ui;
         glx::RendererCLI& _renderer;
 

@@ -26,9 +26,9 @@
 #define Overview_Builder_Hpp
 
 #include "BuilderTypes.hpp"
-#include "Engine/Map.hpp"
+#include "Engine/Model/Map.hpp"
 
-#include <cinek/framework/vector.hpp>
+#include "cinek/framework/vector.hpp"
 
 namespace cinekine {
     namespace rendermodel {

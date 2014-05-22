@@ -23,9 +23,9 @@
  */
 
 #include "Builder.hpp"
-#include "Engine/MapTypes.hpp"
+#include "Engine/Model/MapTypes.hpp"
 
-#include <cinek/rendermodel/tiledatabase.hpp>
+#include "cinek/rendermodel/tiledatabase.hpp"
 
 #include <cstdio>
 #include <cstdlib>

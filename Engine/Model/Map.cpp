@@ -8,7 +8,8 @@
  */
 
 #include "Map.hpp"
-#include "Debug.hpp"
+
+#include "Engine/Debug.hpp"
 
 
 namespace cinekine {

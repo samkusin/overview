@@ -10,8 +10,8 @@
 #ifndef CINEK_OVERVIEW_MAP_TYPES_H
 #define CINEK_OVERVIEW_MAP_TYPES_H
 
-#include <cinek/framework/types.hpp>
-#include <cinek/rendermodel/types.h>
+#include "cinek/framework/types.hpp"
+#include "cinek/rendermodel/types.h"
 
 #include "glm/glm.hpp"
 

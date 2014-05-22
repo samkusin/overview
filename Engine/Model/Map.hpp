@@ -11,10 +11,10 @@
 #define Overview_Map_hpp
 
 #include "MapTypes.hpp"
-#include "Grid.hpp"
+#include "Engine/Grid.hpp"
 
-#include <cinek/framework/allocator.hpp>
-#include <cinek/framework/vector.hpp>
+#include "cinek/framework/allocator.hpp"
+#include "cinek/framework/vector.hpp"
 
 
 namespace cinekine {

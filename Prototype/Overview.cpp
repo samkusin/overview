@@ -18,32 +18,30 @@
 
 namespace cinekine {
     namespace ovengine {
-    
-    ovengine::Director* CreateDirector(TheaterCLI& theaterCLI,
-                                       WindowComponentCLI& windowCLI,
+
+    ovengine::Director* CreateDirector(WindowComponentCLI& windowCLI,
                                        glx::RendererCLI& rendererCLI)
     {
         Allocator allocator;
-        return allocator.newItem<prototype::Overview>(theaterCLI, windowCLI, rendererCLI);
+        return allocator.newItem<prototype::Overview>(windowCLI, rendererCLI);
     }
-    
+
     void DestroyDirector(ovengine::Director* director)
     {
         Allocator allocator;
         allocator.deleteItem(director);
     }
-    
+
     }   // namespace ovengine
 }
 
 namespace cinekine {
     namespace prototype {
 
-    Overview::Overview(ovengine::TheaterCLI& theaterCLI,
-                       ovengine::WindowComponentCLI& uiCLI,
+    Overview::Overview(ovengine::WindowComponentCLI& uiCLI,
                        glx::RendererCLI& rendererCLI) :
         _allocator(),
-        _sceneController(theaterCLI, uiCLI, rendererCLI, _allocator)
+        _sceneController(uiCLI, rendererCLI, _allocator)
     {
         _sceneController.add( "game",
             [this]() -> std::shared_ptr<Scene>
@@ -55,19 +53,19 @@ namespace cinekine {
                             _sceneController
                         );
             });
-        
+
         _sceneController.next("game");
     }
-    
+
     Overview::~Overview()
     {
     }
-    
+
     void Overview::update()
     {
-        _sceneController.update(); 
+        _sceneController.update();
     }
 
-    
+
     }   //  namespace prototype
 }   // namespace cinekine

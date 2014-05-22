@@ -19,10 +19,9 @@ namespace cinekine {
 
 namespace cinekine {
     namespace ovengine {
-    
-    class TheaterCLI;
+
     class WindowComponentCLI;
-        
+
     //  The Director drives execution of the simulation based on an external application controller
     //  Currently the Engine only initializes and destroys the Director object
     class Director
@@ -37,14 +36,13 @@ namespace cinekine {
     };
 
     //  must be defined by the implementing application.
-    Director* CreateDirector(TheaterCLI& theaterCLI,
-                             WindowComponentCLI& winCLI,
+    Director* CreateDirector(WindowComponentCLI& winCLI,
                              glx::RendererCLI& rendererCLI);
 
     //  must be defined by the implementing application - destroys the Director created by
     //  CreateDirector
     void DestroyDirector(Director* director);
-        
+
     }   // namespace ovengine
 }   // namespace cinekine
 

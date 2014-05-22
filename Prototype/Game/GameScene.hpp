@@ -13,7 +13,6 @@
 #include "Prototype/Game/Architect.hpp"
 
 #include "Engine/Component/Window/WindowComponentCLI.hpp"
-#include "Engine/Map.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
@@ -24,7 +23,7 @@ namespace cinekine {
         class RendererCLI;
     }
     namespace ovengine {
-        class TheaterCLI;
+        class Stage;
         class WindowComponentCLI;
         class WindowEventListener;
     }
@@ -52,14 +51,13 @@ namespace cinekine {
     private:
         Allocator _allocator;
         SceneController& _sceneController;
-        ovengine::TheaterCLI& _theater;
         ovengine::WindowComponentCLI& _ui;
         glx::RendererCLI& _renderer;
 
         glx::BitmapLibrary _bitmapLibrary;
         glx::FontLibrary _fontLibrary;
         
-        std::shared_ptr<ovengine::Map> _map;
+        std::shared_ptr<ovengine::Stage> _stage;
         unique_ptr<Architect> _architect;
         cinek_ov_pos _viewPos;
 

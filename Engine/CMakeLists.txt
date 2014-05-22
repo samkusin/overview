@@ -110,11 +110,10 @@ include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
 #
 set( PROJECT_SOURCES
      ${COMPONENT_SOURCES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/Map.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Theater.cpp
-     #${CMAKE_CURRENT_SOURCE_DIR}/Templates.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Map.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
@@ -123,15 +122,14 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Grid.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/MapTypes.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Map.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/BitmapDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/SpriteDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/TileDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Theater.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/TheaterCLI.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BitmapDatabaseLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Map.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/MapTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BuilderTypes.hpp
  )

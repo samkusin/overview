@@ -8,11 +8,7 @@
 
 #include "Debug.hpp"
 #include "Director.hpp"
-#include "Theater.hpp"
 #include "View.hpp"
-
-#include "SpriteDatabaseLoader.hpp"
-#include "TileDatabaseLoader.hpp"
 
 #include "Graphics/SDL/SDLRenderer.hpp"
 #include "Graphics/GL/GL3Renderer.hpp"
@@ -48,9 +44,6 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         return 1;
     }
 
-    //  Startup the Theater MODEL
-    ovengine::Theater theater(allocator);
-
     //  Startup the UI system
     ovengine::WindowComponentPtr windowComponent =
                                 ovengine::createWindowComponent(
@@ -64,9 +57,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     }
 
     //  Startup the Director CONTROLLER script (controls program flow )
-    ovengine::Director* director = cinekine::ovengine::CreateDirector(theater.getCLI(),
-                                            *windowComponent,
-                                            renderer);
+    ovengine::Director* director =
+        cinekine::ovengine::CreateDirector(*windowComponent, renderer);
 
     //  main loop
 

@@ -9,8 +9,7 @@
 #include "GameView.hpp"
 #include "Graphics/RendererCLI.hpp"
 #include "Engine/Debug.hpp"
-#include "Engine/TheaterCLI.hpp"
-#include "Engine/Map.hpp"
+#include "Engine/Model/Stage.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/FontLibrary.hpp"
 #include "Graphics/BitmapLibrary.hpp"
@@ -27,11 +26,9 @@ namespace cinekine {
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
-    GameView::GameView(ovengine::TheaterCLI& theater,
-                       glx::RendererCLI& renderer,
+    GameView::GameView(glx::RendererCLI& renderer,
                        glx::FontLibrary& fontLibrary,
                        glx::BitmapLibrary& bitmapLibrary) :
-        _theater(theater),
         _renderer(renderer),
         _bitmapLibrary(bitmapLibrary),
         _graphics(renderer, bitmapLibrary, fontLibrary),
@@ -50,10 +47,10 @@ namespace cinekine {
 
     //  A new viewpoint has been initialized by our controller.  Replace our reference with the new one.
     //
-    void GameView::setMap(std::shared_ptr<ovengine::Map> &map, const cinek_ov_pos& pos)
+    void GameView::setStage(std::shared_ptr<ovengine::Stage> stage, const cinek_ov_pos& pos)
     {
-        _map = map;
-        if (_map)
+        _stage = stage;
+        if (_stage)
         {
             setupWorldSpace(xlatMapToWorldPos(pos));
         }
@@ -156,12 +153,12 @@ namespace cinekine {
     {
         _currentAtlasIndex = kCinekBitmapAtlas_Invalid;
         _currentAtlas = nullptr;
-        _mapBounds = _map->bounds();
+        _mapBounds = _stage->map().bounds();
     }
         
     void GameView::renderTileMap(int tileZ)
     {
-        _tilemap = _map->tilemapAtZ(tileZ);
+        _tilemap = _stage->map().tilemapAtZ(tileZ);
         if (!_tilemap)
             return;
 
@@ -216,7 +213,7 @@ namespace cinekine {
             int32_t screenOX = tileLocalOX - _worldViewBounds.min.x + _screenViewLeft;
             int32_t screenOY = tileLocalOY - _worldViewBounds.min.y + _screenViewTop;
         
-            const auto& tileInfo = _theater.tileDatabase().tileInfo(tile.layer[layer]);
+            const auto& tileInfo = _stage->tileDatabase().tileInfo(tile.layer[layer]);
             if (_currentAtlasIndex != tileInfo.bitmap.bmpAtlas)
             {
                 _currentAtlas = _bitmapLibrary.getAtlas(tileInfo.bitmap.bmpAtlas);

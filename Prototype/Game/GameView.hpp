@@ -10,7 +10,7 @@
 #define Overview_GameView_hpp
 
 #include "Engine/View.hpp"
-#include "Engine/Map.hpp"
+#include "Engine/Model/Map.hpp"
 #include "Graphics/Graphics2D.hpp"
 
 #include "cinek/framework/allocator.hpp"
@@ -18,7 +18,7 @@
 
 namespace cinekine {
     namespace ovengine {
-        class TheaterCLI;
+        class Stage;
     }
     namespace glx {
         class RendererCLI;
@@ -33,13 +33,12 @@ namespace cinekine {
     class GameView: public ovengine::View
     {
     public:
-        GameView(ovengine::TheaterCLI& theater,
-                    glx::RendererCLI& renderer,
-                    glx::FontLibrary& fontLibrary,
-                    glx::BitmapLibrary& bitmapLibrary);
+        GameView(glx::RendererCLI& renderer,
+                 glx::FontLibrary& fontLibrary,
+                 glx::BitmapLibrary& bitmapLibrary);
         virtual ~GameView();
 
-        void setMap(std::shared_ptr<ovengine::Map>& Map, const cinek_ov_pos& pos);
+        void setStage(std::shared_ptr<ovengine::Stage> stage, const cinek_ov_pos& pos);
         void setMapPosition(const cinek_ov_pos& pos);
 
         virtual void render();
@@ -61,12 +60,11 @@ namespace cinekine {
         void renderSprite(const rendermodel::Sprite& sprite);
 
     private:
-        ovengine::TheaterCLI& _theater;
+        std::shared_ptr<ovengine::Stage> _stage;
         glx::RendererCLI& _renderer;
         glx::BitmapLibrary& _bitmapLibrary;
         glx::Graphics2D _graphics;
 
-        std::shared_ptr<ovengine::Map> _map;
         cinek_ov_bounds _worldViewBounds;
         cinek_ov_bounds _worldViewAlignedBounds;
         int32_t _screenViewLeft, _screenViewTop;

@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "SceneController.hpp"
@@ -28,11 +28,9 @@
 namespace cinekine {
     namespace prototype {
 
-    SceneController::SceneController(ovengine::TheaterCLI& theater,
-                                     ovengine::WindowComponentCLI& ui,
+    SceneController::SceneController(ovengine::WindowComponentCLI& ui,
                                      glx::RendererCLI& renderer,
                                      const Allocator& allocator) :
-        _theater(theater),
         _ui(ui),
         _renderer(renderer),
         _sceneMap(std_allocator<std::pair<string, SceneCreateFn>>(allocator)),
@@ -40,16 +38,16 @@ namespace cinekine {
     {
 
     }
-    
+
     SceneController::~SceneController()
-    {   
+    {
     }
 
     void SceneController::add(const char* name, SceneCreateFn createFn)
     {
         _sceneMap[string(name)] = createFn;
     }
-    
+
     void SceneController::next(const char* name)
     {
         auto sceneIt = _sceneMap.find(string(name));
