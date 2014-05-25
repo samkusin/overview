@@ -9,13 +9,13 @@
 #ifndef CK_Graphics_RenderDefines_hpp
 #define CK_Graphics_RenderDefines_hpp
 
-#include <cinek/framework/types.hpp>
+#include "cinek/types.hpp"
 
 namespace cinekine {
     namespace glx {
-        
+
 const size_t kBitmapLibraryPoolSize = 16;
-        
+
     }   // namespace glx
 }   // namespace cinekine
 

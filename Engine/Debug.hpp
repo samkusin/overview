@@ -10,14 +10,14 @@
 #ifndef Overview_Debug_hpp
 #define Overview_Debug_hpp
 
-#include <cinek/framework/debug.hpp>
+#include "cinek/debug.hpp"
 
 /*****************************************************************************/
 
 /** @cond */
 
 #ifndef OVENGINE_LOG_SOURCE
-#define OVENGINE_LOG_SOURCE "ovengine" 
+#define OVENGINE_LOG_SOURCE "ovengine"
 #endif
 
 #define OVENGINE_LOG_TRACE(...) CK_LOG_TRACE(OVENGINE_LOG_SOURCE, __VA_ARGS__)

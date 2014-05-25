@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    GL/GL3Renderer.hpp
  * @author  Samir Sinha
  * @date    11/16/2013
@@ -35,34 +35,31 @@
 #include "GL3Texture.hpp"
 #include "GLShaderLibrary.hpp"
 #include "GLVertexBatch.hpp"
- 
-#include "SDL2/SDL_video.h"
+#include "cinek/vector.hpp"
 
-#include "glm/gtc/matrix_transform.hpp"
-
-#include "cinek/framework/vector.hpp"
-
+#include <SDL2/SDL_video.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <array>
 
 namespace cinekine {
     namespace glx {
 
     class Texture;
-    
+
     //  The OpenGL 3.x Renderer
     //
     class GL3Renderer: public Renderer
     {
-    public:    
+    public:
         GL3Renderer(const RendererInitParameters& initParams,
                  SDL_Window* window,
                  const Allocator& allocator);
         virtual ~GL3Renderer();
-        
+
         virtual operator bool() const {
             return _glContext != NULL;
         }
-        
+
         ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
@@ -79,7 +76,7 @@ namespace cinekine {
         virtual void enableScissor();
         virtual void disableScissor();
         virtual void setScissor(const Rect& rect);
-        
+
         virtual void clear(const RGBAColor& color);
         virtual void drawTextureRect(const Texture& texture,
                                      const Rect& source, const Rect& dest,
@@ -123,7 +120,7 @@ namespace cinekine {
         vector<glm::vec4> _vertsColor;
         vector<GLVertexBatch> _batch;
         uint32_t _batchIndex;
-        
+
         struct BatchState
         {
             Mesh::Type drawMode;
@@ -137,7 +134,7 @@ namespace cinekine {
                 textureId(texture.textureID()),
                 textureSamplerFormat(texture.samplerFormat())
                 {}
-           
+
             bool operator==(const BatchState& s) const;
             void clear() { textureId = 0; drawMode = Mesh::kUndefined;}
         };
@@ -146,13 +143,13 @@ namespace cinekine {
         GLuint _meshVBOs[4];
 
         glm::mat4 _projectionMat;
-        
+
     private:
         GLVertexBatch& obtainBatch(const BatchState& state, size_t vertexRequest);
         GLVertexBatch& flushBatch();
         void selectShader(GLuint shader, const glm::vec2& position);
     };
-    
+
     inline bool GL3Renderer::BatchState::operator==(const GL3Renderer::BatchState& s) const
     {
         return textureId == s.textureId && drawMode == s.drawMode;

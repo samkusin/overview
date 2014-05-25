@@ -25,7 +25,7 @@
 #include "Builder.hpp"
 #include "Engine/Model/MapTypes.hpp"
 
-#include "cinek/rendermodel/tiledatabase.hpp"
+#include "Engine/Model/TileDatabase.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -64,7 +64,7 @@ namespace cinekine { namespace ovengine {
     ////////////////////////////////////////////////////////////////////////////
 
     Builder::Builder(Map& map,
-                const rendermodel::TileDatabase& tileTemplates,
+                const TileDatabase& tileTemplates,
                 uint32_t roomLimit,
                 const Allocator& allocator) :
         _allocator(allocator),
@@ -255,7 +255,7 @@ namespace cinekine { namespace ovengine {
                                   const TileBrush& wallBrush, const Box& box)
     {
         //  paint floor
-        cinek_tile floorTileId = _tileTemplates.tileHandleFromDescriptor(
+        auto floorTileId = _tileTemplates.tileHandleFromDescriptor(
                                         floorBrush.tileCategoryId,
                                         floorBrush.tileClassId,
                                         kTileRole_Floor);
@@ -296,7 +296,7 @@ namespace cinekine { namespace ovengine {
     void Builder::paintTileWalls(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
                                 const TileBrush& brush)
     {
-        const cinek_tile_info& thisFloorTemplate =
+        const TileInfo& thisFloorTemplate =
             _tileTemplates.tileInfo(tileMap.at(tileY, tileX).layer[0]);
 
         //  calculate wall masks, which are used to determine what wall tiles
@@ -363,7 +363,7 @@ namespace cinekine { namespace ovengine {
             wallRoleFlags |= kTileRole_Wall;
         }
 
-        cinek_tile wallTileHandle =
+        auto wallTileHandle =
             _tileTemplates.tileHandleFromDescriptor(brush.tileCategoryId,
                                                 brush.tileClassId,
                                                 wallRoleFlags);
@@ -374,7 +374,7 @@ namespace cinekine { namespace ovengine {
 
     bool Builder::tileFloorsClassIdEqual(const Tile& tile, uint8_t thisClassId) const
     {
-        const cinek_tile_info& floorTemplate = _tileTemplates.tileInfo(tile.layer[0]);
+        const TileInfo& floorTemplate = _tileTemplates.tileInfo(tile.layer[0]);
         return floorTemplate.classIndex == thisClassId;
     }
 
@@ -465,7 +465,7 @@ namespace cinekine { namespace ovengine {
         //    cornerMask, wallRoleFlags);
         wallRoleFlags |= (kTileRole_Wall+kTileRole_Corner);
 
-        cinek_tile wallTileHandle =
+        auto wallTileHandle =
             _tileTemplates.tileHandleFromDescriptor(brush.tileCategoryId,
                                                 brush.tileClassId,
                                                 wallRoleFlags);
@@ -475,7 +475,7 @@ namespace cinekine { namespace ovengine {
 
     bool Builder::tileWallsEqual(const Tile& tile, uint16_t roleFlags, uint8_t classId) const
     {
-        const cinek_tile_info& wallTemplate = _tileTemplates.tileInfo(tile.layer[1]);
+        const TileInfo& wallTemplate = _tileTemplates.tileInfo(tile.layer[1]);
         return wallTemplate.classIndex == classId &&
               (wallTemplate.flags & roleFlags)==roleFlags;
     }

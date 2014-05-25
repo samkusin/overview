@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    GL/GL3Mesh.hpp
  * @author  Samir Sinha
  * @date    11/29/2013
@@ -31,15 +31,16 @@
 #ifndef CK_Graphics_GL3_Mesh_hpp
 #define CK_Graphics_GL3_Mesh_hpp
 
-#include "Graphics/Mesh.hpp"
-#include "Graphics/Texture.hpp"
 #include "GLUtils.hpp"
 
-#include "cinek/framework/vector.hpp"
+#include "Graphics/Mesh.hpp"
+#include "Graphics/Texture.hpp"
+
+#include "cinek/vector.hpp"
 
 namespace cinekine {
     namespace glx {
-        
+
     /**
      * @class GL3Mesh
      * @brief GL3 (OpenGL3.x VBO based) specific mesh objects
@@ -55,7 +56,7 @@ namespace cinekine {
                 const cinekine::vector<uint16_t>& indices);
 
         virtual ~GL3Mesh();
-        /** @return Checks whether a Mesh was created successfully */ 
+        /** @return Checks whether a Mesh was created successfully */
         virtual operator bool() const {
             return _indexCount != 0;
         }
@@ -71,7 +72,7 @@ namespace cinekine {
         GLuint _vboColor;
         GLuint _ibo;
     };
-    
+
     }   // namespace glx
 }   // namespace cinekine
 

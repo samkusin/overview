@@ -11,14 +11,14 @@
 #include "TileDatabaseLoader.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Framework/FileStreamBuf.hpp"
+#include "Core/FileStreamBuf.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 
 namespace cinekine { namespace ovengine {
 
     Stage::Stage(glx::BitmapLibrary& bitmapLibrary,
                  const ResourceCounts& counts,
-                 const cinek_ov_map_bounds& bounds,
+                 const MapBounds& bounds,
                  const Allocator& allocator) :
         _allocator(allocator),
         _bitmapLibrary(bitmapLibrary),

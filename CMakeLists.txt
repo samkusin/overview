@@ -32,7 +32,7 @@ set( CMAKE_PREFIX_PATH "${CINEK_EXT_PACKAGE_DIR}" ${CMAKE_PREFIX_PATH} )
 #   Libraries to build
 #
 add_subdirectory( cinek )
-add_subdirectory( Framework )
+add_subdirectory( Core )
 add_subdirectory( Graphics )
 add_subdirectory( Engine )
 

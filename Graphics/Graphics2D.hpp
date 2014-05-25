@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    Graphics2D.hpp
  * @author  Samir Sinha
  * @date    11/26/2013
@@ -35,7 +35,7 @@
 #include "Style.hpp"
 #include "Texture.hpp"
 
-#include "cinek/framework/vector.hpp"
+#include "cinek/vector.hpp"
 
 #include <memory>
 
@@ -57,7 +57,7 @@ namespace cinekine {
     class Graphics2D
     {
     public:
-        Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary, 
+        Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary,
                    FontLibrary& fontLibrary);
         ~Graphics2D();
 
@@ -77,9 +77,9 @@ namespace cinekine {
         //  Sets the current bitmap atlas
         void setBitmapAtlas(cinek_bitmap_atlas atlas);
         //  Draws a bitmap from the current atlas with alpha
-        void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex, 
+        void drawBitmapFromAtlas(cinek_bitmap_index bitmapIndex,
                                  int32_t x, int32_t y, float alpha);
-    
+
     private:
         RendererCLI& _renderer;
         BitmapLibrary& _bitmapLibrary;

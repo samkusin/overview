@@ -7,14 +7,14 @@
 //
 
 #include "BitmapAtlas.hpp"
-#include "cinek/rendermodel/types.h"
+#include "cinek/rendertypes.h"
 #include <cstring>
 
 namespace cinekine {
     namespace glx {
 
         //  Contains bitmaps mapped by name
-        
+
     BitmapAtlas::BitmapAtlas(const char* name, TexturePtr& texture,
                              size_t bitmapCount,
                              const Allocator& allocator) :
@@ -26,14 +26,14 @@ namespace cinekine {
     {
         _bitmaps.reserve(bitmapCount);
     }
-    
+
     BitmapAtlas::BitmapAtlas(BitmapAtlas&& other) :
         _texture(std::move(other._texture)),
         _bitmapPool(std::move(other._bitmapPool)),
         _bitmaps(std::move(other._bitmaps))
     {
     }
-    
+
     BitmapAtlas& BitmapAtlas::operator=(BitmapAtlas&& other)
     {
         _texture = std::move(other._texture);
@@ -41,7 +41,7 @@ namespace cinekine {
         _bitmaps = std::move(other._bitmaps);
         return *this;
     }
-    
+
     struct BitmapAtlasBitmap_Comparator
     {
         bool operator()(const BitmapInfo* bitmap, const string& name) const
@@ -49,11 +49,11 @@ namespace cinekine {
             return bitmap->name < name;
         }
     };
-    
+
     cinek_bitmap_index BitmapAtlas::addBitmap(BitmapInfo&& info)
     {
         cinek_bitmap_index index = getBitmapIndex(info.name.c_str());
-       
+
         BitmapInfo* bitmap = nullptr;
         if (index == kCinekBitmapIndex_Invalid)
         {
@@ -69,7 +69,7 @@ namespace cinekine {
 
         return index;
     }
-            
+
     cinek_bitmap_index BitmapAtlas::getBitmapIndex(const char* name) const
     {
         cinek_bitmap_index index = 0;
@@ -80,13 +80,13 @@ namespace cinekine {
         }
         return kCinekBitmapIndex_Invalid;
     }
-    
+
     const BitmapInfo* BitmapAtlas::getBitmapFromIndex(cinek_bitmap_index index) const
     {
         if (index >= _bitmaps.size())
             return nullptr;
         return _bitmaps[index];
     }
-        
+
     }   // namespace glx
 }   // namespace cinekine

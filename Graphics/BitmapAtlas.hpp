@@ -11,10 +11,10 @@
 
 #include "Texture.hpp"
 
-#include "cinek/framework/memorypool.hpp"
-#include "cinek/framework/string.hpp"
-#include "cinek/framework/vector.hpp"
-#include "cinek/rendermodel/types.h"
+#include "cinek/memorypool.hpp"
+#include "cinek/string.hpp"
+#include "cinek/vector.hpp"
+#include "cinek/rendertypes.h"
 
 #include <vector>
 

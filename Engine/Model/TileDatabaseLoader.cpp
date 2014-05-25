@@ -7,12 +7,12 @@
 //
 
 #include "TileDatabaseLoader.hpp"
+#include "TileDatabase.hpp"
+#include "ModelTypes.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Framework/StreamBufRapidJson.hpp"
-#include "Framework/JsonUtilities.hpp"
-
-#include "cinek/rendermodel/tiledatabase.hpp"
+#include "Core/StreamBufRapidJson.hpp"
+#include "Core/JsonUtilities.hpp"
 
 #include <cstring>
 
@@ -54,7 +54,7 @@ static uint16_t parseFlagsToUint(const JsonValue& flagsDef, const char* flags)
     return result;
 }
 
-TileDatabaseLoader::TileDatabaseLoader(rendermodel::TileDatabase& database) :
+TileDatabaseLoader::TileDatabaseLoader(TileDatabase& database) :
     _db(database)
 {
 
@@ -137,7 +137,7 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream,
              ++tileIt)
         {
             const auto& tile =  *tileIt;
-            cinek_tile tileIndex;
+            TileId tileIndex;
             uint8_t tileClass = 0;
             uint16_t tileFlags = 0;
             if (tile.value.IsObject())
@@ -171,7 +171,7 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream,
             }
             else if (tile.value.IsUint())
             {
-                tileIndex = (cinek_tile)(tile.value.GetUint());
+                tileIndex = (TileId)(tile.value.GetUint());
             }
             else
             {
@@ -181,7 +181,7 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream,
                                    tile.name.GetString());
                 continue;
             }
-            cinek_tile_info tileInfo= {
+            TileInfo tileInfo= {
                 {
                     bitmapAtlasId,
                     bitmapReqCb(bitmapAtlasId, tile.name.GetString())

@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    GL/GLShaderLoader.hpp
  * @author  Samir Sinha
  * @date    11/18/2013
@@ -33,8 +33,8 @@
 
 #include "GLUtils.hpp"
 
-#include "cinek/framework/string.hpp"
-#include "cinek/framework/vector.hpp" 
+#include "cinek/string.hpp"
+#include "cinek/vector.hpp"
 
 namespace cinekine {
     namespace glx {

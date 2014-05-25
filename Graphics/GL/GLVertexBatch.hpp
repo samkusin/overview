@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    GL/GLVertexBatch.hpp
  * @author  Samir Sinha
  * @date    11/22/2013
@@ -32,16 +32,16 @@
 #define CK_Graphics_GL_VertexBatch_hpp
 
 #include "GLUtils.hpp"
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/vector.hpp"
- 
+#include "cinek/allocator.hpp"
+#include "cinek/vector.hpp"
+
 namespace cinekine {
     namespace glx {
-    
+
     class GLVertexBatch
     {
         CK_CLASS_NON_COPYABLE(GLVertexBatch);
-        
+
     public:
         GLVertexBatch(GLenum usage,
                       vector<glm::vec2>& pos,
@@ -49,7 +49,7 @@ namespace cinekine {
                       vector<glm::vec4>& color);
         GLVertexBatch(GLVertexBatch&& other);
         ~GLVertexBatch();
-        
+
         //void reset();
         void draw(GLenum mode);
 
@@ -65,7 +65,7 @@ namespace cinekine {
         size_t available() const {
             return _pos.capacity() - _pos.size();
         }
-        
+
         void pushPos(float x, float y) {
             _pos.emplace_back(x, y);
         }

@@ -27,9 +27,9 @@
 
 #include "Scene.hpp"
 
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/string.hpp"
-#include "cinek/framework/map.hpp"
+#include "cinek/allocator.hpp"
+#include "cinek/string.hpp"
+#include "cinek/map.hpp"
 
 #include <functional>
 

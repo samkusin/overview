@@ -9,9 +9,9 @@
 #include "BitmapAtlasLoader.hpp"
 
 #include "RenderDebug.hpp"
-#include "Framework/StreamBufRapidJson.hpp"
+#include "Core/StreamBufRapidJson.hpp"
 
-#include "rapidjson/document.h"
+#include <rapidjson/document.h>
 
 #include <cstring>
 

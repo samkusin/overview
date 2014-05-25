@@ -1,5 +1,5 @@
 //
-//  BitmapDatabaseLoader.hpp
+//  Model/BitmapDatabaseLoader.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 8/24/13.
@@ -9,7 +9,7 @@
 #ifndef Overview_BitmapDatabaseLoader_hpp
 #define Overview_BitmapDatabaseLoader_hpp
 
-#include "cinek/rendermodel/types.h"
+#include "cinek/rendertypes.h"
 
 #include <functional>
 #include <streambuf>

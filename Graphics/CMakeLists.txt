@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 
-project( CKGraphics )
+project( CKGL )
 
 ###############################################################################
 # CMake custom variables used to set up the build process.  All subtargets
@@ -135,6 +135,6 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/RendererCLI.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Graphics2D.hpp )
 
-add_library( ckGL STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
-set_target_properties( ckGL PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
+add_library( CKGL STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
+set_target_properties( CKGL PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
 

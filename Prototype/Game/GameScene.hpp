@@ -16,7 +16,7 @@
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
-#include "cinek/framework/allocator.hpp"
+#include "cinek/allocator.hpp"
 
 namespace cinekine {
     namespace glx {

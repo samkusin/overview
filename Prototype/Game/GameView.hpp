@@ -11,10 +11,11 @@
 
 #include "Engine/View.hpp"
 #include "Engine/Model/Map.hpp"
+#include "Engine/Model/Sprite.hpp"
 #include "Graphics/Graphics2D.hpp"
 
-#include "cinek/framework/allocator.hpp"
-#include "cinek/rendermodel/sprite.hpp"
+#include "cinek/allocator.hpp"
+
 
 namespace cinekine {
     namespace ovengine {
@@ -57,7 +58,7 @@ namespace cinekine {
         void renderReset();
         void renderTileMap(int tileZ);
         void renderTile(const ovengine::Tile& tile, const cinek_ov_pos& worldPos, int layer);
-        void renderSprite(const rendermodel::Sprite& sprite);
+        void renderSprite(const ovengine::Sprite& sprite);
 
     private:
         std::shared_ptr<ovengine::Stage> _stage;
@@ -71,7 +72,7 @@ namespace cinekine {
 
         cinek_bitmap_atlas _currentAtlasIndex;
         std::shared_ptr<glx::BitmapAtlas> _currentAtlas;
-        cinek_ov_map_bounds _mapBounds;
+        ovengine::MapBounds _mapBounds;
         ovengine::Tilemap* _tilemap;
     };
 

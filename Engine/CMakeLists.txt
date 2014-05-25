@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 
-project( OVEngine )
+project( CKOVEngine )
 
 ###############################################################################
 # CMake custom variables used to set up the build process.  All subtargets
@@ -110,8 +110,13 @@ include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
 #
 set( PROJECT_SOURCES
      ${COMPONENT_SOURCES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabase.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabase.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Map.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.cpp
@@ -119,21 +124,28 @@ set( PROJECT_SOURCES
 
 set( PROJECT_INCLUDES
      ${COMPONENT_INCLUDES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Grid.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabase.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelInstance.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabase.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/BitmapDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Map.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/MapTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BuilderTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Grid.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Director.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/View.hpp
  )
 
-add_library( ckOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
-set_target_properties( ckOVEngine PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
+add_library( CKOVEngine STATIC ${PROJECT_INCLUDES} ${PROJECT_SOURCES} )
+set_target_properties( CKOVEngine PROPERTIES COMPILE_FLAGS ${PROJECT_COMPILE_FLAGS} )
 

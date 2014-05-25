@@ -32,10 +32,11 @@
 #define CK_Graphics_GL_GLShaderLibrary_hpp
 
 #include "GLUtils.hpp"
-#include "Framework/JsonUtilities.hpp"
 
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/string.hpp"
+#include "Core/JsonUtilities.hpp"
+
+#include "cinek/allocator.hpp"
+#include "cinek/string.hpp"
 
 #include <unordered_map>
 #include <set>

@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    RendererCLI.hpp
  * @author  Samir Sinha
  * @date    11/26/2013
@@ -36,26 +36,26 @@
 #include "Mesh.hpp"
 #include "Texture.hpp"
 
-#include "cinek/framework/vector.hpp"
+#include "cinek/vector.hpp"
 
 namespace cinekine {
     namespace glx {
-   
+
     /**
      * @class RendererCLI
      * @brief The Renderer client interface exposed to applications
      */
     class RendererCLI
     {
-    public:    
+    public:
         virtual ~RendererCLI() = default;
 
         /**
          * Creates a renderable texture from a file source.  The caller is
          * responsible for holding and releasing the texture.
-         * 
+         *
          * @param  pathname Pathname to the texture file.
-         * @return A managed pointer to the texture. 
+         * @return A managed pointer to the texture.
          */
         virtual TexturePtr loadTexture(const char* pathname) = 0;
         /**
@@ -70,7 +70,7 @@ namespace cinekine {
          * @param  bytes  A buffer containing the texture's pixels.  If NULL, then
          *                no data is uploaded to the texture
          * @return A managed pointer to the texture.
-         */  
+         */
         virtual TexturePtr createTextureFromBuffer(uint32_t w, uint32_t h,
                                                    cinek_pixel_format format,
                                                    const uint8_t* bytes) = 0;
@@ -99,11 +99,11 @@ namespace cinekine {
         virtual void setScissor(const Rect& rect) = 0;
         /**
          * Streams a texture region to the current rendering target
-         * 
+         *
          * @param texture Texture object to render
          * @param source  The source rectangle within the texture to render
-         * @param dest    The destination rectangle on the rendering target.  
-         *                Callers define larger/smaller rectangles to scale or 
+         * @param dest    The destination rectangle on the rendering target.
+         *                Callers define larger/smaller rectangles to scale or
          *                shrink accordingly
          * @param color   RGBA values to render, for color/alpha blending
          */
@@ -112,10 +112,10 @@ namespace cinekine {
                                      const RGBAColor& color) = 0;
         /**
          * Streams vertices to the current rendering target.
-         * 
+         *
          * @param texture    Texture to render
          * @param meshType   How to render the vertices (i.e. triangles,lines)
-         * @param vertsPos   Position vertices to render.  
+         * @param vertsPos   Position vertices to render.
          * @param vertsUV    UV vertices to render
          * @param vertsColor Color vertices to render
          */
@@ -127,10 +127,10 @@ namespace cinekine {
          * Draws a 2D mesh to the current rendering target from the source
          * texture.  All vertex vectors passed to drawMesh must be of the
          * same size.
-         * 
+         *
          * @param texture    Texture to render
          * @param meshType   How to render the vertices (i.e. triangles,lines)
-         * @param vertsPos   Position vertices to render.  
+         * @param vertsPos   Position vertices to render.
          * @param vertsUV    UV vertices to render
          * @param vertsColor Color vertices to render
          * @param indices    Vertex indicies into the specified arrays
@@ -146,7 +146,7 @@ namespace cinekine {
          * @param texture    Texture to render - this mesh will hold a shared reference
          *                   to the supplied texture
          * @param meshType   How to render the vertices (i.e. triangles,lines)
-         * @param vertsPos   Position vertices to render.  
+         * @param vertsPos   Position vertices to render.
          * @param vertsUV    UV vertices to render
          * @param vertsColor Color vertices to render
          * @param indices    Vertex indicies into the specified arrays
@@ -160,7 +160,7 @@ namespace cinekine {
                                    const cinekine::vector<uint16_t>& indices) = 0;
         /**
          * Renders a 2D mesh
-         * 
+         *
          * @param mesh     The Mesh object to render
          * @param position Screen position
          */

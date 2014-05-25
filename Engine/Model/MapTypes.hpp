@@ -1,5 +1,5 @@
 /**
- * \file    Engine/MapTypes.h
+ * \file    Model/MapTypes.hpp
  *
  * Contains map specific types and type interfaces.
  *
@@ -7,26 +7,19 @@
  *          Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#ifndef CINEK_OVERVIEW_MAP_TYPES_H
-#define CINEK_OVERVIEW_MAP_TYPES_H
+#ifndef Overview_Model_MapTypes_hpp
+#define Overview_Model_MapTypes_hpp
 
-#include "cinek/framework/types.hpp"
-#include "cinek/rendermodel/types.h"
+#include "Engine/Model/ModelTypes.hpp"
 
-#include "glm/glm.hpp"
+#include "cinek/types.hpp"
+#include "cinek/rendertypes.h"
+
+#include <glm/glm.hpp>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** Defines the XYZ bounds of a map. */
-typedef struct cinek_ov_map_bounds_t
-{
-    uint16_t xUnits;    /**< Number of units/tiles on the x axis. */
-    uint16_t yUnits;    /**< Number of units/tiles on the y axis. */
-    uint16_t zUnits;
-}
-cinek_ov_map_bounds;
 
 /** Defines a location on the map */
 typedef glm::vec3 cinek_ov_pos;
@@ -48,23 +41,19 @@ typedef struct cinek_tilemap_rect_t
 }
 cinek_tilemap_rect;
 
-/**
- * @struct  cinek_map_tile
- * @brief   Represents a single tile
- */
-typedef struct cinek_map_tile_t
-{
-    cinek_tile layer[2];
-}
-cinek_map_tile;
 
 #ifdef __cplusplus
 }
 #endif
 
 namespace cinekine { namespace ovengine {
-    typedef cinek_map_tile Tile;
-    typedef cinek_ov_map_bounds MapBounds;
+
+    struct MapBounds
+    {
+        uint16_t xUnits;    /**< Number of units/tiles on the x axis. */
+        uint16_t yUnits;    /**< Number of units/tiles on the y axis. */
+        uint16_t zUnits;
+    };
 
     enum
     {

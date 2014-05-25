@@ -9,8 +9,7 @@
 #ifndef CK_Graphics_Render_Rect_hpp
 #define CK_Graphics_Render_Rect_hpp
 
-#include <cinek/framework/types.hpp>
-#include <array>
+#include "cinek/types.hpp"
 
 namespace cinekine {
     namespace glx {

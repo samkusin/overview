@@ -9,11 +9,11 @@
 #ifndef Overview_TileDatabaseLoader_hpp
 #define Overview_TileDatabaseLoader_hpp
 
-#include "BitmapDatabaseLoader.hpp"
+#include "Engine/Model/BitmapDatabaseLoader.hpp"
 
 
 namespace cinekine {
-    namespace rendermodel {
+    namespace ovengine {
         class TileDatabase;
     }
 }
@@ -31,7 +31,7 @@ namespace cinekine {
         /**
          * @param database The source/target database.
          */
-        TileDatabaseLoader(rendermodel::TileDatabase& database);
+        TileDatabaseLoader(TileDatabase& database);
 
         /**
          * Unserializes a database from the given document object.
@@ -47,7 +47,7 @@ namespace cinekine {
                     std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb);
 
     private:
-        rendermodel::TileDatabase& _db;
+        TileDatabase& _db;
     };
 
     }   // namespace ovengine

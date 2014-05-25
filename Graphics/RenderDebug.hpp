@@ -1,5 +1,5 @@
 /**
- * \file    Render/RenderDebug.hpp
+ * \file    Graphics/RenderDebug.hpp
  *
  * Internal debugging utilities for the Overview Engine.
  *
@@ -10,14 +10,14 @@
 #ifndef CK_Graphics_Debug_hpp
 #define CK_Graphics_Debug_hpp
 
-#include <cinek/framework/debug.hpp>
+#include "cinek/debug.hpp"
 
 /*****************************************************************************/
 
 /** @cond */
 
 #ifndef RENDER_LOG_SOURCE
-#define RENDER_LOG_SOURCE "render" 
+#define RENDER_LOG_SOURCE "render"
 #endif
 
 #define RENDER_LOG_TRACE(...) CK_LOG_TRACE(RENDER_LOG_SOURCE, __VA_ARGS__)

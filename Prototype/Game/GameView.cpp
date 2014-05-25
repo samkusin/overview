@@ -7,14 +7,15 @@
 //
 
 #include "GameView.hpp"
-#include "Graphics/RendererCLI.hpp"
+
 #include "Engine/Debug.hpp"
 #include "Engine/Model/Stage.hpp"
+#include "Engine/Model/TileDatabase.hpp"
+#include "Graphics/RendererCLI.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/FontLibrary.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 
-#include "cinek/rendermodel/tiledatabase.hpp"
 
 /////////////////////////////////////////////////////////////
 

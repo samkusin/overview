@@ -12,21 +12,21 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #ifndef Overview_ViewCreate_hpp
 #define Overview_ViewCreate_hpp
 
-#include <cinek/framework/types.hpp>
-#include <cinek/framework/allocator.hpp>
+#include "cinek/types.hpp"
+#include "cinek/allocator.hpp"
 
 #include <functional>
 
@@ -48,7 +48,7 @@ namespace cinekine {
     /** Delegate for creating View objects based on class and ID */
     typedef std::function<std::shared_ptr<View>(const char* /* viewClass */,
                                                 const char* /* viewId */)> ViewCreateFn;
-        
+
     }   // namespace ovengine
 }   // namespace cinekine
 

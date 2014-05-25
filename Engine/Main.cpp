@@ -19,9 +19,9 @@
 
 #include "Component/Window/WindowComponent.hpp"
 
-#include <cinek/framework/allocator.hpp>
+#include "cinek/allocator.hpp"
 
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 using namespace cinekine;
 

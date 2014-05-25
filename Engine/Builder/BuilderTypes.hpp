@@ -27,12 +27,12 @@
 
 #include "Engine/Model/MapTypes.hpp"
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 #include <array>
 
 namespace cinekine {
-    namespace rendermodel {
+    namespace ovengine {
         class TileDatabase;
     }
 }

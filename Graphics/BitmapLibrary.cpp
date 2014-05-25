@@ -10,7 +10,7 @@
 #include "BitmapAtlasLoader.hpp"
 #include "RendererCLI.hpp"
 #include "RenderDebug.hpp"
-#include "Framework/FileStreamBuf.hpp"
+#include "Core/FileStreamBuf.hpp"
 
 
 namespace cinekine {

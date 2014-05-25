@@ -1,5 +1,5 @@
 /**
- * \file    Engine/Map.hpp
+ * \file    Model/Map.hpp
  *
  * Shared map data object containing terrain and prop objects.
  *
@@ -7,20 +7,18 @@
  *          Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#ifndef Overview_Map_hpp
-#define Overview_Map_hpp
+#ifndef Overview_Model_Map_hpp
+#define Overview_Model_Map_hpp
 
-#include "MapTypes.hpp"
+#include "Engine/Model/MapTypes.hpp"
 #include "Engine/Grid.hpp"
 
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/vector.hpp"
+#include "cinek/allocator.hpp"
+#include "cinek/vector.hpp"
 
 
 namespace cinekine {
     namespace ovengine {
-
-typedef cinek_map_tile Tile;
 
 /** Defines a grid of tiles */
 typedef Grid<Tile> Tilemap;
@@ -47,7 +45,7 @@ public:
      *
      *  @param  bounds  Map x,y and z bounds.
      */
-    Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator = Allocator());
+    Map(const MapBounds& bounds, const Allocator& allocator = Allocator());
     /**
      * Destructor.
      */
@@ -58,7 +56,7 @@ public:
      * Can be used to calculate an index into a tile array.
      * @return  Reference to the map bounds structure.
      */
-    const cinek_ov_map_bounds& bounds() const {
+    const MapBounds& bounds() const {
         return _bounds;
     }
 
@@ -77,7 +75,7 @@ public:
 
 private:
     //  grid xyz
-    cinek_ov_map_bounds _bounds;
+    MapBounds _bounds;
     vector<Tilemap> _tilemaps;
 };
 

@@ -28,10 +28,10 @@
 #include "BuilderTypes.hpp"
 #include "Engine/Model/Map.hpp"
 
-#include "cinek/framework/vector.hpp"
+#include "cinek/vector.hpp"
 
 namespace cinekine {
-    namespace rendermodel {
+    namespace ovengine {
         class TileDatabase;
     }
 }
@@ -75,7 +75,7 @@ namespace cinekine { namespace ovengine {
     {
     public:
         Builder(Map& map,
-                const rendermodel::TileDatabase& tileTemplates,
+                const TileDatabase& tileTemplates,
                 uint32_t roomLimit,
                 const Allocator& allocator);
 
@@ -127,7 +127,7 @@ namespace cinekine { namespace ovengine {
     private:
         Allocator _allocator;
         Map& _map;
-        const rendermodel::TileDatabase& _tileTemplates;
+        const TileDatabase& _tileTemplates;
 
         vector<Region> _regions;
         vector<Segment> _segments;

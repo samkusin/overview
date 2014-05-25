@@ -54,7 +54,7 @@ namespace cinekine {
         _window->setEventListener(this);
         _window->show();
 
-        cinek_ov_map_bounds bounds = { 16, 16, 1 };
+        ovengine::MapBounds bounds = { 16, 16, 1 };
         ovengine::Stage::ResourceCounts resourceCounts;
         resourceCounts.spriteLimit = 256;
         resourceCounts.tileLimit = 1024;
@@ -62,7 +62,7 @@ namespace cinekine {
                                     std_allocator<ovengine::Stage>,
                                     glx::BitmapLibrary&,
                                     const ovengine::Stage::ResourceCounts&,
-                                    const cinek_ov_map_bounds&,
+                                    const ovengine::MapBounds&,
                                     const Allocator&>
                             (
                                 std_allocator<ovengine::Stage>(_allocator),

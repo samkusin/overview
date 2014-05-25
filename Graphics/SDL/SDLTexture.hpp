@@ -10,16 +10,14 @@
 #define CK_Graphics_SDL_Texture_hpp
 
 #include "../Texture.hpp"
-
-#include <cinek/framework/types.hpp>
-
-#include "SDL2/SDL_render.h"
+#include "cinek/types.hpp"
+#include <SDL2/SDL_render.h>
 
 namespace cinekine {
     namespace glx {
-    
+
     class Renderer;
-    
+
     class SDLTexture: public Texture
     {
         CK_CLASS_NON_COPYABLE(SDLTexture);
@@ -35,7 +33,7 @@ namespace cinekine {
         virtual operator bool() const {
             return _texture!=NULL;
         }
-        
+
         SDL_Texture* getSDLTexture() const {
             return _texture;
         }
@@ -46,7 +44,7 @@ namespace cinekine {
         virtual uint32_t height() const {
             return _height;
         }
-     
+
     private:
         Renderer& _renderer;
         SDL_Texture* _texture;
@@ -54,7 +52,7 @@ namespace cinekine {
         // to prevent frequent calls to SDL
         uint32_t _width, _height;
     };
-        
+
     }   // namespace glx
 }   // namespace cinekine
 

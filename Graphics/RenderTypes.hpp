@@ -9,7 +9,7 @@
 #ifndef CK_Graphics_RenderTypes_hpp
 #define CK_Graphics_RenderTypes_hpp
 
-#include <cinek/framework/types.hpp>
+#include "cinek/types.hpp"
 
 //  commonly used glm headers
 #include <glm/gtc/type_precision.hpp>

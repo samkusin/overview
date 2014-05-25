@@ -10,7 +10,7 @@
 #include "RendererCLI.hpp"
 #include "RenderDebug.hpp"
 #include "RenderUtils.hpp"
-#include "Framework/FileStreamBuf.hpp"
+#include "Core/FileStreamBuf.hpp"
 #include "External/stb/stb_truetype.h"
 
 namespace cinekine {

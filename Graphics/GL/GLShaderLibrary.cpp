@@ -8,12 +8,13 @@
 
 #include "GLShaderLibrary.hpp"
 #include "GLShaderLoader.hpp"
-#include "Graphics/RenderDebug.hpp"
-#include "Framework/JsonUtilities.hpp"
-#include "Framework/FileStreamBuf.hpp"
-#include "Framework/StreamBufRapidJson.hpp"
 
-#include <cinek/framework/string.hpp>
+#include "Graphics/RenderDebug.hpp"
+#include "Core/JsonUtilities.hpp"
+#include "Core/FileStreamBuf.hpp"
+#include "Core/StreamBufRapidJson.hpp"
+
+#include "cinek/string.hpp"
 
 namespace cinekine {
     namespace glx {

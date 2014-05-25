@@ -10,9 +10,9 @@
 #define Overview_Architect_hpp
 
 #include "Engine/Builder/Builder.hpp"
+#include "Engine/Model/TileDatabase.hpp"
 
-#include "cinek/framework/allocator.hpp"
-#include "cinek/rendermodel/tiledatabase.hpp"
+#include "cinek/allocator.hpp"
 
 namespace cinekine { namespace prototype {
     
@@ -20,7 +20,7 @@ namespace cinekine { namespace prototype {
     {
     public:
         Architect(ovengine::Map& map,
-                  const rendermodel::TileDatabase& tileTemplates,
+                  const ovengine::TileDatabase& tileTemplates,
                   const Allocator& allocator);
 
         void update();
@@ -49,7 +49,7 @@ namespace cinekine { namespace prototype {
             ovengine::Box box;
         };
         
-        const rendermodel::TileDatabase& _tileTemplates;
+        const ovengine::TileDatabase& _tileTemplates;
         ovengine::Map& _map;
         unique_ptr<ovengine::Builder> _builder;
         vector<Room> _rooms;

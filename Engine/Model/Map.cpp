@@ -1,5 +1,5 @@
 /**
- * \file    Engine/Map.cpp
+ * \file    Model/Map.cpp
  *
  * Shared map data object containing terrain and prop objects.
  *
@@ -15,7 +15,7 @@
 namespace cinekine {
     namespace ovengine {
 
-Map::Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator) :
+Map::Map(const MapBounds& bounds, const Allocator& allocator) :
     _bounds(bounds),
     _tilemaps(std_allocator<Tilemap>(allocator))
 {
@@ -34,7 +34,7 @@ Map::Map(const cinek_ov_map_bounds& bounds, const Allocator& allocator) :
     _tilemaps.reserve(_bounds.zUnits);
     for (int32_t i = 0; i < _bounds.zUnits; ++i)
     {
-        _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, std_allocator<cinek_map_tile>(allocator)});
+        _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, std_allocator<Tile>(allocator)});
     }
 }
 

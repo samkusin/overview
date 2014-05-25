@@ -1,6 +1,6 @@
 //
 //  Font.hpp
-//  Graphics 
+//  Graphics
 //
 //  Created by Samir Sinha on 9/15/13.
 //  Copyright (c) 2013 Cinekine. All rights reserved.
@@ -12,13 +12,13 @@
 #include "Texture.hpp"
 #include "External/stb/stb_truetype.h"
 
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/vector.hpp" 
+#include "cinek/allocator.hpp"
+#include "cinek/vector.hpp"
 
 namespace cinekine {
     namespace glx {
 
-    //  Fonts 
+    //  Fonts
     class Font
     {
         Font& operator=(const Font&) = delete;
@@ -34,11 +34,11 @@ namespace cinekine {
 
         Font(Font&& other);
         Font& operator=(Font&& other);
-        
+
         operator bool() const {
             return (_texture != nullptr);
         }
-        
+
         const stbtt_bakedchar& getChar(int32_t c) const;
         const Texture& getTexture() const {
             return *_texture;
@@ -66,7 +66,7 @@ namespace cinekine {
             return _bakedChars[_undefinedChar - _minChar];
         return _bakedChars[normalizedCh];
     }
-    
+
     }   // namespace glx
 }   // namespace cinekine
 

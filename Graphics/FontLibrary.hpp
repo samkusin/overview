@@ -11,18 +11,18 @@
 
 #include "Font.hpp"
 #include "RenderTypes.hpp"
-#include "cinek/framework/string.hpp"
+#include "cinek/string.hpp"
 
 #include <vector>
 
 namespace cinekine {
     namespace glx {
-    
+
     class RendererCLI;
     class Font;
 
     //  A FontLibrary contains a set of fonts.
-    //  
+    //
     class FontLibrary
     {
         CK_CLASS_NON_COPYABLE(FontLibrary);
@@ -31,7 +31,7 @@ namespace cinekine {
         FontLibrary(RendererCLI& renderer, size_t fontLimit,
                     const Allocator& allocator=Allocator());
         ~FontLibrary() = default;
-        
+
         bool loadFont(FontHandle slot, const char* pathname, uint16_t height);
         void unloadFont(FontHandle slot);
 
@@ -47,7 +47,7 @@ namespace cinekine {
         RendererCLI& _renderer;
         vector<Font> _fonts;
     };
-    
+
     }   // namespace glx
 }   // namespace cinekine
 

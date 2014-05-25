@@ -45,7 +45,7 @@ namespace cinekine { namespace prototype {
         
 
     Architect::Architect(ovengine::Map& map,
-                         const rendermodel::TileDatabase& tileTemplates,
+                         const ovengine::TileDatabase& tileTemplates,
                          const Allocator& allocator) :
         _allocator(allocator),
         _state(kState_BuildRegions),

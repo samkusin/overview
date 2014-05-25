@@ -1,5 +1,5 @@
 /**
- * @file    SpriteDatabaseLoader.cpp
+ * @file    Model/SpriteDatabaseLoader.cpp
  *
  * Container for SpriteTemplates.
  *
@@ -8,18 +8,19 @@
  */
 
 #include "SpriteDatabaseLoader.hpp"
-#include "Engine/Debug.hpp"
-#include "Framework/StreamBufRapidJson.hpp"
-#include "rapidjson/document.h"
 
-#include "cinek/rendermodel/sprite.hpp"
-#include "cinek/rendermodel/spritedatabase.hpp"
+#include "Sprite.hpp"
+#include "SpriteDatabase.hpp"
+#include "Engine/Debug.hpp"
+#include "Core/StreamBufRapidJson.hpp"
+
+#include <rapidjson/document.h>
 
 
 namespace cinekine {
     namespace ovengine {
 
-SpriteDatabaseLoader::SpriteDatabaseLoader(rendermodel::SpriteDatabase& database) :
+SpriteDatabaseLoader::SpriteDatabaseLoader(SpriteDatabase& database) :
     _db(database)
 {
 
@@ -64,7 +65,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
                               member.name.GetString());
                 continue;
             }
-            cinek_rendermodel_anim_id animId = member.value.GetInt();
+            AnimationStateId animId = member.value.GetInt();
             if (!_db.mapAnimationStateNameToId(member.name.GetString(), animId))
             {
                 OVENGINE_LOG_WARN("SpriteDatabaseJSONSerializer - Skipping animation state definition (%s). Duplicate ID value found (%u).",
@@ -132,8 +133,8 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
             {
                 // get frame count per state - need this to define animations.
                 const char* stateName = stateIt->name.GetString();
-                cinek_rendermodel_anim_id animId = _db.animationIDByName(stateName);
-                if (animId == kCinekAnimation_Null)
+                AnimationStateId animId = _db.animationIDByName(stateName);
+                if (animId == kNullAnimation)
                 {
                     OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) has an invalid state (%s)",
                                        name, stateName);
@@ -164,7 +165,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
                     }
 
                     //  initialize the state animation.
-                    rendermodel::SpriteAnimation* animation = spriteTemplate->createAnimation(
+                    SpriteAnimation* animation = spriteTemplate->createAnimation(
                                             animId,
                                             frameCount,
                                             duration);

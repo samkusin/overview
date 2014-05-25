@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #ifndef Overview_Components_Rocket_RenderInterface_hpp
@@ -28,9 +28,9 @@
 #include "Rocket/Core/RenderInterface.h"
 
 #include "Graphics/GL/GL3Texture.hpp"
-#include "cinek/framework/allocator.hpp"
-#include "cinek/framework/vector.hpp"
-#include "cinek/framework/map.hpp"
+#include "cinek/allocator.hpp"
+#include "cinek/vector.hpp"
+#include "cinek/map.hpp"
 
 namespace cinekine {
 
@@ -38,7 +38,7 @@ namespace cinekine {
         class RendererCLI;
         class Mesh;
     }
-    
+
     namespace ovengine {
 
     class RocketRenderInterface : public Rocket::Core::RenderInterface
@@ -127,7 +127,7 @@ namespace cinekine {
         /// Returns the number of pixels per inch.
         /// @returns The number of pixels per inch. The default implementation returns 100.
         virtual float GetPixelsPerInch();
-        
+
     private:
         glx::RendererCLI& _renderer;
 

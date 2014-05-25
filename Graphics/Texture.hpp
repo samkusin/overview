@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    Texture.hpp
  * @author  Samir Sinha
  * @date    09/10/2013
@@ -32,13 +32,13 @@
 #define CK_Graphics_Texture_hpp
 
 #include "Graphics/Rect.hpp"
-#include "cinek/rendermodel/types.h"
+#include "cinek/rendertypes.h"
 
 #include <memory>
 
 namespace cinekine {
     namespace glx {
-        
+
     /**
      * @class Texture
      * @brief A cross-platform texture resource used by Renderer implementations.
@@ -47,9 +47,9 @@ namespace cinekine {
     {
     public:
         virtual ~Texture() {}
-        /** @return Checks whether texture exists or was created successfully */ 
+        /** @return Checks whether texture exists or was created successfully */
         virtual operator bool() const = 0;
-    
+
         /** @return The texture width in pixels */
         virtual uint32_t width() const = 0;
         /** @return The texture height in pixels */

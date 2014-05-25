@@ -23,8 +23,9 @@
  */
 
 #include "GLShaderLoader.hpp"
+
 #include "Graphics/RenderDebug.hpp"
-#include "Framework/FileStreamBuf.hpp"
+#include "Core/FileStreamBuf.hpp"
 
 namespace cinekine {
     namespace glx {

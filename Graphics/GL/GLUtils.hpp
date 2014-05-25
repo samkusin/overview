@@ -12,12 +12,12 @@
 #include "Graphics/RenderDebug.hpp"
 #include "Graphics/RenderTypes.hpp"
 
-#include <cinek/framework/types.hpp>
+#include "cinek/types.hpp"
 
 #ifdef CK_TARGET_OSX
 #include <OpenGL/gl3.h>
 #else
-#include <GL/gl.h> 
+#include <GL/gl.h>
 #endif
 
 namespace cinekine {

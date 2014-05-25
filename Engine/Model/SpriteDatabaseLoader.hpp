@@ -8,13 +8,13 @@
  *          Copyright (c) 2013 Cinekine. All rights reserved.
  */
 
-#ifndef Overview_SpriteDatabaseLoader_hpp
-#define Overview_SpriteDatabaseLoader_hpp
+#ifndef Overview_Model_SpriteDatabaseLoader_hpp
+#define Overview_Model_SpriteDatabaseLoader_hpp
 
-#include "BitmapDatabaseLoader.hpp"
+#include "Engine/Model/BitmapDatabaseLoader.hpp"
 
 namespace cinekine {
-    namespace rendermodel {
+    namespace ovengine {
         class SpriteDatabase;
     }
     namespace ovengine {
@@ -29,7 +29,7 @@ namespace cinekine {
         /**
          * @param database The source/target database.
          */
-        SpriteDatabaseLoader(rendermodel::SpriteDatabase& database);
+        SpriteDatabaseLoader(SpriteDatabase& database);
 
         /**
          * Unserializes a database from the given document object.
@@ -45,7 +45,7 @@ namespace cinekine {
                     std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb);
 
     private:
-        rendermodel::SpriteDatabase& _db;
+        SpriteDatabase& _db;
     };
 
     }   // namespace ovengine
