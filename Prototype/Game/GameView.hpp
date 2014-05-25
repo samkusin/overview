@@ -39,8 +39,8 @@ namespace cinekine {
                  glx::BitmapLibrary& bitmapLibrary);
         virtual ~GameView();
 
-        void setStage(std::shared_ptr<ovengine::Stage> stage, const cinek_ov_pos& pos);
-        void setMapPosition(const cinek_ov_pos& pos);
+        void setStage(std::shared_ptr<ovengine::Stage> stage, const glm::vec3& pos);
+        void setMapPosition(const glm::vec3& pos);
 
         virtual void render();
 
@@ -50,14 +50,14 @@ namespace cinekine {
 
     private:
         //  precalculates values used for rendering the local view
-        void setupWorldSpace(const cinek_ov_pos& worldPos);
+        void setupWorldSpace(const glm::vec3& worldPos);
         //  utilities
-        cinek_ov_pos xlatMapToWorldPos(const cinek_ov_pos& pos);
-        cinek_ov_pos xlatWorldToMapPos(const cinek_ov_pos& pos);
+        glm::vec3 xlatMapToWorldPos(const glm::vec3& pos);
+        glm::vec3 xlatWorldToMapPos(const glm::vec3& pos);
         
         void renderReset();
         void renderTileMap(int tileZ);
-        void renderTile(const ovengine::Tile& tile, const cinek_ov_pos& worldPos, int layer);
+        void renderTile(const ovengine::Tile& tile, const glm::vec3& worldPos, int layer);
         void renderSprite(const ovengine::Sprite& sprite);
 
     private:
@@ -65,9 +65,15 @@ namespace cinekine {
         glx::RendererCLI& _renderer;
         glx::BitmapLibrary& _bitmapLibrary;
         glx::Graphics2D _graphics;
+        
+        struct ViewBounds
+        {
+            glm::vec3 min;
+            glm::vec3 max;
+        };
 
-        cinek_ov_bounds _worldViewBounds;
-        cinek_ov_bounds _worldViewAlignedBounds;
+        ViewBounds _worldViewBounds;
+        ViewBounds _worldViewAlignedBounds;
         int32_t _screenViewLeft, _screenViewTop;
 
         cinek_bitmap_atlas _currentAtlasIndex;

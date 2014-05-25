@@ -48,7 +48,7 @@ namespace cinekine {
 
     //  A new viewpoint has been initialized by our controller.  Replace our reference with the new one.
     //
-    void GameView::setStage(std::shared_ptr<ovengine::Stage> stage, const cinek_ov_pos& pos)
+    void GameView::setStage(std::shared_ptr<ovengine::Stage> stage, const glm::vec3& pos)
     {
         _stage = stage;
         if (_stage)
@@ -57,13 +57,13 @@ namespace cinekine {
         }
     }
 
-    void GameView::setMapPosition(const cinek_ov_pos& pos)
+    void GameView::setMapPosition(const glm::vec3& pos)
     {
         setupWorldSpace(xlatMapToWorldPos(pos));
     }
 
     //  precalculates values used for rendering the local view
-    void GameView::setupWorldSpace(const cinek_ov_pos& worldPos)
+    void GameView::setupWorldSpace(const glm::vec3& worldPos)
     {
         glx::Rect viewportRect = _renderer.getViewport();
 
@@ -98,18 +98,18 @@ namespace cinekine {
 
     //  converts map coordinates to our "global" rendering coordinate system
     //  called "world" for the purposes of this view.
-    cinek_ov_pos GameView::xlatMapToWorldPos(const cinek_ov_pos& pos)
+    glm::vec3 GameView::xlatMapToWorldPos(const glm::vec3& pos)
     {
-        cinek_ov_pos worldPos;
+        glm::vec3 worldPos;
         worldPos.x = TILE_WIDTH * (pos.x - pos.y)/2;
         worldPos.y = TILE_HEIGHT * (pos.x + pos.y)/2;
         worldPos.z = pos.z;
         return worldPos;
     }
 
-    cinek_ov_pos GameView::xlatWorldToMapPos(const cinek_ov_pos& pos)
+    glm::vec3 GameView::xlatWorldToMapPos(const glm::vec3& pos)
     {
-        cinek_ov_pos mapPos;
+        glm::vec3 mapPos;
         mapPos.x = pos.x/TILE_WIDTH + pos.y/TILE_HEIGHT;
         mapPos.y = 2 * pos.y/TILE_HEIGHT - mapPos.x;
         mapPos.z = pos.z;
@@ -182,11 +182,11 @@ namespace cinekine {
                 worldEndX += TILE_HALFWIDTH;
             }
             
-            cinek_ov_pos worldTilePos { (float)worldX, (float)worldY, 0 };
+            glm::vec3 worldTilePos { (float)worldX, (float)worldY, 0 };
             while (worldX <= worldEndX)
             {
                 worldTilePos.x = worldX;
-                cinek_ov_pos mapPos = xlatWorldToMapPos(worldTilePos);
+                glm::vec3 mapPos = xlatWorldToMapPos(worldTilePos);
                 if (mapPos.y >= 0.f && mapPos.y < _mapBounds.yUnits &&
                     mapPos.x >= 0.f && mapPos.x < _mapBounds.xUnits)
                 {
@@ -201,10 +201,10 @@ namespace cinekine {
         }
     }
         
-    void GameView::renderTile(const ovengine::Tile& tile, const cinek_ov_pos& worldPos, int layer)
+    void GameView::renderTile(const ovengine::Tile& tile, const glm::vec3& worldPos, int layer)
     {
         //  find world tile from X,Y
-        cinek_ov_pos mapPos = xlatWorldToMapPos(worldPos);
+        glm::vec3 mapPos = xlatWorldToMapPos(worldPos);
         if (mapPos.y >= 0.f && mapPos.y < _mapBounds.yUnits &&
             mapPos.x >= 0.f && mapPos.x < _mapBounds.xUnits)
         {

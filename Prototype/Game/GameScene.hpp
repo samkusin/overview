@@ -59,7 +59,7 @@ namespace cinekine {
         
         std::shared_ptr<ovengine::Stage> _stage;
         unique_ptr<Architect> _architect;
-        cinek_ov_pos _viewPos;
+        glm::vec3 _viewPos;
 
         std::shared_ptr<GameView> _gameView;
 
