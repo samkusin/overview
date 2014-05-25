@@ -25,7 +25,7 @@
 #ifndef Overview_Builder_Types_Hpp
 #define Overview_Builder_Types_Hpp
 
-#include "Engine/Model/MapTypes.hpp"
+#include "Engine/Model/ModelTypes.hpp"
 
 #include <glm/glm.hpp>
 

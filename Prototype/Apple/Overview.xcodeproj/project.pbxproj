@@ -390,9 +390,6 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/cinek/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/Graphics/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/Engine/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
@@ -422,9 +419,6 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/cinek/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/Graphics/Debug",
-					"/Users/samir/Development/cinekine/overview/build-xcode/Engine/Debug",
 				);
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",

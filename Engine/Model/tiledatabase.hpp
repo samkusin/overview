@@ -10,7 +10,7 @@
 #ifndef Overview_Model_TileDatabase_hpp
 #define Overview_Model_TileDatabase_hpp
 
-#include "Engine/Model/MapTypes.hpp"
+#include "Engine/Model/ModelTypes.hpp"
 
 #include "cinek/debug.hpp"
 #include "cinek/string.hpp"

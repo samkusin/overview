@@ -135,7 +135,6 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Map.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/MapTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BuilderTypes.hpp

@@ -25,7 +25,7 @@
 #ifndef Overview_Builder_Hpp
 #define Overview_Builder_Hpp
 
-#include "BuilderTypes.hpp"
+#include "Engine/Builder/BuilderTypes.hpp"
 #include "Engine/Model/Map.hpp"
 
 #include "cinek/vector.hpp"

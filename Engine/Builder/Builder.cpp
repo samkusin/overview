@@ -23,7 +23,6 @@
  */
 
 #include "Builder.hpp"
-#include "Engine/Model/MapTypes.hpp"
 
 #include "Engine/Model/TileDatabase.hpp"
 

@@ -8,20 +8,19 @@
 
 #include "Architect.hpp"
 #include "Engine/Builder/BuilderTypes.hpp"
-#include "Engine/Model/MapTypes.hpp"
 
 #include <cstdlib>
 
 namespace cinekine { namespace prototype {
-    
-        
+
+
     //  determines whether we can build a room from the specified box region
     bool Architect::canBuildRoom(const ovengine::Box& bounds,
                                  const ovengine::Box& box) const
     {
         if (!box.inside(bounds))
             return false;
-        
+
         for (auto& room : _rooms)
         {
             if (room.box.intersects(box))
@@ -29,7 +28,7 @@ namespace cinekine { namespace prototype {
         }
         return true;
     }
-    
+
     //  randomize a box.  one or more boxes comprise a room
     auto Architect::generateBox(int32_t wMin, int32_t hMin,
                                 int32_t wMax, int32_t hMax) -> ovengine::Box
@@ -42,7 +41,7 @@ namespace cinekine { namespace prototype {
         box.p1 = glm::ivec2(xSize, ySize);
         return box;
     }
-        
+
 
     Architect::Architect(ovengine::Map& map,
                          const ovengine::TileDatabase& tileTemplates,
@@ -58,7 +57,7 @@ namespace cinekine { namespace prototype {
         _rooms(std_allocator<Room>(_allocator))
     {
     }
-        
+
     void Architect::update()
     {
         switch (_state)
@@ -84,7 +83,7 @@ namespace cinekine { namespace prototype {
                 break;
         }
     }
-        
+
     void Architect::newRegion(const ovengine::Box& mapBounds)
     {
         //  prioritize large rooms.  If our randomized room selection cannot
@@ -92,14 +91,14 @@ namespace cinekine { namespace prototype {
         int32_t boxMinW = 3+(rand() % 5) , boxMinH = 3+(rand() % 5);
         bool widthDominant = true;
         auto roomBox = ovengine::Box();
-        
+
         while (boxMinW >= 3 && boxMinH >= 3)
         {
             roomBox = generateBox(
                                   boxMinW, boxMinH,
                                   boxMinW + boxMinW/2,
                                   boxMinH + boxMinH/2);
-            
+
             //  randomize our box origin - this is the simplest way to
             //  position a box.  basically in this implementation, there's no
             //  design to our room layout
@@ -123,9 +122,9 @@ namespace cinekine { namespace prototype {
                   && attempts < kMaxAttempts);
             if (boxAllowed)
                 break;
-            
+
             roomBox.clear();
-            
+
             //  shrink our box size since our (admittedly weak) box test
             //  failed.  then try again.
             if (widthDominant)
@@ -138,25 +137,25 @@ namespace cinekine { namespace prototype {
             }
             widthDominant = !widthDominant;
         }
-        
+
         ovengine::TileBrush floorBrush = { 1, 2 };
         ovengine::TileBrush wallBrush = { 1, 1 };
         vector<ovengine::NewRegionInstruction> instructions;
-        
+
         if (roomBox)
         {
             auto policy = ovengine::NewRegionInstruction::kRandomize;
             instructions.emplace_back(policy);
-            
+
             auto& instruction = instructions.back();
             instruction.box = roomBox;
             instruction.terminal = true;
-            
+
             _rooms.emplace_back();
             auto& room = _rooms.back();
             room.handle = _builder->makeRegion(floorBrush, wallBrush, instructions);
             room.box = roomBox;
-            
+
             //  connect room pairs
             if (!(_rooms.size() % 2))
             {
@@ -168,17 +167,17 @@ namespace cinekine { namespace prototype {
             _state = kState_Done;
         }
     }
-    
+
     void Architect::newConnection(uint32_t roomA, uint32_t roomB)
     {
         ovengine::TileBrush floorBrush = { 1, 2 };
         ovengine::TileBrush wallBrush = { 1, 1 };
         vector<ovengine::NewRegionInstruction> instructions;
-        
+
         vector<ovengine::MapPoint> points;
         _builder->connectRegions(floorBrush, wallBrush, _rooms[roomA].handle, _rooms[roomB].handle, points);
         _state = kState_BuildRegions;
     }
 
-    
+
 } /* namespace prototype */ } /* namespace cinekine */
