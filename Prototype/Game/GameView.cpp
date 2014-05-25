@@ -154,12 +154,12 @@ namespace cinekine {
     {
         _currentAtlasIndex = kCinekBitmapAtlas_Invalid;
         _currentAtlas = nullptr;
-        _mapBounds = _stage->map().bounds();
+        _mapBounds = _stage->bounds();
     }
         
     void GameView::renderTileMap(int tileZ)
     {
-        _tilemap = _stage->map().tilemapAtZ(tileZ);
+        _tilemap = _stage->tilemapAtZ(tileZ);
         if (!_tilemap)
             return;
 

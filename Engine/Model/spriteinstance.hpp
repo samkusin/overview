@@ -13,6 +13,8 @@
 #include "Engine/Model/ModelInstance.hpp"
 #include "cinek/types.hpp"
 
+#include <glm/glm.hpp>
+
 namespace cinekine {
     namespace ovengine {
 
@@ -81,6 +83,7 @@ namespace cinekine {
         uint32_t _startTime;
         AnimationStateId _stateId;
         SpriteAnimation* _animation;
+        glm::vec3 _worldPos;
     };
 
     } /* rendermodel */

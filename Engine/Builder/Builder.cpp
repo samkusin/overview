@@ -62,7 +62,7 @@ namespace cinekine { namespace ovengine {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    Builder::Builder(Map& map,
+    Builder::Builder(Stage& map,
                 const TileDatabase& tileTemplates,
                 uint32_t roomLimit,
                 const Allocator& allocator) :

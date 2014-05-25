@@ -119,7 +119,9 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
 
             // create the template.
             cinek_bitmap_atlas bitmapClass = atlasReqCb(sprite["class"].GetString());
-            auto* spriteTemplate = _db.createOrModifyFromName(name, bitmapClass, stateCount);
+            auto& jsonAnchor = sprite["anchor"];
+            glm::ivec2 anchor(jsonAnchor["x"].GetInt(), jsonAnchor["y"].GetInt());
+            auto* spriteTemplate = _db.createOrModifyFromName(name, bitmapClass, anchor, stateCount);
             if (spriteTemplate == nullptr)
             {
                 OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) failed to create template object.", name);

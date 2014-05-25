@@ -17,6 +17,8 @@
 #include "cinek/memorypool.hpp"
 #include "cinek/vector.hpp"
 
+#include <glm/glm.hpp>
+
 namespace cinekine {
     namespace ovengine {
 
@@ -34,10 +36,13 @@ public:
      * serialization.
      *
      * @param bitmapClass   The bitmap class of bitmaps used for this sprite.
+     * @param anchor        The sprite's offset from the origin
      * @param numStates     Number of states to reserve in the state table.
      * @param allocator     An optional allocator.
      */
-    Sprite(cinek_bitmap_atlas bitmapClass, uint16_t numStates,
+    Sprite(cinek_bitmap_atlas bitmapClass,
+           const glm::ivec2& anchor,
+           uint16_t numStates,
            const Allocator& allocator=Allocator());
     /** Destructor */
     ~Sprite();
@@ -51,6 +56,10 @@ public:
      */
     cinek_bitmap_atlas getBitmapClass() const {
         return _bitmapClass;
+    }
+    /** @return The x,y anchor from the sprite's origin */
+    const glm::ivec2& anchor() const {
+        return _anchor;
     }
 
 public:
@@ -77,6 +86,7 @@ public:
 private:
     Allocator _allocator;
     cinek_bitmap_atlas _bitmapClass;
+    glm::ivec2 _anchor;
 
     //  state table containing animation lists mapped to state.
     ObjectPool<SpriteAnimation> _statePool;

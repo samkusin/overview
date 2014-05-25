@@ -13,9 +13,13 @@
 #include "Prototype/SceneController.hpp"
 
 #include "Engine/Model/Stage.hpp"
+#include "Engine/Model/SpriteDatabaseLoader.hpp"
+#include "Engine/Model/TileDatabaseLoader.hpp"
 
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
+
+#include "Core/FileStreamBuf.hpp"
 
 
 namespace cinekine {
@@ -28,6 +32,8 @@ namespace cinekine {
         _renderer(_sceneController.renderer()),
         _bitmapLibrary(_renderer, _allocator),
         _fontLibrary(_renderer, 1, _allocator),
+        _tileDb(1024, _allocator),
+        _spriteDb(32, _allocator),
         _architect(),
         _gameView(),
         _window()
@@ -57,30 +63,33 @@ namespace cinekine {
         ovengine::MapBounds bounds = { 16, 16, 1 };
         ovengine::Stage::ResourceCounts resourceCounts;
         resourceCounts.spriteLimit = 256;
-        resourceCounts.tileLimit = 1024;
         _stage = std::allocate_shared<ovengine::Stage,
                                     std_allocator<ovengine::Stage>,
-                                    glx::BitmapLibrary&,
+                                    const ovengine::TileDatabase&,
+                                    const ovengine::SpriteDatabase&,
                                     const ovengine::Stage::ResourceCounts&,
                                     const ovengine::MapBounds&,
                                     const Allocator&>
                             (
                                 std_allocator<ovengine::Stage>(_allocator),
-                                _bitmapLibrary,
+                                _tileDb,
+                                _spriteDb,
                                 resourceCounts,
                                 bounds,
                                 _allocator
                             );
-        _stage->loadTileDatabase("tiles_caves.json");
-        _stage->loadSpriteDatabase("sprites_common.json");
+        
+        
+        loadTileDatabase("tiles_caves.json");
+        loadSpriteDatabase("sprites_common.json");
         _architect = unique_ptr<Architect>(
-                        _allocator.newItem<Architect>(_stage->map(),
+                        _allocator.newItem<Architect>(*_stage,
                                                       _stage->tileDatabase(),
                                                       _allocator),
                         _allocator);
 
         //  prepopulate map.
-        auto* tilemap = _stage->map().tilemapAtZ(0);
+        auto* tilemap = _stage->tilemapAtZ(0);
         for (uint32_t row = 0; row < tilemap->rowCount(); ++row)
         {
             ovengine::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
@@ -96,6 +105,53 @@ namespace cinekine {
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
         _gameView->setStage(_stage, _viewPos);
     }
+        
+    void GameScene::loadTileDatabase(const char* filename)
+    {
+        FileStreamBuf dbStream(filename);
+        if (!dbStream)
+            return;
+        
+        ovengine::TileDatabaseLoader tileDbLoader(_tileDb);
+        tileDbLoader.unserialize(dbStream,
+            [this](const char* atlasName) -> cinek_bitmap_atlas
+            {
+                char path[MAX_PATH];
+                snprintf(path, sizeof(path), "textures/%s", atlasName);
+                return _bitmapLibrary.loadAtlas(path);
+            },
+            [this](cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+            {
+                const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
+                if (!bitmapAtlas)
+                    return kCinekBitmapIndex_Invalid;
+                return bitmapAtlas->getBitmapIndex(name);
+            });
+    }
+    
+    void GameScene::loadSpriteDatabase(const char* filename)
+    {
+        FileStreamBuf dbStream(filename);
+        if (!dbStream)
+            return;
+        
+        ovengine::SpriteDatabaseLoader spriteDbLoader(_spriteDb);
+        spriteDbLoader.unserialize(dbStream,
+            [this](const char* atlasName) -> cinek_bitmap_atlas
+            {
+               char path[MAX_PATH];
+               snprintf(path, sizeof(path), "textures/%s", atlasName);
+               return _bitmapLibrary.loadAtlas(path);
+            },
+            [this]( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+            {
+               const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
+               if (!bitmapAtlas)
+                   return kCinekBitmapIndex_Invalid;
+               return bitmapAtlas->getBitmapIndex(name);
+            });
+    }
+
 
     void GameScene::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
     {

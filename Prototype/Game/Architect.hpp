@@ -19,7 +19,7 @@ namespace cinekine { namespace prototype {
     class Architect
     {
     public:
-        Architect(ovengine::Map& map,
+        Architect(ovengine::Stage& map,
                   const ovengine::TileDatabase& tileTemplates,
                   const Allocator& allocator);
 
@@ -50,7 +50,7 @@ namespace cinekine { namespace prototype {
         };
         
         const ovengine::TileDatabase& _tileTemplates;
-        ovengine::Map& _map;
+        ovengine::Stage& _map;
         unique_ptr<ovengine::Builder> _builder;
         vector<Room> _rooms;
         

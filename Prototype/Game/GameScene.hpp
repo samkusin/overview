@@ -13,6 +13,9 @@
 #include "Prototype/Game/Architect.hpp"
 
 #include "Engine/Component/Window/WindowComponentCLI.hpp"
+#include "Engine/Model/TileDatabase.hpp"
+#include "Engine/Model/SpriteDatabase.hpp"
+
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
@@ -49,13 +52,19 @@ namespace cinekine {
         virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod);
 
     private:
+        void loadTileDatabase(const char* filename);
+        void loadSpriteDatabase(const char* filename);
+    private:
         Allocator _allocator;
         SceneController& _sceneController;
         ovengine::WindowComponentCLI& _ui;
+        
         glx::RendererCLI& _renderer;
-
         glx::BitmapLibrary _bitmapLibrary;
         glx::FontLibrary _fontLibrary;
+        
+        ovengine::TileDatabase _tileDb;
+        ovengine::SpriteDatabase _spriteDb;
         
         std::shared_ptr<ovengine::Stage> _stage;
         unique_ptr<Architect> _architect;

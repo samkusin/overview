@@ -7,7 +7,6 @@
 //
 
 #include "Architect.hpp"
-#include "Engine/Builder/BuilderTypes.hpp"
 
 #include <cstdlib>
 
@@ -43,7 +42,7 @@ namespace cinekine { namespace prototype {
     }
 
 
-    Architect::Architect(ovengine::Map& map,
+    Architect::Architect(ovengine::Stage& map,
                          const ovengine::TileDatabase& tileTemplates,
                          const Allocator& allocator) :
         _allocator(allocator),

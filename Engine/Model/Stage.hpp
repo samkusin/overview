@@ -9,9 +9,7 @@
 #ifndef Overview_Model_Stage_hpp
 #define Overview_Model_Stage_hpp
 
-#include "Engine/Model/Map.hpp"
-#include "Engine/Model/TileDatabase.hpp"
-#include "Engine/Model/SpriteDatabase.hpp"
+#include "Engine/Model/StageTypes.hpp"
 
 #include "cinek/allocator.hpp"
 
@@ -19,6 +17,10 @@
 namespace cinekine {
     namespace glx {
         class BitmapLibrary;
+    }
+    namespace ovengine {
+        class TileDatabase;
+        class SpriteDatabase;
     }
 }
 
@@ -29,12 +31,11 @@ namespace cinekine { namespace ovengine {
     public:
         struct ResourceCounts
         {
-            uint16_t tileLimit = 16;
             uint16_t spriteLimit = 16;
-            uint16_t entityLimit = 16;
         };
 
-        Stage(glx::BitmapLibrary& bitmapLibrary,
+        Stage(const TileDatabase& tileDb,
+              const SpriteDatabase& spriteDb,
               const ResourceCounts& counts,
               const MapBounds& bounds,
               const Allocator& allocator);
@@ -42,26 +43,37 @@ namespace cinekine { namespace ovengine {
         const TileDatabase& tileDatabase() const {
             return _tileDb;
         }
-        void loadTileDatabase(const char* filename);
-
         const SpriteDatabase& spriteDatabase() const {
             return _spriteDb;
         }
-        void loadSpriteDatabase(const char* filename);
 
-        const Map& map() const {
-            return _map;
+        /**
+         * Retrieve map coordinate bounds.
+         * Can be used to calculate an index into a tile array.
+         * @return  Reference to the map bounds structure.
+         */
+        const MapBounds& bounds() const {
+            return _bounds;
         }
-        Map& map() {
-            return _map;
-        }
+
+        /**
+         * Retrieve the tilemap at the specified Z layer.
+         * @param z     A z-value in the range [zDown, zUp]
+         * @return      A pointer to a tile map.
+         */
+        Tilemap* tilemapAtZ(int16_t z);
+        /**
+         * Retrieve the const tilemap at the specified Z layer.
+         * @param z     A z-value in the range [zDown, zUp]
+         * @return      A const pointer to a tile map.
+         */
+        const Tilemap* tilemapAtZ(int16_t z) const;
 
     private:
-        Allocator _allocator;
-        glx::BitmapLibrary& _bitmapLibrary;
-        TileDatabase _tileDb;
-        SpriteDatabase _spriteDb;
-        Map _map;
+        const TileDatabase& _tileDb;
+        const SpriteDatabase& _spriteDb;
+        MapBounds _bounds;
+        vector<Tilemap> _tilemaps;
     };
 
 

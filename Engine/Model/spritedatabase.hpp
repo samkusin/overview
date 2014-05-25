@@ -71,12 +71,14 @@ public:
      * @param  name      Name of the template.
      * @param  classId   The bitmap class used for all bitmaps referenced in
      *                   the template.
+     * @param  anchor    Anchor pixel offset from origin
      * @param  numStates The animation state count.
      * @return           Pointer to a SpriteTemplate or nullptr if out of
      *                   memory.
      */
     Sprite* createOrModifyFromName(const char* name,
         cinek_bitmap_atlas classId,
+        const glm::ivec2& anchor,
         uint16_t numStates);
     /**
      * Maps animation state name to a numeric ID.  Numeric IDs are used

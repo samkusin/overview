@@ -15,10 +15,13 @@
 namespace cinekine {
     namespace ovengine {
 
-Sprite::Sprite(cinek_bitmap_atlas bitmapClass, uint16_t numStates,
-                               const Allocator& allocator) :
-    _allocator { allocator },
-    _bitmapClass{ bitmapClass },
+Sprite::Sprite(cinek_bitmap_atlas bitmapClass,
+               const glm::ivec2& anchor,
+               uint16_t numStates,
+               const Allocator& allocator) :
+    _allocator( allocator ),
+    _bitmapClass( bitmapClass ),
+    _anchor( anchor ),
     _statePool( numStates, allocator ),
     _states(std_allocator<SpriteAnimation*>(allocator))
 {

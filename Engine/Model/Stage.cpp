@@ -7,72 +7,52 @@
 //
 
 #include "Stage.hpp"
-#include "SpriteDatabaseLoader.hpp"
-#include "TileDatabaseLoader.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Core/FileStreamBuf.hpp"
-#include "Graphics/BitmapLibrary.hpp"
 
 namespace cinekine { namespace ovengine {
 
-    Stage::Stage(glx::BitmapLibrary& bitmapLibrary,
+    Stage::Stage(const TileDatabase& tileDb,
+                 const SpriteDatabase& spriteDb,
                  const ResourceCounts& counts,
                  const MapBounds& bounds,
                  const Allocator& allocator) :
-        _allocator(allocator),
-        _bitmapLibrary(bitmapLibrary),
-        _tileDb(counts.tileLimit, _allocator),
-        _spriteDb(counts.spriteLimit, _allocator),
-        _map(bounds, _allocator)
+        _tileDb(tileDb),
+        _spriteDb(spriteDb),
+        _bounds(bounds),
+        _tilemaps(std_allocator<Tilemap>(allocator))
     {
+        //  validation
+        //
+        if (!_bounds.xUnits || !_bounds.yUnits || !_bounds.zUnits)
+        {
+            OVENGINE_LOG_ERROR("Stage - Invalid bounds specified (%u x %u)", _bounds.xUnits, _bounds.yUnits);
+            _bounds.xUnits = 1;
+            _bounds.yUnits = 1;
+            _bounds.zUnits = 1;
+        }
 
+        //  allocate tilemaps
+        //      Tilemaps are not copyable - so can't initialize via initializer lists.
+        _tilemaps.reserve(_bounds.zUnits);
+        for (int32_t i = 0; i < _bounds.zUnits; ++i)
+        {
+            _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, std_allocator<Tile>(allocator)});
+        }
     }
 
-    void Stage::loadTileDatabase(const char* filename)
+    Tilemap* Stage::tilemapAtZ(int16_t z)
     {
-        FileStreamBuf dbStream(filename);
-        if (!dbStream)
-            return;
-
-        TileDatabaseLoader tileDbLoader(_tileDb);
-        tileDbLoader.unserialize(dbStream,
-              [this](const char* atlasName) -> cinek_bitmap_atlas
-              {
-                  char path[MAX_PATH];
-                  snprintf(path, sizeof(path), "textures/%s", atlasName);
-                  return _bitmapLibrary.loadAtlas(path);
-              },
-              [this](cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-              {
-                  const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
-                  if (!bitmapAtlas)
-                      return kCinekBitmapIndex_Invalid;
-                  return bitmapAtlas->getBitmapIndex(name);
-              });
+        if (z < 0 || z >= _bounds.zUnits)
+            return nullptr;
+        return &_tilemaps[z];
     }
 
-    void Stage::loadSpriteDatabase(const char* filename)
+    const Tilemap* Stage::tilemapAtZ(int16_t z) const
     {
-        FileStreamBuf dbStream(filename);
-        if (!dbStream)
-            return;
-
-        SpriteDatabaseLoader spriteDbLoader(_spriteDb);
-        spriteDbLoader.unserialize(dbStream,
-            [this](const char* atlasName) -> cinek_bitmap_atlas
-            {
-                char path[MAX_PATH];
-                snprintf(path, sizeof(path), "textures/%s", atlasName);
-                return _bitmapLibrary.loadAtlas(path);
-            },
-            [this]( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-            {
-                const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
-                if (!bitmapAtlas)
-                    return kCinekBitmapIndex_Invalid;
-                return bitmapAtlas->getBitmapIndex(name);
-            });
+        if (z < 0 || z >= _bounds.zUnits)
+            return nullptr;
+        return &_tilemaps[z];
     }
 
 } /* namespace ovengine */ } /* namespace cinekine */

@@ -10,7 +10,7 @@
 #define Overview_GameView_hpp
 
 #include "Engine/View.hpp"
-#include "Engine/Model/Map.hpp"
+#include "Engine/Model/Stage.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Graphics/Graphics2D.hpp"
 

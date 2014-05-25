@@ -26,7 +26,7 @@
 #define Overview_Builder_Hpp
 
 #include "Engine/Builder/BuilderTypes.hpp"
-#include "Engine/Model/Map.hpp"
+#include "Engine/Model/Stage.hpp"
 
 #include "cinek/vector.hpp"
 
@@ -74,7 +74,7 @@ namespace cinekine { namespace ovengine {
     class Builder
     {
     public:
-        Builder(Map& map,
+        Builder(Stage& map,
                 const TileDatabase& tileTemplates,
                 uint32_t roomLimit,
                 const Allocator& allocator);
@@ -126,7 +126,7 @@ namespace cinekine { namespace ovengine {
 
     private:
         Allocator _allocator;
-        Map& _map;
+        Stage& _map;
         const TileDatabase& _tileTemplates;
 
         vector<Region> _regions;
