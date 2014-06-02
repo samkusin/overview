@@ -10,6 +10,7 @@
 #define CK_Graphics_RenderTypes_hpp
 
 #include "cinek/types.hpp"
+#include "cinek/string.hpp"
 
 //  commonly used glm headers
 #include <glm/gtc/type_precision.hpp>
@@ -27,6 +28,15 @@ namespace cinekine {
     const FontHandle kFontHandle_Invalid = (FontHandle)(-1);
     /** The 'default' found */
     const FontHandle kFontHandle_Default = (FontHandle)(0);
+    //  Information used to render a bitmap.
+    struct BitmapInfo
+    {
+        uint16_t x, y, w, h;
+        uint16_t offX, offY, offW, offH;
+        uint16_t srcW, srcH;
+        string name;
+        BitmapInfo(const Allocator& allocator=Allocator()): name(string_allocator(allocator)) {}
+    };
 
     }   // namespace glx
 }   // namespace cinekine

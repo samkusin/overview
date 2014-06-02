@@ -10,6 +10,7 @@
 #define CK_Graphics_BitmapAtlas_hpp
 
 #include "Texture.hpp"
+#include "RenderTypes.hpp"
 
 #include "cinek/memorypool.hpp"
 #include "cinek/string.hpp"
@@ -20,16 +21,6 @@
 
 namespace cinekine {
     namespace glx {
-
-    //  Information used to render a bitmap.
-    struct BitmapInfo
-    {
-        uint16_t x, y, w, h;
-        uint16_t offX, offY, offW, offH;
-        uint16_t srcW, srcH;
-        string name;
-        BitmapInfo(const Allocator& allocator=Allocator()): name(string_allocator(allocator)) {}
-    };
 
     //  Contains bitmaps mapped by name to index
     //  Indices remain valid for the duration of the atlas object.  This is because

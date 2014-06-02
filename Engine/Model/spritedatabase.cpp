@@ -17,24 +17,15 @@ SpriteDatabase::SpriteDatabase(size_t initTemplateLimit, const Allocator& alloca
     _allocator(allocator),
     _templatePool(initTemplateLimit, allocator),
     _nameToAnimIds(std_allocator<std::pair<string, AnimationStateId>>(allocator)),
-    _nameToIds(std_allocator<std::pair<string, SpriteId>>(allocator)),
-    _idToTemplates(std_allocator<std::pair<SpriteId, SpriteTemplate*> >(allocator))
+    _nameToTemplates(std_allocator<std::pair<string, Sprite*>>(allocator))
 {
 }
 
-const Sprite* SpriteDatabase::sprite(SpriteId id) const
+const Sprite* SpriteDatabase::spriteByName(const string& templateName) const
 {
-    auto it = _idToTemplates.find(id);
-    if (it == _idToTemplates.end())
+    auto it = _nameToTemplates.find(templateName);
+    if (it == _nameToTemplates.end())
         return nullptr;
-    return it->second;
-}
-
-SpriteId SpriteDatabase::spriteIdByName(const char* templateName) const
-{
-    auto it = _nameToIds.find(templateName);
-    if (it == _nameToIds.end())
-        return kNullSprite;
     return it->second;
 }
 
@@ -54,19 +45,10 @@ Sprite* SpriteDatabase::createOrModifyFromName(const char* name,
     //  check if a sprite of that name exists, if so use that sprite's id,
     //  and replace the old template with a new one.
     //  otherwise just create a new one.
-    auto itId = _nameToIds.find(string(name));
-    SpriteId id;
-    if (itId != _nameToIds.end())
-    {
-        id = itId->second;
-    }
-    else {
-        id = _nameToIds.size()+1;
-    }
-
+    string templateName(name);
+    auto itTemplate = _nameToTemplates.find(templateName);
     Sprite* theTemplate;
-    auto itTemplate = _idToTemplates.find(id);
-    if (itTemplate != _idToTemplates.end())
+    if (itTemplate != _nameToTemplates.end())
     {
         theTemplate = itTemplate->second;
         theTemplate->~Sprite();
@@ -75,7 +57,7 @@ Sprite* SpriteDatabase::createOrModifyFromName(const char* name,
     else
     {
         theTemplate = _templatePool.allocateAndConstruct(classId, anchor, numStates, _allocator);
-        _idToTemplates.emplace(id, theTemplate);
+        _nameToTemplates.emplace(templateName, theTemplate);
     }
     return theTemplate;
 }

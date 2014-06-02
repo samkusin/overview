@@ -114,7 +114,7 @@ public:
      * @param  rows     Number of rows to fill
      * @param  cols     Number of columns to fill
      */
-    void fillWithValue(Value value,
+    void fillWithValue(const Value& value,
                        uint32_t row, uint32_t col, uint32_t rows, uint32_t cols);
 
 private:
@@ -295,6 +295,9 @@ Grid<Value, Allocator>::Grid(uint32_t rowCount, uint32_t columnCount,
     _colCount(columnCount)
 {
     _data = _allocator.allocate(_rowCount * _colCount);
+    size_t kCellCount = _rowCount * _colCount;
+    for (size_t i = 0; i < kCellCount; ++i)
+        _allocator.construct(&_data[i]);
 }
 
 template<typename Value, class Allocator>
@@ -302,6 +305,9 @@ Grid<Value, Allocator>::~Grid()
 {
     if (_data != nullptr)
     {
+        size_t kCellCount = _rowCount * _colCount;
+        for (size_t i = 0; i < kCellCount; ++i)
+            _allocator.destroy(&_data[i]);
         _allocator.deallocate(_data, _rowCount * _colCount);
     }
 }
@@ -373,7 +379,7 @@ typename Grid<Value,Allocator>::row_strip
 }
 
 template<typename Value, class Allocator>
-void Grid<Value, Allocator>::fillWithValue(Value value,
+void Grid<Value, Allocator>::fillWithValue(const Value& value,
                         uint32_t row, uint32_t col,
                         uint32_t rows, uint32_t cols)
 {

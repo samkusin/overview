@@ -115,6 +115,7 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabase.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageSpriteInstance.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
@@ -124,7 +125,6 @@ set( PROJECT_SOURCES
 set( PROJECT_INCLUDES
      ${COMPONENT_INCLUDES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabase.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelInstance.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabase.hpp
@@ -132,6 +132,7 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/BitmapDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageSpriteInstance.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.hpp

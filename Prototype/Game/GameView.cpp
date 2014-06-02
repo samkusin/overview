@@ -34,9 +34,8 @@ namespace cinekine {
         _bitmapLibrary(bitmapLibrary),
         _graphics(renderer, bitmapLibrary, fontLibrary),
         _screenViewLeft(0), _screenViewTop(0),
-        _currentAtlasIndex(kCinekBitmapAtlas_Invalid),
-        _currentAtlas(nullptr),
-        _tilemap(nullptr)
+        _tilemap(nullptr),
+        _renderItemsCount(0)
     {
 
     }
@@ -100,10 +99,9 @@ namespace cinekine {
     //  called "world" for the purposes of this view.
     glm::vec3 GameView::xlatMapToWorldPos(const glm::vec3& pos)
     {
-        glm::vec3 worldPos;
-        worldPos.x = TILE_WIDTH * (pos.x - pos.y)/2;
-        worldPos.y = TILE_HEIGHT * (pos.x + pos.y)/2;
-        worldPos.z = pos.z;
+        glm::vec3 worldPos(TILE_WIDTH * (pos.x - pos.y)/2,
+                           TILE_HEIGHT * (pos.x + pos.y)/2,
+                           pos.z);
         return worldPos;
     }
 
@@ -152,9 +150,8 @@ namespace cinekine {
         
     void GameView::renderReset()
     {
-        _currentAtlasIndex = kCinekBitmapAtlas_Invalid;
-        _currentAtlas = nullptr;
         _mapBounds = _stage->bounds();
+        _renderItemsCount = 0;
     }
         
     void GameView::renderTileMap(int tileZ)
@@ -190,9 +187,7 @@ namespace cinekine {
                 if (mapPos.y >= 0.f && mapPos.y < _mapBounds.yUnits &&
                     mapPos.x >= 0.f && mapPos.x < _mapBounds.xUnits)
                 {
-                    auto tile = _tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
-                    renderTile(tile, worldTilePos, 0);
-                    renderTile(tile, worldTilePos, 1);
+                    renderTile(worldTilePos, mapPos);
                 }
                 worldX += TILE_WIDTH;
             }
@@ -201,42 +196,105 @@ namespace cinekine {
         }
     }
         
-    void GameView::renderTile(const ovengine::Tile& tile, const glm::vec3& worldPos, int layer)
+    void GameView::renderTile(const glm::vec3& worldPos,
+                              const glm::vec3& mapPos)
     {
-        //  find world tile from X,Y
-        glm::vec3 mapPos = xlatWorldToMapPos(worldPos);
-        if (mapPos.y >= 0.f && mapPos.y < _mapBounds.yUnits &&
-            mapPos.x >= 0.f && mapPos.x < _mapBounds.xUnits)
-        {
-            //  our 2d draw anchor is the lower left of our isotile.
-            float tileLocalOX = worldPos.x - TILE_HALFWIDTH;
-            float tileLocalOY = worldPos.y + TILE_HEIGHT;
-            int32_t screenOX = tileLocalOX - _worldViewBounds.min.x + _screenViewLeft;
-            int32_t screenOY = tileLocalOY - _worldViewBounds.min.y + _screenViewTop;
         
-            const auto& tileInfo = _stage->tileDatabase().tileInfo(tile.layer[layer]);
-            if (_currentAtlasIndex != tileInfo.bitmap.bmpAtlas)
+        //  find world tile from X,Y
+        //  our world draw anchor is the lower-y, center-x of our isotile.
+        float tileWorldDrawX = worldPos.x;
+        float tileWorldDrawY = worldPos.y + TILE_HEIGHT;
+
+        auto tile = _tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
+        
+        //  render layer 0 - floor, this is always rendered first
+        auto& tileInfo0 = _stage->tileInfo(tile.layer[0]);
+        
+        auto atlas = _bitmapLibrary.getAtlas(tileInfo0.bitmap.bmpAtlas);
+        if (atlas)
+        {
+            auto bitmapInfo = atlas->getBitmapFromIndex(tileInfo0.bitmap.bmpIndex);
+            if (bitmapInfo)
             {
-                _currentAtlas = _bitmapLibrary.getAtlas(tileInfo.bitmap.bmpAtlas);
-                _currentAtlasIndex = tileInfo.bitmap.bmpAtlas;
-            }
-            
-            if (_currentAtlas)
-            {
-                const glx::BitmapInfo* bitmapInfo = _currentAtlas->getBitmapFromIndex(tileInfo.bitmap.bmpIndex);
-                if (bitmapInfo)
-                {
-                    glx::RGBAColor color(255,255,255,(uint8_t)(1.0*255));
-                    glx::Rect srcRect(bitmapInfo->x, bitmapInfo->y,
-                                      bitmapInfo->x+bitmapInfo->w, bitmapInfo->y+bitmapInfo->h);
-                    glx::Rect destRect = glx::Rect::rectFromDimensions(screenOX + bitmapInfo->offX,
-                                                             screenOY - bitmapInfo->srcH + bitmapInfo->offY,
-                                                             bitmapInfo->offW,
-                                                             bitmapInfo->offH);
-                    _renderer.drawTextureRect(_currentAtlas->getTexture(), srcRect, destRect, color);
-                }
+                int32_t screenOX = tileWorldDrawX - _worldViewBounds.min.x + _screenViewLeft;
+                int32_t screenOY = tileWorldDrawY - _worldViewBounds.min.y + _screenViewTop;
+                renderBitmap(atlas->getTexture(), *bitmapInfo,
+                             screenOX,
+                             screenOY);
             }
         }
+        
+        //  render layer 1 - walls, sprites via the render list
+        //  render order is determined by the tile's role (wall, position, etc)
+        auto& tileInfo1 = _stage->tileInfo(tile.layer[1]);
+        /*
+        bool queueTile = (tileInfo1.flags & ovengine::kTileRole_Floor);
+        if (tileInfo1.flags & ovengine::kTileRole_Wall)
+        {
+            if (tileInfo1.flags & ovengine::kTileDirections_North)
+                
+        }
+        queueTile |= (tileInfo1.flags & ovengine::kTileRole_Wall)
+        */
+        renderQueueBitmap(tileInfo1.bitmap,
+                          glm::vec3(tileWorldDrawX, tileWorldDrawY, worldPos.z));
+        
+        renderQueueFlush();
+    }
+        
+    void GameView::renderQueueBitmap(const cinek_bitmap& bitmap, const glm::vec3& worldPos)
+    {
+        if (_renderItemsCount >= _renderItems.size())
+            return;
+        
+        auto atlas = _bitmapLibrary.getAtlas(bitmap.bmpAtlas);
+        auto bmpInfo = atlas ?  atlas->getBitmapFromIndex(bitmap.bmpIndex) : nullptr;
+        if (!bmpInfo)
+            return;
+        
+        _renderItems[_renderItemsCount].bmpAtlas = atlas.get();
+        _renderItems[_renderItemsCount].bmpInfo = bmpInfo;
+        _renderItems[_renderItemsCount].pos.x = worldPos.x;
+        _renderItems[_renderItemsCount].pos.y = worldPos.y;
+        _renderItems[_renderItemsCount].pos.z = worldPos.z;
+        _renderItemsSorted[_renderItemsCount] = &_renderItems[_renderItemsCount];
+        ++_renderItemsCount;
+    }
+    
+    void GameView::renderQueueFlush()
+    {
+        /*std::sort(_renderItemsSorted.begin(), _renderItemsSorted.begin()+_renderItemsCount,
+                  [](const RenderItem* first, const RenderItem* second)
+                  {
+                      
+                  });
+         */
+        while (_renderItemsCount)
+        {
+            --_renderItemsCount;
+            auto& item = *_renderItemsSorted[_renderItemsCount];
+            //  render to the screen (from world)
+            renderBitmap(item.bmpAtlas->getTexture(), *item.bmpInfo,
+                         item.pos.x - _worldViewBounds.min.x + _screenViewLeft,
+                         item.pos.y - _worldViewBounds.min.y + _screenViewTop);
+           
+        }
+        _renderItemsCount = 0;
+    }
+        
+    void GameView::renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
+                                int32_t sx, int32_t sy)
+    {
+        glx::RGBAColor color(255,255,255,(uint8_t)(1.0*255));
+        glx::Rect srcRect(bitmap.x,
+                          bitmap.y,
+                          bitmap.x + bitmap.w,
+                          bitmap.y + bitmap.h);
+        glx::Rect destRect = glx::Rect::rectFromDimensions(sx + bitmap.offX - bitmap.srcW/2,
+                                                           sy - bitmap.srcH + bitmap.offY,
+                                                           bitmap.offW,
+                                                           bitmap.offH);
+        _renderer.drawTextureRect(texture, srcRect, destRect, color);
     }
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)

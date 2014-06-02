@@ -45,19 +45,12 @@ public:
     SpriteDatabase(size_t initTemplateLimit,
                    const Allocator& allocator=Allocator());
     /**
-     * Finds a SpriteTemplate given its ID.
-     *
-     * @param  id The Sprite Template ID
-     * @return    Pointer to the Sprite Template (or NULL.)
-     */
-    const Sprite* sprite(SpriteId id) const;
-    /**
      * Returns a SpriteTemplate ID given its name.
      *
      * @param  templateName SpriteTemplate name.
      * @return              The ID or kCinekSpriteTemplate_Null.
      */
-    SpriteId spriteIdByName(const char* templateName) const;
+    const Sprite* spriteByName(const string& templateName) const;
     /**
      * Returns the animation ID given its state name.
      *
@@ -104,8 +97,7 @@ private:
         std_allocator<std::pair<const Key, T>> >;
 
     unordered_map<string, AnimationStateId> _nameToAnimIds;
-    unordered_map<string, SpriteId> _nameToIds;
-    unordered_map<SpriteId, Sprite* > _idToTemplates;
+    unordered_map<string, Sprite*> _nameToTemplates;
 };
 
     }   // namespace ovengine

@@ -83,7 +83,7 @@ namespace cinekine { namespace ovengine {
         for (uint32_t z = 0; z < bounds.zUnits; ++z)
         {
             Tilemap* tilemap = _map.tilemapAtZ(z);
-            Tile zeroTile = { 0, 0 };
+            Tile zeroTile;
             tilemap->fillWithValue(zeroTile, 0, 0, bounds.yUnits, bounds.xUnits);
         }
 

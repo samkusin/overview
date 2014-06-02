@@ -15,6 +15,7 @@
 #include "Engine/Model/Stage.hpp"
 #include "Engine/Model/SpriteDatabaseLoader.hpp"
 #include "Engine/Model/TileDatabaseLoader.hpp"
+#include "Engine/Model/StageSpriteInstance.hpp"
 
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
@@ -84,7 +85,7 @@ namespace cinekine {
         loadSpriteDatabase("sprites_common.json");
         _architect = unique_ptr<Architect>(
                         _allocator.newItem<Architect>(*_stage,
-                                                      _stage->tileDatabase(),
+                                                      _tileDb,
                                                       _allocator),
                         _allocator);
 
@@ -100,9 +101,11 @@ namespace cinekine {
             }
         }
         
-        //  add the avatar 
         
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
+        
+        auto avatarSprite = _stage->createSpriteInstance("warrior", _viewPos);
+        
         _gameView->setStage(_stage, _viewPos);
     }
         

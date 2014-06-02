@@ -37,7 +37,9 @@ Sprite::~Sprite()
 }
 
 Sprite::Sprite(Sprite&& other) :
+    _allocator(std::move(other._allocator)),
     _bitmapClass(other._bitmapClass),
+    _anchor(std::move(other._anchor)),
     _statePool(std::move(other._statePool)),
     _states(std::move(other._states))
 {
@@ -47,7 +49,9 @@ Sprite::Sprite(Sprite&& other) :
 Sprite& Sprite::operator=(Sprite&& other)
 {
     _bitmapClass = other._bitmapClass;
+    _allocator = std::move(other._allocator);
     other._bitmapClass = kCinekBitmapAtlas_Invalid;
+    other._anchor = std::move(other._anchor);
     _statePool = std::move(other._statePool);
     _states = std::move(other._states);
     return *this;

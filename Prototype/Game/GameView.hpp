@@ -13,8 +13,11 @@
 #include "Engine/Model/Stage.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Graphics/Graphics2D.hpp"
+#include "Graphics/RenderTypes.hpp"
 
 #include "cinek/allocator.hpp"
+
+#include <array>
 
 
 namespace cinekine {
@@ -57,9 +60,12 @@ namespace cinekine {
         
         void renderReset();
         void renderTileMap(int tileZ);
-        void renderTile(const ovengine::Tile& tile, const glm::vec3& worldPos, int layer);
-        void renderSprite(const ovengine::Sprite& sprite);
-
+        void renderTile(const glm::vec3& worldPos, const glm::vec3& mapPos);
+        void renderQueueBitmap(const cinek_bitmap& bitmap, const glm::vec3& worldPos);
+        void renderQueueFlush();
+        void renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
+                          int32_t x, int32_t y);
+        
     private:
         std::shared_ptr<ovengine::Stage> _stage;
         glx::RendererCLI& _renderer;
@@ -76,10 +82,20 @@ namespace cinekine {
         ViewBounds _worldViewAlignedBounds;
         int32_t _screenViewLeft, _screenViewTop;
 
-        cinek_bitmap_atlas _currentAtlasIndex;
-        std::shared_ptr<glx::BitmapAtlas> _currentAtlas;
         ovengine::MapBounds _mapBounds;
         ovengine::Tilemap* _tilemap;
+        
+        //  used for rendering
+        struct RenderItem
+        {
+            glm::vec3 pos;
+            const glx::BitmapAtlas* bmpAtlas;
+            const glx::BitmapInfo* bmpInfo;
+        };
+        
+        std::array<RenderItem, 16> _renderItems;
+        std::array<RenderItem*, 16> _renderItemsSorted;
+        uint32_t _renderItemsCount;
     };
 
     }

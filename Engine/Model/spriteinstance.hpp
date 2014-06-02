@@ -10,7 +10,7 @@
 #ifndef Overview_SpriteInstance_hpp
 #define Overview_SpriteInstance_hpp
 
-#include "Engine/Model/ModelInstance.hpp"
+#include "Engine/Model/ModelTypes.hpp"
 #include "cinek/types.hpp"
 
 #include <glm/glm.hpp>
@@ -20,12 +20,12 @@ namespace cinekine {
 
     class Sprite;
     class SpriteAnimation;
-
+    class Stage;
     /**
      * @class SpriteInstance
      * @brief A model representing a collection of one of more bitmaps.
      */
-    class SpriteInstance: public ModelInstance
+    class SpriteInstance
     {
         CK_CLASS_NON_COPYABLE(SpriteInstance);
 
@@ -38,7 +38,9 @@ namespace cinekine {
         /**
          * Destructor
          */
-        virtual ~SpriteInstance();
+        ~SpriteInstance();
+
+        SpriteInstance(SpriteInstance&& other);
 
         /**
          * Returns the bitmap atlas (ID) associated with this sprite.  All
@@ -47,11 +49,11 @@ namespace cinekine {
          *
          * @return The bitmap atlas ID
          */
-        cinek_bitmap_atlas getBitmapAtlas() const;
+        cinek_bitmap_atlas bitmapAtlas() const;
         /**
          * @return Returns the number of frames in the state animation.
          */
-        uint16_t getBitmapFrameCount() const;
+        uint16_t bitmapFrameCount() const;
         /**
          * Returns a bitmap index given a time value following the start time
          * specified when setting the state.  As long as the start time value and
@@ -61,13 +63,13 @@ namespace cinekine {
          * @param  currentTime Time value following the time specified in setState
          * @return             [description]
          */
-        cinek_bitmap_index getBitmapFromTime(uint32_t currentTime) const;
+        cinek_bitmap_index bitmapFromTime(uint32_t currentTime) const;
          /**
          * Returns the bitmap at the specified frame index.
          * @param  index Frame index.
          * @return       Bitmap index.
          */
-        cinek_bitmap_index getBitmapFrame(uint16_t index) const;
+        cinek_bitmap_index bitmapFrame(uint16_t index) const;
 
         /**
          * Sets the sprite's state.  State relies on the sprite template's
@@ -75,15 +77,14 @@ namespace cinekine {
          * @param stateId   The animation state
          * @param startTime The animation start time used to time animations
          */
-        virtual void setState(AnimationStateId stateId,
-                              uint32_t startTime);
+        void setState(AnimationStateId stateId,
+                      uint32_t startTime);
 
     private:
         const Sprite& _template;
         uint32_t _startTime;
         AnimationStateId _stateId;
         SpriteAnimation* _animation;
-        glm::vec3 _worldPos;
     };
 
     } /* rendermodel */
