@@ -89,19 +89,7 @@ namespace cinekine {
                                                       _allocator),
                         _allocator);
 
-        //  prepopulate map.
-        auto* tilemap = _stage->tilemapAtZ(0);
-        for (uint32_t row = 0; row < tilemap->rowCount(); ++row)
-        {
-            ovengine::Tilemap::row_strip tileRow = tilemap->atRow(row, 0);
-            while (tileRow.first != tileRow.second)
-            {
-                tileRow.first->layer[0] = 0x0002;
-                ++tileRow.first;
-            }
-        }
-        
-        
+
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
         
         auto avatarSprite = _stage->createSpriteInstance("warrior", _viewPos);

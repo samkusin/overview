@@ -140,6 +140,7 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream,
             TileId tileIndex;
             uint8_t tileClass = 0;
             uint16_t tileFlags = 0;
+            AABB aabb;
             if (tile.value.IsObject())
             {
                 const auto& tileData = tile.value;
@@ -167,6 +168,11 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream,
                         const char* flagsStr = tileAttr.value.GetString();
                         tileFlags = parseFlagsToUint(flags, flagsStr);
                     }
+                    else if (!strcmp(tileAttrName, "aabb"))
+                    {
+                        aabb.min = parseVec3(tileAttr.value["min"]);
+                        aabb.max = parseVec3(tileAttr.value["max"]);
+                    }
                 }
             }
             else if (tile.value.IsUint())
@@ -181,15 +187,12 @@ bool TileDatabaseLoader::unserialize(std::streambuf& instream,
                                    tile.name.GetString());
                 continue;
             }
-            TileInfo tileInfo= {
-                {
-                    bitmapAtlasId,
-                    bitmapReqCb(bitmapAtlasId, tile.name.GetString())
-                },
-                categoryIndex,
-                tileClass,
-                tileFlags
-            };
+            Tile tileInfo;
+            tileInfo.bitmap = { bitmapAtlasId,
+                                bitmapReqCb(bitmapAtlasId, tile.name.GetString()) };
+            tileInfo.categoryIndex = categoryIndex;
+            tileInfo.classIndex = tileClass;
+            tileInfo.flags = tileFlags;
             _db.mapTileToInfo(tileIndex, tileInfo);
         }
     }

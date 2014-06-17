@@ -44,7 +44,6 @@
 		374931441904A72E002C7DE3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		374931461904A73B002C7DE3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
-		3761602517E67B6600841467 /* DroidSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DroidSans.ttf; path = "../../../Prototype-Data/Built/DroidSans.ttf"; sourceTree = "<group>"; };
 		37A9CE4019316F3A0065CAA8 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
 		37A9CE4119316F3A0065CAA8 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../build-xcode/cinek/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37A9CE4219316F3A0065CAA8 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../build-xcode/Graphics/Debug/libCKGL.a"; sourceTree = "<group>"; };
@@ -66,9 +65,6 @@
 		37F64AA01780EA2C009116E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		37F64AA41780EA2D009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		37F64ACD1780F295009116E7 /* Settings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Settings.xcconfig; sourceTree = "<group>"; };
-		37F6A44017CAD46500C9EE1C /* bitmaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bitmaps; path = "../../../Prototype-Data/Built/bitmaps"; sourceTree = "<group>"; };
-		37F6A44117CAD46500C9EE1C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = "../../../Prototype-Data/Built/data"; sourceTree = "<group>"; };
-		37F6A44217CAD46500C9EE1C /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = "../../../Prototype-Data/Built/textures"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,7 +165,6 @@
 		37F64A9B1780EA2C009116E7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				37F6A43F17CAD44800C9EE1C /* Built */,
 				37F64A9C1780EA2C009116E7 /* Overview-Info.plist */,
 				37F64A9D1780EA2C009116E7 /* InfoPlist.strings */,
 				37F64AA31780EA2D009116E7 /* Credits.rtf */,
@@ -187,17 +182,6 @@
 				374931401904A707002C7DE3 /* libiconv.dylib */,
 			);
 			name = Libraries;
-			sourceTree = "<group>";
-		};
-		37F6A43F17CAD44800C9EE1C /* Built */ = {
-			isa = PBXGroup;
-			children = (
-				3761602517E67B6600841467 /* DroidSans.ttf */,
-				37F6A44017CAD46500C9EE1C /* bitmaps */,
-				37F6A44117CAD46500C9EE1C /* data */,
-				37F6A44217CAD46500C9EE1C /* textures */,
-			);
-			name = Built;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,7 +312,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PACKAGES_ROOT)",
-					"$(PACKAGES_ROOT)/ext",
 					../..,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -365,7 +348,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PACKAGES_ROOT)",
-					"$(PACKAGES_ROOT)/ext",
 					../..,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -391,6 +373,7 @@
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
@@ -420,6 +403,7 @@
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",

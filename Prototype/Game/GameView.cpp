@@ -208,7 +208,7 @@ namespace cinekine {
         auto tile = _tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
         
         //  render layer 0 - floor, this is always rendered first
-        auto& tileInfo0 = _stage->tileInfo(tile.layer[0]);
+        auto& tileInfo0 = _stage->tile(tile.layer[0]);
         
         auto atlas = _bitmapLibrary.getAtlas(tileInfo0.bitmap.bmpAtlas);
         if (atlas)
@@ -226,16 +226,8 @@ namespace cinekine {
         
         //  render layer 1 - walls, sprites via the render list
         //  render order is determined by the tile's role (wall, position, etc)
-        auto& tileInfo1 = _stage->tileInfo(tile.layer[1]);
-        /*
-        bool queueTile = (tileInfo1.flags & ovengine::kTileRole_Floor);
-        if (tileInfo1.flags & ovengine::kTileRole_Wall)
-        {
-            if (tileInfo1.flags & ovengine::kTileDirections_North)
-                
-        }
-        queueTile |= (tileInfo1.flags & ovengine::kTileRole_Wall)
-        */
+         
+        auto& tileInfo1 = _stage->tile(tile.layer[1]);
         renderQueueBitmap(tileInfo1.bitmap,
                           glm::vec3(tileWorldDrawX, tileWorldDrawY, worldPos.z));
         

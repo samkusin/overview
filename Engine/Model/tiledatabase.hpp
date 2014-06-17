@@ -10,7 +10,7 @@
 #ifndef Overview_Model_TileDatabase_hpp
 #define Overview_Model_TileDatabase_hpp
 
-#include "Engine/Model/ModelTypes.hpp"
+#include "Engine/Model/Tile.hpp"
 
 #include "cinek/debug.hpp"
 #include "cinek/string.hpp"
@@ -58,12 +58,12 @@ public:
      * @param tile   The tile index to map bitmap info to.
      * @param bitmap The bitmap atlas and index used for the specified tile.
      */
-    void mapTileToInfo(TileId tile, const TileInfo& info);
+    void mapTileToInfo(TileId tile, const Tile& info);
     /**
      * @param  tile The tile info to retrieve.
      * @return A TileInfo pair object containing bitmap atlas and index.
      */
-    const TileInfo& tileInfo(TileId tile) const {
+    const Tile& tile(TileId tile) const {
         CK_ASSERT(tile < _tiles.size());
         return _tiles.at(tile);
     }
@@ -83,10 +83,10 @@ public:
                                     uint16_t roleFlags) const;
 
 private:
-    vector< TileInfo > _tiles;
+    vector< Tile > _tiles;
     unordered_map<uint32_t, TileId> _tilesByDescriptor;
 
-    uint32_t makeDescriptor(const TileInfo& tile) const;
+    uint32_t makeDescriptor(const Tile& tile) const;
 };
 
     }   // namespace ovengine

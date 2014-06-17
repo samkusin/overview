@@ -12,17 +12,17 @@
 #include "cinek/types.hpp"
 #include "cinek/rendertypes.h"
 
+#include <glm/glm.hpp>
+
 namespace cinekine { namespace ovengine {
 
     typedef uint16_t TileId;
     typedef uint32_t SpriteInstanceId;
 
-    struct TileInfo
+    struct AABB
     {
-        cinek_bitmap bitmap;            /**< The tile's bitmap */
-        uint8_t categoryIndex;
-        uint8_t classIndex;
-        uint16_t flags;
+        glm::vec3 min;
+        glm::vec3 max;
     };
 
     /** Identifies the animation of a particular model. */

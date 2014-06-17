@@ -78,7 +78,7 @@ namespace cinekine { namespace ovengine {
          * @param  tileId The TileId
          * @return        Reference to the TileInfo
          */
-        const TileInfo& tileInfo(TileId tileId) const;
+        const Tile& tile(TileId tileId) const;
 
         /**
          * Constructs a SpriteInstance from the given template and its initial

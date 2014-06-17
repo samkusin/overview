@@ -10,7 +10,9 @@
 #define CK_Core_JsonUtilities_hpp
 
 #include <rapidjson/document.h>
+#include <glm/glm.hpp>
 #include <cstdlib>
+
 
 namespace cinekine {
 
@@ -19,6 +21,8 @@ namespace cinekine {
 
     int32_t parseInt(const JsonValue& value, int32_t defaultVal=0);
     uint32_t parseUint(const JsonValue& value, uint32_t defaultVal=0);
+
+    glm::vec3 parseVec3(const JsonValue& value, const glm::vec3& defaultVal=glm::vec3());
 
 } /* namespace cinekine */
 

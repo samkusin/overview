@@ -13,14 +13,8 @@ namespace cinekine {
     namespace ovengine {
 
     TileDatabase::TileDatabase(uint16_t tileLimit, const Allocator& allocator) :
-        _tiles(tileLimit, TileInfo {
-                                            {
-                                              kCinekBitmapAtlas_Invalid,
-                                              kCinekBitmapIndex_Invalid
-                                            },
-                                            0, 0, 0
-                                          },
-               std_allocator<TileInfo>(allocator)),
+        _tiles(tileLimit, Tile(),
+               std_allocator<Tile>(allocator)),
         _tilesByDescriptor(std_allocator<std::pair<uint32_t, TileId>>(allocator))
     {
     }
@@ -35,7 +29,7 @@ namespace cinekine {
         _tiles.clear();
     }
 
-    void TileDatabase::mapTileToInfo(TileId tile, const TileInfo& info)
+    void TileDatabase::mapTileToInfo(TileId tile, const Tile& info)
     {
         if (tile >= _tiles.size())
             return;
@@ -50,7 +44,7 @@ namespace cinekine {
                                     uint8_t classId,
                                     uint16_t roleFlags) const
     {
-        TileInfo tile;
+        Tile tile;
         tile.categoryIndex = categoryId;
         tile.classIndex = classId;
         tile.flags = roleFlags;
@@ -62,7 +56,7 @@ namespace cinekine {
         return it->second;
     }
 
-    uint32_t TileDatabase::makeDescriptor(const TileInfo& tile) const
+    uint32_t TileDatabase::makeDescriptor(const Tile& tile) const
     {
         uint32_t descriptor = tile.flags;
         descriptor <<= 8;

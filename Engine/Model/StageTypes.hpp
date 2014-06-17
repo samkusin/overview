@@ -11,6 +11,7 @@
 #define Overview_Model_StageTypes_hpp
 
 #include "Engine/Model/ModelTypes.hpp"
+#include "Engine/Model/Tile.hpp"
 #include "Engine/Grid.hpp"
 
 #include "cinek/allocator.hpp"
@@ -60,25 +61,25 @@ struct MapBounds
     uint16_t zUnits;
 };
 
-struct Tile
+struct TileInstance
 {
     TileId layer[2];
     //  circular linked list of sprites, 0 if there are none
     SpriteInstanceId firstSpriteInstanceId;
-    Tile(): layer {}, firstSpriteInstanceId(0) {}
-    Tile(const Tile& tile) :
+    TileInstance(): layer {}, firstSpriteInstanceId(0) {}
+    TileInstance(const TileInstance& tile) :
         layer { tile.layer[0], tile.layer[1] },
         firstSpriteInstanceId( tile.firstSpriteInstanceId)
     {
     }
-    Tile& operator=(const Tile& tile)
+    TileInstance& operator=(const TileInstance& tile)
     {
         layer[0] = tile.layer[0];
         layer[1] = tile.layer[1];
         firstSpriteInstanceId = tile.firstSpriteInstanceId;
         return *this;
     }
-    Tile(Tile&& tile):
+    TileInstance(TileInstance&& tile):
         layer { tile.layer[0], tile.layer[1] },
         firstSpriteInstanceId(tile.firstSpriteInstanceId)
     {
@@ -89,7 +90,7 @@ struct Tile
 };
 
 /** Defines a grid of tiles */
-typedef Grid<Tile> Tilemap;
+typedef Grid<TileInstance> Tilemap;
 /** Defines a tilemap section */
 typedef GridContainer<Tilemap> TilemapContainer;
 

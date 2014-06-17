@@ -121,8 +121,8 @@ namespace cinekine { namespace ovengine {
                     const TileBrush& brush);
         void paintTileWallCorners(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
                     const TileBrush& brush);
-        bool tileFloorsClassIdEqual(const Tile& tile, uint8_t thisClassId) const;
-        bool tileWallsEqual(const Tile& tile, uint16_t roleFlags, uint8_t classId) const;
+        bool tileFloorsClassIdEqual(const TileInstance& tile, uint8_t thisClassId) const;
+        bool tileWallsEqual(const TileInstance& tile, uint16_t roleFlags, uint8_t classId) const;
 
     private:
         Allocator _allocator;

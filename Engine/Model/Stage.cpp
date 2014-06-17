@@ -62,9 +62,9 @@ namespace cinekine { namespace ovengine {
         return &_tilemaps[z];
     }
 
-    const TileInfo& Stage::tileInfo(TileId tileId) const
+    const Tile& Stage::tile(TileId tileId) const
     {
-        return _tileDb.tileInfo(tileId);
+        return _tileDb.tile(tileId);
     }
 
     std::pair<SpriteInstanceId, StageSpriteInstance*>

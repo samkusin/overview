@@ -83,7 +83,7 @@ namespace cinekine { namespace ovengine {
         for (uint32_t z = 0; z < bounds.zUnits; ++z)
         {
             Tilemap* tilemap = _map.tilemapAtZ(z);
-            Tile zeroTile;
+            TileInstance zeroTile;
             tilemap->fillWithValue(zeroTile, 0, 0, bounds.yUnits, bounds.xUnits);
         }
 
@@ -259,7 +259,7 @@ namespace cinekine { namespace ovengine {
                                         floorBrush.tileClassId,
                                         kTileRole_Floor);
 
-        Tile tile;
+        TileInstance tile;
         tile.layer[0] = floorTileId;
         tile.layer[1] = 0;
 
@@ -295,8 +295,8 @@ namespace cinekine { namespace ovengine {
     void Builder::paintTileWalls(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
                                 const TileBrush& brush)
     {
-        const TileInfo& thisFloorTemplate =
-            _tileTemplates.tileInfo(tileMap.at(tileY, tileX).layer[0]);
+        auto& thisFloorTemplate =
+            _tileTemplates.tile(tileMap.at(tileY, tileX).layer[0]);
 
         //  calculate wall masks, which are used to determine what wall tiles
         //  to display.
@@ -367,13 +367,13 @@ namespace cinekine { namespace ovengine {
                                                 brush.tileClassId,
                                                 wallRoleFlags);
 
-        Tile& thisTile = tileMap.at(tileY, tileX);
+        auto& thisTile = tileMap.at(tileY, tileX);
         thisTile.layer[1] = wallTileHandle;
     }
 
-    bool Builder::tileFloorsClassIdEqual(const Tile& tile, uint8_t thisClassId) const
+    bool Builder::tileFloorsClassIdEqual(const TileInstance& tile, uint8_t thisClassId) const
     {
-        const TileInfo& floorTemplate = _tileTemplates.tileInfo(tile.layer[0]);
+        auto& floorTemplate = _tileTemplates.tile(tile.layer[0]);
         return floorTemplate.classIndex == thisClassId;
     }
 
@@ -383,7 +383,7 @@ namespace cinekine { namespace ovengine {
         uint16_t cornerMask = kTileDirection_N | kTileDirection_W |
                     kTileDirection_S | kTileDirection_E;
 
-        Tile& thisTile = tileMap.at(tileY, tileX);
+        auto& thisTile = tileMap.at(tileY, tileX);
         if (thisTile.layer[1])
         {
             // this tile already has a wall - no need to run tests
@@ -396,7 +396,7 @@ namespace cinekine { namespace ovengine {
 
         if (tileY > 0)
         {
-            const Tile& north = tileMap.at(tileY-1, tileX);
+            auto& north = tileMap.at(tileY-1, tileX);
             //printf("north:[%u,%u], ", north.floor, north.wall);
             if (!tileWallsEqual(north, kTileDirection_W, brush.tileClassId) &&
                 !tileWallsEqual(north, kTileDirection_E, brush.tileClassId) &&
@@ -408,7 +408,7 @@ namespace cinekine { namespace ovengine {
         }
         if (tileX > 0)
         {
-            const Tile& west = tileMap.at(tileY, tileX-1);
+            auto& west = tileMap.at(tileY, tileX-1);
             //printf("west:[%u,%u], ", west.floor, west.wall);
             if (!tileWallsEqual(west, kTileDirection_N, brush.tileClassId) &&
                 !tileWallsEqual(west, kTileDirection_S, brush.tileClassId) &&
@@ -420,7 +420,7 @@ namespace cinekine { namespace ovengine {
         }
         if (tileY < tileMap.rowCount()-1)
         {
-            const Tile& south = tileMap.at(tileY+1, tileX);
+            auto& south = tileMap.at(tileY+1, tileX);
             //printf("south:[%u,%u], ", south.floor, south.wall);
             if (!tileWallsEqual(south, kTileDirection_W, brush.tileClassId) &&
                 !tileWallsEqual(south, kTileDirection_E, brush.tileClassId) &&
@@ -432,7 +432,7 @@ namespace cinekine { namespace ovengine {
         }
         if (tileX < tileMap.columnCount()-1)
         {
-            const Tile& east = tileMap.at(tileY, tileX+1);
+            auto& east = tileMap.at(tileY, tileX+1);
             //printf("east:[%u,%u], ", east.floor, east.wall);
             if (!tileWallsEqual(east, kTileDirection_S, brush.tileClassId) &&
                 !tileWallsEqual(east, kTileDirection_N, brush.tileClassId) &&
@@ -472,9 +472,9 @@ namespace cinekine { namespace ovengine {
         thisTile.layer[1] = wallTileHandle;
     }
 
-    bool Builder::tileWallsEqual(const Tile& tile, uint16_t roleFlags, uint8_t classId) const
+    bool Builder::tileWallsEqual(const TileInstance& tile, uint16_t roleFlags, uint8_t classId) const
     {
-        const TileInfo& wallTemplate = _tileTemplates.tileInfo(tile.layer[1]);
+        auto& wallTemplate = _tileTemplates.tile(tile.layer[1]);
         return wallTemplate.classIndex == classId &&
               (wallTemplate.flags & roleFlags)==roleFlags;
     }
