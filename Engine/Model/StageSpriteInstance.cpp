@@ -62,7 +62,7 @@ void StageSpriteInstance::setPosition(const glm::vec3& pos)
 
 void StageSpriteInstance::detachFromStage()
 {
-    auto tilemap = _stage.tilemapAtZ((int)_pos.z);
+    auto tilemap = _stage.tileGridAtZ((int)_pos.z);
     if (!tilemap)
         return;
     uint32_t oldrow = (uint32_t)_pos.x;
@@ -93,7 +93,7 @@ void StageSpriteInstance::detachFromStage()
 
 void StageSpriteInstance::attachToStage()
 {
-    auto tilemap = _stage.tilemapAtZ((int)_pos.z);
+    auto tilemap = _stage.tileGridAtZ((int)_pos.z);
     if (!tilemap)
         return;
 

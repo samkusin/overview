@@ -1,19 +1,18 @@
-/**
- * @file    rendermodel/spritetemplate.cpp
- *
- * Sprite related data shared across multiple sprite instances.
- *
- * @note    Created by Samir Sinha on 5/18/13.
- *          Copyright (c) 2013 Cinekine. All rights reserved.
- */
+//
+//  SpriteLibrary.cpp
+//  Implementation
+//
+//  Copyright 2013 Cinekine Media All rights reserved
+//  Author: Samir Sinha
+//  License: The MIT License (MIT)
 
-#include "SpriteDatabase.hpp"
-#include "Sprite.hpp"
+#include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/Sprite.hpp"
 
 namespace cinekine {
     namespace ovengine {
 
-SpriteDatabase::SpriteDatabase(size_t initTemplateLimit, const Allocator& allocator) :
+SpriteLibrary::SpriteLibrary(size_t initTemplateLimit, const Allocator& allocator) :
     _allocator(allocator),
     _templatePool(initTemplateLimit, allocator),
     _nameToAnimIds(std_allocator<std::pair<string, AnimationStateId>>(allocator)),
@@ -21,7 +20,7 @@ SpriteDatabase::SpriteDatabase(size_t initTemplateLimit, const Allocator& alloca
 {
 }
 
-const Sprite* SpriteDatabase::spriteByName(const string& templateName) const
+const Sprite* SpriteLibrary::spriteByName(const string& templateName) const
 {
     auto it = _nameToTemplates.find(templateName);
     if (it == _nameToTemplates.end())
@@ -29,7 +28,7 @@ const Sprite* SpriteDatabase::spriteByName(const string& templateName) const
     return it->second;
 }
 
-AnimationStateId SpriteDatabase::animationIDByName(const char* animationName) const
+AnimationStateId SpriteLibrary::animationIDByName(const char* animationName) const
 {
     auto it = _nameToAnimIds.find(animationName);
     if (it == _nameToAnimIds.end())
@@ -37,7 +36,7 @@ AnimationStateId SpriteDatabase::animationIDByName(const char* animationName) co
     return it->second;
 }
 
-Sprite* SpriteDatabase::createOrModifyFromName(const char* name,
+Sprite* SpriteLibrary::createOrModifyFromName(const char* name,
         cinek_bitmap_atlas classId,
         const glm::ivec2& anchor,
         uint16_t numStates)
@@ -62,7 +61,7 @@ Sprite* SpriteDatabase::createOrModifyFromName(const char* name,
     return theTemplate;
 }
 
-bool SpriteDatabase::mapAnimationStateNameToId(const char* name,
+bool SpriteLibrary::mapAnimationStateNameToId(const char* name,
         AnimationStateId id)
 {
     for(const auto& val : _nameToAnimIds)

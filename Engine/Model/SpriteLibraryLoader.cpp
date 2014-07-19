@@ -1,16 +1,15 @@
-/**
- * @file    Model/SpriteDatabaseLoader.cpp
- *
- * Container for SpriteTemplates.
- *
- * @note    Created by Samir Sinha on 7/5/13.
- *          Copyright (c) 2013 Cinekine. All rights reserved.
- */
+//
+//  SpriteLibraryLoader.cpp
+//  Implementation
+//
+//  Copyright 2013 Cinekine Media All rights reserved
+//  Author: Samir Sinha
+//  License: The MIT License (MIT)
 
-#include "SpriteDatabaseLoader.hpp"
+#include "Engine/Model/SpriteLibraryLoader.hpp"
 
-#include "Sprite.hpp"
-#include "SpriteDatabase.hpp"
+#include "Engine/Model/Sprite.hpp"
+#include "Engine/Model/SpriteLibrary.hpp"
 #include "Engine/Debug.hpp"
 #include "Core/StreamBufRapidJson.hpp"
 
@@ -20,15 +19,11 @@
 namespace cinekine {
     namespace ovengine {
 
-SpriteDatabaseLoader::SpriteDatabaseLoader(SpriteDatabase& database) :
-    _db(database)
-{
 
-}
-
-bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
-                    std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-                    std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb)
+bool unserializeFromJSON(SpriteLibrary& outLibrary,
+            std::streambuf& instream,
+            std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
+            std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb)
 {
     typedef rapidjson::GenericDocument<rapidjson::UTF8<> > Document;
     typedef rapidjson::GenericValue<rapidjson::UTF8<> > Value;
@@ -66,7 +61,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
                 continue;
             }
             AnimationStateId animId = member.value.GetInt();
-            if (!_db.mapAnimationStateNameToId(member.name.GetString(), animId))
+            if (!outLibrary.mapAnimationStateNameToId(member.name.GetString(), animId))
             {
                 OVENGINE_LOG_WARN("SpriteDatabaseJSONSerializer - Skipping animation state definition (%s). Duplicate ID value found (%u).",
                               member.name.GetString(), animId);
@@ -121,7 +116,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
             cinek_bitmap_atlas bitmapClass = atlasReqCb(sprite["class"].GetString());
             auto& jsonAnchor = sprite["anchor"];
             glm::ivec2 anchor(jsonAnchor["x"].GetInt(), jsonAnchor["y"].GetInt());
-            auto* spriteTemplate = _db.createOrModifyFromName(name, bitmapClass, anchor, stateCount);
+            auto* spriteTemplate = outLibrary.createOrModifyFromName(name, bitmapClass, anchor, stateCount);
             if (spriteTemplate == nullptr)
             {
                 OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) failed to create template object.", name);
@@ -135,7 +130,7 @@ bool SpriteDatabaseLoader::unserialize(std::streambuf& instream,
             {
                 // get frame count per state - need this to define animations.
                 const char* stateName = stateIt->name.GetString();
-                AnimationStateId animId = _db.animationIDByName(stateName);
+                AnimationStateId animId = outLibrary.animationIDByName(stateName);
                 if (animId == kNullAnimation)
                 {
                     OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) has an invalid state (%s)",

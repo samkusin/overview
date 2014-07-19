@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-#include "Builder.hpp"
+#include "Engine/Builder/Builder.hpp"
 
-#include "Engine/Model/TileDatabase.hpp"
+#include "Engine/Model/TileLibrary.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -33,62 +33,25 @@
 
 namespace cinekine { namespace ovengine {
 
-    Builder::Segment::Segment()
-    {
-    }
-
-    Builder::Segment::Segment(const Box& box) :
-        box(box)
-    {
-    }
-
-    auto Builder::Region::closestSegmentToPoint(const MapPoint& pt) -> Segment*
-    {
-        //  pick closest segment to the point
-        Segment* closest = nullptr;
-        int d2Closest = INT32_MAX;
-        for (auto segment: segments)
-        {
-            MapPoint ptDelta = segment->box.center() - pt;
-            int d2 = glm::dot(ptDelta, ptDelta);
-            if (d2 < d2Closest)
-            {
-                closest = segment;
-                d2Closest = d2;
-            }
-        }
-        return closest;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-
     Builder::Builder(Stage& map,
-                const TileDatabase& tileTemplates,
-                uint32_t roomLimit,
+                const TileLibrary& tileTemplates,
+                const BlockLibrary& blockTemplates,
                 const Allocator& allocator) :
         _allocator(allocator),
         _map(map),
         _tileTemplates(tileTemplates),
-        _regions(std_allocator<Region>(_allocator)),
-        _segments(std_allocator<Segment>(_allocator)),
-        _connections(std_allocator<Connection>(_allocator))
+        _blockTemplates(blockTemplates)
     {
-        _regions.reserve(roomLimit);
-        _segments.reserve(roomLimit*8);
-        _connections.reserve(roomLimit*8);
-
-        //  clear all tilemaps
-        const cinekine::ovengine::MapBounds& bounds = _map.bounds();
-
+        auto& bounds = _map.bounds();
         for (uint32_t z = 0; z < bounds.zUnits; ++z)
         {
-            Tilemap* tilemap = _map.tilemapAtZ(z);
+            TileGrid* tilemap = _map.tileGridAtZ(z);
             TileInstance zeroTile;
             tilemap->fillWithValue(zeroTile, 0, 0, bounds.yUnits, bounds.xUnits);
         }
-
     }
 
+    /*
     int Builder::makeRegion(const TileBrush& floorBrush,
                             const TileBrush& wallBrush,
                             const vector<NewRegionInstruction>& instructions)
@@ -478,5 +441,6 @@ namespace cinekine { namespace ovengine {
         return wallTemplate.classIndex == classId &&
               (wallTemplate.flags & roleFlags)==roleFlags;
     }
+    */
 
 } /* namespace ovengine */ } /* namespace cinekine */

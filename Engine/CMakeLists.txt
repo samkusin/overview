@@ -110,30 +110,36 @@ include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
 #
 set( PROJECT_SOURCES
      ${COMPONENT_SOURCES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabase.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/AABB.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollectionLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockCollection.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabase.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibrary.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageSpriteInstance.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES
      ${COMPONENT_INCLUDES}
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabase.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/AABB.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Tile.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollection.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileLibrary.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollectionLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Block.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockCollection.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabase.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BitmapDatabaseLoader.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteDatabaseLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibrary.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageSpriteInstance.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.hpp

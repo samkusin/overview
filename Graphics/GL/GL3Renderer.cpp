@@ -60,11 +60,11 @@ namespace cinekine {
         }
 
         // Default GL State Setup
-        //  orthographic projection 
+        //  orthographic projection
         int w, h;
         SDL_GetWindowSize(_window, &w, &h);
         _projectionMat = glm::ortho(0.0f, (float)w, (float)h, 0.0f, -1.0f, 1.0f );
-        
+
         selectShader(_standardShader, glm::vec2());
 
         const size_t kBatchLimit = 16;
@@ -86,7 +86,7 @@ namespace cinekine {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
-    
+
     GL3Renderer::~GL3Renderer()
     {
         _shaderLibrary.unloadProgram(_textShader);
@@ -111,7 +111,7 @@ namespace cinekine {
     {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Texture> texture = std::allocate_shared<GL3Texture,
-                                                                std_allocator<GL3Texture>, 
+                                                                std_allocator<GL3Texture>,
                                                                 GL3Renderer&, const char*>
             (
                 std_allocator<GL3Texture>(allocator), *this, std::move(pathname)
@@ -126,7 +126,7 @@ namespace cinekine {
     {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Texture> texture = std::allocate_shared<GL3Texture,
-                                                                std_allocator<GL3Texture>, 
+                                                                std_allocator<GL3Texture>,
                                                                 GL3Renderer&,
                                                                 uint32_t, uint32_t,
                                                                 cinek_pixel_format,
@@ -139,18 +139,18 @@ namespace cinekine {
 
         return texture;
     }
-    
+
     void GL3Renderer::begin()
     {
         SDL_GL_MakeCurrent(_window, _glContext);
     }
-        
+
     void GL3Renderer::display()
     {
         flushBatch();
 
         _batchState.clear();
-        
+
         SDL_GL_SwapWindow(_window);
     }
 
@@ -203,7 +203,7 @@ namespace cinekine {
     {
         const GL3Texture& gltexture = static_cast<const GL3Texture&>(texture);
         GLVertexBatch& batch = obtainBatch(BatchState(Mesh::kTriangles, gltexture), 6);
-          
+
         float tWscale = 1.0f/(float)texture.width();
         float tHscale = 1.0f/(float)texture.height();
 
@@ -213,7 +213,7 @@ namespace cinekine {
         batch.pushUV(source.right*tWscale, source.top*tHscale);
         batch.pushUV(source.right*tWscale, source.bottom*tHscale);
         batch.pushUV(source.left*tWscale, source.bottom*tHscale);
-        
+
         batch.pushPos((float)dest.left, (float)dest.bottom);
         batch.pushPos((float)dest.left, (float)dest.top);
         batch.pushPos((float)dest.right, (float)dest.top);
@@ -276,7 +276,7 @@ namespace cinekine {
             CK_ASSERT(false);
             return;
         }
-        
+
         //  draw plain vertices or a true mesh (with vertex indices)
         glBindBuffer(GL_ARRAY_BUFFER, _meshVBOs[0]);
         glBufferData(GL_ARRAY_BUFFER, vertsPos.size() * sizeof(glm::vec2), vertsPos.data(), GL_STATIC_DRAW);
@@ -287,7 +287,7 @@ namespace cinekine {
         glBufferData(GL_ARRAY_BUFFER, vertsUV.size() * sizeof(glm::vec2), vertsUV.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrUVs);
         glVertexAttribPointer(kGL_ShaderVertexAttrUVs, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, _meshVBOs[2]);
         glBufferData(GL_ARRAY_BUFFER, vertsColor.size() * sizeof(glm::vec4), vertsColor.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrColor);
@@ -295,7 +295,7 @@ namespace cinekine {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _meshVBOs[3]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
-        
+
         selectShader(this->_standardShader, glm::vec2());
 
         if (textureId)
@@ -315,7 +315,7 @@ namespace cinekine {
     {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Mesh> mesh = std::allocate_shared<GL3Mesh,
-                                                          std_allocator<GL3Mesh>, 
+                                                          std_allocator<GL3Mesh>,
                                                           TexturePtr&,
                                                           Mesh::Type,
                                                           const vector<glm::vec2>&,
@@ -329,7 +329,7 @@ namespace cinekine {
                 vertsPos, vertsUV, vertsColor, indices
             );
 
-        return mesh;    
+        return mesh;
     }
 
     void GL3Renderer::drawMesh(const Mesh& mesh, const glm::vec2& position)
@@ -341,7 +341,7 @@ namespace cinekine {
         const GL3Mesh& glMesh = static_cast<const GL3Mesh&>(mesh);
         glMesh.draw();
     }
-    
+
     GLVertexBatch& GL3Renderer::obtainBatch(const BatchState& state, size_t vertexRequest)
     {
         //  determine if we need to render the current batch, i.e. any changes in state
@@ -352,24 +352,24 @@ namespace cinekine {
             _batchState = state;
             return batch;
         }
-    
+
         if (state == _batchState && batch.available() >= vertexRequest)
         {
-            return batch; 
+            return batch;
         }
-        
+
         GLVertexBatch& nextbatch = flushBatch();
-        
+
         _batchState = state;
         return nextbatch;
     }
-    
+
     GLVertexBatch& GL3Renderer::flushBatch()
     {
         GLVertexBatch& batch = _batch[_batchIndex % _batch.capacity()];
         if (batch.empty())
             return batch;
-        
+
         GLuint texture = _batchState.textureId;
         GLuint program = 0;
 
@@ -385,7 +385,7 @@ namespace cinekine {
             default:
                 break;
         }
-        
+
         GLenum drawMode = GL_POINTS;
         if (_batchState.drawMode == Mesh::kTriangles)
         {
@@ -408,9 +408,9 @@ namespace cinekine {
         {
            selectShader(program, glm::vec2());
         }
-        
+
         batch.draw(drawMode);
-        
+
         //  wipe the scratchpad vertex vectors used to upload data into the current GLVertexBatch
         _vertsPos.clear();
         _vertsUV.clear();
@@ -419,13 +419,13 @@ namespace cinekine {
         ++_batchIndex;
         return _batch[_batchIndex % _batch.capacity()];
     }
-        
+
     void GL3Renderer::selectShader(GLuint shader, const glm::vec2& position)
     {
         if (shader != _currentShader)
         {
             glUseProgram(shader);
-       
+
             _projectionMatUniform = glGetUniformLocation(shader, kGL_ShaderUniformProjectionMat);
             if (_projectionMatUniform < 0)
             {
@@ -444,7 +444,7 @@ namespace cinekine {
             {
                 // required
                 RENDER_LOG_WARN("GL3Renderer.selectShader - selected shader does not have a uniform: %s",
-                                kGL_ShaderUniformPosition);        
+                                kGL_ShaderUniformPosition);
             }
         }
         glUniformMatrix4fv(_projectionMatUniform, 1, GL_FALSE, glm::value_ptr(_projectionMat));

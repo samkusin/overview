@@ -1,14 +1,14 @@
-/**
- * @file    Model/SpriteDatabase.hpp
- *
- * Container for SpriteTemplates.
- *
- * @note    Created by Samir Sinha on 7/4/13.
- *          Copyright (c) 2013 Cinekine. All rights reserved.
- */
+///
+/// @file
+/// Contains the class definition for the SpriteLibrary
+///
+/// @author     Samir Sinha
+/// @date       07/04/13
+/// @copyright  Copyright 2013 Cinekine Media
+/// @license    The MIT License
 
-#ifndef Overview_SpriteDatabase_hpp
-#define Overview_SpriteDatabase_hpp
+#ifndef Overview_SpriteLibrary_hpp
+#define Overview_SpriteLibrary_hpp
 
 #include "Engine/Model/Sprite.hpp"
 
@@ -22,28 +22,28 @@ namespace cinekine {
     namespace ovengine {
 
 /**
- * @class SpriteDatabase
- * @brief A store for SpriteTemplate objects.
+ * @class SpriteLibrary
+ * @brief A store for Sprite objects and their animations
  *
- * The SpriteDatabase acts as a container for SpriteTemplate objects.  It also
- * owns SpriteTemplate instances.  If a SpriteDatabase instance is destroyed,
- * all of its SpriteTemplates are also destroyed.  Any application using
- * SpriteDatabase should take this into account.
+ * The SpriteLibrary acts as a container for Sprite objects.  It also
+ * owns Sprite Animation instances.  If a SpriteLibrary instance is destroyed,
+ * all of its Sprites are also destroyed.  Any application using
+ * SpriteLibrary should take this into account.
  */
-class SpriteDatabase
+class SpriteLibrary
 {
-    CK_CLASS_NON_COPYABLE(SpriteDatabase);
+    CK_CLASS_NON_COPYABLE(SpriteLibrary);
 
 public:
     /**
-     * @param initTemplateLimit The initial SpriteTemplate limit value.  Used
-     *                          for efficient usage of memory.  SpriteTemplate
-     *                          count can exceed the limit, but will result in
-     *                          additional memory allocations.
+     * @param initTemplateLimit The initial SpriteLibrary limit value.  Used
+     *                          for efficient usage of memory.  Sprite count can
+     *                          exceed the limit, but will result in additional
+     *                          memory allocations.
      * @param allocator         An optional allocator.
      */
-    SpriteDatabase(size_t initTemplateLimit,
-                   const Allocator& allocator=Allocator());
+    SpriteLibrary(size_t initTemplateLimit,
+                  const Allocator& allocator=Allocator());
     /**
      * Returns a SpriteTemplate ID given its name.
      *
@@ -59,7 +59,7 @@ public:
      */
     AnimationStateId animationIDByName(const char* animationName) const;
     /**
-     * Creates a SpriteTemplate.
+     * Creates a Sprite.
      *
      * @param  name      Name of the template.
      * @param  classId   The bitmap class used for all bitmaps referenced in

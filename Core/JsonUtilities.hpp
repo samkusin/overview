@@ -24,6 +24,8 @@ namespace cinekine {
 
     glm::vec3 parseVec3(const JsonValue& value, const glm::vec3& defaultVal=glm::vec3());
 
+    uint32_t parseFlagsToUint(const JsonValue& flagsDef, const char* flags);
+
 } /* namespace cinekine */
 
 #endif

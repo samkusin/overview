@@ -90,9 +90,9 @@ struct TileInstance
 };
 
 /** Defines a grid of tiles */
-typedef Grid<TileInstance> Tilemap;
+typedef Grid<TileInstance> TileGrid;
 /** Defines a tilemap section */
-typedef GridContainer<Tilemap> TilemapContainer;
+typedef GridContainer<TileGrid> TileGridContainer;
 
     } /* overview */
 } /* cinekine */

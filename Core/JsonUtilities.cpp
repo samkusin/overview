@@ -7,6 +7,7 @@
 //
 
 #include "JsonUtilities.hpp"
+#include <cstring>
 
 namespace cinekine {
 
@@ -39,6 +40,41 @@ namespace cinekine {
         if (vy.IsDouble()) v.y = vy.GetDouble();
         if (vz.IsDouble()) v.z = vz.GetDouble();
         return v;
+    }
+
+    uint32_t parseFlagsToUint(const JsonValue& flagsDef, const char* flags)
+    {
+        uint32_t result = 0;
+
+        const char* end = flags + strlen(flags);
+        const char* current = flags;
+        while (current < end)
+        {
+            const char* next = strchr(current, ',');
+            if (!next)
+                next = end;
+            size_t slen = next - current;
+            if (slen)
+            {
+                for (auto memberIt = flagsDef.MemberBegin(),
+                                     memberItEnd = flagsDef.MemberEnd();
+                     memberIt != memberItEnd;
+                     ++memberIt)
+                {
+                    const auto& member = *memberIt;
+                    const char* flagStr = member.name.GetString();
+                    if (!strncmp(current, flagStr, slen) && strlen(flagStr) == slen)
+                    {
+                        result |= parseUint(member.value);
+                        break;
+                    }
+                }
+            }
+
+            current = next + 1;
+        }
+
+        return result;
     }
 
 } /* namespace cinekine */
