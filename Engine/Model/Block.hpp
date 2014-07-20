@@ -13,7 +13,7 @@
 
 #include "Engine/Model/ModelTypes.hpp"
 #include "Engine/Model/Tile.hpp"
-#include "Engine/Model/StageTypes.hpp"
+#include "Engine/Grid.hpp"
 
 #include "cinek/allocator.hpp"
 #include "cinek/string.hpp"
@@ -37,6 +37,8 @@ public:
         kClass_Count        ///< Total number of available classes
     };
 
+    typedef Grid<uint16_t> Grid;
+
     /// Default Constructor
     ///
     Block();
@@ -51,12 +53,12 @@ public:
     /// @param  classId The TileGrid class
     /// @return A pointer to the TileGrid or nullptr if not found
     ///
-    TileGrid& grid(Class classId);
+    Grid& grid(Class classId);
     /// Returns a const TileGrid for the given class ID
     /// @param  classId The TileGrid class
     /// @return A pointer to the TileGrid or nullptr if not found
     ///
-    const TileGrid& grid(Class classId) const;
+    const Grid& grid(Class classId) const;
     /// @return The number of tiles per grid unit
     ///
     int granularity() const;
@@ -65,11 +67,11 @@ public:
     const string& name() const { return _name; }
 
 private:
-    TileGrid createGrid(int dimension, const Allocator& allocator);
+    Grid createGrid(int dimension, const Allocator& allocator);
 
 private:
     string _name;
-    std::array<TileGrid, kClass_Count> _grids;
+    std::array<Grid, kClass_Count> _grids;
     int _granularity;
 };
 
@@ -80,12 +82,12 @@ inline Block::operator bool() const
     return _granularity > 0;
 }
 
-inline TileGrid& Block::grid(Class classId)
+inline auto Block::grid(Class classId) -> Grid&
 {
     return _grids[classId % _grids.size()];
 }
 
-inline const TileGrid& Block::grid(Class classId) const
+inline auto Block::grid(Class classId) const -> const Grid&
 {
     return _grids[classId % _grids.size()];
 }

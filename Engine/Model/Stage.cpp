@@ -61,7 +61,7 @@ Stage::Stage(const TileLibrary& tileDb,
     _tilemaps.reserve(_bounds.zUnits);
     for (int32_t i = 0; i < _bounds.zUnits; ++i)
     {
-        _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, std_allocator<Tile>(allocator)});
+        _tilemaps.push_back({ _bounds.xUnits, _bounds.yUnits, allocator});
     }
 }
 

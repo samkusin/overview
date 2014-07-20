@@ -11,6 +11,8 @@
 #include "Core/StreamBufRapidJson.hpp"
 #include "Core/JsonUtilities.hpp"
 
+#include "Engine/Debug.hpp"
+
 #include <cstring>
 
 namespace cinekine { namespace ovengine {
@@ -51,7 +53,7 @@ bool unserializeFromJSON(std::streambuf& instream, ModelCollectionLoader& handle
             return false;
         }
 
-        auto& items = collection["collection"];
+        auto& items = collection.value["collection"];
 
         if (!handler.startCollection(collectionName, items.MemberEnd() - items.MemberBegin()))
         {
@@ -100,7 +102,7 @@ bool unserializeFromJSON(std::streambuf& instream, ModelCollectionLoader& handle
             return false;
         }
     }
-
+    return true;
 }
 
 } /* namespace ovengine */ } /* namespace cinekine */

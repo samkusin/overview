@@ -8,19 +8,19 @@
 
 #include "GameScene.hpp"
 #include "GameView.hpp"
-#include "Architect.hpp"
 
 #include "Prototype/SceneController.hpp"
 
 #include "Engine/Model/Stage.hpp"
-#include "Engine/Model/SpriteDatabaseLoader.hpp"
-#include "Engine/Model/TileDatabaseLoader.hpp"
+#include "Engine/Model/SpriteLibraryLoader.hpp"
+#include "Engine/Model/TileCollectionLoader.hpp"
 #include "Engine/Model/StageSpriteInstance.hpp"
 
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 
 #include "Core/FileStreamBuf.hpp"
+#include "Core/StreamBufRapidJson.hpp"
 
 
 namespace cinekine {
@@ -33,9 +33,8 @@ namespace cinekine {
         _renderer(_sceneController.renderer()),
         _bitmapLibrary(_renderer, _allocator),
         _fontLibrary(_renderer, 1, _allocator),
-        _tileDb(1024, _allocator),
-        _spriteDb(32, _allocator),
-        _architect(),
+        _tileLibrary(1024, _allocator),
+        _spriteLibrary(32, _allocator),
         _gameView(),
         _window()
     {
@@ -51,7 +50,13 @@ namespace cinekine {
                                 std_allocator<GameView>(_allocator),
                                 _renderer, _fontLibrary, _bitmapLibrary
                             );
+        
+        //  load game document
+        FileStreamBuf gameStream("game.json");
+        RapidJsonStdStreamBuf jsonStream(gameStream);
+        _gameDocument.ParseStream<0>(jsonStream);
 
+        //  create our UI
         _window = _ui.createWindow("static/ui/main.rml",
                 [this](const char* className, const char* idName)
                 {
@@ -66,30 +71,24 @@ namespace cinekine {
         resourceCounts.spriteLimit = 256;
         _stage = std::allocate_shared<ovengine::Stage,
                                     std_allocator<ovengine::Stage>,
-                                    const ovengine::TileDatabase&,
-                                    const ovengine::SpriteDatabase&,
+                                    const ovengine::TileLibrary&,
+                                    const ovengine::SpriteLibrary&,
                                     const ovengine::Stage::ResourceCounts&,
                                     const ovengine::MapBounds&,
                                     const Allocator&>
                             (
                                 std_allocator<ovengine::Stage>(_allocator),
-                                _tileDb,
-                                _spriteDb,
+                                _tileLibrary,
+                                _spriteLibrary,
                                 resourceCounts,
                                 bounds,
                                 _allocator
                             );
         
         
-        loadTileDatabase("tiles_caves.json");
-        loadSpriteDatabase("sprites_common.json");
-        _architect = unique_ptr<Architect>(
-                        _allocator.newItem<Architect>(*_stage,
-                                                      _tileDb,
-                                                      _allocator),
-                        _allocator);
-
-
+        loadTileCollection("tiles_dungeon.json");
+        loadSpriteCollection("sprites_common.json");
+        
         _viewPos = glm::vec3(bounds.xUnits * 0.5f, bounds.yUnits * 0.5f, 0.f);
         
         auto avatarSprite = _stage->createSpriteInstance("warrior", _viewPos);
@@ -97,14 +96,13 @@ namespace cinekine {
         _gameView->setStage(_stage, _viewPos);
     }
         
-    void GameScene::loadTileDatabase(const char* filename)
+    void GameScene::loadTileCollection(const char* filename)
     {
         FileStreamBuf dbStream(filename);
         if (!dbStream)
             return;
         
-        ovengine::TileDatabaseLoader tileDbLoader(_tileDb);
-        tileDbLoader.unserialize(dbStream,
+        ovengine::TileCollectionLoader tileLoader(_gameDocument["model"]["tiles"]["flags"],
             [this](const char* atlasName) -> cinek_bitmap_atlas
             {
                 char path[MAX_PATH];
@@ -117,17 +115,22 @@ namespace cinekine {
                 if (!bitmapAtlas)
                     return kCinekBitmapIndex_Invalid;
                 return bitmapAtlas->getBitmapIndex(name);
-            });
+            },
+            [this](ovengine::TileCollection&& collection)
+            {
+                _tileLibrary.mapCollectionToSlot(std::move(collection), 0);
+            },
+            _allocator);
+        unserializeFromJSON(dbStream, tileLoader);
     }
     
-    void GameScene::loadSpriteDatabase(const char* filename)
+    void GameScene::loadSpriteCollection(const char* filename)
     {
         FileStreamBuf dbStream(filename);
         if (!dbStream)
             return;
         
-        ovengine::SpriteDatabaseLoader spriteDbLoader(_spriteDb);
-        spriteDbLoader.unserialize(dbStream,
+        unserializeFromJSON(_spriteLibrary, dbStream,
             [this](const char* atlasName) -> cinek_bitmap_atlas
             {
                char path[MAX_PATH];
@@ -179,7 +182,6 @@ namespace cinekine {
 
     void GameScene::update()
     {
-        _architect->update();
     }
 
     }   // namespace ovengine

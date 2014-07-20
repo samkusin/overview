@@ -18,12 +18,6 @@
 
 namespace cinekine { namespace ovengine {
 
-#include "cinek/string.hpp"
-
-#include <functional>
-
-namespace cinekine { namespace ovengine {
-
 /// @class   BlockCollectionLoader
 /// @ingroup TileModel
 /// @brief   Handler for unserializing BlockCollection objects from an input
@@ -46,7 +40,8 @@ public:
     bool endCollection();
 
 private:
-    std::function<void(TileCollection&&)> _collectionCb;
+    Allocator _allocator;
+    std::function<void(BlockCollection&&)> _collectionCb;
     string _name;
     string _tilesetName;
     BlockCollection::Container _models;

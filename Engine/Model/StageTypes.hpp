@@ -21,39 +21,6 @@
 namespace cinekine {
     namespace ovengine {
 
-enum
-{
-    kTileDirection_N       = 0x0001,   /**< North */
-    kTileDirection_NE      = 0x0002,   /**< Northeast */
-    kTileDirection_E       = 0x0004,   /**< East */
-    kTileDirection_SE      = 0x0008,   /**< Southeast */
-    kTileDirection_S       = 0x0010,   /**< South */
-    kTileDirection_SW      = 0x0020,   /**< Southwest */
-    kTileDirection_W       = 0x0040,   /**< West */
-    kTileDirection_NW      = 0x0080,   /**< Northwest */
-    kTileDirection_Mask    = 0x00ff    /**< Bitmask defining direction */
-};
-
-const uint32_t kTileDirections_North = kTileDirection_NW +
-                                       kTileDirection_N +
-                                       kTileDirection_NE;
-const uint32_t kTileDirections_South = kTileDirection_SW +
-                                       kTileDirection_S +
-                                       kTileDirection_SE;
-const uint32_t kTileDirections_East  = kTileDirection_NE +
-                                       kTileDirection_E +
-                                       kTileDirection_SE;
-const uint32_t kTileDirections_West  = kTileDirection_NW +
-                                       kTileDirection_W +
-                                       kTileDirection_SW;
-
-enum
-{
-    kTileRole_Wall          = 0x0100,
-    kTileRole_Corner        = 0x0200,
-    kTileRole_Floor         = 0x1000
-};
-
 struct MapBounds
 {
     uint16_t xUnits;    /**< Number of units/tiles on the x axis. */

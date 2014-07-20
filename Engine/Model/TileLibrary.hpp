@@ -20,12 +20,17 @@ namespace cinekine { namespace ovengine {
 class TileLibrary: public ModelLibrary<TileCollection, TileSlot>
 {
 public:
+    TileLibrary(SlotType limit, const Allocator& allocator);
     const Tile& tileFromCollectionAtIndex(TileSlot slot, TileIndex index) const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+inline TileLibrary::TileLibrary(SlotType limit, const Allocator& allocator) :
+    ModelLibrary<TileCollection, TileSlot>(limit, allocator)
+{
+}
 
-const Tile& TileLibrary::tileFromCollectionAtIndex(TileSlot slot, TileIndex index) const
+inline const Tile& TileLibrary::tileFromCollectionAtIndex(TileSlot slot, TileIndex index) const
 {
     auto& collection = collectionAtSlot(slot);
     return collection[index];

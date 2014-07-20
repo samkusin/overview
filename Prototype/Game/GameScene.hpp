@@ -10,14 +10,15 @@
 #define Overview_Scenes_GameScene_hpp
 
 #include "Prototype/Scene.hpp"
-#include "Prototype/Game/Architect.hpp"
 
 #include "Engine/Component/Window/WindowComponentCLI.hpp"
-#include "Engine/Model/TileDatabase.hpp"
-#include "Engine/Model/SpriteDatabase.hpp"
+#include "Engine/Model/TileLibrary.hpp"
+#include "Engine/Model/SpriteLibrary.hpp"
 
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
+
+#include "Core/JsonUtilities.hpp"
 
 #include "cinek/allocator.hpp"
 
@@ -52,8 +53,9 @@ namespace cinekine {
         virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod);
 
     private:
-        void loadTileDatabase(const char* filename);
-        void loadSpriteDatabase(const char* filename);
+        void loadTileCollection(const char* filename);
+        void loadSpriteCollection(const char* filename);
+
     private:
         Allocator _allocator;
         SceneController& _sceneController;
@@ -63,11 +65,12 @@ namespace cinekine {
         glx::BitmapLibrary _bitmapLibrary;
         glx::FontLibrary _fontLibrary;
         
-        ovengine::TileDatabase _tileDb;
-        ovengine::SpriteDatabase _spriteDb;
+        JsonDocument _gameDocument;
+        
+        ovengine::TileLibrary _tileLibrary;
+        ovengine::SpriteLibrary _spriteLibrary;
         
         std::shared_ptr<ovengine::Stage> _stage;
-        unique_ptr<Architect> _architect;
         glm::vec3 _viewPos;
 
         std::shared_ptr<GameView> _gameView;

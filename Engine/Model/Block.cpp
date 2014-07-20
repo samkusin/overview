@@ -24,10 +24,10 @@ Block::Block(const char* name, int granularity, const Allocator& allocator) :
 }
 
 
-TileGrid Block::createGrid(int dimension, const Allocator& allocator)
+Grid Block::createGrid(int dimension, const Allocator& allocator)
 {
-    return std::move(TileGrid(dimension*_granularity, dimension*_granularity,
-                              allocator));
+    return std::move(Grid(dimension*_granularity, dimension*_granularity,
+                          allocator));
 }
 
 }   /* namespace ovengine */ }  /* namespace cinekine */

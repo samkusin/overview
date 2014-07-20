@@ -111,8 +111,10 @@ include_directories( "${CINEK_OVENGINE_ROOT_DIR}"
 set( PROJECT_SOURCES
      ${COMPONENT_SOURCES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/AABB.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelCollectionLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollectionLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockCollection.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockCollectionLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibrary.cpp
@@ -126,13 +128,17 @@ set( PROJECT_SOURCES
 set( PROJECT_INCLUDES
      ${COMPONENT_INCLUDES}
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelCollection.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelCollectionLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ModelLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/AABB.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Tile.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollection.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollectionLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Block.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockCollection.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockCollectionLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/BlockLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.hpp

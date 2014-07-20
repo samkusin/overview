@@ -83,7 +83,7 @@ namespace cinekine {
         int32_t _screenViewLeft, _screenViewTop;
 
         ovengine::MapBounds _mapBounds;
-        ovengine::Tilemap* _tilemap;
+        ovengine::TileGrid* _tilemap;
         
         //  used for rendering
         struct RenderItem

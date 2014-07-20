@@ -10,7 +10,6 @@
 
 #include "Engine/Debug.hpp"
 #include "Engine/Model/Stage.hpp"
-#include "Engine/Model/TileDatabase.hpp"
 #include "Graphics/RendererCLI.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/FontLibrary.hpp"
@@ -156,7 +155,7 @@ namespace cinekine {
         
     void GameView::renderTileMap(int tileZ)
     {
-        _tilemap = _stage->tilemapAtZ(tileZ);
+        _tilemap = _stage->tileGridAtZ(tileZ);
         if (!_tilemap)
             return;
 

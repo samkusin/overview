@@ -21,6 +21,7 @@ namespace cinekine {
 BlockCollectionLoader::BlockCollectionLoader(
                         std::function<void(BlockCollection&&)> collectionCb,
                         const Allocator& allocator) :
+    _allocator(allocator),
     _collectionCb(collectionCb),
     _models(allocator)
 {
@@ -46,157 +47,76 @@ bool BlockCollectionLoader::parseAttribute(const char* key, const JsonValue& val
 
 bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
+    int granularity = object["granularity"].GetInt();
 
+    Block block(key, granularity, _allocator);
+
+    //  parse our grids
+    for (auto attrIt = object.MemberBegin(), attrItEnd = object.MemberEnd();
+         attrIt != attrItEnd;
+         ++attrIt)
+    {
+        auto& attr = *attrIt;
+        const char* attrName = attr.name.GetString();
+        const char* kBlockPrefix = "maps_";
+        const size_t kBlockPrefixLen = strlen(kBlockPrefix);
+        if (!strncmp(attrName, kBlockPrefix, 4))
+        {
+            Block::Class blockClass = Block::kClass_Count;
+            if (!strcmp(attrName+kBlockPrefixLen, "1x1"))
+                blockClass = Block::kClass_1x1;
+            else if (!strcmp(attrName+kBlockPrefixLen, "3x3"))
+                blockClass = Block::kClass_3x3;
+            if (blockClass == Block::kClass_Count)
+            {
+                OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s' "
+                                  "has an invalid class '%s'",
+                                  key, attrName);
+                continue;
+            }
+            if (!attr.value.IsArray())
+            {
+                OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s'.'%s' "
+                                  "has no valid grid definition",
+                                  key, attrName);
+                continue;
+            }
+            auto& grid = block.grid(blockClass);
+            for (auto rowIt = attr.value.Begin(), rowItEnd = attr.value.End();
+                 rowIt != rowItEnd;
+                 ++rowIt)
+            {
+                auto& row = *rowIt;
+                if (!row.IsArray())
+                {
+                    OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s'.'%s' "
+                                      "row is not an array.",
+                                      key, attrName);
+                    break;
+                }
+                uint32_t rowIndex = rowIt - attr.value.Begin();
+                auto strip = grid.atRow(rowIndex, 0);
+                for (auto colIt = row.Begin(), colItEnd = row.End();
+                     colIt != colItEnd && strip.first != strip.second;
+                     ++colIt)
+                {
+                    *strip.first = parseUint(*colIt);
+                    ++strip.first;
+                }
+            }
+        }
+    }
+    _models.emplace_back(std::move(block));
+    return true;
 }
 
 bool BlockCollectionLoader::endCollection()
 {
-
-}
-
-bool unserializeFromJSON(BlockCollection& outputCollection,
-                         std::streambuf& instream)
-{
-    RapidJsonStdStreamBuf jsonStream(instream);
-
-    JsonDocument jsonDoc;
-    jsonDoc.ParseStream<0>(jsonStream);
-
-    if (jsonDoc.HasParseError() || !jsonDoc.IsObject())
-    {
-        OVENGINE_LOG_ERROR("unserializeFromJSON - failed to parse the block stream.");
-        return false;
-    }
-
-    //  iterate through all collections
-    for (auto collectionIter = jsonDoc.MemberBegin(),
-              collectionIterEnd = jsonDoc.MemberEnd();
-         collectionIter != collectionIterEnd;
-         ++collectionIter)
-    {
-
-    }
-
-    const auto& flags = jsonDoc["flags"];
-    const auto& collection = jsonDoc["collection"];
-
-    if (flags.IsNull() || !flags.IsObject())
-    {
-        OVENGINE_LOG_ERROR("unserializeFromJSON - no flags found.");
-        return false;
-    }
-    if (collection.IsNull() || !collection.IsObject())
-    {
-        OVENGINE_LOG_ERROR("unserializeFromJSON - no collection found.");
-        return false;
-    }
-
-    const char* collectionName = collection["name"].GetString();
-    if (!collectionName[0])
-    {
-        OVENGINE_LOG_ERROR("unserializeFromJSON - collection does not have a name.");
-        return false;
-    }
-
-    const auto& tiles = collection["tiles"];
-    if (tiles.IsNull() && !tiles.IsObject())
-    {
-        OVENGINE_LOG_ERROR("unserializeFromJSON - "
-                           "Tile collection '%s' has no tile map entry.",
-                           collectionName);
-        return false;
-    }
-
-    cinek_bitmap_atlas bitmapAtlasId = atlasReqCb(collectionName);
-    if (bitmapAtlasId == kCinekBitmapAtlas_Invalid)
-    {
-        OVENGINE_LOG_ERROR("unserializeFromJSON - "
-                           "Tile collection '%s' has an invalid atlas.",
-                           collectionName);
-        return false;
-    }
-
-    //  Reserve our tile vector for the collection.
-    size_t tileCount = 0;
-    for (auto tileIt = tiles.MemberBegin(), tileItEnd = tiles.MemberEnd();
-         tileIt != tileItEnd;
-         ++tileIt, ++tileCount) {}
-
-    vector<Tile> tileCollectionTiles;
-    tileCollectionTiles.reserve(tileCount);
-
-    for (auto tileIt = tiles.MemberBegin(), tileItEnd = tiles.MemberEnd();
-         tileIt != tileItEnd;
-         ++tileIt)
-    {
-        const auto& tile =  *tileIt;
-        const char* tileName = nullptr;
-        uint32_t tileFlags = 0;
-        AABB aabb;
-        TileId tileIndex = 0;
-        if (tile.name.IsString())
-        {
-            tileIndex = parseUint(tile.name);
-        }
-        if (tileIndex == 0)
-        {
-            OVENGINE_LOG_ERROR("unserializeFromJSON - "
-                               "Tile collection %s, '%s' is not a valid index",
-                               collectionName,
-                               tile.name.GetString());
-            continue;
-        }
-        if (tile.value.IsObject())
-        {
-            const auto& tileData = tile.value;
-            for (auto tileDataIt = tileData.MemberBegin(),
-                      tileDataItEnd = tileData.MemberEnd();
-                 tileDataIt != tileDataItEnd;
-                 ++tileDataIt)
-            {
-                const auto& tileAttr = *tileDataIt;
-                const char* tileAttrName = tileAttr.name.GetString();
-                if (!strcmp(tileAttrName, "name"))
-                {
-                    tileName = tileAttr.value.GetString();
-                }
-                else if (!strcmp(tileAttrName, "flags"))
-                {
-                    const char* flagsStr = tileAttr.value.GetString();
-                    tileFlags = parseFlagsToUint(flags, flagsStr);
-                }
-                else if (!strcmp(tileAttrName, "aabb"))
-                {
-                    aabb.min = parseVec3(tileAttr.value["min"]);
-                    aabb.max = parseVec3(tileAttr.value["max"]);
-                }
-            }
-        }
-        else if (tile.value.IsString())
-        {
-            tileName = tile.value.GetString();
-        }
-        if (!tileName)
-        {
-            OVENGINE_LOG_ERROR("unserializeFromJSON - "
-                               "Tile collection %s, tile %s has no valid mapping.",
-                               collectionName,
-                               tile.name.GetString());
-            continue;
-        }
-        Tile tileInfo;
-        tileInfo.bitmap = { bitmapAtlasId,
-                            bitmapReqCb(bitmapAtlasId, tileName) };
-        tileInfo.flags = tileFlags;
-        tileInfo.aabb = aabb;
-        tileCollectionTiles.push_back(tileInfo);
-    }
-
-    TileCollection tc(collectionName, std::move(tileCollectionTiles));
-    outputCollection = std::move(tc);
-
+    BlockCollection collection(_name.c_str(), _tilesetName.c_str(), std::move(_models));
+    _collectionCb(std::move(collection));
     return true;
 }
+
 
     }   // namespace ovengine
 }   // namespace cinekine
