@@ -10,8 +10,8 @@
 
 #include "cinek/allocator.hpp"
 
-#include "SceneController.hpp"
-#include "Game/GameScene.hpp"
+#include "ApplicationController.hpp"
+#include "Game/GameView.hpp"
 
 #include <memory>
 
@@ -41,20 +41,23 @@ namespace cinekine {
     Overview::Overview(ovengine::WindowComponentCLI& uiCLI,
                        glx::RendererCLI& rendererCLI) :
         _allocator(),
-        _sceneController(uiCLI, rendererCLI, _allocator)
+        _controller(uiCLI, rendererCLI, _allocator)
     {
-        _sceneController.add( "game",
-            [this]() -> std::shared_ptr<Scene>
+        _controller.add( "game",
+            [this](ApplicationController& app, const Allocator& allocator) -> std::shared_ptr<ovengine::View>
             {
-                return std::allocate_shared<GameScene, std_allocator<GameScene>,
-                                            SceneController&>
-                        (
-                            std_allocator<GameScene>(_allocator),
-                            _sceneController
-                        );
-            });
+                return std::allocate_shared<GameView,
+                                            std_allocator<GameView>,
+                                            ApplicationController&,
+                                            const Allocator&>
+                                        (
+                                            allocator,
+                                            app,
+                                            allocator
+                                        );
+                });
 
-        _sceneController.next("game");
+        _controller.next("game");
     }
 
     Overview::~Overview()
@@ -63,7 +66,7 @@ namespace cinekine {
 
     void Overview::update()
     {
-        _sceneController.update();
+        _controller.update();
     }
 
 

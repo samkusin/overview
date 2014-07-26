@@ -11,12 +11,9 @@
 #define Overview_Model_Stage_hpp
 
 #include "Engine/Model/StageTypes.hpp"
-#include "Engine/Model/StageSpriteInstance.hpp"
+#include "Engine/Model/TileGridMap.hpp"
 
 #include "cinek/allocator.hpp"
-#include "cinek/string.hpp"
-#include "cinek/memorypool.hpp"
-
 
 namespace cinekine {
     namespace glx {
@@ -33,15 +30,16 @@ namespace cinekine { namespace ovengine {
 class Stage
 {
 public:
-    struct ResourceCounts
+    struct InitParameters
     {
+        uint32_t overlayToFloorTileRatio = 4;
         uint16_t spriteLimit = 16;
     };
 
     Stage(const TileLibrary& tileDb,
           const SpriteLibrary& spriteDb,
-          const ResourceCounts& counts,
           const MapBounds& bounds,
+          const InitParameters& params,
           const Allocator& allocator);
 
     /**
@@ -53,17 +51,19 @@ public:
         return _bounds;
     }
     /**
-     * Retrieve the TileGrid at the specified Z layer.
-     * @param z     A z-value in the range [zDown, zUp]
-     * @return      A pointer to a tile map.
+     * Retrieve the TileGridMap
+     * @return      A reference to a tile map.
      */
-    TileGrid* tileGridAtZ(int16_t z);
+    TileGridMap& tileGridMap() {
+        return _gridMap;
+    }
     /**
-     * Retrieve the const TileGrid at the specified Z layer.
-     * @param z     A z-value in the range [zDown, zUp]
-     * @return      A const pointer to a tile map.
+     * Retrieve the const TileGridMap.
+     * @return      A const reference to a tile map.
      */
-    const TileGrid* tileGridAtZ(int16_t z) const;
+    const TileGridMap& tileGridMap() const {
+        return _gridMap;
+    }
 
     /** @return The TileLibrary used by this Stage */
     const TileLibrary& tileLibrary() const {
@@ -81,38 +81,12 @@ public:
      */
     const Tile& tile(TileId tileId) const;
 
-    /**
-     * Constructs a SpriteInstance from the given template and its initial
-     * position on the stage (world)
-     *
-     * @param  name  The sprite template name to use
-     * @param  pos   The initial sprite position
-     * @return A pair containing the sprite instance handle and pointer.
-     *         The pointer should not be retained by other objects - it is
-     *         meant for immediate access only
-     */
-    std::pair<SpriteInstanceId, StageSpriteInstance*>
-            createSpriteInstance(const string& name,
-                                 const glm::vec3& pos);
-    /**
-     * Returns a pointer given the sprite instance's handle
-     * @param  instanceHandle The instance handle
-     * @return A pointer to the instance
-     */
-    StageSpriteInstance* spriteInstance(SpriteInstanceId instanceHandle);
-    /**
-     * Releases a SpriteInstance pointed to by the given handle
-     * @param instanceHandle A sprite instance handle
-     */
-    void releaseSpriteInstance(SpriteInstanceId instanceHandle);
-
 private:
     const TileLibrary& _tileDb;
     const SpriteLibrary& _spriteDb;
     MapBounds _bounds;
-    vector<TileGrid> _tilemaps;
+    TileGridMap _gridMap;
 
-    vector<StageSpriteInstance> _spriteInstances;
     vector<uint32_t> _freeSpriteInstanceIds;
 };
 

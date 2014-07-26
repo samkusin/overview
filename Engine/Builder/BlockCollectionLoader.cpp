@@ -6,8 +6,8 @@
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Engine/Model/BlockCollectionLoader.hpp"
-#include "Engine/Model/BlockCollection.hpp"
+#include "Engine/Builder/BlockCollectionLoader.hpp"
+#include "Engine/Builder/BlockCollection.hpp"
 #include "Engine/Debug.hpp"
 
 #include "Core/StreamBufRapidJson.hpp"
@@ -47,9 +47,50 @@ bool BlockCollectionLoader::parseAttribute(const char* key, const JsonValue& val
 
 bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
+    const char* gridLayerTypeName = object["type"].GetString();
+    Block::Layer gridLayerType;
+    if (!strcmp(gridLayerTypeName, "floor"))
+    {
+        gridLayerType = Block::kLayer_Floor;
+    }
+    else if (!strcmp(gridLayerTypeName, "overlay"))
+    {
+        gridLayerType = Block::kLayer_Overlay;
+    }
+    else
+    {
+        OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s' has an "
+                          "invalid type '%s'",
+                          key,
+                          gridLayerTypeName);
+        return true;
+    }
+
+    BuilderPaintStyle paintStyle = kBuilderPaintStyle_Tiled;
+    if (!object["paint"].IsNull())
+    {
+        const char* paintStyleName = object["paint"].GetString();
+        if (!strcmp(paintStyleName, "stretch"))
+        {
+            paintStyle = kBuilderPaintStyle_Stretch;
+        }
+        else if (!strcmp(paintStyleName, "tile"))
+        {
+            paintStyle = kBuilderPaintStyle_Tiled;
+        }
+        else
+        {
+            OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s' has an "
+                              "invalid paint style '%s'",
+                              key,
+                              paintStyleName);
+            return true;
+        }
+    }
+
     int granularity = object["granularity"].GetInt();
 
-    Block block(key, granularity, _allocator);
+    Block block(key, granularity, gridLayerType, paintStyle, _allocator);
 
     //  parse our grids
     for (auto attrIt = object.MemberBegin(), attrItEnd = object.MemberEnd();
@@ -65,8 +106,12 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
             Block::Class blockClass = Block::kClass_Count;
             if (!strcmp(attrName+kBlockPrefixLen, "1x1"))
                 blockClass = Block::kClass_1x1;
+            else if (!strcmp(attrName+kBlockPrefixLen, "2x2"))
+                blockClass = Block::kClass_2x2;
             else if (!strcmp(attrName+kBlockPrefixLen, "3x3"))
                 blockClass = Block::kClass_3x3;
+            else if (!strcmp(attrName+kBlockPrefixLen, "4x4"))
+                blockClass = Block::kClass_4x4;
             if (blockClass == Block::kClass_Count)
             {
                 OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s' "
@@ -81,6 +126,7 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
                                   key, attrName);
                 continue;
             }
+            block.enableGrid(blockClass);
             auto& grid = block.grid(blockClass);
             for (auto rowIt = attr.value.Begin(), rowItEnd = attr.value.End();
                  rowIt != rowItEnd;

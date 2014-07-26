@@ -28,36 +28,8 @@ struct MapBounds
     uint16_t zUnits;
 };
 
-struct TileInstance
-{
-    TileId layer[2];
-    //  circular linked list of sprites, 0 if there are none
-    SpriteInstanceId firstSpriteInstanceId;
-    TileInstance(): layer {}, firstSpriteInstanceId(0) {}
-    TileInstance(const TileInstance& tile) :
-        layer { tile.layer[0], tile.layer[1] },
-        firstSpriteInstanceId( tile.firstSpriteInstanceId)
-    {
-    }
-    TileInstance& operator=(const TileInstance& tile)
-    {
-        layer[0] = tile.layer[0];
-        layer[1] = tile.layer[1];
-        firstSpriteInstanceId = tile.firstSpriteInstanceId;
-        return *this;
-    }
-    TileInstance(TileInstance&& tile):
-        layer { tile.layer[0], tile.layer[1] },
-        firstSpriteInstanceId(tile.firstSpriteInstanceId)
-    {
-        tile.layer[0] = 0;
-        tile.layer[1] = 0;
-        tile.firstSpriteInstanceId = 0;
-    }
-};
-
 /** Defines a grid of tiles */
-typedef Grid<TileInstance> TileGrid;
+typedef Grid<TileId> TileGrid;
 /** Defines a tilemap section */
 typedef GridContainer<TileGrid> TileGridContainer;
 

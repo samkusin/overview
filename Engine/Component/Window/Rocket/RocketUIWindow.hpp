@@ -33,28 +33,17 @@
 namespace cinekine {
     namespace ovengine {
 
-    class RocketSDLInputMap;
-
     class RocketUIWindow :
-        public Window,
-        public Rocket::Core::EventListener
+        public Window
     {
     public:
-        RocketUIWindow(Rocket::Core::ElementDocument* document,
-                       const RocketSDLInputMap& inputMapper);
+        RocketUIWindow(Rocket::Core::ElementDocument* document);
         virtual ~RocketUIWindow();
 
         virtual void show();
-        virtual void setEventListener(WindowEventListener* listener) {
-            _eventListener = listener;
-        }
-
-        virtual void ProcessEvent(Rocket::Core::Event& event);
 
     private:
         Rocket::Core::ElementDocument* _document;
-        WindowEventListener* _eventListener;
-        const RocketSDLInputMap& _inputMap;
     };
 
     }   // namespace ovengine

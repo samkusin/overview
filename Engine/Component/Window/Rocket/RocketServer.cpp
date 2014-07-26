@@ -59,8 +59,9 @@ namespace cinekine {
          * @todo use allocator instead of new/delete - this may require a refactor of how libRocket 
          * allocates memory
          */
-        _overviewElementInstancer = _allocator.newItem<RocketOverviewElementInstancer, const Allocator&>
+        _overviewElementInstancer = _allocator.newItem<RocketOverviewElementInstancer, RocketServer&, const Allocator&>
                                         (
+                                            *this,
                                             _allocator
                                         );
         Rocket::Core::Factory::RegisterElementInstancer("overview", _overviewElementInstancer);
@@ -133,12 +134,10 @@ namespace cinekine {
             {
                 //  create our window and views
                 ptr = std::allocate_shared<RocketUIWindow, std_allocator<RocketUIWindow>,
-                                            Rocket::Core::ElementDocument*,
-                                            const RocketSDLInputMap&>
+                                            Rocket::Core::ElementDocument*>
                                     (
                                         std_allocator<RocketUIWindow>(_allocator),
-                                        std::move(uiDocument),
-                                        _sdlInput
+                                        std::move(uiDocument)
                                     );
             }
         }

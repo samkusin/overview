@@ -7,11 +7,11 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Model_BlockLibrary_hpp
-#define Overview_Model_BlockLibrary_hpp
+#ifndef Overview_Buidler_BlockLibrary_hpp
+#define Overview_Builder_BlockLibrary_hpp
 
 #include "Engine/Model/ModelLibrary.hpp"
-#include "Engine/Model/BlockCollection.hpp"
+#include "Engine/Builder/BlockCollection.hpp"
 
 namespace cinekine {
     namespace ovengine {

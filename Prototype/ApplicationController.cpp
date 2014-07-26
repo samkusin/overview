@@ -22,54 +22,63 @@
  * THE SOFTWARE.
  */
 
-#include "SceneController.hpp"
+#include "ApplicationController.hpp"
 #include "Engine/Debug.hpp"
+#include "Engine/View.hpp"
 
 namespace cinekine {
     namespace prototype {
 
-    SceneController::SceneController(ovengine::WindowComponentCLI& ui,
-                                     glx::RendererCLI& renderer,
-                                     const Allocator& allocator) :
+    ApplicationController::ApplicationController(ovengine::WindowComponentCLI& ui,
+                                                 glx::RendererCLI& renderer,
+                                                 const Allocator& allocator) :
         _ui(ui),
         _renderer(renderer),
-        _sceneMap(std_allocator<std::pair<string, SceneCreateFn>>(allocator)),
-        _currentScene()
+        _allocator(allocator),
+        _viewCreateMap(allocator)
     {
 
     }
 
-    SceneController::~SceneController()
+    ApplicationController::~ApplicationController()
     {
     }
 
-    void SceneController::add(const char* name, SceneCreateFn createFn)
+    void ApplicationController::add(const char* name, ViewCreateFn createFn)
     {
-        _sceneMap[string(name)] = createFn;
+        _viewCreateMap[string(name)] = createFn;
     }
 
-    void SceneController::next(const char* name)
+    void ApplicationController::next(const char* name)
     {
-        auto sceneIt = _sceneMap.find(string(name));
-        if (sceneIt == _sceneMap.end())
+        auto viewIt = _viewCreateMap.find(string(name));
+        if (viewIt == _viewCreateMap.end())
         {
-            OVENGINE_LOG_ERROR("SceneController.next - scene '%s' not found", name);
+            OVENGINE_LOG_ERROR("ApplicationController.next - scene '%s' not found", name);
             return;
         }
-        std::shared_ptr<Scene> nextScene = (*sceneIt).second();
-        if (!nextScene)
+        auto nextView = (*viewIt).second(*this, _allocator);
+        string rmlPath = "static/ui/";
+        rmlPath += name;
+        rmlPath += ".rml";
+        _window = _ui.createWindow(rmlPath.c_str(),
+                                   [this, nextView](const char* className, const char* idName)
+                                   {
+                                       return nextView;
+                                   });
+        if (_window)
         {
-            OVENGINE_LOG_ERROR("SceneController.next - scene '%s' creation failed", name);
-            return;
+            _window->show();
         }
-        _currentScene = nextScene;
+
+        _currentView = nextView;
     }
 
-    void SceneController::update()
+    void ApplicationController::update()
     {
-        if (_currentScene)
+        if (_currentView)
         {
-            _currentScene->update();
+            _currentView->update();
         }
     }
 

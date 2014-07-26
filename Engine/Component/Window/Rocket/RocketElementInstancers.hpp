@@ -35,11 +35,13 @@
 
 namespace cinekine {
     namespace ovengine {
+        
+    class RocketServer;
 
     class RocketOverviewElementInstancer: public Rocket::Core::ElementInstancer
     {
     public:
-    	RocketOverviewElementInstancer(const Allocator& allocator);
+    	RocketOverviewElementInstancer(RocketServer& server, const Allocator& allocator);
 		virtual ~RocketOverviewElementInstancer() = default;
 
 		void setViewRequestDelegate(ViewCreateFn viewCreateFn) {
@@ -55,6 +57,7 @@ namespace cinekine {
 		void Release();
 
 	private:
+        RocketServer& _server;
 		Allocator _allocator;
 		ViewCreateFn _viewCreateFn;
 	};

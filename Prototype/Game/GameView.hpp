@@ -12,8 +12,13 @@
 #include "Engine/View.hpp"
 #include "Engine/Model/Stage.hpp"
 #include "Engine/Model/Sprite.hpp"
+#include "Engine/Model/TileLibrary.hpp"
+#include "Engine/Model/SpriteLibrary.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/RenderTypes.hpp"
+#include "Graphics/BitmapLibrary.hpp"
+#include "Graphics/FontLibrary.hpp"
+#include "Core/JsonUtilities.hpp"
 
 #include "cinek/allocator.hpp"
 
@@ -21,13 +26,8 @@
 
 
 namespace cinekine {
-    namespace ovengine {
-        class Stage;
-    }
-    namespace glx {
-        class RendererCLI;
-        class FontLibrary;
-        class BitmapLibrary;
+    namespace prototype {
+        class ApplicationController;
     }
 }
 
@@ -37,19 +37,23 @@ namespace cinekine {
     class GameView: public ovengine::View
     {
     public:
-        GameView(glx::RendererCLI& renderer,
-                 glx::FontLibrary& fontLibrary,
-                 glx::BitmapLibrary& bitmapLibrary);
+        GameView(ApplicationController& application,
+                 const Allocator& allocator);
         virtual ~GameView();
-
-        void setStage(std::shared_ptr<ovengine::Stage> stage, const glm::vec3& pos);
-        void setMapPosition(const glm::vec3& pos);
+        
+        virtual void update();
 
         virtual void render();
 
         virtual void onMouseButtonDown(MouseButton button, int32_t x, int32_t y);
         virtual void onMouseButtonUp(MouseButton button, int32_t x, int32_t y);
         virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y);
+        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod);
+        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod);
+        
+    private:
+        void loadTileCollection(const char* filename);
+        void loadSpriteCollection(const char* filename);
 
     private:
         //  precalculates values used for rendering the local view
@@ -67,10 +71,20 @@ namespace cinekine {
                           int32_t x, int32_t y);
         
     private:
-        std::shared_ptr<ovengine::Stage> _stage;
-        glx::RendererCLI& _renderer;
-        glx::BitmapLibrary& _bitmapLibrary;
+        ApplicationController& _application;
+        Allocator _allocator;
+        glx::BitmapLibrary _bitmapLibrary;
+        glx::FontLibrary _fontLibrary;
         glx::Graphics2D _graphics;
+        
+        ovengine::TileLibrary _tileLibrary;
+        ovengine::SpriteLibrary _spriteLibrary;
+        
+        JsonDocument _gameDocument;
+        
+        std::shared_ptr<ovengine::Stage> _stage;
+        
+        glm::vec3 _viewPos;
         
         struct ViewBounds
         {
@@ -83,7 +97,7 @@ namespace cinekine {
         int32_t _screenViewLeft, _screenViewTop;
 
         ovengine::MapBounds _mapBounds;
-        ovengine::TileGrid* _tilemap;
+        const ovengine::TileGridMap* _tilemap;
         
         //  used for rendering
         struct RenderItem

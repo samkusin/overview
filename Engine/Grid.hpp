@@ -45,9 +45,9 @@ public:
     /**
      *  Constructor that creates an gridwith specified dimensions.
      *
-     *  @param rowCount     Number of rows in the grid.
-     *  @param columnCount  Number of columns in the grid.
-     *  @param allocator    The allocator used to allocate grid memory (optional)
+     *  @param rowCount    Number of rows in the grid.
+     *  @param columnCount Number of columns in the grid.
+     *  @param allocator   The allocator used to allocate grid memory (optional)
      */
     Grid(uint32_t rowCount, uint32_t columnCount, Allocator allocator=Allocator());
     /**
@@ -59,6 +59,10 @@ public:
      * Destructor.
      */
     ~Grid();
+    /**
+     * @return True if the row is a valid (rows and columns greater than 0.)
+     */
+    operator bool() const { return _rowCount > 0 && _colCount > 0; }
     /**
      * Assignment move operator.
      */
@@ -85,25 +89,25 @@ public:
     /**
      * Returns a pointer to the data row in the grid.  To retrieve data at a
      * specific column, use pointer math, atRow(row) + columnIndex.
-     * @param  row      Row index in grid [0, getRowCount()]
-     * @param  col      Column offset from start of row.
-     * @param  length   Number of columns in row to use.  If UINT32_MAX, the strip
-     *                  will run to the end of the row.
-     * @return          A row strip pointer pair.  If the row or column
-     *                  parameter lie out of the grid's range, returns a
-     *                  null_row_strip.
+     * @param  row    Row index in grid [0, getRowCount()]
+     * @param  col    Column offset from start of row.
+     * @param  length Number of columns in row to use.  If UINT32_MAX, the strip
+     *                will run to the end of the row.
+     * @return        A row strip pointer pair.  If the row or column
+     *                parameter lie out of the grid's range, returns a
+     *                null_row_strip.
      */
     row_strip atRow(uint32_t row, uint32_t col, uint32_t length=UINT32_MAX);
     /**
      * Returns a const pointer to the data row in the grid.  To retrieve data
      * at a specific column, use pointer math, atRow(row) + columnIndex.
      * @param  row Row index in grid [0, getRowCount()]
-     * @param  col      Column offset from start of row.
-     * @param  length   Number of columns in row to use.  If UINT32_MAX, the strip
-     *                  will run to the end of the row.
-     * @return          A row strip pointer pair.  If the row or column
-     *                  parameter lie out of the grid's range, returns a
-     *                  null_row_strip.
+     * @param  col    Column offset from start of row.
+     * @param  length Number of columns in row to use.  If UINT32_MAX, the strip
+     *                will run to the end of the row.
+     * @return        A row strip pointer pair.  If the row or column
+     *                parameter lie out of the grid's range, returns a
+     *                null_row_strip.
      */
     const_row_strip atRow(uint32_t row, uint32_t col, uint32_t length=UINT32_MAX) const;
     /**
@@ -158,7 +162,8 @@ public:
 
     /**
      * Initializes a container for a portion of the specified grid object.
-     * @param grid The grid object conforming to the Grid<T> class specficiation.
+     * @param grid      The grid object conforming to the Grid<T> class
+     *                  specficiation.
      * @param row       The upper bound of the specified grid.
      * @param column    The left bound of the specified grid.
      * @param rowCount  Number of rows to map from the specified grid.
@@ -174,8 +179,8 @@ public:
         _rowCount(rowCount), _colCount(colCount) {}
 
     /**
-     * Copy constructor.  Note that this is a shallow copy (the parent grid is not
-     * copied.)
+     * Copy constructor.  Note that this is a shallow copy (the parent grid is
+     * not copied.)
      * @param rhs The container to copy.
      */
     GridContainer(const GridContainer& rhs) :
@@ -200,7 +205,8 @@ public:
         return _grid ? _grid->atRow(_row+row, _column, _colCount) : row_strip();
     }
     /**
-     * Returns the const_row_strip at the specified row relative to the parent grid.
+     * Returns the const_row_strip at the specified row relative to the parent
+     * grid.
      * @param  row       The row within the container.
      * @return           The const_row_strip.
      */

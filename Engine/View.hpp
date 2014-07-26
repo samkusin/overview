@@ -30,6 +30,8 @@
 #include "cinek/types.hpp"
 #include "cinek/allocator.hpp"
 
+#include <SDL2/SDL_keycode.h>
+
 namespace cinekine {
     namespace ovengine {
 
@@ -44,6 +46,8 @@ namespace cinekine {
     public:
         virtual ~View() {}
 
+        virtual void update() = 0;
+        
         //  Executes rendering code specific to the View implementation.
         virtual void render() = 0;
 
@@ -83,6 +87,9 @@ namespace cinekine {
          * @param y      Y coordinate within view
          */
         virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y) {}
+        
+        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod) {}
+        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod) {}
     };
 
 

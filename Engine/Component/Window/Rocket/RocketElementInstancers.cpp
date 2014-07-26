@@ -27,11 +27,14 @@
 
 #include "./RocketElementInstancers.hpp"
 #include "./Elements/ElementOverview.hpp"
+#include "./RocketServer.hpp"
 
 namespace cinekine {
     namespace ovengine {
 
-    RocketOverviewElementInstancer::RocketOverviewElementInstancer(const Allocator& allocator) :
+    RocketOverviewElementInstancer::RocketOverviewElementInstancer(RocketServer& server,
+                                                                   const Allocator& allocator) :
+        _server(server),
         _allocator(allocator),
         _viewCreateFn()
     {
@@ -43,7 +46,7 @@ namespace cinekine {
                                     const Rocket::Core::XMLAttributes& /*attributes*/)
     {
         std::shared_ptr<View> view = _viewCreateFn("","");
-        return _allocator.newItem<RocketElementOverview, const Rocket::Core::String&>(tag, view);
+        return _allocator.newItem<RocketElementOverview, const Rocket::Core::String&>(tag, _server.sdlInput(), view);
     }
 
     void RocketOverviewElementInstancer::ReleaseElement(Rocket::Core::Element* element)

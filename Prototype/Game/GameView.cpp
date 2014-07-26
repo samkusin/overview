@@ -7,13 +7,15 @@
 //
 
 #include "GameView.hpp"
+#include "ApplicationController.hpp"
 
 #include "Engine/Debug.hpp"
-#include "Engine/Model/Stage.hpp"
 #include "Graphics/RendererCLI.hpp"
-#include "Graphics/Graphics2D.hpp"
-#include "Graphics/FontLibrary.hpp"
-#include "Graphics/BitmapLibrary.hpp"
+
+#include "Engine/Model/SpriteLibraryLoader.hpp"
+#include "Engine/Model/TileCollectionLoader.hpp"
+#include "Core/FileStreamBuf.hpp"
+#include "Core/StreamBufRapidJson.hpp"
 
 
 /////////////////////////////////////////////////////////////
@@ -21,49 +23,142 @@
 namespace cinekine {
     namespace prototype {
 
-    const int32_t TILE_WIDTH = 128;
-    const int32_t TILE_HEIGHT = 64;
+    const int32_t TILE_WIDTH = 32;
+    const int32_t TILE_HEIGHT = 16;
     const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
     const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
-    GameView::GameView(glx::RendererCLI& renderer,
-                       glx::FontLibrary& fontLibrary,
-                       glx::BitmapLibrary& bitmapLibrary) :
-        _renderer(renderer),
-        _bitmapLibrary(bitmapLibrary),
-        _graphics(renderer, bitmapLibrary, fontLibrary),
+    GameView::GameView(ApplicationController& application,
+                       const Allocator& allocator) :
+        _application(application),
+        _allocator(allocator),
+        _bitmapLibrary(_application.renderer(), _allocator),
+        _fontLibrary(_application.renderer(), 1, _allocator),
+        _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
+        _tileLibrary(1024, _allocator),
+        _spriteLibrary(32, _allocator),
         _screenViewLeft(0), _screenViewTop(0),
         _tilemap(nullptr),
         _renderItemsCount(0)
     {
+        //  this should be an application-wide op (move _fontLibrary to ApplicationController)
+        _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
 
+        //  load game document
+        FileStreamBuf gameStream("game.json");
+        RapidJsonStdStreamBuf jsonStream(gameStream);
+        _gameDocument.ParseStream<0>(jsonStream);
+
+        //  load assets
+        loadTileCollection("tiles_dungeon.json");
+        loadSpriteCollection("sprites_common.json");
+        
+        //  initialize simulation
+        ovengine::MapBounds bounds = { 4, 4, 1 };
+        ovengine::Stage::InitParameters initParams;
+        initParams.overlayToFloorTileRatio = 4;
+        initParams.spriteLimit = 256;
+        _stage = std::allocate_shared<ovengine::Stage,
+                                      std_allocator<ovengine::Stage>,
+                                      const ovengine::TileLibrary&,
+                                      const ovengine::SpriteLibrary&,
+                                      const ovengine::MapBounds&,
+                                      const ovengine::Stage::InitParameters&,
+                                      const Allocator&>
+                                      (
+                                         _allocator,
+                                         _tileLibrary,
+                                         _spriteLibrary,
+                                         bounds,
+                                         initParams,
+                                         _allocator
+                                      );
+        
+        //  paint our test map
+        auto& floorGrid = _stage->tileGridMap().floor();
+        auto& overlayGrid = _stage->tileGridMap().overlay();
+        
+        for (auto row = 0; row < floorGrid.rowCount(); ++row)
+        {
+            auto strip = floorGrid.atRow(row, 0);
+            for (; strip.first != strip.second; ++strip.first)
+                *strip.first = 0x0001;
+        }
+        for (auto row = 1; row < floorGrid.rowCount()-1; ++row)
+        {
+            auto strip = floorGrid.atRow(row, 1, floorGrid.columnCount()-2);
+            for (; strip.first != strip.second; ++strip.first)
+                *strip.first = 0x0002;
+        }
+        
+        _viewPos = glm::vec3(overlayGrid.columnCount() * 0.5f, overlayGrid.rowCount() * 0.5f, 0.f);
+        setupWorldSpace(xlatMapToWorldPos(_viewPos));
     }
 
     GameView::~GameView()
     {
 
     }
-
-    //  A new viewpoint has been initialized by our controller.  Replace our reference with the new one.
-    //
-    void GameView::setStage(std::shared_ptr<ovengine::Stage> stage, const glm::vec3& pos)
+    
+    void GameView::update()
     {
-        _stage = stage;
-        if (_stage)
-        {
-            setupWorldSpace(xlatMapToWorldPos(pos));
-        }
+        
     }
-
-    void GameView::setMapPosition(const glm::vec3& pos)
+        
+    void GameView::loadTileCollection(const char* filename)
     {
-        setupWorldSpace(xlatMapToWorldPos(pos));
+        FileStreamBuf dbStream(filename);
+        if (!dbStream)
+            return;
+        
+        ovengine::TileCollectionLoader tileLoader(_gameDocument["model"]["tiles"]["flags"],
+                  [this](const char* atlasName) -> cinek_bitmap_atlas
+                  {
+                      char path[MAX_PATH];
+                      snprintf(path, sizeof(path), "textures/%s", atlasName);
+                      return _bitmapLibrary.loadAtlas(path);
+                  },
+                  [this](cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+                  {
+                      const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
+                      if (!bitmapAtlas)
+                          return kCinekBitmapIndex_Invalid;
+                      return bitmapAtlas->getBitmapIndex(name);
+                  },
+                  [this](ovengine::TileCollection&& collection)
+                  {
+                      _tileLibrary.mapCollectionToSlot(std::move(collection), 0);
+                  },
+                  _allocator);
+        unserializeFromJSON(dbStream, tileLoader);
+    }
+    
+    void GameView::loadSpriteCollection(const char* filename)
+    {
+        FileStreamBuf dbStream(filename);
+        if (!dbStream)
+            return;
+        
+        unserializeFromJSON(_spriteLibrary, dbStream,
+            [this](const char* atlasName) -> cinek_bitmap_atlas
+            {
+                char path[MAX_PATH];
+                snprintf(path, sizeof(path), "textures/%s", atlasName);
+                return _bitmapLibrary.loadAtlas(path);
+            },
+            [this]( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
+            {
+                const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
+                if (!bitmapAtlas)
+                    return kCinekBitmapIndex_Invalid;
+                return bitmapAtlas->getBitmapIndex(name);
+            });
     }
 
     //  precalculates values used for rendering the local view
     void GameView::setupWorldSpace(const glm::vec3& worldPos)
     {
-        glx::Rect viewportRect = _renderer.getViewport();
+        glx::Rect viewportRect = _application.renderer().getViewport();
 
         //  calculate view anchor
         //  this is the world bounds for our view,
@@ -150,15 +245,14 @@ namespace cinekine {
     void GameView::renderReset()
     {
         _mapBounds = _stage->bounds();
+        _tilemap = nullptr;
         _renderItemsCount = 0;
     }
         
     void GameView::renderTileMap(int tileZ)
     {
-        _tilemap = _stage->tileGridAtZ(tileZ);
-        if (!_tilemap)
-            return;
-
+        _tilemap = &_stage->tileGridMap();
+        
         //  pick all tiles within the view bounds:
         //
         int32_t worldY = _worldViewAlignedBounds.min.y;
@@ -198,31 +292,40 @@ namespace cinekine {
     void GameView::renderTile(const glm::vec3& worldPos,
                               const glm::vec3& mapPos)
     {
-        
         //  find world tile from X,Y
         //  our world draw anchor is the lower-y, center-x of our isotile.
         float tileWorldDrawX = worldPos.x;
         float tileWorldDrawY = worldPos.y + TILE_HEIGHT;
 
-        auto tile = _tilemap->at((uint32_t)mapPos.y, (uint32_t)mapPos.x);
+        uint32_t mapY = (uint32_t)mapPos.y;
+        uint32_t mapX = (uint32_t)mapPos.x;
         
-        //  render layer 0 - floor, this is always rendered first
-        auto& tileInfo0 = _stage->tile(tile.layer[0]);
+        const uint32_t kOverlayFloorTileCount = _tilemap->overlayToFloorRatio();
         
-        auto atlas = _bitmapLibrary.getAtlas(tileInfo0.bitmap.bmpAtlas);
-        if (atlas)
+        if ((mapX % kOverlayFloorTileCount) == kOverlayFloorTileCount-1 &&
+            (mapY % kOverlayFloorTileCount) == kOverlayFloorTileCount-1)
         {
-            auto bitmapInfo = atlas->getBitmapFromIndex(tileInfo0.bitmap.bmpIndex);
-            if (bitmapInfo)
+            auto tile = _tilemap->floor().at(mapY/kOverlayFloorTileCount, mapX/kOverlayFloorTileCount);
+            
+            //  render layer 0 - floor, this is always rendered first
+            auto& tileInfo0 = _stage->tile(tile);
+            
+            auto atlas = _bitmapLibrary.getAtlas(tileInfo0.bitmap.bmpAtlas);
+            if (atlas)
             {
-                int32_t screenOX = tileWorldDrawX - _worldViewBounds.min.x + _screenViewLeft;
-                int32_t screenOY = tileWorldDrawY - _worldViewBounds.min.y + _screenViewTop;
-                renderBitmap(atlas->getTexture(), *bitmapInfo,
-                             screenOX,
-                             screenOY);
+                auto bitmapInfo = atlas->getBitmapFromIndex(tileInfo0.bitmap.bmpIndex);
+                if (bitmapInfo)
+                {
+                    int32_t screenOX = tileWorldDrawX - _worldViewBounds.min.x + _screenViewLeft;
+                    int32_t screenOY = tileWorldDrawY - _worldViewBounds.min.y + _screenViewTop;
+                    renderBitmap(atlas->getTexture(), *bitmapInfo,
+                                 screenOX,
+                                 screenOY);
+                }
             }
         }
         
+        /*
         //  render layer 1 - walls, sprites via the render list
         //  render order is determined by the tile's role (wall, position, etc)
          
@@ -231,6 +334,7 @@ namespace cinekine {
                           glm::vec3(tileWorldDrawX, tileWorldDrawY, worldPos.z));
         
         renderQueueFlush();
+         */
     }
         
     void GameView::renderQueueBitmap(const cinek_bitmap& bitmap, const glm::vec3& worldPos)
@@ -285,7 +389,7 @@ namespace cinekine {
                                                            sy - bitmap.srcH + bitmap.offY,
                                                            bitmap.offW,
                                                            bitmap.offH);
-        _renderer.drawTextureRect(texture, srcRect, destRect, color);
+        _application.renderer().drawTextureRect(texture, srcRect, destRect, color);
     }
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)
@@ -300,6 +404,39 @@ namespace cinekine {
 
     void GameView::onMouseMove(MouseRegion region, int32_t x, int32_t y)
     {
+    }
+        
+    void GameView::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
+    {
+        glm::vec3 newPos(0,0,0);
+        
+        const float kAdjX = 0.25f;
+        const float kAdjY = 0.25f;
+        
+        switch (keycode)
+        {
+            case SDLK_e:    newPos.y = -kAdjY; break;
+            case SDLK_z:    newPos.y = kAdjY; break;
+            case SDLK_q:    newPos.x = -kAdjX; break;
+            case SDLK_c:    newPos.x = kAdjX; break;
+            case SDLK_w:    newPos.x = -kAdjX; newPos.y = -kAdjY; break;
+            case SDLK_x:    newPos.x = kAdjX; newPos.y = kAdjY; break;
+            case SDLK_a:    newPos.x = -kAdjX; newPos.y = kAdjY; break;
+            case SDLK_d:    newPos.x = kAdjX; newPos.y = -kAdjY; break;
+            default:
+                break;
+        }
+        
+        if (newPos.x || newPos.y || newPos.z)
+        {
+            _viewPos += newPos;
+            setupWorldSpace(xlatMapToWorldPos(_viewPos));
+        }
+    }
+    
+    void GameView::onKeyUp(SDL_Keycode keycode, uint16_t keymod)
+    {
+        
     }
 
     }

@@ -7,11 +7,11 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Model_BlockCollectionLoader_hpp
-#define Overview_Model_BlockCollectionLoader_hpp
+#ifndef Overview_Builder_BlockCollectionLoader_hpp
+#define Overview_Builder_BlockCollectionLoader_hpp
 
 #include "Engine/Model/ModelCollectionLoader.hpp"
-#include "Engine/Model/BlockCollection.hpp"
+#include "Engine/Builder/BlockCollection.hpp"
 
 #include <functional>
 #include <streambuf>
@@ -19,7 +19,7 @@
 namespace cinekine { namespace ovengine {
 
 /// @class   BlockCollectionLoader
-/// @ingroup TileModel
+/// @ingroup Builder
 /// @brief   Handler for unserializing BlockCollection objects from an input
 ///          JSON stream.
 ///

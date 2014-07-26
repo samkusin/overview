@@ -9,7 +9,7 @@
 #ifndef Overview_Overview_hpp
 #define Overview_Overview_hpp
 
-#include "SceneController.hpp"
+#include "ApplicationController.hpp"
 #include "Engine/Director.hpp"
 
 namespace cinekine {
@@ -35,7 +35,7 @@ namespace cinekine {
 
     private:
         Allocator _allocator;
-        SceneController _sceneController;
+        ApplicationController _controller;
     };
 
     }

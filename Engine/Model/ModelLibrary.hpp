@@ -94,7 +94,7 @@ void ModelLibrary<_Collection, _SlotType>::mapCollectionToSlot(
         return;
     }
     OVENGINE_LOG_TRACE("ModelLibrary.mapCollectionToSlot - slot %u mapped to "
-                       "collection '%s'", collection.name().c_str());
+                       "collection '%s'", slot, collection.name().c_str());
 
     _collections[slot] = std::move(collection);
 }

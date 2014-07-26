@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-#ifndef Overview_SceneController_hpp
-#define Overview_SceneController_hpp
+#ifndef Overview_ApplicationController_hpp
+#define Overview_ApplicationController_hpp
 
-#include "Scene.hpp"
+#include "Engine/Component/Window/WindowComponentCLI.hpp"
 
 #include "cinek/allocator.hpp"
 #include "cinek/string.hpp"
@@ -40,28 +40,29 @@ namespace cinekine {
     namespace ovengine {
         class Stage;
         class WindowComponentCLI;
+        class View;
     }
 }
 
 namespace cinekine {
     namespace prototype {
 
-    class SceneController
+    class ApplicationController
     {
     public:
-        SceneController(ovengine::WindowComponentCLI& ui,
-                        glx::RendererCLI& renderer,
-                        const Allocator& allocator);
-        ~SceneController();
+        ApplicationController(ovengine::WindowComponentCLI& ui,
+                              glx::RendererCLI& renderer,
+                              const Allocator& allocator);
+        ~ApplicationController();
 
-        typedef std::function<std::shared_ptr<Scene>(void)> SceneCreateFn;
+        typedef std::function<std::shared_ptr<ovengine::View>(ApplicationController&, const Allocator&)> ViewCreateFn;
 
         //  add a scene provider - the provider will supply a Scene object that will
         //  be managed by the Scenes collection during state changes
-        void add(const char* name, SceneCreateFn createFn);
-        //  advances to the next Scene
+        void add(const char* name, ViewCreateFn createFn);
+        //  advances to the next Controller
         void next(const char* name);
-        //  updates the current Scene
+        //  updates the current Controller
         void update();
 
         ovengine::WindowComponentCLI& ui() { return _ui; }
@@ -72,9 +73,10 @@ namespace cinekine {
     private:
         ovengine::WindowComponentCLI& _ui;
         glx::RendererCLI& _renderer;
-
-        unordered_map<string, SceneCreateFn> _sceneMap;
-        std::shared_ptr<Scene> _currentScene;
+        Allocator _allocator;
+        unordered_map<string, ViewCreateFn> _viewCreateMap;
+        std::shared_ptr<ovengine::View> _currentView;
+        ovengine::WindowPtr _window;
     };
 
     }   // namespace ovengine

@@ -42,13 +42,9 @@ namespace cinekine { namespace ovengine {
         _tileTemplates(tileTemplates),
         _blockTemplates(blockTemplates)
     {
-        auto& bounds = _map.bounds();
-        for (uint32_t z = 0; z < bounds.zUnits; ++z)
-        {
-            TileGrid* tilemap = _map.tileGridAtZ(z);
-            TileInstance zeroTile;
-            tilemap->fillWithValue(zeroTile, 0, 0, bounds.yUnits, bounds.xUnits);
-        }
+        TileGridMap& tilemap = _map.tileGridMap();
+        TileGrid& floorGrid = tilemap.floor();
+        floorGrid.fillWithValue(0x0000, 0, 0, floorGrid.rowCount(), floorGrid.columnCount());
     }
 
     /*

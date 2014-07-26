@@ -29,8 +29,10 @@ namespace cinekine {
     namespace ovengine {
 
     RocketElementOverview::RocketElementOverview(const Rocket::Core::String& tag,
+                                                 const RocketSDLInputMap& inputMap,
                                                  std::shared_ptr<View> view) :
         Rocket::Core::Element(tag),
+        _inputMap(inputMap),
         _view(view)
     {
      //   AddEventListener("mousedown", this, true);
@@ -90,6 +92,37 @@ namespace cinekine {
                 }
             }   
         }
+        else if (event == "keydown" || event == "keyup")
+        {
+            
+            Rocket::Core::Input::KeyIdentifier key =
+            (Rocket::Core::Input::KeyIdentifier)event.GetParameter<int>(
+                                                                        "key_identifier",
+                                                                        Rocket::Core::Input::KI_UNKNOWN);
+            bool ctrlKey = event.GetParameter("ctrl_key", false);
+            bool shiftKey = event.GetParameter("shift_key", false);
+            bool altKey = event.GetParameter("alt_key", false);
+            
+            uint16_t mod = 0;
+            if (ctrlKey)
+                mod |= Rocket::Core::Input::KM_CTRL;
+            else if (shiftKey)
+                mod |= Rocket::Core::Input::KM_SHIFT;
+            else if (altKey)
+                mod |= Rocket::Core::Input::KM_ALT;
+            
+            RocketSDLInputMap::SDLKey sdlKey = _inputMap.translateRocketKey(key, mod);
+            
+            if (event == "keydown")
+            {
+                _view->onKeyDown(sdlKey.code, sdlKey.mod);
+            }
+            else
+            {
+                _view->onKeyUp(sdlKey.code, sdlKey.mod);
+            }
+        }
+
     }
 
     void RocketElementOverview::OnRender()

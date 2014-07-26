@@ -8,18 +8,18 @@
 /// @license    The MIT License
 
 
-#ifndef Overview_Model_BlockCollection_hpp
-#define Overview_Model_BlockCollection_hpp
+#ifndef Overview_Builder_BlockCollection_hpp
+#define Overview_Builder_BlockCollection_hpp
 
 #include "Engine/Model/ModelCollection.hpp"
-#include "Engine/Model/Block.hpp"
+#include "Engine/Builder/Block.hpp"
 
 #include "cinek/string.hpp"
 
 namespace cinekine { namespace ovengine {
 
 /// @class  BlockCollection
-/// @ingroup TileModel
+/// @ingroup Builder
 /// @brief  A group of Block objects sharing attributes
 ///
 class BlockCollection : public ModelCollection<Block>

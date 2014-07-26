@@ -34,6 +34,7 @@ namespace cinekine {
     namespace ovengine {
 
     class RocketServer;
+    class RocketSDLInputMap;
     
     class RocketElementOverview : 
         public Rocket::Core::Element,
@@ -41,6 +42,7 @@ namespace cinekine {
     {
     public:
         RocketElementOverview(const Rocket::Core::String& tag,
+                              const RocketSDLInputMap& inputMap,
                               std::shared_ptr<View> view);
         virtual ~RocketElementOverview();
         
@@ -50,6 +52,7 @@ namespace cinekine {
         virtual void OnRender();
 
     private:
+        const RocketSDLInputMap& _inputMap;
         std::shared_ptr<View> _view;
     };
 

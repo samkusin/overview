@@ -58,6 +58,8 @@ namespace cinekine {
         void handleInput(const SDL_Event& event);
 
         WindowPtr createWindow(const char* name, ViewCreateFn createFn);
+        
+        const RocketSDLInput& sdlInput() const { return _sdlInput; }
 
     private:
         Allocator _allocator;

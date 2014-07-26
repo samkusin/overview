@@ -41,19 +41,6 @@ namespace cinekine {
     namespace ovengine {
 
     /**
-     * @class WindowEventListener
-     * @brief A listener for Window events
-     */
-    class WindowEventListener
-    {
-    public:
-        virtual ~WindowEventListener() {}
-
-        virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod) {}
-        virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod) {}
-    };
-
-    /**
      * @class Window
      * @brief Interface for all Window implementations
      */
@@ -66,11 +53,6 @@ namespace cinekine {
          * Shows the window
          */
         virtual void show() = 0;
-        /**
-         * Sets the listener for Window events
-         * @param listener The object listening for events
-         */
-        virtual void setEventListener(WindowEventListener* listener) = 0;
     };
 
     typedef std::shared_ptr<Window> WindowPtr;

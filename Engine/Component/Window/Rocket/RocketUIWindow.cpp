@@ -23,21 +23,15 @@
  */
 
 #include "./RocketUIWindow.hpp"
-#include "./RocketSDLInputMap.hpp"
 
 #include "Rocket/Core/Input.h"
 
 namespace cinekine {
     namespace ovengine {
 
-    RocketUIWindow::RocketUIWindow(Rocket::Core::ElementDocument* document,
-                                   const RocketSDLInputMap& inputMapper) :
-        _document(document),
-        _eventListener(nullptr),
-        _inputMap(inputMapper)
+    RocketUIWindow::RocketUIWindow(Rocket::Core::ElementDocument* document) :
+        _document(document)
     {
-        _document->AddEventListener("keydown", this);
-        _document->AddEventListener("keyup", this);
     }
     
     RocketUIWindow::~RocketUIWindow()
@@ -49,43 +43,6 @@ namespace cinekine {
     void RocketUIWindow::show()
     {
          _document->Show();
-    }
-
-    void RocketUIWindow::ProcessEvent(Rocket::Core::Event& event)
-    {
-        if (!_eventListener)
-            return;
-
-        if (event == "keydown" || event == "keyup")
-        {
-
-            Rocket::Core::Input::KeyIdentifier key =
-                (Rocket::Core::Input::KeyIdentifier)event.GetParameter<int>(
-                                                        "key_identifier", 
-                                                        Rocket::Core::Input::KI_UNKNOWN);
-            bool ctrlKey = event.GetParameter("ctrl_key", false);
-            bool shiftKey = event.GetParameter("shift_key", false);
-            bool altKey = event.GetParameter("alt_key", false);
-
-            uint16_t mod = 0;
-            if (ctrlKey)
-                mod |= Rocket::Core::Input::KM_CTRL;
-            else if (shiftKey)
-                mod |= Rocket::Core::Input::KM_SHIFT;
-            else if (altKey)
-                mod |= Rocket::Core::Input::KM_ALT;
-
-            RocketSDLInputMap::SDLKey sdlKey = _inputMap.translateRocketKey(key, mod);
-
-            if (event == "keydown")
-            {
-                _eventListener->onKeyDown(sdlKey.code, sdlKey.mod);
-            }
-            else
-            {
-                _eventListener->onKeyUp(sdlKey.code, sdlKey.mod);
-            }
-        }
     }
 
     }   // namespace ovengine
