@@ -33,7 +33,8 @@ struct Tile
         kCinekBitmapIndex_Invalid
     };
     uint32_t flags = 0;         ///< Application defined flags for the tile
-    AABB aabb;                  ///< An axis-aligned bounding box for the tile
+    AABB<glm::vec3> aabb;       ///< An axis-aligned bounding box for the tile
+    glm::ivec2 anchor;          ///< 2D Anchor from tile origin
 };
 
 } /* namespace ovengine */ } /* namespace cinekine */

@@ -12,10 +12,10 @@
 
 namespace cinekine { namespace ovengine {
 
-
-    AABB AABB::boundTo(const AABB& box) const
+    template<class _Point>
+    AABB<_Point> AABB<_Point>::boundTo(const AABB<_Point>& box) const
     {
-        AABB result;
+        AABB<_Point> result;
         result.min.x = std::min(box.min.x, min.x);
         result.min.y = std::min(box.min.y, min.y);
         result.min.z = std::min(box.min.z, min.z);
@@ -24,6 +24,5 @@ namespace cinekine { namespace ovengine {
         result.max.z = std::max(box.max.z, max.z);
         return result;
     }
-
 
 } /* namespace ovengine */ } /* namespace cinekine */

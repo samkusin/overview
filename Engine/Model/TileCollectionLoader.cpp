@@ -75,6 +75,11 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
             tile.aabb.min = parseVec3(attr.value["min"]);
             tile.aabb.max = parseVec3(attr.value["max"]);
         }
+        else if (!strcmp(attrName, "anchor"))
+        {
+            tile.anchor.x = parseInt(attr.value["x"]);
+            tile.anchor.y = parseInt(attr.value["y"]);
+        }
     }
     uint16_t tileIndex = (uint16_t)strtoul(key, nullptr, 16);
     _tiles.emplace_back(tileIndex, tile);

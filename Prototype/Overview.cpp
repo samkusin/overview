@@ -7,14 +7,10 @@
 //
 
 #include "Overview.hpp"
-
-#include "cinek/allocator.hpp"
-
 #include "ApplicationController.hpp"
 #include "Game/GameView.hpp"
 
-#include <memory>
-
+#include "cinek/allocator.hpp"
 
 namespace cinekine {
     namespace ovengine {

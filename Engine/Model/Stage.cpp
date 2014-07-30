@@ -15,22 +15,6 @@
 
 namespace cinekine { namespace ovengine {
 
-inline TileId CompressTile(TileSlot slot, TileIndex index)
-{
-    return (slot << 12) + (index & 0xf000);
-}
-
-inline TileSlot SlotFromTileId(TileId id)
-{
-    return (id >> 12);
-}
-
-inline TileIndex IndexFromTileId(TileId id)
-{
-    return (id & 0x0fff);
-}
-
-
 Stage::Stage(const TileLibrary& tileDb,
              const SpriteLibrary& spriteDb,
              const MapBounds& bounds,
@@ -45,12 +29,6 @@ Stage::Stage(const TileLibrary& tileDb,
     _freeSpriteInstanceIds.reserve(params.spriteLimit);
     _bounds.xUnits = _gridMap.overlay().columnCount();
     _bounds.yUnits = _gridMap.overlay().rowCount();
-}
-
-const Tile& Stage::tile(TileId tileId) const
-{
-    return _tileDb.tileFromCollectionAtIndex(SlotFromTileId(tileId),
-                                             IndexFromTileId(tileId));
 }
 
 

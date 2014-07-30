@@ -8,7 +8,6 @@
 
 #include "Debug.hpp"
 #include "Director.hpp"
-#include "View.hpp"
 
 #include "Graphics/SDL/SDLRenderer.hpp"
 #include "Graphics/GL/GL3Renderer.hpp"
@@ -95,6 +94,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
     ovengine::DestroyDirector(director);
     director = nullptr;
+    
+    windowComponent->update(SDL_GetTicks());
 
     return 0;
 }

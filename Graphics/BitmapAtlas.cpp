@@ -33,6 +33,11 @@ namespace cinekine {
         _bitmaps(std::move(other._bitmaps))
     {
     }
+        
+    BitmapAtlas::~BitmapAtlas()
+    {
+        
+    }
 
     BitmapAtlas& BitmapAtlas::operator=(BitmapAtlas&& other)
     {

@@ -9,6 +9,68 @@
 #ifndef Overview_IsoScene_hpp
 #define Overview_IsoScene_hpp
 
+#include "Game/Render/IsoNodeGraph.hpp"
 
+#include "Engine/Model/TileGridMap.hpp"
+#include "Engine/Model/AABB.hpp"
+
+#include "cinek/allocator.hpp"
+
+namespace cinekine { namespace glx {
+    class RendererCLI;
+    class Texture;
+    struct BitmapInfo;
+} /* namespace glx */ } /* namespace cinekine */
+
+namespace cinekine { namespace ovengine {
+
+    class TileGridMap;
+    class TileLibrary;
+    class SpriteLibrary;
+    
+    /// @class   IsoScene
+    /// @ingroup IsoScene
+    /// @brief   A scene generator used for building Isometric render graphs.
+    class IsoScene
+    {
+    public:
+        IsoScene(const glm::ivec2& viewDimensions,
+                 const glm::ivec2& tileDimensions,
+                 const ovengine::TileGridMap& tileGridMap,
+                 const ovengine::TileLibrary& tileLibrary,
+                 const ovengine::SpriteLibrary& spriteLibrary,
+                 const Allocator& allocator);
+        
+        void update(const glm::vec3& pos);
+        
+        void visit(std::function<void(const IsoNode*)> fn);
+                
+    private:
+        void setupViewBounds(const glm::vec3& viewPos);
+        glm::vec3 isoToViewPos(const glm::vec3& isoPos) const;
+        glm::vec3 viewToIsoPos(const glm::vec3& viewPos) const;
+        const Tile& tileFromId(TileId id) const;
+        
+        void attachTileToGraph(const glm::vec3& viewPos, const glm::vec3& isoPos);
+        
+    private:
+        const ovengine::TileGridMap& _tileGridMap;
+        const ovengine::TileLibrary& _tileLibrary;
+        const ovengine::SpriteLibrary& _spriteLibrary;
+        const glm::ivec2 _tileDim;
+        const glm::ivec2 _viewDim;
+
+        Allocator _allocator;
+        
+        glm::vec3 _centerPos;
+        ovengine::AABB<glm::vec3> _isoWorldBounds;
+        ovengine::AABB<glm::vec3> _viewBounds;
+        ovengine::AABB<glm::vec3> _viewAlignedBounds;
+        glm::ivec2 _screenOffset;
+        
+        IsoNodeGraph _isoNodeGraph;
+    };
+    
+} /* namespace ovengine */ } /* namespace cinekine */
 
 #endif

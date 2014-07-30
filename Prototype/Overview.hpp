@@ -10,6 +10,7 @@
 #define Overview_Overview_hpp
 
 #include "ApplicationController.hpp"
+
 #include "Engine/Director.hpp"
 
 namespace cinekine {

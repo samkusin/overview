@@ -140,6 +140,8 @@ namespace cinekine {
                                         std::move(uiDocument)
                                     );
             }
+            uiDocument->RemoveReference();
+            _overviewElementInstancer->clearViewRequestDelegate();
         }
         return ptr;
     } 

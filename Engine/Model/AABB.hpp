@@ -18,10 +18,11 @@ namespace cinekine { namespace ovengine {
     /// @struct AABB
     /// @brief  An axis-aligned box in 3D space
     ///
+    template<class _Point>
     struct AABB
     {
-        typedef Point::value_type  ValueType;
-        typedef Point              Type;
+        typedef typename _Point::value_type  ValueType;
+        typedef _Point                       Type;
         Type min;          ///< The min coordinate
         Type max;          ///< The max coordinate
 
@@ -40,6 +41,11 @@ namespace cinekine { namespace ovengine {
         /// @return True if the this box lies within the supplied box
         ///
         bool inside(const AABB& box) const;
+        /// Determines if this box contains a point
+        /// @param  point The point to test
+        /// @return True if the this box contains the supplied point
+        ///
+        bool contains(const Type& pt) const;
         /// Determines if this box lies outside a box
         /// @param  box The box to test
         /// @return True if this box lies outside the supplied box
@@ -80,59 +86,77 @@ namespace cinekine { namespace ovengine {
     ////////////////////////////////////////////////////////////////////////////
 
 
-    inline AABB::operator bool() const
+    template<class _Point>
+    AABB<_Point>::operator bool() const
     {
         return min != max;
     }
 
-    inline AABB::Type AABB::size() const
+    template<class _Point>
+    typename AABB<_Point>::Type AABB<_Point>::size() const
     {
         return max - min;
     }
 
-    inline bool AABB::inside(const AABB& box) const
+    template<class _Point>
+    bool AABB<_Point>::inside(const AABB<_Point>& box) const
     {
         return (min.x >= box.min.x && max.x <= box.max.x &&
                 min.y >= box.min.y && max.y <= box.max.y &&
                 min.z >= box.min.z && max.z <= box.max.z);
     }
+    
+    template<class _Point>
+    bool AABB<_Point>::contains(const Type& pt) const
+    {
+        return (pt.x >= min.x && pt.x <= max.x &&
+                pt.y >= min.y && pt.y <= max.y &&
+                pt.z >= min.z && pt.z <= max.z);
+    }
 
-    inline bool AABB::outside(const AABB& box) const
+    template<class _Point>
+    bool AABB<_Point>::outside(const AABB<_Point>& box) const
     {
         return (min.x > box.max.x || box.min.x > max.x ||
                 min.y > box.max.y || box.min.y > max.y ||
                 min.z > box.max.z || box.min.z > max.z);
     }
 
-    inline bool AABB::intersects(const AABB& box) const
+    template<class _Point>
+    bool AABB<_Point>::intersects(const AABB<_Point>& box) const
     {
         return !outside(box);
     }
 
-    inline bool AABB::operator==(const AABB& box) const
+    template<class _Point>
+    bool AABB<_Point>::operator==(const AABB<_Point>& box) const
     {
         return min != box.min || max != box.max;
     }
 
-    inline bool AABB::operator!=(const AABB& box) const
+    template<class _Point>
+    bool AABB<_Point>::operator!=(const AABB<_Point>& box) const
     {
         return min != box.min || max != box.max;
     }
 
-    inline void AABB::clear()
+    template<class _Point>
+    void AABB<_Point>::clear()
     {
         min = Point();
         max = Point();
     }
 
-    inline AABB::Type AABB::center() const
+    template<class _Point>
+    typename AABB<_Point>::Type AABB<_Point>::center() const
     {
         return (min + max)/2.f;
     }
 
-    inline AABB operator+(const AABB& box, const AABB::Type& off)
+    template<class _Point>
+    AABB<_Point> operator+(const AABB<_Point>& box, const typename AABB<_Point>::Type& off)
     {
-        AABB result;
+        AABB<_Point> result;
         result.min = box.min + off;
         result.max = box.max + off;
         return result;

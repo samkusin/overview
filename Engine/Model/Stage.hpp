@@ -73,13 +73,6 @@ public:
     const SpriteLibrary& spriteDatabase() const {
         return _spriteDb;
     }
-    /**
-     * Shortcut method to retrieve Tile information from an ID using
-     * the Stage's TileLibrary
-     * @param  tileId The TileId
-     * @return        Reference to the TileInfo
-     */
-    const Tile& tile(TileId tileId) const;
 
 private:
     const TileLibrary& _tileDb;

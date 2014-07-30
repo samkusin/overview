@@ -25,6 +25,7 @@
 #include "./RocketUIWindow.hpp"
 
 #include "Rocket/Core/Input.h"
+#include "Rocket/Core/Context.h"
 
 namespace cinekine {
     namespace ovengine {
@@ -32,17 +33,18 @@ namespace cinekine {
     RocketUIWindow::RocketUIWindow(Rocket::Core::ElementDocument* document) :
         _document(document)
     {
+        _document->AddReference();
     }
     
     RocketUIWindow::~RocketUIWindow()
     {
-        _document->Close();
         _document->RemoveReference();
+        _document->Close();
     }
 
     void RocketUIWindow::show()
     {
-         _document->Show();
+        _document->Show();
     }
 
     }   // namespace ovengine

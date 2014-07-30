@@ -26,14 +26,16 @@
 
 
 namespace cinekine {
-    namespace prototype {
-        class ApplicationController;
+    namespace ovengine {
+        class IsoScene;
     }
 }
 
 namespace cinekine {
     namespace prototype {
 
+    class ApplicationController;
+        
     class GameView: public ovengine::View
     {
     public:
@@ -56,19 +58,9 @@ namespace cinekine {
         void loadSpriteCollection(const char* filename);
 
     private:
-        //  precalculates values used for rendering the local view
-        void setupWorldSpace(const glm::vec3& worldPos);
-        //  utilities
-        glm::vec3 xlatMapToWorldPos(const glm::vec3& pos);
-        glm::vec3 xlatWorldToMapPos(const glm::vec3& pos);
-        
         void renderReset();
-        void renderTileMap(int tileZ);
-        void renderTile(const glm::vec3& worldPos, const glm::vec3& mapPos);
-        void renderQueueBitmap(const cinek_bitmap& bitmap, const glm::vec3& worldPos);
-        void renderQueueFlush();
         void renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
-                          int32_t x, int32_t y);
+                          int32_t sx, int32_t sy);
         
     private:
         ApplicationController& _application;
@@ -85,31 +77,7 @@ namespace cinekine {
         std::shared_ptr<ovengine::Stage> _stage;
         
         glm::vec3 _viewPos;
-        
-        struct ViewBounds
-        {
-            glm::vec3 min;
-            glm::vec3 max;
-        };
-
-        ViewBounds _worldViewBounds;
-        ViewBounds _worldViewAlignedBounds;
-        int32_t _screenViewLeft, _screenViewTop;
-
-        ovengine::MapBounds _mapBounds;
-        const ovengine::TileGridMap* _tilemap;
-        
-        //  used for rendering
-        struct RenderItem
-        {
-            glm::vec3 pos;
-            const glx::BitmapAtlas* bmpAtlas;
-            const glx::BitmapInfo* bmpInfo;
-        };
-        
-        std::array<RenderItem, 16> _renderItems;
-        std::array<RenderItem*, 16> _renderItemsSorted;
-        uint32_t _renderItemsCount;
+        unique_ptr<ovengine::IsoScene> _isoScene;
     };
 
     }

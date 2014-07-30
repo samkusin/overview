@@ -47,6 +47,10 @@ namespace cinekine {
 		void setViewRequestDelegate(ViewCreateFn viewCreateFn) {
 			_viewCreateFn = viewCreateFn;
 		}
+        
+        void clearViewRequestDelegate() {
+            _viewCreateFn = 0;
+        }
 	
 		Rocket::Core::Element* InstanceElement(Rocket::Core::Element* parent,
 										 const Rocket::Core::String& tag,

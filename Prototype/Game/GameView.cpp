@@ -6,8 +6,11 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#include "GameView.hpp"
+#include "Game/GameView.hpp"
+
 #include "ApplicationController.hpp"
+
+#include "Game/Render/IsoScene.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Graphics/RendererCLI.hpp"
@@ -17,6 +20,8 @@
 #include "Core/FileStreamBuf.hpp"
 #include "Core/StreamBufRapidJson.hpp"
 
+#include "cinek/allocator.hpp"
+
 
 /////////////////////////////////////////////////////////////
 
@@ -25,8 +30,6 @@ namespace cinekine {
 
     const int32_t TILE_WIDTH = 32;
     const int32_t TILE_HEIGHT = 16;
-    const int32_t TILE_HALFWIDTH = TILE_WIDTH/2;
-    const int32_t TILE_HALFHEIGHT = TILE_HEIGHT/2;
 
     GameView::GameView(ApplicationController& application,
                        const Allocator& allocator) :
@@ -36,10 +39,7 @@ namespace cinekine {
         _fontLibrary(_application.renderer(), 1, _allocator),
         _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
         _tileLibrary(1024, _allocator),
-        _spriteLibrary(32, _allocator),
-        _screenViewLeft(0), _screenViewTop(0),
-        _tilemap(nullptr),
-        _renderItemsCount(0)
+        _spriteLibrary(32, _allocator)
     {
         //  this should be an application-wide op (move _fontLibrary to ApplicationController)
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
@@ -53,8 +53,8 @@ namespace cinekine {
         loadTileCollection("tiles_dungeon.json");
         loadSpriteCollection("sprites_common.json");
         
-        //  initialize simulation
-        ovengine::MapBounds bounds = { 4, 4, 1 };
+        //  initialize sim (our stage)
+        ovengine::MapBounds bounds = { 8, 8, 1 };
         ovengine::Stage::InitParameters initParams;
         initParams.overlayToFloorTileRatio = 4;
         initParams.spriteLimit = 256;
@@ -74,25 +74,40 @@ namespace cinekine {
                                          _allocator
                                       );
         
-        //  paint our test map
+        //  create our stage map
         auto& floorGrid = _stage->tileGridMap().floor();
         auto& overlayGrid = _stage->tileGridMap().overlay();
+        const uint32_t kRowCount = floorGrid.rowCount();
+        const uint32_t kColCount = floorGrid.columnCount();
         
-        for (auto row = 0; row < floorGrid.rowCount(); ++row)
+        for (auto row = 0; row < kRowCount; ++row)
         {
             auto strip = floorGrid.atRow(row, 0);
             for (; strip.first != strip.second; ++strip.first)
                 *strip.first = 0x0001;
         }
-        for (auto row = 1; row < floorGrid.rowCount()-1; ++row)
+        for (auto row = kRowCount/4; row < kRowCount-kRowCount/4; ++row)
         {
-            auto strip = floorGrid.atRow(row, 1, floorGrid.columnCount()-2);
+            auto strip = floorGrid.atRow(row, kColCount/4, kColCount - 2*kColCount/4);
             for (; strip.first != strip.second; ++strip.first)
                 *strip.first = 0x0002;
         }
         
         _viewPos = glm::vec3(overlayGrid.columnCount() * 0.5f, overlayGrid.rowCount() * 0.5f, 0.f);
-        setupWorldSpace(xlatMapToWorldPos(_viewPos));
+        
+        auto viewport = _application.renderer().getViewport();
+        
+        glm::ivec2 viewDimensions(viewport.width(), viewport.height());
+        glm::ivec2 tileDimensions(TILE_WIDTH, TILE_HEIGHT);
+
+        auto isoScenePtr = new(_allocator.alloc(sizeof(ovengine::IsoScene)))
+                                ovengine::IsoScene(viewDimensions,
+                                                   tileDimensions,
+                                                   _stage->tileGridMap(),
+                                                   _tileLibrary,
+                                                   _spriteLibrary,
+                                                   _allocator);
+        _isoScene = unique_ptr<ovengine::IsoScene>(isoScenePtr, _allocator);
     }
 
     GameView::~GameView()
@@ -102,7 +117,7 @@ namespace cinekine {
     
     void GameView::update()
     {
-        
+        _isoScene->update(_viewPos);
     }
         
     void GameView::loadTileCollection(const char* filename)
@@ -155,66 +170,39 @@ namespace cinekine {
             });
     }
 
-    //  precalculates values used for rendering the local view
-    void GameView::setupWorldSpace(const glm::vec3& worldPos)
-    {
-        glx::Rect viewportRect = _application.renderer().getViewport();
-
-        //  calculate view anchor
-        //  this is the world bounds for our view,
-        _worldViewBounds.min.x = worldPos.x - viewportRect.width() / 2;
-        _worldViewBounds.min.y = worldPos.y - viewportRect.height() / 2;
-        _worldViewBounds.min.z = 0;
-        _worldViewBounds.max.x = worldPos.x + viewportRect.width() / 2;
-        _worldViewBounds.max.y = worldPos.y + viewportRect.height() / 2;
-        _worldViewBounds.max.z = 0;
-        
-        //  - now adjust to include some extra space around the viewport, which
-        //  is necessary when some tiles are larger than our standard tile size
-        _worldViewBounds.min.x -= TILE_WIDTH*2;
-        _worldViewBounds.min.y -= TILE_HEIGHT*2;
-        _worldViewBounds.max.x += TILE_WIDTH*2;
-        _worldViewBounds.max.y += TILE_HEIGHT*2;
-        
-        //  our bounds aligned to tile dimensions - this is used as the bounding rect
-        //  for drawing our isoworld
-        _worldViewAlignedBounds.min.x = TILE_WIDTH * floorf(_worldViewBounds.min.x/TILE_WIDTH);
-        _worldViewAlignedBounds.min.y = TILE_HEIGHT * floorf(_worldViewBounds.min.y/TILE_HEIGHT);
-        _worldViewAlignedBounds.min.z = 0;
-        _worldViewAlignedBounds.max.x = TILE_WIDTH * floorf(_worldViewBounds.max.x/TILE_WIDTH);
-        _worldViewAlignedBounds.max.y = TILE_HEIGHT * floorf(_worldViewBounds.max.y/TILE_HEIGHT);
-        _worldViewAlignedBounds.max.z = 0;
-        
-        _screenViewLeft = (viewportRect.width() - _worldViewBounds.max.x +_worldViewBounds.min.x)/2;
-        _screenViewTop = (viewportRect.height() - _worldViewBounds.max.y +_worldViewBounds.min.y)/2;
-    }
-
-    //  converts map coordinates to our "global" rendering coordinate system
-    //  called "world" for the purposes of this view.
-    glm::vec3 GameView::xlatMapToWorldPos(const glm::vec3& pos)
-    {
-        glm::vec3 worldPos(TILE_WIDTH * (pos.x - pos.y)/2,
-                           TILE_HEIGHT * (pos.x + pos.y)/2,
-                           pos.z);
-        return worldPos;
-    }
-
-    glm::vec3 GameView::xlatWorldToMapPos(const glm::vec3& pos)
-    {
-        glm::vec3 mapPos;
-        mapPos.x = pos.x/TILE_WIDTH + pos.y/TILE_HEIGHT;
-        mapPos.y = 2 * pos.y/TILE_HEIGHT - mapPos.x;
-        mapPos.z = pos.z;
-        return mapPos;
-    }
-
     //  Main render pipeline
     //
     void GameView::render()
     {
         renderReset();
         
-        renderTileMap(0);
+        _isoScene->visit([this](const ovengine::IsoNode* node)
+         {
+              auto screenPos = node->viewPos();
+              
+              switch(node->type())
+              {
+              case ovengine::IsoNode::kBitmap:
+                  {
+                      auto bitmap = node->bitmap();
+                      auto atlas = _bitmapLibrary.getAtlas(bitmap.bmpAtlas);
+                      if (atlas)
+                      {
+                          auto bitmapInfo = atlas->getBitmapFromIndex(bitmap.bmpIndex);
+                          if (bitmapInfo)
+                          {
+                              renderBitmap(atlas->getTexture(), *bitmapInfo,
+                                           screenPos.x,
+                                           screenPos.y);
+                          }
+                      }
+                  }
+                  break;
+              default:
+                  break;
+              }
+         });
+
         
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
@@ -244,137 +232,6 @@ namespace cinekine {
         
     void GameView::renderReset()
     {
-        _mapBounds = _stage->bounds();
-        _tilemap = nullptr;
-        _renderItemsCount = 0;
-    }
-        
-    void GameView::renderTileMap(int tileZ)
-    {
-        _tilemap = &_stage->tileGridMap();
-        
-        //  pick all tiles within the view bounds:
-        //
-        int32_t worldY = _worldViewAlignedBounds.min.y;
-        int32_t worldEndY = _worldViewAlignedBounds.max.y;
-        
-        //  left to right
-        //  top to bottom
-        int32_t rowCount = 0;
-        
-        while (worldY <= worldEndY)
-        {
-            int32_t worldX = _worldViewAlignedBounds.min.x;
-            int32_t worldEndX = _worldViewAlignedBounds.max.x;
-            if (rowCount & 1)
-            {
-                worldX -= TILE_HALFWIDTH;
-                worldEndX += TILE_HALFWIDTH;
-            }
-            
-            glm::vec3 worldTilePos { (float)worldX, (float)worldY, 0 };
-            while (worldX <= worldEndX)
-            {
-                worldTilePos.x = worldX;
-                glm::vec3 mapPos = xlatWorldToMapPos(worldTilePos);
-                if (mapPos.y >= 0.f && mapPos.y < _mapBounds.yUnits &&
-                    mapPos.x >= 0.f && mapPos.x < _mapBounds.xUnits)
-                {
-                    renderTile(worldTilePos, mapPos);
-                }
-                worldX += TILE_WIDTH;
-            }
-            worldY += TILE_HALFHEIGHT;
-            ++rowCount;
-        }
-    }
-        
-    void GameView::renderTile(const glm::vec3& worldPos,
-                              const glm::vec3& mapPos)
-    {
-        //  find world tile from X,Y
-        //  our world draw anchor is the lower-y, center-x of our isotile.
-        float tileWorldDrawX = worldPos.x;
-        float tileWorldDrawY = worldPos.y + TILE_HEIGHT;
-
-        uint32_t mapY = (uint32_t)mapPos.y;
-        uint32_t mapX = (uint32_t)mapPos.x;
-        
-        const uint32_t kOverlayFloorTileCount = _tilemap->overlayToFloorRatio();
-        
-        if ((mapX % kOverlayFloorTileCount) == kOverlayFloorTileCount-1 &&
-            (mapY % kOverlayFloorTileCount) == kOverlayFloorTileCount-1)
-        {
-            auto tile = _tilemap->floor().at(mapY/kOverlayFloorTileCount, mapX/kOverlayFloorTileCount);
-            
-            //  render layer 0 - floor, this is always rendered first
-            auto& tileInfo0 = _stage->tile(tile);
-            
-            auto atlas = _bitmapLibrary.getAtlas(tileInfo0.bitmap.bmpAtlas);
-            if (atlas)
-            {
-                auto bitmapInfo = atlas->getBitmapFromIndex(tileInfo0.bitmap.bmpIndex);
-                if (bitmapInfo)
-                {
-                    int32_t screenOX = tileWorldDrawX - _worldViewBounds.min.x + _screenViewLeft;
-                    int32_t screenOY = tileWorldDrawY - _worldViewBounds.min.y + _screenViewTop;
-                    renderBitmap(atlas->getTexture(), *bitmapInfo,
-                                 screenOX,
-                                 screenOY);
-                }
-            }
-        }
-        
-        /*
-        //  render layer 1 - walls, sprites via the render list
-        //  render order is determined by the tile's role (wall, position, etc)
-         
-        auto& tileInfo1 = _stage->tile(tile.layer[1]);
-        renderQueueBitmap(tileInfo1.bitmap,
-                          glm::vec3(tileWorldDrawX, tileWorldDrawY, worldPos.z));
-        
-        renderQueueFlush();
-         */
-    }
-        
-    void GameView::renderQueueBitmap(const cinek_bitmap& bitmap, const glm::vec3& worldPos)
-    {
-        if (_renderItemsCount >= _renderItems.size())
-            return;
-        
-        auto atlas = _bitmapLibrary.getAtlas(bitmap.bmpAtlas);
-        auto bmpInfo = atlas ?  atlas->getBitmapFromIndex(bitmap.bmpIndex) : nullptr;
-        if (!bmpInfo)
-            return;
-        
-        _renderItems[_renderItemsCount].bmpAtlas = atlas.get();
-        _renderItems[_renderItemsCount].bmpInfo = bmpInfo;
-        _renderItems[_renderItemsCount].pos.x = worldPos.x;
-        _renderItems[_renderItemsCount].pos.y = worldPos.y;
-        _renderItems[_renderItemsCount].pos.z = worldPos.z;
-        _renderItemsSorted[_renderItemsCount] = &_renderItems[_renderItemsCount];
-        ++_renderItemsCount;
-    }
-    
-    void GameView::renderQueueFlush()
-    {
-        /*std::sort(_renderItemsSorted.begin(), _renderItemsSorted.begin()+_renderItemsCount,
-                  [](const RenderItem* first, const RenderItem* second)
-                  {
-                      
-                  });
-         */
-        while (_renderItemsCount)
-        {
-            --_renderItemsCount;
-            auto& item = *_renderItemsSorted[_renderItemsCount];
-            //  render to the screen (from world)
-            renderBitmap(item.bmpAtlas->getTexture(), *item.bmpInfo,
-                         item.pos.x - _worldViewBounds.min.x + _screenViewLeft,
-                         item.pos.y - _worldViewBounds.min.y + _screenViewTop);
-           
-        }
-        _renderItemsCount = 0;
     }
         
     void GameView::renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
@@ -385,13 +242,13 @@ namespace cinekine {
                           bitmap.y,
                           bitmap.x + bitmap.w,
                           bitmap.y + bitmap.h);
-        glx::Rect destRect = glx::Rect::rectFromDimensions(sx + bitmap.offX - bitmap.srcW/2,
-                                                           sy - bitmap.srcH + bitmap.offY,
+        glx::Rect destRect = glx::Rect::rectFromDimensions(sx + bitmap.offX,
+                                                           sy + bitmap.offY - bitmap.srcH,
                                                            bitmap.offW,
                                                            bitmap.offH);
         _application.renderer().drawTextureRect(texture, srcRect, destRect, color);
     }
-
+        
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)
     {
 
@@ -430,7 +287,6 @@ namespace cinekine {
         if (newPos.x || newPos.y || newPos.z)
         {
             _viewPos += newPos;
-            setupWorldSpace(xlatMapToWorldPos(_viewPos));
         }
     }
     

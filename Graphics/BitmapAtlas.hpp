@@ -37,7 +37,7 @@ namespace cinekine {
                     size_t bitmapCount, const Allocator& allocator);
         BitmapAtlas(BitmapAtlas&& other);
         BitmapAtlas& operator=(BitmapAtlas&& other);
-        ~BitmapAtlas() = default;
+        ~BitmapAtlas();
 
         const char* getName() const {
             return _name.c_str();
