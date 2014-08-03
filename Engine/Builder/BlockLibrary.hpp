@@ -7,7 +7,7 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Buidler_BlockLibrary_hpp
+#ifndef Overview_Builder_BlockLibrary_hpp
 #define Overview_Builder_BlockLibrary_hpp
 
 #include "Engine/Model/ModelLibrary.hpp"
@@ -16,7 +16,7 @@
 namespace cinekine {
     namespace ovengine {
 
-    using BlockLibrary = ModelLibrary<BlockCollection, uint32_t>;
+    using BlockLibrary = ModelLibrary<BlockCollection, BlockCollectionId, 0xffff>;
 
     }   // namespace ovengine
 }   //  namespace cinekine

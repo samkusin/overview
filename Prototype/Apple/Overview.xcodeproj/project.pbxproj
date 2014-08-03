@@ -16,6 +16,7 @@
 		374931451904A72E002C7DE3 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931441904A72E002C7DE3 /* OpenGL.framework */; };
 		374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931461904A73B002C7DE3 /* Cocoa.framework */; };
 		374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931481904A75B002C7DE3 /* IOKit.framework */; };
+		3764ECC8198EB2E50078EE3A /* StageGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3764ECC6198EB2E50078EE3A /* StageGenerator.cpp */; };
 		37A9CE4419316F3A0065CAA8 /* libCKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4019316F3A0065CAA8 /* libCKCore.a */; };
 		37A9CE4519316F3A0065CAA8 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4119316F3A0065CAA8 /* libCKFramework.a */; };
 		37A9CE4619316F3A0065CAA8 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4219316F3A0065CAA8 /* libCKGL.a */; };
@@ -53,6 +54,8 @@
 		374931441904A72E002C7DE3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		374931461904A73B002C7DE3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		3764ECC6198EB2E50078EE3A /* StageGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StageGenerator.cpp; path = ../Game/StageGenerator.cpp; sourceTree = "<group>"; };
+		3764ECC7198EB2E50078EE3A /* StageGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StageGenerator.hpp; path = ../Game/StageGenerator.hpp; sourceTree = "<group>"; };
 		37A9CE4019316F3A0065CAA8 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
 		37A9CE4119316F3A0065CAA8 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../build-xcode/cinek/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37A9CE4219316F3A0065CAA8 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../build-xcode/Graphics/Debug/libCKGL.a"; sourceTree = "<group>"; };
@@ -122,6 +125,8 @@
 				3769211E1980B6B600F8D2F5 /* Render */,
 				37D11678191C9212008E27B5 /* GameView.hpp */,
 				372C4A3E1984659C007319D1 /* GameView.cpp */,
+				3764ECC6198EB2E50078EE3A /* StageGenerator.cpp */,
+				3764ECC7198EB2E50078EE3A /* StageGenerator.hpp */,
 			);
 			name = Game;
 			sourceTree = "<group>";
@@ -267,6 +272,7 @@
 				372C4A481985AE03007319D1 /* IsoNode.cpp in Sources */,
 				372C4A4519859E45007319D1 /* IsoNodeGraph.cpp in Sources */,
 				37DFA0951850108200382685 /* ApplicationController.cpp in Sources */,
+				3764ECC8198EB2E50078EE3A /* StageGenerator.cpp in Sources */,
 				372C4A3F1984659C007319D1 /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

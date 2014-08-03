@@ -14,21 +14,7 @@
 #include "Engine/Model/StageTypes.hpp"
 
 namespace cinekine { namespace ovengine {
-    
-inline TileId compressTileToId(TileSlot slot, TileIndex index)
-{
-    return (slot << 12) + (index & 0xf000);
-}
 
-inline TileSlot slotFromTileId(TileId id)
-{
-    return (id >> 12);
-}
-
-inline TileIndex indexFromTileId(TileId id)
-{
-    return (id & 0x0fff);
-}
 
 /// @class  TileGridMap
 /// @ingroup TileModel

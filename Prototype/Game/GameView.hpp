@@ -35,6 +35,7 @@ namespace cinekine {
     namespace prototype {
 
     class ApplicationController;
+    class StageGenerator;
         
     class GameView: public ovengine::View
     {
@@ -78,6 +79,9 @@ namespace cinekine {
         
         glm::vec3 _viewPos;
         unique_ptr<ovengine::IsoScene> _isoScene;
+        
+        //  Used for generating stage maps (temporary)
+        unique_ptr<StageGenerator> _stageGenerator;
     };
 
     }

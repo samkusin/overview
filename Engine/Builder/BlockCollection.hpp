@@ -25,6 +25,14 @@ namespace cinekine { namespace ovengine {
 class BlockCollection : public ModelCollection<Block>
 {
 public:
+    /// Default constructor
+    ///
+    BlockCollection() = default;
+    /// Constructs a Block collection
+    ///
+    /// @param name               The collection name
+    /// @param tileCollectionName The name of the associated tile collection
+    /// @param blocks             The collection's blocks
     BlockCollection(const char* name, const char* tileCollectionName,
                     vector<Block>&& blocks);
     /// Returns the tile at the requested index.

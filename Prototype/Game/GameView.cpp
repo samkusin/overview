@@ -8,6 +8,8 @@
 
 #include "Game/GameView.hpp"
 
+#include "Game/StageGenerator.hpp"
+
 #include "ApplicationController.hpp"
 
 #include "Game/Render/IsoScene.hpp"
@@ -74,24 +76,13 @@ namespace cinekine {
                                          _allocator
                                       );
         
-        //  create our stage map
-        auto& floorGrid = _stage->tileGridMap().floor();
-        auto& overlayGrid = _stage->tileGridMap().overlay();
-        const uint32_t kRowCount = floorGrid.rowCount();
-        const uint32_t kColCount = floorGrid.columnCount();
+        _stageGenerator = unique_ptr<StageGenerator>(
+                                _allocator.newItem<StageGenerator>(*_stage,
+                                                                   _allocator),
+                                _allocator);
         
-        for (auto row = 0; row < kRowCount; ++row)
-        {
-            auto strip = floorGrid.atRow(row, 0);
-            for (; strip.first != strip.second; ++strip.first)
-                *strip.first = 0x0001;
-        }
-        for (auto row = kRowCount/4; row < kRowCount-kRowCount/4; ++row)
-        {
-            auto strip = floorGrid.atRow(row, kColCount/4, kColCount - 2*kColCount/4);
-            for (; strip.first != strip.second; ++strip.first)
-                *strip.first = 0x0002;
-        }
+        //  create our stage map
+        auto& overlayGrid = _stage->tileGridMap().overlay();
         
         _viewPos = glm::vec3(overlayGrid.columnCount() * 0.5f, overlayGrid.rowCount() * 0.5f, 0.f);
         

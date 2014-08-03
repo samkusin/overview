@@ -22,7 +22,7 @@ namespace cinekine { namespace ovengine {
 /// @ingroup Model
 /// @brief  A container for ModelCollection records.
 ///
-template<class _Collection, class _SlotType>
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
 class ModelLibrary
 {
 public:
@@ -32,6 +32,9 @@ public:
     typedef _SlotType           SlotType;
 
 public:
+    /// Default Constructor
+    ///
+    ModelLibrary() = default;
     /// Constructor
     ///
     /// @param collectionLimit  The total number of collections to reserve for
@@ -61,6 +64,17 @@ public:
     /// @return The ModelCollection with that name or an empty collection
     ///
     const CollectionType& collectionByName(const string& name) const;
+    /// Returns the slot that contains the specified collection
+    ///
+    /// @param  name The collection name
+    /// @return The Slot
+    ///
+    SlotType slotByCollectionName(const string& name) const;
+    /// Retrieves the null collection.
+    ///
+    /// @return A null/empty ModelCollection.
+    ///
+    const CollectionType& nullCollection() const;
 
 protected:
     vector<CollectionType> _collections;
@@ -69,21 +83,24 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class _Collection, class _SlotType>
-ModelLibrary<_Collection,_SlotType>::ModelLibrary(SlotType collectionLimit,
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+ModelLibrary<_Collection,_SlotType, _InvalidSlot>::ModelLibrary(SlotType collectionLimit,
                                                   const Allocator& allocator) :
-    _collections(collectionLimit, CollectionType(), allocator)
+    _collections(allocator)
 {
+    _collections.reserve(collectionLimit);
+    for (auto i = 0; i < collectionLimit; ++i)
+        _collections.emplace_back(CollectionType());
 }
 
-template<class _Collection, class _SlotType>
-void ModelLibrary<_Collection, _SlotType>::clear()
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+void ModelLibrary<_Collection, _SlotType, _InvalidSlot>::clear()
 {
     _collections.clear();
 }
 
-template<class _Collection, class _SlotType>
-void ModelLibrary<_Collection, _SlotType>::mapCollectionToSlot(
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+void ModelLibrary<_Collection, _SlotType, _InvalidSlot>::mapCollectionToSlot(
                                                 CollectionType&& collection,
                                                 SlotType slot)
 {
@@ -99,15 +116,15 @@ void ModelLibrary<_Collection, _SlotType>::mapCollectionToSlot(
     _collections[slot] = std::move(collection);
 }
 
-template<class _Collection, class _SlotType>
-auto ModelLibrary<_Collection, _SlotType>::collectionAtSlot(SlotType slot) const
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::collectionAtSlot(SlotType slot) const
     -> const CollectionType&
 {
     return _collections[slot % _collections.size()];
 }
 
-template<class _Collection, class _SlotType>
-auto ModelLibrary<_Collection, _SlotType>::collectionByName(const string& name) const
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::collectionByName(const string& name) const
     -> const CollectionType&
 {
     for (auto& collection: _collections)
@@ -115,8 +132,30 @@ auto ModelLibrary<_Collection, _SlotType>::collectionByName(const string& name) 
         if (collection.name() == name)
             return collection;
     }
+    return nullCollection();
+}
+
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::nullCollection() const
+    -> const CollectionType&
+{
     return _nullCollection;
 }
+
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+auto ModelLibrary<_Collection,
+                  _SlotType,
+                  _InvalidSlot>::slotByCollectionName(const string& name) const
+    -> SlotType
+{
+    for (SlotType slot = 0; slot < _collections.size(); ++slot)
+    {
+        if (_collections[slot].name() == name)
+            return slot;
+    }
+    return _InvalidSlot;
+}
+
 
 }   /* namespace ovengine */ }   /* namespace cinekine */
 

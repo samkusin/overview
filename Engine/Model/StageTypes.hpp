@@ -33,6 +33,21 @@ typedef Grid<TileId> TileGrid;
 /** Defines a tilemap section */
 typedef GridContainer<TileGrid> TileGridContainer;
 
+inline TileId compressTileToId(TileSlot slot, TileIndex index)
+{
+    return (slot << 12) + (index & 0x0fff);
+}
+
+inline TileSlot slotFromTileId(TileId id)
+{
+    return (id >> 12);
+}
+
+inline TileIndex indexFromTileId(TileId id)
+{
+    return (id & 0x0fff);
+}
+
     } /* overview */
 } /* cinekine */
 

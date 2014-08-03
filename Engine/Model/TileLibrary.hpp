@@ -17,7 +17,7 @@
 
 namespace cinekine { namespace ovengine {
 
-class TileLibrary: public ModelLibrary<TileCollection, TileSlot>
+class TileLibrary: public ModelLibrary<TileCollection, TileSlot, 0xffff>
 {
 public:
     TileLibrary(SlotType limit, const Allocator& allocator);
@@ -26,7 +26,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 inline TileLibrary::TileLibrary(SlotType limit, const Allocator& allocator) :
-    ModelLibrary<TileCollection, TileSlot>(limit, allocator)
+    ModelLibrary<TileCollection, TileSlot, 0xffff>(limit, allocator)
 {
 }
 

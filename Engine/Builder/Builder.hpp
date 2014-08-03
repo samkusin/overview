@@ -7,18 +7,20 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Builder_Hpp
-#define Overview_Builder_Hpp
+#ifndef Overview_GridBuilder_Hpp
+#define Overview_GridBuilder_Hpp
 
 #include "Engine/Builder/BuilderTypes.hpp"
-#include "Engine/Model/Stage.hpp"
+#include "Engine/Builder/BlockLibrary.hpp"
 
 #include "cinek/vector.hpp"
+#include "cinek/string.hpp"
+
 
 namespace cinekine {
     namespace ovengine {
         class TileLibrary;
-        class BlockLibrary;
+        class BlockCollection;
     }
 }
 
@@ -29,27 +31,45 @@ namespace cinekine { namespace ovengine {
     /// tile grids onto Stages.
     ///
 
-    /// @class Builder
-    /// @brief The front-end interface for the Builder toolbox.
+    /// @class GridBuilder
+    /// @brief Utilities for building grid-based maps
     ///
-    /// Applications create a Builder to procedurally generate maps using the
-    /// supplied Tile and Block libraries.   Tile maps/grids are managed by
-    /// a Stage object also supplied by the application.
+    /// Applications use GridBuilder to procedurally generate maps using the
+    /// supplied Tile and Block libraries.
     ///
-    class Builder
+    class GridBuilder
     {
     public:
-        Builder(Stage& stage,
-                const TileLibrary& tileLibrary,
-                const BlockLibrary& blockLibrary,
-                const Allocator& allocator);
+        GridBuilder(TileGrid& gridMap,
+                    const TileLibrary& tileLibrary,
+                    const BlockLibrary& blockLibrary,
+                    const Allocator& allocator);
+        
+        void clear();
+
+        glm::ivec2 dimensions() const;
+        
+        void setBlockCollection(BlockCollectionId id);
+        void paintRect(const string& blockName,
+                       int x0, int y0, int x1, int y1);
+
+    private:
+        typedef void (*PlotFn)(TileGrid&, const TileGrid&, TileSlot, int, int, int, int);
+
+        PlotFn plotFunctionFromStyle(BuilderPaintStyle style) const;
 
     private:
         Allocator _allocator;
-        Stage& _map;
+        TileGrid& _grid;
         const TileLibrary& _tileTemplates;
         const BlockLibrary& _blockTemplates;
+
+        //  context
+        const BlockCollection* _blockCollection;
+        TileSlot _tileCollectionSlot;
     };
+    
+    
 } /* namespace overview */ } /* namespace cinekine */
 
 #endif

@@ -121,6 +121,7 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Block.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockCollection.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockCollectionLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )

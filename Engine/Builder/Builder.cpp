@@ -25,6 +25,7 @@
 #include "Engine/Builder/Builder.hpp"
 
 #include "Engine/Model/TileLibrary.hpp"
+#include "Engine/Builder/BlockLibrary.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -33,410 +34,165 @@
 
 namespace cinekine { namespace ovengine {
 
-    Builder::Builder(Stage& map,
-                const TileLibrary& tileTemplates,
-                const BlockLibrary& blockTemplates,
-                const Allocator& allocator) :
+    static void plotBlockTileOnGridTiled(TileGrid& targetGrid,
+                                         const TileGrid& blockGrid,
+                                         TileSlot tileSlot,
+                                         int xOrigin, int yOrigin,
+                                         int xOffset, int yOffset);
+
+    static void plotBlockTileOnGridStretch(TileGrid& targetGrid,
+                                          const TileGrid& blockGrid,
+                                          TileSlot tileSlot,
+                                          int xOrigin, int yOrigin,
+                                          int xOffset, int yOffset);
+
+
+    GridBuilder::GridBuilder(TileGrid& gridMap,
+                             const TileLibrary& tileLibrary,
+                             const BlockLibrary& blockLibrary,
+                             const Allocator& allocator) :
         _allocator(allocator),
-        _map(map),
-        _tileTemplates(tileTemplates),
-        _blockTemplates(blockTemplates)
+        _grid(gridMap),
+        _tileTemplates(tileLibrary),
+        _blockTemplates(blockLibrary),
+        _blockCollection(&_blockTemplates.nullCollection()),
+        _tileCollectionSlot(0)
     {
-        TileGridMap& tilemap = _map.tileGridMap();
-        TileGrid& floorGrid = tilemap.floor();
-        floorGrid.fillWithValue(0x0000, 0, 0, floorGrid.rowCount(), floorGrid.columnCount());
+    }
+    
+    glm::ivec2 GridBuilder::dimensions() const
+    {
+        return glm::ivec2(_grid.columnCount(), _grid.rowCount());
+    }
+    
+    void GridBuilder::clear()
+    {
+        _grid.fillWithValue(0x0000, 0, 0, _grid.rowCount(), _grid.columnCount());
+    }
+    
+    void GridBuilder::setBlockCollection(BlockCollectionId id)
+    {
+        _blockCollection = &_blockTemplates.collectionAtSlot(id);
+        _tileCollectionSlot =
+            _tileTemplates.slotByCollectionName(_blockCollection->tileCollectionName());
     }
 
-    /*
-    int Builder::makeRegion(const TileBrush& floorBrush,
-                            const TileBrush& wallBrush,
-                            const vector<NewRegionInstruction>& instructions)
+    void GridBuilder::paintRect(const string& blockName,
+                                int x0, int y0, int x1, int y1)
     {
-        //  Send a request for a new room within our entire map bounds
-        //  the builder currently is pretty simple - it requests a room and then
-        //  paints it.
-        //
-        int regionIndex = -1;
-        Region* region = nullptr;
-        bool finalize = false;
-        for (auto& cmd : instructions)
-        {
-            Box segBox = cmd.box;
+        //  select the block
+        auto& block = (*_blockCollection)[blockName];
 
-            switch (cmd.policy)
-            {
-            case NewRegionInstruction::kRandomize:
-                break;
-            case NewRegionInstruction::kFixed:
-                break;
-            default:
-                finalize = true;
-                break;
-            }
-
-            if (_segments.size() >= _segments.capacity())
-            {
-                finalize = true;
-            }
-
-            if (!finalize)
-            {
-                if (!region)
-                {
-                    _regions.emplace_back();
-                    region = &_regions.back();
-                    regionIndex = (int)_regions.size()-1;
-                }
-                _segments.emplace_back(segBox);
-                auto* segment = &_segments.back();
-
-                region->segments.push_back(segment);
-
-                paintBoxOntoMap(floorBrush, wallBrush, segment->box);
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return regionIndex;
-    }
-
-    int Builder::connectRegions(const TileBrush& floorBrush,
-                                const TileBrush& wallBrush,
-                                int startRegionHandle, int endRegionHandle,
-                                const vector<MapPoint>& connectPoints)
-    {
-        if (_connections.size() >= _connections.capacity())
-            return -1;
-        if (startRegionHandle >= _regions.size())
-            return -1;
-        if (endRegionHandle >= _regions.size())
-            return -1;
-        if (startRegionHandle == endRegionHandle)
-            return -1;
-
-        //  Paint connection onto map
-        //  From the closest segment to the end region in the start region to
-        //  the closest segment in the start region from the closest end room
-        //  segment - these points mark our start and end points for the
-        //  region's connection.
-        Region& startRegion = _regions[startRegionHandle];
-        Region& endRegion = _regions[endRegionHandle];
-        Segment* startSegment = startRegion.closestSegmentToPoint(endRegion.bounds.center());
-        if (!startSegment)
-            return -1;      // only if an empty start region
-        Segment* endSegment = endRegion.closestSegmentToPoint(startSegment->box.center());
-        if (!endSegment)
-            return -1;      // only if an empty end retion
-        startSegment = startRegion.closestSegmentToPoint(endSegment->box.center());
-
-        //  paint all connections
-        MapPoint startPoint = startSegment->box.center();
-        MapPoint endPoint = endSegment->box.center();
-        const MapPoint* connectStartPoint = &startPoint;
-
-        for (auto& connectPoint : connectPoints)
-        {
-            const MapPoint* connectEndPoint = &connectPoint;
-            paintConnectionOntoMap(floorBrush, wallBrush, *connectStartPoint, *connectEndPoint);
-            connectStartPoint = connectEndPoint;
-        }
-
-        paintConnectionOntoMap(floorBrush, wallBrush, *connectStartPoint, endPoint);
-
-        _connections.emplace_back();
-        Connection& connection = _connections.back();
-        connection.regionA = startRegionHandle;
-        connection.regionB = endRegionHandle;
-
-        return (int)_connections.size()-1;
-    }
-
-    void Builder::paintConnectionOntoMap(const TileBrush& floorBrush,
-                                         const TileBrush& wallBrush,
-                                         const MapPoint& p0,
-                                         const MapPoint& p1)
-    {
-        //  paint a hallway line using the desired plot method -
-        //  by default, the method is orthogonal (half-rectangle) from p0 to p1
-        const int32_t kHallSize = 3;
-        const Box kHallBox = {
-            Box::Point(-kHallSize/2,-kHallSize/2),
-            Box::Point((kHallSize+1)/2,(kHallSize+1)/2)
-        };
-        MapPoint delta = p1 - p0;
-        if (delta.x)
-            delta.x /= abs(delta.x);
-        if (delta.y)
-            delta.y /= abs(delta.y);
-        MapPoint ptCurrent = p0;
-        int xy = rand() % 2;
-
-        while (ptCurrent != p1)
-        {
-            paintBoxOntoMap(floorBrush, wallBrush, kHallBox + ptCurrent);
-            if (xy == 0)            // x dominant
-            {
-                if (ptCurrent.x == p1.x)
-                {
-                    xy = 1;
-                }
-                else
-                {
-                    ptCurrent.x += delta.x;
-                }
-            }
-            else                    // y dominant
-            {
-                if (ptCurrent.y == p1.y)
-                {
-                    xy = 0;
-                }
-                else
-                {
-                    ptCurrent.y += delta.y;
-                }
-            }
-            paintBoxOntoMap(floorBrush, wallBrush, kHallBox + ptCurrent);
-        }
-
-    }
-
-    //  the segment is guaranteed to lie entirely within the map's bounds
-    //  the paint action is a multi step process:
-    //      - step 1, paint a rect of floor tiles
-    //      - step 2, paint a rect of wall tiles
-    //
-    void Builder::paintBoxOntoMap(const TileBrush& floorBrush,
-                                  const TileBrush& wallBrush, const Box& box)
-    {
-        //  paint floor
-        auto floorTileId = _tileTemplates.tileHandleFromDescriptor(
-                                        floorBrush.tileCategoryId,
-                                        floorBrush.tileClassId,
-                                        kTileRole_Floor);
-
-        TileInstance tile;
-        tile.layer[0] = floorTileId;
-        tile.layer[1] = 0;
-
-        cinekine::ovengine::Tilemap* tileMap = _map.tilemapAtZ(0);
-        tileMap->fillWithValue(tile, box.p0.y, box.p0.x,
-                                 box.height(),
-                                 box.width());
-
-        //  paint walls into this segment
-        //  this is a two step process - painting wall tiles, and a second
-        //      pass for wall corners to "fill in the gaps" created from the
-        //      first pass.
-        //
-        uint32_t yPos;
-        for (yPos = box.p0.y; yPos < box.p1.y; ++yPos)
-        {
-            for (uint32_t xPos = box.p0.x; xPos < box.p1.x; ++xPos)
-            {
-                paintTileWalls(*tileMap, yPos, xPos, wallBrush);
-            }
-        }
-        for (yPos = box.p0.y; yPos < box.p1.y; ++yPos)
-        {
-            for (uint32_t xPos = box.p0.x; xPos < box.p1.x; ++xPos)
-            {
-                paintTileWallCorners(*tileMap, yPos, xPos, wallBrush);
-            }
-        }
-    }
-
-
-
-    void Builder::paintTileWalls(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
-                                const TileBrush& brush)
-    {
-        auto& thisFloorTemplate =
-            _tileTemplates.tile(tileMap.at(tileY, tileX).layer[0]);
-
-        //  calculate wall masks, which are used to determine what wall tiles
-        //  to display.
-        uint16_t wallMask = kTileDirection_N | kTileDirection_E |
-            kTileDirection_W | kTileDirection_S;
-
-        if (tileY > 0 &&
-            tileFloorsClassIdEqual(tileMap.at(tileY-1, tileX), thisFloorTemplate.classIndex))
-        {
-            wallMask &= ~(kTileDirection_N);
-        }
-        if (tileX > 0 &&
-            tileFloorsClassIdEqual(tileMap.at(tileY, tileX-1), thisFloorTemplate.classIndex))
-        {
-            wallMask &= ~(kTileDirection_W);
-        }
-        if (tileY < tileMap.rowCount()-1 &&
-            tileFloorsClassIdEqual(tileMap.at(tileY+1, tileX), thisFloorTemplate.classIndex))
-        {
-            wallMask &= ~(kTileDirection_S);
-        }
-        if (tileX < tileMap.columnCount()-1 &&
-            tileFloorsClassIdEqual(tileMap.at(tileY, tileX+1), thisFloorTemplate.classIndex))
-        {
-            wallMask &= ~(kTileDirection_E);
-        }
-
-        uint16_t wallRoleFlags = 0;
-
-        if (wallMask)
-        {
-            if (wallMask & kTileDirection_W)
-            {
-                if (wallMask & kTileDirection_N)
-                    wallRoleFlags |= kTileDirection_NW;
-                else if (wallMask & kTileDirection_S)
-                    wallRoleFlags |= kTileDirection_SW;
-                else
-                    wallRoleFlags |= kTileDirection_W;
-            }
-            if (!wallRoleFlags && (wallMask & kTileDirection_N))
-            {
-                //  we've already evaluated for West, so only need to eval East
-                if (wallMask & kTileDirection_E)
-                    wallRoleFlags |= kTileDirection_NE;
-                else
-                    wallRoleFlags |= kTileDirection_N;
-            }
-            if (!wallRoleFlags && (wallMask & kTileDirection_E))
-            {
-                //  we've already evaluated North, so only care about South
-                if (wallMask & kTileDirection_S)
-                    wallRoleFlags |= kTileDirection_SE;
-                else
-                    wallRoleFlags |= kTileDirection_E;
-            }
-            if (!wallRoleFlags && (wallMask & kTileDirection_S))
-            {
-                //  we've already evaluated East and West, so...
-                wallRoleFlags |= kTileDirection_S;
-            }
-
-            wallRoleFlags |= kTileRole_Wall;
-        }
-
-        auto wallTileHandle =
-            _tileTemplates.tileHandleFromDescriptor(brush.tileCategoryId,
-                                                brush.tileClassId,
-                                                wallRoleFlags);
-
-        auto& thisTile = tileMap.at(tileY, tileX);
-        thisTile.layer[1] = wallTileHandle;
-    }
-
-    bool Builder::tileFloorsClassIdEqual(const TileInstance& tile, uint8_t thisClassId) const
-    {
-        auto& floorTemplate = _tileTemplates.tile(tile.layer[0]);
-        return floorTemplate.classIndex == thisClassId;
-    }
-
-    void Builder::paintTileWallCorners(Tilemap& tileMap, uint32_t tileY, uint32_t tileX,
-                            const TileBrush& brush)
-    {
-        uint16_t cornerMask = kTileDirection_N | kTileDirection_W |
-                    kTileDirection_S | kTileDirection_E;
-
-        auto& thisTile = tileMap.at(tileY, tileX);
-        if (thisTile.layer[1])
-        {
-            // this tile already has a wall - no need to run tests
+        //  align our rectangle to the block's granularity.  if alignment
+        //  results in a rectangle dimension smaller than our granularity, then
+        //  abort the paint
+        auto granularity = block.granularity();
+        if (!granularity)
             return;
-        }
-
-        //printf("at (%u,%u) => ", tileX, tileY);
-
-        uint16_t wallRoleFlags = 0;
-
-        if (tileY > 0)
+        auto xDim = x1 - x0;
+        if (xDim < 0)
         {
-            auto& north = tileMap.at(tileY-1, tileX);
-            //printf("north:[%u,%u], ", north.floor, north.wall);
-            if (!tileWallsEqual(north, kTileDirection_W, brush.tileClassId) &&
-                !tileWallsEqual(north, kTileDirection_E, brush.tileClassId) &&
-                !tileWallsEqual(north, kTileDirection_NW, brush.tileClassId) &&
-                !tileWallsEqual(north, kTileDirection_NE, brush.tileClassId))
+            std::swap(x0, x1);
+            xDim *= -1;
+        }
+        auto yDim = y1 - y0;
+        if (yDim < 0)
+        {
+            std::swap(y0,y1);
+            yDim *= -1;
+        }
+        if (yDim < granularity || xDim < granularity)
+            return;
+
+        auto xBlockUnits = xDim/granularity;
+        auto yBlockUnits = yDim/granularity;
+        xDim = xBlockUnits * granularity;
+        yDim = yBlockUnits * granularity;
+        x1 = x0 + xDim;
+        y1 = y0 + yDim;
+
+        //  select our source grids (from the block) based on our target
+        //  dimensions
+        if (xBlockUnits > Block::kClass_Count)
+            xBlockUnits = Block::kClass_Count;
+        if (yBlockUnits > Block::kClass_Count)
+            yBlockUnits = Block::kClass_Count;
+
+        while (xBlockUnits && !block.hasGrid(xBlockUnits-1))
+            --xBlockUnits;
+        while (yBlockUnits && !block.hasGrid(yBlockUnits-1))
+            --yBlockUnits;
+        if (!xBlockUnits || !yBlockUnits)
+            return;
+
+        //  select the dominant grid (vertical or horizontal bias)
+        auto& xBlockGrid = block.grid(xBlockUnits-1);
+        auto& yBlockGrid = block.grid(yBlockUnits-1);
+        auto blockGrid = &xBlockGrid;
+        if (yBlockUnits > xBlockUnits)
+            blockGrid = &yBlockGrid;
+
+        PlotFn plotFn = plotFunctionFromStyle(block.paintStyle());
+        if (!plotFn)
+            return;
+
+        //  clip our rectangle to the target grid bounds
+        int xCol = 0, yRow = 0;
+        if (x0 < 0)
+            xCol = -x0;
+        if (x1 >= _grid.columnCount())
+            xDim -= (x1 - _grid.columnCount());
+        if (y0 < 0)
+            yRow = -y0;
+        if (y1 >= _grid.rowCount())
+            yDim -= (y1 - _grid.rowCount());
+
+        //  paint our rect
+        for (auto yRow = 0; yRow < yDim; ++yRow)
+        {
+            for (auto xCol = 0; xCol < xDim; ++xCol)
             {
-                cornerMask &= ~(kTileDirection_N);
+                (*plotFn)(_grid, *blockGrid, _tileCollectionSlot, x0, y0, xCol, yRow);
             }
         }
-        if (tileX > 0)
-        {
-            auto& west = tileMap.at(tileY, tileX-1);
-            //printf("west:[%u,%u], ", west.floor, west.wall);
-            if (!tileWallsEqual(west, kTileDirection_N, brush.tileClassId) &&
-                !tileWallsEqual(west, kTileDirection_S, brush.tileClassId) &&
-                !tileWallsEqual(west, kTileDirection_NW, brush.tileClassId) &&
-                !tileWallsEqual(west, kTileDirection_SW, brush.tileClassId))
-            {
-                cornerMask &= ~(kTileDirection_W);
-            }
-        }
-        if (tileY < tileMap.rowCount()-1)
-        {
-            auto& south = tileMap.at(tileY+1, tileX);
-            //printf("south:[%u,%u], ", south.floor, south.wall);
-            if (!tileWallsEqual(south, kTileDirection_W, brush.tileClassId) &&
-                !tileWallsEqual(south, kTileDirection_E, brush.tileClassId) &&
-                !tileWallsEqual(south, kTileDirection_SW, brush.tileClassId) &&
-                !tileWallsEqual(south, kTileDirection_SE, brush.tileClassId))
-            {
-                cornerMask &= ~(kTileDirection_S);
-            }
-        }
-        if (tileX < tileMap.columnCount()-1)
-        {
-            auto& east = tileMap.at(tileY, tileX+1);
-            //printf("east:[%u,%u], ", east.floor, east.wall);
-            if (!tileWallsEqual(east, kTileDirection_S, brush.tileClassId) &&
-                !tileWallsEqual(east, kTileDirection_N, brush.tileClassId) &&
-                !tileWallsEqual(east, kTileDirection_NE, brush.tileClassId) &&
-                !tileWallsEqual(east, kTileDirection_SE, brush.tileClassId))
-            {
-                cornerMask &= ~(kTileDirection_E);
-            }
-        }
 
-        if (cornerMask & kTileDirection_W)
-        {
-            if (cornerMask & kTileDirection_N)
-                wallRoleFlags |= kTileDirection_NW;
-            else  if (cornerMask & kTileDirection_S)
-                wallRoleFlags |= kTileDirection_SW;
-        }
-        if (!wallRoleFlags && (cornerMask & kTileDirection_N))
-        {
-            if (cornerMask & kTileDirection_E)
-                wallRoleFlags |= kTileDirection_NE;
-        }
-        if (!wallRoleFlags && (cornerMask & kTileDirection_E))
-        {
-            if (cornerMask & kTileDirection_S)
-                wallRoleFlags |= kTileDirection_SE;
-        }
-        //printf("cornerFlags, wallRoleFlags (%04x,%04x)\n",
-        //    cornerMask, wallRoleFlags);
-        wallRoleFlags |= (kTileRole_Wall+kTileRole_Corner);
-
-        auto wallTileHandle =
-            _tileTemplates.tileHandleFromDescriptor(brush.tileCategoryId,
-                                                brush.tileClassId,
-                                                wallRoleFlags);
-
-        thisTile.layer[1] = wallTileHandle;
     }
 
-    bool Builder::tileWallsEqual(const TileInstance& tile, uint16_t roleFlags, uint8_t classId) const
+    GridBuilder::PlotFn GridBuilder::plotFunctionFromStyle(BuilderPaintStyle style) const
     {
-        auto& wallTemplate = _tileTemplates.tile(tile.layer[1]);
-        return wallTemplate.classIndex == classId &&
-              (wallTemplate.flags & roleFlags)==roleFlags;
+        switch (style)
+        {
+        case kBuilderPaintStyle_Tiled:
+            return plotBlockTileOnGridTiled;
+        case kBuilderPaintStyle_Stretch:
+            return plotBlockTileOnGridStretch;
+        default:
+            break;
+        }
+        return nullptr;
     }
-    */
+
+    void plotBlockTileOnGridTiled(TileGrid& targetGrid,
+                                  const TileGrid& blockGrid,
+                                  TileSlot tileSlot,
+                                  int xOrigin, int yOrigin,
+                                  int xOffset, int yOffset)
+    {
+        auto xBlockTile = xOffset % blockGrid.columnCount();
+        auto yBlockTile = yOffset % blockGrid.rowCount();
+        TileId srcTileId = compressTileToId(tileSlot,
+                                            blockGrid.at(yBlockTile, xBlockTile));
+
+        targetGrid.at(yOrigin + yOffset, xOrigin + xOffset) = srcTileId;
+    }
+
+    void plotBlockTileOnGridStretch(TileGrid& targetGrid,
+                                    const TileGrid& blockGrid,
+                                    TileSlot tileSlot,
+                                    int xOrigin, int yOrigin,
+                                    int xOffset, int yOffset)
+    {
+
+    }
 
 } /* namespace ovengine */ } /* namespace cinekine */

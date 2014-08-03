@@ -30,7 +30,7 @@ namespace cinekine { namespace ovengine {
 class Block
 {
 public:
-    enum Class
+    enum
     {
         kClass_1x1,         ///< Has a tile width/height equal to granularity
         kClass_2x2,         ///< Has a tile dimension equal to 2 * granularity
@@ -46,6 +46,7 @@ public:
     };
 
     typedef Grid<TileId> Grid;
+    typedef int32_t      Class;
 
     /// Default Constructor
     ///
@@ -97,7 +98,7 @@ public:
     Layer layerType() const { return _type; }
 
 private:
-    Grid createGrid(int dimension, const Allocator& allocator);
+    Grid createGrid(int dimension);
 
 private:
     Allocator _allocator;

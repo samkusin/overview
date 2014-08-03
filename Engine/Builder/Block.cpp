@@ -11,7 +11,7 @@
 namespace cinekine { namespace ovengine {
 
 Block::Block() :
-    _granluarity(0)
+    _granularity(0)
 {
 }
 
@@ -21,9 +21,9 @@ Block::Block(const char* name, int granularity,
              const Allocator& allocator) :
     _allocator(allocator),
     _type(layer),
-    _paintStyle(paitnStyle),
+    _paintStyle(paintStyle),
     _name(name),
-    _granluarity(granularity)
+    _granularity(granularity)
 {
 }
 
@@ -40,14 +40,14 @@ void Block::enableGrid(Class classId)
     }
     if (dim <= 0)
         return;
-    if (!_grids[classId])
+    if (_grids[classId])
         return;
 
     _grids[classId] = createGrid(dim);
 }
 
 
-Grid Block::createGrid(int dimension)
+auto Block::createGrid(int dimension) -> Grid
 {
     return std::move(Grid(dimension*_granularity, dimension*_granularity,
                           _allocator));
