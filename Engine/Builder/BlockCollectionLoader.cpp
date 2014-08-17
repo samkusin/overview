@@ -32,22 +32,17 @@ bool BlockCollectionLoader::startCollection(const char* name, uint32_t modelCoun
     _models.clear();
     _models.reserve(modelCount);
     _name = name;
-    _tilesetName = "";
     return true;
 }
 
 bool BlockCollectionLoader::parseAttribute(const char* key, const JsonValue& value)
 {
-    if (!strcmp(key, "tileset"))
-    {
-        _tilesetName = value.GetString();
-    }
     return true;
 }
 
 bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
-    const char* gridLayerTypeName = object["type"].GetString();
+    const char* gridLayerTypeName = object["layer"].GetString();
     Block::Layer gridLayerType;
     if (!strcmp(gridLayerTypeName, "floor"))
     {
@@ -67,7 +62,7 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
     }
 
     BuilderPaintStyle paintStyle = kBuilderPaintStyle_Tiled;
-    if (!object["paint"].IsNull())
+    if (object.HasMember("paint"))
     {
         const char* paintStyleName = object["paint"].GetString();
         if (!strcmp(paintStyleName, "stretch"))
@@ -89,8 +84,13 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
     }
 
     int granularity = object["granularity"].GetInt();
+    int border = 0;
+    if (object.HasMember("border"))
+    {
+        border = object["border"].GetInt();
+    }
 
-    Block block(key, granularity, gridLayerType, paintStyle, _allocator);
+    Block block(key, granularity, border, gridLayerType, paintStyle, _allocator);
 
     //  parse our grids
     for (auto attrIt = object.MemberBegin(), attrItEnd = object.MemberEnd();
@@ -103,16 +103,9 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
         const size_t kBlockPrefixLen = strlen(kBlockPrefix);
         if (!strncmp(attrName, kBlockPrefix, 4))
         {
-            Block::Class blockClass = Block::kClass_Count;
-            if (!strcmp(attrName+kBlockPrefixLen, "1x1"))
-                blockClass = Block::kClass_1x1;
-            else if (!strcmp(attrName+kBlockPrefixLen, "2x2"))
-                blockClass = Block::kClass_2x2;
-            else if (!strcmp(attrName+kBlockPrefixLen, "3x3"))
-                blockClass = Block::kClass_3x3;
-            else if (!strcmp(attrName+kBlockPrefixLen, "4x4"))
-                blockClass = Block::kClass_4x4;
-            if (blockClass == Block::kClass_Count)
+            int32_t xGrid = 0, yGrid = 0;
+            sscanf(attrName + kBlockPrefixLen, "%dx%d", &xGrid, &yGrid);
+            if (!xGrid || !yGrid)
             {
                 OVENGINE_LOG_WARN("BlockCollectionLoader.parseModel - '%s' "
                                   "has an invalid class '%s'",
@@ -126,8 +119,8 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
                                   key, attrName);
                 continue;
             }
-            block.enableGrid(blockClass);
-            auto& grid = block.grid(blockClass);
+            block.enableGrid(xGrid, yGrid);
+            auto& grid = block.grid(xGrid, yGrid);
             for (auto rowIt = attr.value.Begin(), rowItEnd = attr.value.End();
                  rowIt != rowItEnd;
                  ++rowIt)
@@ -158,7 +151,7 @@ bool BlockCollectionLoader::parseModel(const char* key, JsonValue& object)
 
 bool BlockCollectionLoader::endCollection()
 {
-    BlockCollection collection(_name.c_str(), _tilesetName.c_str(), std::move(_models));
+    BlockCollection collection(_name.c_str(), std::move(_models));
     _collectionCb(std::move(collection));
     return true;
 }

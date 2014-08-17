@@ -13,10 +13,8 @@
 namespace cinekine { namespace ovengine {
 
 BlockCollection::BlockCollection(const char* name,
-                                 const char* tileCollectionName,
                                  vector<Block>&& blocks) :
-    ModelCollection<Block>(name, std::move(blocks)),
-    _tileCollectionName(tileCollectionName)
+    ModelCollection<Block>(name, std::move(blocks))
 {
 }
 

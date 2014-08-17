@@ -32,11 +32,7 @@ class Block
 public:
     enum
     {
-        kClass_1x1,         ///< Has a tile width/height equal to granularity
-        kClass_2x2,         ///< Has a tile dimension equal to 2 * granularity
-        kClass_3x3,         ///< Has a tile dimension equal to 3 * granularity
-        kClass_4x4,         ///< Has a tile dimension equal to 4 * granularity
-        kClass_Count        ///< Total number of available classes
+        kGrid_MaxSize = 4               ///< Maximum grid dimension
     };
 
     enum Layer
@@ -46,7 +42,7 @@ public:
     };
 
     typedef Grid<TileId> Grid;
-    typedef int32_t      Class;
+    typedef int32_t      GridDimension;
 
     /// Default Constructor
     ///
@@ -57,10 +53,11 @@ public:
     /// Constructor
     /// @param name        The name of the block
     /// @param granularity The tile dimension (tiles width and height)
+    /// @param border      Grid border width used for drawing edges
     /// @param layer       The Grid layer target for painting this Block
     /// @param allocator   The memory Allocator
     ///
-    Block(const char* name, int granularity,
+    Block(const char* name, int granularity, int border,
           Layer layer,
           BuilderPaintStyle paintStyle,
           const Allocator& allocator=Allocator());
@@ -68,25 +65,28 @@ public:
     /// method allocates a new Grid mapped to the specified Class.
     /// @param type The Grid Class
     ///
-    void enableGrid(Class type);
+    void enableGrid(GridDimension xGrid, GridDimension yGrid);
     /// Checks whether this Block has enabled the specified Grid Class.
     /// @param  classId The Grid Class
     /// @return True if the class was enabled
     ///
-    bool hasGrid(Class classId) const;
+    bool hasGrid(GridDimension xGrid, GridDimension yGrid) const;
     /// Returns a TileGrid for the given class ID
     /// @param  classId The TileGrid class
     /// @return A pointer to the TileGrid or nullptr if not found
     ///
-    Grid& grid(Class classId);
+    Grid& grid(GridDimension xGrid, GridDimension yGrid);
     /// Returns a const TileGrid for the given class ID
     /// @param  classId The TileGrid class
     /// @return A pointer to the TileGrid or nullptr if not found
     ///
-    const Grid& grid(Class classId) const;
+    const Grid& grid(GridDimension xGrid, GridDimension yGrid) const;
     /// @return The number of tiles per grid unit
     ///
     int granularity() const;
+    /// @return The border width used for drawing tiles along the edge of a grid
+    ///
+    int border() const;
     /// @return The Block's name
     ///
     const string& name() const { return _name; }
@@ -96,17 +96,27 @@ public:
     /// @return The layer type used for painting to the Stage
     ///
     Layer layerType() const { return _type; }
+    /// Returns the largest Grid available given dimensions
+    /// @param  xGrid The X dimension in block units
+    /// @param  yGrid the Y dimension in block units
+    /// @return The largest grid available.  If no grid matches, returns a zero
+    ///         sized grid
+    ///
+    const Grid& findLargestGridByDimensions(GridDimension xGrid,
+                                            GridDimension yGrid) const;
 
 private:
-    Grid createGrid(int dimension);
+    Grid createGrid(int xDim, int yDim);
 
 private:
     Allocator _allocator;
     Layer _type;
     BuilderPaintStyle _paintStyle;
     string _name;
-    std::array<Grid, kClass_Count> _grids;
+    Grid _nullGrid;
+    Grid _grids[kGrid_MaxSize][kGrid_MaxSize];
     int _granularity;
+    int _border;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,24 +126,35 @@ inline Block::operator bool() const
     return _granularity > 0;
 }
 
-inline auto Block::grid(Class classId) -> Grid&
+inline auto Block::grid(GridDimension xGrid, GridDimension yGrid) -> Grid&
 {
-    return _grids[classId % _grids.size()];
+    if (yGrid <= 0 || yGrid > kGrid_MaxSize || xGrid <=0 || xGrid > kGrid_MaxSize)
+        return _nullGrid;
+    return _grids[yGrid-1][xGrid-1];
 }
 
-inline auto Block::grid(Class classId) const -> const Grid&
+inline auto Block::grid(GridDimension xGrid, GridDimension yGrid) const -> const Grid&
 {
-    return _grids[classId % _grids.size()];
+    if (yGrid <= 0 || yGrid > kGrid_MaxSize || xGrid <=0 || xGrid > kGrid_MaxSize)
+        return _nullGrid;
+    return _grids[yGrid-1][xGrid-1];
 }
 
 inline int Block::granularity() const
 {
     return _granularity;
 }
-
-inline bool Block::hasGrid(Class classId) const
+    
+inline int Block::border() const
 {
-    return _grids[classId];
+    return _border;
+}
+
+inline bool Block::hasGrid(GridDimension xGrid, GridDimension yGrid) const
+{
+    if (yGrid <= 0 || yGrid > kGrid_MaxSize || xGrid <=0 || xGrid > kGrid_MaxSize)
+        return _nullGrid;
+    return _grids[yGrid-1][xGrid-1];
 }
 
 } /* namespace ovengine */ } /* namespace cinekine */

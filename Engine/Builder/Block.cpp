@@ -15,7 +15,7 @@ Block::Block() :
 {
 }
 
-Block::Block(const char* name, int granularity,
+Block::Block(const char* name, int granularity, int border,
              Layer layer,
              BuilderPaintStyle paintStyle,
              const Allocator& allocator) :
@@ -23,34 +23,52 @@ Block::Block(const char* name, int granularity,
     _type(layer),
     _paintStyle(paintStyle),
     _name(name),
-    _granularity(granularity)
+    _granularity(granularity),
+    _border(border)
 {
 }
 
-void Block::enableGrid(Class classId)
+void Block::enableGrid(GridDimension xGrid, GridDimension yGrid)
 {
-    int dim = 0;
-    switch (classId)
-    {
-    case kClass_1x1:    dim = 1;    break;
-    case kClass_2x2:    dim = 2;    break;
-    case kClass_3x3:    dim = 3;    break;
-    case kClass_4x4:    dim = 4;    break;
-    default:                        break;
-    }
-    if (dim <= 0)
+    int xDim = xGrid;
+    int yDim = yGrid;
+    if (xDim <= 0 || yDim <= 0 || xDim > kGrid_MaxSize || yDim > kGrid_MaxSize)
         return;
-    if (_grids[classId])
+    if (_grids[yGrid-1][xGrid-1])
         return;
-
-    _grids[classId] = createGrid(dim);
+    _grids[yGrid-1][xGrid-1] = createGrid(xDim, yDim);
 }
 
-
-auto Block::createGrid(int dimension) -> Grid
+auto Block::createGrid(int xDim, int yDim) -> Grid
 {
-    return std::move(Grid(dimension*_granularity, dimension*_granularity,
+    return std::move(Grid(xDim*_granularity, yDim*_granularity,
                           _allocator));
+}
+
+auto Block::findLargestGridByDimensions(GridDimension xGrid, GridDimension yGrid) const
+     -> const Block::Grid&
+{
+    //  choose the grid with the greatest area
+    auto blockUnits = std::max(xGrid, yGrid);
+    blockUnits = std::min(blockUnits, (GridDimension)Block::kGrid_MaxSize);
+
+    int32_t largestYGrid = 0, largestXGrid = 0;
+
+    for (int32_t yGrid = 1; yGrid <= blockUnits; ++yGrid)
+    {
+        for (int32_t xGrid = 1; xGrid <= blockUnits; ++xGrid)
+        {
+            if (hasGrid(xGrid,yGrid))
+            {
+                if (xGrid*yGrid > largestXGrid*largestYGrid)
+                {
+                    largestXGrid = xGrid;
+                    largestYGrid = yGrid;
+                }
+            }
+        }
+    }
+    return grid(largestXGrid, largestYGrid);
 }
 
 }   /* namespace ovengine */ }  /* namespace cinekine */

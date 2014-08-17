@@ -22,7 +22,7 @@ enum BuilderPaintStyle
     kBuilderPaintStyle_Tiled,
     kBuilderPaintStyle_Stretch
 };
-    
+
 typedef uint16_t BlockCollectionId;
 
 } /* namespace overview */ } /* namespace cinekine */

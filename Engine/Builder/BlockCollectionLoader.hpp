@@ -43,7 +43,6 @@ private:
     Allocator _allocator;
     std::function<void(BlockCollection&&)> _collectionCb;
     string _name;
-    string _tilesetName;
     BlockCollection::Container _models;
 };
 

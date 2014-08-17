@@ -8,6 +8,7 @@
 
 #include "Game/StageGenerator.hpp"
 #include "Engine/Model/Stage.hpp"
+#include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Builder/BlockCollectionLoader.hpp"
 #include "Engine/Builder/BlockCollection.hpp"
@@ -22,17 +23,11 @@ namespace cinekine { namespace prototype {
         _allocator(allocator),
         _stage(stage),
         _blockLibrary(32, _allocator),
-        _floorBuilder(_stage.tileGridMap().floor(),
-                     _stage.tileLibrary(),
-                     _blockLibrary,
-                     _allocator),
-        _overlayBuilder(_stage.tileGridMap().overlay(),
-                        _stage.tileLibrary(),
-                        _blockLibrary,
-                        _allocator)
+        _floorBuilder(_stage.tileGridMap().floor()),
+        _overlayBuilder(_stage.tileGridMap().overlay())
     {
         
-        FileStreamBuf dbStream("blocks_dungeon.json");
+        FileStreamBuf dbStream("blocks.json");
         if (!dbStream)
             return;
 
@@ -44,17 +39,56 @@ namespace cinekine { namespace prototype {
         
         ovengine::unserializeFromJSON(dbStream, loader);
         
+        auto& blockCollection = _blockLibrary.collectionAtSlot(0);
+        auto tileCollectionSlot = _stage.tileLibrary().slotByCollectionName("dungeon");
+        
         //  start map generation
         _floorBuilder.clear();
         _overlayBuilder.clear();
         
         auto floorDims = _floorBuilder.dimensions();
         
-        _floorBuilder.setBlockCollection(0);
-        _floorBuilder.paintRect("dirt_ground", 0, 0, floorDims.x, floorDims.y);
-        _floorBuilder.paintRect("wood_floor",
-                                floorDims.x/4, floorDims.y/4,
-                                floorDims.x - floorDims.x/4, floorDims.y - floorDims.y/4);
+        _floorBuilder.fillBox(blockCollection["dirt_ground"], tileCollectionSlot,
+                               0, 0, floorDims.x, floorDims.y);
+        _floorBuilder.fillBox(blockCollection["wood_floor"],
+                               tileCollectionSlot,
+                               floorDims.x/4, floorDims.y/4,
+                               floorDims.x/2, floorDims.y/2);
+        
+        auto overlayDims = _overlayBuilder.dimensions();
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
+                                 glm::ivec2(8,8), 4);
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
+                                 glm::ivec2(8,23), 4);
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Vertical,
+                                 glm::ivec2(8,8), 4);
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Vertical,
+                                 glm::ivec2(23,8), 4);
+        
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
+                                 glm::ivec2(28,28), 1);
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Vertical,
+                                 glm::ivec2(28,28), 1);
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
+                                 glm::ivec2(31,31), -1);
+        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
+                                 ovengine::GridBuilder::kDrawDirection_Vertical,
+                                 glm::ivec2(31,31), -1);
     }
     
     void StageGenerator::update()

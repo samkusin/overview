@@ -23,176 +23,250 @@
  */
 
 #include "Engine/Builder/Builder.hpp"
+#include "Engine/Builder/Block.hpp"
 
-#include "Engine/Model/TileLibrary.hpp"
-#include "Engine/Builder/BlockLibrary.hpp"
-
-#include <cstdio>
-#include <cstdlib>
 #include <algorithm>
-#include <cstdio>
+#include <glm/glm.hpp>
 
 namespace cinekine { namespace ovengine {
 
-    static void plotBlockTileOnGridTiled(TileGrid& targetGrid,
-                                         const TileGrid& blockGrid,
-                                         TileSlot tileSlot,
-                                         int xOrigin, int yOrigin,
-                                         int xOffset, int yOffset);
+    inline void plotBlockTileOnMap(TileGrid& mapGrid,
+                                   TileSlot tileSlot, int tileX, int tileY,
+                                   const Block::Grid& blockGrid, int blockX, int blockY,
+                                   int blockCntX, int blockCntY)
+    {
+        for (int iy = 0; iy < blockCntY; ++iy)
+        {
+            for (int ix = 0; ix < blockCntX; ++ix)
+            {
+                TileId srcTileId = compressTileToId(tileSlot,
+                                                    blockGrid.at(blockY+iy, blockX+ix));
+                mapGrid.at(tileY+iy, tileX+ix) = srcTileId;
+            }
+        }
+    }
 
-    static void plotBlockTileOnGridStretch(TileGrid& targetGrid,
-                                          const TileGrid& blockGrid,
-                                          TileSlot tileSlot,
-                                          int xOrigin, int yOrigin,
-                                          int xOffset, int yOffset);
 
-
-    GridBuilder::GridBuilder(TileGrid& gridMap,
-                             const TileLibrary& tileLibrary,
-                             const BlockLibrary& blockLibrary,
-                             const Allocator& allocator) :
-        _allocator(allocator),
-        _grid(gridMap),
-        _tileTemplates(tileLibrary),
-        _blockTemplates(blockLibrary),
-        _blockCollection(&_blockTemplates.nullCollection()),
-        _tileCollectionSlot(0)
+    GridBuilder::GridBuilder(TileGrid& gridMap) :
+        _grid(gridMap)
     {
     }
-    
+
     glm::ivec2 GridBuilder::dimensions() const
     {
         return glm::ivec2(_grid.columnCount(), _grid.rowCount());
     }
-    
+
     void GridBuilder::clear()
     {
         _grid.fillWithValue(0x0000, 0, 0, _grid.rowCount(), _grid.columnCount());
     }
-    
-    void GridBuilder::setBlockCollection(BlockCollectionId id)
-    {
-        _blockCollection = &_blockTemplates.collectionAtSlot(id);
-        _tileCollectionSlot =
-            _tileTemplates.slotByCollectionName(_blockCollection->tileCollectionName());
-    }
 
-    void GridBuilder::paintRect(const string& blockName,
-                                int x0, int y0, int x1, int y1)
+    void GridBuilder::fillBox(const Block& block,
+                              TileSlot tileCollectionSlot,
+                              int tileX, int tileY, int unitsX, int unitsY)
     {
-        //  select the block
-        auto& block = (*_blockCollection)[blockName];
+        if (!unitsX || !unitsY)
+            return;
 
-        //  align our rectangle to the block's granularity.  if alignment
-        //  results in a rectangle dimension smaller than our granularity, then
-        //  abort the paint
+        //  choose the grid with the greatest area
+        auto& blockGrid = block.findLargestGridByDimensions(std::abs(unitsX),
+                                                            std::abs(unitsY));
+        if (!blockGrid)
+            return;
+
         auto granularity = block.granularity();
         if (!granularity)
             return;
-        auto xDim = x1 - x0;
-        if (xDim < 0)
-        {
-            std::swap(x0, x1);
-            xDim *= -1;
-        }
-        auto yDim = y1 - y0;
-        if (yDim < 0)
-        {
-            std::swap(y0,y1);
-            yDim *= -1;
-        }
-        if (yDim < granularity || xDim < granularity)
-            return;
+        auto xDim = unitsX * granularity;
+        auto yDim = unitsY * granularity;
+        auto tileXEnd = tileX + xDim;
+        auto tileYEnd = tileY + yDim;
 
-        auto xBlockUnits = xDim/granularity;
-        auto yBlockUnits = yDim/granularity;
-        xDim = xBlockUnits * granularity;
-        yDim = yBlockUnits * granularity;
-        x1 = x0 + xDim;
-        y1 = y0 + yDim;
-
-        //  select our source grids (from the block) based on our target
-        //  dimensions
-        if (xBlockUnits > Block::kClass_Count)
-            xBlockUnits = Block::kClass_Count;
-        if (yBlockUnits > Block::kClass_Count)
-            yBlockUnits = Block::kClass_Count;
-
-        while (xBlockUnits && !block.hasGrid(xBlockUnits-1))
-            --xBlockUnits;
-        while (yBlockUnits && !block.hasGrid(yBlockUnits-1))
-            --yBlockUnits;
-        if (!xBlockUnits || !yBlockUnits)
-            return;
-
-        //  select the dominant grid (vertical or horizontal bias)
-        auto& xBlockGrid = block.grid(xBlockUnits-1);
-        auto& yBlockGrid = block.grid(yBlockUnits-1);
-        auto blockGrid = &xBlockGrid;
-        if (yBlockUnits > xBlockUnits)
-            blockGrid = &yBlockGrid;
-
-        PlotFn plotFn = plotFunctionFromStyle(block.paintStyle());
-        if (!plotFn)
-            return;
+        //  normalize coords so that X, Y is "upper left", and XEnd, YEnd is
+        //  "lower right"
+        if (tileXEnd < tileX)
+            std::swap(tileX, tileXEnd);
+        if (tileYEnd < tileY)
+            std::swap(tileY, tileYEnd);
 
         //  clip our rectangle to the target grid bounds
         int xCol = 0, yRow = 0;
-        if (x0 < 0)
-            xCol = -x0;
-        if (x1 >= _grid.columnCount())
-            xDim -= (x1 - _grid.columnCount());
-        if (y0 < 0)
-            yRow = -y0;
-        if (y1 >= _grid.rowCount())
-            yDim -= (y1 - _grid.rowCount());
+        if (tileX < 0)
+            xCol = -tileX;
+        if (tileXEnd >= _grid.columnCount())
+            xDim -= (tileXEnd - _grid.columnCount());
+        if (tileY < 0)
+            yRow = -tileY;
+        if (tileYEnd >= _grid.rowCount())
+            yDim -= (tileYEnd - _grid.rowCount());
 
-        //  paint our rect
-        for (auto yRow = 0; yRow < yDim; ++yRow)
+        if (block.paintStyle() == kBuilderPaintStyle_Tiled)
         {
-            for (auto xCol = 0; xCol < xDim; ++xCol)
+            //  paint our rect
+            for (auto yRow = 0; yRow < yDim; ++yRow)
             {
-                (*plotFn)(_grid, *blockGrid, _tileCollectionSlot, x0, y0, xCol, yRow);
+                for (auto xCol = 0; xCol < xDim; ++xCol)
+                {
+                    plotBlockTileOnMap(_grid,
+                                       tileCollectionSlot,
+                                       tileX + xCol, tileY + yRow,
+                                       blockGrid,
+                                       xCol % blockGrid.columnCount(), yRow % blockGrid.rowCount(),
+                                       1, 1);
+                }
+            }
+        }
+        else if (block.paintStyle() == kBuilderPaintStyle_Stretch)
+        {
+
+        }
+
+    }
+
+    void GridBuilder::drawLine(const Block& block, BlockSideType blockSide,
+                               TileSlot tileSlot,
+                               DrawDirection drawDirection,
+                               const glm::ivec2& mapPoint, int mapLineUnits)
+    {
+        // Select source Block::Grid using direction and mapLineOffset
+        // Obtain tile from source Block::Grid
+        //  Tiled Case:
+        //   mapLineOffset % Block::Grid::columnCount()
+        //  Stretch Case:
+        //   srcGridTileOffset % Block::Grid::columnCount()
+        //
+        glm::ivec2 destTilePos = mapPoint;
+        glm::ivec2 destTilePosEnd;
+        glm::ivec2 tilePosIncr;
+
+        switch (drawDirection)
+        {
+        case kDrawDirection_Horizontal:
+            destTilePosEnd.x = mapLineUnits * block.granularity();
+            tilePosIncr.x = 1;
+            break;
+        case kDrawDirection_Vertical:
+            destTilePosEnd.y = mapLineUnits * block.granularity();
+            tilePosIncr.y = 1;
+            break;
+        }
+
+        destTilePosEnd += mapPoint;
+
+        //  flip our start and end points so that the algorithm only needs to
+        //  handle a single "left to right, top to bottom" case
+        if (mapLineUnits < 0)
+        {
+            std::swap(destTilePos, destTilePosEnd);
+            // necessary since our destEnd always points to the tile ahead of
+            // the last plotted tile
+            destTilePos += tilePosIncr;
+            destTilePosEnd += tilePosIncr;
+        }
+
+        //  determine start position within source block from which to copy
+        //  tiles to the target, based on the blockSide and border.
+        auto destTileDims = destTilePosEnd - destTilePos;
+        auto& srcGrid = block.findLargestGridByDimensions(destTileDims.x/block.granularity(),
+                                                          destTileDims.y/block.granularity());
+        glm::ivec2 srcTilePos, srcTileDim;
+        int blockBorder = block.border() ? block.border() : 1;
+
+        switch (drawDirection)
+        {
+        case kDrawDirection_Horizontal:
+            if (blockSide == kBlockSide_Bottom)
+                srcTilePos.y = srcGrid.rowCount() - blockBorder;
+            else
+                srcTilePos.y = 0;
+            srcTileDim.x = 1;
+            srcTileDim.y = blockBorder;
+            break;
+        case kDrawDirection_Vertical:
+            if (blockSide == kBlockSide_Right)
+                srcTilePos.x = srcGrid.columnCount() - blockBorder;
+            else
+                srcTilePos.x = 0;
+            srcTileDim.x = blockBorder;
+            srcTileDim.y = 1;
+            break;
+        }
+
+        //  draw from mapPoint start to end
+        //
+
+        //  >>> used for stretch mode only
+        enum {
+            kSrcTileStartUnit,
+            kSrcTileStretchUnit,
+            kSrcTileEndUnit,
+            kSrcTileCompleteUnit
+        }
+        srcTileUnitStage = kSrcTileStartUnit;
+        glm::ivec2 destTilePosStageEnd = tilePosIncr * block.granularity();
+        glm::ivec2 srcTilePosStageEnd = tilePosIncr * block.granularity();
+        destTilePosStageEnd += destTilePos;
+        //  <<<
+
+        glm::ivec2 srcTilePosOffset;
+
+        while (destTilePos.x < destTilePosEnd.x ||
+               destTilePos.y < destTilePosEnd.y)
+        {
+            //  least efficient way to clip, but our logic for calculating
+            //  srcGrid coordinates is rather complex - clipping both dest and
+            //  source to avoid edge cases seems unnecessary
+            if (destTilePos.x >= 0 && destTilePos.x < _grid.columnCount() &&
+                destTilePos.y >= 0 && destTilePos.y < _grid.rowCount())
+            {
+                //  plot tiles up to the border edge
+                plotBlockTileOnMap(_grid, tileSlot,
+                                   destTilePos.x, destTilePos.y,
+                                   srcGrid,
+                                   (srcTilePos.x + srcTilePosOffset.x) % srcGrid.columnCount(),
+                                   (srcTilePos.y + srcTilePosOffset.y) % srcGrid.rowCount(),
+                                   srcTileDim.x, srcTileDim.y);
+            }
+
+            srcTilePosOffset += tilePosIncr;
+            destTilePos += tilePosIncr;
+
+            if (block.paintStyle() == kBuilderPaintStyle_Stretch)
+            {
+                while (destTilePos == destTilePosStageEnd)
+                {
+                    srcTilePos.x = srcTilePosStageEnd.x % srcGrid.columnCount();
+                    srcTilePos.y = srcTilePosStageEnd.y % srcGrid.rowCount();
+                    srcTilePosOffset.x = 0;
+                    srcTilePosOffset.y = 0;
+                    if (srcTileUnitStage == kSrcTileStartUnit)
+                    {
+                        srcTileUnitStage = kSrcTileStretchUnit;
+
+                        destTilePosStageEnd = destTilePosEnd - (tilePosIncr * block.granularity());
+                        srcTilePosStageEnd.x = std::max(tilePosIncr.x * block.granularity(),
+                                                        (int)srcGrid.columnCount() - tilePosIncr.x * block.granularity());
+                        srcTilePosStageEnd.y = std::max(tilePosIncr.x * block.granularity(),
+                                                        (int)srcGrid.rowCount() - tilePosIncr.y * block.granularity());
+                    }
+                    else if (srcTileUnitStage == kSrcTileStretchUnit)
+                    {
+                        srcTileUnitStage = kSrcTileEndUnit;
+                        destTilePosStageEnd = destTilePosEnd;
+                        srcTilePosStageEnd.x = srcGrid.columnCount();
+                        srcTilePosStageEnd.y = srcGrid.rowCount();
+                    }
+                    else if (srcTileUnitStage == kSrcTileEndUnit)
+                    {
+                        srcTileUnitStage = kSrcTileCompleteUnit;
+                        break;
+                    }
+                }
             }
         }
 
     }
 
-    GridBuilder::PlotFn GridBuilder::plotFunctionFromStyle(BuilderPaintStyle style) const
-    {
-        switch (style)
-        {
-        case kBuilderPaintStyle_Tiled:
-            return plotBlockTileOnGridTiled;
-        case kBuilderPaintStyle_Stretch:
-            return plotBlockTileOnGridStretch;
-        default:
-            break;
-        }
-        return nullptr;
-    }
-
-    void plotBlockTileOnGridTiled(TileGrid& targetGrid,
-                                  const TileGrid& blockGrid,
-                                  TileSlot tileSlot,
-                                  int xOrigin, int yOrigin,
-                                  int xOffset, int yOffset)
-    {
-        auto xBlockTile = xOffset % blockGrid.columnCount();
-        auto yBlockTile = yOffset % blockGrid.rowCount();
-        TileId srcTileId = compressTileToId(tileSlot,
-                                            blockGrid.at(yBlockTile, xBlockTile));
-
-        targetGrid.at(yOrigin + yOffset, xOrigin + xOffset) = srcTileId;
-    }
-
-    void plotBlockTileOnGridStretch(TileGrid& targetGrid,
-                                    const TileGrid& blockGrid,
-                                    TileSlot tileSlot,
-                                    int xOrigin, int yOrigin,
-                                    int xOffset, int yOffset)
-    {
-
-    }
 
 } /* namespace ovengine */ } /* namespace cinekine */

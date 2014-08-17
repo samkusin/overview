@@ -31,9 +31,8 @@ public:
     /// Constructs a Block collection
     ///
     /// @param name               The collection name
-    /// @param tileCollectionName The name of the associated tile collection
     /// @param blocks             The collection's blocks
-    BlockCollection(const char* name, const char* tileCollectionName,
+    BlockCollection(const char* name,
                     vector<Block>&& blocks);
     /// Returns the tile at the requested index.
     /// @param  name The name of the Block
@@ -41,12 +40,8 @@ public:
     ///
     const Type& operator[](const string& name) const;
 
-    /// @return The TileCollection name
-    ///
-    const string& tileCollectionName() const;
 
 private:
-    string _tileCollectionName;
     Block _nullBlock;
 };
 
@@ -60,11 +55,6 @@ inline auto BlockCollection::operator[](const string& name) const -> const Type&
             return block;
     }
     return _nullBlock;
-}
-
-inline const string& BlockCollection::tileCollectionName() const
-{
-    return _tileCollectionName;
 }
 
 } /* namespace ovengine */ } /* namespace cinekine */
