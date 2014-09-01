@@ -17,6 +17,11 @@
 
 namespace cinekine { namespace ovengine {
 
+/// @defgroup Builder The Map Grid Builder
+/// The Builder is a toolbox used by map generators to procedurally create
+/// tile grids onto Stages.
+///
+
 enum BuilderPaintStyle
 {
     kBuilderPaintStyle_Tiled,

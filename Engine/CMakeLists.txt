@@ -119,11 +119,14 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Room.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomGraph.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Block.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockCollection.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockCollectionLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/GridBuilder.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/RoomBuilder.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp )
 
 set( PROJECT_INCLUDES
@@ -143,14 +146,18 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Room.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomGraph.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Builder.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BuilderTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Block.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockCollection.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockCollectionLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BlockLibrary.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/GridBuilder.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Builder/RoomBuilder.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Debug.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Grid.hpp

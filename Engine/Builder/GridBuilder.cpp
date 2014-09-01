@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-#include "Engine/Builder/Builder.hpp"
+#include "Engine/Builder/GridBuilder.hpp"
 #include "Engine/Builder/Block.hpp"
 
 #include <algorithm>
@@ -47,25 +47,31 @@ namespace cinekine { namespace ovengine {
     }
 
 
-    GridBuilder::GridBuilder(TileGrid& gridMap) :
-        _grid(gridMap)
+    GridBuilder::GridBuilder(TileGrid& gridMap, int tileCoordRatio) :
+        _grid(&gridMap),
+        _tileCoordRatio(tileCoordRatio)
     {
     }
 
     glm::ivec2 GridBuilder::dimensions() const
     {
-        return glm::ivec2(_grid.columnCount(), _grid.rowCount());
+        return glm::ivec2(_grid->columnCount() * _tileCoordRatio,
+                          _grid->rowCount() * _tileCoordRatio);
     }
 
     void GridBuilder::clear()
     {
-        _grid.fillWithValue(0x0000, 0, 0, _grid.rowCount(), _grid.columnCount());
+        _grid->fillWithValue(0x0000, 0, 0, _grid->rowCount(), _grid->columnCount());
     }
 
     void GridBuilder::fillBox(const Block& block,
                               TileSlot tileCollectionSlot,
-                              int tileX, int tileY, int unitsX, int unitsY)
+                              const glm::ivec2& mapPoint,  const glm::ivec2& mapDims)
     {
+        auto tileX = mapPoint.x/_tileCoordRatio;
+        auto tileY = mapPoint.y/_tileCoordRatio;
+        auto unitsX = mapDims.x/(_tileCoordRatio * block.granularity());
+        auto unitsY = mapDims.y/(_tileCoordRatio * block.granularity());
         if (!unitsX || !unitsY)
             return;
 
@@ -94,12 +100,12 @@ namespace cinekine { namespace ovengine {
         int xCol = 0, yRow = 0;
         if (tileX < 0)
             xCol = -tileX;
-        if (tileXEnd >= _grid.columnCount())
-            xDim -= (tileXEnd - _grid.columnCount());
+        if (tileXEnd >= _grid->columnCount())
+            xDim -= (tileXEnd - _grid->columnCount());
         if (tileY < 0)
             yRow = -tileY;
-        if (tileYEnd >= _grid.rowCount())
-            yDim -= (tileYEnd - _grid.rowCount());
+        if (tileYEnd >= _grid->rowCount())
+            yDim -= (tileYEnd - _grid->rowCount());
 
         if (block.paintStyle() == kBuilderPaintStyle_Tiled)
         {
@@ -108,7 +114,7 @@ namespace cinekine { namespace ovengine {
             {
                 for (auto xCol = 0; xCol < xDim; ++xCol)
                 {
-                    plotBlockTileOnMap(_grid,
+                    plotBlockTileOnMap(*_grid,
                                        tileCollectionSlot,
                                        tileX + xCol, tileY + yRow,
                                        blockGrid,
@@ -127,8 +133,10 @@ namespace cinekine { namespace ovengine {
     void GridBuilder::drawLine(const Block& block, BlockSideType blockSide,
                                TileSlot tileSlot,
                                DrawDirection drawDirection,
-                               const glm::ivec2& mapPoint, int mapLineUnits)
+                               const glm::ivec2& mapPoint, int mapLineOffset)
     {
+        auto mapLineUnits = mapLineOffset/(_tileCoordRatio * block.granularity());
+
         // Select source Block::Grid using direction and mapLineOffset
         // Obtain tile from source Block::Grid
         //  Tiled Case:
@@ -137,6 +145,8 @@ namespace cinekine { namespace ovengine {
         //   srcGridTileOffset % Block::Grid::columnCount()
         //
         glm::ivec2 destTilePos = mapPoint;
+        destTilePos /= _tileCoordRatio;
+
         glm::ivec2 destTilePosEnd;
         glm::ivec2 tilePosIncr;
 
@@ -152,7 +162,7 @@ namespace cinekine { namespace ovengine {
             break;
         }
 
-        destTilePosEnd += mapPoint;
+        destTilePosEnd += destTilePos;
 
         //  flip our start and end points so that the algorithm only needs to
         //  handle a single "left to right, top to bottom" case
@@ -217,11 +227,11 @@ namespace cinekine { namespace ovengine {
             //  least efficient way to clip, but our logic for calculating
             //  srcGrid coordinates is rather complex - clipping both dest and
             //  source to avoid edge cases seems unnecessary
-            if (destTilePos.x >= 0 && destTilePos.x < _grid.columnCount() &&
-                destTilePos.y >= 0 && destTilePos.y < _grid.rowCount())
+            if (destTilePos.x >= 0 && destTilePos.x < _grid->columnCount() &&
+                destTilePos.y >= 0 && destTilePos.y < _grid->rowCount())
             {
                 //  plot tiles up to the border edge
-                plotBlockTileOnMap(_grid, tileSlot,
+                plotBlockTileOnMap(*_grid, tileSlot,
                                    destTilePos.x, destTilePos.y,
                                    srcGrid,
                                    (srcTilePos.x + srcTilePosOffset.x) % srcGrid.columnCount(),

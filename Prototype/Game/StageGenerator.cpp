@@ -23,8 +23,8 @@ namespace cinekine { namespace prototype {
         _allocator(allocator),
         _stage(stage),
         _blockLibrary(32, _allocator),
-        _floorBuilder(_stage.tileGridMap().floor()),
-        _overlayBuilder(_stage.tileGridMap().overlay())
+        _floorBuilder(_stage.tileGridMap().floor(), _stage.tileGridMap().overlayToFloorRatio()),
+        _overlayBuilder(_stage.tileGridMap().overlay(), 1)
     {
         
         FileStreamBuf dbStream("blocks.json");
@@ -49,46 +49,46 @@ namespace cinekine { namespace prototype {
         auto floorDims = _floorBuilder.dimensions();
         
         _floorBuilder.fillBox(blockCollection["dirt_ground"], tileCollectionSlot,
-                               0, 0, floorDims.x, floorDims.y);
+                              glm::ivec2(0,0), floorDims);
         _floorBuilder.fillBox(blockCollection["wood_floor"],
-                               tileCollectionSlot,
-                               floorDims.x/4, floorDims.y/4,
-                               floorDims.x/2, floorDims.y/2);
+                              tileCollectionSlot,
+                              floorDims/4,
+                              floorDims/2);
         
         auto overlayDims = _overlayBuilder.dimensions();
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,8), 4);
+                                 glm::ivec2(8,8), 16);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,23), 4);
+                                 glm::ivec2(8,23), 16);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(8,8), 4);
+                                 glm::ivec2(8,8), 16);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(23,8), 4);
+                                 glm::ivec2(23,8), 16);
         
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(28,28), 1);
+                                 glm::ivec2(28,28), 4);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(28,28), 1);
+                                 glm::ivec2(28,28), 4);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(31,31), -1);
+                                 glm::ivec2(31,31), -4);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(31,31), -1);
+                                 glm::ivec2(31,31), -4);
     }
     
     void StageGenerator::update()

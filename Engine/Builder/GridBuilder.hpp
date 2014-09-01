@@ -1,6 +1,6 @@
 ///
 /// @file
-/// Common types for all Model objects
+/// The GridBuilder utility class
 ///
 /// @author     Samir Sinha
 /// @date       07/16/2014
@@ -12,12 +12,6 @@
 
 #include "Engine/Builder/BuilderTypes.hpp"
 #include "Engine/Builder/BlockLibrary.hpp"
-
-#include "cinek/vector.hpp"
-#include "cinek/string.hpp"
-
-#include <glm/glm.hpp>
-
 
 namespace cinekine {
     namespace ovengine {
@@ -34,6 +28,7 @@ namespace cinekine { namespace ovengine {
     ///
 
     /// @class GridBuilder
+    /// @ingroup Builder
     /// @brief Utilities for building grid-based maps
     ///
     /// Applications use GridBuilder to procedurally generate maps using the
@@ -42,16 +37,15 @@ namespace cinekine { namespace ovengine {
     class GridBuilder
     {
     public:
-        GridBuilder(TileGrid& gridMap);
+        GridBuilder(TileGrid& gridMap, int32_t tileCoordRatio);
 
         glm::ivec2 dimensions() const;
 
         void clear();
 
-        void setBlockCollection(BlockCollectionId id);
         void fillBox(const Block& block,
                      TileSlot tileCollectionSlot,
-                     int tileX, int tileY, int unitsX, int unitsY);
+                     const glm::ivec2& mapPoint, const glm::ivec2& mapDims);
 
         enum BlockSideType
         {
@@ -92,12 +86,14 @@ namespace cinekine { namespace ovengine {
         void drawLine(const Block& block, BlockSideType blockSide,
                       TileSlot tileSlot,
                       DrawDirection drawDirection,
-                      const glm::ivec2& mapPoint, int mapLineUnits);
+                      const glm::ivec2& mapPoint, int mapLineOffset);
 
 
     private:
-        TileGrid& _grid;
+        TileGrid* _grid;
+        int _tileCoordRatio;
     };
+
 } /* namespace overview */ } /* namespace cinekine */
 
 #endif

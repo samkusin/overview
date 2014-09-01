@@ -9,7 +9,7 @@
 #ifndef Overview_StageGenerator_hpp
 #define Overview_StageGenerator_hpp
 
-#include "Engine/Builder/Builder.hpp"
+#include "Engine/Builder/GridBuilder.hpp"
 #include "Engine/Builder/BlockLibrary.hpp"
 
 #include "cinek/allocator.hpp"

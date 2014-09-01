@@ -26,6 +26,14 @@ namespace cinekine { namespace ovengine {
         Type min;          ///< The min coordinate
         Type max;          ///< The max coordinate
 
+        /// Default Constructor
+        ///
+        AABB() = default;
+        /// Constructor
+        /// @param min  Min point of the box
+        /// @param max  Max point of the box
+        ///
+        AABB(const Type& min, const Type& max);
         /// Checks if the box is valid.  The box could be flat (planar), or even
         /// a line if the min/max points share common coordinates.
         ///
@@ -85,6 +93,10 @@ namespace cinekine { namespace ovengine {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    template<class _Point>
+    AABB<_Point>::AABB(const Type& min, const Type& max) : min(min), max(max)
+    {
+    }
 
     template<class _Point>
     AABB<_Point>::operator bool() const
@@ -96,30 +108,6 @@ namespace cinekine { namespace ovengine {
     typename AABB<_Point>::Type AABB<_Point>::size() const
     {
         return max - min;
-    }
-
-    template<class _Point>
-    bool AABB<_Point>::inside(const AABB<_Point>& box) const
-    {
-        return (min.x >= box.min.x && max.x <= box.max.x &&
-                min.y >= box.min.y && max.y <= box.max.y &&
-                min.z >= box.min.z && max.z <= box.max.z);
-    }
-    
-    template<class _Point>
-    bool AABB<_Point>::contains(const Type& pt) const
-    {
-        return (pt.x >= min.x && pt.x <= max.x &&
-                pt.y >= min.y && pt.y <= max.y &&
-                pt.z >= min.z && pt.z <= max.z);
-    }
-
-    template<class _Point>
-    bool AABB<_Point>::outside(const AABB<_Point>& box) const
-    {
-        return (min.x > box.max.x || box.min.x > max.x ||
-                min.y > box.max.y || box.min.y > max.y ||
-                min.z > box.max.z || box.min.z > max.z);
     }
 
     template<class _Point>

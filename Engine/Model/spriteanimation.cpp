@@ -14,10 +14,10 @@ namespace cinekine {
 
     SpriteAnimation::SpriteAnimation(AnimationStateId id, uint16_t frameCount,
                                      cinek_bitmap_index* frames) :
-        _id {id},
-        _duration {0},
-        _frameCount {frameCount},
-        _frames {frames}
+        _id(id),
+        _duration(0),
+        _frameCount(frameCount),
+        _frames(frames)
     {
     }
 
