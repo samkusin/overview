@@ -7,8 +7,8 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_GridBuilder_Hpp
-#define Overview_GridBuilder_Hpp
+#ifndef Overview_Builder_GridBuilder_Hpp
+#define Overview_Builder_GridBuilder_Hpp
 
 #include "Engine/Builder/BuilderTypes.hpp"
 #include "Engine/Builder/BlockLibrary.hpp"

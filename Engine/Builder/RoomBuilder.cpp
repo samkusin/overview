@@ -8,22 +8,17 @@
 
 #include "Engine/Builder/RoomBuilder.hpp"
 #include "Engine/Builder/GridBuilder.hpp"
-#include "Engine/Model/RoomGraph.hpp"
 
 namespace cinekine {
     namespace ovengine {
+        namespace room_builder {
 
-/*
-    RoomBuilder::RoomBuilder(GridBuilder& gridBuilder) :
-        _gridBuilder(&gridBuilder)
-    {
-    }
+void paint(Room room, const PaintStyle& style, GridBuilder& grid)
+{
+    // paint edges based on portal points
+    auto roomAABB = room.AABB();
 
-    void RoomBuilder::draw(RoomGraph& graph, RoomHandle handle,
-                           const RoomBlockInfo& blockInfo)
-    {
-
-    }
-*/
+}
+        } /* namespace room_builder */
     } /* namespace overview */
 } /* namespace cinekine */

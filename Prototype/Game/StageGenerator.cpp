@@ -60,10 +60,11 @@ namespace cinekine { namespace prototype {
                                  ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
                                  glm::ivec2(8,8), 16);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
+        /*_overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,23), 16);
+                                 glm::ivec2(8,24), 16);
+         */
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
@@ -71,24 +72,24 @@ namespace cinekine { namespace prototype {
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(23,8), 16);
+                                 glm::ivec2(24,8), 16);
         
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
+                                 ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
                                  glm::ivec2(28,28), 4);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
+                                 ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
                                  glm::ivec2(28,28), 4);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(31,31), -4);
+                                 glm::ivec2(32,32), -4);
         _overlayBuilder.drawLine(blockCollection["brick_wall"],
                                  ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
                                  ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(31,31), -4);
+                                 glm::ivec2(32,32), -4);
     }
     
     void StageGenerator::update()

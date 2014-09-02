@@ -169,10 +169,12 @@ namespace cinekine { namespace ovengine {
         if (mapLineUnits < 0)
         {
             std::swap(destTilePos, destTilePosEnd);
+            /*
             // necessary since our destEnd always points to the tile ahead of
             // the last plotted tile
             destTilePos += tilePosIncr;
             destTilePosEnd += tilePosIncr;
+            */
         }
 
         //  determine start position within source block from which to copy
@@ -187,17 +189,31 @@ namespace cinekine { namespace ovengine {
         {
         case kDrawDirection_Horizontal:
             if (blockSide == kBlockSide_Bottom)
+            {
                 srcTilePos.y = srcGrid.rowCount() - blockBorder;
+                //  adjust destTile positions to take the border into account
+                destTilePos.y  -= blockBorder;
+                destTilePosEnd.y -= blockBorder;
+            }
             else
+            {
                 srcTilePos.y = 0;
+            }
             srcTileDim.x = 1;
             srcTileDim.y = blockBorder;
             break;
         case kDrawDirection_Vertical:
             if (blockSide == kBlockSide_Right)
+            {
                 srcTilePos.x = srcGrid.columnCount() - blockBorder;
+                //  adjust destTile positions to take the border into account
+                destTilePos.x -= blockBorder;
+                destTilePosEnd.x -= blockBorder;
+            }
             else
+            {
                 srcTilePos.x = 0;
+            }
             srcTileDim.x = blockBorder;
             srcTileDim.y = 1;
             break;
