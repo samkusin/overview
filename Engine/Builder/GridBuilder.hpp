@@ -43,9 +43,9 @@ namespace cinekine { namespace ovengine {
 
         void clear();
 
-        void fillBox(const Block& block,
-                     TileSlot tileCollectionSlot,
-                     const glm::ivec2& mapPoint, const glm::ivec2& mapDims);
+        void fillBox(const glm::ivec2& mapPoint, const glm::ivec2& mapDims,
+                     const Block& block,
+                     TileSlot tileCollectionSlot);
 
         enum BlockSideType
         {
@@ -83,10 +83,10 @@ namespace cinekine { namespace ovengine {
         ///                         to (0,0).  A map unit is the block's
         ///                         granularity value
         ///
-        void drawLine(const Block& block, BlockSideType blockSide,
-                      TileSlot tileSlot,
+        void drawLine(const glm::ivec2& mapPoint, int mapLineOffset,
                       DrawDirection drawDirection,
-                      const glm::ivec2& mapPoint, int mapLineOffset);
+                      const Block& block, BlockSideType blockSide,
+                      TileSlot tileSlot);
 
 
     private:

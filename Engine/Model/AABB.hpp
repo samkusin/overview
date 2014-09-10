@@ -43,7 +43,7 @@ namespace cinekine { namespace ovengine {
         /// Calculates the size of the box as a Point
         /// @return The x,y,z sizes of the box
         ///
-        Type size() const;
+        Type dimensions() const;
         /// Determines if this box lies within a box
         /// @param  box The box to test
         /// @return True if the this box lies within the supplied box
@@ -105,7 +105,7 @@ namespace cinekine { namespace ovengine {
     }
 
     template<class _Point>
-    typename AABB<_Point>::Type AABB<_Point>::size() const
+    typename AABB<_Point>::Type AABB<_Point>::dimensions() const
     {
         return max - min;
     }

@@ -38,10 +38,12 @@ public:
 
     operator bool() const { return _graph!=0; }
 
+    //  clears all portals, and resets edges to the AABB
+    void resetToBounds(const RoomAABB& aabb);
+
     Portal portal(RoomSide side) const;
 
     inline RoomAABB AABB() const;
-    inline void setAABB(const RoomAABB& aabb);
 
     const RoomNode* node() const { return _info; }
 
@@ -63,7 +65,7 @@ class Portal
 public:
     Portal() = default;
     inline Portal(uintptr_t graphptr, PortalNode* infoptr);
-    operator bool() const { return _graph!= 0; }
+    inline operator bool() const;
 
     Room toRoom() const;
     Room fromRoom() const;

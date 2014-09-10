@@ -38,20 +38,17 @@ namespace cinekine {
         return _info ? _info->box : RoomAABB();
     }
 
-    inline void Room::setAABB(const RoomAABB& aabb)
-    {
-        if (_info)
-        {
-            _info->box = aabb;
-        }
-    }
-
     ////////////////////////////////////////////////////////////////////////////
 
     inline Portal::Portal(uintptr_t graphptr, PortalNode* infoptr) :
         _graph(graphptr),
         _info(infoptr)
     {
+    }
+
+    inline Portal::operator bool() const
+    {
+        return _graph!= 0 && _info && _info->v0 != _info->v1;
     }
 
     inline RoomVertex Portal::startPos() const

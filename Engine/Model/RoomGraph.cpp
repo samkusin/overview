@@ -22,7 +22,7 @@ void RoomGraph::invalidate()
 {
     _portalPool.destructAll();
     _roomPool.destructAll();
-    _root = Room();
+    _root = createRoom();
 }
 
 Room RoomGraph::createRoom()

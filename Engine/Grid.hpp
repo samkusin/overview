@@ -121,6 +121,9 @@ public:
     void fillWithValue(const Value& value,
                        uint32_t row, uint32_t col, uint32_t rows, uint32_t cols);
 
+    /** Clears the whole grid, filling values with null */
+    void clear();
+
 private:
     Allocator _allocator;
     Value* _data;
@@ -399,6 +402,12 @@ void Grid<Value, Allocator>::fillWithValue(const Value& value,
             *rowStrip.first = value;
         }
     }
+}
+
+template<typename Value, class Allocator>
+void Grid<Value, Allocator>::clear()
+{
+    fillWithValue(Value(), 0, 0, rowCount(), columnCount());
 }
 
     } /* overview */

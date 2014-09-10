@@ -9,8 +9,8 @@
 #ifndef Overview_StageGenerator_hpp
 #define Overview_StageGenerator_hpp
 
-#include "Engine/Builder/GridBuilder.hpp"
 #include "Engine/Builder/BlockLibrary.hpp"
+#include "Engine/Model/RoomGraph.hpp"
 
 #include "cinek/allocator.hpp"
 
@@ -33,8 +33,7 @@ private:
     Allocator _allocator;
     ovengine::Stage& _stage;
     ovengine::BlockLibrary _blockLibrary;
-    ovengine::GridBuilder _floorBuilder;
-    ovengine::GridBuilder _overlayBuilder;
+    ovengine::RoomGraph _roomGraph;
 };
 
 

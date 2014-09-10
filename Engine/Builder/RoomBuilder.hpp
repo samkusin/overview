@@ -17,7 +17,8 @@
 
 namespace cinekine {
     namespace ovengine {
-        class GridBuilder;
+        class TileGridMap;
+        class BlockCollection;
     }
 }
 
@@ -29,12 +30,14 @@ struct PaintStyle
 {
     string floorBlockName;
     string wallBlockName;
-    TileSlot tileCollectionSlot;
 };
 
-void paint(Room room, const PaintStyle& style, GridBuilder& grid);
+void paint(Room room, TileGridMap& grid,
+           const PaintStyle& style,
+           const BlockCollection& blockCollection,
+           TileSlot tileCollectionSlot);
 
-        }
+        } /* namespace room_builder */
     } /* namespace ovengine */
 } /* namespace cinekine */
 

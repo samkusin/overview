@@ -12,6 +12,28 @@
 namespace cinekine {
     namespace ovengine {
 
+void Room::resetToBounds(const RoomAABB& aabb)
+{
+    if (!_info)
+        return;
+
+    _info->box = aabb;
+    //  reset portals to the edges of the AAAB, which indicates a zero-sized or
+    //  a "closed" portal
+    auto p = portal(kRoomSide_North);
+    p.setStartPos(aabb.min);
+    p.setEndPos(aabb.min);
+    p = portal(kRoomSide_South);
+    p.setStartPos(aabb.max);
+    p.setEndPos(aabb.max);
+    p = portal(kRoomSide_East);
+    p.setStartPos(aabb.max);
+    p.setEndPos(aabb.max);
+    p = portal(kRoomSide_West);
+    p.setStartPos(aabb.min);
+    p.setEndPos(aabb.min);
+}
+
 Portal Room::portal(RoomSide side) const
 {
     if (!_info)
@@ -57,7 +79,7 @@ Room Portal::createRoom(const RoomAABB& aabb)
 
     auto graph = reinterpret_cast<RoomGraph*>(_graph);
     auto room = graph->createRoom();
-    room.setAABB(aabb);
+    room.resetToBounds(aabb);
     room._info->portals[toSide]->toRoom = _info->fromRoom;
 
     return room;

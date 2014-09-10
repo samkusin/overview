@@ -61,12 +61,12 @@ namespace cinekine { namespace ovengine {
 
     void GridBuilder::clear()
     {
-        _grid->fillWithValue(0x0000, 0, 0, _grid->rowCount(), _grid->columnCount());
+        _grid->clear();
     }
 
-    void GridBuilder::fillBox(const Block& block,
-                              TileSlot tileCollectionSlot,
-                              const glm::ivec2& mapPoint,  const glm::ivec2& mapDims)
+    void GridBuilder::fillBox(const glm::ivec2& mapPoint, const glm::ivec2& mapDims,
+                              const Block& block,
+                              TileSlot tileCollectionSlot)
     {
         auto tileX = mapPoint.x/_tileCoordRatio;
         auto tileY = mapPoint.y/_tileCoordRatio;
@@ -130,10 +130,10 @@ namespace cinekine { namespace ovengine {
 
     }
 
-    void GridBuilder::drawLine(const Block& block, BlockSideType blockSide,
-                               TileSlot tileSlot,
+    void GridBuilder::drawLine(const glm::ivec2& mapPoint, int mapLineOffset,
                                DrawDirection drawDirection,
-                               const glm::ivec2& mapPoint, int mapLineOffset)
+                               const Block& block, BlockSideType blockSide,
+                               TileSlot tileSlot)
     {
         auto mapLineUnits = mapLineOffset/(_tileCoordRatio * block.granularity());
 
