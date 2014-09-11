@@ -56,7 +56,7 @@ namespace cinekine {
         loadSpriteCollection("sprites_common.json");
         
         //  initialize sim (our stage)
-        ovengine::MapBounds bounds = { 8, 8, 1 };
+        ovengine::MapBounds bounds = { 12, 12, 1 };
         ovengine::Stage::InitParameters initParams;
         initParams.overlayToFloorTileRatio = 4;
         initParams.spriteLimit = 256;

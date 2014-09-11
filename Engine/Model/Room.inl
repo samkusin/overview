@@ -21,8 +21,8 @@ namespace cinekine {
         RoomNode* toRoom;
         RoomNode* fromRoom;
         RoomSide side;
-        RoomVertex v0;
-        RoomVertex v1;
+        int iV0;
+        int iV1;
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -48,33 +48,7 @@ namespace cinekine {
 
     inline Portal::operator bool() const
     {
-        return _graph!= 0 && _info && _info->v0 != _info->v1;
-    }
-
-    inline RoomVertex Portal::startPos() const
-    {
-        return _info ? _info->v0 : RoomVertex();
-    }
-
-    inline void Portal::setStartPos(const RoomVertex& v)
-    {
-        if (_info)
-        {
-            _info->v0 = v;
-        }
-    }
-
-    inline RoomVertex Portal::endPos() const
-    {
-        return _info ? _info->v1 : RoomVertex();
-    }
-
-    inline void Portal::setEndPos(const RoomVertex& v)
-    {
-        if (_info)
-        {
-            _info->v1 = v;
-        }
+        return _graph!= 0 && _info;
     }
 
     } /* namespace overview */

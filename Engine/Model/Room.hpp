@@ -63,18 +63,45 @@ private:
 class Portal
 {
 public:
+    typedef RoomVertex::value_type offset_type;
+
     Portal() = default;
     inline Portal(uintptr_t graphptr, PortalNode* infoptr);
     inline operator bool() const;
 
     Room toRoom() const;
     Room fromRoom() const;
+
+    ///  Creates a room attached to this portal, connecting it to the portal's
+    ///  owning room.   Note the portal for the newly created room's connecting
+    ///  side is automatically set to match this portal's starting and end pos.
+    ///
+    ///  @param  aabb  The room's bounding box
+    ///  @return The created room interface
     Room createRoom(const RoomAABB& aabb=RoomAABB());
 
-    inline RoomVertex startPos() const;
-    inline void setStartPos(const RoomVertex& v);
-    inline RoomVertex endPos() const;
-    inline void setEndPos(const RoomVertex& v);
+    /// Set the portal points using an offset from the room side's start
+    /// position.
+    ///
+    /// @param  offset The offset from the parent room's side start point.
+    ///                The value offsets either from the x or y start coordinate
+    ///                depending on the portal's side.
+    /// @param  length The length of the portal.
+    void setFromOffsets(offset_type offset, offset_type length);
+
+    /// Set portal positions to the edges
+    void setAsOpen();
+
+    /// Set portal positions to the end edge, closing the wall
+    void setAsClosed();
+
+    RoomVertex startPos() const;
+    void setStartPos(const RoomVertex& v);
+    RoomVertex endPos() const;
+    void setEndPos(const RoomVertex& v);
+
+    RoomVertex edgeStartPos() const;
+    RoomVertex edgeEndPos() const;
 
     const PortalNode* node() const { return _info; }
 

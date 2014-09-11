@@ -53,124 +53,56 @@ namespace cinekine { namespace prototype {
                              floorDims,
                              blockCollection["dirt_ground"], tileCollectionSlot);
         
+        //  Construct our rooms
         auto room = _roomGraph.root();
-        ovengine::RoomAABB roomAABB(ovengine::RoomVertex(8,8),
-                                    ovengine::RoomVertex(24,24));
+        ovengine::RoomAABB roomAABB(ovengine::RoomVertex(12,12),
+                                    ovengine::RoomVertex(36,36));
         room.resetToBounds(roomAABB);
         
         auto portal = room.portal(ovengine::kRoomSide_West);
-        portal.setStartPos(room.AABB().min + ovengine::RoomVertex(0,4));
-        portal.setEndPos(portal.startPos() + ovengine::RoomVertex(0,4));
+        portal.setFromOffsets(0, 0);
+        
+        portal = room.portal(ovengine::kRoomSide_North);
+        portal.setFromOffsets(0, 0);
         
         portal = room.portal(ovengine::kRoomSide_East);
-        portal.setStartPos(room.AABB().max - ovengine::RoomVertex(0,8));
-        portal.setEndPos(portal.startPos() + ovengine::RoomVertex(0,4));
+        portal.setFromOffsets(8, 4);
+
+        roomAABB.min = portal.startPos() - ovengine::RoomVertex(0,4);
+        roomAABB.max = portal.endPos() + ovengine::RoomVertex(8,4);
         
+        auto eastRoom = portal.createRoom(roomAABB);
+        portal = eastRoom.portal(ovengine::kRoomSide_West);
+        portal.setAsOpen();
+        
+        portal = room.portal(ovengine::kRoomSide_South);
+        portal.setFromOffsets(8, 4);
+        
+        roomAABB.min = portal.startPos() - ovengine::RoomVertex(4,0);
+        roomAABB.max = portal.endPos() + ovengine::RoomVertex(12,12);
+        
+        auto southRoom = portal.createRoom(roomAABB);
+        portal = southRoom.portal(ovengine::kRoomSide_North);
+        portal.setAsOpen();
+
+        //  paint all of the rooms
         ovengine::room_builder::PaintStyle style;
+
         style.floorBlockName = "wood_tile";
         style.wallBlockName = "brick_wall";
         
         ovengine::room_builder::paint(room, _stage.tileGridMap(),
                                       style, blockCollection, tileCollectionSlot);
-        
-        
-        /*
-        
-        _floorBuilder.fillBox(blockCollection["dirt_ground"], tileCollectionSlot,
-                              glm::ivec2(0,0), floorDims);
-        _floorBuilder.fillBox(blockCollection["wood_tile"],
-                              tileCollectionSlot,
-                              floorDims/4,
-                              floorDims/2);
-        
-        auto overlayDims = _overlayBuilder.dimensions();
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,8), 4);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(16,8), 8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,24), 8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(20,24), 4);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(8,8), 8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(8,20), 4);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(24,8), 4);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(24,16), 8);
-        
-        _floorBuilder.fillBox(blockCollection["wood_floor"],
-                              tileCollectionSlot,
-                              glm::ivec2(0,8),
-                              glm::ivec2(8,12));
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(8,8), -8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(20,8), -8);
-        
-        _floorBuilder.fillBox(blockCollection["wood_floor"],
-                              tileCollectionSlot,
-                              glm::ivec2(0,12),
-                              glm::ivec2(8,12));
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,12), -8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(8,24), -8);
-        
 
-        _floorBuilder.fillBox(blockCollection["wood_floor"],
-                              tileCollectionSlot,
-                              glm::ivec2(12,24),
-                              glm::ivec2(12,8));
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Left, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(12,24), 8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Right, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Vertical,
-                                 glm::ivec2(24,24), 8);
+        style.floorBlockName = "wood_floor";
+        style.wallBlockName = "brick_wall";
+
+        ovengine::room_builder::paint(eastRoom, _stage.tileGridMap(),
+                                      style, blockCollection, tileCollectionSlot);
+        ovengine::room_builder::paint(southRoom, _stage.tileGridMap(),
+                                      style, blockCollection, tileCollectionSlot);
         
-        _floorBuilder.fillBox(blockCollection["wood_floor"],
-                              tileCollectionSlot,
-                              glm::ivec2(24,8),
-                              glm::ivec2(8,12));
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Top, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(24,8), 8);
-        _overlayBuilder.drawLine(blockCollection["brick_wall"],
-                                 ovengine::GridBuilder::kBlockSide_Bottom, tileCollectionSlot,
-                                 ovengine::GridBuilder::kDrawDirection_Horizontal,
-                                 glm::ivec2(24,20), 8);
         
-        */
     }
     
     void StageGenerator::update()

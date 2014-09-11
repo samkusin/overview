@@ -17,6 +17,12 @@
 
 namespace cinekine {
     namespace ovengine {
+        class Portal;
+    }
+}
+
+namespace cinekine {
+    namespace ovengine {
 
 /// @class   RoomGraph
 /// @brief   Container owning all objects related to one or more Rooms
@@ -36,10 +42,18 @@ public:
     Room createRoom();
 
 private:
+    //  All Room based node objects are meant to be managed only by RoomGraph
+    //  or their container class equivalents (Room, Portal, etc)
+    //  Also all Node objects are be POD by design, so initialization occurs
+    //  when a Room is created.
+    void initPortalNode(PortalNode* output, RoomNode* fromRoom, RoomSide side);
+
+    friend class Portal;
     Room _root;
 
     ObjectPool<RoomNode> _roomPool;
     ObjectPool<PortalNode> _portalPool;
+    vector<RoomVertex> _portalVertices;
 };
 
     } /* namespace overview */
