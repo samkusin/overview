@@ -14,6 +14,7 @@
 namespace cinekine {
     namespace ovengine {
 
+
 SpriteInstance::SpriteInstance(const Sprite& spriteTemplate) :
     _template(spriteTemplate),
     _startTime(0),

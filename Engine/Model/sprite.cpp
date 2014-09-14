@@ -15,6 +15,13 @@
 namespace cinekine {
     namespace ovengine {
 
+Sprite::Sprite() :
+    _bitmapClass(kCinekBitmapAtlas_Invalid),
+    _statePool(1, _allocator),
+    _states(_allocator)
+{
+}
+
 Sprite::Sprite(cinek_bitmap_atlas bitmapClass,
                const glm::ivec2& anchor,
                uint16_t numStates,
@@ -23,7 +30,7 @@ Sprite::Sprite(cinek_bitmap_atlas bitmapClass,
     _bitmapClass( bitmapClass ),
     _anchor( anchor ),
     _statePool( numStates, allocator ),
-    _states(std_allocator<SpriteAnimation*>(allocator))
+    _states(_allocator)
 {
     _states.reserve(numStates);
 }

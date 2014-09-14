@@ -44,13 +44,21 @@ public:
      */
     SpriteLibrary(size_t initTemplateLimit,
                   const Allocator& allocator=Allocator());
+
+    /**
+     * Returns a null sprite, used for initializing empty SpriteInstance objects
+     * @return A null sprite
+     */
+    const Sprite& emptySprite() const {
+        return _nullSprite;
+    }
     /**
      * Returns a SpriteTemplate ID given its name.
      *
      * @param  templateName SpriteTemplate name.
-     * @return              The ID or kCinekSpriteTemplate_Null.
+     * @return If no sprite is found, returns an empty Sprite.
      */
-    const Sprite* spriteByName(const string& templateName) const;
+    const Sprite& spriteByName(const string& templateName) const;
     /**
      * Returns the animation ID given its state name.
      *
@@ -88,6 +96,7 @@ public:
 
 private:
     Allocator _allocator;
+    Sprite _nullSprite;
     ObjectPool<Sprite> _templatePool;
 
     template <typename Key, typename T>

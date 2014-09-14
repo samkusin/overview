@@ -12,7 +12,8 @@
 
 #include "Engine/Model/StageTypes.hpp"
 #include "Engine/Model/TileGridMap.hpp"
-
+#include "Engine/Model/SpriteInstance.hpp"
+#include "cinek/vector.hpp"
 #include "cinek/allocator.hpp"
 
 namespace cinekine {
@@ -33,7 +34,7 @@ public:
     struct InitParameters
     {
         uint32_t overlayToFloorTileRatio = 4;
-        uint16_t spriteLimit = 16;
+        uint16_t spriteLimit = 256;
     };
 
     Stage(const TileLibrary& tileDb,
@@ -79,7 +80,7 @@ private:
     const SpriteLibrary& _spriteDb;
     MapBounds _bounds;
     TileGridMap _gridMap;
-
+    vector<SpriteInstance> _spriteInstances;
     vector<uint32_t> _freeSpriteInstanceIds;
 };
 

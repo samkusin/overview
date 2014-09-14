@@ -31,6 +31,8 @@ class Sprite
     CK_CLASS_NON_COPYABLE(Sprite);
 
 public:
+    Sprite();
+
     /**
      * Constructor reserving memory for a number of states for later definition,
      * serialization.

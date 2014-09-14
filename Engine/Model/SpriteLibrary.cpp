@@ -20,12 +20,12 @@ SpriteLibrary::SpriteLibrary(size_t initTemplateLimit, const Allocator& allocato
 {
 }
 
-const Sprite* SpriteLibrary::spriteByName(const string& templateName) const
+const Sprite& SpriteLibrary::spriteByName(const string& templateName) const
 {
     auto it = _nameToTemplates.find(templateName);
     if (it == _nameToTemplates.end())
-        return nullptr;
-    return it->second;
+        return emptySprite();
+    return *it->second;
 }
 
 AnimationStateId SpriteLibrary::animationIDByName(const char* animationName) const

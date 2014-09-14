@@ -24,8 +24,10 @@ Stage::Stage(const TileLibrary& tileDb,
     _spriteDb(spriteDb),
     _bounds(bounds),
     _gridMap(bounds.xUnits, bounds.yUnits, params.overlayToFloorTileRatio, allocator),
-    _freeSpriteInstanceIds(std_allocator<uint32_t>(allocator))
+    _spriteInstances(allocator),
+    _freeSpriteInstanceIds(allocator)
 {
+    _spriteInstances.reserve(params.spriteLimit);
     _freeSpriteInstanceIds.reserve(params.spriteLimit);
     _bounds.xUnits = _gridMap.overlay().columnCount();
     _bounds.yUnits = _gridMap.overlay().rowCount();

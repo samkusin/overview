@@ -80,10 +80,25 @@ namespace cinekine {
         void setState(AnimationStateId stateId,
                       uint32_t startTime);
 
+        /**
+         * @return The world position of the sprite
+         */
+        const glm::vec3& position() const {
+            return _position;
+        }
+        /**
+         * @return Returns a r/w reference to the sprite's position
+         */
+        glm::vec3& position() {
+            return _position;
+        }
+
     private:
         const Sprite& _template;
+        glm::vec3 _position;
         uint32_t _startTime;
         AnimationStateId _stateId;
+        //  cached pointer from the Sprite template
         SpriteAnimation* _animation;
     };
 

@@ -53,7 +53,7 @@ namespace cinekine {
 
         //  load assets
         loadTileCollection("tiles_dungeon.json");
-        loadSpriteCollection("sprites_common.json");
+        loadSpriteCollection("sprites_core.json");
         
         //  initialize sim (our stage)
         ovengine::MapBounds bounds = { 12, 12, 1 };
@@ -143,8 +143,10 @@ namespace cinekine {
     {
         FileStreamBuf dbStream(filename);
         if (!dbStream)
+        {
+            OVENGINE_LOG_ERROR("Cannot find sprite collection %s", filename);
             return;
-        
+        }
         unserializeFromJSON(_spriteLibrary, dbStream,
             [this](const char* atlasName) -> cinek_bitmap_atlas
             {
@@ -258,8 +260,8 @@ namespace cinekine {
     {
         glm::vec3 newPos(0,0,0);
         
-        const float kAdjX = 0.25f;
-        const float kAdjY = 0.25f;
+        const float kAdjX = 0.125f;
+        const float kAdjY = 0.125f;
         
         switch (keycode)
         {
