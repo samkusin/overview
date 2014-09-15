@@ -12,7 +12,7 @@
 #include "Texture.hpp"
 #include "RenderTypes.hpp"
 
-#include "cinek/memorypool.hpp"
+#include "cinek/objectheap.hpp"
 #include "cinek/string.hpp"
 #include "cinek/vector.hpp"
 #include "cinek/rendertypes.h"
@@ -58,7 +58,7 @@ namespace cinekine {
         Allocator _allocator;
         string _name;
         TexturePtr _texture;
-        ObjectPool<BitmapInfo> _bitmapPool;
+        ObjectHeap<BitmapInfo> _bitmapPool;
         vector<BitmapInfo*> _bitmaps;
     };
 

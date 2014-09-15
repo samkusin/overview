@@ -14,7 +14,7 @@
 
 #include "cinek/rendertypes.h"
 #include "cinek/allocator.hpp"
-#include "cinek/memorypool.hpp"
+#include "cinek/objectheap.hpp"
 #include "cinek/vector.hpp"
 
 #include <glm/glm.hpp>
@@ -51,11 +51,9 @@ public:
     /** @cond */
     Sprite(Sprite&& other);
     Sprite& operator=(Sprite&& other);
-
     /** @endcond */
-    /**
-     * @return Returns the bitmap class for bitmaps used in the sprite.
-     */
+
+    /** @return Returns the bitmap class for bitmaps used in the sprite. */
     cinek_bitmap_atlas getBitmapClass() const {
         return _bitmapClass;
     }
@@ -91,7 +89,7 @@ private:
     glm::ivec2 _anchor;
 
     //  state table containing animation lists mapped to state.
-    ObjectPool<SpriteAnimation> _statePool;
+    ObjectHeap<SpriteAnimation> _statePool;
     vector<SpriteAnimation*> _states;
 };
 

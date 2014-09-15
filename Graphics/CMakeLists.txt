@@ -33,7 +33,7 @@ elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
 endif( )
 
 if( CINEK_CXX_COMPILER_CLANG )
-     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
+     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++1y -stdlib=libc++" )
 else( )
      message( FATAL "Compiler not supported" )
 endif( )

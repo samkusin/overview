@@ -49,7 +49,7 @@ public:
      *  @param columnCount Number of columns in the grid.
      *  @param allocator   The allocator used to allocate grid memory (optional)
      */
-    Grid(uint32_t rowCount, uint32_t columnCount, Allocator allocator=Allocator());
+    Grid(int32_t rowCount, int32_t columnCount, Allocator allocator=Allocator());
     /**
      *  Move constructor.
      *  @param grid The grid being moved into this object.
@@ -69,47 +69,47 @@ public:
     Grid& operator=(Grid&& grid) noexcept;
 
     /** @return Number of rows in grid. */
-    uint32_t rowCount() const { return _rowCount; }
+    int32_t rowCount() const { return _rowCount; }
     /** @return Number of columns in grid */
-    uint32_t columnCount() const { return _colCount; }
+    int32_t columnCount() const { return _colCount; }
     /**
      * Gets a const reference of the value at the specified row, column.
      * @param  row The row [0, rowCount-1]
      * @param  col The column [0, columnCount-1]
      * @return     A reference of the value at row,col.
      */
-    const Value& at(uint32_t row, uint32_t col) const;
+    const Value& at(int32_t row, int32_t col) const;
     /**
      * Gets a reference of the value at the specified row, column.
      * @param  row The row [0, rowCount-1]
      * @param  col The column [0, columnCount-1]
      * @return     A reference of the value at row,col.
      */
-    Value& at(uint32_t row, uint32_t col);
+    Value& at(int32_t row, int32_t col);
     /**
      * Returns a pointer to the data row in the grid.  To retrieve data at a
      * specific column, use pointer math, atRow(row) + columnIndex.
      * @param  row    Row index in grid [0, getRowCount()]
      * @param  col    Column offset from start of row.
-     * @param  length Number of columns in row to use.  If UINT32_MAX, the strip
+     * @param  length Number of columns in row to use.  If INT32_MAX, the strip
      *                will run to the end of the row.
      * @return        A row strip pointer pair.  If the row or column
      *                parameter lie out of the grid's range, returns a
      *                null_row_strip.
      */
-    row_strip atRow(uint32_t row, uint32_t col, uint32_t length=UINT32_MAX);
+    row_strip atRow(int32_t row, int32_t col, int32_t length=INT32_MAX);
     /**
      * Returns a const pointer to the data row in the grid.  To retrieve data
      * at a specific column, use pointer math, atRow(row) + columnIndex.
      * @param  row Row index in grid [0, getRowCount()]
      * @param  col    Column offset from start of row.
-     * @param  length Number of columns in row to use.  If UINT32_MAX, the strip
+     * @param  length Number of columns in row to use.  If INT32_MAX, the strip
      *                will run to the end of the row.
      * @return        A row strip pointer pair.  If the row or column
      *                parameter lie out of the grid's range, returns a
      *                null_row_strip.
      */
-    const_row_strip atRow(uint32_t row, uint32_t col, uint32_t length=UINT32_MAX) const;
+    const_row_strip atRow(int32_t row, int32_t col, int32_t length=INT32_MAX) const;
     /**
      * Fills a region within the grid with a specific value
      * @param  value    The value to set
@@ -119,7 +119,7 @@ public:
      * @param  cols     Number of columns to fill
      */
     void fillWithValue(const Value& value,
-                       uint32_t row, uint32_t col, uint32_t rows, uint32_t cols);
+                       int32_t row, int32_t col, int32_t rows, int32_t cols);
 
     /** Clears the whole grid, filling values with null */
     void clear();
@@ -127,8 +127,8 @@ public:
 private:
     Allocator _allocator;
     Value* _data;
-    uint32_t _rowCount;
-    uint32_t _colCount;
+    int32_t _rowCount;
+    int32_t _colCount;
 };
 
 /**
@@ -173,10 +173,10 @@ public:
      * @param colCount  Number of columns to map from the specified grid.
      */
     GridContainer(GridType& grid,
-            uint32_t row,
-            uint32_t column,
-            uint32_t rowCount,
-            uint32_t colCount
+            int32_t row,
+            int32_t column,
+            int32_t rowCount,
+            int32_t colCount
         ) :
         _grid(&grid), _row(row), _column(column),
         _rowCount(rowCount), _colCount(colCount) {}
@@ -191,20 +191,20 @@ public:
         _rowCount(rhs._rowCount), _colCount(rhs._colCount) {}
 
     /** @return The starting row index from the grid. */
-    uint32_t getRowOrigin() const { return _row; }
+    int32_t getRowOrigin() const { return _row; }
     /** @return The starting column index from the grid. */
-    uint32_t getColOrigin() const { return _column; }
+    int32_t getColOrigin() const { return _column; }
 
     /** @return number of rows in the container. */
-    uint32_t getRowCount() const { return _rowCount; }
+    int32_t getRowCount() const { return _rowCount; }
     /** @return number of columns in the container. */
-    uint32_t getColCount() const { return _colCount; }
+    int32_t getColCount() const { return _colCount; }
     /**
      * Returns the row_strip at the specified row relative to the parent grid.
      * @param  row       The row within the container.
      * @return           The row_strip.
      */
-    row_strip atRow(uint32_t row) {
+    row_strip atRow(int32_t row) {
         return _grid ? _grid->atRow(_row+row, _column, _colCount) : row_strip();
     }
     /**
@@ -213,7 +213,7 @@ public:
      * @param  row       The row within the container.
      * @return           The const_row_strip.
      */
-    const_row_strip atRow(uint32_t row) const {
+    const_row_strip atRow(int32_t row) const {
         return _grid ? _grid->atRow(_row+row, _column, _colCount) : const_row_strip();
     }
 
@@ -225,12 +225,12 @@ public:
         public std::iterator<std::input_iterator_tag, ValueType>
     {
         GridType* _grid;
-        uint32_t _row, _col;
-        uint32_t _colcount;
+        int32_t _row, _col;
+        int32_t _colcount;
     public:
         /** @cond */
         base_iterator() : _grid(nullptr), _row(0), _col(0), _colcount(0) {}
-        base_iterator(GridType* x, uint32_t row, uint32_t col, uint32_t colcount) :
+        base_iterator(GridType* x, int32_t row, int32_t col, int32_t colcount) :
             _grid(x), _row(row), _col(col), _colcount(colcount) {}
         base_iterator(const base_iterator& mit) :
             _grid(mit._grid), _row(mit._row), _col(mit._col), _colcount(mit._colcount) {}
@@ -280,8 +280,8 @@ public:
 
 private:
     GridType* _grid;
-    uint32_t _row, _column;
-    uint32_t _rowCount, _colCount;
+    int32_t _row, _column;
+    int32_t _rowCount, _colCount;
 };
 
 
@@ -296,7 +296,7 @@ Grid<Value, Allocator>::Grid() :
 }
 
 template<typename Value, class Allocator>
-Grid<Value, Allocator>::Grid(uint32_t rowCount, uint32_t columnCount,
+Grid<Value, Allocator>::Grid(int32_t rowCount, int32_t columnCount,
             Allocator allocator) :
     _allocator(allocator),
     _data(nullptr),
@@ -346,14 +346,14 @@ Grid<Value, Allocator>& Grid<Value, Allocator>::operator=(Grid&& grid) noexcept 
     return *this;
 }
 template<typename Value, class Allocator>
-const Value& Grid<Value, Allocator>::at(uint32_t row, uint32_t col) const
+const Value& Grid<Value, Allocator>::at(int32_t row, int32_t col) const
 {
     const Value* rowData = _data + (_colCount * row);
     return *(rowData + col);
 }
 
 template<typename Value, class Allocator>
-Value& Grid<Value, Allocator>::at(uint32_t row, uint32_t col)
+Value& Grid<Value, Allocator>::at(int32_t row, int32_t col)
 {
     return const_cast<Value&>(
             reinterpret_cast<const Grid<Value, Allocator>* >(this)->at(row, col)
@@ -363,36 +363,36 @@ Value& Grid<Value, Allocator>::at(uint32_t row, uint32_t col)
 
 template<typename Value, class Allocator>
 typename Grid<Value, Allocator>::const_row_strip
-    Grid<Value, Allocator>::atRow(uint32_t row, uint32_t col, uint32_t length /*=0*/) const
+    Grid<Value, Allocator>::atRow(int32_t row, int32_t col, int32_t length /*=0*/) const
 {
     if (row >= _rowCount || col >= _colCount)
         return const_row_strip();
     const Value* rowStart = _data + (_colCount * row);
-    if (length == UINT32_MAX)
+    if (length == INT32_MAX)
         length = _colCount - col;
-    uint32_t endCol = std::min(col+length, _colCount);
+    auto endCol = std::min(col+length, _colCount);
     return std::make_pair(rowStart+col, rowStart+endCol);
 }
 
 template<typename Value, class Allocator>
 typename Grid<Value,Allocator>::row_strip
-    Grid<Value, Allocator>::atRow(uint32_t row, uint32_t col, uint32_t length /*=0*/)
+    Grid<Value, Allocator>::atRow(int32_t row, int32_t col, int32_t length /*=0*/)
 {
     if (row >= _rowCount || col >= _colCount)
         return row_strip();
     Value* rowStart = _data + (_colCount * row);
-    if (length == UINT32_MAX)
+    if (length == INT32_MAX)
         length = _colCount - col;
-    uint32_t endCol = std::min(col+length, _colCount);
+    auto endCol = std::min(col+length, _colCount);
     return std::make_pair(rowStart+col, rowStart+endCol);
 }
 
 template<typename Value, class Allocator>
 void Grid<Value, Allocator>::fillWithValue(const Value& value,
-                        uint32_t row, uint32_t col,
-                        uint32_t rows, uint32_t cols)
+                        int32_t row, int32_t col,
+                        int32_t rows, int32_t cols)
 {
-    for (uint32_t r = row; r < row + rows; ++r)
+    for (auto r = row; r < row + rows; ++r)
     {
         typename Grid<Value, Allocator>::row_strip rowStrip = atRow(r, col, cols);
         if (rowStrip == row_strip())

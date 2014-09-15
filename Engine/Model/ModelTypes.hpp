@@ -18,24 +18,24 @@
 
 namespace cinekine { namespace ovengine {
 
-    typedef uint16_t TileSlot;
-    typedef uint16_t TileIndex;
-    typedef uint16_t TileId;
-    typedef uint32_t SpriteInstanceId;
+    using TileSlot = uint16_t;
+    using TileIndex = uint16_t;
+    using TileId = uint16_t;
+    using SpriteInstanceId = uint32_t;
 
-    typedef glm::vec3 Point;
+    using Point = glm::vec3;
 
     /** Identifies the animation of a particular model. */
-    typedef uint16_t AnimationStateId;
+    using AnimationStateId = uint16_t;
 
     /** Define for a null sprite template. */
     const AnimationStateId kNullAnimation = (AnimationStateId)0;
 
-    /** Keyframe information for an animation. */
-    struct ModelKeyframe
+    struct TileHandle
     {
-        uint32_t frame;         /**< Frame index. */
-        uint32_t t;             /**< Time index at this frame. */
+        int32_t x;
+        int32_t y;
+        int32_t layerIndex;     /**< Maps to a TileGridMap layer */
     };
 
 } /* namespace ovengine */ } /* namespace cinekine */

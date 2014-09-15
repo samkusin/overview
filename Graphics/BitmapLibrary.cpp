@@ -76,7 +76,7 @@ namespace cinekine {
                                                         bitmapCount,
                                                         _allocator);
                 std::shared_ptr<BitmapAtlas> atlasPtr(atlas,
-                                                      SharedPtrDeleter<BitmapAtlas>(_allocator),
+                                                      AllocatorDeleter<BitmapAtlas>(_allocator),
                                                       BitmapAtlasAllocator(_allocator));
                 /*
                                     std::allocate_shared<BitmapAtlas, BitmapAtlasAllocator,

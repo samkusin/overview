@@ -11,7 +11,7 @@
 
 #include "Game/Render/IsoNode.hpp"
 
-#include "cinek/memorypool.hpp"
+#include "cinek/objectheap.hpp"
 #include "cinek/vector.hpp"
 
 #include <functional>
@@ -66,7 +66,7 @@ namespace cinekine { namespace ovengine {
         ///
         void fixupNode(IsoNode* node);
         
-        ObjectPool<IsoNode> _nodePool;
+        ObjectHeap<IsoNode> _nodePool;
         vector<IsoNode*> _nodes;
         //  these are the collective nodes behind *each* IsoNode
         //  each IsoNode refers to a particular slice of this vector.

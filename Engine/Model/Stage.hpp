@@ -13,8 +13,7 @@
 #include "Engine/Model/StageTypes.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/SpriteInstance.hpp"
-#include "cinek/vector.hpp"
-#include "cinek/allocator.hpp"
+#include "Core/ObjectPool.hpp"
 
 namespace cinekine {
     namespace glx {
@@ -28,29 +27,32 @@ namespace cinekine {
 
 namespace cinekine { namespace ovengine {
 
+/**
+ * @class   Stage
+ * @brief   The data store for a simulation's model instances
+ * @details The Stage is the highest level construct for a self-contained
+ *          simulation world.   Its inputs consist of various 'model libraries'
+ *          used to construct model instances.  For example, an application can
+ *          create one or more stages sharing common Sprite or Tile model
+ *          libraries.  Each Stage though contains its own set of model
+ *          instances.
+ */
 class Stage
 {
 public:
     struct InitParameters
     {
         uint32_t overlayToFloorTileRatio = 4;
-        uint16_t spriteLimit = 256;
+        uint16_t floorDimX = 12;
+        uint16_t floorDimY = 12;
+        uint16_t spriteLimit = 1024;
+        uint16_t entityLimit = 256;
     };
 
     Stage(const TileLibrary& tileDb,
           const SpriteLibrary& spriteDb,
-          const MapBounds& bounds,
           const InitParameters& params,
           const Allocator& allocator);
-
-    /**
-     * Retrieve map coordinate bounds.
-     * Can be used to calculate an index into a tile array.
-     * @return  Reference to the map bounds structure.
-     */
-    const MapBounds& bounds() const {
-        return _bounds;
-    }
     /**
      * Retrieve the TileGridMap
      * @return      A reference to a tile map.
@@ -78,10 +80,8 @@ public:
 private:
     const TileLibrary& _tileDb;
     const SpriteLibrary& _spriteDb;
-    MapBounds _bounds;
     TileGridMap _gridMap;
-    vector<SpriteInstance> _spriteInstances;
-    vector<uint32_t> _freeSpriteInstanceIds;
+    ObjectPool<SpriteInstance> _spriteInstancePool;
 };
 
 

@@ -33,7 +33,7 @@ elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
 endif( )
 
 if( CINEK_CXX_COMPILER_CLANG )
-     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
+     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++1y -stdlib=libc++" )
 else( )
      message( FATAL "Compiler not supported" )
 endif( )
@@ -119,6 +119,7 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Entity.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Room.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomGraph.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Stage.cpp
@@ -145,6 +146,8 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/ViewModelInstance.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/Entity.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Room.hpp

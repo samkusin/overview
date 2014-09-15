@@ -21,17 +21,10 @@
 namespace cinekine {
     namespace ovengine {
 
-struct MapBounds
-{
-    uint16_t xUnits;    /**< Number of units/tiles on the x axis. */
-    uint16_t yUnits;    /**< Number of units/tiles on the y axis. */
-    uint16_t zUnits;
-};
-
 /** Defines a grid of tiles */
-typedef Grid<TileId> TileGrid;
+using TileGrid = Grid<TileId>;
 /** Defines a tilemap section */
-typedef GridContainer<TileGrid> TileGridContainer;
+using TileGridContainer = GridContainer<TileGrid>;
 
 inline TileId compressTileToId(TileSlot slot, TileIndex index)
 {

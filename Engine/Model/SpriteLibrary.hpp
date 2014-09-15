@@ -14,7 +14,7 @@
 
 #include "cinek/string.hpp"
 #include "cinek/allocator.hpp"
-#include "cinek/memorypool.hpp"
+#include "cinek/objectheap.hpp"
 
 #include <unordered_map>
 
@@ -97,7 +97,7 @@ public:
 private:
     Allocator _allocator;
     Sprite _nullSprite;
-    ObjectPool<Sprite> _templatePool;
+    ObjectHeap<Sprite> _templatePool;
 
     template <typename Key, typename T>
     using unordered_map = std::unordered_map<Key, T,

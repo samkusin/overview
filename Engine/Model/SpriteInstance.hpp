@@ -23,7 +23,8 @@ namespace cinekine {
     class Stage;
     /**
      * @class SpriteInstance
-     * @brief A model representing a collection of one of more bitmaps.
+     * @brief A Sprite model instance representing a collection of one of more
+     *        bitmaps.
      */
     class SpriteInstance
     {
@@ -80,22 +81,18 @@ namespace cinekine {
         void setState(AnimationStateId stateId,
                       uint32_t startTime);
 
-        /**
-         * @return The world position of the sprite
-         */
-        const glm::vec3& position() const {
+        /** @return The world position of the sprite */
+        const Point& position() const {
             return _position;
         }
-        /**
-         * @return Returns a r/w reference to the sprite's position
-         */
-        glm::vec3& position() {
+        /** @return A r/w reference to the sprite's position */
+        Point& position() {
             return _position;
         }
 
     private:
         const Sprite& _template;
-        glm::vec3 _position;
+        Point _position;
         uint32_t _startTime;
         AnimationStateId _stateId;
         //  cached pointer from the Sprite template

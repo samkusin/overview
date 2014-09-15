@@ -17,20 +17,16 @@ namespace cinekine { namespace ovengine {
 
 Stage::Stage(const TileLibrary& tileDb,
              const SpriteLibrary& spriteDb,
-             const MapBounds& bounds,
              const InitParameters& params,
              const Allocator& allocator) :
     _tileDb(tileDb),
     _spriteDb(spriteDb),
-    _bounds(bounds),
-    _gridMap(bounds.xUnits, bounds.yUnits, params.overlayToFloorTileRatio, allocator),
-    _spriteInstances(allocator),
-    _freeSpriteInstanceIds(allocator)
+    _gridMap(params.floorDimX,
+             params.floorDimY,
+             params.overlayToFloorTileRatio,
+             allocator),
+    _spriteInstancePool(params.spriteLimit, allocator)
 {
-    _spriteInstances.reserve(params.spriteLimit);
-    _freeSpriteInstanceIds.reserve(params.spriteLimit);
-    _bounds.xUnits = _gridMap.overlay().columnCount();
-    _bounds.yUnits = _gridMap.overlay().rowCount();
 }
 
 

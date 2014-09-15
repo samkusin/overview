@@ -144,7 +144,7 @@ inline int Block::granularity() const
 {
     return _granularity;
 }
-    
+
 inline int Block::border() const
 {
     return _border;
