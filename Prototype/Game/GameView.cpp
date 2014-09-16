@@ -55,26 +55,18 @@ namespace cinekine {
         loadTileCollection("tiles_dungeon.json");
         loadSpriteCollection("sprites_core.json");
         
-        //  initialize sim (our stage)
-        ovengine::Stage::InitParameters initParams;
-        initParams.overlayToFloorTileRatio = 4;
-        initParams.floorDimX = 12;
-        initParams.floorDimY = 12;
-        initParams.spriteLimit = 256;
-        _stage = std::allocate_shared<ovengine::Stage,
-                                      std_allocator<ovengine::Stage>,
-                                      const ovengine::TileLibrary&,
-                                      const ovengine::SpriteLibrary&,
-                                      const ovengine::Stage::InitParameters&,
-                                      const Allocator&>
-                                      (
-                                         _allocator,
-                                         _tileLibrary,
-                                         _spriteLibrary,
-                                         initParams,
-                                         _allocator
-                                      );
-
+        //  create our stage map
+        _stageGenerator = unique_ptr<StageGenerator>
+                                (_allocator.newItem<StageGenerator>(_allocator),
+                                 _allocator);
+        
+        StageGenerator::CreateWorldParams params;
+        params.floorX = 12;
+        params.floorY = 12;
+        params.overlayToFloorRatio = 4;
+        params.roomLimit = 8;
+        _world = _stageGenerator->createWorld(_tileLibrary, _spriteLibrary, params);
+        
         //  create our scene graph from the stage
         auto viewport = _application.renderer().getViewport();
         glm::ivec2 viewDimensions(viewport.width(), viewport.height());
@@ -83,21 +75,14 @@ namespace cinekine {
         auto isoScenePtr = new(_allocator.alloc(sizeof(ovengine::IsoScene)))
         ovengine::IsoScene(viewDimensions,
                            tileDimensions,
-                           _stage->tileGridMap(),
-                           _tileLibrary,
-                           _spriteLibrary,
+                           *_world,
                            _allocator);
         
         _isoScene = unique_ptr<ovengine::IsoScene>(isoScenePtr, _allocator);
 
-        //  create our stage map
-        _stageGenerator = unique_ptr<StageGenerator>(
-                                _allocator.newItem<StageGenerator>(*_stage,
-                                                                   _allocator),
-                                _allocator);
         
         //  create our player entity
-        auto& overlayGrid = _stage->tileGridMap().overlay();
+        auto& overlayGrid = _world->tileGridMap().overlay();
         _viewPos = glm::vec3(overlayGrid.columnCount() * 0.5f, overlayGrid.rowCount() * 0.5f, 0.f);
     }
 

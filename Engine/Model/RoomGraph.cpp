@@ -8,61 +8,45 @@
 
 #include "Engine/Model/RoomGraph.hpp"
 
+#include "./Internal/RoomGraphImpl.hpp"
+
 namespace cinekine { namespace ovengine {
 
-RoomGraph::RoomGraph(size_t maxRooms, const Allocator& allocator) :
-    _root(),
-    _roomPool(maxRooms, allocator),
-    _portalPool(maxRooms * kRoomSide_Count, allocator),
-    _portalVertices(allocator)
+RoomGraph::RoomGraph(size_t maxRooms, const Allocator& allocator)
 {
-    _portalVertices.reserve(maxRooms * kRoomSide_Count);
-    _root = createRoom();
+    Allocator internalAllocator { allocator };
+    _impl = unique_ptr<Impl>(internalAllocator.newItem<Impl>(maxRooms, allocator),
+                                           internalAllocator);
 }
+
+//  implementation here to allow for unique_ptr to the impl
+RoomGraph::~RoomGraph() = default;
+
+RoomGraph::RoomGraph(RoomGraph&& other) :
+    _impl(std::move(other._impl))
+{
+}
+
+RoomGraph& RoomGraph::operator=(RoomGraph&& other)
+{
+    _impl = std::move(other._impl);
+    return *this;
+}
+
 
 void RoomGraph::invalidate()
 {
-    _portalVertices.clear();
-    _portalPool.destructAll();
-    _roomPool.destructAll();
-    _root = createRoom();
+    _impl->invalidate();
 }
 
 Room RoomGraph::createRoom()
 {
-    auto info = _roomPool.allocate();
-
-    auto portal = _portalPool.allocate();
-    initPortalNode(portal, info, kRoomSide_North);
-
-    portal = _portalPool.allocate();
-    initPortalNode(portal, info, kRoomSide_East);
-
-    portal = _portalPool.allocate();
-    initPortalNode(portal, info, kRoomSide_South);
-
-    portal = _portalPool.allocate();
-    initPortalNode(portal, info, kRoomSide_West);
-
-    return Room(reinterpret_cast<uintptr_t>(this), info);
+    return _impl->createRoom();
 }
-
-void RoomGraph::initPortalNode(PortalNode* node, RoomNode* fromRoom, RoomSide side)
-{
-    node->fromRoom = fromRoom;
-    node->side = side;
-    node->iV0 = _portalVertices.size();
-    _portalVertices.emplace_back();
-    node->iV1 = _portalVertices.size();
-    _portalVertices.emplace_back();
-
-    fromRoom->portals[side] = node;
-}
-
 
 Room RoomGraph::root() const
 {
-    return _root;
+    return _impl->root();
 }
 
 

@@ -29,9 +29,9 @@ public:
     /// often not the same as the floor grid.  Put another way, a floor tile may
     /// be 1x1, 2x2, 4x4, etc overlay tiles.
     ///
-    /// @param xDimension       The x coordinate dimension in overlay tile
+    /// @param xDimension       The x coordinate dimension in floor tile
     ///                         coordinates
-    /// @param yDimension       The y coordinate dimension in overlay tile
+    /// @param yDimension       The y coordinate dimension in floor tile
     ///                         coordinates
     /// @param overlayToFloorRatio The number of overlay tiles per floor tile
     /// @param allocator        The memory allocator

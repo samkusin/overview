@@ -11,9 +11,7 @@
 #define Overview_Model_RoomGraph_Hpp
 
 #include "Engine/Model/Room.hpp"
-#include "cinek/objectheap.hpp"
-
-#include "cinek/vector.hpp"
+#include "cinek/allocator.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -34,6 +32,10 @@ class RoomGraph
 
 public:
     RoomGraph(size_t maxRooms, const Allocator& allocator);
+    RoomGraph(RoomGraph&& other);
+    ~RoomGraph();
+
+    RoomGraph& operator=(RoomGraph&& other);
 
     void invalidate();
 
@@ -42,18 +44,9 @@ public:
     Room createRoom();
 
 private:
-    //  All Room based node objects are meant to be managed only by RoomGraph
-    //  or their container class equivalents (Room, Portal, etc)
-    //  Also all Node objects are be POD by design, so initialization occurs
-    //  when a Room is created.
-    void initPortalNode(PortalNode* output, RoomNode* fromRoom, RoomSide side);
-
     friend class Portal;
-    Room _root;
-
-    ObjectHeap<RoomNode> _roomPool;
-    ObjectHeap<PortalNode> _portalPool;
-    vector<RoomVertex> _portalVertices;
+    class Impl;
+    unique_ptr<Impl> _impl;
 };
 
     } /* namespace overview */

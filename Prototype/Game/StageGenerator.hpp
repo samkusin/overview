@@ -10,13 +10,16 @@
 #define Overview_StageGenerator_hpp
 
 #include "Engine/Builder/BlockLibrary.hpp"
-#include "Engine/Model/RoomGraph.hpp"
+#include "Engine/Model/World.hpp"
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine { namespace ovengine {
-    class Stage;
-} /* namespace ovengine */ } /* namespace cinekine */
+namespace cinekine {
+    namespace ovengine {
+        class TileLibrary;
+        class SpriteLibrary;
+    } /* namespace ovengine */
+} /* namespace cinekine */
 
 
 namespace cinekine { namespace prototype {
@@ -24,16 +27,24 @@ namespace cinekine { namespace prototype {
 class StageGenerator
 {
 public:
-    StageGenerator(ovengine::Stage& stage,
-                   const Allocator& allocator=Allocator());
+    StageGenerator(const Allocator& allocator=Allocator());
     
-    void update();
+    struct CreateWorldParams
+    {
+        int32_t floorX;
+        int32_t floorY;
+        int32_t overlayToFloorRatio;
+        int32_t roomLimit;
+    };
+    
+    std::shared_ptr<ovengine::World> createWorld(const ovengine::TileLibrary& tileLibrary,
+                                                 const ovengine::SpriteLibrary& spriteLibrary,
+                                                 const CreateWorldParams& params);
 
 private:
     Allocator _allocator;
-    ovengine::Stage& _stage;
+    
     ovengine::BlockLibrary _blockLibrary;
-    ovengine::RoomGraph _roomGraph;
 };
 
 

@@ -7,9 +7,9 @@
 //  License: The MIT License (MIT)
 
 #include "Engine/Model/Room.hpp"
-#include "Engine/Model/RoomGraph.hpp"
-
 #include "Engine/Debug.hpp"
+
+#include "./Internal/RoomGraphImpl.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -79,7 +79,7 @@ Room Portal::createRoom(const RoomAABB& aabb)
     else
         return Room();
 
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     auto room = graph->createRoom();
     room.resetToBounds(aabb);
     room._info->portals[toSide]->toRoom = _info->fromRoom;
@@ -99,7 +99,7 @@ void Portal::setFromOffsets(offset_type offset, offset_type length)
     }
 
     auto room = _info->fromRoom;
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
 
     RoomVertex start = room->box.min;
     RoomVertex end;
@@ -148,7 +148,7 @@ void Portal::setFromOffsets(offset_type offset, offset_type length)
 
 void Portal::setAsOpen()
 {
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     graph->_portalVertices[_info->iV0] = edgeStartPos();
     graph->_portalVertices[_info->iV1] = edgeEndPos();
 }
@@ -156,7 +156,7 @@ void Portal::setAsOpen()
 void Portal::setAsClosed()
 {
     auto endPos = edgeEndPos();
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     graph->_portalVertices[_info->iV0] = endPos;
     graph->_portalVertices[_info->iV1] = endPos;
 }
@@ -166,7 +166,7 @@ RoomVertex Portal::startPos() const
     if (!*this)
         return RoomVertex();
 
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     return graph->_portalVertices[_info->iV0];
 }
 
@@ -174,7 +174,7 @@ void Portal::setStartPos(const RoomVertex& v)
 {
     if (!*this)
         return;
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     graph->_portalVertices[_info->iV0] = v;
 }
 
@@ -183,7 +183,7 @@ RoomVertex Portal::endPos() const
     if (!*this)
         return RoomVertex();
 
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     return graph->_portalVertices[_info->iV1];
 }
 
@@ -191,7 +191,7 @@ void Portal::setEndPos(const RoomVertex& v)
 {
     if (!*this)
         return;
-    auto graph = reinterpret_cast<RoomGraph*>(_graph);
+    auto graph = reinterpret_cast<RoomGraph::Impl*>(_graph);
     graph->_portalVertices[_info->iV1] = v;
 }
 

@@ -16,11 +16,11 @@
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine { namespace glx {
-    class RendererCLI;
-    class Texture;
-    struct BitmapInfo;
-} /* namespace glx */ } /* namespace cinekine */
+namespace cinekine {
+    namespace ovengine {
+        class World;
+    } /* namespace ovengine */
+} /* namespace cinekine */
 
 namespace cinekine { namespace ovengine {
 
@@ -33,12 +33,12 @@ namespace cinekine { namespace ovengine {
     /// @brief   A scene generator used for building Isometric render graphs.
     class IsoScene
     {
+        CK_CLASS_NON_COPYABLE(IsoScene);
+
     public:
         IsoScene(const glm::ivec2& viewDimensions,
                  const glm::ivec2& tileDimensions,
-                 const ovengine::TileGridMap& tileGridMap,
-                 const ovengine::TileLibrary& tileLibrary,
-                 const ovengine::SpriteLibrary& spriteLibrary,
+                 const ovengine::World& world,
                  const Allocator& allocator);
         
         void update(const glm::vec3& pos);
@@ -49,14 +49,12 @@ namespace cinekine { namespace ovengine {
         void setupViewBounds(const glm::vec3& viewPos);
         glm::vec3 isoToViewPos(const glm::vec3& isoPos) const;
         glm::vec3 viewToIsoPos(const glm::vec3& viewPos) const;
-        const Tile& tileFromId(TileId id) const;
         
         void attachTileToGraph(const glm::vec3& viewPos, const glm::vec3& isoPos);
         
     private:
+        const ovengine::World& _world;
         const ovengine::TileGridMap& _tileGridMap;
-        const ovengine::TileLibrary& _tileLibrary;
-        const ovengine::SpriteLibrary& _spriteLibrary;
         const glm::ivec2 _tileDim;
         const glm::ivec2 _viewDim;
 

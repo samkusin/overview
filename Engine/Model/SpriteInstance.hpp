@@ -20,7 +20,6 @@ namespace cinekine {
 
     class Sprite;
     class SpriteAnimation;
-    class Stage;
     /**
      * @class SpriteInstance
      * @brief A Sprite model instance representing a collection of one of more

@@ -7,7 +7,7 @@
 //
 
 #include "Game/Render/IsoScene.hpp"
-#include "Engine/Model/TileLibrary.hpp"
+#include "Engine/Model/World.hpp"
 #include "Graphics/RendererCLI.hpp"
 #include "Graphics/Rect.hpp"
 
@@ -15,17 +15,14 @@ namespace cinekine { namespace ovengine {
     
     IsoScene::IsoScene(const glm::ivec2& viewDimensions,
                        const glm::ivec2& tileDimensions,
-                       const ovengine::TileGridMap& tileGridMap,
-                       const ovengine::TileLibrary& tileLibrary,
-                       const ovengine::SpriteLibrary& spriteLibrary,
+                       const ovengine::World& world,
                        const Allocator& allocator) :
-        _tileGridMap(tileGridMap),
-        _tileLibrary(tileLibrary),
-        _spriteLibrary(spriteLibrary),
+        _world(world),
+        _tileGridMap(world.tileGridMap()),
         _tileDim(tileDimensions),
         _viewDim(viewDimensions),
         _allocator(allocator),
-        _isoNodeGraph(1024, allocator)
+        _isoNodeGraph(2048, allocator)
     {
         auto& overlayGrid = _tileGridMap.overlay();
         _centerPos = glm::vec3(overlayGrid.columnCount() * 0.5f,
@@ -33,8 +30,8 @@ namespace cinekine { namespace ovengine {
                                0.f);
         _isoWorldBounds.min = glm::vec3(0,0,0);
         _isoWorldBounds.max = glm::vec3(overlayGrid.columnCount(),
-                                    overlayGrid.rowCount(),
-                                    _tileGridMap.overlayToFloorRatio()*1.f);
+                                        overlayGrid.rowCount(),
+                                        _tileGridMap.overlayToFloorRatio()*1.f);
         setupViewBounds(isoToViewPos(_centerPos));
     }
         
@@ -107,7 +104,7 @@ namespace cinekine { namespace ovengine {
             auto tileId = _tileGridMap.floor().at(floorY, floorX);
             if (tileId)
             {
-                auto& tileInfo = tileFromId(tileId);
+                auto& tileInfo = _world.tileInfo(tileId);
 
                 isoBox =  tileInfo.aabb + isoPos;
                 
@@ -123,7 +120,7 @@ namespace cinekine { namespace ovengine {
         auto tileId = _tileGridMap.overlay().at(overlayY, overlayX);
         if (tileId)
         {
-            auto& tileInfo = tileFromId(tileId);
+            auto& tileInfo = _world.tileInfo(tileId);
             
             isoBox = tileInfo.aabb + isoPos;
             
@@ -159,12 +156,6 @@ namespace cinekine { namespace ovengine {
         isoPos.y = 2 * viewPos.y/_tileDim.y - isoPos.x;
         isoPos.z = viewPos.z;
         return isoPos;
-    }
-    
-    const Tile& IsoScene::tileFromId(TileId id) const
-    {
-        return _tileLibrary.tileFromCollectionAtIndex(slotFromTileId(id),
-                                                      indexFromTileId(id));
     }
     
     //  precalculates values used for rendering the local view

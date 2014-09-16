@@ -10,7 +10,7 @@
 #define Overview_GameView_hpp
 
 #include "Engine/View.hpp"
-#include "Engine/Model/Stage.hpp"
+#include "Engine/Model/World.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
@@ -75,7 +75,7 @@ namespace cinekine {
         
         JsonDocument _gameDocument;
         
-        std::shared_ptr<ovengine::Stage> _stage;
+        std::shared_ptr<ovengine::World> _world;
         
         glm::vec3 _viewPos;
         unique_ptr<ovengine::IsoScene> _isoScene;

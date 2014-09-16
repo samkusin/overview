@@ -1,5 +1,5 @@
 //
-//  Stage.cpp
+//  World.cpp
 //  Implementation
 //
 //  Copyright 2014 Cinekine Media All rights reserved.
@@ -7,7 +7,7 @@
 //  License: The MIT License (MIT)
 //
 
-#include "Engine/Model/Stage.hpp"
+#include "Engine/Model/World.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Engine/Model/TileLibrary.hpp"
@@ -15,18 +15,22 @@
 
 namespace cinekine { namespace ovengine {
 
-Stage::Stage(const TileLibrary& tileDb,
+World::World(RoomGraph&& roomGraph,
+             TileGridMap&& tileGridMap,
+             const TileLibrary& tileDb,
              const SpriteLibrary& spriteDb,
-             const InitParameters& params,
              const Allocator& allocator) :
     _tileDb(tileDb),
     _spriteDb(spriteDb),
-    _gridMap(params.floorDimX,
-             params.floorDimY,
-             params.overlayToFloorTileRatio,
-             allocator),
-    _spriteInstancePool(params.spriteLimit, allocator)
+    _roomGraph(std::move(roomGraph)),
+    _gridMap(std::move(tileGridMap))
 {
+}
+
+const Tile& World::tileInfo(TileId tileId) const
+{
+    return _tileDb.tileFromCollectionAtIndex(slotFromTileId(tileId),
+                                             indexFromTileId(tileId));
 }
 
 
