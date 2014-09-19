@@ -14,8 +14,22 @@
 namespace cinekine {
     namespace ovengine {
 
+const Sprite SpriteInstance::kNullSprite;
+
+SpriteInstance::SpriteInstance() :
+    __prevListNode(nullptr),
+    __nextListNode(nullptr),
+    _template(kNullSprite),
+    _startTime(0),
+    _stateId(kNullAnimation),
+    _animation(nullptr)
+{
+}
+
 
 SpriteInstance::SpriteInstance(const Sprite& spriteTemplate) :
+    __prevListNode(nullptr),
+    __nextListNode(nullptr),
     _template(spriteTemplate),
     _startTime(0),
     _stateId(kNullAnimation),
@@ -29,11 +43,15 @@ SpriteInstance::~SpriteInstance()
 }
 
 SpriteInstance::SpriteInstance(SpriteInstance&& other) :
+    __prevListNode(other.__prevListNode),
+    __nextListNode(other.__nextListNode),
     _template(other._template),
     _startTime(other._startTime),
     _stateId(other._stateId),
     _animation(other._animation)
 {
+    other.__prevListNode = nullptr;
+    other.__nextListNode = nullptr;
     other._startTime = 0;
     other._stateId = kNullAnimation;
     other._animation = nullptr;
@@ -66,6 +84,7 @@ cinek_bitmap_index SpriteInstance::bitmapFrame(uint16_t index) const
 {
     return _animation->getFrame(index);
 }
+
 
     } /* rendermodel */
 } /* cinekine */

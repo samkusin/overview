@@ -33,9 +33,18 @@ namespace cinekine {
     {
     }
 
-    inline RoomAABB Room::AABB() const
+    inline RoomAABB Room::aabb() const
     {
         return _info ? _info->box : RoomAABB();
+    }
+
+    inline bool Room::operator==(const Room& rhs) const
+    {
+        return _info==rhs._info && _graph==rhs._graph;
+    }
+    inline bool Room::operator!=(const Room& rhs) const
+    {
+        return _info!=rhs._info || _graph!=rhs._graph;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -49,6 +58,15 @@ namespace cinekine {
     inline Portal::operator bool() const
     {
         return _graph!= 0 && _info;
+    }
+
+    inline bool Portal::operator==(const Portal& rhs) const
+    {
+        return _info==rhs._info && _graph==rhs._graph;
+    }
+    inline bool Portal::operator!=(const Portal& rhs) const
+    {
+        return _info!=rhs._info || _graph!=rhs._graph;
     }
 
     } /* namespace overview */

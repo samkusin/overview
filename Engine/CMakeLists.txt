@@ -153,7 +153,7 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Room.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/RoomGraph.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/StageTypes.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/WorldTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/World.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/BuilderTypes.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Builder/Block.hpp

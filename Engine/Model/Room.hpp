@@ -33,6 +33,9 @@ class Portal;
 class Room
 {
 public:
+    typedef RoomAABB                    AABB;
+    typedef AABB::point_type            point_type;
+
     Room() = default;
     inline Room(uintptr_t graphptr, RoomNode* infoptr);
 
@@ -43,9 +46,12 @@ public:
 
     Portal portal(RoomSide side) const;
 
-    inline RoomAABB AABB() const;
+    inline RoomAABB aabb() const;
 
     const RoomNode* node() const { return _info; }
+
+    inline bool operator==(const Room& rhs) const;
+    inline bool operator!=(const Room& rhs) const;
 
 private:
     friend class Portal;
@@ -104,6 +110,9 @@ public:
     RoomVertex edgeEndPos() const;
 
     const PortalNode* node() const { return _info; }
+
+    inline bool operator==(const Portal& rhs) const;
+    inline bool operator!=(const Portal& rhs) const;
 
 private:
     uintptr_t _graph;

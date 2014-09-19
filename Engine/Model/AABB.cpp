@@ -41,26 +41,26 @@ namespace cinekine { namespace ovengine {
     }
 
     template<>
-    bool AABB<glm::ivec2>::contains(const Type& pt) const
+    bool AABB<glm::ivec2>::contains(const point_type& pt) const
     {
         return (pt.x >= min.x && pt.x <= max.x &&
                 pt.y >= min.y && pt.y <= max.y);
     }
     template<>
-    bool AABB<glm::vec2>::contains(const Type& pt) const
+    bool AABB<glm::vec2>::contains(const point_type& pt) const
     {
         return (pt.x >= min.x && pt.x <= max.x &&
                 pt.y >= min.y && pt.y <= max.y);
     }
     template<>
-    bool AABB<glm::ivec3>::contains(const Type& pt) const
+    bool AABB<glm::ivec3>::contains(const point_type& pt) const
     {
         return (pt.x >= min.x && pt.x <= max.x &&
                 pt.y >= min.y && pt.y <= max.y &&
                 pt.z >= min.z && pt.z <= max.z);
     }
     template<>
-    bool AABB<glm::vec3>::contains(const Type& pt) const
+    bool AABB<glm::vec3>::contains(const point_type& pt) const
     {
         return (pt.x >= min.x && pt.x <= max.x &&
                 pt.y >= min.y && pt.y <= max.y &&

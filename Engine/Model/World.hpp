@@ -10,12 +10,17 @@
 #ifndef Overview_Model_World_hpp
 #define Overview_Model_World_hpp
 
-#include "Engine/Model/StageTypes.hpp"
+#include "Engine/Model/WorldTypes.hpp"
 #include "Engine/Model/RoomGraph.hpp"
 #include "Engine/Model/TileGridMap.hpp"
-
+#include "Engine/Model/Tile.hpp"
 #include "Engine/Model/SpriteInstance.hpp"
-#include "Core/ObjectPool.hpp"
+
+#include "cinek/intrusive_list.hpp"
+#include "cinek/objectpool.hpp"
+#include "cinek/string.hpp"
+
+#include <functional>
 
 namespace cinekine {
     namespace glx {
@@ -45,24 +50,58 @@ public:
     World(RoomGraph&& roomGraph,
           TileGridMap&& tileGridMap,
           const TileLibrary& tileDb,
-          const SpriteLibrary& spriteDb,
           const Allocator& allocator);
 
-    /** @return      A const reference to a tile map. */
+    /** @return A const reference to a tile map. */
     const TileGridMap& tileGridMap() const {
+        return _gridMap;
+    }
+    /** @return A reference to the tile map. */
+    TileGridMap& tileGridMap() {
         return _gridMap;
     }
     /**
      * @param  tileId A TileGridMap tile identifier
-     * @return        A TileInfo mapped to the supplied TileId
+     * @return A TileInfo mapped to the supplied TileId
      */
     const Tile& tileInfo(TileId tileId) const;
+    /**
+     * Attaches a SpriteInstance to the World
+     *
+     * @param  instance The instance to attach from the World
+     */
+    void attachSpriteInstance(SpriteInstancePtr instance);
+    /**
+     * Detaches the SpriteInstance from the Wrold
+     *
+     * @param  instance The instance to detach from the World
+     */
+    void detachSpriteInstance(SpriteInstancePtr instance);
+
+    /**
+     * Selects ViewModel (SpriteInstance reference) lists from the World that
+     * intersect a supplied AABB.
+     *
+     * This method will select instance lists.  Each instance list has its own
+     * AABB, and this method will choose one or more instance lists that
+     * intersects with the given bounds.  The caller will have to cull
+     * individual ViewModel (SpriteInstance) references from the returned lists
+     * if it wants a precise result of all instances within the bounds.
+     *
+     * @param bounds A bounding box that intersects one or more World sections.
+     *               Each section has its own AABB and instance list.  See the
+     *               method definition for details on this process.
+     * @param cb     Callback issued for each selected SpriteInstanceList
+     */
+    void selectInstanceLists(const AABB<glm::ivec2>& bounds,
+                             std::function<void(const SpriteInstanceList&)> cb);
 
 private:
     const TileLibrary& _tileDb;
-    const SpriteLibrary& _spriteDb;
     RoomGraph _roomGraph;
     TileGridMap _gridMap;
+
+    SpriteInstanceList _sprites;
 };
 
 

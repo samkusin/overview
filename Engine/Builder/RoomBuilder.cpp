@@ -23,7 +23,7 @@ void paint(Room room, TileGridMap& grid,
     GridBuilder overlayBuilder(grid.overlay(), 1);
 
     // paint edges based on portal points
-    auto roomAABB = room.AABB();
+    auto roomAABB = room.aabb();
     auto& floorBlock = blockCollection[style.floorBlockName];
     floorBuilder.fillBox(roomAABB.min, roomAABB.dimensions(), floorBlock, tileCollectionSlot);
 

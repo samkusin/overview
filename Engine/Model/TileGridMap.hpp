@@ -11,7 +11,7 @@
 #ifndef Overview_Model_TileGridMap_hpp
 #define Overview_Model_TileGridMap_hpp
 
-#include "Engine/Model/StageTypes.hpp"
+#include "Engine/Model/WorldTypes.hpp"
 
 namespace cinekine { namespace ovengine {
 
@@ -54,6 +54,13 @@ public:
     const TileGrid& overlay() const { return _overlayGrid; }
 
     uint32_t overlayToFloorRatio() const { return _overlayToFloorRatio; }
+
+    glm::ivec2 floorDimensions() const {
+        return glm::ivec2(_floorGrid.rowCount(), _floorGrid.columnCount());
+    }
+    glm::ivec2 overlayDimensions() const {
+        return glm::ivec2(_overlayGrid.rowCount(), _overlayGrid.columnCount());
+    }
 
 private:
     TileGrid _floorGrid;

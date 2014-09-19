@@ -113,14 +113,13 @@ namespace cinekine { namespace prototype {
                                     ovengine::RoomGraph&&,
                                     ovengine::TileGridMap&&,
                                     const ovengine::TileLibrary&,
-                                    const ovengine::SpriteLibrary&,
                                     const Allocator&>
                                     (
                                      _allocator,
                                      std::move(roomGraph),
                                      std::move(tileGridMap),
                                      tileLibrary,
-                                     spriteLibrary,
+
                                      _allocator
                                     );
     }

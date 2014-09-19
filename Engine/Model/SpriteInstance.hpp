@@ -11,7 +11,7 @@
 #define Overview_SpriteInstance_hpp
 
 #include "Engine/Model/ModelTypes.hpp"
-#include "cinek/types.hpp"
+#include "cinek/intrusive_list.hpp"
 
 #include <glm/glm.hpp>
 
@@ -20,6 +20,10 @@ namespace cinekine {
 
     class Sprite;
     class SpriteAnimation;
+    class SpriteInstance;
+
+    using SpriteInstanceList = intrusive_list<SpriteInstance>;
+
     /**
      * @class SpriteInstance
      * @brief A Sprite model instance representing a collection of one of more
@@ -29,7 +33,10 @@ namespace cinekine {
     {
         CK_CLASS_NON_COPYABLE(SpriteInstance);
 
+        static const Sprite kNullSprite;
+
     public:
+        SpriteInstance();
         /**
          * Constructs a sprite with the given template.
          * @param spriteTemplate Constructs a sprite based on this template.
@@ -90,12 +97,18 @@ namespace cinekine {
         }
 
     private:
+        friend SpriteInstanceList;
+
+        SpriteInstance* __prevListNode;
+        SpriteInstance* __nextListNode;
+
+    private:
         const Sprite& _template;
         Point _position;
         uint32_t _startTime;
         AnimationStateId _stateId;
         //  cached pointer from the Sprite template
-        SpriteAnimation* _animation;
+        const SpriteAnimation* _animation;
     };
 
     } /* rendermodel */

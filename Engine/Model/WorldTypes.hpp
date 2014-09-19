@@ -11,11 +11,15 @@
 #define Overview_Model_StageTypes_hpp
 
 #include "Engine/Model/ModelTypes.hpp"
-#include "Engine/Model/Tile.hpp"
 #include "Engine/Grid.hpp"
 
-#include "cinek/allocator.hpp"
-#include "cinek/vector.hpp"
+#include "cinek/objectpool.hpp"
+
+namespace cinekine {
+    namespace ovengine {
+        class SpriteInstance;
+    }
+}
 
 
 namespace cinekine {
@@ -25,6 +29,9 @@ namespace cinekine {
 using TileGrid = Grid<TileId>;
 /** Defines a tilemap section */
 using TileGridContainer = GridContainer<TileGrid>;
+
+using SpriteInstancePool = ObjectPool<SpriteInstance>;
+using SpriteInstancePtr = SpriteInstancePool::pointer;
 
 inline TileId compressTileToId(TileSlot slot, TileIndex index)
 {

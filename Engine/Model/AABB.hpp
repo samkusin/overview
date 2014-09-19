@@ -21,10 +21,9 @@ namespace cinekine { namespace ovengine {
     template<class _Point>
     struct AABB
     {
-        typedef typename _Point::value_type  ValueType;
-        typedef _Point                       Type;
-        Type min;          ///< The min coordinate
-        Type max;          ///< The max coordinate
+        typedef _Point                       point_type;
+        point_type min;          ///< The min coordinate
+        point_type max;          ///< The max coordinate
 
         /// Default Constructor
         ///
@@ -33,7 +32,7 @@ namespace cinekine { namespace ovengine {
         /// @param min  Min point of the box
         /// @param max  Max point of the box
         ///
-        AABB(const Type& min, const Type& max);
+        AABB(const point_type& min, const point_type& max);
         /// Checks if the box is valid.  The box could be flat (planar), or even
         /// a line if the min/max points share common coordinates.
         ///
@@ -43,7 +42,7 @@ namespace cinekine { namespace ovengine {
         /// Calculates the size of the box as a Point
         /// @return The x,y,z sizes of the box
         ///
-        Type dimensions() const;
+        point_type dimensions() const;
         /// Determines if this box lies within a box
         /// @param  box The box to test
         /// @return True if the this box lies within the supplied box
@@ -53,7 +52,7 @@ namespace cinekine { namespace ovengine {
         /// @param  point The point to test
         /// @return True if the this box contains the supplied point
         ///
-        bool contains(const Type& pt) const;
+        bool contains(const point_type& pt) const;
         /// Determines if this box lies outside a box
         /// @param  box The box to test
         /// @return True if this box lies outside the supplied box
@@ -88,13 +87,13 @@ namespace cinekine { namespace ovengine {
         /// Calculates the center point of our box
         /// @return The center point
         ///
-        Type center() const;
+        point_type center() const;
     };
 
     ////////////////////////////////////////////////////////////////////////////
 
     template<class _Point>
-    AABB<_Point>::AABB(const Type& min, const Type& max) : min(min), max(max)
+    AABB<_Point>::AABB(const point_type& min, const point_type& max) : min(min), max(max)
     {
     }
 
@@ -105,7 +104,7 @@ namespace cinekine { namespace ovengine {
     }
 
     template<class _Point>
-    typename AABB<_Point>::Type AABB<_Point>::dimensions() const
+    typename AABB<_Point>::point_type AABB<_Point>::dimensions() const
     {
         return max - min;
     }
@@ -136,13 +135,13 @@ namespace cinekine { namespace ovengine {
     }
 
     template<class _Point>
-    typename AABB<_Point>::Type AABB<_Point>::center() const
+    typename AABB<_Point>::point_type AABB<_Point>::center() const
     {
         return (min + max)/2.f;
     }
 
     template<class _Point>
-    AABB<_Point> operator+(const AABB<_Point>& box, const typename AABB<_Point>::Type& off)
+    AABB<_Point> operator+(const AABB<_Point>& box, const typename AABB<_Point>::point_type& off)
     {
         AABB<_Point> result;
         result.min = box.min + off;

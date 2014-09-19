@@ -72,12 +72,10 @@ namespace cinekine {
         glm::ivec2 viewDimensions(viewport.width(), viewport.height());
         glm::ivec2 tileDimensions(TILE_WIDTH, TILE_HEIGHT);
         
-        auto isoScenePtr = new(_allocator.alloc(sizeof(ovengine::IsoScene)))
-        ovengine::IsoScene(viewDimensions,
-                           tileDimensions,
-                           *_world,
-                           _allocator);
-        
+        auto isoScenePtr = _allocator.newItem<ovengine::IsoScene>(viewDimensions,
+                                                                  tileDimensions,
+                                                                  *_world,
+                                                                  _allocator);
         _isoScene = unique_ptr<ovengine::IsoScene>(isoScenePtr, _allocator);
 
         

@@ -28,7 +28,7 @@ namespace cinekine { namespace ovengine {
     /** Identifies the animation of a particular model. */
     using AnimationStateId = uint16_t;
 
-    /** Define for a null sprite template. */
+    /** Define for a null sprite animation template. */
     const AnimationStateId kNullAnimation = (AnimationStateId)0;
 
     struct TileHandle
@@ -36,6 +36,15 @@ namespace cinekine { namespace ovengine {
         int32_t x;
         int32_t y;
         int32_t layerIndex;     /**< Maps to a TileGridMap layer */
+    };
+
+    enum class Quadrant
+    {
+        kTopLeft,
+        kTopRight,
+        kBottomRight,
+        kBottomLeft,
+        kCount
     };
 
 } /* namespace ovengine */ } /* namespace cinekine */

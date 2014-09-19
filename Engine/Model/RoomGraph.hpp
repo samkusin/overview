@@ -24,7 +24,15 @@ namespace cinekine {
 
 /// @class   RoomGraph
 /// @brief   Container owning all objects related to one or more Rooms
-/// @details All Room objects and dependencies belong to a RoomGraph.
+/// @details All Room objects and dependencies belong to a RoomGraph.  To
+///          maintain relationships between Room and Portal nodes with their
+///          owning RoomGraph, RoomGraph is *guaranteed* not to alter or remap
+///          nodes to memory once allocated -- basically all pointers remain
+///          valid for the life of the RoomGraph.
+///          Remember this when invoking move operators on a RoomGraph.  Any
+///          Node objects remaining after a move operation on RoomGraph will
+///          belong to the moved-to RoomGraph.
+///          Especially remember this when destroying a RoomGraph!
 ///
 class RoomGraph
 {
