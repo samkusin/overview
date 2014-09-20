@@ -12,6 +12,7 @@
 #include "Engine/Model/SpriteLibrary.hpp"
 #include "Engine/Debug.hpp"
 #include "Core/StreamBufRapidJson.hpp"
+#include "Core/JsonUtilities.hpp"
 
 #include <rapidjson/document.h>
 
@@ -116,7 +117,18 @@ bool unserializeFromJSON(SpriteLibrary& outLibrary,
             cinek_bitmap_atlas bitmapClass = atlasReqCb(sprite["class"].GetString());
             auto& jsonAnchor = sprite["anchor"];
             glm::ivec2 anchor(jsonAnchor["x"].GetInt(), jsonAnchor["y"].GetInt());
-            auto* spriteTemplate = outLibrary.createOrModifyFromName(name, bitmapClass, anchor, stateCount);
+            AABB<Point> aabb;
+            if (sprite.HasMember("aabb"))
+            {
+                auto& value = sprite["aabb"];
+                aabb.min = parseVec3(value["min"]);
+                aabb.max = parseVec3(value["max"]);
+            }
+            auto* spriteTemplate = outLibrary.createOrModifyFromName(name,
+                                                            bitmapClass,
+                                                            anchor,
+                                                            aabb,
+                                                            stateCount);
             if (spriteTemplate == nullptr)
             {
                 OVENGINE_LOG_ERROR("SpriteDatabaseJSONSerializer - Sprite entry (%s) failed to create template object.", name);
@@ -149,12 +161,12 @@ bool unserializeFromJSON(SpriteLibrary& outLibrary,
                     const Value& frames = state["frames"];
                     uint16_t frameCount = frames.Size();
 
-                    uint32_t duration;
+                    uint32_t duration = 0;
                     if (state.HasMember("duration"))
                     {
                         duration = state["duration"].GetUint();
                     }
-                    else
+                    if (duration == 0)
                     {
                         duration = 1000;
                         OVENGINE_LOG_WARN("SpriteDatabaseJSONSerializer - Sprite state entry (%s/%s) has no duration.  Defaulting to %u.",

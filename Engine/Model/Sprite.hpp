@@ -11,6 +11,7 @@
 #define Overview_Model_Sprite_hpp
 
 #include "Engine/Model/SpriteAnimation.hpp"
+#include "Engine/Model/AABB.hpp"
 
 #include "cinek/rendertypes.h"
 #include "cinek/allocator.hpp"
@@ -44,6 +45,7 @@ public:
      */
     Sprite(cinek_bitmap_atlas bitmapClass,
            const glm::ivec2& anchor,
+           const AABB<Point>& aabb,
            uint16_t numStates,
            const Allocator& allocator=Allocator());
     /** Destructor */
@@ -60,6 +62,11 @@ public:
     /** @return The x,y anchor from the sprite's origin */
     const glm::ivec2& anchor() const {
         return _anchor;
+    }
+
+    /** @return The Local AABB for the Sprite */
+    const AABB<Point>& aabb() const {
+        return _aabb;
     }
 
 public:
@@ -87,6 +94,7 @@ private:
     Allocator _allocator;
     cinek_bitmap_atlas _bitmapClass;
     glm::ivec2 _anchor;
+    AABB<Point> _aabb;
 
     //  state table containing animation lists mapped to state.
     ObjectHeap<SpriteAnimation> _statePool;

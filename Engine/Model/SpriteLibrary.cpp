@@ -39,6 +39,7 @@ AnimationStateId SpriteLibrary::animationIDByName(const char* animationName) con
 Sprite* SpriteLibrary::createOrModifyFromName(const char* name,
         cinek_bitmap_atlas classId,
         const glm::ivec2& anchor,
+        const AABB<Point>& aabb,
         uint16_t numStates)
 {
     //  check if a sprite of that name exists, if so use that sprite's id,
@@ -51,11 +52,13 @@ Sprite* SpriteLibrary::createOrModifyFromName(const char* name,
     {
         theTemplate = itTemplate->second;
         theTemplate->~Sprite();
-        new(theTemplate) Sprite(classId, anchor, numStates, _allocator);
+        new(theTemplate) Sprite(classId, anchor, aabb, numStates, _allocator);
     }
     else
     {
-        theTemplate = _templatePool.allocateAndConstruct(classId, anchor, numStates, _allocator);
+        theTemplate = _templatePool.allocateAndConstruct(classId, anchor, aabb,
+                                                         numStates,
+                                                         _allocator);
         _nameToTemplates.emplace(templateName, theTemplate);
     }
     return theTemplate;

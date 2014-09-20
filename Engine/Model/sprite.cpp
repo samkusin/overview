@@ -24,11 +24,13 @@ Sprite::Sprite() :
 
 Sprite::Sprite(cinek_bitmap_atlas bitmapClass,
                const glm::ivec2& anchor,
+               const AABB<Point>& aabb,
                uint16_t numStates,
                const Allocator& allocator) :
     _allocator( allocator ),
     _bitmapClass( bitmapClass ),
     _anchor( anchor ),
+    _aabb(aabb),
     _statePool( numStates, allocator ),
     _states(_allocator)
 {
@@ -84,7 +86,7 @@ SpriteAnimation* Sprite::createAnimation(
     if (stateIt == _states.end() || (*stateIt)->getId() != animId)
     {
         cinek_bitmap_index* frames = _allocator.allocItems<cinek_bitmap_index>(frameCount);
-        state = _statePool.allocateAndConstruct(animId, frameCount, frames);
+        state = _statePool.allocateAndConstruct(animId, frameCount, frames, duration);
         _states.emplace(stateIt, state);
     }
     else
@@ -93,7 +95,7 @@ SpriteAnimation* Sprite::createAnimation(
         _allocator.free(state->_frames);
         state->~SpriteAnimation();
         cinek_bitmap_index* frames = _allocator.allocItems<cinek_bitmap_index>(frameCount);
-        ::new(state) SpriteAnimation(animId, frameCount, frames);
+        ::new(state) SpriteAnimation(animId, frameCount, frames, duration);
     }
 
     return state;

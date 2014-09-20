@@ -63,7 +63,7 @@ namespace cinekine {
         //  advances to the next Controller
         void next(const char* name);
         //  updates the current Controller
-        void update();
+        void update(uint32_t ticks);
 
         ovengine::WindowComponentCLI& ui() { return _ui; }
         const ovengine::WindowComponentCLI& ui() const { return _ui; }

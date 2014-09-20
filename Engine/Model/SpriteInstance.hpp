@@ -11,6 +11,7 @@
 #define Overview_SpriteInstance_hpp
 
 #include "Engine/Model/ModelTypes.hpp"
+#include "Engine/Model/AABB.hpp"
 #include "cinek/intrusive_list.hpp"
 
 #include <glm/glm.hpp>
@@ -50,19 +51,11 @@ namespace cinekine {
         SpriteInstance(SpriteInstance&& other);
 
         /**
-         * Returns the bitmap atlas (ID) associated with this sprite.  All
-         * animation frames related to a sprite must reside within the same atlas
-         * which is why a sprite has one and only one atlas.
-         *
-         * @return The bitmap atlas ID
-         */
-        cinek_bitmap_atlas bitmapAtlas() const;
-        /**
          * @return Returns the number of frames in the state animation.
          */
         uint16_t bitmapFrameCount() const;
         /**
-         * Returns a bitmap index given a time value following the start time
+         * Returns a bitmap  given a time value following the start time
          * specified when setting the state.  As long as the start time value and
          * this time value are related, this method returns what bitmap to render
          * at the current time.
@@ -70,13 +63,13 @@ namespace cinekine {
          * @param  currentTime Time value following the time specified in setState
          * @return             [description]
          */
-        cinek_bitmap_index bitmapFromTime(uint32_t currentTime) const;
+        cinek_bitmap bitmapFromTime(uint32_t currentTime) const;
          /**
          * Returns the bitmap at the specified frame index.
          * @param  index Frame index.
          * @return       Bitmap index.
          */
-        cinek_bitmap_index bitmapFrame(uint16_t index) const;
+        cinek_bitmap bitmapFrame(uint16_t index) const;
 
         /**
          * Sets the sprite's state.  State relies on the sprite template's
@@ -92,9 +85,13 @@ namespace cinekine {
             return _position;
         }
         /** @return A r/w reference to the sprite's position */
-        Point& position() {
-            return _position;
+        void setPosition(const Point& pos) {
+            _position = pos;
         }
+        /** @return The local AABB of this sprite instance */
+        const AABB<Point>& aabb() const;
+        /** @return The 2D anchor pixel offset from center, bottom */
+        const glm::ivec2& anchor() const;
 
     private:
         friend SpriteInstanceList;

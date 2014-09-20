@@ -74,11 +74,11 @@ namespace cinekine {
         _currentView = nextView;
     }
 
-    void ApplicationController::update()
+    void ApplicationController::update(uint32_t ticks)
     {
         if (_currentView)
         {
-            _currentView->update();
+            _currentView->update(ticks);
         }
     }
 

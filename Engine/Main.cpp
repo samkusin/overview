@@ -81,7 +81,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         }
 
         ///////////////////////////////////////////////////////////////////
-        director->update();
+        director->update(systemTicks);
 
         ///////////////////////////////////////////////////////////////////
         renderer.begin();
@@ -94,7 +94,7 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
 
     ovengine::DestroyDirector(director);
     director = nullptr;
-    
+
     windowComponent->update(SDL_GetTicks());
 
     return 0;

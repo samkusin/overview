@@ -80,6 +80,7 @@ public:
     Sprite* createOrModifyFromName(const char* name,
         cinek_bitmap_atlas classId,
         const glm::ivec2& anchor,
+        const AABB<Point>& aabb,
         uint16_t numStates);
     /**
      * Maps animation state name to a numeric ID.  Numeric IDs are used

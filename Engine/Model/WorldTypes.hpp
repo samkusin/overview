@@ -30,8 +30,7 @@ using TileGrid = Grid<TileId>;
 /** Defines a tilemap section */
 using TileGridContainer = GridContainer<TileGrid>;
 
-using SpriteInstancePool = ObjectPool<SpriteInstance>;
-using SpriteInstancePtr = SpriteInstancePool::pointer;
+using SpriteInstancePtr = SpriteInstance*;
 
 inline TileId compressTileToId(TileSlot slot, TileIndex index)
 {

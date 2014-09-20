@@ -24,6 +24,7 @@
 
 #include "cinek/allocator.hpp"
 
+#include <random>
 
 /////////////////////////////////////////////////////////////
 
@@ -32,6 +33,28 @@ namespace cinekine {
 
     const int32_t TILE_WIDTH = 32;
     const int32_t TILE_HEIGHT = 16;
+        
+        
+    enum
+    {
+        kAnimationState_Idle            = 0,
+        kAnimationState_Idle_North      = 1,
+        kAnimationState_Idle_NorthEast  = 2,
+        kAnimationState_Idle_East       = 3,
+        kAnimationState_Idle_SouthEast  = 4,
+        kAnimationState_Idle_South      = 5,
+        kAnimationState_Idle_SouthWest  = 6,
+        kAnimationState_Idle_West       = 7,
+        kAnimationState_Idle_NorthWest  = 8,
+        kAnimationState_Walk_North      = 9,
+        kAnimationState_Walk_NorthEast  = 10,
+        kAnimationState_Walk_East       = 11,
+        kAnimationState_Walk_SouthEast  = 12,
+        kAnimationState_Walk_South      = 13,
+        kAnimationState_Walk_SouthWest  = 14,
+        kAnimationState_Walk_West       = 15,
+        kAnimationState_Walk_NorthWest  = 16
+    };
 
     GameView::GameView(ApplicationController& application,
                        const Allocator& allocator) :
@@ -41,7 +64,9 @@ namespace cinekine {
         _fontLibrary(_application.renderer(), 1, _allocator),
         _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
         _tileLibrary(1024, _allocator),
-        _spriteLibrary(32, _allocator)
+        _spriteLibrary(256, _allocator),
+        _spritePool(2048, _allocator),
+        _playerSprite()
     {
         //  this should be an application-wide op (move _fontLibrary to ApplicationController)
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
@@ -80,18 +105,51 @@ namespace cinekine {
 
         
         //  create our player entity
-        auto& overlayGrid = _world->tileGridMap().overlay();
-        _viewPos = glm::vec3(overlayGrid.columnCount() * 0.5f, overlayGrid.rowCount() * 0.5f, 0.f);
+        auto overlayDims = _world->tileGridMap().overlayDimensions();
+        _viewPos = Point(overlayDims.x * 0.5f, overlayDims.y * 0.5f, 0.f);
+        
+        auto& maleAvatarSprite = _spriteLibrary.spriteByName("warrior");
+        _playerSprite = _spritePool.construct(maleAvatarSprite);
+        _playerSprite->setState(kAnimationState_Walk_South, 0);
+        _playerSprite->setPosition(_viewPos);
+        _world->attachSpriteInstance(_playerSprite);
+
+        /*
+        std::default_random_engine numGenerator;
+        std::uniform_int_distribution<int> xDist(0, overlayDims.x-1);
+        std::uniform_int_distribution<int> yDist(0, overlayDims.y-1);
+        std::uniform_int_distribution<int> stateDist(kAnimationState_Idle_North,
+                                                     kAnimationState_Walk_NorthWest);
+        _otherSprites.reserve(256);
+        
+        for (int cnt = 0; cnt < _otherSprites.capacity(); ++cnt)
+        {
+            auto sprite = _spritePool.construct(maleAvatarSprite);
+            sprite->setState(stateDist(numGenerator), 0);
+            sprite->setPosition(Point(xDist(numGenerator), yDist(numGenerator), 0.f));
+            _world->attachSpriteInstance(sprite);
+            _otherSprites.push_back(sprite);
+        }
+         */
+
     }
 
     GameView::~GameView()
     {
+        while (!_otherSprites.empty())
+        {
+            auto sprite = _otherSprites.back();
+            _world->detachSpriteInstance(sprite);
+            _otherSprites.pop_back();
+        }
 
+        _world->detachSpriteInstance(_playerSprite);
+        _playerSprite = nullptr;
     }
     
-    void GameView::update()
+    void GameView::update(uint32_t ticks)
     {
-        _isoScene->update(_viewPos);
+        _isoScene->update(ticks, _viewPos);
     }
         
     void GameView::loadTileCollection(const char* filename)
@@ -263,6 +321,7 @@ namespace cinekine {
         if (newPos.x || newPos.y || newPos.z)
         {
             _viewPos += newPos;
+            _playerSprite->setPosition(_viewPos);
         }
     }
     

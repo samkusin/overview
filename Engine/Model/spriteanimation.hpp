@@ -33,7 +33,9 @@ namespace cinekine {
          * \param id         State identifier.
          * \param frameCount Number of frames in the state animation.
          */
-        SpriteAnimation(AnimationStateId id, uint16_t frameCount, cinek_bitmap_index* frames);
+        SpriteAnimation(AnimationStateId id, uint16_t frameCount,
+                        cinek_bitmap_index* frames,
+                        uint32_t duration);
         /**
          * Returns the bitmap at the specified frame index.
          * @param  index Frame index.

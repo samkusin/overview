@@ -65,24 +65,30 @@ void SpriteInstance::setState(AnimationStateId stateId, uint32_t startTime)
     _animation = _template.getAnimation(_stateId);
 }
 
-cinek_bitmap_atlas SpriteInstance::bitmapAtlas() const
-{
-    return _template.getBitmapClass();
-}
 
 uint16_t SpriteInstance::bitmapFrameCount() const
 {
     return _animation->getFrameCount();
 }
 
-cinek_bitmap_index SpriteInstance::bitmapFromTime(uint32_t currentTime) const
+cinek_bitmap SpriteInstance::bitmapFromTime(uint32_t currentTime) const
 {
-    return _animation->getFrameByTime(currentTime - _startTime);
+    return { _template.getBitmapClass(), _animation->getFrameByTime(currentTime - _startTime) };
 }
 
-cinek_bitmap_index SpriteInstance::bitmapFrame(uint16_t index) const
+cinek_bitmap SpriteInstance::bitmapFrame(uint16_t index) const
 {
-    return _animation->getFrame(index);
+    return { _template.getBitmapClass(), _animation->getFrame(index) };
+}
+
+const AABB<Point>& SpriteInstance::aabb() const
+{
+    return _template.aabb();
+}
+
+const glm::ivec2& SpriteInstance::anchor() const
+{
+    return _template.anchor();
 }
 
 

@@ -19,23 +19,28 @@ namespace cinekine { namespace ovengine {
                        const Allocator& allocator) :
         _world(world),
         _tileGridMap(world.tileGridMap()),
-        _tileDim(tileDimensions),
-        _viewDim(viewDimensions),
+        _tileDim(tileDimensions.x, tileDimensions.y, tileDimensions.y),
+        _viewDim(viewDimensions.x, viewDimensions.y, 0.f),
         _allocator(allocator),
         _isoNodeGraph(2048, allocator)
     {
         auto& overlayGrid = _tileGridMap.overlay();
-        _centerPos = glm::vec3(overlayGrid.columnCount() * 0.5f,
-                               overlayGrid.rowCount() * 0.5f,
-                               0.f);
-        _isoWorldBounds.min = glm::vec3(0,0,0);
-        _isoWorldBounds.max = glm::vec3(overlayGrid.columnCount(),
-                                        overlayGrid.rowCount(),
-                                        _tileGridMap.overlayToFloorRatio()*1.f);
+        //  determine z view and iso coords based on a pre-fixed +- z tile offset
+        //  at some point we'd want to make this configurable, but for now pre-fixed
+        //  works for development purposes
+        //
+        float zTiles = _tileGridMap.overlayToFloorRatio() * 1.f;
+        _isoWorldBounds.min = Point(0,0, -zTiles*0.5f);
+        _isoWorldBounds.max = Point(overlayGrid.columnCount(),
+                                    overlayGrid.rowCount(),
+                                    zTiles*0.5f);
+        _viewDim.z = zTiles * _tileDim.z;
+
+        _centerPos = _isoWorldBounds.center();
         setupViewBounds(isoToViewPos(_centerPos));
     }
         
-    void IsoScene::update(const glm::vec3& pos)
+    void IsoScene::update(uint32_t ticks, const Point& pos)
     {
         _isoNodeGraph.reset();
         
@@ -49,8 +54,8 @@ namespace cinekine { namespace ovengine {
         //  pick all tiles within the view bounds
         //      this is done to minimize the number of tiles and objects added to
         //      our scene graph
-        int32_t viewY = _viewAlignedBounds.min.y;
-        int32_t viewEndY = _viewAlignedBounds.max.y;
+        float viewY = _viewAlignedBounds.min.y;
+        float viewEndY = _viewAlignedBounds.max.y;
         
         //  left to right
         //  top to bottom
@@ -58,19 +63,19 @@ namespace cinekine { namespace ovengine {
         
         while (viewY <= viewEndY)
         {
-            int32_t viewX = _viewAlignedBounds.min.x;
-            int32_t viewEndX = _viewAlignedBounds.max.x;
+            float viewX = _viewAlignedBounds.min.x;
+            float viewEndX = _viewAlignedBounds.max.x;
             if (rowCount & 1)
             {
                 viewX -= _tileDim.x/2;
                 viewEndX += _tileDim.x/2;
             }
             
-            glm::vec3 viewTilePos(viewX, viewY, 0);
+            Point viewTilePos(viewX, viewY, 0);
             while (viewX <= viewEndX)
             {
                 viewTilePos.x = viewX;
-                glm::vec3 isoTilePos = viewToIsoPos(viewTilePos);
+                auto isoTilePos = viewToIsoPos(viewTilePos);
                 if (isoTilePos.x >= _isoWorldBounds.min.x && isoTilePos.x < _isoWorldBounds.max.x &&
                     isoTilePos.y >= _isoWorldBounds.min.y && isoTilePos.y < _isoWorldBounds.max.y &&
                     isoTilePos.z >= _isoWorldBounds.min.z && isoTilePos.z < _isoWorldBounds.max.z)
@@ -83,20 +88,68 @@ namespace cinekine { namespace ovengine {
             ++rowCount;
         }
         
+        // Place sprites
+        // Calculate a bounding isometric bounds based on our view bounds.
+        //
+        //
+        Point viewIsoMinXY = _viewAlignedBounds.min;
+        Point viewIsoMaxXY = _viewAlignedBounds.max;
+        Point viewIsoMinXMaxY = Point(viewIsoMinXY.x, viewIsoMaxXY.y, 0.f);
+        Point viewIsoMaxXMinY = Point(viewIsoMaxXY.x, viewIsoMinXY.y, 0.f);
+        
+        viewIsoMinXY = viewToIsoPos(viewIsoMinXY);
+        viewIsoMaxXY = viewToIsoPos(viewIsoMaxXY);
+        viewIsoMinXMaxY = viewToIsoPos(viewIsoMinXMaxY);
+        viewIsoMaxXMinY = viewToIsoPos(viewIsoMaxXMinY);
+        viewIsoMinXY.y = viewIsoMaxXMinY.y;
+        viewIsoMaxXY.y = viewIsoMinXMaxY.y;
+        
+        AABB<Point> isoBounds(viewIsoMinXY, viewIsoMaxXY);
+        
+        struct
+        {
+            IsoScene* scene;
+            uint32_t ticks;
+        }
+        context = { this, ticks };
+        
+        _world.selectInstanceLists(isoBounds,
+                                   [&context](const ovengine::SpriteInstanceList& instances)
+                                   {
+                                       IsoScene* scene = context.scene;
+                                       for (auto& instance : instances)
+                                       {
+                                           auto& isoPos = instance.position();
+                                           auto viewPos = scene->isoToViewPos(isoPos);
+                                           if (scene->_viewAlignedBounds.contains(viewPos))
+                                           {
+                                               viewPos -= scene->_viewBounds.min;
+                                               glm::ivec2 viewAnchor = scene->_screenOffset - instance.anchor();
+                                               viewAnchor.x += viewPos.x;
+                                               viewAnchor.y += viewPos.y + scene->_tileDim.y;
+                                               
+                                               AABB<Point> isoBox =  instance.aabb() + isoPos;
+                                               scene->_isoNodeGraph.obtainNode(instance.bitmapFromTime(context.ticks),
+                                                                               viewAnchor,
+                                                                               isoBox);
+                                           }
+                                       }
+                                   });
+        
         // sort nodes.  once complete, the graph will be ready for traversal
         //
         _isoNodeGraph.sort();
     }
     
-    void IsoScene::attachTileToGraph(const glm::vec3& viewPos,
-                                     const glm::vec3& isoPos)
+    void IsoScene::attachTileToGraph(const Point& viewPos,
+                                     const Point& isoPos)
     {
         const uint32_t kOverlayTilePerFloor = _tileGridMap.overlayToFloorRatio();
         const uint32_t overlayY = (uint32_t)isoPos.y;
         const uint32_t overlayX = (uint32_t)isoPos.x;
         const uint32_t floorY = overlayY / kOverlayTilePerFloor;
         const uint32_t floorX = overlayX / kOverlayTilePerFloor;
-        AABB<glm::vec3> isoBox;
+        AABB<Point> isoBox;
         
         //  floor tile
         if (!(overlayX % kOverlayTilePerFloor) && !(overlayY % kOverlayTilePerFloor))
@@ -141,52 +194,46 @@ namespace cinekine { namespace ovengine {
         }
     }
 
-    glm::vec3 IsoScene::isoToViewPos(const glm::vec3& isoPos) const
+    glm::vec3 IsoScene::isoToViewPos(const Point& isoPos) const
     {
-        glm::vec3 viewPos(_tileDim.x * (isoPos.x - isoPos.y)/2,
-                          _tileDim.y * (isoPos.x + isoPos.y)/2,
-                          isoPos.z);
+        Point viewPos(_tileDim.x * (isoPos.x - isoPos.y)/2,
+                      _tileDim.y * (isoPos.x + isoPos.y)/2,
+                      isoPos.z * _tileDim.z);
         return viewPos;
     }
     
-    glm::vec3 IsoScene::viewToIsoPos(const glm::vec3& viewPos) const
+    glm::vec3 IsoScene::viewToIsoPos(const Point& viewPos) const
     {
-        glm::vec3 isoPos;
+        Point isoPos;
         isoPos.x = viewPos.x/_tileDim.x + viewPos.y/_tileDim.y;
         isoPos.y = 2 * viewPos.y/_tileDim.y - isoPos.x;
-        isoPos.z = viewPos.z;
+        isoPos.z = viewPos.z/_tileDim.z;
         return isoPos;
     }
     
     //  precalculates values used for rendering the local view
-    void IsoScene::setupViewBounds(const glm::vec3& viewPos)
+    void IsoScene::setupViewBounds(const Point& viewPos)
     {
         //  calculate view anchor
         //  this is the world bounds for our view,
-        _viewBounds.min.x = viewPos.x - _viewDim.x / 2;
-        _viewBounds.min.y = viewPos.y - _viewDim.y / 2;
-        _viewBounds.min.z = 0;
-        _viewBounds.max.x = viewPos.x + _viewDim.x / 2;
-        _viewBounds.max.y = viewPos.y + _viewDim.y / 2;
-        _viewBounds.max.z = 0;
+        _viewBounds.min = viewPos - _viewDim*0.5f;
+        _viewBounds.max = viewPos + _viewDim*0.5f;
         
         //  - now adjust to include some extra space around the viewport, which
         //  is necessary when some tiles are larger than our standard tile size
         const uint32_t kOverlayTilePerFloor = _tileGridMap.overlayToFloorRatio();
-        _viewBounds.min.x -= _tileDim.x*2*kOverlayTilePerFloor;
-        _viewBounds.min.y -= _tileDim.y*2*kOverlayTilePerFloor;
-        _viewBounds.max.x += _tileDim.x*2*kOverlayTilePerFloor;
-        _viewBounds.max.y += _tileDim.y*2*kOverlayTilePerFloor;
+        _viewBounds.min -= _tileDim * (2.f*kOverlayTilePerFloor);
+        _viewBounds.max += _tileDim * (2.f*kOverlayTilePerFloor);
         
         //  our bounds aligned to tile dimensions - this is used as the bounding rect
         //  for drawing our isoworld
         _viewAlignedBounds.min.x = _tileDim.x * floorf(_viewBounds.min.x/_tileDim.x);
         _viewAlignedBounds.min.y = _tileDim.y * floorf(_viewBounds.min.y/_tileDim.y);
-        _viewAlignedBounds.min.z = 0;
+        _viewAlignedBounds.min.z = _tileDim.z * floorf(_viewBounds.min.z/_tileDim.z);
         _viewAlignedBounds.max.x = _tileDim.x * floorf(_viewBounds.max.x/_tileDim.x);
         _viewAlignedBounds.max.y = _tileDim.y * floorf(_viewBounds.max.y/_tileDim.y);
-        _viewAlignedBounds.max.z = 0;
-        
+        _viewAlignedBounds.max.z = _tileDim.z * floorf(_viewBounds.max.z/_tileDim.z);
+
         _screenOffset.x = (_viewDim.x - _viewBounds.max.x + _viewBounds.min.x);
         _screenOffset.y = (_viewDim.y - _viewBounds.max.y + _viewBounds.min.y);
         _screenOffset /= 2;

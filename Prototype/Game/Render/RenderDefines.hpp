@@ -13,7 +13,7 @@
 
 namespace cinekine { namespace prototype {
     
-
+    using Point = ovengine::Point;
     
 } /* namespace prototype */ } /* namespace cinekine */
 

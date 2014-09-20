@@ -93,8 +93,8 @@ public:
      *               method definition for details on this process.
      * @param cb     Callback issued for each selected SpriteInstanceList
      */
-    void selectInstanceLists(const AABB<glm::ivec2>& bounds,
-                             std::function<void(const SpriteInstanceList&)> cb);
+    void selectInstanceLists(const AABB<Point>& bounds,
+                             std::function<void(const SpriteInstanceList&)> cb) const;
 
 private:
     const TileLibrary& _tileDb;

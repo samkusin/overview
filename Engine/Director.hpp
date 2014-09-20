@@ -32,7 +32,7 @@ namespace cinekine {
         /**
          * Updates the director - called once per frame.
          */
-        virtual void update() = 0;
+        virtual void update(uint32_t ticks) = 0;
     };
 
     //  must be defined by the implementing application.

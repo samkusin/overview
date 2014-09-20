@@ -53,10 +53,14 @@ void World::detachSpriteInstance(SpriteInstancePtr instance)
  * individual ViewModel (SpriteInstance) references from the returned lists
  * if it wants a precise result of all instances within the bounds.
  */
-void World::selectInstanceLists(const AABB<glm::ivec2>& bounds,
-                                std::function<void(const SpriteInstanceList&)> cb)
+void World::selectInstanceLists(const AABB<Point>& bounds,
+                                std::function<void(const SpriteInstanceList&)> cb) const
 {
-    AABB<glm::ivec2> quadBounds(glm::ivec2(0,0), _gridMap.overlayDimensions());
+    auto overlayDims = _gridMap.overlayDimensions();
+    AABB<Point> quadBounds(Point(0,0,0),
+                           Point(overlayDims.x,
+                                 overlayDims.y,
+                                 _gridMap.overlayToFloorRatio()*2.f) /* z-coord HACK */);
 
     if (bounds.intersects(quadBounds) && cb)
     {

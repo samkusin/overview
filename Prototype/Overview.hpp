@@ -32,7 +32,7 @@ namespace cinekine {
                  glx::RendererCLI& rendererCLI);
         virtual ~Overview();
 
-        virtual void update();
+        virtual void update(uint32_t ticks);
 
     private:
         Allocator _allocator;

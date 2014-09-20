@@ -41,29 +41,29 @@ namespace cinekine { namespace ovengine {
                  const ovengine::World& world,
                  const Allocator& allocator);
         
-        void update(const glm::vec3& pos);
+        void update(uint32_t ticks, const Point& pos);
         
         void visit(std::function<void(const IsoNode*)> fn);
                 
     private:
-        void setupViewBounds(const glm::vec3& viewPos);
-        glm::vec3 isoToViewPos(const glm::vec3& isoPos) const;
-        glm::vec3 viewToIsoPos(const glm::vec3& viewPos) const;
+        void setupViewBounds(const Point& viewPos);
+        glm::vec3 isoToViewPos(const Point& isoPos) const;
+        glm::vec3 viewToIsoPos(const Point& viewPos) const;
         
-        void attachTileToGraph(const glm::vec3& viewPos, const glm::vec3& isoPos);
+        void attachTileToGraph(const Point& viewPos, const Point& isoPos);
         
     private:
         const ovengine::World& _world;
         const ovengine::TileGridMap& _tileGridMap;
-        const glm::ivec2 _tileDim;
-        const glm::ivec2 _viewDim;
+        const Point _tileDim;
+        Point _viewDim;
 
         Allocator _allocator;
         
-        glm::vec3 _centerPos;
-        ovengine::AABB<glm::vec3> _isoWorldBounds;
-        ovengine::AABB<glm::vec3> _viewBounds;
-        ovengine::AABB<glm::vec3> _viewAlignedBounds;
+        Point _centerPos;
+        AABB<Point> _isoWorldBounds;
+        AABB<Point> _viewBounds;
+        AABB<Point> _viewAlignedBounds;
         glm::ivec2 _screenOffset;
         
         IsoNodeGraph _isoNodeGraph;

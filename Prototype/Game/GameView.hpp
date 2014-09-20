@@ -9,11 +9,14 @@
 #ifndef Overview_GameView_hpp
 #define Overview_GameView_hpp
 
+#include "Render/RenderDefines.hpp"
+
 #include "Engine/View.hpp"
 #include "Engine/Model/World.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/ModelTypes.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/RenderTypes.hpp"
 #include "Graphics/BitmapLibrary.hpp"
@@ -44,7 +47,7 @@ namespace cinekine {
                  const Allocator& allocator);
         virtual ~GameView();
         
-        virtual void update();
+        virtual void update(uint32_t ticks);
 
         virtual void render();
 
@@ -74,14 +77,20 @@ namespace cinekine {
         ovengine::SpriteLibrary _spriteLibrary;
         
         JsonDocument _gameDocument;
-        
+
+        ObjectPool<ovengine::SpriteInstance> _spritePool;
+
         std::shared_ptr<ovengine::World> _world;
         
-        glm::vec3 _viewPos;
+        Point _viewPos;
         unique_ptr<ovengine::IsoScene> _isoScene;
         
         //  Used for generating stage maps (temporary)
         unique_ptr<StageGenerator> _stageGenerator;
+        
+        //  objects
+        ovengine::SpriteInstancePtr _playerSprite;
+        vector<ovengine::SpriteInstancePtr> _otherSprites;
     };
 
     }

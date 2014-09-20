@@ -60,9 +60,9 @@ namespace cinekine {
     {
     }
 
-    void Overview::update()
+    void Overview::update(uint32_t ticks)
     {
-        _controller.update();
+        _controller.update(ticks);
     }
 
 

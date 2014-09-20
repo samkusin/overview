@@ -46,8 +46,8 @@ namespace cinekine {
     public:
         virtual ~View() {}
 
-        virtual void update() = 0;
-        
+        virtual void update(uint32_t ticks) = 0;
+
         //  Executes rendering code specific to the View implementation.
         virtual void render() = 0;
 
@@ -87,7 +87,7 @@ namespace cinekine {
          * @param y      Y coordinate within view
          */
         virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y) {}
-        
+
         virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod) {}
         virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod) {}
     };

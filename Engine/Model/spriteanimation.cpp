@@ -13,9 +13,10 @@ namespace cinekine {
     namespace ovengine {
 
     SpriteAnimation::SpriteAnimation(AnimationStateId id, uint16_t frameCount,
-                                     cinek_bitmap_index* frames) :
+                                     cinek_bitmap_index* frames,
+                                     uint32_t duration) :
         _id(id),
-        _duration(0),
+        _duration(duration),
         _frameCount(frameCount),
         _frames(frames)
     {
