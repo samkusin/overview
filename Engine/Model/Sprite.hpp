@@ -15,7 +15,7 @@
 
 #include "cinek/rendertypes.h"
 #include "cinek/allocator.hpp"
-#include "cinek/objectheap.hpp"
+#include "cinek/objectstack.hpp"
 #include "cinek/vector.hpp"
 
 #include <glm/glm.hpp>
@@ -97,7 +97,7 @@ private:
     AABB<Point> _aabb;
 
     //  state table containing animation lists mapped to state.
-    ObjectHeap<SpriteAnimation> _statePool;
+    ObjectStack<SpriteAnimation> _statePool;
     vector<SpriteAnimation*> _states;
 };
 

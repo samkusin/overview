@@ -22,8 +22,8 @@ namespace cinekine {
     GLShaderLibrary::GLShaderLibrary(const char* shaderDir, const Allocator& allocator) :
         _allocator(allocator),
         _shaderRootDir(shaderDir),
-        _shaderNameToHandle(std_allocator<std::pair<string, GLuint>>(allocator)),
-        _programSet(std_allocator<GLuint>(allocator))
+        _shaderNameToHandle(allocator),
+        _programSet(allocator)
     {
     }
 
@@ -41,7 +41,7 @@ namespace cinekine {
 
     GLuint GLShaderLibrary::loadProgram(const char *programFilename)
     {
-        string filePath = directoryPath({_shaderRootDir}).append(programFilename);
+        auto filePath = directoryPath({_shaderRootDir}).append(programFilename);
 
         RENDER_LOG_INFO("GLShaderLibrary.loadProgram - loading program %s", filePath.c_str());
 
@@ -177,7 +177,7 @@ namespace cinekine {
                 auto it = _shaderNameToHandle.find(shaderName.GetString());
                 if (it == _shaderNameToHandle.end())
                 {
-                    string filePath = directoryPath({_shaderRootDir}).append(shaderName.GetString());
+                    auto filePath = directoryPath({_shaderRootDir}).append(shaderName.GetString());
                     RENDER_LOG_INFO("GLShaderLibrary.loadShaders - loading shader %s",
                                     shaderName.GetString());
                     GLuint shader = loader.load(filePath.c_str(),shaderType);

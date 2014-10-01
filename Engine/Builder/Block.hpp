@@ -89,7 +89,7 @@ public:
     int border() const;
     /// @return The Block's name
     ///
-    const string& name() const { return _name; }
+    const std::string& name() const { return _name; }
     /// @return The paint style used by the Builder toolbox
     ///
     BuilderPaintStyle paintStyle() const { return _paintStyle; }
@@ -112,7 +112,7 @@ private:
     Allocator _allocator;
     Layer _type;
     BuilderPaintStyle _paintStyle;
-    string _name;
+    std::string _name;
     Grid _nullGrid;
     Grid _grids[kGrid_MaxSize][kGrid_MaxSize];
     int _granularity;

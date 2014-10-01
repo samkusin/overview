@@ -19,7 +19,7 @@ namespace cinekine {
                              size_t bitmapCount,
                              const Allocator& allocator) :
         _allocator(allocator),
-        _name(name, string_allocator(_allocator)),
+        _name(name),
         _texture(texture),
         _bitmapPool(bitmapCount, _allocator),
         _bitmaps(std_allocator<BitmapInfo*>(_allocator))
@@ -33,10 +33,10 @@ namespace cinekine {
         _bitmaps(std::move(other._bitmaps))
     {
     }
-        
+
     BitmapAtlas::~BitmapAtlas()
     {
-        
+
     }
 
     BitmapAtlas& BitmapAtlas::operator=(BitmapAtlas&& other)
@@ -49,7 +49,7 @@ namespace cinekine {
 
     struct BitmapAtlasBitmap_Comparator
     {
-        bool operator()(const BitmapInfo* bitmap, const string& name) const
+        bool operator()(const BitmapInfo* bitmap, const std::string& name) const
         {
             return bitmap->name < name;
         }
@@ -62,7 +62,7 @@ namespace cinekine {
         BitmapInfo* bitmap = nullptr;
         if (index == kCinekBitmapIndex_Invalid)
         {
-            bitmap = _bitmapPool.allocateAndConstruct(_allocator);
+            bitmap = _bitmapPool.allocateAndConstruct();
             _bitmaps.push_back(bitmap);
             index = _bitmaps.size()-1;
         }

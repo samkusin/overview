@@ -43,7 +43,7 @@ namespace cinekine {
 
         std::istreambuf_iterator<char> itInput(&shaderFile);
         std::istreambuf_iterator<char> itEnd;
-        string source(itInput, itEnd);
+        std::string source(itInput, itEnd);
         const char* sourceCData = source.data();
         glShaderSource(shader, 1, &sourceCData, NULL);
         glCompileShader(shader);

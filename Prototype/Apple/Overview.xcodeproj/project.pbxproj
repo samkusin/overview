@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		371AF4EF19D29C6E002EF32B /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371AF4EB19D29C6E002EF32B /* Entity.cpp */; };
+		371AF4F019D29C6E002EF32B /* Entity.inl in Resources */ = {isa = PBXBuildFile; fileRef = 371AF4ED19D29C6E002EF32B /* Entity.inl */; };
 		372C4A3D19846227007319D1 /* IsoScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372C4A3B19846227007319D1 /* IsoScene.cpp */; };
 		372C4A3F1984659C007319D1 /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372C4A3E1984659C007319D1 /* GameView.cpp */; };
 		372C4A4519859E45007319D1 /* IsoNodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372C4A4319859E45007319D1 /* IsoNodeGraph.cpp */; };
@@ -41,6 +43,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		371AF4EB19D29C6E002EF32B /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
+		371AF4EC19D29C6E002EF32B /* Entity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
+		371AF4ED19D29C6E002EF32B /* Entity.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Entity.inl; sourceTree = "<group>"; };
+		371AF4EE19D29C6E002EF32B /* EntityTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTypes.hpp; sourceTree = "<group>"; };
+		371AF4F119D29D60002EF32B /* Types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Types.hpp; path = ../Game/Types.hpp; sourceTree = "<group>"; };
 		372C4A3919820057007319D1 /* IsoScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = IsoScene.hpp; path = ../Game/Render/IsoScene.hpp; sourceTree = "<group>"; };
 		372C4A3A19844376007319D1 /* IsoNode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = IsoNode.hpp; path = ../Game/Render/IsoNode.hpp; sourceTree = "<group>"; };
 		372C4A3B19846227007319D1 /* IsoScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IsoScene.cpp; path = ../Game/Render/IsoScene.cpp; sourceTree = "<group>"; };
@@ -93,6 +100,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		371AF4EA19D29C6E002EF32B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				371AF4EB19D29C6E002EF32B /* Entity.cpp */,
+				371AF4EC19D29C6E002EF32B /* Entity.hpp */,
+				371AF4ED19D29C6E002EF32B /* Entity.inl */,
+				371AF4EE19D29C6E002EF32B /* EntityTypes.hpp */,
+			);
+			name = Model;
+			path = ../Game/Model;
+			sourceTree = "<group>";
+		};
 		3769211E1980B6B600F8D2F5 /* Render */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,11 +141,13 @@
 		37D11674191C9205008E27B5 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				371AF4EA19D29C6E002EF32B /* Model */,
 				3769211E1980B6B600F8D2F5 /* Render */,
 				37D11678191C9212008E27B5 /* GameView.hpp */,
 				372C4A3E1984659C007319D1 /* GameView.cpp */,
 				3764ECC6198EB2E50078EE3A /* StageGenerator.cpp */,
 				3764ECC7198EB2E50078EE3A /* StageGenerator.hpp */,
+				371AF4F119D29D60002EF32B /* Types.hpp */,
 			);
 			name = Game;
 			sourceTree = "<group>";
@@ -254,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				371AF4F019D29C6E002EF32B /* Entity.inl in Resources */,
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
 			);
@@ -273,6 +295,7 @@
 				372C4A4519859E45007319D1 /* IsoNodeGraph.cpp in Sources */,
 				37DFA0951850108200382685 /* ApplicationController.cpp in Sources */,
 				3764ECC8198EB2E50078EE3A /* StageGenerator.cpp in Sources */,
+				371AF4EF19D29C6E002EF32B /* Entity.cpp in Sources */,
 				372C4A3F1984659C007319D1 /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,7 +402,7 @@
 		37F64AAF1780EA2D009116E7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++1y";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -411,7 +434,7 @@
 		37F64AB01780EA2D009116E7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++1y";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

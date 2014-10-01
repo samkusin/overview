@@ -13,6 +13,7 @@
 #include "ApplicationController.hpp"
 
 #include "Game/Render/IsoScene.hpp"
+#include "Game/Model/EntityTypes.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Graphics/RendererCLI.hpp"
@@ -25,6 +26,8 @@
 #include "cinek/allocator.hpp"
 
 #include <random>
+
+#include "Core/ValueConvertGLM.hpp"
 
 /////////////////////////////////////////////////////////////
 
@@ -131,7 +134,17 @@ namespace cinekine {
             _otherSprites.push_back(sprite);
         }
          */
-
+        
+        EntityCommand cmd(2);
+        cmd.set<int32_t>(10, 12);
+        cmd.set<float>(3, 3.14159f);
+        cmd.set<glm::vec3>(9, glm::vec3(1.0f, 0.5f, 0.25f));
+        
+        printf("[10] = %d\n", cmd.get<int32_t>(10));
+        
+        auto vec = cmd.get<glm::vec3>(9);
+        printf("[9] = %.2f,%.2f,%.2f\n", vec.x, vec.y, vec.z);
+        printf("[3] = %s\n", cmd.get<std::string>(3).c_str());
     }
 
     GameView::~GameView()

@@ -21,7 +21,6 @@ namespace cinekine { namespace ovengine {
     using TileSlot = uint16_t;
     using TileIndex = uint16_t;
     using TileId = uint16_t;
-    using SpriteInstanceId = uint32_t;
 
     using Point = glm::vec3;
 

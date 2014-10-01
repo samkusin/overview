@@ -56,7 +56,7 @@ private:
     std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _bitmapReqCb;
     std::function<void(TileCollection&&)> _collectionCb;
 
-    string _name;
+    std::string _name;
     cinek_bitmap_atlas _atlasId;
     typedef std::pair<uint16_t, Tile> TilePair;
     vector< TilePair > _tiles;

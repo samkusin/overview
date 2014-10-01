@@ -46,19 +46,19 @@ namespace cinekine {
 
     void ApplicationController::add(const char* name, ViewCreateFn createFn)
     {
-        _viewCreateMap[string(name)] = createFn;
+        _viewCreateMap[std::string(name)] = createFn;
     }
 
     void ApplicationController::next(const char* name)
     {
-        auto viewIt = _viewCreateMap.find(string(name));
+        auto viewIt = _viewCreateMap.find(std::string(name));
         if (viewIt == _viewCreateMap.end())
         {
             OVENGINE_LOG_ERROR("ApplicationController.next - scene '%s' not found", name);
             return;
         }
         auto nextView = (*viewIt).second(*this, _allocator);
-        string rmlPath = "static/ui/";
+        std::string rmlPath = "static/ui/";
         rmlPath += name;
         rmlPath += ".rml";
         _window = _ui.createWindow(rmlPath.c_str(),

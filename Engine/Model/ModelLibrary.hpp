@@ -63,13 +63,13 @@ public:
     /// @param  name The collection's name
     /// @return The ModelCollection with that name or an empty collection
     ///
-    const CollectionType& collectionByName(const string& name) const;
+    const CollectionType& collectionByName(const std::string& name) const;
     /// Returns the slot that contains the specified collection
     ///
     /// @param  name The collection name
     /// @return The Slot
     ///
-    SlotType slotByCollectionName(const string& name) const;
+    SlotType slotByCollectionName(const std::string& name) const;
     /// Retrieves the null collection.
     ///
     /// @return A null/empty ModelCollection.
@@ -124,7 +124,7 @@ auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::collectionAtSlot(SlotTy
 }
 
 template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
-auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::collectionByName(const string& name) const
+auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::collectionByName(const std::string& name) const
     -> const CollectionType&
 {
     for (auto& collection: _collections)
@@ -145,7 +145,7 @@ auto ModelLibrary<_Collection, _SlotType, _InvalidSlot>::nullCollection() const
 template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
 auto ModelLibrary<_Collection,
                   _SlotType,
-                  _InvalidSlot>::slotByCollectionName(const string& name) const
+                  _InvalidSlot>::slotByCollectionName(const std::string& name) const
     -> SlotType
 {
     for (SlotType slot = 0; slot < _collections.size(); ++slot)

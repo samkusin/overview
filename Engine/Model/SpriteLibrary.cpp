@@ -15,12 +15,12 @@ namespace cinekine {
 SpriteLibrary::SpriteLibrary(size_t initTemplateLimit, const Allocator& allocator) :
     _allocator(allocator),
     _templatePool(initTemplateLimit, allocator),
-    _nameToAnimIds(std_allocator<std::pair<string, AnimationStateId>>(allocator)),
-    _nameToTemplates(std_allocator<std::pair<string, Sprite*>>(allocator))
+    _nameToAnimIds(allocator),
+    _nameToTemplates(allocator)
 {
 }
 
-const Sprite& SpriteLibrary::spriteByName(const string& templateName) const
+const Sprite& SpriteLibrary::spriteByName(const std::string& templateName) const
 {
     auto it = _nameToTemplates.find(templateName);
     if (it == _nameToTemplates.end())
@@ -45,7 +45,7 @@ Sprite* SpriteLibrary::createOrModifyFromName(const char* name,
     //  check if a sprite of that name exists, if so use that sprite's id,
     //  and replace the old template with a new one.
     //  otherwise just create a new one.
-    string templateName(name);
+    std::string templateName(name);
     auto itTemplate = _nameToTemplates.find(templateName);
     Sprite* theTemplate;
     if (itTemplate != _nameToTemplates.end())
@@ -72,7 +72,7 @@ bool SpriteLibrary::mapAnimationStateNameToId(const char* name,
         if (val.second == id)
             return false;
     }
-    _nameToAnimIds[string(name)] = id;
+    _nameToAnimIds[std::string(name)] = id;
     return true;
 }
 

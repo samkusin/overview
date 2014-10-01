@@ -38,7 +38,7 @@ public:
     /// @param  name The name of the Block
     /// @return The mapped Block object
     ///
-    const Type& operator[](const string& name) const;
+    const Type& operator[](const std::string& name) const;
 
 
 private:
@@ -47,7 +47,7 @@ private:
 
 ////////////////////////////////////////////////////////////////////
 
-inline auto BlockCollection::operator[](const string& name) const -> const Type&
+inline auto BlockCollection::operator[](const std::string& name) const -> const Type&
 {
     for (auto& block : _models)
     {

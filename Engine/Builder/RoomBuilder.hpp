@@ -28,8 +28,8 @@ namespace cinekine {
 
 struct PaintStyle
 {
-    string floorBlockName;
-    string wallBlockName;
+    std::string floorBlockName;
+    std::string wallBlockName;
 };
 
 void paint(Room room, TileGridMap& grid,

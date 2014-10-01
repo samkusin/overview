@@ -74,7 +74,7 @@ namespace cinekine {
         ovengine::WindowComponentCLI& _ui;
         glx::RendererCLI& _renderer;
         Allocator _allocator;
-        unordered_map<string, ViewCreateFn> _viewCreateMap;
+        unordered_map<std::string, ViewCreateFn> _viewCreateMap;
         std::shared_ptr<ovengine::View> _currentView;
         ovengine::WindowPtr _window;
     };

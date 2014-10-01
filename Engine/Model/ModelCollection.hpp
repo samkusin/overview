@@ -43,7 +43,7 @@ public:
     size_t count() const;
     /// @return The collection name
     ///
-    const string& name() const;
+    const std::string& name() const;
     /// Reference a Model in the collection by index
     /// @param  index The Model's index within the collection
     /// @return The Model object
@@ -59,7 +59,7 @@ protected:
     Container _models;
 
 private:
-    string _name;
+    std::string _name;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ size_t ModelCollection<_Model>::count() const
 }
 
 template<class _Model>
-const string& ModelCollection<_Model>::name() const
+const std::string& ModelCollection<_Model>::name() const
 {
     return _name;
 }

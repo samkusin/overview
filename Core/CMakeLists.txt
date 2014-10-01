@@ -33,7 +33,7 @@ elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
 endif( )
 
 if( CINEK_CXX_COMPILER_CLANG )
-     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++1y -stdlib=libc++" )
+     set( PROJECT_COMPILE_FLAGS "-Wall -Wno-missing-braces -std=c++11 -stdlib=libc++" )
 else( )
      message( FATAL "Compiler not supported" )
 endif( )
@@ -56,7 +56,8 @@ include_directories( "${CINEK_SDK_ROOT_DIR}" "${CINEK_EXT_PACKAGE_DIR}/include" 
 set( PROJECT_STREAM_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/StreamBufRapidJson.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.hpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/ValueConvertGLM.hpp)
 set( PROJECT_STREAM_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.cpp )

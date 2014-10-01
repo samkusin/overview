@@ -11,31 +11,31 @@
 
 #include "Game/Render/IsoNode.hpp"
 
-#include "cinek/objectheap.hpp"
+#include "cinek/objectstack.hpp"
 #include "cinek/vector.hpp"
 
 #include <functional>
 
 namespace cinekine { namespace ovengine {
-    
+
     struct Tile;
-    
+
     class IsoNodeGraph
     {
     public:
         IsoNodeGraph(size_t nodeLimit, const Allocator& allocator);
-        
+
         /// Resets the graph's node lists
         ///
         void reset();
-        
+
         /// Obtains an IsoNode from the graph's pool.
         /// @return A pointer to the IsoNode.  The IsoNodeGraph owns this
         ///         node.
         ///
         IsoNode* obtainNode(const cinek_bitmap& bitmap,
                             const glm::ivec2& viewPos, const AABB<glm::vec3>& box);
-        
+
         /// Sort the graph based on the current node list
         /// The current version makes this operation an n^2 one.  we could probably
         /// optimize this sort, so that our algortihm gathers behind nodes B1...BN
@@ -44,7 +44,7 @@ namespace cinekine { namespace ovengine {
         /// operation.
         ///
         void sort();
-        
+
         /// Iterates through all IsoNode objects in the container
         ///
         /// @param  fn The delegate to call for every tile
@@ -59,14 +59,14 @@ namespace cinekine { namespace ovengine {
         /// @return The index to the node on the behind list
         ///
         uint32_t pushNodeBehind(IsoNode* node);
-        
+
         /// Sorts the node and its behind nodes in the graph
         ///
         /// @param node  The IsoNode to sort
         ///
         void fixupNode(IsoNode* node);
-        
-        ObjectHeap<IsoNode> _nodePool;
+
+        ObjectStack<IsoNode> _nodePool;
         vector<IsoNode*> _nodes;
         //  these are the collective nodes behind *each* IsoNode
         //  each IsoNode refers to a particular slice of this vector.
@@ -74,10 +74,10 @@ namespace cinekine { namespace ovengine {
         //  continguous block of pointers that point to an (ideally)
         //  contingous pool of IsoNodes.
         vector<IsoNode*> _nodesBehind;
-        
+
         uint32_t _sortDepth;
     };
-    
+
 } /* namespace ovengine */ } /* namespace cinekine */
 
 #endif

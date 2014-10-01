@@ -42,7 +42,7 @@ public:
 private:
     Allocator _allocator;
     std::function<void(BlockCollection&&)> _collectionCb;
-    string _name;
+    std::string _name;
     BlockCollection::Container _models;
 };
 

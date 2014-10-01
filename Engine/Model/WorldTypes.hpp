@@ -13,8 +13,6 @@
 #include "Engine/Model/ModelTypes.hpp"
 #include "Engine/Grid.hpp"
 
-#include "cinek/objectpool.hpp"
-
 namespace cinekine {
     namespace ovengine {
         class SpriteInstance;
@@ -31,6 +29,7 @@ using TileGrid = Grid<TileId>;
 using TileGridContainer = GridContainer<TileGrid>;
 
 using SpriteInstancePtr = SpriteInstance*;
+using ConstSpriteInstancePtr = const SpriteInstance*;
 
 inline TileId compressTileToId(TileSlot slot, TileIndex index)
 {

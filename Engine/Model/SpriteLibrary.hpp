@@ -14,7 +14,7 @@
 
 #include "cinek/string.hpp"
 #include "cinek/allocator.hpp"
-#include "cinek/objectheap.hpp"
+#include "cinek/objectstack.hpp"
 
 #include <unordered_map>
 
@@ -58,7 +58,7 @@ public:
      * @param  templateName SpriteTemplate name.
      * @return If no sprite is found, returns an empty Sprite.
      */
-    const Sprite& spriteByName(const string& templateName) const;
+    const Sprite& spriteByName(const std::string& templateName) const;
     /**
      * Returns the animation ID given its state name.
      *
@@ -98,7 +98,7 @@ public:
 private:
     Allocator _allocator;
     Sprite _nullSprite;
-    ObjectHeap<Sprite> _templatePool;
+    ObjectStack<Sprite> _templatePool;
 
     template <typename Key, typename T>
     using unordered_map = std::unordered_map<Key, T,
@@ -106,8 +106,8 @@ private:
         std::equal_to<Key>,
         std_allocator<std::pair<const Key, T>> >;
 
-    unordered_map<string, AnimationStateId> _nameToAnimIds;
-    unordered_map<string, Sprite*> _nameToTemplates;
+    unordered_map<std::string, AnimationStateId> _nameToAnimIds;
+    unordered_map<std::string, Sprite*> _nameToTemplates;
 };
 
     }   // namespace ovengine

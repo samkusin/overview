@@ -11,7 +11,7 @@
 #define Overview_Model_RoomGraphInterface_Hpp
 
 #include "Engine/Model/RoomGraph.hpp"
-#include "cinek/objectheap.hpp"
+#include "cinek/objectstack.hpp"
 
 #include "cinek/vector.hpp"
 
@@ -53,8 +53,8 @@ private:
     friend class Portal;
     RoomNode* _root;
 
-    ObjectHeap<RoomNode> _roomPool;
-    ObjectHeap<PortalNode> _portalPool;
+    ObjectStack<RoomNode> _roomPool;
+    ObjectStack<PortalNode> _portalPool;
     vector<RoomVertex> _portalVertices;
 };
 

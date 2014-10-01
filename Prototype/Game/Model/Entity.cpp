@@ -6,18 +6,17 @@
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Engine/Model/Entity.hpp"
+#include "Game/Model/Entity.hpp"
 
 namespace cinekine {
-    namespace ovengine {
+    namespace prototype {
 
-Entity::Entity(EntityId id, const Point& pos) :
+Entity::Entity(EntityId id, const glm::vec3& pos) :
     _id(id),
     _position(pos)
 {
 
 }
 
-
-    } /* namespace ovengine */
+    } /* namespace prototype */
 } /* namespace cinekine */

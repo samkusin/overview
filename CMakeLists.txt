@@ -21,7 +21,7 @@ set( CINEK_SDK_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 
 set( CINEK_CXX_EXCEPTIONS OFF CACHE BOOL "Disable C++ exception handling where applicable" )
 
-set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
+set( CINEK_GTEST OFF CACHE BOOL "Enable C++ testing" )
 
 set( CMAKE_PREFIX_PATH "${CINEK_EXT_PACKAGE_DIR}" ${CMAKE_PREFIX_PATH} )
 
@@ -65,8 +65,4 @@ foreach( PROJECT_MODULE ${PROJECT_MODULES} )
     endif( )
 endforeach( PROJECT_MODULE )
 
-# Build Executable
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-# Apple OSX
-# add_executable( ovengine MACOSX_BUNDLE ${PROJECT_SOURCES} )
