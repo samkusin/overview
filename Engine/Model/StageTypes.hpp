@@ -28,6 +28,8 @@ using TileGrid = Grid<TileId>;
 /** Defines a tilemap section */
 using TileGridContainer = GridContainer<TileGrid>;
 
+using SpriteInstanceId = uint32_t;
+
 using SpriteInstancePtr = SpriteInstance*;
 using ConstSpriteInstancePtr = const SpriteInstance*;
 

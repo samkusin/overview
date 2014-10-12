@@ -7,10 +7,10 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Model_World_hpp
-#define Overview_Model_World_hpp
+#ifndef Overview_Model_Stage_hpp
+#define Overview_Model_Stage_hpp
 
-#include "Engine/Model/WorldTypes.hpp"
+#include "Engine/Model/StageTypes.hpp"
 #include "Engine/Model/RoomGraph.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/Tile.hpp"
@@ -35,19 +35,18 @@ namespace cinekine {
 namespace cinekine { namespace ovengine {
 
 /**
- * @class   World
- * @brief   The data store for a simulation's model instances
+ * @class   Stage
+ * @brief   The Stage store for a simulation's model instances
  * @details The World is the highest level construct for a self-contained
- *          simulation world.   Its inputs consist of various 'model libraries'
- *          used to construct model instances.  For example, an application can
- *          create one or more worlds sharing common Sprite or Tile model
- *          libraries.  Each World though contains its own set of model
- *          instances.
+ *          container of viewable objets.   Its inputs consist of various
+ *          'model libraries' used to construct model instances.  For example,
+ *          an application can create one or more worlds sharing common Sprite
+ *          or Tile model libraries.
  */
-class World
+class Stage
 {
 public:
-    World(RoomGraph&& roomGraph,
+    Stage(RoomGraph&& roomGraph,
           TileGridMap&& tileGridMap,
           const TileLibrary& tileDb,
           const Allocator& allocator);
@@ -66,20 +65,20 @@ public:
      */
     const Tile& tileInfo(TileId tileId) const;
     /**
-     * Attaches a SpriteInstance to the World
+     * Attaches a SpriteInstance to the Stage
      *
-     * @param  instance The instance to attach from the World
+     * @param  instance The instance to attach from the Stage
      */
     void attachSpriteInstance(SpriteInstancePtr instance);
     /**
      * Detaches the SpriteInstance from the Wrold
      *
-     * @param  instance The instance to detach from the World
+     * @param  instance The instance to detach from the Stage
      */
     void detachSpriteInstance(SpriteInstancePtr instance);
 
     /**
-     * Selects ViewModel (SpriteInstance reference) lists from the World that
+     * Selects ViewModel (SpriteInstance reference) lists from the Stage that
      * intersect a supplied AABB.
      *
      * This method will select instance lists.  Each instance list has its own
@@ -88,7 +87,7 @@ public:
      * individual ViewModel (SpriteInstance) references from the returned lists
      * if it wants a precise result of all instances within the bounds.
      *
-     * @param bounds A bounding box that intersects one or more World sections.
+     * @param bounds A bounding box that intersects one or more Stage sections.
      *               Each section has its own AABB and instance list.  See the
      *               method definition for details on this process.
      * @param cb     Callback issued for each selected SpriteInstanceList

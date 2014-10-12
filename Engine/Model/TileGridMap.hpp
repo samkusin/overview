@@ -11,7 +11,7 @@
 #ifndef Overview_Model_TileGridMap_hpp
 #define Overview_Model_TileGridMap_hpp
 
-#include "Engine/Model/WorldTypes.hpp"
+#include "Engine/Model/StageTypes.hpp"
 
 namespace cinekine { namespace ovengine {
 

@@ -1,5 +1,5 @@
 //
-//  World.cpp
+//  Stage.cpp
 //  Implementation
 //
 //  Copyright 2014 Cinekine Media All rights reserved.
@@ -7,7 +7,7 @@
 //  License: The MIT License (MIT)
 //
 
-#include "Engine/Model/World.hpp"
+#include "Engine/Model/Stage.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Engine/Model/TileLibrary.hpp"
@@ -15,7 +15,7 @@
 
 namespace cinekine { namespace ovengine {
 
-World::World(RoomGraph&& roomGraph,
+Stage::Stage(RoomGraph&& roomGraph,
              TileGridMap&& tileGridMap,
              const TileLibrary& tileDb,
              const Allocator& allocator) :
@@ -25,26 +25,26 @@ World::World(RoomGraph&& roomGraph,
 {
 }
 
-const Tile& World::tileInfo(TileId tileId) const
+const Tile& Stage::tileInfo(TileId tileId) const
 {
     return _tileDb.tileFromCollectionAtIndex(slotFromTileId(tileId),
                                              indexFromTileId(tileId));
 }
 
-void World::attachSpriteInstance(SpriteInstancePtr instance)
+void Stage::attachSpriteInstance(SpriteInstancePtr instance)
 {
     // TODO: select the instance list based on the sprite's position
     _sprites.push_back(instance);
 }
 
-void World::detachSpriteInstance(SpriteInstancePtr instance)
+void Stage::detachSpriteInstance(SpriteInstancePtr instance)
 {
     //  TODO: select the instance list based on the instance's position
     _sprites.remove(instance);
 }
 
 /*
- * Selects ViewModel (SpriteInstance reference) lists from the World that
+ * Selects ViewModel (SpriteInstance reference) lists from the Stage that
  * intersect a supplied AABB.
  *
  * This method will select instance lists.  Each instance list has its own
@@ -53,7 +53,7 @@ void World::detachSpriteInstance(SpriteInstancePtr instance)
  * individual ViewModel (SpriteInstance) references from the returned lists
  * if it wants a precise result of all instances within the bounds.
  */
-void World::selectInstanceLists(const AABB<Point>& bounds,
+void Stage::selectInstanceLists(const AABB<Point>& bounds,
                                 std::function<void(const SpriteInstanceList&)> cb) const
 {
     auto overlayDims = _gridMap.overlayDimensions();
