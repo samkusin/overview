@@ -31,6 +31,7 @@
 namespace cinekine {
     namespace ovengine {
         class IsoScene;
+        class Simulation;
     }
 }
 
@@ -100,6 +101,8 @@ namespace cinekine {
         ovengine::SpriteLibrary _spriteLibrary;
         
         JsonDocument _gameDocument;
+        
+        unique_ptr<ovengine::Simulation> _simulation;
 
         ObjectPool<ovengine::SpriteInstance> _spritePool;
 

@@ -97,8 +97,7 @@ namespace cinekine {
 
     //////////////////////////////////////////////////////////////////////////
 
-    GL3Texture::GL3Texture(Renderer& renderer, const char* pathname) :
-        _renderer(renderer),
+    GL3Texture::GL3Texture(const char* pathname) :
         _texture(0),
         _width(0),
         _height(0),
@@ -115,10 +114,9 @@ namespace cinekine {
         SDL_FreeSurface(sdlSurface);
     }
 
-    GL3Texture::GL3Texture(Renderer& renderer, uint32_t w, uint32_t h,
+    GL3Texture::GL3Texture(uint32_t w, uint32_t h,
             cinek_pixel_format format,
             const uint8_t* bytes) :
-        _renderer(renderer),
         _texture(0),
         _width(0),
         _height(0)
@@ -163,14 +161,13 @@ namespace cinekine {
                 _width = (uint32_t)width;
                 _height = (uint32_t)height;
                 _samplerFormat = format == kCinekPixelFormat_A8 ? kFormatRed : kFormatRGBA;
-            
                 return _texture;
             }
         }
         _texture = 0;
         return _texture;
     }
-    
+
     GL3Texture::~GL3Texture()
     {
         if (_texture != 0)
@@ -180,13 +177,12 @@ namespace cinekine {
         }
 
     }
-    
+
     GL3Texture::GL3Texture(GL3Texture&& other) :
-        _renderer(other._renderer),
         _texture(other._texture)
     {
         other._texture = 0;
     }
-        
+
     }   // namespace glx
 }   // namespace cinekine

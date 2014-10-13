@@ -37,15 +37,6 @@ namespace cinekine { namespace ovengine {
         int32_t layerIndex;     /**< Maps to a TileGridMap layer */
     };
 
-    enum class Quadrant
-    {
-        kTopLeft,
-        kTopRight,
-        kBottomRight,
-        kBottomLeft,
-        kCount
-    };
-
 } /* namespace ovengine */ } /* namespace cinekine */
 
 #endif

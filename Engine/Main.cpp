@@ -92,10 +92,12 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
         renderer.display();
     }
 
+    windowComponent->update(SDL_GetTicks());
+    
     ovengine::DestroyDirector(director);
     director = nullptr;
 
-    windowComponent->update(SDL_GetTicks());
+    windowComponent = nullptr;
 
     return 0;
 }

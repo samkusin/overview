@@ -7,6 +7,7 @@
 //
 
 #include "Game/GameView.hpp"
+#include "Game/Simulation.hpp"
 
 #include "Game/StageGenerator.hpp"
 
@@ -44,10 +45,9 @@ namespace cinekine {
         _bitmapLibrary(_application.renderer(), _allocator),
         _fontLibrary(_application.renderer(), 1, _allocator),
         _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
-        _tileLibrary(1024, _allocator),
+        _tileLibrary(256, _allocator),
         _spriteLibrary(256, _allocator),
-        _spritePool(2048, _allocator),
-        _playerSprite()
+        _spritePool(256, _allocator)
     {
         //  this should be an application-wide op (move _fontLibrary to ApplicationController)
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
@@ -73,6 +73,11 @@ namespace cinekine {
         params.roomLimit = 8;
         _stage = _stageGenerator->createWorld(_tileLibrary, _spriteLibrary, params);
         
+        /*_simulation = unique_ptr<ovengine::Simulation>
+                                (_allocator.newItem<ovengine::Simulation>(_stage->tileGridMap(),
+                                                                          _allocator),
+                                 _allocator);
+        */
         //  create our scene graph from the stage
         auto viewport = _application.renderer().getViewport();
         glm::ivec2 viewDimensions(viewport.width(), viewport.height());

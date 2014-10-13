@@ -44,8 +44,8 @@ namespace cinekine {
         CK_CLASS_NON_COPYABLE(GL3Texture);
 
     public:
-        GL3Texture(Renderer& renderer, const char *pathname);
-        GL3Texture(Renderer& renderer, uint32_t w, uint32_t h,
+        GL3Texture(const char *pathname);
+        GL3Texture(uint32_t w, uint32_t h,
             cinek_pixel_format format,
             const uint8_t* bytes);
         GL3Texture(GL3Texture&& other);
@@ -79,7 +79,6 @@ namespace cinekine {
         GLuint createTexture(uint32_t w, uint32_t h,
                              cinek_pixel_format format,
                              const uint8_t* bytes);
-        Renderer& _renderer;
         GLuint _texture;
         uint32_t _width, _height;
         SamplerFormat _samplerFormat;

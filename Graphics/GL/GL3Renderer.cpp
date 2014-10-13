@@ -112,9 +112,9 @@ namespace cinekine {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Texture> texture = std::allocate_shared<GL3Texture,
                                                                 std_allocator<GL3Texture>,
-                                                                GL3Renderer&, const char*>
+                                                                const char*>
             (
-                std_allocator<GL3Texture>(allocator), *this, std::move(pathname)
+                std_allocator<GL3Texture>(allocator), std::move(pathname)
             );
 
         return texture;
@@ -127,12 +127,11 @@ namespace cinekine {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Texture> texture = std::allocate_shared<GL3Texture,
                                                                 std_allocator<GL3Texture>,
-                                                                GL3Renderer&,
                                                                 uint32_t, uint32_t,
                                                                 cinek_pixel_format,
                                                                 const uint8_t*>
             (
-                std_allocator<GL3Texture>(allocator), *this,
+                std_allocator<GL3Texture>(allocator),
                                           std::move(w), std::move(h),
                                           std::move(format), std::move(bytes)
             );

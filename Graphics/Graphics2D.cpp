@@ -53,8 +53,8 @@ namespace cinekine {
         _polyVertsColor.reserve(32);
 
         //  build pattern texture for fills
-        uint8_t solid = 255;
-        _solidTexture = _renderer.createTextureFromBuffer(1,1, kCinekPixelFormat_A8, &solid);
+        uint8_t solid[] = { 255, 255, 255, 255 };
+        _solidTexture = _renderer.createTextureFromBuffer(2,2, kCinekPixelFormat_A8, solid);
     }
 
     Graphics2D::~Graphics2D()
