@@ -18,7 +18,7 @@
 
 namespace cinekine {
     namespace ovengine {
-        class World;
+        class Stage;
     } /* namespace ovengine */
 } /* namespace cinekine */
 
@@ -38,7 +38,7 @@ namespace cinekine { namespace ovengine {
     public:
         IsoScene(const glm::ivec2& viewDimensions,
                  const glm::ivec2& tileDimensions,
-                 const ovengine::World& world,
+                 const ovengine::Stage& stage,
                  const Allocator& allocator);
         
         void update(uint32_t ticks, const Point& pos);
@@ -53,7 +53,7 @@ namespace cinekine { namespace ovengine {
         void attachTileToGraph(const Point& viewPos, const Point& isoPos);
         
     private:
-        const ovengine::World& _world;
+        const ovengine::Stage& _stage;
         const ovengine::TileGridMap& _tileGridMap;
         const Point _tileDim;
         Point _viewDim;
@@ -61,7 +61,7 @@ namespace cinekine { namespace ovengine {
         Allocator _allocator;
         
         Point _centerPos;
-        AABB<Point> _isoWorldBounds;
+        AABB<Point> _isoStageBounds;
         AABB<Point> _viewBounds;
         AABB<Point> _viewAlignedBounds;
         glm::ivec2 _screenOffset;

@@ -11,30 +11,60 @@
 
 #include "Game/Model/EntityTypes.hpp"
 
+//  Bullet forward decls
+class btCollisionObject;
+
+//  Engine forward declarations
 namespace cinekine {
-    namespace prototype {
+    namespace ovengine {
+        class EntityTemplate;
+    }
+}
+
+namespace cinekine {
+    namespace ovengine {
 
     class Entity
     {
     public:
-        /// Constructs an Entity with an initial position
+        /// Constructs an Entity with its components
         ///
-        Entity(EntityId id, const glm::vec3& pos);
+        Entity(EntityId id, const EntityTemplate& entityTempl);
 
         /// @return The Entity's identifier
         EntityId id() const;
+        
+        /// @ return The Entity's template object
+        const EntityTemplate& sourceTemplate() const;
 
         /// @return The current position of the Entity
-        const glm::vec3& position() const;
+        glm::vec3 position() const;
+        
+        /// @return The Front direction vector
+        glm::vec3 frontDirection() const;
 
+        /// Associates a collision body with the Entity.  The Entity
+        /// does not own the body, and the caller should invoke detachBody
+        /// prior to destroying the associated body object (or otherwise
+        /// destroy the Entity prior to destroying the body object.)
+        ///
+        /// @param body The collision engine-specific body
+        ///
+        void attachBody(btCollisionObject* body);
+        
+        /// Detaches a collision body from the entity
+        ///
+        /// @return The collision engine-specific body
+        ///
+        btCollisionObject* detachBody();
+        
     private:
+        const EntityTemplate& _template;
         const EntityId _id;
-        glm::vec3 _position;
-        
-        
+        btCollisionObject* _bodyObject;
     };
 
-    }   /* namespace prototype */
+    }   /* namespace ovengine */
 }   /* namespace cinekine */
 
 #include "Game/Model/Entity.inl"

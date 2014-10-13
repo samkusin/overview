@@ -19,10 +19,15 @@
 		374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931461904A73B002C7DE3 /* Cocoa.framework */; };
 		374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931481904A75B002C7DE3 /* IOKit.framework */; };
 		3764ECC8198EB2E50078EE3A /* StageGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3764ECC6198EB2E50078EE3A /* StageGenerator.cpp */; };
+		3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; };
+		3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; };
+		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		37A9CE4419316F3A0065CAA8 /* libCKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4019316F3A0065CAA8 /* libCKCore.a */; };
 		37A9CE4519316F3A0065CAA8 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4119316F3A0065CAA8 /* libCKFramework.a */; };
 		37A9CE4619316F3A0065CAA8 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4219316F3A0065CAA8 /* libCKGL.a */; };
 		37A9CE4719316F3A0065CAA8 /* libCKOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4319316F3A0065CAA8 /* libCKOVEngine.a */; };
+		37BC8F6319E2EFF300F5DEB8 /* EntityTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BC8F6219E2EFF300F5DEB8 /* EntityTemplate.cpp */; };
 		37DFA0951850108200382685 /* ApplicationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* ApplicationController.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
@@ -37,6 +42,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in CopyFiles */,
+				3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,10 +70,16 @@
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		3764ECC6198EB2E50078EE3A /* StageGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StageGenerator.cpp; path = ../Game/StageGenerator.cpp; sourceTree = "<group>"; };
 		3764ECC7198EB2E50078EE3A /* StageGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StageGenerator.hpp; path = ../Game/StageGenerator.hpp; sourceTree = "<group>"; };
+		3783683519DCF8A8009EEE83 /* EntityTemplate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplate.hpp; sourceTree = "<group>"; };
+		3783683619DD0F2D009EEE83 /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = ../../External/framework/BulletCollision.framework; sourceTree = "<group>"; };
+		3783683719DD0F2D009EEE83 /* LinearMath.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinearMath.framework; path = ../../External/framework/LinearMath.framework; sourceTree = "<group>"; };
+		3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.2.82.dylib; path = ../../External/lib/libBulletCollision.2.82.dylib; sourceTree = "<group>"; };
+		3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.2.82.dylib; path = ../../External/lib/libLinearMath.2.82.dylib; sourceTree = "<group>"; };
 		37A9CE4019316F3A0065CAA8 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
 		37A9CE4119316F3A0065CAA8 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../build-xcode/cinek/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37A9CE4219316F3A0065CAA8 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../build-xcode/Graphics/Debug/libCKGL.a"; sourceTree = "<group>"; };
 		37A9CE4319316F3A0065CAA8 /* libCKOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKOVEngine.a; path = "../../build-xcode/Engine/Debug/libCKOVEngine.a"; sourceTree = "<group>"; };
+		37BC8F6219E2EFF300F5DEB8 /* EntityTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplate.cpp; sourceTree = "<group>"; };
 		37D11678191C9212008E27B5 /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Game/GameView.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* ApplicationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApplicationController.cpp; path = ../ApplicationController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* ApplicationController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ApplicationController.hpp; path = ../ApplicationController.hpp; sourceTree = "<group>"; };
@@ -85,6 +98,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */,
+				3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */,
 				37A9CE4419316F3A0065CAA8 /* libCKCore.a in Frameworks */,
 				37A9CE4519316F3A0065CAA8 /* libCKFramework.a in Frameworks */,
 				37A9CE4619316F3A0065CAA8 /* libCKGL.a in Frameworks */,
@@ -103,10 +118,13 @@
 		371AF4EA19D29C6E002EF32B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				376D7F5819E9CAA4005724D7 /* Physics */,
 				371AF4EB19D29C6E002EF32B /* Entity.cpp */,
 				371AF4EC19D29C6E002EF32B /* Entity.hpp */,
 				371AF4ED19D29C6E002EF32B /* Entity.inl */,
 				371AF4EE19D29C6E002EF32B /* EntityTypes.hpp */,
+				3783683519DCF8A8009EEE83 /* EntityTemplate.hpp */,
+				37BC8F6219E2EFF300F5DEB8 /* EntityTemplate.cpp */,
 			);
 			name = Model;
 			path = ../Game/Model;
@@ -124,6 +142,13 @@
 				372C4A4419859E45007319D1 /* IsoNodeGraph.hpp */,
 			);
 			name = Render;
+			sourceTree = "<group>";
+		};
+		376D7F5819E9CAA4005724D7 /* Physics */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Physics;
 			sourceTree = "<group>";
 		};
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
@@ -175,6 +200,10 @@
 		37F64A931780EA2C009116E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */,
+				3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */,
+				3783683619DD0F2D009EEE83 /* BulletCollision.framework */,
+				3783683719DD0F2D009EEE83 /* LinearMath.framework */,
 				374931481904A75B002C7DE3 /* IOKit.framework */,
 				374931461904A73B002C7DE3 /* Cocoa.framework */,
 				374931441904A72E002C7DE3 /* OpenGL.framework */,
@@ -296,6 +325,7 @@
 				37DFA0951850108200382685 /* ApplicationController.cpp in Sources */,
 				3764ECC8198EB2E50078EE3A /* StageGenerator.cpp in Sources */,
 				371AF4EF19D29C6E002EF32B /* Entity.cpp in Sources */,
+				37BC8F6319E2EFF300F5DEB8 /* EntityTemplate.cpp in Sources */,
 				372C4A3F1984659C007319D1 /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,6 +447,7 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
+					/Users/samir/Development/cinekine/overview/External/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
@@ -449,6 +480,7 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
+					/Users/samir/Development/cinekine/overview/External/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (

@@ -7,7 +7,7 @@
 //
 
 #include "Game/Render/IsoScene.hpp"
-#include "Engine/Model/World.hpp"
+#include "Engine/Model/Stage.hpp"
 #include "Graphics/RendererCLI.hpp"
 #include "Graphics/Rect.hpp"
 
@@ -15,10 +15,10 @@ namespace cinekine { namespace ovengine {
     
     IsoScene::IsoScene(const glm::ivec2& viewDimensions,
                        const glm::ivec2& tileDimensions,
-                       const ovengine::World& world,
+                       const ovengine::Stage& stage,
                        const Allocator& allocator) :
-        _world(world),
-        _tileGridMap(world.tileGridMap()),
+        _stage(stage),
+        _tileGridMap(_stage.tileGridMap()),
         _tileDim(tileDimensions.x, tileDimensions.y, tileDimensions.y),
         _viewDim(viewDimensions.x, viewDimensions.y, 0.f),
         _allocator(allocator),
@@ -30,13 +30,13 @@ namespace cinekine { namespace ovengine {
         //  works for development purposes
         //
         float zTiles = _tileGridMap.overlayToFloorRatio() * 1.f;
-        _isoWorldBounds.min = Point(0,0, -zTiles*0.5f);
-        _isoWorldBounds.max = Point(overlayGrid.columnCount(),
+        _isoStageBounds.min = Point(0,0, -zTiles*0.5f);
+        _isoStageBounds.max = Point(overlayGrid.columnCount(),
                                     overlayGrid.rowCount(),
                                     zTiles*0.5f);
         _viewDim.z = zTiles * _tileDim.z;
 
-        _centerPos = _isoWorldBounds.center();
+        _centerPos = _isoStageBounds.center();
         setupViewBounds(isoToViewPos(_centerPos));
     }
         
@@ -76,9 +76,9 @@ namespace cinekine { namespace ovengine {
             {
                 viewTilePos.x = viewX;
                 auto isoTilePos = viewToIsoPos(viewTilePos);
-                if (isoTilePos.x >= _isoWorldBounds.min.x && isoTilePos.x < _isoWorldBounds.max.x &&
-                    isoTilePos.y >= _isoWorldBounds.min.y && isoTilePos.y < _isoWorldBounds.max.y &&
-                    isoTilePos.z >= _isoWorldBounds.min.z && isoTilePos.z < _isoWorldBounds.max.z)
+                if (isoTilePos.x >= _isoStageBounds.min.x && isoTilePos.x < _isoStageBounds.max.x &&
+                    isoTilePos.y >= _isoStageBounds.min.y && isoTilePos.y < _isoStageBounds.max.y &&
+                    isoTilePos.z >= _isoStageBounds.min.z && isoTilePos.z < _isoStageBounds.max.z)
                 {
                     attachTileToGraph(viewTilePos - _viewBounds.min, isoTilePos);
                 }
@@ -113,7 +113,7 @@ namespace cinekine { namespace ovengine {
         }
         context = { this, ticks };
         
-        _world.selectInstanceLists(isoBounds,
+        _stage.selectInstanceLists(isoBounds,
                                    [&context](const ovengine::SpriteInstanceList& instances)
                                    {
                                        IsoScene* scene = context.scene;
@@ -157,7 +157,7 @@ namespace cinekine { namespace ovengine {
             auto tileId = _tileGridMap.floor().at(floorY, floorX);
             if (tileId)
             {
-                auto& tileInfo = _world.tileInfo(tileId);
+                auto& tileInfo = _stage.tileInfo(tileId);
 
                 isoBox =  tileInfo.aabb + isoPos;
                 
@@ -173,7 +173,7 @@ namespace cinekine { namespace ovengine {
         auto tileId = _tileGridMap.overlay().at(overlayY, overlayX);
         if (tileId)
         {
-            auto& tileInfo = _world.tileInfo(tileId);
+            auto& tileInfo = _stage.tileInfo(tileId);
             
             isoBox = tileInfo.aabb + isoPos;
             
@@ -215,7 +215,7 @@ namespace cinekine { namespace ovengine {
     void IsoScene::setupViewBounds(const Point& viewPos)
     {
         //  calculate view anchor
-        //  this is the world bounds for our view,
+        //  this is the stage bounds for our view,
         _viewBounds.min = viewPos - _viewDim*0.5f;
         _viewBounds.max = viewPos + _viewDim*0.5f;
         
@@ -226,7 +226,7 @@ namespace cinekine { namespace ovengine {
         _viewBounds.max += _tileDim * (2.f*kOverlayTilePerFloor);
         
         //  our bounds aligned to tile dimensions - this is used as the bounding rect
-        //  for drawing our isoworld
+        //  for drawing our isostage
         _viewAlignedBounds.min.x = _tileDim.x * floorf(_viewBounds.min.x/_tileDim.x);
         _viewAlignedBounds.min.y = _tileDim.y * floorf(_viewBounds.min.y/_tileDim.y);
         _viewAlignedBounds.min.z = _tileDim.z * floorf(_viewBounds.min.z/_tileDim.z);

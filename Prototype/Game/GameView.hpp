@@ -12,7 +12,7 @@
 #include "Render/RenderDefines.hpp"
 
 #include "Engine/View.hpp"
-#include "Engine/Model/World.hpp"
+#include "Engine/Model/Stage.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
@@ -36,6 +36,29 @@ namespace cinekine {
 
 namespace cinekine {
     namespace prototype {
+        
+    //  Animation states as defined in the sprite database file
+    //
+    enum
+    {
+        kAnimationState_Idle            = 0,
+        kAnimationState_Idle_North      = 1,
+        kAnimationState_Idle_NorthEast  = 2,
+        kAnimationState_Idle_East       = 3,
+        kAnimationState_Idle_SouthEast  = 4,
+        kAnimationState_Idle_South      = 5,
+        kAnimationState_Idle_SouthWest  = 6,
+        kAnimationState_Idle_West       = 7,
+        kAnimationState_Idle_NorthWest  = 8,
+        kAnimationState_Walk_North      = 9,
+        kAnimationState_Walk_NorthEast  = 10,
+        kAnimationState_Walk_East       = 11,
+        kAnimationState_Walk_SouthEast  = 12,
+        kAnimationState_Walk_South      = 13,
+        kAnimationState_Walk_SouthWest  = 14,
+        kAnimationState_Walk_West       = 15,
+        kAnimationState_Walk_NorthWest  = 16
+    };
 
     class ApplicationController;
     class StageGenerator;
@@ -80,7 +103,7 @@ namespace cinekine {
 
         ObjectPool<ovengine::SpriteInstance> _spritePool;
 
-        std::shared_ptr<ovengine::World> _world;
+        std::shared_ptr<ovengine::Stage> _stage;
         
         Point _viewPos;
         unique_ptr<ovengine::IsoScene> _isoScene;

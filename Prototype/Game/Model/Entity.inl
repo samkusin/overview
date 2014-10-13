@@ -8,15 +8,15 @@
 /// @license    The MIT License
 
 namespace cinekine {
-    namespace prototype {
+    namespace ovengine {
 
-    EntityId Entity::id() const {
+    inline EntityId Entity::id() const {
         return _id;
     }
-
-    inline const glm::vec3& Entity::position() const {
-        return _position;
+        
+    inline const EntityTemplate& Entity::sourceTemplate() const {
+        return _template;
     }
 
-    }   /* namespace prototype */
+    }   /* namespace ovengine */
 }   /* namespace cinekine */

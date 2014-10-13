@@ -7,7 +7,7 @@
 //
 
 #include "Game/StageGenerator.hpp"
-#include "Engine/Model/World.hpp"
+#include "Engine/Model/Stage.hpp"
 #include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/RoomGraph.hpp"
@@ -39,7 +39,7 @@ namespace cinekine { namespace prototype {
         ovengine::unserializeFromJSON(dbStream, loader);
     }
     
-    std::shared_ptr<ovengine::World>  StageGenerator::createWorld(const ovengine::TileLibrary& tileLibrary,
+    std::shared_ptr<ovengine::Stage>  StageGenerator::createWorld(const ovengine::TileLibrary& tileLibrary,
                                                 const ovengine::SpriteLibrary& spriteLibrary,
                                                 const CreateWorldParams& params)
     {
@@ -108,8 +108,8 @@ namespace cinekine { namespace prototype {
                                       style, blockCollection, tileCollectionSlot);
 
         
-        return std::allocate_shared<ovengine::World,
-                                    std_allocator<ovengine::World>,
+        return std::allocate_shared<ovengine::Stage,
+                                    std_allocator<ovengine::Stage>,
                                     ovengine::RoomGraph&&,
                                     ovengine::TileGridMap&&,
                                     const ovengine::TileLibrary&,

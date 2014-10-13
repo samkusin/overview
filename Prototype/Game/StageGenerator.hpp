@@ -10,7 +10,7 @@
 #define Overview_StageGenerator_hpp
 
 #include "Engine/Builder/BlockLibrary.hpp"
-#include "Engine/Model/World.hpp"
+#include "Engine/Model/Stage.hpp"
 
 #include "cinek/allocator.hpp"
 
@@ -37,7 +37,7 @@ public:
         int32_t roomLimit;
     };
     
-    std::shared_ptr<ovengine::World> createWorld(const ovengine::TileLibrary& tileLibrary,
+    std::shared_ptr<ovengine::Stage> createWorld(const ovengine::TileLibrary& tileLibrary,
                                                  const ovengine::SpriteLibrary& spriteLibrary,
                                                  const CreateWorldParams& params);
 

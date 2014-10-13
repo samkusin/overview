@@ -9,14 +9,14 @@
 #include "Game/Model/Entity.hpp"
 
 namespace cinekine {
-    namespace prototype {
+    namespace ovengine {
 
-Entity::Entity(EntityId id, const glm::vec3& pos) :
-    _id(id),
-    _position(pos)
+Entity::Entity(EntityId id, const EntityTemplate& entityTempl) :
+    _template(entityTempl),
+    _id(id)
 {
 
 }
 
-    } /* namespace prototype */
+    } /* namespace ovengine */
 } /* namespace cinekine */

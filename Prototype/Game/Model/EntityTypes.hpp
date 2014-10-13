@@ -19,14 +19,13 @@
 #include <glm/glm.hpp>
 
 namespace cinekine {
-    namespace prototype {
+    namespace ovengine {
 
     using EntityId = uint32_t;
 
     using EntityCommand = ValueMap<int, Value<std::string, glm::vec3>>;
         
-        
-    } /* prototype */
+    } /* ovengine */
 } /* cinekine */
 
 #endif

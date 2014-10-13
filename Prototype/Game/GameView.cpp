@@ -37,28 +37,6 @@ namespace cinekine {
     const int32_t TILE_WIDTH = 32;
     const int32_t TILE_HEIGHT = 16;
         
-        
-    enum
-    {
-        kAnimationState_Idle            = 0,
-        kAnimationState_Idle_North      = 1,
-        kAnimationState_Idle_NorthEast  = 2,
-        kAnimationState_Idle_East       = 3,
-        kAnimationState_Idle_SouthEast  = 4,
-        kAnimationState_Idle_South      = 5,
-        kAnimationState_Idle_SouthWest  = 6,
-        kAnimationState_Idle_West       = 7,
-        kAnimationState_Idle_NorthWest  = 8,
-        kAnimationState_Walk_North      = 9,
-        kAnimationState_Walk_NorthEast  = 10,
-        kAnimationState_Walk_East       = 11,
-        kAnimationState_Walk_SouthEast  = 12,
-        kAnimationState_Walk_South      = 13,
-        kAnimationState_Walk_SouthWest  = 14,
-        kAnimationState_Walk_West       = 15,
-        kAnimationState_Walk_NorthWest  = 16
-    };
-
     GameView::GameView(ApplicationController& application,
                        const Allocator& allocator) :
         _application(application),
@@ -93,7 +71,7 @@ namespace cinekine {
         params.floorY = 12;
         params.overlayToFloorRatio = 4;
         params.roomLimit = 8;
-        _world = _stageGenerator->createWorld(_tileLibrary, _spriteLibrary, params);
+        _stage = _stageGenerator->createWorld(_tileLibrary, _spriteLibrary, params);
         
         //  create our scene graph from the stage
         auto viewport = _application.renderer().getViewport();
@@ -102,20 +80,20 @@ namespace cinekine {
         
         auto isoScenePtr = _allocator.newItem<ovengine::IsoScene>(viewDimensions,
                                                                   tileDimensions,
-                                                                  *_world,
+                                                                  *_stage,
                                                                   _allocator);
         _isoScene = unique_ptr<ovengine::IsoScene>(isoScenePtr, _allocator);
 
         
         //  create our player entity
-        auto overlayDims = _world->tileGridMap().overlayDimensions();
+        auto overlayDims = _stage->tileGridMap().overlayDimensions();
         _viewPos = Point(overlayDims.x * 0.5f, overlayDims.y * 0.5f, 0.f);
         
         auto& maleAvatarSprite = _spriteLibrary.spriteByName("warrior");
         _playerSprite = _spritePool.construct(maleAvatarSprite);
         _playerSprite->setState(kAnimationState_Walk_South, 0);
         _playerSprite->setPosition(_viewPos);
-        _world->attachSpriteInstance(_playerSprite);
+        _stage->attachSpriteInstance(_playerSprite);
 
         /*
         std::default_random_engine numGenerator;
@@ -130,12 +108,12 @@ namespace cinekine {
             auto sprite = _spritePool.construct(maleAvatarSprite);
             sprite->setState(stateDist(numGenerator), 0);
             sprite->setPosition(Point(xDist(numGenerator), yDist(numGenerator), 0.f));
-            _world->attachSpriteInstance(sprite);
+            _stage->attachSpriteInstance(sprite);
             _otherSprites.push_back(sprite);
         }
          */
         
-        EntityCommand cmd(2);
+        ovengine::EntityCommand cmd(2);
         cmd.set<int32_t>(10, 12);
         cmd.set<float>(3, 3.14159f);
         cmd.set<glm::vec3>(9, glm::vec3(1.0f, 0.5f, 0.25f));
@@ -152,11 +130,11 @@ namespace cinekine {
         while (!_otherSprites.empty())
         {
             auto sprite = _otherSprites.back();
-            _world->detachSpriteInstance(sprite);
+            _stage->detachSpriteInstance(sprite);
             _otherSprites.pop_back();
         }
 
-        _world->detachSpriteInstance(_playerSprite);
+        _stage->detachSpriteInstance(_playerSprite);
         _playerSprite = nullptr;
     }
     
