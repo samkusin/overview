@@ -9,7 +9,7 @@
 #ifndef Overview_Game_ModelEntity_hpp
 #define Overview_Game_ModelEntity_hpp
 
-#include "Game/Model/EntityTypes.hpp"
+#include "Game/EntityTypes.hpp"
 
 //  Bullet forward decls
 class btCollisionObject;
@@ -67,6 +67,6 @@ namespace cinekine {
     }   /* namespace ovengine */
 }   /* namespace cinekine */
 
-#include "Game/Model/Entity.inl"
+#include "Game/Entity.inl"
 
 #endif

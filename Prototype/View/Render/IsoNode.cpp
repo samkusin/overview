@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/Render/IsoNode.hpp"
-#include "Game/Render/IsoNodeGraph.hpp"
+#include "View/Render/IsoNode.hpp"
+#include "View/Render/IsoNodeGraph.hpp"
 
 namespace cinekine { namespace ovengine {
     

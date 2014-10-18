@@ -38,7 +38,7 @@ public:
     /// @param  name The name of the Block
     /// @return The mapped Block object
     ///
-    const Type& operator[](const std::string& name) const;
+    inline const Type& operator[](const std::string& name) const;
 
 
 private:

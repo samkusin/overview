@@ -10,9 +10,8 @@
 #ifndef Overview_Model_Stage_hpp
 #define Overview_Model_Stage_hpp
 
-#include "Engine/Model/StageTypes.hpp"
-#include "Engine/Model/RoomGraph.hpp"
-#include "Engine/Model/TileGridMap.hpp"
+#include "View/StageTypes.hpp"
+
 #include "Engine/Model/Tile.hpp"
 #include "Engine/Model/SpriteInstance.hpp"
 
@@ -23,12 +22,10 @@
 #include <functional>
 
 namespace cinekine {
-    namespace glx {
-        class BitmapLibrary;
-    }
     namespace ovengine {
+        class GameTemplates;
         class TileLibrary;
-        class SpriteLibrary;
+        class TileGridMap;
     }
 }
 
@@ -46,18 +43,11 @@ namespace cinekine { namespace ovengine {
 class Stage
 {
 public:
-    Stage(RoomGraph&& roomGraph,
-          TileGridMap&& tileGridMap,
-          const TileLibrary& tileDb,
-          const Allocator& allocator);
+    Stage(const GameTemplates& gameTemplates);
 
     /** @return A const reference to a tile map. */
     const TileGridMap& tileGridMap() const {
-        return _gridMap;
-    }
-    /** @return A reference to the tile map. */
-    TileGridMap& tileGridMap() {
-        return _gridMap;
+        return _tileGridMap;
     }
     /**
      * @param  tileId A TileGridMap tile identifier
@@ -96,9 +86,8 @@ public:
                              std::function<void(const SpriteInstanceList&)> cb) const;
 
 private:
-    const TileLibrary& _tileDb;
-    RoomGraph _roomGraph;
-    TileGridMap _gridMap;
+    const TileLibrary& _tileLibrary;
+    const TileGridMap& _tileGridMap;
 
     SpriteInstanceList _sprites;
 };

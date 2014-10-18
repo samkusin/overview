@@ -8,7 +8,7 @@
 
 #include "Overview.hpp"
 #include "ApplicationController.hpp"
-#include "Game/GameView.hpp"
+#include "View/GameView.hpp"
 
 #include "cinek/allocator.hpp"
 

@@ -11,10 +11,9 @@
 #ifndef Overview_Model_TileGridMap_hpp
 #define Overview_Model_TileGridMap_hpp
 
-#include "Engine/Model/StageTypes.hpp"
+#include "Engine/Model/TileGrid.hpp"
 
 namespace cinekine { namespace ovengine {
-
 
 /// @class  TileGridMap
 /// @ingroup TileModel
@@ -22,6 +21,8 @@ namespace cinekine { namespace ovengine {
 ///
 class TileGridMap
 {
+    CK_CLASS_NON_COPYABLE(TileGridMap);
+
 public:
     /// Constructor
     /// Creates a TileGridMap with the specified grid dimensions.
@@ -39,6 +40,13 @@ public:
     TileGridMap(uint32_t xDimension, uint32_t yDimension,
                 uint32_t overlayToFloorRatio,
                 const Allocator& allocator=Allocator());
+
+    /// Default constructor
+    ///
+    TileGridMap();
+
+    TileGridMap(TileGridMap&& other);
+    TileGridMap& operator=(TileGridMap&& other);
 
     /// @return The floor's TileGrid
     ///

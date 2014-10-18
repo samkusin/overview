@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/Model/EntityTemplate.hpp"
+#include "Game/EntityTemplate.hpp"
 
 namespace cinekine {
     namespace ovengine {

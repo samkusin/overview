@@ -9,7 +9,7 @@
 #ifndef Overview_EntityTemplate_hpp
 #define Overview_EntityTemplate_hpp
 
-#include "Game/Model/EntityTypes.hpp"
+#include "Game/EntityTypes.hpp"
 
 #include <string>
 
@@ -19,7 +19,11 @@ namespace cinekine {
     class EntityTemplate
     {
     public:
+        EntityTemplate() = default;
+        
         EntityTemplate(const std::string& name, const std::string& spriteName);
+        
+        const std::string& name() const { return _name; }
         
     private:
         const std::string _name;

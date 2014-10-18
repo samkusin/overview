@@ -9,7 +9,7 @@
 #ifndef Overview_IsoScene_hpp
 #define Overview_IsoScene_hpp
 
-#include "Game/Render/IsoNodeGraph.hpp"
+#include "View/Render/IsoNodeGraph.hpp"
 
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/AABB.hpp"

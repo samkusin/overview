@@ -11,8 +11,10 @@
 
 #include "Render/RenderDefines.hpp"
 
+#include "Shared/GameTemplates.hpp"
+#include "View/Stage.hpp"
+
 #include "Engine/View.hpp"
-#include "Engine/Model/Stage.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
@@ -31,12 +33,13 @@
 namespace cinekine {
     namespace ovengine {
         class IsoScene;
-        class Simulation;
     }
 }
 
 namespace cinekine {
     namespace prototype {
+        
+    class Simulation;
         
     //  Animation states as defined in the sprite database file
     //
@@ -62,7 +65,6 @@ namespace cinekine {
     };
 
     class ApplicationController;
-    class StageGenerator;
         
     class GameView: public ovengine::View
     {
@@ -80,10 +82,6 @@ namespace cinekine {
         virtual void onMouseMove(MouseRegion region, int32_t x, int32_t y);
         virtual void onKeyDown(SDL_Keycode keycode, uint16_t keymod);
         virtual void onKeyUp(SDL_Keycode keycode, uint16_t keymod);
-        
-    private:
-        void loadTileCollection(const char* filename);
-        void loadSpriteCollection(const char* filename);
 
     private:
         void renderReset();
@@ -97,12 +95,9 @@ namespace cinekine {
         glx::FontLibrary _fontLibrary;
         glx::Graphics2D _graphics;
         
-        ovengine::TileLibrary _tileLibrary;
-        ovengine::SpriteLibrary _spriteLibrary;
-        
-        JsonDocument _gameDocument;
-        
-        unique_ptr<ovengine::Simulation> _simulation;
+        unique_ptr<ovengine::GameTemplates> _gameTemplates;
+                
+        unique_ptr<Simulation> _simulation;
 
         ObjectPool<ovengine::SpriteInstance> _spritePool;
 
@@ -110,9 +105,6 @@ namespace cinekine {
         
         Point _viewPos;
         unique_ptr<ovengine::IsoScene> _isoScene;
-        
-        //  Used for generating stage maps (temporary)
-        unique_ptr<StageGenerator> _stageGenerator;
         
         //  objects
         ovengine::SpriteInstancePtr _playerSprite;

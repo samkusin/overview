@@ -10,8 +10,7 @@
 
 namespace cinekine { namespace ovengine {
 
-RoomGraph::Impl::Impl(size_t maxRooms,
-                                       const Allocator& allocator) :
+RoomGraph::Impl::Impl(size_t maxRooms, const Allocator& allocator) :
     _root(nullptr),
     _roomPool(maxRooms, allocator),
     _portalPool(maxRooms * kRoomSide_Count, allocator),

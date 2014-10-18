@@ -9,32 +9,36 @@
 #ifndef Overview_Game_Simulation_hpp
 #define Overview_Game_Simulation_hpp
 
-#include "Game/Model/WorldTypes.hpp"
-#include "Game/Model/Entity.hpp"
+#include "Game/WorldTypes.hpp"
+#include "Game/Entity.hpp"
 
 #include "cinek/objectpool.hpp"
 #include "cinek/allocator.hpp"
 
 
 namespace cinekine { namespace ovengine {
-    class TileGridMap;
+    class GameTemplates;
     class World;
 } /* namespace ovengine */ } /* namespace cinekine */
 
-namespace cinekine { namespace ovengine {
+namespace cinekine { namespace prototype {
     
     class Simulation
     {
     public:
-        Simulation(const TileGridMap& gridMap,
+        Simulation(ObjectPool<ovengine::Entity>&& entityPool,
+                   unique_ptr<ovengine::World>&& worldPtr,
+                   const ovengine::GameTemplates& gameTemplates,
                    const Allocator& allocator);
         ~Simulation();
         
+        void createEntity(const std::string& templateName);
+        
     private:
         Allocator _allocator;
-        const TileGridMap& _tileGridMap;
-        ObjectPool<Entity> _entityPool;
-        unique_ptr<World> _world;
+        const ovengine::GameTemplates& _gameTemplates;
+        ObjectPool<ovengine::Entity> _entityPool;
+        unique_ptr<ovengine::World> _world;
     };
     
 } /* namespace ovengine */ } /* namespace cinekine */

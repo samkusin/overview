@@ -19,5 +19,31 @@ namespace cinekine { namespace ovengine {
     {
     }
 
+    TileGridMap::TileGridMap() :
+        _floorGrid(),
+        _overlayGrid(),
+        _overlayToFloorRatio(1.f)
+    {
+    }
+
+    TileGridMap::TileGridMap(TileGridMap&& other) :
+        _floorGrid(std::move(other._floorGrid)),
+        _overlayGrid(std::move(other._overlayGrid)),
+        _overlayToFloorRatio(other._overlayToFloorRatio)
+    {
+        other._overlayToFloorRatio = 1.f;
+    }
+
+    TileGridMap& TileGridMap::operator=(TileGridMap&& other)
+    {
+        _floorGrid = std::move(other._floorGrid);
+        _overlayGrid = std::move(other._overlayGrid);
+        _overlayToFloorRatio = other._overlayToFloorRatio;
+
+        other._overlayToFloorRatio = 1.f;
+
+        return *this;
+    }
+
 
 } /* namespace ovengine */ } /* namespace cinekine */

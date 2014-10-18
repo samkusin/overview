@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/Render/IsoScene.hpp"
-#include "Engine/Model/Stage.hpp"
+#include "View/Render/IsoScene.hpp"
+#include "View/Stage.hpp"
 #include "Graphics/RendererCLI.hpp"
 #include "Graphics/Rect.hpp"
 

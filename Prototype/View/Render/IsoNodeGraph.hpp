@@ -9,7 +9,7 @@
 #ifndef Overview_IsoNodeGraph_hpp
 #define Overview_IsoNodeGraph_hpp
 
-#include "Game/Render/IsoNode.hpp"
+#include "View/Render/IsoNode.hpp"
 
 #include "cinek/objectstack.hpp"
 #include "cinek/vector.hpp"

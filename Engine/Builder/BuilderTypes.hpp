@@ -11,7 +11,7 @@
 #ifndef Overview_Builder_Types_Hpp
 #define Overview_Builder_Types_Hpp
 
-#include "Engine/Model/StageTypes.hpp"
+#include "Engine/Model/ModelTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 #include "Engine/Model/Tile.hpp"
 

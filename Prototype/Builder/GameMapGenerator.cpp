@@ -1,14 +1,14 @@
 //
-//  StageGenerator.cpp
+//  GameMapGenerator.cpp
 //  Overview
 //
-//  Created by Samir Sinha on 8/3/14.
+//  Created by Samir Sinha on 10/16/14.
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/StageGenerator.hpp"
-#include "Engine/Model/Stage.hpp"
-#include "Engine/Model/TileLibrary.hpp"
+#include "Builder/GameMapGenerator.hpp"
+#include "Shared/GameTemplates.hpp"
+
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/RoomGraph.hpp"
 #include "Engine/Builder/RoomBuilder.hpp"
@@ -20,46 +20,45 @@
 
 namespace cinekine { namespace prototype {
     
-   
-    StageGenerator::StageGenerator(const Allocator& allocator) :
-        _allocator(allocator),
-        _blockLibrary(32, _allocator)
+    
+    ovengine::GameTemplates& generateMapFromTemplates(
+                                            ovengine::GameTemplates& gameTemplates,
+                                            const GenerateMapParams& params)
     {
-        
-        FileStreamBuf dbStream("blocks.json");
-        if (!dbStream)
-            return;
+        Allocator& allocator = gameTemplates.allocator();
 
-        ovengine::BlockCollectionLoader loader([this](ovengine::BlockCollection&& collection)
+        ovengine::BlockLibrary blockLibrary(128, allocator);
+        FileStreamBuf dbStream(params.blocksPathname);
+        if (!dbStream)
+            return gameTemplates;
+        
+        ovengine::BlockCollectionLoader loader([&blockLibrary](ovengine::BlockCollection&& collection)
                                                {
-                                                   _blockLibrary.mapCollectionToSlot(std::move(collection), 0);
+                                                   blockLibrary.mapCollectionToSlot(std::move(collection), 0);
                                                },
-                                               _allocator);
+                                               allocator);
         
         ovengine::unserializeFromJSON(dbStream, loader);
-    }
-    
-    std::shared_ptr<ovengine::Stage>  StageGenerator::createWorld(const ovengine::TileLibrary& tileLibrary,
-                                                const ovengine::SpriteLibrary& spriteLibrary,
-                                                const CreateWorldParams& params)
-    {
-        ovengine::TileGridMap tileGridMap(params.floorX, params.floorY,
-                                          params.overlayToFloorRatio,
-                                          _allocator);
-        ovengine::RoomGraph roomGraph(params.roomLimit,
-                                      _allocator);
         
-        auto& blockCollection = _blockLibrary.collectionAtSlot(0);
-        auto tileCollectionSlot = tileLibrary.slotByCollectionName("dungeon");
+        auto tileGridMap = allocate_unique<ovengine::TileGridMap>(allocator,
+                                                                  params.floorX, params.floorY,
+                                                                  params.overlayToFloorRatio,
+                                                                  allocator);
+        auto roomGraph = allocate_unique<ovengine::RoomGraph>(allocator,
+                                                              params.roomLimit,
+                                                              allocator);
         
-        ovengine::GridBuilder floorBuilder(tileGridMap.floor(), tileGridMap.overlayToFloorRatio());
+        auto& blockCollection = blockLibrary.collectionAtSlot(0);
+        auto tileCollectionSlot = gameTemplates.tileLibrary().slotByCollectionName("dungeon");
+        
+        ovengine::GridBuilder floorBuilder(tileGridMap->floor(), tileGridMap->overlayToFloorRatio());
         auto floorDims = floorBuilder.dimensions();
         floorBuilder.fillBox(ovengine::RoomVertex(0,0),
                              floorDims,
                              blockCollection["dirt_ground"], tileCollectionSlot);
         
         //  Construct our rooms
-        auto room = roomGraph.root();
+        auto room = roomGraph->root();
         ovengine::RoomAABB roomAABB(ovengine::RoomVertex(12,12),
                                     ovengine::RoomVertex(36,36));
         room.resetToBounds(roomAABB);
@@ -96,32 +95,21 @@ namespace cinekine { namespace prototype {
         style.floorBlockName = "wood_tile";
         style.wallBlockName = "brick_wall";
         
-        ovengine::room_builder::paint(room, tileGridMap,
+        ovengine::room_builder::paint(room, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
         
         style.floorBlockName = "wood_floor";
         style.wallBlockName = "brick_wall";
         
-        ovengine::room_builder::paint(eastRoom, tileGridMap,
+        ovengine::room_builder::paint(eastRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
-        ovengine::room_builder::paint(southRoom, tileGridMap,
+        ovengine::room_builder::paint(southRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
-
         
-        return std::allocate_shared<ovengine::Stage,
-                                    std_allocator<ovengine::Stage>,
-                                    ovengine::RoomGraph&&,
-                                    ovengine::TileGridMap&&,
-                                    const ovengine::TileLibrary&,
-                                    const Allocator&>
-                                    (
-                                     _allocator,
-                                     std::move(roomGraph),
-                                     std::move(tileGridMap),
-                                     tileLibrary,
-
-                                     _allocator
-                                    );
+        gameTemplates.loadTileGridMap(std::move(tileGridMap));
+        gameTemplates.loadRoomGraph(std::move(roomGraph));
+        
+        return gameTemplates;
     }
     
     

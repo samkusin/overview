@@ -7,28 +7,26 @@
 //  License: The MIT License (MIT)
 //
 
-#include "Engine/Model/Stage.hpp"
+#include "View/Stage.hpp"
+#include "Shared/GameTemplates.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Engine/Model/TileLibrary.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/TileGridMap.hpp"
 
 namespace cinekine { namespace ovengine {
 
-Stage::Stage(RoomGraph&& roomGraph,
-             TileGridMap&& tileGridMap,
-             const TileLibrary& tileDb,
-             const Allocator& allocator) :
-    _tileDb(tileDb),
-    _roomGraph(std::move(roomGraph)),
-    _gridMap(std::move(tileGridMap))
+Stage::Stage(const GameTemplates& gameTemplates) :
+    _tileLibrary(gameTemplates.tileLibrary()),
+    _tileGridMap(*gameTemplates.tileGridMap())
 {
 }
 
 const Tile& Stage::tileInfo(TileId tileId) const
 {
-    return _tileDb.tileFromCollectionAtIndex(slotFromTileId(tileId),
-                                             indexFromTileId(tileId));
+    return _tileLibrary.tileFromCollectionAtIndex(slotFromTileId(tileId),
+                                                  indexFromTileId(tileId));
 }
 
 void Stage::attachSpriteInstance(SpriteInstancePtr instance)
@@ -56,11 +54,11 @@ void Stage::detachSpriteInstance(SpriteInstancePtr instance)
 void Stage::selectInstanceLists(const AABB<Point>& bounds,
                                 std::function<void(const SpriteInstanceList&)> cb) const
 {
-    auto overlayDims = _gridMap.overlayDimensions();
+    auto overlayDims = _tileGridMap.overlayDimensions();
     AABB<Point> quadBounds(Point(0,0,0),
                            Point(overlayDims.x,
                                  overlayDims.y,
-                                 _gridMap.overlayToFloorRatio()*2.f) /* z-coord HACK */);
+                                 _tileGridMap.overlayToFloorRatio()*2.f) /* z-coord HACK */);
 
     if (bounds.intersects(quadBounds) && cb)
     {

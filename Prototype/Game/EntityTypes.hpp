@@ -11,8 +11,6 @@
 #ifndef Overview_Model_EntityTypes_hpp
 #define Overview_Model_EntityTypes_hpp
 
-#include "Game/Types.hpp"
-
 #include "cinek/value_map.hpp"
 #include "cinek/string.hpp"
 

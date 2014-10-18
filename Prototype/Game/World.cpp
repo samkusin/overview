@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/Model/World.hpp"
+#include "Game/World.hpp"
 
 #include "btBulletCollisionCommon.h"
 
@@ -16,7 +16,7 @@ namespace cinekine { namespace ovengine {
     class World::Impl
     {
     public:
-        Impl(const AABB<Point>& bounds);
+        Impl(const WorldAABB& bounds);
         ~Impl();
         
     private:
@@ -43,7 +43,7 @@ namespace cinekine { namespace ovengine {
     /////////////////////////////////////////////////////////////////////
     
     
-    World::World(const AABB<Point>& bounds,
+    World::World(const WorldAABB& bounds,
                  const Allocator& allocator) :
         _allocator(allocator)
     {

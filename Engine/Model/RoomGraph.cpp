@@ -12,6 +12,7 @@
 
 namespace cinekine { namespace ovengine {
 
+
 RoomGraph::RoomGraph(size_t maxRooms, const Allocator& allocator)
 {
     Allocator internalAllocator { allocator };

@@ -7,26 +7,25 @@
 //
 
 #include "Game/Simulation.hpp"
-#include "Game/Model/World.hpp"
+#include "Game/World.hpp"
+#include "Shared/GameTemplates.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 
+namespace cinekine {
+    using namespace ovengine;
+}
 
-namespace cinekine { namespace ovengine {
+namespace cinekine { namespace prototype {
     
-Simulation::Simulation(const TileGridMap& gridMap,
-                       const Allocator& allocator) :
+    Simulation::Simulation(ObjectPool<ovengine::Entity>&& entityPool,
+                           unique_ptr<ovengine::World>&& worldPtr,
+                           const ovengine::GameTemplates& gameTemplates,
+                           const Allocator& allocator) :
     _allocator(allocator),
-    _tileGridMap(gridMap),
-    _entityPool(256, _allocator)
+    _gameTemplates(gameTemplates),
+    _entityPool(std::move(entityPool)),
+    _world(std::move(worldPtr))
 {
-    auto tileDims = _tileGridMap.overlayDimensions();
-    auto height = _tileGridMap.overlayToFloorRatio();   // 1 tile for now
-    
-    AABB<Point> worldBounds;
-    worldBounds.min = Point(0,0,0);
-    worldBounds.max = Point(tileDims.x, tileDims.y, height);
-    _world = unique_ptr<World>(_allocator.newItem<World>(worldBounds, _allocator),
-                               _allocator);
 }
     
 Simulation::~Simulation()

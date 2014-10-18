@@ -10,6 +10,7 @@
 #define Overview_Game_Model_WorldTypes_hpp
 
 #include "Engine/Model/ModelTypes.hpp"
+#include "Engine/Model/AABB.hpp"
 #include "LinearMath/btVector3.h"
 
 namespace cinekine { namespace ovengine {
@@ -23,6 +24,9 @@ namespace cinekine { namespace ovengine {
         btVector3 ret(vec3.x, vec3.y, vec3.z);
         return ret;
     }
+    
+    using WorldPoint = ovengine::Point;
+    using WorldAABB = ovengine::AABB<WorldPoint>;
     
     
 } /* namespace ovengine */ } /* namespace ovengine */

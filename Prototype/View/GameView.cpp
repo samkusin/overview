@@ -6,15 +6,16 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#include "Game/GameView.hpp"
+#include "View/GameView.hpp"
 #include "Game/Simulation.hpp"
 
-#include "Game/StageGenerator.hpp"
+#include "Builder/GameMapGenerator.hpp"
+#include "Builder/SimulationGenerator.hpp"
 
 #include "ApplicationController.hpp"
 
-#include "Game/Render/IsoScene.hpp"
-#include "Game/Model/EntityTypes.hpp"
+#include "View/Render/IsoScene.hpp"
+#include "Game/EntityTypes.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Graphics/RendererCLI.hpp"
@@ -37,7 +38,7 @@ namespace cinekine {
 
     const int32_t TILE_WIDTH = 32;
     const int32_t TILE_HEIGHT = 16;
-        
+
     GameView::GameView(ApplicationController& application,
                        const Allocator& allocator) :
         _application(application),
@@ -45,39 +46,35 @@ namespace cinekine {
         _bitmapLibrary(_application.renderer(), _allocator),
         _fontLibrary(_application.renderer(), 1, _allocator),
         _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
-        _tileLibrary(256, _allocator),
-        _spriteLibrary(256, _allocator),
         _spritePool(256, _allocator)
     {
         //  this should be an application-wide op (move _fontLibrary to ApplicationController)
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
 
         //  load game document
-        FileStreamBuf gameStream("game.json");
-        RapidJsonStdStreamBuf jsonStream(gameStream);
-        _gameDocument.ParseStream<0>(jsonStream);
+        ovengine::GameTemplates::InitParams initParams;
+        initParams.gameDefinitionPath = "game.json";
+        initParams.tileSlotLimit = 32;
+        initParams.spriteLimit = 256;
+        
+        _gameTemplates = allocate_unique<ovengine::GameTemplates>(_allocator, initParams, _allocator);
+        
+        _gameTemplates->loadTileCollection("tiles_dungeon.json", _bitmapLibrary);
+        _gameTemplates->loadSpriteCollection("sprites_core.json", _bitmapLibrary);
+        
+        
+        GenerateMapParams generateMapParams;
+        generateMapParams.blocksPathname = "blocks.json";
+        generateMapParams.floorX = 12;
+        generateMapParams.floorY = 12;
+        generateMapParams.overlayToFloorRatio = 4;
+        generateMapParams.roomLimit = 8;
+        
+        generateMapFromTemplates(*_gameTemplates, generateMapParams);
+        
+        _stage = allocate_unique<ovengine::Stage>(_allocator, *_gameTemplates);
 
-        //  load assets
-        loadTileCollection("tiles_dungeon.json");
-        loadSpriteCollection("sprites_core.json");
-        
-        //  create our stage map
-        _stageGenerator = unique_ptr<StageGenerator>
-                                (_allocator.newItem<StageGenerator>(_allocator),
-                                 _allocator);
-        
-        StageGenerator::CreateWorldParams params;
-        params.floorX = 12;
-        params.floorY = 12;
-        params.overlayToFloorRatio = 4;
-        params.roomLimit = 8;
-        _stage = _stageGenerator->createWorld(_tileLibrary, _spriteLibrary, params);
-        
-        /*_simulation = unique_ptr<ovengine::Simulation>
-                                (_allocator.newItem<ovengine::Simulation>(_stage->tileGridMap(),
-                                                                          _allocator),
-                                 _allocator);
-        */
+       
         //  create our scene graph from the stage
         auto viewport = _application.renderer().getViewport();
         glm::ivec2 viewDimensions(viewport.width(), viewport.height());
@@ -94,12 +91,13 @@ namespace cinekine {
         auto overlayDims = _stage->tileGridMap().overlayDimensions();
         _viewPos = Point(overlayDims.x * 0.5f, overlayDims.y * 0.5f, 0.f);
         
-        auto& maleAvatarSprite = _spriteLibrary.spriteByName("warrior");
+        auto& maleAvatarSprite = _gameTemplates->spriteLibrary().spriteByName("warrior");
         _playerSprite = _spritePool.construct(maleAvatarSprite);
         _playerSprite->setState(kAnimationState_Walk_South, 0);
         _playerSprite->setPosition(_viewPos);
         _stage->attachSpriteInstance(_playerSprite);
 
+        
         /*
         std::default_random_engine numGenerator;
         std::uniform_int_distribution<int> xDist(0, overlayDims.x-1);
@@ -116,7 +114,6 @@ namespace cinekine {
             _stage->attachSpriteInstance(sprite);
             _otherSprites.push_back(sprite);
         }
-         */
         
         ovengine::EntityCommand cmd(2);
         cmd.set<int32_t>(10, 12);
@@ -128,6 +125,12 @@ namespace cinekine {
         auto vec = cmd.get<glm::vec3>(9);
         printf("[9] = %.2f,%.2f,%.2f\n", vec.x, vec.y, vec.z);
         printf("[3] = %s\n", cmd.get<std::string>(3).c_str());
+        */
+        //  create simulation using GameTemplates
+        CreateSimulationParams simParams;
+        simParams.allocator = _allocator;
+        simParams.entityLimit = 16;
+        _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
     }
 
     GameView::~GameView()
@@ -148,57 +151,7 @@ namespace cinekine {
         _isoScene->update(ticks, _viewPos);
     }
         
-    void GameView::loadTileCollection(const char* filename)
-    {
-        FileStreamBuf dbStream(filename);
-        if (!dbStream)
-            return;
-        
-        ovengine::TileCollectionLoader tileLoader(_gameDocument["model"]["tiles"]["flags"],
-                  [this](const char* atlasName) -> cinek_bitmap_atlas
-                  {
-                      char path[MAX_PATH];
-                      snprintf(path, sizeof(path), "textures/%s", atlasName);
-                      return _bitmapLibrary.loadAtlas(path);
-                  },
-                  [this](cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-                  {
-                      const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
-                      if (!bitmapAtlas)
-                          return kCinekBitmapIndex_Invalid;
-                      return bitmapAtlas->getBitmapIndex(name);
-                  },
-                  [this](ovengine::TileCollection&& collection)
-                  {
-                      _tileLibrary.mapCollectionToSlot(std::move(collection), 0);
-                  },
-                  _allocator);
-        unserializeFromJSON(dbStream, tileLoader);
-    }
-    
-    void GameView::loadSpriteCollection(const char* filename)
-    {
-        FileStreamBuf dbStream(filename);
-        if (!dbStream)
-        {
-            OVENGINE_LOG_ERROR("Cannot find sprite collection %s", filename);
-            return;
-        }
-        unserializeFromJSON(_spriteLibrary, dbStream,
-            [this](const char* atlasName) -> cinek_bitmap_atlas
-            {
-                char path[MAX_PATH];
-                snprintf(path, sizeof(path), "textures/%s", atlasName);
-                return _bitmapLibrary.loadAtlas(path);
-            },
-            [this]( cinek_bitmap_atlas atlas, const char* name) -> cinek_bitmap_index
-            {
-                const glx::BitmapAtlas* bitmapAtlas = _bitmapLibrary.getAtlas(atlas).get();
-                if (!bitmapAtlas)
-                    return kCinekBitmapIndex_Invalid;
-                return bitmapAtlas->getBitmapIndex(name);
-            });
-    }
+   
 
     //  Main render pipeline
     //

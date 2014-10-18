@@ -12,6 +12,7 @@
 
 #include "Engine/Builder/BuilderTypes.hpp"
 #include "Engine/Builder/BlockLibrary.hpp"
+#include "Engine/Model/TileGrid.hpp"
 
 namespace cinekine {
     namespace ovengine {

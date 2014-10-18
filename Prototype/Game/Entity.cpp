@@ -6,7 +6,7 @@
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Game/Model/Entity.hpp"
+#include "Game/Entity.hpp"
 
 namespace cinekine {
     namespace ovengine {
@@ -17,6 +17,5 @@ Entity::Entity(EntityId id, const EntityTemplate& entityTempl) :
 {
 
 }
-
     } /* namespace ovengine */
 } /* namespace cinekine */
