@@ -30,17 +30,17 @@
 #include <array>
 
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class IsoScene;
     }
 }
 
-namespace cinekine {
-    namespace prototype {
-        
+namespace cinek {
+    namespace overview {
+
     class Simulation;
-        
+
     //  Animation states as defined in the sprite database file
     //
     enum
@@ -65,14 +65,14 @@ namespace cinekine {
     };
 
     class ApplicationController;
-        
-    class GameView: public ovengine::View
+
+    class GameView: public overview::View
     {
     public:
         GameView(ApplicationController& application,
                  const Allocator& allocator);
         virtual ~GameView();
-        
+
         virtual void update(uint32_t ticks);
 
         virtual void render();
@@ -87,28 +87,28 @@ namespace cinekine {
         void renderReset();
         void renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
                           int32_t sx, int32_t sy);
-        
+
     private:
         ApplicationController& _application;
         Allocator _allocator;
         glx::BitmapLibrary _bitmapLibrary;
         glx::FontLibrary _fontLibrary;
         glx::Graphics2D _graphics;
-        
-        unique_ptr<ovengine::GameTemplates> _gameTemplates;
-                
+
+        unique_ptr<overview::GameTemplates> _gameTemplates;
+
         unique_ptr<Simulation> _simulation;
 
-        ObjectPool<ovengine::SpriteInstance> _spritePool;
+        ObjectPool<overview::SpriteInstance> _spritePool;
 
-        std::shared_ptr<ovengine::Stage> _stage;
-        
+        std::shared_ptr<overview::Stage> _stage;
+
         Point _viewPos;
-        unique_ptr<ovengine::IsoScene> _isoScene;
-        
+        unique_ptr<overview::IsoScene> _isoScene;
+
         //  objects
-        ovengine::SpriteInstancePtr _playerSprite;
-        vector<ovengine::SpriteInstancePtr> _otherSprites;
+        overview::SpriteInstancePtr _playerSprite;
+        vector<overview::SpriteInstancePtr> _otherSprites;
     };
 
     }

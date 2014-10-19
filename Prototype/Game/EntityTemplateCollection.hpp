@@ -13,8 +13,8 @@
 #include "Engine/Model/ModelCollection.hpp"
 #include "cinek/string.hpp"
 
-namespace cinekine { namespace ovengine {
-    
+namespace cinek { namespace overview {
+
     class EntityTemplateCollection : public ModelCollection<EntityTemplate>
     {
     public:
@@ -32,13 +32,13 @@ namespace cinekine { namespace ovengine {
         /// @return The mapped Block object
         ///
         const Type& operator[](const std::string& name) const;
-            
-            
+
+
     private:
         EntityTemplate _nullEntity;
     };
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */
 
 
 #endif /* Overview_Game_Model_EntityTemplateCollection_Hpp */

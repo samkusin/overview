@@ -16,18 +16,18 @@
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class Stage;
-    } /* namespace ovengine */
-} /* namespace cinekine */
+    } /* namespace overview */
+} /* namespace cinek */
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     class TileGridMap;
     class TileLibrary;
     class SpriteLibrary;
-    
+
     /// @class   IsoScene
     /// @ingroup IsoScene
     /// @brief   A scene generator used for building Isometric render graphs.
@@ -38,37 +38,37 @@ namespace cinekine { namespace ovengine {
     public:
         IsoScene(const glm::ivec2& viewDimensions,
                  const glm::ivec2& tileDimensions,
-                 const ovengine::Stage& stage,
+                 const overview::Stage& stage,
                  const Allocator& allocator);
-        
+
         void update(uint32_t ticks, const Point& pos);
-        
+
         void visit(std::function<void(const IsoNode*)> fn);
-                
+
     private:
         void setupViewBounds(const Point& viewPos);
         glm::vec3 isoToViewPos(const Point& isoPos) const;
         glm::vec3 viewToIsoPos(const Point& viewPos) const;
-        
+
         void attachTileToGraph(const Point& viewPos, const Point& isoPos);
-        
+
     private:
-        const ovengine::Stage& _stage;
-        const ovengine::TileGridMap& _tileGridMap;
+        const overview::Stage& _stage;
+        const overview::TileGridMap& _tileGridMap;
         const Point _tileDim;
         Point _viewDim;
 
         Allocator _allocator;
-        
+
         Point _centerPos;
         AABB<Point> _isoStageBounds;
         AABB<Point> _viewBounds;
         AABB<Point> _viewAlignedBounds;
         glm::ivec2 _screenOffset;
-        
+
         IsoNodeGraph _isoNodeGraph;
     };
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

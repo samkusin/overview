@@ -11,26 +11,33 @@
 #include "Shared/GameTemplates.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 
-namespace cinekine {
-    using namespace ovengine;
+namespace cinek {
+    using namespace overview;
 }
 
-namespace cinekine { namespace prototype {
-    
-    Simulation::Simulation(ObjectPool<ovengine::Entity>&& entityPool,
-                           unique_ptr<ovengine::World>&& worldPtr,
-                           const ovengine::GameTemplates& gameTemplates,
-                           const Allocator& allocator) :
-    _allocator(allocator),
-    _gameTemplates(gameTemplates),
-    _entityPool(std::move(entityPool)),
-    _world(std::move(worldPtr))
+namespace cinek { namespace overview {
+
+Simulation::Simulation(const overview::GameTemplates& gameTemplates,
+                       const SimulationParams& params) :
+        _allocator(params.allocator),
+        _gameTemplates(gameTemplates),
+        _entityPool(params.entityLimit, _allocator)
 {
+    auto tileDims = gameTemplates.tileGridMap()->overlayDimensions();
+    auto tileHeight = gameTemplates.tileGridMap()->overlayToFloorRatio();
+
+    WorldAABB worldBounds;
+    worldBounds.min = WorldPoint(0,0,0);
+    worldBounds.max = WorldPoint(tileDims.x, tileDims.y, tileHeight);
+
+    _world = allocate_unique<World>(_allocator,
+                                    worldBounds,
+                                    _allocator);
 }
-    
+
 Simulation::~Simulation()
 {
-    
+
 }
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */

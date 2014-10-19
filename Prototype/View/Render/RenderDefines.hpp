@@ -11,11 +11,11 @@
 
 #include "Engine/Model/ModelTypes.hpp"
 
-namespace cinekine { namespace prototype {
-    
-    using Point = ovengine::Point;
-    
-} /* namespace prototype */ } /* namespace cinekine */
+namespace cinek { namespace overview {
+
+    using Point = overview::Point;
+
+} /* namespace overview */ } /* namespace cinek */
 
 
 #endif

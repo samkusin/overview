@@ -16,13 +16,13 @@
 
 #include <glm/glm.hpp>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     using EntityId = uint32_t;
 
     using EntityCommand = ValueMap<int, Value<std::string, glm::vec3>>;
-        
+
     } /* ovengine */
 } /* cinekine */
 

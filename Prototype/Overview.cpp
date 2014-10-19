@@ -12,35 +12,35 @@
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
-    ovengine::Director* CreateDirector(WindowComponentCLI& windowCLI,
+    overview::Director* CreateDirector(WindowComponentCLI& windowCLI,
                                        glx::RendererCLI& rendererCLI)
     {
         Allocator allocator;
-        return allocator.newItem<prototype::Overview>(windowCLI, rendererCLI);
+        return allocator.newItem<overview::Overview>(windowCLI, rendererCLI);
     }
 
-    void DestroyDirector(ovengine::Director* director)
+    void DestroyDirector(overview::Director* director)
     {
         Allocator allocator;
         allocator.deleteItem(director);
     }
 
-    }   // namespace ovengine
+    }   // namespace overview
 }
 
-namespace cinekine {
-    namespace prototype {
+namespace cinek {
+    namespace overview {
 
-    Overview::Overview(ovengine::WindowComponentCLI& uiCLI,
+    Overview::Overview(overview::WindowComponentCLI& uiCLI,
                        glx::RendererCLI& rendererCLI) :
         _allocator(),
         _controller(uiCLI, rendererCLI, _allocator)
     {
         _controller.add( "game",
-            [this](ApplicationController& app, const Allocator& allocator) -> std::shared_ptr<ovengine::View>
+            [this](ApplicationController& app, const Allocator& allocator) -> std::shared_ptr<overview::View>
             {
                 return std::allocate_shared<GameView,
                                             std_allocator<GameView>,
@@ -66,5 +66,5 @@ namespace cinekine {
     }
 
 
-    }   //  namespace prototype
-}   // namespace cinekine
+    }   //  namespace overview
+}   // namespace cinek

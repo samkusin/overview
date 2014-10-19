@@ -8,14 +8,26 @@
 
 #include "Game/EntityTemplate.hpp"
 
-namespace cinekine {
-    namespace ovengine {
-        
+namespace cinek { namespace overview {
+
     EntityTemplate::EntityTemplate(const std::string& name, const std::string& spriteName) :
         _name(name),
         _spriteName(spriteName)
     {
     }
-        
-    }   // ovengine
-}   // cinekine
+
+    EntityTemplate::EntityTemplate(EntityTemplate&& other) :
+        _name(std::move(other._name)),
+        _spriteName(std::move(other._spriteName))
+    {
+    }
+
+    EntityTemplate& EntityTemplate::operator=(EntityTemplate&& other)
+    {
+        _name = std::move(other._name);
+        _spriteName = std::move(other._spriteName);
+        return *this;
+    }
+
+
+}   /* ovengine */ }   /* cinekine */

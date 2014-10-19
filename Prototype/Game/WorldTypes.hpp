@@ -13,22 +13,22 @@
 #include "Engine/Model/AABB.hpp"
 #include "LinearMath/btVector3.h"
 
-namespace cinekine { namespace ovengine {
-    
+namespace cinek { namespace overview {
+
     inline glm::vec3 toVec3(const btVector3& btv3) {
         glm::vec3 ret(btv3.x(), btv3.y(), btv3.z());
         return ret;
     }
-    
+
     inline btVector3 toBtVector3(const glm::vec3& vec3) {
         btVector3 ret(vec3.x, vec3.y, vec3.z);
         return ret;
     }
-    
-    using WorldPoint = ovengine::Point;
-    using WorldAABB = ovengine::AABB<WorldPoint>;
-    
-    
-} /* namespace ovengine */ } /* namespace ovengine */
+
+    using WorldPoint = overview::Point;
+    using WorldAABB = overview::AABB<WorldPoint>;
+
+
+} /* namespace overview */ } /* namespace overview */
 
 #endif

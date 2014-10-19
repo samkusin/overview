@@ -7,6 +7,7 @@
 //
 
 #include "Shared/GameTemplates.hpp"
+#include "Game/EntityTemplateCollectionLoader.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/RoomGraph.hpp"
 #include "Engine/Model/TileCollectionLoader.hpp"
@@ -15,8 +16,8 @@
 #include "Core/FileStreamBuf.hpp"
 #include "Core/StreamBufRapidJson.hpp"
 
-namespace cinekine { namespace ovengine {
-    
+namespace cinek { namespace overview {
+
     GameTemplates::GameTemplates(const InitParams& params,
                                  const Allocator& allocator) :
         _allocator(allocator),
@@ -27,16 +28,16 @@ namespace cinekine { namespace ovengine {
         RapidJsonStdStreamBuf jsonStream(gameStream);
         _gameDefinition.ParseStream<0>(jsonStream);
     }
-    
+
     GameTemplates::~GameTemplates() = default;
-    
+
     void GameTemplates::loadTileCollection(const char* pathname,
                                            glx::BitmapLibrary& bitmapLibrary)
     {
         FileStreamBuf dbStream(pathname);
         if (!dbStream)
             return;
-        
+
         TileCollectionLoader tileLoader(_gameDefinition["model"]["tiles"]["flags"],
                                         [&bitmapLibrary](const char* atlasName) -> cinek_bitmap_atlas
                                         {
@@ -59,7 +60,7 @@ namespace cinekine { namespace ovengine {
         unserializeFromJSON(dbStream, tileLoader);
 
     }
-    
+
     void GameTemplates::loadSpriteCollection(const char* pathname,
                                              glx::BitmapLibrary& bitmapLibrary)
     {
@@ -67,7 +68,7 @@ namespace cinekine { namespace ovengine {
         if (!dbStream)
         {
             OVENGINE_LOG_ERROR("GameTemplates.loadSpriteCollection: "
-                               "Cannot find sprite collection %s", pathname);
+                               "Cannot find collection %s", pathname);
             return;
         }
         unserializeFromJSON(_spriteLibrary, dbStream,
@@ -86,20 +87,35 @@ namespace cinekine { namespace ovengine {
                             });
 
     }
-    
+
     void GameTemplates::loadEntityTemplateCollection(const char* pathname)
     {
-        
+        FileStreamBuf dbStream(pathname);
+        if (!dbStream)
+        {
+            OVENGINE_LOG_ERROR("loadEntityTemplateCollection: "
+                               "Cannot find collection %s", pathname);
+            return;
+        }
+        EntityTemplateCollectionLoader loader(JsonValue(),
+                                              [this](EntityTemplateCollection&& collection)
+                                              {
+                                                  _entityTemplColl = std::move(collection);
+                                              },
+                                              _allocator);
+
+
+        unserializeFromJSON(dbStream, loader);
     }
-    
-    void GameTemplates::loadTileGridMap(unique_ptr<ovengine::TileGridMap>&& tileGridMap)
+
+    void GameTemplates::loadTileGridMap(unique_ptr<overview::TileGridMap>&& tileGridMap)
     {
         _tileGridMap = std::move(tileGridMap);
     }
-    
-    void GameTemplates::loadRoomGraph(unique_ptr<ovengine::RoomGraph>&& roomGraph)
+
+    void GameTemplates::loadRoomGraph(unique_ptr<overview::RoomGraph>&& roomGraph)
     {
         _roomGraph = std::move(roomGraph);
     }
-    
-} /* namespace prototype */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */

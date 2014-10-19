@@ -4,26 +4,23 @@
 /// EntityTemplateCollectionLoader
 ///
 /// @author     Samir Sinha
-/// @date       08/24/13
+/// @date       10/18/14
 /// @copyright  Copyright 2013 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Model_EntityTemplateCollectionLoader_hpp
-#define Overview_Model_EntityTemplateCollectionLoader_hpp
+#ifndef Overview_Game_Model_EntityTemplateCollectionLoader_hpp
+#define Overview_Game_Model_EntityTemplateCollectionLoader_hpp
 
+#include "Game/EntityTemplateCollection.hpp"
 #include "Engine/Model/ModelCollectionLoader.hpp"
-#include "Engine/Model/TileCollection.hpp"
 
-#include "cinek/string.hpp"
+#include "cinek/vector.hpp"
 
-#include <functional>
-
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class   EntityTemplateCollectionLoader
-/// @ingroup TileModel
-/// @brief   Handler for unserializing TileCollection objects from an input JSON
-///          stream.
+/// @brief   Handler for unserializing EntityTemplateCollection objects
+///          from an input JSON stream.
 ///
 class EntityTemplateCollectionLoader : public ModelCollectionLoader
 {
@@ -40,9 +37,7 @@ public:
     ///
     EntityTemplateCollectionLoader(
         const JsonValue& tileFlagConsts,
-        std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
-        std::function<void(TileCollection&&)> collectionCb,
+        std::function<void(EntityTemplateCollection&&)> collectionCb,
         const Allocator& allocator);
 
     bool startCollection(const char* name, uint32_t modelCount);
@@ -52,17 +47,11 @@ public:
 
 private:
     const JsonValue& _tileFlagConsts;
-
-    std::function<cinek_bitmap_atlas(const char*)> _atlasReqCb;
-    std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _bitmapReqCb;
-    std::function<void(TileCollection&&)> _collectionCb;
-
+    std::function<void(EntityTemplateCollection&&)> _collectionCb;
     std::string _name;
-    cinek_bitmap_atlas _atlasId;
-    typedef std::pair<uint16_t, Tile> TilePair;
-    vector< TilePair > _tiles;
+    vector<EntityTemplate> _templates;
 };
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

@@ -33,8 +33,8 @@
 
 /////////////////////////////////////////////////////////////
 
-namespace cinekine {
-    namespace prototype {
+namespace cinek {
+    namespace overview {
 
     const int32_t TILE_WIDTH = 32;
     const int32_t TILE_HEIGHT = 16;
@@ -52,52 +52,53 @@ namespace cinekine {
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
 
         //  load game document
-        ovengine::GameTemplates::InitParams initParams;
+        overview::GameTemplates::InitParams initParams;
         initParams.gameDefinitionPath = "game.json";
         initParams.tileSlotLimit = 32;
         initParams.spriteLimit = 256;
-        
-        _gameTemplates = allocate_unique<ovengine::GameTemplates>(_allocator, initParams, _allocator);
-        
+
+        _gameTemplates = allocate_unique<overview::GameTemplates>(_allocator, initParams, _allocator);
+
         _gameTemplates->loadTileCollection("tiles_dungeon.json", _bitmapLibrary);
         _gameTemplates->loadSpriteCollection("sprites_core.json", _bitmapLibrary);
-        
-        
+        _gameTemplates->loadEntityTemplateCollection("entity.json");
+
+
         GenerateMapParams generateMapParams;
         generateMapParams.blocksPathname = "blocks.json";
         generateMapParams.floorX = 12;
         generateMapParams.floorY = 12;
         generateMapParams.overlayToFloorRatio = 4;
         generateMapParams.roomLimit = 8;
-        
-        generateMapFromTemplates(*_gameTemplates, generateMapParams);
-        
-        _stage = allocate_unique<ovengine::Stage>(_allocator, *_gameTemplates);
 
-       
+        generateMapFromTemplates(*_gameTemplates, generateMapParams);
+
+        _stage = allocate_unique<overview::Stage>(_allocator, *_gameTemplates);
+
+
         //  create our scene graph from the stage
         auto viewport = _application.renderer().getViewport();
         glm::ivec2 viewDimensions(viewport.width(), viewport.height());
         glm::ivec2 tileDimensions(TILE_WIDTH, TILE_HEIGHT);
-        
-        auto isoScenePtr = _allocator.newItem<ovengine::IsoScene>(viewDimensions,
+
+        auto isoScenePtr = _allocator.newItem<overview::IsoScene>(viewDimensions,
                                                                   tileDimensions,
                                                                   *_stage,
                                                                   _allocator);
-        _isoScene = unique_ptr<ovengine::IsoScene>(isoScenePtr, _allocator);
+        _isoScene = unique_ptr<overview::IsoScene>(isoScenePtr, _allocator);
 
-        
+
         //  create our player entity
         auto overlayDims = _stage->tileGridMap().overlayDimensions();
         _viewPos = Point(overlayDims.x * 0.5f, overlayDims.y * 0.5f, 0.f);
-        
+
         auto& maleAvatarSprite = _gameTemplates->spriteLibrary().spriteByName("warrior");
         _playerSprite = _spritePool.construct(maleAvatarSprite);
         _playerSprite->setState(kAnimationState_Walk_South, 0);
         _playerSprite->setPosition(_viewPos);
         _stage->attachSpriteInstance(_playerSprite);
 
-        
+
         /*
         std::default_random_engine numGenerator;
         std::uniform_int_distribution<int> xDist(0, overlayDims.x-1);
@@ -105,7 +106,7 @@ namespace cinekine {
         std::uniform_int_distribution<int> stateDist(kAnimationState_Idle_North,
                                                      kAnimationState_Walk_NorthWest);
         _otherSprites.reserve(256);
-        
+
         for (int cnt = 0; cnt < _otherSprites.capacity(); ++cnt)
         {
             auto sprite = _spritePool.construct(maleAvatarSprite);
@@ -114,22 +115,20 @@ namespace cinekine {
             _stage->attachSpriteInstance(sprite);
             _otherSprites.push_back(sprite);
         }
-        
-        ovengine::EntityCommand cmd(2);
+
+        overview::EntityCommand cmd(2);
         cmd.set<int32_t>(10, 12);
         cmd.set<float>(3, 3.14159f);
         cmd.set<glm::vec3>(9, glm::vec3(1.0f, 0.5f, 0.25f));
-        
+
         printf("[10] = %d\n", cmd.get<int32_t>(10));
-        
+
         auto vec = cmd.get<glm::vec3>(9);
         printf("[9] = %.2f,%.2f,%.2f\n", vec.x, vec.y, vec.z);
         printf("[3] = %s\n", cmd.get<std::string>(3).c_str());
         */
         //  create simulation using GameTemplates
         CreateSimulationParams simParams;
-        simParams.allocator = _allocator;
-        simParams.entityLimit = 16;
         _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
     }
 
@@ -145,27 +144,27 @@ namespace cinekine {
         _stage->detachSpriteInstance(_playerSprite);
         _playerSprite = nullptr;
     }
-    
+
     void GameView::update(uint32_t ticks)
     {
         _isoScene->update(ticks, _viewPos);
     }
-        
-   
+
+
 
     //  Main render pipeline
     //
     void GameView::render()
     {
         renderReset();
-        
-        _isoScene->visit([this](const ovengine::IsoNode* node)
+
+        _isoScene->visit([this](const overview::IsoNode* node)
          {
               auto screenPos = node->viewPos();
-              
+
               switch(node->type())
               {
-              case ovengine::IsoNode::kBitmap:
+              case overview::IsoNode::kBitmap:
                   {
                       auto bitmap = node->bitmap();
                       auto atlas = _bitmapLibrary.getAtlas(bitmap.bmpAtlas);
@@ -186,7 +185,7 @@ namespace cinekine {
               }
          });
 
-        
+
         glx::Style style;
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
@@ -212,11 +211,11 @@ namespace cinekine {
         _graphics.drawPolygon(polyVerts, 5, style);
         */
     }
-        
+
     void GameView::renderReset()
     {
     }
-        
+
     void GameView::renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
                                 int32_t sx, int32_t sy)
     {
@@ -231,7 +230,7 @@ namespace cinekine {
                                                            bitmap.offH);
         _application.renderer().drawTextureRect(texture, srcRect, destRect, color);
     }
-        
+
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)
     {
 
@@ -245,14 +244,14 @@ namespace cinekine {
     void GameView::onMouseMove(MouseRegion region, int32_t x, int32_t y)
     {
     }
-        
+
     void GameView::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
     {
         glm::vec3 newPos(0,0,0);
-        
+
         const float kAdjX = 0.125f;
         const float kAdjY = 0.125f;
-        
+
         switch (keycode)
         {
             case SDLK_e:    newPos.y = -kAdjY; break;
@@ -266,17 +265,17 @@ namespace cinekine {
             default:
                 break;
         }
-        
+
         if (newPos.x || newPos.y || newPos.z)
         {
             _viewPos += newPos;
             _playerSprite->setPosition(_viewPos);
         }
     }
-    
+
     void GameView::onKeyUp(SDL_Keycode keycode, uint16_t keymod)
     {
-        
+
     }
 
     }

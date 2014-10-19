@@ -33,29 +33,29 @@
 
 #include <functional>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
         class RendererCLI;
     }
-    namespace ovengine {
+    namespace overview {
         class Stage;
         class WindowComponentCLI;
         class View;
     }
 }
 
-namespace cinekine {
-    namespace prototype {
+namespace cinek {
+    namespace overview {
 
     class ApplicationController
     {
     public:
-        ApplicationController(ovengine::WindowComponentCLI& ui,
+        ApplicationController(overview::WindowComponentCLI& ui,
                               glx::RendererCLI& renderer,
                               const Allocator& allocator);
         ~ApplicationController();
 
-        typedef std::function<std::shared_ptr<ovengine::View>(ApplicationController&, const Allocator&)> ViewCreateFn;
+        typedef std::function<std::shared_ptr<overview::View>(ApplicationController&, const Allocator&)> ViewCreateFn;
 
         //  add a scene provider - the provider will supply a Scene object that will
         //  be managed by the Scenes collection during state changes
@@ -65,21 +65,21 @@ namespace cinekine {
         //  updates the current Controller
         void update(uint32_t ticks);
 
-        ovengine::WindowComponentCLI& ui() { return _ui; }
-        const ovengine::WindowComponentCLI& ui() const { return _ui; }
+        overview::WindowComponentCLI& ui() { return _ui; }
+        const overview::WindowComponentCLI& ui() const { return _ui; }
         glx::RendererCLI& renderer() { return _renderer; }
         const glx::RendererCLI& renderer() const { return _renderer; }
 
     private:
-        ovengine::WindowComponentCLI& _ui;
+        overview::WindowComponentCLI& _ui;
         glx::RendererCLI& _renderer;
         Allocator _allocator;
         unordered_map<std::string, ViewCreateFn> _viewCreateMap;
-        std::shared_ptr<ovengine::View> _currentView;
-        ovengine::WindowPtr _window;
+        std::shared_ptr<overview::View> _currentView;
+        overview::WindowPtr _window;
     };
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

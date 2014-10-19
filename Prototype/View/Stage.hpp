@@ -21,15 +21,15 @@
 
 #include <functional>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class GameTemplates;
         class TileLibrary;
         class TileGridMap;
     }
 }
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /**
  * @class   Stage
@@ -93,7 +93,7 @@ private:
 };
 
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif
 

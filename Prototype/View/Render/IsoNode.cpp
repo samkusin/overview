@@ -9,8 +9,8 @@
 #include "View/Render/IsoNode.hpp"
 #include "View/Render/IsoNodeGraph.hpp"
 
-namespace cinekine { namespace ovengine {
-    
+namespace cinek { namespace overview {
+
     IsoNode::IsoNode(const cinek_bitmap& bitmap,
                      const glm::ivec2& viewPos,
                      const AABB<glm::vec3>& box) :
@@ -22,12 +22,12 @@ namespace cinekine { namespace ovengine {
         _depth(0),
         _visited(false)
     {
-        
+
     }
-    
+
     void IsoNode::clearBehindList()
     {
         _behindRange.first = _behindRange.second = 0;
     }
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */

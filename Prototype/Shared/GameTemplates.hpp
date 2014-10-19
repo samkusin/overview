@@ -17,16 +17,16 @@
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class TileGridMap;
         class RoomGraph;
     }
     namespace glx {
         class BitmapLibrary;
     }
-} 
-namespace cinekine { namespace ovengine {
+}
+namespace cinek { namespace overview {
 
     class GameTemplates
     {
@@ -37,10 +37,10 @@ namespace cinekine { namespace ovengine {
             uint32_t tileSlotLimit;
             uint32_t spriteLimit;
         };
-        
+
         GameTemplates(const InitParams& params, const Allocator& allocator);
         ~GameTemplates();
-        
+
         void loadTileCollection(const char* pathname,
                                 glx::BitmapLibrary& bitmapLibrary);
         void loadSpriteCollection(const char* pathname,
@@ -48,11 +48,11 @@ namespace cinekine { namespace ovengine {
         void loadEntityTemplateCollection(const char* pathname);
         void loadTileGridMap(unique_ptr<TileGridMap>&& tileGridMap);
         void loadRoomGraph(unique_ptr<RoomGraph>&& roomGraph);
-        
+
         const JsonDocument& gameDefinition() const {
             return _gameDefinition;
         }
-        
+
         const TileLibrary& tileLibrary() const {
             return _tileLibrary;
         }
@@ -68,22 +68,22 @@ namespace cinekine { namespace ovengine {
         const RoomGraph* roomGraph() const {
             return _roomGraph.get();
         }
-        
+
         Allocator& allocator() {
             return _allocator;
         }
-        
+
     private:
         Allocator _allocator;
         JsonDocument _gameDefinition;
         TileLibrary _tileLibrary;
         SpriteLibrary _spriteLibrary;
         EntityTemplateCollection _entityTemplColl;
-        
+
         unique_ptr<TileGridMap> _tileGridMap;
         unique_ptr<RoomGraph> _roomGraph;
     };
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */
 
 #endif /* Overview_Model_GameTemplates_hpp */

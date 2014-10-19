@@ -14,12 +14,13 @@
 		374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931481904A75B002C7DE3 /* IOKit.framework */; };
 		3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; };
 		3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; };
-		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		37A9CE4419316F3A0065CAA8 /* libCKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4019316F3A0065CAA8 /* libCKCore.a */; };
-		37A9CE4519316F3A0065CAA8 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4119316F3A0065CAA8 /* libCKFramework.a */; };
-		37A9CE4619316F3A0065CAA8 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4219316F3A0065CAA8 /* libCKGL.a */; };
-		37A9CE4719316F3A0065CAA8 /* libCKOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9CE4319316F3A0065CAA8 /* libCKOVEngine.a */; };
+		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		37AAC1C919F42A3600C32899 /* libCKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C519F42A3600C32899 /* libCKCore.a */; };
+		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
+		37AAC1CB19F42A3600C32899 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C719F42A3600C32899 /* libCKGL.a */; };
+		37AAC1CC19F42A3600C32899 /* libCKOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C819F42A3600C32899 /* libCKOVEngine.a */; };
+		37AAC1D419F44F2800C32899 /* Entity.proto in Sources */ = {isa = PBXBuildFile; fileRef = 37AAC1D019F4463800C32899 /* Entity.proto */; };
 		37B8F31419F2DFCC00995B61 /* GameMapGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F119F2DFCC00995B61 /* GameMapGenerator.cpp */; };
 		37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F319F2DFCC00995B61 /* SimulationGenerator.cpp */; };
 		37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F619F2DFCC00995B61 /* Entity.cpp */; };
@@ -34,6 +35,7 @@
 		37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30C19F2DFCC00995B61 /* IsoNodeGraph.cpp */; };
 		37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30E19F2DFCC00995B61 /* IsoScene.cpp */; };
 		37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F31119F2DFCC00995B61 /* Stage.cpp */; };
+		37B8F32419F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */; };
 		37DFA0951850108200382685 /* ApplicationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* ApplicationController.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
@@ -41,16 +43,32 @@
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		37AAC1C419F358FE00C32899 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.proto";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${PROJECT_DIR}/../Gen/$(INPUT_FILE_BASE).pb.h",
+				"${PROJECT_DIR}/../Gen/$(INPUT_FILE_BASE).pb.cc",
+			);
+			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/protoc --proto_path=${INPUT_FILE_DIR} ${INPUT_FILE_PATH} --cpp_out=${PROJECT_DIR}/../Gen\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXCopyFilesBuildPhase section */
-		37CEF196179F9AD1007AB3A6 /* CopyFiles */ = {
+		37CEF196179F9AD1007AB3A6 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in CopyFiles */,
-				3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in CopyFiles */,
+				3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in Copy Files */,
+				3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -61,14 +79,14 @@
 		374931441904A72E002C7DE3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		374931461904A73B002C7DE3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
-		3783683619DD0F2D009EEE83 /* BulletCollision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BulletCollision.framework; path = ../../External/framework/BulletCollision.framework; sourceTree = "<group>"; };
-		3783683719DD0F2D009EEE83 /* LinearMath.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinearMath.framework; path = ../../External/framework/LinearMath.framework; sourceTree = "<group>"; };
 		3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.2.82.dylib; path = ../../External/lib/libBulletCollision.2.82.dylib; sourceTree = "<group>"; };
 		3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.2.82.dylib; path = ../../External/lib/libLinearMath.2.82.dylib; sourceTree = "<group>"; };
-		37A9CE4019316F3A0065CAA8 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
-		37A9CE4119316F3A0065CAA8 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../build-xcode/cinek/Debug/libCKFramework.a"; sourceTree = "<group>"; };
-		37A9CE4219316F3A0065CAA8 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../build-xcode/Graphics/Debug/libCKGL.a"; sourceTree = "<group>"; };
-		37A9CE4319316F3A0065CAA8 /* libCKOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKOVEngine.a; path = "../../build-xcode/Engine/Debug/libCKOVEngine.a"; sourceTree = "<group>"; };
+		37AAC1C519F42A3600C32899 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
+		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
+		37AAC1C719F42A3600C32899 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKGL.a"; sourceTree = "<group>"; };
+		37AAC1C819F42A3600C32899 /* libCKOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKOVEngine.a"; sourceTree = "<group>"; };
+		37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../../External/lib/libprotobuf-lite.a"; sourceTree = "<group>"; };
+		37AAC1D019F4463800C32899 /* Entity.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Entity.proto; path = Msg/Entity.proto; sourceTree = "<group>"; };
 		37B8F2F119F2DFCC00995B61 /* GameMapGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameMapGenerator.cpp; sourceTree = "<group>"; };
 		37B8F2F219F2DFCC00995B61 /* GameMapGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameMapGenerator.hpp; sourceTree = "<group>"; };
 		37B8F2F319F2DFCC00995B61 /* SimulationGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationGenerator.cpp; sourceTree = "<group>"; };
@@ -100,6 +118,8 @@
 		37B8F31119F2DFCC00995B61 /* Stage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Stage.cpp; sourceTree = "<group>"; };
 		37B8F31219F2DFCC00995B61 /* Stage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Stage.hpp; sourceTree = "<group>"; };
 		37B8F31319F2DFCC00995B61 /* StageTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StageTypes.hpp; sourceTree = "<group>"; };
+		37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplateCollectionLoader.cpp; sourceTree = "<group>"; };
+		37B8F32319F2FB0500995B61 /* EntityTemplateCollectionLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplateCollectionLoader.hpp; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* ApplicationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApplicationController.cpp; path = ../ApplicationController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* ApplicationController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ApplicationController.hpp; path = ../ApplicationController.hpp; sourceTree = "<group>"; };
 		37E76A0D17C6EC34009EAA97 /* Overview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Overview.cpp; path = ../Overview.cpp; sourceTree = "<group>"; };
@@ -119,10 +139,10 @@
 			files = (
 				3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */,
 				3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */,
-				37A9CE4419316F3A0065CAA8 /* libCKCore.a in Frameworks */,
-				37A9CE4519316F3A0065CAA8 /* libCKFramework.a in Frameworks */,
-				37A9CE4619316F3A0065CAA8 /* libCKGL.a in Frameworks */,
-				37A9CE4719316F3A0065CAA8 /* libCKOVEngine.a in Frameworks */,
+				37AAC1C919F42A3600C32899 /* libCKCore.a in Frameworks */,
+				37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */,
+				37AAC1CB19F42A3600C32899 /* libCKGL.a in Frameworks */,
+				37AAC1CC19F42A3600C32899 /* libCKOVEngine.a in Frameworks */,
 				374931411904A707002C7DE3 /* libiconv.dylib in Frameworks */,
 				374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */,
 				374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */,
@@ -164,6 +184,9 @@
 		37B8F2F519F2DFCC00995B61 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				37B8F32819F34CDA00995B61 /* Msg */,
+				37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */,
+				37B8F32319F2FB0500995B61 /* EntityTemplateCollectionLoader.hpp */,
 				37B8F2F619F2DFCC00995B61 /* Entity.cpp */,
 				37B8F2F719F2DFCC00995B61 /* Entity.hpp */,
 				37B8F2F819F2DFCC00995B61 /* Entity.inl */,
@@ -220,6 +243,14 @@
 			path = Render;
 			sourceTree = "<group>";
 		};
+		37B8F32819F34CDA00995B61 /* Msg */ = {
+			isa = PBXGroup;
+			children = (
+				37AAC1D019F4463800C32899 /* Entity.proto */,
+			);
+			name = Msg;
+			sourceTree = "<group>";
+		};
 		37F64A881780EA2C009116E7 = {
 			isa = PBXGroup;
 			children = (
@@ -243,10 +274,11 @@
 		37F64A931780EA2C009116E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */,
-				3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */,
-				3783683619DD0F2D009EEE83 /* BulletCollision.framework */,
-				3783683719DD0F2D009EEE83 /* LinearMath.framework */,
+				37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */,
+				37AAC1C519F42A3600C32899 /* libCKCore.a */,
+				37AAC1C619F42A3600C32899 /* libCKFramework.a */,
+				37AAC1C719F42A3600C32899 /* libCKGL.a */,
+				37AAC1C819F42A3600C32899 /* libCKOVEngine.a */,
 				374931481904A75B002C7DE3 /* IOKit.framework */,
 				374931461904A73B002C7DE3 /* Cocoa.framework */,
 				374931441904A72E002C7DE3 /* OpenGL.framework */,
@@ -286,10 +318,8 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				37A9CE4019316F3A0065CAA8 /* libCKCore.a */,
-				37A9CE4119316F3A0065CAA8 /* libCKFramework.a */,
-				37A9CE4219316F3A0065CAA8 /* libCKGL.a */,
-				37A9CE4319316F3A0065CAA8 /* libCKOVEngine.a */,
+				3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */,
+				3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */,
 				374931401904A707002C7DE3 /* libiconv.dylib */,
 			);
 			name = Libraries;
@@ -305,9 +335,10 @@
 				37F64A8D1780EA2C009116E7 /* Sources */,
 				37F64A8E1780EA2C009116E7 /* Frameworks */,
 				37F64A8F1780EA2C009116E7 /* Resources */,
-				37CEF196179F9AD1007AB3A6 /* CopyFiles */,
+				37CEF196179F9AD1007AB3A6 /* Copy Files */,
 			);
 			buildRules = (
+				37AAC1C419F358FE00C32899 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -360,6 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37AAC1D419F44F2800C32899 /* Entity.proto in Sources */,
 				37B8F31419F2DFCC00995B61 /* GameMapGenerator.cpp in Sources */,
 				37B8F31C19F2DFCC00995B61 /* GameTemplates.cpp in Sources */,
 				37B8F31D19F2DFCC00995B61 /* GameView.cpp in Sources */,
@@ -376,6 +408,7 @@
 				37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */,
 				37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */,
 				37B8F31E19F2DFCC00995B61 /* IsoNode.cpp in Sources */,
+				37B8F32419F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +519,14 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					GOOGLE_PROTOBUF_NO_RTTI,
+					"DEBUG=1",
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					GOOGLE_PROTOBUF_NO_RTTI,
+					"DEBUG=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					..,
 					../..,
@@ -496,10 +537,10 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
-					/Users/samir/Development/cinekine/overview/External/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
+					"$(PACKAGES_ROOT)/lib/libprotobuf-lite.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
 					"$(PACKAGES_ROOT)/lib/libRocket_d.a",
@@ -519,6 +560,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = GOOGLE_PROTOBUF_NO_RTTI;
 				HEADER_SEARCH_PATHS = (
 					..,
 					../..,
@@ -529,10 +571,10 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
-					/Users/samir/Development/cinekine/overview/External/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
+					"$(PACKAGES_ROOT)/lib/libprotobuf-lite.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
 					"$(PACKAGES_ROOT)/lib/libRocket_d.a",

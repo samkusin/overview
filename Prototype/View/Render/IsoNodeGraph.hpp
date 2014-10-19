@@ -16,7 +16,7 @@
 
 #include <functional>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     struct Tile;
 
@@ -78,6 +78,6 @@ namespace cinekine { namespace ovengine {
         uint32_t _sortDepth;
     };
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

@@ -11,14 +11,14 @@
 
 #include "cinek/types.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
     class GameTemplates;
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
-namespace cinekine { namespace prototype {
-    
+namespace cinek { namespace overview {
+
     class GameTemplates;
-    
+
     struct GenerateMapParams
     {
         const char* blocksPathname = "";
@@ -27,13 +27,13 @@ namespace cinekine { namespace prototype {
         int32_t overlayToFloorRatio = 1;
         int32_t roomLimit = 1;
     };
-    
-    ovengine::GameTemplates& generateMapFromTemplates(
-                                            ovengine::GameTemplates& gameTemplates,
+
+    overview::GameTemplates& generateMapFromTemplates(
+                                            overview::GameTemplates& gameTemplates,
                                             const GenerateMapParams& params);
-    
-    
-    
-} /* namespace prototype */ } /* namespace cinekine */
+
+
+
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

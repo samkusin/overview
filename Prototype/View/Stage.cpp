@@ -15,7 +15,7 @@
 #include "Engine/Model/SpriteLibrary.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 Stage::Stage(const GameTemplates& gameTemplates) :
     _tileLibrary(gameTemplates.tileLibrary()),
@@ -66,5 +66,5 @@ void Stage::selectInstanceLists(const AABB<Point>& bounds,
     }
 }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 

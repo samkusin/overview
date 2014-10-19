@@ -7,16 +7,16 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     inline EntityId Entity::id() const {
         return _id;
     }
-        
+
     inline const EntityTemplate& Entity::sourceTemplate() const {
         return _template;
     }
 
-    }   /* namespace ovengine */
-}   /* namespace cinekine */
+    }   /* namespace overview */
+}   /* namespace cinek */

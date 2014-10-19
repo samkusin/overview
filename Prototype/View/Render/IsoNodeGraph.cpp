@@ -9,8 +9,8 @@
 #include "View/Render/IsoNodeGraph.hpp"
 
 
-namespace cinekine { namespace ovengine {
-    
+namespace cinek { namespace overview {
+
     IsoNodeGraph::IsoNodeGraph(size_t nodeLimit, const Allocator& allocator) :
         _nodePool(nodeLimit, allocator),
         _nodes(allocator),
@@ -23,7 +23,7 @@ namespace cinekine { namespace ovengine {
         _nodes.reserve(nodeLimit);
         _nodesBehind.reserve(nodeLimit*nodeLimit/2);
     }
-    
+
     IsoNode* IsoNodeGraph::obtainNode(const cinek_bitmap& bitmap,
                                       const glm::ivec2& viewPos, const AABB<glm::vec3>& box)
     {
@@ -31,20 +31,20 @@ namespace cinekine { namespace ovengine {
         _nodes.push_back(node);
         return node;
     }
-    
+
     uint32_t IsoNodeGraph::pushNodeBehind(IsoNode* node)
     {
         _nodesBehind.push_back(node);
         return (uint32_t)(_nodesBehind.size()-1);
     }
-    
+
     void IsoNodeGraph::reset()
     {
         _nodesBehind.clear();
         _nodes.clear();
         _nodePool.destructAll();
     }
-    
+
     void IsoNodeGraph::sort()
     {
         //  build behind list for every node, forming a graph of IsoNode objects
@@ -65,30 +65,30 @@ namespace cinekine { namespace ovengine {
             }
             nodeA->_visited = false;
         }
-        
+
         _sortDepth = 0;
         for (auto& node : _nodes)
         {
             fixupNode(node);
         }
-        
+
         //  sort our node list by depth
         std::sort(_nodes.begin(), _nodes.end(),
                   [](const IsoNode* l, const IsoNode* r) -> bool
                   {
                       return l->depth() < r->depth();
                   });
-        
-        
+
+
     }
-    
+
     void IsoNodeGraph::fixupNode(IsoNode* node)
     {
         if (node->visited())
             return;
-        
+
         node->_visited = true;
-        
+
         auto& behindRange = node->behindRange();
         for (auto i = behindRange.first; i < behindRange.second; ++i)
         {
@@ -103,9 +103,9 @@ namespace cinekine { namespace ovengine {
                 _nodesBehind[i] = nullptr;
             }
         }
-        
+
         node->_depth = _sortDepth++;
     }
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */
 

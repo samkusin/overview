@@ -1,46 +1,39 @@
 //
-//  TileCollectionLoader.cpp
+//  EntityTemplateCollectionLoader.cpp
 //  Implementation
 //
 //  Copyright 2013 Cinekine Media All rights reserved
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Engine/Model/TileCollectionLoader.hpp"
-#include "Engine/Model/TileCollection.hpp"
-#include "Engine/Debug.hpp"
+#include "Game/EntityTemplateCollectionLoader.hpp"
 
+#include "Engine/Debug.hpp"
 #include "Core/StreamBufRapidJson.hpp"
 #include "Core/JsonUtilities.hpp"
 
 #include <cstring>
 #include <cstdlib>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 EntityTemplateCollectionLoader::EntityTemplateCollectionLoader(
         const JsonValue& tileFlagConsts,
-        std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
-        std::function<void(TileCollection&&)> collectionCb,
+        std::function<void(EntityTemplateCollection&&)> collectionCb,
         const Allocator& allocator) :
     _tileFlagConsts(tileFlagConsts),
-    _atlasReqCb(atlasReqCb),
-    _bitmapReqCb(bitmapReqCb),
     _collectionCb(collectionCb),
-    _atlasId(kCinekBitmapAtlas_Invalid),
-    _tiles(allocator)
+    _templates(allocator)
 {
 }
 
 bool EntityTemplateCollectionLoader::startCollection(const char* name, uint32_t modelCount)
 {
     //  start with a fresh model container
-    _tiles.clear();
-    _tiles.reserve(modelCount);
     _name = name;
-    _atlasId = _atlasReqCb(name);
+    _templates.reserve(modelCount);
+
     return true;
 }
 
@@ -52,63 +45,37 @@ bool EntityTemplateCollectionLoader::parseAttribute(const char* key, const JsonV
 
 bool EntityTemplateCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
-    Tile tile;
-
+    std::string spriteName;
     for (auto attrIt = object.MemberBegin(), attrItEnd = object.MemberEnd();
          attrIt != attrItEnd;
          ++attrIt)
     {
         auto& attr = *attrIt;
         const char* attrName = attr.name.GetString();
-        if (!strcmp(attrName, "name"))
+        if (!strcmp(attrName, "sprite"))
         {
-            tile.bitmap.bmpAtlas = _atlasId;
-            tile.bitmap.bmpIndex = _bitmapReqCb(_atlasId, attr.value.GetString());
-        }
-        else if (!strcmp(attrName, "flags"))
-        {
-            const char* flagsStr = attr.value.GetString();
-            tile.flags = parseFlagsToUint(_tileFlagConsts, flagsStr);
-        }
-        else if (!strcmp(attrName, "aabb"))
-        {
-            tile.aabb.min = parseVec3(attr.value["min"]);
-            tile.aabb.max = parseVec3(attr.value["max"]);
-        }
-        else if (!strcmp(attrName, "anchor"))
-        {
-            tile.anchor.x = parseInt(attr.value["x"]);
-            tile.anchor.y = parseInt(attr.value["y"]);
+            spriteName = attr.value.GetString();
         }
     }
-    uint16_t tileIndex = (uint16_t)strtoul(key, nullptr, 16);
-    _tiles.emplace_back(tileIndex, tile);
+
+    EntityTemplate et(key, spriteName);
+    _templates.emplace_back(std::move(et));
     return true;
 }
 
 bool EntityTemplateCollectionLoader::endCollection()
 {
-    if (_tiles.empty())
-        return false;
-
     //  convert our tiles vecrtor into a single sparse vector with capacity
     //  equal to the maximum tile index
-    std::sort(_tiles.begin(), _tiles.end(),
-              [](const TilePair& l, const TilePair& r) -> bool {
-                return l.first < r.first;
+    std::sort(_templates.begin(), _templates.end(),
+              [](const EntityTemplate& l, const EntityTemplate& r) -> bool {
+                return l.name() < r.name();
               });
-    uint16_t tileIndexMax = _tiles.back().first;
-    //  create our sparse vector
-    TileCollection::Container models(_tiles.get_allocator());
-    models.resize(tileIndexMax+1);
-    for (auto& tile : _tiles)
-    {
-        models[tile.first] = tile.second;
-    }
-    TileCollection collection(_name.c_str(), std::move(models));
+
+    EntityTemplateCollection collection(_name.c_str(), std::move(_templates));
     _collectionCb(std::move(collection));
     return true;
 }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

@@ -26,10 +26,10 @@
 #include "Engine/Debug.hpp"
 #include "Engine/View.hpp"
 
-namespace cinekine {
-    namespace prototype {
+namespace cinek {
+    namespace overview {
 
-    ApplicationController::ApplicationController(ovengine::WindowComponentCLI& ui,
+    ApplicationController::ApplicationController(overview::WindowComponentCLI& ui,
                                                  glx::RendererCLI& renderer,
                                                  const Allocator& allocator) :
         _ui(ui),
@@ -82,6 +82,6 @@ namespace cinekine {
         }
     }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 

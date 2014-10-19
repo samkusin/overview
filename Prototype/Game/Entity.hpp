@@ -15,14 +15,14 @@
 class btCollisionObject;
 
 //  Engine forward declarations
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class EntityTemplate;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class Entity
     {
@@ -33,13 +33,13 @@ namespace cinekine {
 
         /// @return The Entity's identifier
         EntityId id() const;
-        
+
         /// @ return The Entity's template object
         const EntityTemplate& sourceTemplate() const;
 
         /// @return The current position of the Entity
         glm::vec3 position() const;
-        
+
         /// @return The Front direction vector
         glm::vec3 frontDirection() const;
 
@@ -51,21 +51,21 @@ namespace cinekine {
         /// @param body The collision engine-specific body
         ///
         void attachBody(btCollisionObject* body);
-        
+
         /// Detaches a collision body from the entity
         ///
         /// @return The collision engine-specific body
         ///
         btCollisionObject* detachBody();
-        
+
     private:
         const EntityTemplate& _template;
         const EntityId _id;
         btCollisionObject* _bodyObject;
     };
 
-    }   /* namespace ovengine */
-}   /* namespace cinekine */
+    }   /* namespace overview */
+}   /* namespace cinek */
 
 #include "Game/Entity.inl"
 

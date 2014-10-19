@@ -13,22 +13,22 @@
 
 #include "Engine/Director.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
         class RendererCLI;
     }
-    namespace ovengine {
+    namespace overview {
         class WindowComponentCLI;
     }
 }
 
-namespace cinekine {
-    namespace prototype {
+namespace cinek {
+    namespace overview {
 
-    class Overview: public ovengine::Director
+    class Overview: public overview::Director
     {
     public:
-        Overview(ovengine::WindowComponentCLI& uiCLI,
+        Overview(overview::WindowComponentCLI& uiCLI,
                  glx::RendererCLI& rendererCLI);
         virtual ~Overview();
 

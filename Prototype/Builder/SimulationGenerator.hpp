@@ -1,5 +1,5 @@
 //
-//  SimulationGenerator.h
+//  SimulationGenerator.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 10/17/14.
@@ -11,24 +11,23 @@
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
     class GameTemplates;
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
-namespace cinekine { namespace prototype {
-    
+namespace cinek { namespace overview {
+
     class Simulation;
-    
+
     struct CreateSimulationParams
     {
-        uint32_t entityLimit = 32;
         Allocator allocator = Allocator();
     };
-    
-    unique_ptr<Simulation> generateSimulation(const ovengine::GameTemplates& gameTemplates,
+
+    unique_ptr<Simulation> generateSimulation(const overview::GameTemplates& gameTemplates,
                                               const CreateSimulationParams& params);
-    
-} /* namespace prototype */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */
 
 
 #endif /* ifndef Overview_Builder_SimulationGenerator_hpp */

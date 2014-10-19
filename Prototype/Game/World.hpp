@@ -15,10 +15,10 @@
 
 #include "cinek/allocator.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
-        
+
     class World
     {
         CK_CLASS_NON_COPYABLE(World);
@@ -26,13 +26,13 @@ namespace cinekine {
     public:
         World(const WorldAABB& bounds, const Allocator& allocator);
         ~World();
-        
+
     private:
         Allocator _allocator;
         class Impl;
         unique_ptr<Impl> _impl;
     };
-        
+
     }
 }
 

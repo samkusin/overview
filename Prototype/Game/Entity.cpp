@@ -8,8 +8,8 @@
 
 #include "Game/Entity.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 Entity::Entity(EntityId id, const EntityTemplate& entityTempl) :
     _template(entityTempl),
@@ -17,5 +17,5 @@ Entity::Entity(EntityId id, const EntityTemplate& entityTempl) :
 {
 
 }
-    } /* namespace ovengine */
-} /* namespace cinekine */
+    } /* namespace overview */
+} /* namespace cinek */

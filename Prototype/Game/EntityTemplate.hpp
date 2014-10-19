@@ -11,25 +11,28 @@
 
 #include "Game/EntityTypes.hpp"
 
-#include <string>
+#include "cinek/string.hpp"
 
-namespace cinekine {
-    namespace ovengine {
-        
+namespace cinek {
+    namespace overview {
+
     class EntityTemplate
     {
+        CK_CLASS_NON_COPYABLE(EntityTemplate);
+
     public:
         EntityTemplate() = default;
-        
         EntityTemplate(const std::string& name, const std::string& spriteName);
-        
+        EntityTemplate(EntityTemplate&& other);
+        EntityTemplate& operator=(EntityTemplate&& other);
+
         const std::string& name() const { return _name; }
-        
+
     private:
-        const std::string _name;
-        const std::string _spriteName;
+        std::string _name;
+        std::string _spriteName;
     };
-    
+
     }   // ovengine
 }   // cinekine
 

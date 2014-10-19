@@ -12,14 +12,14 @@
 
 #include "Engine/Model/ModelTypes.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class SpriteInstance;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 using SpriteInstancePtr = SpriteInstance*;
 using ConstSpriteInstancePtr = const SpriteInstance*;

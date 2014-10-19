@@ -15,32 +15,38 @@
 #include "cinek/objectpool.hpp"
 #include "cinek/allocator.hpp"
 
+#include "Gen/Entity.pb.h"
 
-namespace cinekine { namespace ovengine {
+
+namespace cinek { namespace overview {
     class GameTemplates;
     class World;
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
-namespace cinekine { namespace prototype {
-    
+namespace cinek { namespace overview {
+
+    struct SimulationParams
+    {
+        uint32_t entityLimit;
+        Allocator allocator;
+    };
+
     class Simulation
     {
     public:
-        Simulation(ObjectPool<ovengine::Entity>&& entityPool,
-                   unique_ptr<ovengine::World>&& worldPtr,
-                   const ovengine::GameTemplates& gameTemplates,
-                   const Allocator& allocator);
+        Simulation(const overview::GameTemplates& gameTemplates,
+                   const SimulationParams& params);
         ~Simulation();
-        
-        void createEntity(const std::string& templateName);
-        
+
+        //void addPlayer(const AddPlayerRequest& req, );
+
     private:
         Allocator _allocator;
-        const ovengine::GameTemplates& _gameTemplates;
-        ObjectPool<ovengine::Entity> _entityPool;
-        unique_ptr<ovengine::World> _world;
+        const overview::GameTemplates& _gameTemplates;
+        ObjectPool<overview::Entity> _entityPool;
+        unique_ptr<overview::World> _world;
     };
-    
-} /* namespace ovengine */ } /* namespace cinekine */
+
+} /* namespace overview */ } /* namespace cinek */
 
 #endif /* defined(__Overview__Simulation__) */

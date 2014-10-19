@@ -18,99 +18,99 @@
 #include "Core/FileStreamBuf.hpp"
 #include "Core/StreamBufRapidJson.hpp"
 
-namespace cinekine { namespace prototype {
-    
-    
-    ovengine::GameTemplates& generateMapFromTemplates(
-                                            ovengine::GameTemplates& gameTemplates,
+namespace cinek { namespace overview {
+
+
+    overview::GameTemplates& generateMapFromTemplates(
+                                            overview::GameTemplates& gameTemplates,
                                             const GenerateMapParams& params)
     {
         Allocator& allocator = gameTemplates.allocator();
 
-        ovengine::BlockLibrary blockLibrary(128, allocator);
+        overview::BlockLibrary blockLibrary(128, allocator);
         FileStreamBuf dbStream(params.blocksPathname);
         if (!dbStream)
             return gameTemplates;
-        
-        ovengine::BlockCollectionLoader loader([&blockLibrary](ovengine::BlockCollection&& collection)
+
+        overview::BlockCollectionLoader loader([&blockLibrary](overview::BlockCollection&& collection)
                                                {
                                                    blockLibrary.mapCollectionToSlot(std::move(collection), 0);
                                                },
                                                allocator);
-        
-        ovengine::unserializeFromJSON(dbStream, loader);
-        
-        auto tileGridMap = allocate_unique<ovengine::TileGridMap>(allocator,
+
+        overview::unserializeFromJSON(dbStream, loader);
+
+        auto tileGridMap = allocate_unique<overview::TileGridMap>(allocator,
                                                                   params.floorX, params.floorY,
                                                                   params.overlayToFloorRatio,
                                                                   allocator);
-        auto roomGraph = allocate_unique<ovengine::RoomGraph>(allocator,
+        auto roomGraph = allocate_unique<overview::RoomGraph>(allocator,
                                                               params.roomLimit,
                                                               allocator);
-        
+
         auto& blockCollection = blockLibrary.collectionAtSlot(0);
         auto tileCollectionSlot = gameTemplates.tileLibrary().slotByCollectionName("dungeon");
-        
-        ovengine::GridBuilder floorBuilder(tileGridMap->floor(), tileGridMap->overlayToFloorRatio());
+
+        overview::GridBuilder floorBuilder(tileGridMap->floor(), tileGridMap->overlayToFloorRatio());
         auto floorDims = floorBuilder.dimensions();
-        floorBuilder.fillBox(ovengine::RoomVertex(0,0),
+        floorBuilder.fillBox(overview::RoomVertex(0,0),
                              floorDims,
                              blockCollection["dirt_ground"], tileCollectionSlot);
-        
+
         //  Construct our rooms
         auto room = roomGraph->root();
-        ovengine::RoomAABB roomAABB(ovengine::RoomVertex(12,12),
-                                    ovengine::RoomVertex(36,36));
+        overview::RoomAABB roomAABB(overview::RoomVertex(12,12),
+                                    overview::RoomVertex(36,36));
         room.resetToBounds(roomAABB);
-        
-        auto portal = room.portal(ovengine::kRoomSide_West);
+
+        auto portal = room.portal(overview::kRoomSide_West);
         portal.setFromOffsets(0, 0);
-        
-        portal = room.portal(ovengine::kRoomSide_North);
+
+        portal = room.portal(overview::kRoomSide_North);
         portal.setFromOffsets(0, 0);
-        
-        portal = room.portal(ovengine::kRoomSide_East);
+
+        portal = room.portal(overview::kRoomSide_East);
         portal.setFromOffsets(8, 4);
-        
-        roomAABB.min = portal.startPos() - ovengine::RoomVertex(0,4);
-        roomAABB.max = portal.endPos() + ovengine::RoomVertex(8,4);
-        
+
+        roomAABB.min = portal.startPos() - overview::RoomVertex(0,4);
+        roomAABB.max = portal.endPos() + overview::RoomVertex(8,4);
+
         auto eastRoom = portal.createRoom(roomAABB);
-        portal = eastRoom.portal(ovengine::kRoomSide_West);
+        portal = eastRoom.portal(overview::kRoomSide_West);
         portal.setAsOpen();
-        
-        portal = room.portal(ovengine::kRoomSide_South);
+
+        portal = room.portal(overview::kRoomSide_South);
         portal.setFromOffsets(8, 4);
-        
-        roomAABB.min = portal.startPos() - ovengine::RoomVertex(4,0);
-        roomAABB.max = portal.endPos() + ovengine::RoomVertex(12,12);
-        
+
+        roomAABB.min = portal.startPos() - overview::RoomVertex(4,0);
+        roomAABB.max = portal.endPos() + overview::RoomVertex(12,12);
+
         auto southRoom = portal.createRoom(roomAABB);
-        portal = southRoom.portal(ovengine::kRoomSide_North);
+        portal = southRoom.portal(overview::kRoomSide_North);
         portal.setAsOpen();
-        
+
         //  paint all of the rooms
-        ovengine::room_builder::PaintStyle style;
-        
+        overview::room_builder::PaintStyle style;
+
         style.floorBlockName = "wood_tile";
         style.wallBlockName = "brick_wall";
-        
-        ovengine::room_builder::paint(room, *tileGridMap,
+
+        overview::room_builder::paint(room, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
-        
+
         style.floorBlockName = "wood_floor";
         style.wallBlockName = "brick_wall";
-        
-        ovengine::room_builder::paint(eastRoom, *tileGridMap,
+
+        overview::room_builder::paint(eastRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
-        ovengine::room_builder::paint(southRoom, *tileGridMap,
+        overview::room_builder::paint(southRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
-        
+
         gameTemplates.loadTileGridMap(std::move(tileGridMap));
         gameTemplates.loadRoomGraph(std::move(roomGraph));
-        
+
         return gameTemplates;
     }
-    
-    
-} /* namespace prototype */ } /* namespace cinekine */
+
+
+} /* namespace overview */ } /* namespace cinek */
