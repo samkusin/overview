@@ -15,7 +15,7 @@
 
 #include <streambuf>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class   ModelCollectionLoader
 /// @ingroup TileModel
@@ -48,6 +48,6 @@ public:
 ///
 bool unserializeFromJSON(std::streambuf& instream, ModelCollectionLoader& handler);
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

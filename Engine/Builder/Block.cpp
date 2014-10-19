@@ -8,7 +8,7 @@
 
 #include "Engine/Builder/Block.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 Block::Block() :
     _granularity(0)
@@ -71,4 +71,4 @@ auto Block::findLargestGridByDimensions(GridDimension xGrid, GridDimension yGrid
     return grid(largestXGrid, largestYGrid);
 }
 
-}   /* namespace ovengine */ }  /* namespace cinekine */
+}   /* namespace overview */ }  /* namespace cinek */

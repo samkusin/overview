@@ -13,23 +13,23 @@
 
 #include "SDL2/SDL_render.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
-    
+
     //  The top-level Renderer object
     //      The Renderer handles drawing to the display.
     class SDLRenderer: public Renderer
     {
-    public:        
+    public:
         SDLRenderer(const RendererInitParameters& initParams,
                  SDL_Window* window,
                  const Allocator& allocator);
         virtual ~SDLRenderer();
-        
+
         operator bool() const {
             return _renderer != NULL;
         }
-        
+
         ///////////////////////////////////////////////////////////////////////
         // Resource Management
         //
@@ -54,28 +54,28 @@ namespace cinekine {
 
         //  Specialized clear method, which clears the current rendering target
         virtual void clear(const RGBAColor& color);
-    
+
         virtual void drawTextureRect(const Texture& texture,
                                      const Rect& source, const Rect& dest,
                                      const RGBAColor& color);
 
         virtual void drawVertices(const Texture& texture, Mesh::Type meshType,
-                                  const cinekine::vector<glm::vec2>& vertsPos,
-                                  const cinekine::vector<glm::vec2>& vertsUV,
-                                  const cinekine::vector<glm::vec4>& vertsColor);
+                                  const cinek::vector<glm::vec2>& vertsPos,
+                                  const cinek::vector<glm::vec2>& vertsUV,
+                                  const cinek::vector<glm::vec4>& vertsColor);
 
         virtual void drawMeshVertices(const Texture& texture, Mesh::Type meshType,
-                                      const cinekine::vector<glm::vec2>& vertsPos,
-                                      const cinekine::vector<glm::vec2>& vertsUV,
-                                      const cinekine::vector<glm::vec4>& vertsColor,
-                                      const cinekine::vector<uint16_t>& indices);
+                                      const cinek::vector<glm::vec2>& vertsPos,
+                                      const cinek::vector<glm::vec2>& vertsUV,
+                                      const cinek::vector<glm::vec4>& vertsColor,
+                                      const cinek::vector<uint16_t>& indices);
 
         virtual MeshPtr createMesh(TexturePtr& texture,
                                    Mesh::Type meshType,
-                                   const cinekine::vector<glm::vec2>& vertsPos,
-                                   const cinekine::vector<glm::vec2>& vertsUV,
-                                   const cinekine::vector<glm::vec4>& vertsColor,
-                                   const cinekine::vector<uint16_t>& indices);
+                                   const cinek::vector<glm::vec2>& vertsPos,
+                                   const cinek::vector<glm::vec2>& vertsUV,
+                                   const cinek::vector<glm::vec4>& vertsColor,
+                                   const cinek::vector<uint16_t>& indices);
 
         virtual void drawMesh(const Mesh& mesh, const glm::vec2& position);
 
@@ -89,9 +89,9 @@ namespace cinekine {
     private:
         SDL_Renderer* _renderer;
     };
-    
+
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

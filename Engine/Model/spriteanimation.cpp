@@ -9,8 +9,8 @@
 
 #include "SpriteAnimation.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     SpriteAnimation::SpriteAnimation(AnimationStateId id, uint16_t frameCount,
                                      cinek_bitmap_index* frames,
@@ -28,5 +28,5 @@ namespace cinekine {
         return getFrame((uint16_t)(getFrameCount() * scalar));
     }
 
-    }   // namespace ovengine
-}   //  namespace cinekine
+    }   // namespace overview
+}   //  namespace cinek

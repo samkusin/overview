@@ -22,7 +22,7 @@
 
 #include <SDL2/SDL.h>
 
-using namespace cinekine;
+using namespace cinek;
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,8 +44,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     }
 
     //  Startup the UI system
-    ovengine::WindowComponentPtr windowComponent =
-                                ovengine::createWindowComponent(
+    overview::WindowComponentPtr windowComponent =
+                                overview::createWindowComponent(
                                         "rocket",
                                         renderer,
                                         allocator);
@@ -56,8 +56,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     }
 
     //  Startup the Director CONTROLLER script (controls program flow )
-    ovengine::Director* director =
-        cinekine::ovengine::CreateDirector(*windowComponent, renderer);
+    overview::Director* director =
+        cinek::overview::CreateDirector(*windowComponent, renderer);
 
     //  main loop
 
@@ -93,8 +93,8 @@ int OverviewSDLMain(SDL_Window* window, int argc, char* argv[])
     }
 
     windowComponent->update(SDL_GetTicks());
-    
-    ovengine::DestroyDirector(director);
+
+    overview::DestroyDirector(director);
     director = nullptr;
 
     windowComponent = nullptr;

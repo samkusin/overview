@@ -9,7 +9,7 @@
 #include "JsonUtilities.hpp"
 #include <cstring>
 
-namespace cinekine {
+namespace cinek {
 
     int32_t parseInt(const JsonValue& value, int32_t defaultVal)
     {
@@ -77,4 +77,4 @@ namespace cinekine {
         return result;
     }
 
-} /* namespace cinekine */
+} /* namespace cinek */

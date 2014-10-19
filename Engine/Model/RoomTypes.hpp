@@ -13,8 +13,8 @@
 #include "Engine/Model/ModelTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 class RoomGraph;
 
@@ -31,6 +31,6 @@ enum RoomSide
 };
 
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */
 
 #endif

@@ -10,7 +10,7 @@
 #include "cinek/rendertypes.h"
 #include <cstring>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
         //  Contains bitmaps mapped by name
@@ -94,4 +94,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

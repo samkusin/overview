@@ -13,14 +13,14 @@
 #include "Engine/Model/Room.hpp"
 #include "cinek/allocator.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class Portal;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 /// @class   RoomGraph
 /// @brief   Container owning all objects related to one or more Rooms
@@ -58,6 +58,6 @@ private:
 };
 
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */
 
 #endif

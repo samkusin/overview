@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <cstring>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 Sprite::Sprite() :
     _bitmapClass(kCinekBitmapAtlas_Invalid),
@@ -111,5 +111,5 @@ SpriteAnimation* Sprite::getAnimation(AnimationStateId animId) const
     return nullptr;
 }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

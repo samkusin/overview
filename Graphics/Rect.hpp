@@ -11,7 +11,7 @@
 
 #include "cinek/types.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**
@@ -67,6 +67,6 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

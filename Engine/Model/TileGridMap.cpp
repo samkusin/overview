@@ -8,7 +8,7 @@
 
 #include "Engine/Model/TileGridMap.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     TileGridMap::TileGridMap(uint32_t xDimension, uint32_t yDimension,
                              uint32_t overlayToFloorRatio,
@@ -46,4 +46,4 @@ namespace cinekine { namespace ovengine {
     }
 
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */

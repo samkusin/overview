@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "GL3Mesh.hpp"
@@ -27,15 +27,15 @@
 #include "GLShaderAttributes.hpp"
 #include "Graphics/RenderDebug.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     GL3Mesh::GL3Mesh(TexturePtr& texture,
                 Mesh::Type meshType,
-                const cinekine::vector<glm::vec2>& vertsPos,
-                const cinekine::vector<glm::vec2>& vertsUV,
-                const cinekine::vector<glm::vec4>& vertsColor,
-                const cinekine::vector<uint16_t>& indices) :
+                const cinek::vector<glm::vec2>& vertsPos,
+                const cinek::vector<glm::vec2>& vertsUV,
+                const cinek::vector<glm::vec4>& vertsColor,
+                const cinek::vector<uint16_t>& indices) :
         _texture(texture),
         _indexCount(0),
         _mode(0),
@@ -54,18 +54,18 @@ namespace cinekine {
             return;
         }
         glGenVertexArrays(1, &_vao);
-        
+
         glGenBuffers(1, &_vboPos);
         glGenBuffers(1, &_vboUV);
         glGenBuffers(1, &_vboColor);
         glGenBuffers(1, &_ibo);
-        
+
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vboPos);
         glBufferData(GL_ARRAY_BUFFER, vertsPos.size() * sizeof(glm::vec2), vertsPos.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrPos);
         glVertexAttribPointer(kGL_ShaderVertexAttrPos, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, _vboUV);
         glBufferData(GL_ARRAY_BUFFER, vertsUV.size() * sizeof(glm::vec2), vertsUV.data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(kGL_ShaderVertexAttrUVs);
@@ -78,7 +78,7 @@ namespace cinekine {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
-        
+
         glBindVertexArray(0);
 
         _indexCount = indices.size();
@@ -111,8 +111,8 @@ namespace cinekine {
             glDeleteBuffers(1, &_ibo);
             _ibo = 0;
         }
-    } 
-    
+    }
+
     void GL3Mesh::draw() const
     {
         GLuint textureId = static_cast<GL3Texture*>(_texture.get())->textureID();
@@ -124,4 +124,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

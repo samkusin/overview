@@ -27,7 +27,7 @@
 #include "Graphics/RenderDebug.hpp"
 #include "Core/FileStreamBuf.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     GLuint GLShaderLoader::load(const char* pathname, GLenum type)
@@ -69,4 +69,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

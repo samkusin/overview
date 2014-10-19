@@ -11,7 +11,7 @@
 
 #include "RenderTypes.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     enum FillMethod
@@ -44,6 +44,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

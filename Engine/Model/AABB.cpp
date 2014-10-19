@@ -11,7 +11,7 @@
 
 #include <algorithm>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     template<>
     bool AABB<glm::ivec2>::inside(const AABB<glm::ivec2>& box) const
@@ -140,4 +140,4 @@ namespace cinekine { namespace ovengine {
     }
 
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */

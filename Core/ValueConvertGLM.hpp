@@ -15,7 +15,7 @@
 #include <cstdlib>
 
 
-namespace cinekine {
+namespace cinek {
 
 template<> class value_convert<glm::ivec2, glm::ivec2> {
 public:
@@ -31,6 +31,6 @@ public:
     }
 };
 
-} /* namespace cinekine */
+} /* namespace cinek */
 
 #endif

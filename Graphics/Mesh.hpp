@@ -35,7 +35,7 @@
 #include "cinek/rendertypes.h"
 #include <memory>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**
@@ -62,6 +62,6 @@ namespace cinekine {
     typedef std::shared_ptr<Mesh> MeshPtr;
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

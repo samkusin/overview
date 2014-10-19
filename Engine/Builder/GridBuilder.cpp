@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     inline void plotBlockTileOnMap(TileGrid& mapGrid,
                                    TileSlot tileSlot, int tileX, int tileY,
@@ -295,4 +295,4 @@ namespace cinekine { namespace ovengine {
     }
 
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */

@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "RocketSDLInput.hpp"
@@ -30,10 +30,10 @@
 #include "SDL2/SDL_keyboard.h"
 
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
-    RocketSDLInput::RocketSDLInput() 
+    RocketSDLInput::RocketSDLInput()
     {
     }
 
@@ -48,19 +48,19 @@ namespace cinekine {
         if(modState & KMOD_CTRL) {
             keyMods |= Rocket::Core::Input::KM_CTRL;
         }
-        
+
         if(modState & KMOD_ALT) {
             keyMods |= Rocket::Core::Input::KM_ALT;
         }
-               
+
         if((modState & KMOD_NUM) == KMOD_NUM) {
             keyMods |= Rocket::Core::Input::KM_NUMLOCK;
         }
-        
+
         if((modState & KMOD_CAPS) == KMOD_CAPS) {
             keyMods |= Rocket::Core::Input::KM_CAPSLOCK;
         }
-                        
+
         switch (event.type)
         {
         case SDL_MOUSEMOTION:
@@ -80,7 +80,7 @@ namespace cinekine {
 
                 if (event.type == SDL_MOUSEBUTTONDOWN)
                     context->ProcessMouseButtonDown(buttonIndex, keyMods);
-                else 
+                else
                     context->ProcessMouseButtonUp(buttonIndex, keyMods);
             }
             break;
@@ -109,5 +109,5 @@ namespace cinekine {
         return true;
     }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

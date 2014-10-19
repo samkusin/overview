@@ -38,7 +38,7 @@
 
 #include "cinek/vector.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**
@@ -50,10 +50,10 @@ namespace cinekine {
     public:
         GL3Mesh(TexturePtr& texture,
                 Mesh::Type meshType,
-                const cinekine::vector<glm::vec2>& vertsPos,
-                const cinekine::vector<glm::vec2>& vertsUV,
-                const cinekine::vector<glm::vec4>& vertsColor,
-                const cinekine::vector<uint16_t>& indices);
+                const cinek::vector<glm::vec2>& vertsPos,
+                const cinek::vector<glm::vec2>& vertsUV,
+                const cinek::vector<glm::vec4>& vertsColor,
+                const cinek::vector<uint16_t>& indices);
 
         virtual ~GL3Mesh();
         /** @return Checks whether a Mesh was created successfully */
@@ -74,6 +74,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

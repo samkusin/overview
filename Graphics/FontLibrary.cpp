@@ -13,7 +13,7 @@
 #include "Core/FileStreamBuf.hpp"
 #include "External/stb/stb_truetype.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
 //  Modified form of stbtt_BakeFontBitmap
@@ -221,4 +221,4 @@ void FontLibrary::unloadFont(FontHandle slot)
 }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

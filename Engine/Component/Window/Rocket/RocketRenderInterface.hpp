@@ -32,14 +32,14 @@
 #include "cinek/vector.hpp"
 #include "cinek/map.hpp"
 
-namespace cinekine {
+namespace cinek {
 
     namespace glx {
         class RendererCLI;
         class Mesh;
     }
 
-    namespace ovengine {
+    namespace overview {
 
     class RocketRenderInterface : public Rocket::Core::RenderInterface
     {
@@ -140,7 +140,7 @@ namespace cinekine {
                          vector<uint16_t>& indices);
     };
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

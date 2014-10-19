@@ -8,7 +8,7 @@
 
 #include "./RoomGraphImpl.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 RoomGraph::Impl::Impl(size_t maxRooms, const Allocator& allocator) :
     _root(nullptr),
@@ -72,4 +72,4 @@ Room RoomGraph::Impl::root() const
 
 
 
-}   /* namespace ovengine */ }  /* namespace cinekine */
+}   /* namespace overview */ }  /* namespace cinek */

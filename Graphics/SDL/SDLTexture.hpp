@@ -13,7 +13,7 @@
 #include "cinek/types.hpp"
 #include <SDL2/SDL_render.h>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     class Renderer;
@@ -54,6 +54,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

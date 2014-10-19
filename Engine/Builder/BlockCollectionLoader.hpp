@@ -16,7 +16,7 @@
 #include <functional>
 #include <streambuf>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class   BlockCollectionLoader
 /// @ingroup Builder
@@ -47,6 +47,6 @@ private:
 };
 
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

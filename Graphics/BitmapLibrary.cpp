@@ -13,7 +13,7 @@
 #include "Core/FileStreamBuf.hpp"
 
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     BitmapLibrary::BitmapLibrary(RendererCLI& renderer, const Allocator& allocator) :
@@ -129,4 +129,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

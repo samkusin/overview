@@ -16,8 +16,8 @@
 
 #include <glm/glm.hpp>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class Sprite;
     class SpriteAnimation;

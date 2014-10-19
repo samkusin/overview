@@ -10,8 +10,8 @@
 #include "Engine/Builder/GridBuilder.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         namespace room_builder {
 
 void paint(Room room, TileGridMap& grid,
@@ -89,4 +89,4 @@ void paint(Room room, TileGridMap& grid,
 }
         } /* namespace room_builder */
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */

@@ -13,8 +13,8 @@
 #include "Engine/Model/RoomTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 struct RoomNode;
 struct PortalNode;
@@ -120,7 +120,7 @@ private:
 };
 
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */
 
 #include "Engine/Model/Room.inl"
 

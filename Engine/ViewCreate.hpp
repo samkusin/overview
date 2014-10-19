@@ -30,26 +30,26 @@
 
 #include <functional>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
         class Renderer;
         class FontLibrary;
         class BitmapLibrary;
     }
-    namespace ovengine {
+    namespace overview {
         class Theater;
         class View;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     /** Delegate for creating View objects based on class and ID */
     typedef std::function<std::shared_ptr<View>(const char* /* viewClass */,
                                                 const char* /* viewId */)> ViewCreateFn;
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

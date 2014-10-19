@@ -28,8 +28,8 @@
 
 #include "cinek/vector.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 
 RocketRenderInterface::RocketRenderInterface(glx::RendererCLI& renderer,
@@ -217,6 +217,6 @@ float RocketRenderInterface::GetPixelsPerInch()
     return 100.0f;
 }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 

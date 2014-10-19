@@ -13,12 +13,12 @@
 #include "Engine/Model/ModelLibrary.hpp"
 #include "Engine/Builder/BlockCollection.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     using BlockLibrary = ModelLibrary<BlockCollection, BlockCollectionId, 0xffff>;
 
-    }   // namespace ovengine
-}   //  namespace cinekine
+    }   // namespace overview
+}   //  namespace cinek
 
 #endif

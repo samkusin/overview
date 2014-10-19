@@ -14,7 +14,7 @@
 #include "Engine/Model/ModelTypes.hpp"
 #include "Engine/Grid.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /** Defines a grid of tiles */
 using TileGrid = Grid<TileId>;
@@ -36,6 +36,6 @@ inline TileIndex indexFromTileId(TileId id)
     return (id & 0x0fff);
 }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

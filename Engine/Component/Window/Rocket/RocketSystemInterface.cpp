@@ -12,28 +12,28 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "RocketSystemInterface.hpp"
 #include "Engine/Debug.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     RocketSystemInterface::RocketSystemInterface() :
         _currentTime(0.0f)
     {
     }
 
-    bool RocketSystemInterface::LogMessage(Rocket::Core::Log::Type type, 
+    bool RocketSystemInterface::LogMessage(Rocket::Core::Log::Type type,
                                            const Rocket::Core::String& message)
     {
         switch (type)
@@ -47,7 +47,7 @@ namespace cinekine {
             break;
         case Rocket::Core::Log::LT_WARNING:
              OVENGINE_LOG_WARN(message.CString());
-             break;       
+             break;
         case Rocket::Core::Log::LT_ERROR:
             OVENGINE_LOG_ERROR(message.CString());
             break;
@@ -64,11 +64,11 @@ namespace cinekine {
     {
 
     }
-        
+
     void RocketSystemInterface::DeactivateKeyboard()
     {
 
     }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

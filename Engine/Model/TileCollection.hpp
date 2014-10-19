@@ -15,10 +15,10 @@
 #include "Engine/Model/Tile.hpp"
 
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     using TileCollection = ModelCollection<Tile>;
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

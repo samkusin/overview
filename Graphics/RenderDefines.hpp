@@ -11,12 +11,12 @@
 
 #include "cinek/types.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
 const size_t kBitmapLibraryPoolSize = 16;
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

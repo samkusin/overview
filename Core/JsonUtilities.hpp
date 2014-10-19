@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 
-namespace cinekine {
+namespace cinek {
 
     typedef rapidjson::GenericDocument<rapidjson::UTF8<> > JsonDocument;
     typedef rapidjson::GenericValue<rapidjson::UTF8<> > JsonValue;
@@ -26,6 +26,6 @@ namespace cinekine {
 
     uint32_t parseFlagsToUint(const JsonValue& flagsDef, const char* flags);
 
-} /* namespace cinekine */
+} /* namespace cinek */
 
 #endif

@@ -16,7 +16,7 @@
 
 #include "cinek/vector.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class  ModelLibrary
 /// @ingroup Model
@@ -157,6 +157,6 @@ auto ModelLibrary<_Collection,
 }
 
 
-}   /* namespace ovengine */ }   /* namespace cinekine */
+}   /* namespace overview */ }   /* namespace cinek */
 
 #endif

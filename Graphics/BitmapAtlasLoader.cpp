@@ -15,7 +15,7 @@
 
 #include <cstring>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     bool BitmapAtlasLoader::unserialize(std::streambuf& instream)
@@ -115,4 +115,4 @@ namespace cinekine {
 
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

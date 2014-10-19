@@ -20,7 +20,7 @@
 
 #include <array>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class  Block
 /// @ingroup Builder
@@ -157,6 +157,6 @@ inline bool Block::hasGrid(GridDimension xGrid, GridDimension yGrid) const
     return _grids[yGrid-1][xGrid-1];
 }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

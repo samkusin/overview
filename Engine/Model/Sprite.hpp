@@ -20,8 +20,8 @@
 
 #include <glm/glm.hpp>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 /**
  * \class Sprite
@@ -101,7 +101,7 @@ private:
     vector<SpriteAnimation*> _states;
 };
 
-    }   // namespace ovengine
-}   //  namespace cinekine
+    }   // namespace overview
+}   //  namespace cinek
 
 #endif

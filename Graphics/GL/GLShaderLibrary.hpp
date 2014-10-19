@@ -41,7 +41,7 @@
 #include <unordered_map>
 #include <set>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     class GLShaderLoader;
@@ -84,6 +84,6 @@ namespace cinekine {
 
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

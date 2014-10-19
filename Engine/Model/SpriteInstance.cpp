@@ -11,8 +11,8 @@
 #include "Sprite.hpp"
 #include "SpriteAnimation.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 const Sprite SpriteInstance::kNullSprite;
 

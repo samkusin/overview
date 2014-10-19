@@ -36,7 +36,7 @@
 
 #include <memory>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**
@@ -60,6 +60,6 @@ namespace cinekine {
     typedef std::shared_ptr<Texture> TexturePtr;
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

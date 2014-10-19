@@ -9,8 +9,8 @@
 #include "Engine/Model/SpriteLibrary.hpp"
 #include "Engine/Model/Sprite.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 SpriteLibrary::SpriteLibrary(size_t initTemplateLimit, const Allocator& allocator) :
     _allocator(allocator),
@@ -77,5 +77,5 @@ bool SpriteLibrary::mapAnimationStateNameToId(const char* name,
 }
 
 
-    }   // namespace ovengine
-}   //  namespace cinekine
+    }   // namespace overview
+}   //  namespace cinek

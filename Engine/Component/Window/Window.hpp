@@ -37,8 +37,8 @@
 
 #include <functional>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     /**
      * @class Window
@@ -57,7 +57,7 @@ namespace cinekine {
 
     typedef std::shared_ptr<Window> WindowPtr;
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

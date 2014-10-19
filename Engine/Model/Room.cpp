@@ -11,8 +11,8 @@
 
 #include "./Internal/RoomGraphImpl.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 void Room::resetToBounds(const RoomAABB& aabb)
 {
@@ -224,4 +224,4 @@ RoomVertex Portal::edgeEndPos() const
 }
 
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */

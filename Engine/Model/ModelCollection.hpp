@@ -16,7 +16,7 @@
 #include "cinek/string.hpp"
 #include "cinek/vector.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class  ModelCollection
 /// @ingroup Model
@@ -96,6 +96,6 @@ auto ModelCollection<_Model>::operator[](size_t index) const -> const Type&
     return _models[index];
 }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

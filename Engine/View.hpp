@@ -32,8 +32,8 @@
 
 #include <SDL2/SDL_keycode.h>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class Theater;
 
@@ -94,7 +94,7 @@ namespace cinekine {
 
 
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

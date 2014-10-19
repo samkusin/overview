@@ -18,8 +18,8 @@
 
 #include <unordered_map>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 /**
  * @class SpriteLibrary
@@ -110,7 +110,7 @@ private:
     unordered_map<std::string, Sprite*> _nameToTemplates;
 };
 
-    }   // namespace ovengine
-}   //  namespace cinekine
+    }   // namespace overview
+}   //  namespace cinek
 
 #endif

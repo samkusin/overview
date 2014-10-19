@@ -15,7 +15,7 @@
 
 #include "SDL2/SDL_image.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     struct GLTextureFormat
@@ -185,4 +185,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

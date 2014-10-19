@@ -14,8 +14,8 @@
 #include "Engine/Model/ModelTypes.hpp"
 #include <array>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     /**
      * @class   QuadTree
@@ -47,6 +47,6 @@ namespace cinekine {
         std::array<this_type*, Quadrant::kCount> _nodes;
     };
 
-    } /* namespace ovengine */
-} /* namespace cinekine */
+    } /* namespace overview */
+} /* namespace cinek */
 

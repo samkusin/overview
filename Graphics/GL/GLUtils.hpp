@@ -20,7 +20,7 @@
 #include <GL/gl.h>
 #endif
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     inline bool GLError(const char* context) {
@@ -34,6 +34,6 @@ namespace cinekine {
  //   GLuint loadShader(const char *)
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

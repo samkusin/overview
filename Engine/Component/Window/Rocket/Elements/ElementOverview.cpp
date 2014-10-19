@@ -12,21 +12,21 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "ElementOverview.hpp"
 #include "../RocketServer.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     RocketElementOverview::RocketElementOverview(const Rocket::Core::String& tag,
                                                  const RocketSDLInputMap& inputMap,
@@ -37,7 +37,7 @@ namespace cinekine {
     {
      //   AddEventListener("mousedown", this, true);
     }
-    
+
     RocketElementOverview::~RocketElementOverview()
     {
     }
@@ -58,7 +58,7 @@ namespace cinekine {
                 region = View::kMouseRegionEnter;
             else if (event == "mouseout")
                 region = View::kMouseRegionExit;
-   
+
             _view->onMouseMove(region, mx, my);
         }
         else if (event == "mousedown" || event == "mouseup")
@@ -90,11 +90,11 @@ namespace cinekine {
                 {
                     _view->onMouseButtonUp(button, mx, my);
                 }
-            }   
+            }
         }
         else if (event == "keydown" || event == "keyup")
         {
-            
+
             Rocket::Core::Input::KeyIdentifier key =
             (Rocket::Core::Input::KeyIdentifier)event.GetParameter<int>(
                                                                         "key_identifier",
@@ -102,7 +102,7 @@ namespace cinekine {
             bool ctrlKey = event.GetParameter("ctrl_key", false);
             bool shiftKey = event.GetParameter("shift_key", false);
             bool altKey = event.GetParameter("alt_key", false);
-            
+
             uint16_t mod = 0;
             if (ctrlKey)
                 mod |= Rocket::Core::Input::KM_CTRL;
@@ -110,9 +110,9 @@ namespace cinekine {
                 mod |= Rocket::Core::Input::KM_SHIFT;
             else if (altKey)
                 mod |= Rocket::Core::Input::KM_ALT;
-            
+
             RocketSDLInputMap::SDLKey sdlKey = _inputMap.translateRocketKey(key, mod);
-            
+
             if (event == "keydown")
             {
                 _view->onKeyDown(sdlKey.code, sdlKey.mod);
@@ -134,5 +134,5 @@ namespace cinekine {
     }
 
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

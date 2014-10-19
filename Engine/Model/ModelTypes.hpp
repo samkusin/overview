@@ -16,7 +16,7 @@
 
 #include <glm/glm.hpp>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     using TileSlot = uint16_t;
     using TileIndex = uint16_t;
@@ -37,6 +37,6 @@ namespace cinekine { namespace ovengine {
         int32_t layerIndex;     /**< Maps to a TileGridMap layer */
     };
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

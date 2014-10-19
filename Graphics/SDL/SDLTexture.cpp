@@ -15,7 +15,7 @@
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_pixels.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     static uint32_t convertToSDLPixelFormat(cinek_pixel_format pixelFormat)
@@ -39,7 +39,7 @@ namespace cinekine {
         }
         return SDL_PIXELFORMAT_UNKNOWN;
     }
-    
+
     //  convert this alpha-only format to the target SDL pixel format
     static bool pixelsA8toFormat(uint16_t w, uint16_t h, const uint8_t* in,
                                  uint8_t* out, size_t outSize, SDL_PixelFormat* outFormat)
@@ -48,7 +48,7 @@ namespace cinekine {
         size_t requiredOutSize = outFormat->BytesPerPixel * (w * h);
         if (requiredOutSize > outSize)
             return false;
-        
+
         const uint8_t* source = in;
         uint8_t* target = out;
         for (uint16_t row = 0; row < h; ++row)
@@ -79,7 +79,7 @@ namespace cinekine {
         size_t requiredOutSize = outFormat->BytesPerPixel * (w * h);
         if (requiredOutSize > outSize)
             return false;
-        
+
         const uint8_t* source = in;
         uint8_t* target = out;
         for (uint16_t row = 0; row < h; ++row)
@@ -101,7 +101,7 @@ namespace cinekine {
         }
         return true;
     }
-      
+
     SDLTexture::SDLTexture(Renderer& renderer, const char* pathname) :
         _renderer(renderer),
         _texture(NULL),
@@ -165,7 +165,7 @@ namespace cinekine {
             return;
         if (!bytes)
             return;
-        
+
         int updateResult = -1;
 
         //  copy pixels to our texture.  for non-SDL formats, must create
@@ -205,7 +205,7 @@ namespace cinekine {
             }
             SDL_FreeFormat(sdlPf);
         }
-        
+
         if (updateResult < 0)
         {
             RENDER_LOG_ERROR("SDLTexture::SDLTexture - UpdateTexture failed: %s", SDL_GetError());
@@ -213,7 +213,7 @@ namespace cinekine {
             _texture = NULL;
         }
     }
-    
+
     SDLTexture::~SDLTexture()
     {
         if (_texture)
@@ -221,7 +221,7 @@ namespace cinekine {
             SDL_DestroyTexture(_texture);
         }
     }
-    
+
     SDLTexture::SDLTexture(SDLTexture&& other) :
         _renderer(other._renderer),
         _texture(std::move(other._texture))
@@ -231,4 +231,4 @@ namespace cinekine {
 
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

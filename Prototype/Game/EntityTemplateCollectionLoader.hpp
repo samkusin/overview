@@ -1,14 +1,15 @@
 ///
 /// @file
-/// Contains the class definition for the JSON based TileCollectionLoader
+/// Contains the class definition for the JSON based
+/// EntityTemplateCollectionLoader
 ///
 /// @author     Samir Sinha
 /// @date       08/24/13
 /// @copyright  Copyright 2013 Cinekine Media
 /// @license    The MIT License
 
-#ifndef Overview_Model_TileCollectionLoader_hpp
-#define Overview_Model_TileCollectionLoader_hpp
+#ifndef Overview_Model_EntityTemplateCollectionLoader_hpp
+#define Overview_Model_EntityTemplateCollectionLoader_hpp
 
 #include "Engine/Model/ModelCollectionLoader.hpp"
 #include "Engine/Model/TileCollection.hpp"
@@ -17,14 +18,14 @@
 
 #include <functional>
 
-namespace cinek { namespace overview {
+namespace cinekine { namespace ovengine {
 
-/// @class   TileCollectionLoader
+/// @class   EntityTemplateCollectionLoader
 /// @ingroup TileModel
 /// @brief   Handler for unserializing TileCollection objects from an input JSON
 ///          stream.
 ///
-class TileCollectionLoader : public ModelCollectionLoader
+class EntityTemplateCollectionLoader : public ModelCollectionLoader
 {
 public:
     /// Constructor
@@ -37,7 +38,7 @@ public:
     /// @param  collectionCb Issued when a TileCollection has been unserialized
     /// @param  allocator   The allocator for memory operations
     ///
-    TileCollectionLoader(
+    EntityTemplateCollectionLoader(
         const JsonValue& tileFlagConsts,
         std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
         std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
@@ -62,6 +63,6 @@ private:
     vector< TilePair > _tiles;
 };
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ovengine */ } /* namespace cinekine */
 
 #endif

@@ -14,7 +14,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,8 +29,8 @@
 #include "./Elements/ElementOverview.hpp"
 #include "./RocketServer.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     RocketOverviewElementInstancer::RocketOverviewElementInstancer(RocketServer& server,
                                                                    const Allocator& allocator) :
@@ -56,8 +56,8 @@ namespace cinekine {
 
     void RocketOverviewElementInstancer::Release()
     {
-        _allocator.deleteItem(this);    
+        _allocator.deleteItem(this);
     }
-    
-    }   // namespace ovengine
-}   // namespace cinekine
+
+    }   // namespace overview
+}   // namespace cinek

@@ -15,15 +15,15 @@
 
 #include "cinek/vector.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class Portal;
         class RoomGraph;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 /// @class   RoomGraphInterface
 /// @brief   A non movable, non copyable RoomGraph implementation.
@@ -59,6 +59,6 @@ private:
 };
 
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */
 
 #endif

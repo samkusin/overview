@@ -13,7 +13,7 @@
 
 #include "Engine/Model/ModelTypes.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     /// @struct AABB
     /// @brief  An axis-aligned box in 3D space
@@ -149,7 +149,7 @@ namespace cinekine { namespace ovengine {
         return result;
     }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif
 

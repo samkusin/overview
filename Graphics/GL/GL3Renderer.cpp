@@ -15,7 +15,7 @@
 
 #include <array>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     GL3Renderer::GL3Renderer(const RendererInitParameters& initParams,
@@ -233,9 +233,9 @@ namespace cinekine {
     }
 
     void GL3Renderer::drawVertices(const Texture& texture, Mesh::Type meshType,
-                                   const cinekine::vector<glm::vec2>& vertsPos,
-                                   const cinekine::vector<glm::vec2>& vertsUV,
-                                   const cinekine::vector<glm::vec4>& vertsColor)
+                                   const cinek::vector<glm::vec2>& vertsPos,
+                                   const cinek::vector<glm::vec2>& vertsUV,
+                                   const cinek::vector<glm::vec4>& vertsColor)
     {
         //  stream the vertices onto a batch.
         const GL3Texture& gltexture = static_cast<const GL3Texture&>(texture);
@@ -246,10 +246,10 @@ namespace cinekine {
     }
 
     void GL3Renderer::drawMeshVertices(const Texture& texture, Mesh::Type meshType,
-                                       const cinekine::vector<glm::vec2>& vertsPos,
-                                       const cinekine::vector<glm::vec2>& vertsUV,
-                                       const cinekine::vector<glm::vec4>& vertsColor,
-                                       const cinekine::vector<GLushort>& indices)
+                                       const cinek::vector<glm::vec2>& vertsPos,
+                                       const cinek::vector<glm::vec2>& vertsUV,
+                                       const cinek::vector<glm::vec4>& vertsColor,
+                                       const cinek::vector<GLushort>& indices)
     {
         //  just push the vertices up - this code will orphan buffers (depending on driver impl)
         //  this should be a call of last resort.  the rule is mesh first, then streaming tris before
@@ -307,10 +307,10 @@ namespace cinekine {
 
     MeshPtr GL3Renderer::createMesh(TexturePtr& texture,
                                     Mesh::Type meshType,
-                                    const cinekine::vector<glm::vec2>& vertsPos,
-                                    const cinekine::vector<glm::vec2>& vertsUV,
-                                    const cinekine::vector<glm::vec4>& vertsColor,
-                                    const cinekine::vector<uint16_t>& indices)
+                                    const cinek::vector<glm::vec2>& vertsPos,
+                                    const cinek::vector<glm::vec2>& vertsUV,
+                                    const cinek::vector<glm::vec4>& vertsColor,
+                                    const cinek::vector<uint16_t>& indices)
     {
         Allocator& allocator = getAllocator();
         std::shared_ptr<Mesh> mesh = std::allocate_shared<GL3Mesh,
@@ -452,4 +452,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

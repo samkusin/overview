@@ -15,15 +15,15 @@
 
 #include "cinek/string.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class TileGridMap;
         class BlockCollection;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         namespace room_builder {
 
 struct PaintStyle
@@ -38,7 +38,7 @@ void paint(Room room, TileGridMap& grid,
            TileSlot tileCollectionSlot);
 
         } /* namespace room_builder */
-    } /* namespace ovengine */
-} /* namespace cinekine */
+    } /* namespace overview */
+} /* namespace cinek */
 
 #endif

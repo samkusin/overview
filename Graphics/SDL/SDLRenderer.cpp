@@ -12,7 +12,7 @@
 
 #include "SDL2/SDL_rect.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     SDLRenderer::SDLRenderer(const RendererInitParameters& initParams,
@@ -25,7 +25,7 @@ namespace cinekine {
                                        SDL_RENDERER_ACCELERATED |
                                        SDL_RENDERER_PRESENTVSYNC);
     }
-    
+
     SDLRenderer::~SDLRenderer()
     {
         SDL_DestroyRenderer(_renderer);
@@ -60,12 +60,12 @@ namespace cinekine {
                                           std::move(format), std::move(bytes)
             );
     }
-    
+
     void SDLRenderer::begin()
     {
         SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
     }
-        
+
     void SDLRenderer::display()
     {
         SDL_RenderPresent(_renderer);
@@ -136,13 +136,13 @@ namespace cinekine {
             SDL_SetTextureColorMod(sdlTexture, color.r, color.g, color.b);
             SDL_SetTextureAlphaMod(sdlTexture, color.a);
             SDL_RenderCopy(_renderer, sdlTexture, &srcRect, &destRect);
-        }      
+        }
     }
 
     void SDLRenderer::drawVertices(const Texture& texture, Mesh::Type meshType,
-                                   const cinekine::vector<glm::vec2>& vertsPos,
-                                   const cinekine::vector<glm::vec2>& vertsUV,
-                                   const cinekine::vector<glm::vec4>& vertsColor)
+                                   const cinek::vector<glm::vec2>& vertsPos,
+                                   const cinek::vector<glm::vec2>& vertsUV,
+                                   const cinek::vector<glm::vec4>& vertsColor)
     {
         /**
          * @todo SDL's accelerated renderer does not offer a uniform way to render
@@ -150,15 +150,15 @@ namespace cinekine {
          *
          * Windows and Linux support OpenGL 2.1 so that will likely be the reference
          * renderer.
-         */        
+         */
     }
 
 
     void SDLRenderer::drawMeshVertices(const Texture& texture, Mesh::Type meshType,
-                                       const cinekine::vector<glm::vec2>& vertsPos,
-                                       const cinekine::vector<glm::vec2>& vertsUV,
-                                       const cinekine::vector<glm::vec4>& vertsColor,
-                                       const cinekine::vector<uint16_t>& indices)
+                                       const cinek::vector<glm::vec2>& vertsPos,
+                                       const cinek::vector<glm::vec2>& vertsUV,
+                                       const cinek::vector<glm::vec4>& vertsColor,
+                                       const cinek::vector<uint16_t>& indices)
     {
         /**
          * @todo SDL's accelerated renderer does not offer a uniform way to render
@@ -171,10 +171,10 @@ namespace cinekine {
 
     MeshPtr SDLRenderer::createMesh(TexturePtr& texture,
                                     Mesh::Type meshType,
-                                    const cinekine::vector<glm::vec2>& vertsPos,
-                                    const cinekine::vector<glm::vec2>& vertsUV,
-                                    const cinekine::vector<glm::vec4>& vertsColor,
-                                    const cinekine::vector<uint16_t>& indices)
+                                    const cinek::vector<glm::vec2>& vertsPos,
+                                    const cinek::vector<glm::vec2>& vertsUV,
+                                    const cinek::vector<glm::vec4>& vertsColor,
+                                    const cinek::vector<uint16_t>& indices)
     {
         Allocator& allocator = getAllocator();
         return std::allocate_shared<SDLMesh,
@@ -189,4 +189,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

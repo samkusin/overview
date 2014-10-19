@@ -6,9 +6,9 @@
 
 #include <memory>
 
-namespace overview = cinekine::overview;
+namespace overview = cinek::overview;
 
-cinekine::overview::Stage* CreateStage(uint16_t xUnits, uint16_t yUnits, int16_t zUp, int16_t zDown)
+cinek::overview::Stage* CreateStage(uint16_t xUnits, uint16_t yUnits, int16_t zUp, int16_t zDown)
 {
     cinek_ov_map_bounds bounds;
     bounds.xUnits = xUnits;
@@ -66,5 +66,5 @@ TEST(StageMap, StageGetMapNoRelease) {
     EXPECT_EQ(MAP_X_SIZE, bounds.xUnits);
     EXPECT_EQ(MAP_Y_SIZE, bounds.yUnits);
     EXPECT_EQ(MAP_Z_UP, bounds.zUp);
-    EXPECT_EQ(MAP_Z_DOWN, bounds.zDown);  
+    EXPECT_EQ(MAP_Z_DOWN, bounds.zDown);
 }

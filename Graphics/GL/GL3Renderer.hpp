@@ -41,7 +41,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <array>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     class Texture;
@@ -83,22 +83,22 @@ namespace cinekine {
                                      const RGBAColor& color);
 
         virtual void drawVertices(const Texture& texture, Mesh::Type meshType,
-                                  const cinekine::vector<glm::vec2>& vertsPos,
-                                  const cinekine::vector<glm::vec2>& vertsUV,
-                                  const cinekine::vector<glm::vec4>& vertsColor);
+                                  const cinek::vector<glm::vec2>& vertsPos,
+                                  const cinek::vector<glm::vec2>& vertsUV,
+                                  const cinek::vector<glm::vec4>& vertsColor);
 
         virtual void drawMeshVertices(const Texture& texture, Mesh::Type meshType,
-                                      const cinekine::vector<glm::vec2>& vertsPos,
-                                      const cinekine::vector<glm::vec2>& vertsUV,
-                                      const cinekine::vector<glm::vec4>& vertsColor,
-                                      const cinekine::vector<uint16_t>& indices);
+                                      const cinek::vector<glm::vec2>& vertsPos,
+                                      const cinek::vector<glm::vec2>& vertsUV,
+                                      const cinek::vector<glm::vec4>& vertsColor,
+                                      const cinek::vector<uint16_t>& indices);
 
         virtual MeshPtr createMesh(TexturePtr& texture,
                                    Mesh::Type meshType,
-                                   const cinekine::vector<glm::vec2>& vertsPos,
-                                   const cinekine::vector<glm::vec2>& vertsUV,
-                                   const cinekine::vector<glm::vec4>& vertsColor,
-                                   const cinekine::vector<uint16_t>& indices);
+                                   const cinek::vector<glm::vec2>& vertsPos,
+                                   const cinek::vector<glm::vec2>& vertsUV,
+                                   const cinek::vector<glm::vec4>& vertsColor,
+                                   const cinek::vector<uint16_t>& indices);
 
         virtual void drawMesh(const Mesh& mesh, const glm::vec2& position);
 
@@ -156,6 +156,6 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

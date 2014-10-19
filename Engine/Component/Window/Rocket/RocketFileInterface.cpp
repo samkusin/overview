@@ -12,22 +12,22 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "RocketFileInterface.hpp"
 
 #include "SDL2/SDL_rwops.h"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     RocketFileInterface::RocketFileInterface(const char* rootdir) :
         _rootDir(rootdir ? rootdir : "")
@@ -40,7 +40,7 @@ namespace cinekine {
         Rocket::Core::String pathname = _rootDir + path;
         return reinterpret_cast<Rocket::Core::FileHandle>(SDL_RWFromFile(pathname.CString(), "rb"));
     }
-    
+
     void RocketFileInterface::Close(Rocket::Core::FileHandle file)
     {
         SDL_RWops* rwops = reinterpret_cast<SDL_RWops*>(file);
@@ -65,5 +65,5 @@ namespace cinekine {
         return (size_t)SDL_RWtell(rwops);
     }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

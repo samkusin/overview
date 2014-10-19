@@ -38,7 +38,7 @@
 
 #include "cinek/vector.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**
@@ -120,9 +120,9 @@ namespace cinekine {
          * @param vertsColor Color vertices to render
          */
         virtual void drawVertices(const Texture& texture, Mesh::Type meshType,
-                                  const cinekine::vector<glm::vec2>& vertsPos,
-                                  const cinekine::vector<glm::vec2>& vertsUV,
-                                  const cinekine::vector<glm::vec4>& vertsColor) = 0;
+                                  const cinek::vector<glm::vec2>& vertsPos,
+                                  const cinek::vector<glm::vec2>& vertsUV,
+                                  const cinek::vector<glm::vec4>& vertsColor) = 0;
         /**
          * Draws a 2D mesh to the current rendering target from the source
          * texture.  All vertex vectors passed to drawMesh must be of the
@@ -136,10 +136,10 @@ namespace cinekine {
          * @param indices    Vertex indicies into the specified arrays
          */
         virtual void drawMeshVertices(const Texture& texture, Mesh::Type meshType,
-                                      const cinekine::vector<glm::vec2>& vertsPos,
-                                      const cinekine::vector<glm::vec2>& vertsUV,
-                                      const cinekine::vector<glm::vec4>& vertsColor,
-                                      const cinekine::vector<uint16_t>& indices) = 0;
+                                      const cinek::vector<glm::vec2>& vertsPos,
+                                      const cinek::vector<glm::vec2>& vertsUV,
+                                      const cinek::vector<glm::vec4>& vertsColor,
+                                      const cinek::vector<uint16_t>& indices) = 0;
         /**
          * Creates a 2D Mesh given its texture and vertices.
          *
@@ -154,10 +154,10 @@ namespace cinekine {
          */
         virtual MeshPtr createMesh(TexturePtr& texture,
                                    Mesh::Type meshType,
-                                   const cinekine::vector<glm::vec2>& vertsPos,
-                                   const cinekine::vector<glm::vec2>& vertsUV,
-                                   const cinekine::vector<glm::vec4>& vertsColor,
-                                   const cinekine::vector<uint16_t>& indices) = 0;
+                                   const cinek::vector<glm::vec2>& vertsPos,
+                                   const cinek::vector<glm::vec2>& vertsUV,
+                                   const cinek::vector<glm::vec4>& vertsColor,
+                                   const cinek::vector<uint16_t>& indices) = 0;
         /**
          * Renders a 2D mesh
          *
@@ -168,6 +168,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

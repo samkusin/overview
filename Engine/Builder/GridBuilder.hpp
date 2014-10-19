@@ -14,14 +14,14 @@
 #include "Engine/Builder/BlockLibrary.hpp"
 #include "Engine/Model/TileGrid.hpp"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
         class TileLibrary;
         class BlockCollection;
     }
 }
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
     /// @defgroup Builder The Map Grid Builder
     /// The Builder is a toolbox used by map generators to procedurally create
@@ -95,6 +95,6 @@ namespace cinekine { namespace ovengine {
         int _tileCoordRatio;
     };
 
-} /* namespace overview */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

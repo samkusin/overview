@@ -15,7 +15,7 @@
 
 #include <vector>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     class RendererCLI;
@@ -49,6 +49,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

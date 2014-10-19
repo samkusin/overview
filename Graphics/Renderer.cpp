@@ -9,14 +9,14 @@
 #include "Renderer.hpp"
 #include "RenderDefines.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     Renderer::Renderer(const RendererInitParameters& initParams,
                        const Allocator& allocator) :
         _allocator(allocator)
-    {    
+    {
     }
-        
+
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

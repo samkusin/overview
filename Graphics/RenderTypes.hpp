@@ -16,7 +16,7 @@
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**< Defines a RGBA quad */
@@ -38,6 +38,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

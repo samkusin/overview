@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "RocketSDLInput.hpp"
@@ -30,15 +30,15 @@
 #include "SDL2/SDL_keyboard.h"
 
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     RocketSDLInputMap::RocketSDLInputMap() :
         _keyMap(),
         _keyMapToSDL()
     {
         using namespace Rocket::Core;
-        _keyMap[SDLK_BACKSPACE]     = Input::KI_BACK; 
+        _keyMap[SDLK_BACKSPACE]     = Input::KI_BACK;
         _keyMap[SDLK_TAB]           = Input::KI_TAB;
         _keyMap[SDLK_RETURN]        = Input::KI_RETURN;
         _keyMap[SDLK_ESCAPE]        = Input::KI_ESCAPE;
@@ -186,5 +186,5 @@ namespace cinekine {
         return outkey;
     }
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

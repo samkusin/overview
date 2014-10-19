@@ -15,7 +15,7 @@
 #include "Engine/Model/AABB.hpp"
 #include "Engine/Model/Tile.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @defgroup Builder The Map Grid Builder
 /// The Builder is a toolbox used by map generators to procedurally create
@@ -30,6 +30,6 @@ enum BuilderPaintStyle
 
 typedef uint16_t BlockCollectionId;
 
-} /* namespace overview */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

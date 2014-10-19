@@ -19,7 +19,7 @@
 
 #include <vector>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     //  Contains bitmaps mapped by name to index
@@ -66,6 +66,6 @@ namespace cinekine {
     typedef std_allocator<BitmapAtlas> BitmapAtlasAllocator;
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

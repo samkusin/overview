@@ -12,15 +12,15 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
+ * THE SOFTWARE.
+ *
  * @file    Renderer.hpp
  * @author  Samir Sinha
  * @date    11/26/2013
@@ -35,9 +35,9 @@
 
 #include "SDL2/SDL_video.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
-    
+
     class Theater;
 
     //  Extra parameters for initializing the renderer.
@@ -53,11 +53,11 @@ namespace cinekine {
      */
     class Renderer : public RendererCLI
     {
-    public:    
+    public:
         Renderer(const RendererInitParameters& initParams,
                  const Allocator& allocator);
         virtual ~Renderer() = default;
-       
+
         /**
          * Used to verify that the renderer initialized
          * @return True if the renderer initialized, or False on error
@@ -93,9 +93,9 @@ namespace cinekine {
     private:
         Allocator _allocator;
     };
-    
+
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

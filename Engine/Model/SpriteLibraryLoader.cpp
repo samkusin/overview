@@ -17,8 +17,8 @@
 #include <rapidjson/document.h>
 
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 
 bool unserializeFromJSON(SpriteLibrary& outLibrary,
@@ -203,5 +203,5 @@ bool unserializeFromJSON(SpriteLibrary& outLibrary,
 }
 
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

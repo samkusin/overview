@@ -16,10 +16,10 @@
 #include <cstring>
 #include <cstdlib>
 
-namespace cinek {
-    namespace overview {
+namespace cinekine {
+    namespace ovengine {
 
-TileCollectionLoader::TileCollectionLoader(
+EntityTemplateCollectionLoader::EntityTemplateCollectionLoader(
         const JsonValue& tileFlagConsts,
         std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
         std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
@@ -34,7 +34,7 @@ TileCollectionLoader::TileCollectionLoader(
 {
 }
 
-bool TileCollectionLoader::startCollection(const char* name, uint32_t modelCount)
+bool EntityTemplateCollectionLoader::startCollection(const char* name, uint32_t modelCount)
 {
     //  start with a fresh model container
     _tiles.clear();
@@ -44,13 +44,13 @@ bool TileCollectionLoader::startCollection(const char* name, uint32_t modelCount
     return true;
 }
 
-bool TileCollectionLoader::parseAttribute(const char* key, const JsonValue& value)
+bool EntityTemplateCollectionLoader::parseAttribute(const char* key, const JsonValue& value)
 {
     //  none
     return true;
 }
 
-bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
+bool EntityTemplateCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
     Tile tile;
 
@@ -86,7 +86,7 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
     return true;
 }
 
-bool TileCollectionLoader::endCollection()
+bool EntityTemplateCollectionLoader::endCollection()
 {
     if (_tiles.empty())
         return false;
@@ -110,5 +110,5 @@ bool TileCollectionLoader::endCollection()
     return true;
 }
 
-    }   // namespace overview
-}   // namespace cinek
+    }   // namespace ovengine
+}   // namespace cinekine

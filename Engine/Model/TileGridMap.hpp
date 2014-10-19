@@ -13,7 +13,7 @@
 
 #include "Engine/Model/TileGrid.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class  TileGridMap
 /// @ingroup TileModel
@@ -76,6 +76,6 @@ private:
     uint32_t _overlayToFloorRatio;
 };
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

@@ -7,8 +7,8 @@
 /// @copyright  Copyright 2014 Cinekine Media
 /// @license    The MIT License
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     struct RoomNode
     {
@@ -70,4 +70,4 @@ namespace cinekine {
     }
 
     } /* namespace overview */
-} /* namespace cinekine */
+} /* namespace cinek */

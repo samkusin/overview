@@ -16,8 +16,8 @@
 #include <iterator>
 #include <algorithm>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 /**
  * @class Grid grid.hpp "cinek/overview/grid.hpp"

@@ -8,9 +8,9 @@
 
 #include "Font.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
-    
+
 Font::Font(TexturePtr& texture,
            vector<stbtt_bakedchar>&& bakedChars,
            int32_t height,
@@ -43,9 +43,9 @@ Font& Font::operator=(Font&& other)
     _minChar = other._minChar;
     _undefinedChar = other._undefinedChar;
     other._height = other._minChar = other._undefinedChar = 0;
-    
+
     return *this;
 }
-    
+
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

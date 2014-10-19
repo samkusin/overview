@@ -11,7 +11,7 @@
 
 #include <streambuf>
 
-namespace cinekine {
+namespace cinek {
 
     class RapidJsonStdStreamBuf
     {

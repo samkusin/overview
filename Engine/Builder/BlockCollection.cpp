@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 BlockCollection::BlockCollection(const char* name,
                                  vector<Block>&& blocks) :
@@ -19,4 +19,4 @@ BlockCollection::BlockCollection(const char* name,
 }
 
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */

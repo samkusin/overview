@@ -14,7 +14,7 @@
 #include "Engine/Model/ModelTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @defgroup TileModel The Tile Model
 /// The Tile Model encompasses all objects related to housekeeping and rendering
@@ -37,6 +37,6 @@ struct Tile
     glm::ivec2 anchor;          ///< 2D Anchor from tile origin
 };
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

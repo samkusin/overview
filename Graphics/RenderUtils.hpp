@@ -11,11 +11,11 @@
 
 #include <cstdint>
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-    // 
+    //
     inline uint16_t powerOf2(uint16_t v) {
         v--;
         v |= v >> 1;

@@ -11,14 +11,14 @@
 
 #include "ViewCreate.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
         class RendererCLI;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class WindowComponentCLI;
 
@@ -43,7 +43,7 @@ namespace cinekine {
     //  CreateDirector
     void DestroyDirector(Director* director);
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

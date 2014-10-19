@@ -35,7 +35,7 @@
 #include "cinek/allocator.hpp"
 #include "cinek/vector.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     class GLVertexBatch
@@ -101,6 +101,6 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif

@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #include "./RocketServer.hpp"
@@ -29,8 +29,8 @@
 #include "Rocket/Core.h"
 #include "Rocket/Core/Input.h"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     RocketServer::RocketServer(glx::RendererCLI& renderer, const Allocator& allocator) :
         _allocator(allocator),
@@ -56,7 +56,7 @@ namespace cinekine {
         Rocket::Core::FontDatabase::LoadFontFace("static/fonts/Delicious-Roman.otf");
 
         /**
-         * @todo use allocator instead of new/delete - this may require a refactor of how libRocket 
+         * @todo use allocator instead of new/delete - this may require a refactor of how libRocket
          * allocates memory
          */
         _overviewElementInstancer = _allocator.newItem<RocketOverviewElementInstancer, RocketServer&, const Allocator&>
@@ -68,7 +68,7 @@ namespace cinekine {
 
         glx::Rect viewport = _rocketRenderer.getViewport();
         _context = Rocket::Core::CreateContext( "default",
-                                                Rocket::Core::Vector2i(viewport.width(), 
+                                                Rocket::Core::Vector2i(viewport.width(),
                                                                        viewport.height())
                                               );
     }
@@ -144,8 +144,8 @@ namespace cinekine {
             _overviewElementInstancer->clearViewRequestDelegate();
         }
         return ptr;
-    } 
+    }
 
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

@@ -14,8 +14,8 @@
 
 #include "cinek/rendertypes.h"
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class SpriteTemplate;
 
@@ -74,7 +74,7 @@ namespace cinekine {
         cinek_bitmap_index* _frames;
     };
 
-    }   // namespace ovengine
-}   //  namespace cinekine
+    }   // namespace overview
+}   //  namespace cinek
 
 #endif

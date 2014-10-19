@@ -14,7 +14,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,9 +33,9 @@
 
 #include "Rocket/Core/ElementInstancer.h"
 
-namespace cinekine {
-    namespace ovengine {
-        
+namespace cinek {
+    namespace overview {
+
     class RocketServer;
 
     class RocketOverviewElementInstancer: public Rocket::Core::ElementInstancer
@@ -47,11 +47,11 @@ namespace cinekine {
 		void setViewRequestDelegate(ViewCreateFn viewCreateFn) {
 			_viewCreateFn = viewCreateFn;
 		}
-        
+
         void clearViewRequestDelegate() {
             _viewCreateFn = 0;
         }
-	
+
 		Rocket::Core::Element* InstanceElement(Rocket::Core::Element* parent,
 										 const Rocket::Core::String& tag,
 										 const Rocket::Core::XMLAttributes& attributes);
@@ -66,7 +66,7 @@ namespace cinekine {
 		ViewCreateFn _viewCreateFn;
 	};
 
-	}	// namespace ovengine
-}	// namespace cinekine
+	}	// namespace overview
+}	// namespace cinek
 
 #endif

@@ -31,7 +31,7 @@
 
 #include "glm/glm.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     Graphics2D::Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary,
@@ -197,4 +197,4 @@ namespace cinekine {
     }
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek

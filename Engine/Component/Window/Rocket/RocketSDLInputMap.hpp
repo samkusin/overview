@@ -31,8 +31,8 @@
 #include <Rocket/Core/Input.h>
 #include <SDL2/SDL_keyboard.h>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class RocketSDLInputMap
     {
@@ -54,7 +54,7 @@ namespace cinekine {
         unordered_map<uint32_t, SDL_Keycode> _keyMapToSDL;
     };
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

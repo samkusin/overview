@@ -16,7 +16,7 @@
 
 #include "cinek/string.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 /// @class  BlockCollection
 /// @ingroup Builder
@@ -57,6 +57,6 @@ inline auto BlockCollection::operator[](const std::string& name) const -> const 
     return _nullBlock;
 }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */
 
 #endif

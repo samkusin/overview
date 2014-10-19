@@ -16,7 +16,7 @@
 
 #include "cinek/string.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     GLShaderLibrary::GLShaderLibrary(const char* shaderDir, const Allocator& allocator) :
@@ -249,5 +249,5 @@ namespace cinekine {
 
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 

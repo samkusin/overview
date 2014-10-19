@@ -36,7 +36,7 @@
 #include "cinek/string.hpp"
 #include "cinek/vector.hpp"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
 
     /**
@@ -62,7 +62,7 @@ namespace cinekine {
     };
 
     }   // namespace glx
-}   // namespace cinekine
+}   // namespace cinek
 
 #endif
 

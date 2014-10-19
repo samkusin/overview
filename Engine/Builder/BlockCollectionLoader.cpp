@@ -15,8 +15,8 @@
 
 #include <cstring>
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
 BlockCollectionLoader::BlockCollectionLoader(
                         std::function<void(BlockCollection&&)> collectionCb,
@@ -157,5 +157,5 @@ bool BlockCollectionLoader::endCollection()
 }
 
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek

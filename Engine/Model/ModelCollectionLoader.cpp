@@ -15,7 +15,7 @@
 
 #include <cstring>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 //
 // The Unserializer object must implement the following methods:
@@ -105,4 +105,4 @@ bool unserializeFromJSON(std::streambuf& instream, ModelCollectionLoader& handle
     return true;
 }
 
-} /* namespace ovengine */ } /* namespace cinekine */
+} /* namespace overview */ } /* namespace cinek */

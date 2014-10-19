@@ -13,7 +13,7 @@
 
 #include <streambuf>
 
-namespace cinekine {
+namespace cinek {
 
     //  An implementation of std::streambuf specialized for the OGE allowing access
     //  to filedata from multiple sources.
@@ -59,7 +59,7 @@ namespace cinekine {
         char_type* _buffer;
     };
 
-}   // namespace cinekine
+}   // namespace cinek
 
 
 #endif

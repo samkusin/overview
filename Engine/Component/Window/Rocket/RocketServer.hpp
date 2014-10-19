@@ -12,14 +12,14 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
+ * THE SOFTWARE.
  */
 
 #ifndef Overview_Components_Rocket_WindowService_hpp
@@ -35,14 +35,14 @@
 
 #include "Rocket/Core.h"
 
-namespace cinekine {
+namespace cinek {
     namespace glx {
         class Renderer;
     }
 }
 
-namespace cinekine {
-    namespace ovengine {
+namespace cinek {
+    namespace overview {
 
     class RocketServer: public WindowComponent
     {
@@ -58,7 +58,7 @@ namespace cinekine {
         void handleInput(const SDL_Event& event);
 
         WindowPtr createWindow(const char* name, ViewCreateFn createFn);
-        
+
         const RocketSDLInput& sdlInput() const { return _sdlInput; }
 
     private:
@@ -74,7 +74,7 @@ namespace cinekine {
         RocketOverviewElementInstancer* _overviewElementInstancer;
     };
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif

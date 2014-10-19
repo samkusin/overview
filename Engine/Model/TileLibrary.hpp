@@ -15,7 +15,7 @@
 
 #include "cinek/vector.hpp"
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 class TileLibrary: public ModelLibrary<TileCollection, TileSlot, 0xffff>
 {
@@ -36,6 +36,6 @@ inline const Tile& TileLibrary::tileFromCollectionAtIndex(TileSlot slot, TileInd
     return collection[index];
 }
 
-}   /* namespace ovengine */ }   /* namespace cinekine */
+}   /* namespace overview */ }   /* namespace cinek */
 
 #endif

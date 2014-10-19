@@ -15,7 +15,7 @@
 #include <functional>
 #include <streambuf>
 
-namespace cinekine { namespace ovengine {
+namespace cinek { namespace overview {
 
 class SpriteLibrary;
 
@@ -34,7 +34,7 @@ bool unserializeFromJSON(SpriteLibrary& outLibrary,
             std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
             std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb);
 
-    }   // namespace ovengine
-}   // namespace cinekine
+    }   // namespace overview
+}   // namespace cinek
 
 #endif
