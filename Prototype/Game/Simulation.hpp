@@ -15,12 +15,14 @@
 #include "cinek/objectpool.hpp"
 #include "cinek/allocator.hpp"
 
-#include "Gen/Entity.pb.h"
-
 
 namespace cinek { namespace overview {
     class GameTemplates;
     class World;
+    
+    class CreateEntityRequest;
+    class CreateEntityResponse;
+
 } /* namespace overview */ } /* namespace cinek */
 
 namespace cinek { namespace overview {
@@ -38,8 +40,22 @@ namespace cinek { namespace overview {
                    const SimulationParams& params);
         ~Simulation();
 
-        //void addPlayer(const AddPlayerRequest& req, );
-
+        /// Creates an Entity from a named template.  The response contains
+        /// the created entity by template and its unique (per simulation) ID
+        /// value.
+        ///
+        /// @param[out]  response Resultant entity
+        /// @param       request  Request with the entity definition used to
+        ///                       create the instance.
+        /// @return      The command result
+        void createEntity(CreateEntityResponse& response,
+                          const CreateEntityRequest& request);
+        
+        /// Steps the simulation.
+        ///
+        /// @param The current simulation time.  
+        void step(float simTime);
+        
     private:
         Allocator _allocator;
         const overview::GameTemplates& _gameTemplates;

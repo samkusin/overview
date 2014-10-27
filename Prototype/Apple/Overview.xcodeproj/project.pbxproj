@@ -20,11 +20,9 @@
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
 		37AAC1CB19F42A3600C32899 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C719F42A3600C32899 /* libCKGL.a */; };
 		37AAC1CC19F42A3600C32899 /* libCKOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C819F42A3600C32899 /* libCKOVEngine.a */; };
-		37AAC1D419F44F2800C32899 /* Entity.proto in Sources */ = {isa = PBXBuildFile; fileRef = 37AAC1D019F4463800C32899 /* Entity.proto */; };
 		37B8F31419F2DFCC00995B61 /* GameMapGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F119F2DFCC00995B61 /* GameMapGenerator.cpp */; };
 		37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F319F2DFCC00995B61 /* SimulationGenerator.cpp */; };
 		37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F619F2DFCC00995B61 /* Entity.cpp */; };
-		37B8F31719F2DFCC00995B61 /* Entity.inl in Resources */ = {isa = PBXBuildFile; fileRef = 37B8F2F819F2DFCC00995B61 /* Entity.inl */; };
 		37B8F31819F2DFCC00995B61 /* EntityTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F919F2DFCC00995B61 /* EntityTemplate.cpp */; };
 		37B8F31919F2DFCC00995B61 /* EntityTemplateCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2FB19F2DFCC00995B61 /* EntityTemplateCollection.cpp */; };
 		37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2FE19F2DFCC00995B61 /* Simulation.cpp */; };
@@ -86,7 +84,6 @@
 		37AAC1C719F42A3600C32899 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKGL.a"; sourceTree = "<group>"; };
 		37AAC1C819F42A3600C32899 /* libCKOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKOVEngine.a"; sourceTree = "<group>"; };
 		37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../../External/lib/libprotobuf-lite.a"; sourceTree = "<group>"; };
-		37AAC1D019F4463800C32899 /* Entity.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Entity.proto; path = Msg/Entity.proto; sourceTree = "<group>"; };
 		37B8F2F119F2DFCC00995B61 /* GameMapGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameMapGenerator.cpp; sourceTree = "<group>"; };
 		37B8F2F219F2DFCC00995B61 /* GameMapGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameMapGenerator.hpp; sourceTree = "<group>"; };
 		37B8F2F319F2DFCC00995B61 /* SimulationGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationGenerator.cpp; sourceTree = "<group>"; };
@@ -184,7 +181,6 @@
 		37B8F2F519F2DFCC00995B61 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				37B8F32819F34CDA00995B61 /* Msg */,
 				37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */,
 				37B8F32319F2FB0500995B61 /* EntityTemplateCollectionLoader.hpp */,
 				37B8F2F619F2DFCC00995B61 /* Entity.cpp */,
@@ -241,14 +237,6 @@
 				37B8F31019F2DFCC00995B61 /* RenderDefines.hpp */,
 			);
 			path = Render;
-			sourceTree = "<group>";
-		};
-		37B8F32819F34CDA00995B61 /* Msg */ = {
-			isa = PBXGroup;
-			children = (
-				37AAC1D019F4463800C32899 /* Entity.proto */,
-			);
-			name = Msg;
 			sourceTree = "<group>";
 		};
 		37F64A881780EA2C009116E7 = {
@@ -378,7 +366,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37B8F31719F2DFCC00995B61 /* Entity.inl in Resources */,
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
 			);
@@ -391,7 +378,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37AAC1D419F44F2800C32899 /* Entity.proto in Sources */,
 				37B8F31419F2DFCC00995B61 /* GameMapGenerator.cpp in Sources */,
 				37B8F31C19F2DFCC00995B61 /* GameTemplates.cpp in Sources */,
 				37B8F31D19F2DFCC00995B61 /* GameView.cpp in Sources */,
@@ -529,6 +515,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					..,
+					../Gen,
 					../..,
 					"$(PACKAGES_ROOT)/include",
 				);
@@ -563,6 +550,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = GOOGLE_PROTOBUF_NO_RTTI;
 				HEADER_SEARCH_PATHS = (
 					..,
+					../Gen,
 					../..,
 					"$(PACKAGES_ROOT)/include",
 				);

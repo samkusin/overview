@@ -11,6 +11,8 @@
 #include "Shared/GameTemplates.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 
+#include "SDO/Game/CreateEntity.hpp"
+
 namespace cinek {
     using namespace overview;
 }
@@ -36,6 +38,12 @@ Simulation::Simulation(const overview::GameTemplates& gameTemplates,
 }
 
 Simulation::~Simulation()
+{
+
+}
+
+void Simulation::createEntity(CreateEntityResponse& response,
+                              const CreateEntityRequest& request)
 {
 
 }

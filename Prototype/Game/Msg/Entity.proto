@@ -1,8 +1,0 @@
-package cinek.overview.sdo.sim;
-
-option optimize_for = LITE_RUNTIME;
-
-message Entity
-{
-    required string templateName = 1;
-}
