@@ -15,6 +15,8 @@
 #include "cinek/objectpool.hpp"
 #include "cinek/allocator.hpp"
 
+#include <functional>
+
 
 namespace cinek { namespace overview {
     class GameTemplates;
@@ -44,17 +46,17 @@ namespace cinek { namespace overview {
         /// the created entity by template and its unique (per simulation) ID
         /// value.
         ///
-        /// @param[out]  response Resultant entity
-        /// @param       request  Request with the entity definition used to
+        /// @param  cb      Resultant entity
+        /// @param  request Request with the entity definition used to
         ///                       create the instance.
-        /// @return      The command result
-        void createEntity(CreateEntityResponse& response,
-                          const CreateEntityRequest& request);
+        /// @return The command result
+        void createEntity(const CreateEntityRequest& request,
+                          const std::function<void(const CreateEntityResponse&)>& cb);
         
         /// Steps the simulation.
         ///
         /// @param The current simulation time.  
-        void step(float simTime);
+        void update(uint32_t frameTimeMs);
         
     private:
         Allocator _allocator;

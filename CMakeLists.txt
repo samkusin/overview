@@ -25,7 +25,6 @@ set( CINEK_GTEST OFF CACHE BOOL "Enable C++ testing" )
 
 set( CMAKE_PREFIX_PATH "${CINEK_EXT_PACKAGE_DIR}" ${CMAKE_PREFIX_PATH} )
 
-
 #   All subprojects ordered by dependency (i.e. Engine needs Rocket, Graphics,
 #   Stream and cinek), and Prototype needs them all)
 

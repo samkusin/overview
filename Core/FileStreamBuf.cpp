@@ -1,12 +1,14 @@
-//
-//  StreamBuf.cpp
-//  Overview
-//
-//  Created by Samir Sinha on 8/18/13.
-//  Copyright (c) 2013 Cinekine. All rights reserved.
-//
+/**
+ * @file    Core/FileStreamBuf.hpp
+ * @author  Samir Sinha
+ * @date    8/18/2013
+ * @brief   A custom streambuf implementation for the common filesystem
+ * @copyright Copyright 2014 Samir Sinha.  All rights reserved.
+ * @license ISC
+ *          (http://www.isc.org/downloads/software-support-policy/isc-license/)
+ */
 
-#include "FileStreamBuf.hpp"
+#include "Core/FileStreamBuf.hpp"
 
 #include <SDL2/SDL_rwops.h>
 
@@ -174,7 +176,9 @@ namespace cinek {
         if (_fileHandle)
         {
             size_t revertCount = egptr()-gptr();
-            if (SDL_RWseek(reinterpret_cast<SDL_RWops*>(_fileHandle), -revertCount, RW_SEEK_CUR) < 0)
+            if (SDL_RWseek(reinterpret_cast<SDL_RWops*>(_fileHandle),
+                           -revertCount,
+                           RW_SEEK_CUR) < 0)
                 return -1;
             setg(nullptr, nullptr, nullptr);
         }

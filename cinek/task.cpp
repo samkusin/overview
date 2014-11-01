@@ -21,33 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @file    cinek/jobscheduler.cpp
+ * @file    cinek/task.cpp
  * @author  Samir Sinha
- * @date    2/17/2014
- * @brief   A "schedule-only" interface to a JobQueue provided for Jobs
+ * @date    10/29/2014
+ * @brief   A Task execution object
  * @copyright Cinekine
  */
 
-#include "cinek/jobscheduler.hpp"
-#include "cinek/jobqueue.hpp"
+/*
+ * An extension of Mike McShaffry's example of Process based execution,
+ * substituting 'Task' for 'Process' in a cooperative multitasking system.
+ * For details, refer to his book "Game Coding Complete (4th edition)",
+ * Chapter 7 ('Controlling the Main Loop')
+ */
 
+#include "cinek/task.hpp"
 
 namespace cinek {
 
-    JobScheduler::JobScheduler(JobQueue& queue) :
-        _queue(queue)
-    {
+Task::Task() :
+    _state(State::kIdle),
+    _schedulerHandle(kNullHandle)
+{
+}
 
-    }
+void Task::setNextTask(unique_ptr<Task>& task)
+{
+    _nextTask = std::move(task);
+}
 
-    JobHandle JobScheduler::schedule(unique_ptr<Job>&& job)
-    {
-        return _queue.schedule(std::move(job));
-    }
+void Task::cancel()
+{
+    _state = State::kCanceled;
+}
 
-    void JobScheduler::cancel(JobHandle jobHandle)
-    {
-        _queue.cancel(jobHandle);
-    }
+void Task::end()
+{
+    _state = State::kEnded;
+}
+
+void Task::fail()
+{
+    _state = State::kFailed;
+}
 
 } /* namespace cinek */

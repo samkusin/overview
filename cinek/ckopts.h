@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Cinekine Media
+ * Copyright (c) 2012 Cinekine Media
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,51 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @file    Core/MessageDispatchTable.hpp
+ * @file    cinek/ckdefs.h
  * @author  Samir Sinha
- * @date    10/20/2014
- * @brief   Queued request and result dispatch to application supplied callbacks
+ * @date    11/1/2013
+ * @brief   C and C++ common macros and definitions
  * @copyright Cinekine
  */
 
-#ifndef CK_Core_MessageDispatchTable_hpp
-#define CK_Core_MessageDispatchTable_hpp
+#ifndef CINEK_OPTS_H
+#define CINEK_OPTS_H
 
-#include "Core/Message.hpp"
+#ifndef NDEBUG
+#define CK_DEBUG
+#endif
 
-#include "cinek/allocator.hpp"
-#include "cinek/vector.hpp"
-
-#include <functional>
-
-namespace cinek {
-
-class MessageDispatchTable
-{
-public:
-    template<typename MessageData>
-    using Delegate = std::function<void(const MessageData&)>;
-
-    MessageDispatchTable(size_t tableSize,
-                         const Allocator& allocator=Allocator());
-
-    template<typename MessageDataDerived>
-    void addEntry(MessageId id, const Delegate<MessageDataDerived>& delegate);
-    void sortEntries();
-    void flushEntries();
-
-
-    template<typename MessageDataDerived>
-    bool invoke(MessageId id, const Message& msg);
-
-private:
-    using DelegateBase = Delegate<Message::DataType>;
-    vector<std::pair<MessageId, DelegateBase>> _table;
-    decltype(_table)::iterator lower_bound(MessageId id);
-};
-
-} /* namespace cinek */
-
-#include "Core/MessageDispatchTable.inl"
-
+/* CINEK_OPTS_H */
 #endif

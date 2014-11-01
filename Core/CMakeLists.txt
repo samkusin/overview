@@ -41,7 +41,7 @@ if( NOT CINEK_CXX_EXCEPTIONS )
      if( CINEK_CXX_COMPILER_CLANG OR CINEK_CXX_COMPILER_GNU )
           set( PROJECT_COMPILE_FLAGS "${PROJECT_COMPILE_FLAGS} -fno-exceptions -fno-rtti")
      else( )
-          message( FATAL "Compiler not supported" )
+          message( FATAL "C   ompiler not supported" )
      endif( )
 endif( )
 
@@ -59,13 +59,12 @@ set( PROJECT_STREAM_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/StreamBufRapidJson.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/ValueConvertGLM.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Message.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/MessageDispatchTable.hpp)
+     ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.hpp )
 
 set( PROJECT_STREAM_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/MessageDispatchTable.cpp )
+     ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.cpp )
 
 # Main
 #

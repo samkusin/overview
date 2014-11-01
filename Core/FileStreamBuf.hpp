@@ -1,10 +1,12 @@
-//
-//  FileStreamBuf.hpp
-//  Overview
-//
-//  Created by Samir Sinha on 8/18/13.
-//  Copyright (c) 2013 Cinekine. All rights reserved.
-//
+/**
+ * @file    Core/FileStreamBuf.hpp
+ * @author  Samir Sinha
+ * @date    8/18/2013
+ * @brief   A custom streambuf implementation for the common filesystem
+ * @copyright Copyright 2014 Samir Sinha.  All rights reserved.
+ * @license ISC
+ *          (http://www.isc.org/downloads/software-support-policy/isc-license/)
+ */
 
 #ifndef CK_Core_FileStreamBuf_hpp
 #define CK_Core_FileStreamBuf_hpp
