@@ -55,6 +55,7 @@ include_directories( "${CINEK_SDK_ROOT_DIR}" "${CINEK_EXT_PACKAGE_DIR}/include" 
 #
 set( PROJECT_STREAM_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/SDO/Base.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/EventBase.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/FileStreamBuf.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/StreamBufRapidJson.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/JsonUtilities.hpp
