@@ -13,9 +13,36 @@ namespace cinek {
     inline EntityId Entity::id() const {
         return _id;
     }
-
-    inline const EntityTemplate& Entity::sourceTemplate() const {
+        
+    inline bool Entity::operator<(const Entity& rhs) const {
+        return _id < rhs._id;
+    }
+        
+    inline const EntityTemplate& Entity::sourceTemplate() const
+    {
         return _template;
+    }
+
+    inline uint32_t Entity::resultFlags() const
+    {
+        return _updateFlags;
+    }
+    
+    inline void Entity::resetResultFlags()
+    {
+        _updateFlags = 0;
+    }
+    
+    inline void Entity::setResult(uint32_t resultFlag, bool state)
+    {
+        if (state)
+        {
+            _updateFlags |= resultFlag;
+        }
+        else
+        {
+            _updateFlags &= ~(resultFlag);
+        }
     }
 
     }   /* namespace overview */

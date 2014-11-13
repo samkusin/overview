@@ -9,11 +9,17 @@
 #ifndef Overview_Game_Model_World_hpp
 #define Overview_Game_Model_World_hpp
 
-#include "Game/WorldTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 #include "Engine/Model/ModelTypes.hpp"
 
 #include "cinek/allocator.hpp"
+
+namespace cinek {
+    namespace overview {
+        class Entity;
+        class WorldObject;
+    }
+}
 
 namespace cinek {
     namespace overview {
@@ -24,11 +30,22 @@ namespace cinek {
         CK_CLASS_NON_COPYABLE(World);
 
     public:
-        World(const WorldAABB& bounds, const Allocator& allocator);
+        struct CreateParams
+        {
+            AABB<Point> bounds;
+            uint32_t objectLimit;
+        };
+        World(const CreateParams& params, Allocator& allocator);
         ~World();
+        
+        WorldObject* createObject(const Point& pos,
+                                  const Point& front,
+                                  const AABB<Point>& bbox);
+        void destroyObject(WorldObject* body);
+
+        void update(uint32_t deltaTimeMs);
 
     private:
-        Allocator _allocator;
         class Impl;
         unique_ptr<Impl> _impl;
     };

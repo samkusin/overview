@@ -12,6 +12,8 @@
 		374931451904A72E002C7DE3 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931441904A72E002C7DE3 /* OpenGL.framework */; };
 		374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931461904A73B002C7DE3 /* Cocoa.framework */; };
 		374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931481904A75B002C7DE3 /* IOKit.framework */; };
+		374C29EA1A0ECE9000940936 /* EntitySimResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 374C29E81A0ECE9000940936 /* EntitySimResult.cpp */; };
+		375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 375DA3671A12F99C00EB0D63 /* WorldObject.cpp */; };
 		3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; };
 		3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; };
 		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -77,6 +79,10 @@
 		374931441904A72E002C7DE3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		374931461904A73B002C7DE3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		374C29E81A0ECE9000940936 /* EntitySimResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntitySimResult.cpp; sourceTree = "<group>"; };
+		374C29E91A0ECE9000940936 /* EntitySimResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntitySimResult.hpp; sourceTree = "<group>"; };
+		375DA3671A12F99C00EB0D63 /* WorldObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldObject.cpp; sourceTree = "<group>"; };
+		375DA3681A12F99C00EB0D63 /* WorldObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldObject.hpp; sourceTree = "<group>"; };
 		3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.2.82.dylib; path = ../../External/lib/libBulletCollision.2.82.dylib; sourceTree = "<group>"; };
 		3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.2.82.dylib; path = ../../External/lib/libLinearMath.2.82.dylib; sourceTree = "<group>"; };
 		37AAC1C519F42A3600C32899 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
@@ -181,6 +187,8 @@
 		37B8F2F519F2DFCC00995B61 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				375DA3671A12F99C00EB0D63 /* WorldObject.cpp */,
+				375DA3681A12F99C00EB0D63 /* WorldObject.hpp */,
 				37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */,
 				37B8F32319F2FB0500995B61 /* EntityTemplateCollectionLoader.hpp */,
 				37B8F2F619F2DFCC00995B61 /* Entity.cpp */,
@@ -196,6 +204,8 @@
 				37B8F30019F2DFCC00995B61 /* World.cpp */,
 				37B8F30119F2DFCC00995B61 /* World.hpp */,
 				37B8F30219F2DFCC00995B61 /* WorldTypes.hpp */,
+				374C29E81A0ECE9000940936 /* EntitySimResult.cpp */,
+				374C29E91A0ECE9000940936 /* EntitySimResult.hpp */,
 			);
 			name = Game;
 			path = ../Game;
@@ -389,8 +399,10 @@
 				37B8F31B19F2DFCC00995B61 /* World.cpp in Sources */,
 				37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */,
 				37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */,
+				374C29EA1A0ECE9000940936 /* EntitySimResult.cpp in Sources */,
 				37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */,
 				37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */,
+				375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */,
 				37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */,
 				37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */,
 				37B8F31E19F2DFCC00995B61 /* IsoNode.cpp in Sources */,
@@ -515,7 +527,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					..,
-					../Gen,
 					../..,
 					"$(PACKAGES_ROOT)/include",
 				);
@@ -550,7 +561,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = GOOGLE_PROTOBUF_NO_RTTI;
 				HEADER_SEARCH_PATHS = (
 					..,
-					../Gen,
 					../..,
 					"$(PACKAGES_ROOT)/include",
 				);

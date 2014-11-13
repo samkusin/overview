@@ -124,10 +124,10 @@ namespace cinek { namespace overview {
                                            if (scene->_viewAlignedBounds.contains(viewPos))
                                            {
                                                viewPos -= scene->_viewBounds.min;
-                                               glm::ivec2 viewAnchor = scene->_screenOffset - instance.anchor();
+                                               glm::ivec2 viewAnchor = scene->_screenOffset;
                                                viewAnchor.x += viewPos.x;
                                                viewAnchor.y += viewPos.y + scene->_tileDim.y;
-
+                                               viewAnchor -= instance.anchor();
                                                AABB<Point> isoBox =  instance.aabb() + isoPos;
                                                scene->_isoNodeGraph.obtainNode(instance.bitmapFromTime(context.ticks),
                                                                                viewAnchor,

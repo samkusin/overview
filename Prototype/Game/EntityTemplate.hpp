@@ -25,8 +25,11 @@ namespace cinek {
         EntityTemplate(const std::string& name, const std::string& spriteName);
         EntityTemplate(EntityTemplate&& other);
         EntityTemplate& operator=(EntityTemplate&& other);
+        
+        operator bool() const { return !_name.empty(); }
 
         const std::string& name() const { return _name; }
+        const std::string& spriteName() const { return _spriteName; }
 
     private:
         std::string _name;

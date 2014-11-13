@@ -15,19 +15,20 @@
 
 namespace cinek { namespace overview {
 
-    inline glm::vec3 toVec3(const btVector3& btv3) {
-        glm::vec3 ret(btv3.x(), btv3.y(), btv3.z());
+    using WorldObjectId = uint32_t;
+    
+    const btVector3 kWorldRefDir = btVector3(0,1,0);
+
+    //  Utilities used for converting between coordinate systems
+    inline Point toPoint(const btVector3& btv3) {
+        Point ret(btv3.x(), btv3.y(), btv3.z());
         return ret;
     }
 
-    inline btVector3 toBtVector3(const glm::vec3& vec3) {
+    inline btVector3 toBtVector3(const Point& vec3) {
         btVector3 ret(vec3.x, vec3.y, vec3.z);
         return ret;
     }
-
-    using WorldPoint = overview::Point;
-    using WorldAABB = overview::AABB<WorldPoint>;
-
 
 } /* namespace overview */ } /* namespace overview */
 

@@ -26,13 +26,18 @@
 #include "Core/JsonUtilities.hpp"
 
 #include "cinek/allocator.hpp"
+#include "cinek/map.hpp"
 
 #include <array>
 
 
 namespace cinek {
+    class EventBase;
+    
     namespace overview {
+        class EntitySimResult;
         class IsoScene;
+        class WorldObject;
     }
 }
 
@@ -88,6 +93,16 @@ namespace cinek {
         void renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
                           int32_t sx, int32_t sy);
 
+        void handleSimResults(const EventBase* evt);
+        
+        void entitySimResult(const EntitySimResult* result);
+        
+        SpriteInstancePtr allocateSprite(const std::string& spriteClassName);
+        void freeSprite(SpriteInstancePtr ptr);
+        
+        void applyObjectStateToSprite(SpriteInstancePtr sprite, const WorldObject& body,
+                                      uint32_t timeMs);
+        
     private:
         ApplicationController& _application;
         Allocator _allocator;
@@ -98,17 +113,13 @@ namespace cinek {
         unique_ptr<overview::GameTemplates> _gameTemplates;
 
         unique_ptr<Simulation> _simulation;
-
-        ObjectPool<overview::SpriteInstance> _spritePool;
-
+        
+        ObjectPool<SpriteInstance> _sprites;
+        unordered_map<EntityId, SpriteInstancePtr> _entitySpritePtrs;
         std::shared_ptr<overview::Stage> _stage;
 
         Point _viewPos;
         unique_ptr<overview::IsoScene> _isoScene;
-
-        //  objects
-        overview::SpriteInstancePtr _playerSprite;
-        vector<overview::SpriteInstancePtr> _otherSprites;
     };
 
     }

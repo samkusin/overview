@@ -8,6 +8,7 @@
 
 #include "View/GameView.hpp"
 #include "Game/Simulation.hpp"
+#include "Game/EntitySimResult.hpp"
 
 #include "Builder/GameMapGenerator.hpp"
 #include "Builder/SimulationGenerator.hpp"
@@ -46,7 +47,8 @@ namespace cinek {
         _bitmapLibrary(_application.renderer(), _allocator),
         _fontLibrary(_application.renderer(), 1, _allocator),
         _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
-        _spritePool(256, _allocator)
+        _sprites(1024, _allocator),
+        _entitySpritePtrs(_allocator)
     {
         //  this should be an application-wide op (move _fontLibrary to ApplicationController)
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
@@ -74,7 +76,7 @@ namespace cinek {
         generateMapFromTemplates(*_gameTemplates, generateMapParams);
 
         _stage = allocate_unique<overview::Stage>(_allocator, *_gameTemplates);
-
+        _entitySpritePtrs.reserve(1024);
 
         //  create our scene graph from the stage
         auto viewport = _application.renderer().getViewport();
@@ -88,69 +90,143 @@ namespace cinek {
         _isoScene = unique_ptr<overview::IsoScene>(isoScenePtr, _allocator);
 
 
-        //  create our player entity
         auto overlayDims = _stage->tileGridMap().overlayDimensions();
         _viewPos = Point(overlayDims.x * 0.5f, overlayDims.y * 0.5f, 0.f);
-
-        auto& maleAvatarSprite = _gameTemplates->spriteLibrary().spriteByName("warrior");
-        _playerSprite = _spritePool.construct(maleAvatarSprite);
-        _playerSprite->setState(kAnimationState_Walk_South, 0);
-        _playerSprite->setPosition(_viewPos);
-        _stage->attachSpriteInstance(_playerSprite);
-
-
-        /*
-        std::default_random_engine numGenerator;
-        std::uniform_int_distribution<int> xDist(0, overlayDims.x-1);
-        std::uniform_int_distribution<int> yDist(0, overlayDims.y-1);
-        std::uniform_int_distribution<int> stateDist(kAnimationState_Idle_North,
-                                                     kAnimationState_Walk_NorthWest);
-        _otherSprites.reserve(256);
-
-        for (int cnt = 0; cnt < _otherSprites.capacity(); ++cnt)
-        {
-            auto sprite = _spritePool.construct(maleAvatarSprite);
-            sprite->setState(stateDist(numGenerator), 0);
-            sprite->setPosition(Point(xDist(numGenerator), yDist(numGenerator), 0.f));
-            _stage->attachSpriteInstance(sprite);
-            _otherSprites.push_back(sprite);
-        }
-
-        overview::EntityCommand cmd(2);
-        cmd.set<int32_t>(10, 12);
-        cmd.set<float>(3, 3.14159f);
-        cmd.set<glm::vec3>(9, glm::vec3(1.0f, 0.5f, 0.25f));
-
-        printf("[10] = %d\n", cmd.get<int32_t>(10));
-
-        auto vec = cmd.get<glm::vec3>(9);
-        printf("[9] = %.2f,%.2f,%.2f\n", vec.x, vec.y, vec.z);
-        printf("[3] = %s\n", cmd.get<std::string>(3).c_str());
-        */
+        
         //  create simulation using GameTemplates
         CreateSimulationParams simParams;
         _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
+        
+        EntityId id = _simulation->createEntity("avatar");
+        _simulation->activateEntity(id, _viewPos, Point(0,1,0));
     }
 
     GameView::~GameView()
     {
-        while (!_otherSprites.empty())
+        for (auto& sprite: _entitySpritePtrs)
         {
-            auto sprite = _otherSprites.back();
-            _stage->detachSpriteInstance(sprite);
-            _otherSprites.pop_back();
+            _stage->detachSpriteInstance(sprite.second);
+            _sprites.destruct(sprite.second);
         }
-
-        _stage->detachSpriteInstance(_playerSprite);
-        _playerSprite = nullptr;
+        _entitySpritePtrs.clear();
     }
 
     void GameView::update(uint32_t ticks)
     {
+        // update systems (at some point these could be parallel jobs, so
+        // it doesn't matter what order thse updates are called)
         _isoScene->update(ticks, _viewPos);
+        _simulation->update(ticks);
+        
+        // execute upon system update complete (this would be the sync
+        // point between all parallel jobs in an update frame)
+        /*
+        _simulation->syncResults(std::bind(&GameView::handleSimResults,
+                                     this,
+                                     std::placeholders::_1));
+        */
+        _simulation->syncResults([this](const EventBase* evt) {
+            handleSimResults(evt);
+        });
     }
+    
+    void GameView::handleSimResults(const EventBase* evt)
+    {
+        if (evt->classID() == EntitySimResult::kClassID) 
+        {
+            auto result = event_cast<const EntitySimResult>(evt);
+            if (result)
+            {
+                entitySimResult(result);
+            }
+        }
+    }
+    
+    void GameView::entitySimResult(const EntitySimResult* result)
+    {
+        if (result->flags() & kEntityResultFlag_Activated)
+        {
+            auto entity = _simulation->entity(result->id());
+            if (entity)
+            {
+                auto sprite = allocateSprite(entity->sourceTemplate().spriteName());
+                _entitySpritePtrs.emplace(result->id(), sprite);
+                auto body = entity->body();
+                applyObjectStateToSprite(sprite, *body, result->timestamp());
+                _stage->attachSpriteInstance(sprite);
+            }
+        }
+        if (result->flags() & kEntityResultFlag_Deactivated)
+        {
+            auto spriteIt = _entitySpritePtrs.find(result->id());
+            if (spriteIt != _entitySpritePtrs.end())
+            {
+                _stage->detachSpriteInstance(spriteIt->second);
+                freeSprite(spriteIt->second);
+                _entitySpritePtrs.erase(spriteIt);
+            }
+        }
+    }
+    
+    SpriteInstancePtr GameView::allocateSprite(const std::string& spriteClassName)
+    {
+        auto& spriteClass = _gameTemplates->spriteLibrary().spriteByName(spriteClassName);
+        SpriteInstancePtr ptr = _sprites.construct(spriteClass);
+        return ptr;
+    }
+    
+    void GameView::freeSprite(SpriteInstancePtr ptr)
+    {
+        _sprites.destruct(ptr);
+    }
+    
+    void GameView::applyObjectStateToSprite(SpriteInstancePtr sprite,
+                                            const WorldObject& body,
+                                            uint32_t timeMs)
+    {
+        //  direction using (0,1,0) as a reference to South
+        //  dir.x determines the side ('west', 'east')
+        //  dot product determines direction.
+        //
+        auto& dir = body.frontDirection();
+        float speed = body.speed();
+        float dp = glm::dot(dir, Point(0,1,0));
+        
+        AnimationStateId animId = kAnimationState_Idle;
+        if (dp >= 0.75f)
+        {
+            animId = speed > 0.f ? kAnimationState_Walk_South : kAnimationState_Idle_South;
+        }
+        else if (dp >= 0.25f)
+        {
+            if (dir.x >= 0.f)
+                animId = speed > 0.f ? kAnimationState_Walk_SouthEast : kAnimationState_Idle_SouthEast;
+            else
+                animId = speed > 0.f ? kAnimationState_Walk_SouthWest : kAnimationState_Idle_SouthWest;
+        }
+        else if (dp >= -0.25f)
+        {
+            if (dir.x >= 0.f)
+                animId = speed > 0.f ? kAnimationState_Walk_East : kAnimationState_Idle_East;
+            else
+                animId = speed > 0.f ? kAnimationState_Walk_West : kAnimationState_Idle_West;
+        }
+        else if (dp >= -0.75f)
+        {
+            if (dir.x >= 0.f)
+                animId = speed > 0.f ? kAnimationState_Walk_NorthEast : kAnimationState_Idle_NorthEast;
+            else
+                animId = speed > 0.f ? kAnimationState_Walk_NorthWest : kAnimationState_Idle_NorthWest;
+        }
+        else
+        {
+            animId = speed > 0.f ? kAnimationState_Walk_North : kAnimationState_Idle_North;
+        }
+        
 
-
+        sprite->setState(animId, timeMs);
+        sprite->setPosition(body.position());
+    }
 
     //  Main render pipeline
     //
@@ -269,7 +345,7 @@ namespace cinek {
         if (newPos.x || newPos.y || newPos.z)
         {
             _viewPos += newPos;
-            _playerSprite->setPosition(_viewPos);
+            //_playerSprite->setPosition(_viewPos);
         }
     }
 
