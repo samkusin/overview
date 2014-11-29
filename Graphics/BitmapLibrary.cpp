@@ -65,33 +65,18 @@ namespace cinek {
                     return false;
                 }
 
-                /**
-                 * @todo (LOW) Use allocate_shared instead?
-                 * Odd compile error when passing atlasName as a const char* (conversion to a
-                 * const char* && occurs, which fails.)  This code isn't in a time-crticial
-                 * section, so the dual allocation would not be an issue.
-                 */
-                atlas = _allocator.newItem<BitmapAtlas>(atlasName,
-                                                        texture,
-                                                        bitmapCount,
-                                                        _allocator);
-                std::shared_ptr<BitmapAtlas> atlasPtr(atlas,
-                                                      AllocatorDeleter<BitmapAtlas>(_allocator),
-                                                      BitmapAtlasAllocator(_allocator));
-                /*
-                                    std::allocate_shared<BitmapAtlas, BitmapAtlasAllocator,
-                                        const char* const,
-                                        unique_ptr<Texture>&,
-                                        size_t,
-                                        const Allocator&>
-                                    (
-                                        BitmapAtlasAllocator(_renderer.getAllocator()),
-                                        atlasName, texture, bitmapCount, _renderer.getAllocator()
-                                    );
-                */
+               std::shared_ptr<BitmapAtlas> atlasPtr =
+                    std::allocate_shared<BitmapAtlas, std_allocator<BitmapAtlas>>(
+                        _allocator,
+                        atlasName,
+                        texture,
+                        bitmapCount,
+                        _allocator);
+
                 _atlasMap.emplace(_nextAtlasHandle, atlasPtr);
                 //atlas = (*result.first).second.get();
                 atlasHandle = _nextAtlasHandle;
+                atlas = atlasPtr.get();
                 ++_nextAtlasHandle;
                 return true;
             }

@@ -62,9 +62,6 @@ namespace cinek {
         vector<BitmapInfo*> _bitmaps;
     };
 
-    //  used for shared_ptr custom allocation
-    typedef std_allocator<BitmapAtlas> BitmapAtlasAllocator;
-
     }   // namespace glx
 }   // namespace cinek
 
