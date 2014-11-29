@@ -8,7 +8,6 @@
 
 #include "View/GameView.hpp"
 #include "Game/Simulation.hpp"
-#include "Game/EntitySimResult.hpp"
 
 #include "Builder/GameMapGenerator.hpp"
 #include "Builder/SimulationGenerator.hpp"
@@ -16,7 +15,6 @@
 #include "ApplicationController.hpp"
 
 #include "View/Render/IsoScene.hpp"
-#include "Game/EntityTypes.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Graphics/RendererCLI.hpp"
@@ -30,7 +28,12 @@
 
 #include <random>
 
-#include "Core/ValueConvertGLM.hpp"
+#include "Game/Messages/SimMessageClassIds.hpp"
+#include "Game/Messages/CreateEntityRequest.hpp"
+#include "Game/Messages/CreateEntityResponse.hpp"
+#include "Game/Events/SimEventClassIds.hpp"
+#include "Game/Events/CreateEntityEvent.hpp"
+
 
 /////////////////////////////////////////////////////////////
 
@@ -47,8 +50,12 @@ namespace cinek {
         _bitmapLibrary(_application.renderer(), _allocator),
         _fontLibrary(_application.renderer(), 1, _allocator),
         _graphics(_application.renderer(), _bitmapLibrary, _fontLibrary),
+        _simCommandQueue(128, _allocator),
+        _simResponseQueue(512, _allocator),
+        _simMessageDispatcher(64, 32, 32, _allocator),
         _sprites(1024, _allocator),
-        _entitySpritePtrs(_allocator)
+        _entitySpritePtrs(_allocator),
+        _playerEntityId(0)
     {
         //  this should be an application-wide op (move _fontLibrary to ApplicationController)
         _fontLibrary.loadFont(glx::kFontHandle_Default, "static/fonts/DroidSans.ttf", 16);
@@ -97,8 +104,24 @@ namespace cinek {
         CreateSimulationParams simParams;
         _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
         
-        EntityId id = _simulation->createEntity("avatar");
-        _simulation->activateEntity(id, _viewPos, Point(0,1,0));
+        CreateEntityRequest createReq("avatar", _viewPos, Point(0,1,0));
+        _simMessageDispatcher.queue(_simCommandQueue, SimCommand::kCreateEntity, createReq);
+        
+        _simMessageDispatcher.on(SimEvent::kCreateEntity,
+            [this](const SDO* data, Message::SequenceId, void* context)
+            {
+                GameContext& gameContext = *reinterpret_cast<GameContext*>(context);
+                auto event = sdo_cast<const CreateEntityEvent*>(data);
+                auto entity = _simulation->entity(event->entityId());
+                if (entity)
+                {
+                    auto sprite = allocateSprite(entity->sourceTemplate().spriteName());
+                    _entitySpritePtrs.emplace(entity->id(), sprite);
+                    auto body = entity->body();
+                    applyObjectStateToSprite(sprite, *body, gameContext.timeMs);
+                    _stage->attachSpriteInstance(sprite);
+                }
+            });
     }
 
     GameView::~GameView()
@@ -116,35 +139,17 @@ namespace cinek {
         // update systems (at some point these could be parallel jobs, so
         // it doesn't matter what order thse updates are called)
         _isoScene->update(ticks, _viewPos);
-        _simulation->update(ticks);
+        _simulation->update(_simCommandQueue, _simResponseQueue, ticks);
         
-        // execute upon system update complete (this would be the sync
-        // point between all parallel jobs in an update frame)
-        /*
-        _simulation->syncResults(std::bind(&GameView::handleSimResults,
-                                     this,
-                                     std::placeholders::_1));
-        */
-        _simulation->syncResults([this](const EventBase* evt) {
-            handleSimResults(evt);
-        });
+        GameContext context;
+        context.timeMs = ticks;
+        _simMessageDispatcher.dispatch(_simResponseQueue, ticks, &context);
     }
     
-    void GameView::handleSimResults(const EventBase* evt)
+    /*
+    void GameView::entitySimResult(const EntityStateEvent* result, uint32_t timeMs)
     {
-        if (evt->classID() == EntitySimResult::kClassID) 
-        {
-            auto result = event_cast<const EntitySimResult>(evt);
-            if (result)
-            {
-                entitySimResult(result);
-            }
-        }
-    }
-    
-    void GameView::entitySimResult(const EntitySimResult* result)
-    {
-        if (result->flags() & kEntityResultFlag_Activated)
+        if (result->state() == EntityStateEvent::kActivated)
         {
             auto entity = _simulation->entity(result->id());
             if (entity)
@@ -152,11 +157,11 @@ namespace cinek {
                 auto sprite = allocateSprite(entity->sourceTemplate().spriteName());
                 _entitySpritePtrs.emplace(result->id(), sprite);
                 auto body = entity->body();
-                applyObjectStateToSprite(sprite, *body, result->timestamp());
+                applyObjectStateToSprite(sprite, *body, timeMs);
                 _stage->attachSpriteInstance(sprite);
             }
         }
-        if (result->flags() & kEntityResultFlag_Deactivated)
+        if (result->state() == EntityStateEvent::kDeactivated)
         {
             auto spriteIt = _entitySpritePtrs.find(result->id());
             if (spriteIt != _entitySpritePtrs.end())
@@ -167,6 +172,7 @@ namespace cinek {
             }
         }
     }
+    */
     
     SpriteInstancePtr GameView::allocateSprite(const std::string& spriteClassName)
     {

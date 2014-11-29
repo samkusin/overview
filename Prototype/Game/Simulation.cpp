@@ -11,8 +11,14 @@
 #include "Shared/GameTemplates.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
-#include "Game/EntitySimResult.hpp"
+#include "Core/MessageQueue.hpp"
 
+#include "Game/Messages/SimMessageClassIds.hpp"
+#include "Game/Messages/CreateEntityRequest.hpp"
+#include "Game/Messages/CreateEntityResponse.hpp"
+
+#include "Game/Events/SimEventClassIds.hpp"
+#include "Game/Events/CreateEntityEvent.hpp"
 
 namespace cinek {
     using namespace overview;
@@ -21,19 +27,27 @@ namespace cinek {
 namespace cinek { namespace overview {
 
 Simulation::Simulation(
-    const overview::GameTemplates& gameTemplates,
+    const GameTemplates& gameTemplates,
     const SimulationParams& params
 ) :
     _allocator(params.allocator),
     _entityAllocator(_allocator),
     _gameTemplates(gameTemplates),
+    _systemTimeMs(0),
+    _commandDispatcher(128, 32, 0, _allocator),
+    _eventDispatcher(128, 16, 128, _allocator),
+    _activeEventQueue(0),
+    _scheduler(16, _allocator),
     _nextObjectId(0),
-    _entityMap(_entityAllocator),
-    _resultMemory(64*1024, _allocator),
-    _results(_allocator)
+    _entityMap(_entityAllocator)
 {
     _entityMap.reserve(params.entityLimit);
-    _results.reserve(1024);
+    
+    for (auto& eventQueue : _eventQueues)
+    {
+        MessageQueue q(1024, _allocator);
+        eventQueue = std::move(q);
+    }
     
     auto tileDims = gameTemplates.tileGridMap()->overlayDimensions();
     auto tileHeight = gameTemplates.tileGridMap()->overlayToFloorRatio();
@@ -47,6 +61,34 @@ Simulation::Simulation(
     _world = allocate_unique<World>(_allocator,
                                     worldParams,
                                     _allocator);
+    
+    _commandDispatcher.on(SimCommand::kCreateEntity,
+        [this](const SDO* data, Message::SequenceId seqId, void* context)
+        {
+            SimulationContext& simContext = *reinterpret_cast<SimulationContext*>(context);
+            auto req = sdo_cast<const CreateEntityRequest*>(data);
+            if (req)
+            {
+                simContext.sequenceId = seqId;
+                createEntityCommand(*req,
+                    [&simContext](const CreateEntityResponse& resp) {
+                        simContext.resultMsgQueue->push(SimCommand::kCreateEntity,
+                            resp,
+                            simContext.sequenceId);
+                    });
+            }
+        });
+    
+    _eventDispatcher.on(SimEvent::kCreateEntity,
+        [this](const SDO* data, Message::SequenceId, void* context)
+        {
+            SimulationContext& simContext = *reinterpret_cast<SimulationContext*>(context);
+            auto evt = sdo_cast<const CreateEntityEvent*>(data);
+            if (evt)
+            {
+                simContext.resultMsgQueue->push(SimEvent::kCreateEntity, *evt);
+            }
+        });
 }
 
 Simulation::~Simulation()
@@ -58,7 +100,38 @@ Simulation::~Simulation()
     }
 }
 
-EntityId Simulation::createEntity(const std::string& templateId)
+void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
+        uint32_t timeMs)
+{
+    uint32_t deltaTimeMs = timeMs - _systemTimeMs;
+    _systemTimeMs = timeMs;
+    
+    SimulationContext simContext;
+    simContext.eventQueue = &_eventQueues[_activeEventQueue];
+    simContext.resultMsgQueue = &outQueue;
+    simContext.scheduler = &_scheduler;
+    simContext.allocator = _allocator;
+    //  process commands
+    //  every command has a "command" key. dispatch the handler matching
+    //  the command's key.
+    _commandDispatcher.dispatch(inQueue, timeMs, &simContext);
+    
+    //  update simulation subsystems
+    //
+    _world->update(deltaTimeMs);
+    _scheduler.process(deltaTimeMs);
+    
+    //  process events created during world/task execution
+    //  the process will also fill our result queue
+    MessageQueue& events = activeEventQueue();
+    _activeEventQueue = (_activeEventQueue+1) % _eventQueues.size();
+    _eventDispatcher.dispatch(events, timeMs, &simContext);
+}
+
+
+/*
+void Simulation::createEntity(const std::string& templateId,
+                              const SimulationCallback<CreateEntityResponse>& cb)
 {
     auto& tmpl = _gameTemplates.entityTemplateCollection()[templateId];
     if (!tmpl)
@@ -109,7 +182,13 @@ void Simulation::activateEntity(EntityId id, const Point& pos,
     }
     
     entity.attachBody(body);
-    entity.setResult(kEntityResultFlag_Activated);
+    
+    auto event = allocate_unique<EntityStateEvent>(
+                                _allocator,
+                                entity.id(),
+                                EntityStateEvent::kActivated
+                            );
+    _eventQueue.queue(std::move(event));
 }
     
 void Simulation::deactivateEntity(EntityId id)
@@ -134,7 +213,12 @@ void Simulation::destroyEntity(EntityId id)
     }
     auto& entity = entityIt->second;
     deactivateEntity(entity);
-    entity.setResult(kEntityResultFlag_Destroyed);
+    auto event = allocate_unique<EntityStateEvent>(
+                                _allocator,
+                                entity.id(),
+                                EntityStateEvent::kDestroyed
+                            );
+    _eventQueue.queue(std::move(event));
 }
     
 void Simulation::deactivateEntity(Entity& entity)
@@ -143,8 +227,15 @@ void Simulation::deactivateEntity(Entity& entity)
     if (!body)
         return;
     _world->destroyObject(body);
-    entity.setResult(kEntityResultFlag_Deactivated);
+
+    auto event = allocate_unique<EntityStateEvent>(
+                                _allocator,
+                                entity.id(),
+                                EntityStateEvent::kDeactivated
+                            );
+    _eventQueue.queue(std::move(event));
 }
+*/
 
 const Entity* Simulation::entity(EntityId entityId) const
 {
@@ -159,58 +250,60 @@ Entity* Simulation::entity(EntityId entityId)
     return const_cast<Entity*>(static_cast<const Simulation*>(this)->entity(entityId));
 }
 
-void Simulation::update(uint32_t timeMs)
+void Simulation::createEntityCommand(
+    const CreateEntityRequest& req,
+    ResponseCallback<CreateEntityResponse> respCb
+)
 {
-    //  update simulation subsystems
-    //
-    _world->update(timeMs);
-    
-    //  report entity results
-    //
-    for (auto entityIt = _entityMap.begin(); entityIt != _entityMap.end(); )
+    CreateEntityResponse resp;
+    auto& tmpl = _gameTemplates.entityTemplateCollection()[req.templateId()];
+    if (tmpl)
     {
-        auto& entity = entityIt->second;
-        auto flags = entity.resultFlags();
-        
-        if (flags)
+        auto& spriteTmpl = _gameTemplates.spriteLibrary().spriteByName(tmpl.spriteName());
+        WorldObject* body = _world->createObject(req.position(), req.direction(), spriteTmpl.aabb());
+        if (!body)
         {
-            EntitySimResult* result =
-                _resultMemory.newItem<EntitySimResult>(entityIt->first, flags, timeMs);
-            _results.push_back(result);
-        }
-        
-        if (flags & kEntityResultFlag_Destroyed)
-        {
-            entityIt = _entityMap.erase(entityIt);
+            OVENGINE_LOG_WARN("Simulation.createEntity - failed to create body");
+            resp.setResponseCode(CommandResponse::kFailure);
         }
         else
         {
-            ++entityIt;
+            EntityId newEntityId = (_nextObjectId+1);
+            if (!newEntityId)
+                newEntityId = 1;
+        
+            auto entityIt = _entityMap.emplace(std::piecewise_construct,
+                                std::forward_as_tuple(newEntityId),
+                                std::forward_as_tuple(newEntityId, tmpl)).first;
+        
+            if (entityIt != _entityMap.end())
+            {
+                _nextObjectId = newEntityId;
+
+                entityIt->second.attachBody(body);
+
+                resp.setEntityId(newEntityId);
+                
+                CreateEntityEvent evt;
+                evt.setEntityId(newEntityId);
+                activeEventQueue().push(SimEvent::kCreateEntity, evt);
+            }
+            else
+            {
+                OVENGINE_LOG_WARN("Simulation.createEntity - failed to create body");
+                _world->destroyObject(body);
+                resp.setResponseCode(CommandResponse::kFailure);
+            }
         }
     }
+    else
+    {
+        OVENGINE_LOG_WARN("Simulation.createEntity - invalid template %s specified",
+                          req.templateId().c_str());
+        resp.setResponseCode(CommandResponse::kInvalidParameter);
+    }
+    respCb(resp);
 }
 
-void Simulation::syncResults(const std::function<void(const EventBase*)>& fn)
-{
-    for (auto& result : _results)
-    {
-        fn(result);
-    }
-    
-    //  clear results
-    //
-    for (auto& result : _results)
-    {
-        result->~EventBase();
-    }
-    _results.clear();
-    _resultMemory.reset();
-    
-    for (auto entityIt = _entityMap.begin(); entityIt != _entityMap.end(); ++entityIt)
-    {
-        auto& entity = entityIt->second;
-        entity.resetResultFlags();
-    }
-}
 
 } /* namespace overview */ } /* namespace cinek */

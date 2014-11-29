@@ -9,16 +9,14 @@
 #ifndef Overview_Game_Model_WorldTypes_hpp
 #define Overview_Game_Model_WorldTypes_hpp
 
-#include "Engine/Model/ModelTypes.hpp"
+#include "Game/SimulationTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 #include "LinearMath/btVector3.h"
 
 namespace cinek { namespace overview {
-
-    using WorldObjectId = uint32_t;
     
     const btVector3 kWorldRefDir = btVector3(0,1,0);
-
+    
     //  Utilities used for converting between coordinate systems
     inline Point toPoint(const btVector3& btv3) {
         Point ret(btv3.x(), btv3.y(), btv3.z());

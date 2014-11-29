@@ -9,7 +9,7 @@
 #ifndef Overview_Game_ModelEntity_hpp
 #define Overview_Game_ModelEntity_hpp
 
-#include "Game/EntityTypes.hpp"
+#include "Game/SimulationTypes.hpp"
 #include "Game/WorldObject.hpp"
 
 //  Engine forward declarations

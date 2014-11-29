@@ -12,8 +12,12 @@
 		374931451904A72E002C7DE3 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931441904A72E002C7DE3 /* OpenGL.framework */; };
 		374931471904A73B002C7DE3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931461904A73B002C7DE3 /* Cocoa.framework */; };
 		374931491904A75B002C7DE3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374931481904A75B002C7DE3 /* IOKit.framework */; };
-		374C29EA1A0ECE9000940936 /* EntitySimResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 374C29E81A0ECE9000940936 /* EntitySimResult.cpp */; };
 		375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 375DA3671A12F99C00EB0D63 /* WorldObject.cpp */; };
+		375EB2DE1A26BF97001EB283 /* CreateEntityResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 375EB2DD1A26BF97001EB283 /* CreateEntityResponse.cpp */; };
+		375EB2E01A26BFAA001EB283 /* CreateEntityRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 375EB2DF1A26BFAA001EB283 /* CreateEntityRequest.cpp */; };
+		377AB2E31A296ABB00B66D91 /* CommandResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E21A296ABB00B66D91 /* CommandResponse.cpp */; };
+		377AB2E61A297CEA00B66D91 /* SimulationContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */; };
+		377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */; };
 		3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; };
 		3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; };
 		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -79,10 +83,22 @@
 		374931441904A72E002C7DE3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		374931461904A73B002C7DE3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
-		374C29E81A0ECE9000940936 /* EntitySimResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntitySimResult.cpp; sourceTree = "<group>"; };
-		374C29E91A0ECE9000940936 /* EntitySimResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntitySimResult.hpp; sourceTree = "<group>"; };
 		375DA3671A12F99C00EB0D63 /* WorldObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldObject.cpp; sourceTree = "<group>"; };
 		375DA3681A12F99C00EB0D63 /* WorldObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldObject.hpp; sourceTree = "<group>"; };
+		375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SimulationTypes.hpp; sourceTree = "<group>"; };
+		375DA36F1A213BD600EB0D63 /* SimulationCommandTask.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SimulationCommandTask.hpp; path = Tasks/SimulationCommandTask.hpp; sourceTree = "<group>"; };
+		375DA3821A22D08100EB0D63 /* CreateEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CreateEntityRequest.hpp; path = Messages/CreateEntityRequest.hpp; sourceTree = "<group>"; };
+		375DA3831A22D35F00EB0D63 /* CreateEntityResponse.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CreateEntityResponse.hpp; path = Messages/CreateEntityResponse.hpp; sourceTree = "<group>"; };
+		375EB2DD1A26BF97001EB283 /* CreateEntityResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CreateEntityResponse.cpp; path = Messages/CreateEntityResponse.cpp; sourceTree = "<group>"; };
+		375EB2DF1A26BFAA001EB283 /* CreateEntityRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CreateEntityRequest.cpp; path = Messages/CreateEntityRequest.cpp; sourceTree = "<group>"; };
+		375EB2E11A26C471001EB283 /* SimMessageClassIds.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SimMessageClassIds.hpp; path = Messages/SimMessageClassIds.hpp; sourceTree = "<group>"; };
+		377AB2E11A29699900B66D91 /* CommandResponse.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CommandResponse.hpp; path = Messages/CommandResponse.hpp; sourceTree = "<group>"; };
+		377AB2E21A296ABB00B66D91 /* CommandResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandResponse.cpp; path = Messages/CommandResponse.cpp; sourceTree = "<group>"; };
+		377AB2E41A297BA400B66D91 /* SimulationContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SimulationContext.hpp; sourceTree = "<group>"; };
+		377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationContext.cpp; sourceTree = "<group>"; };
+		377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CreateEntityEvent.cpp; path = Events/CreateEntityEvent.cpp; sourceTree = "<group>"; };
+		377AB2E81A298AFE00B66D91 /* CreateEntityEvent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CreateEntityEvent.hpp; path = Events/CreateEntityEvent.hpp; sourceTree = "<group>"; };
+		377AB2EA1A2992E600B66D91 /* SimEventClassIds.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SimEventClassIds.hpp; path = Events/SimEventClassIds.hpp; sourceTree = "<group>"; };
 		3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.2.82.dylib; path = ../../External/lib/libBulletCollision.2.82.dylib; sourceTree = "<group>"; };
 		3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.2.82.dylib; path = ../../External/lib/libLinearMath.2.82.dylib; sourceTree = "<group>"; };
 		37AAC1C519F42A3600C32899 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
@@ -101,7 +117,6 @@
 		37B8F2FA19F2DFCC00995B61 /* EntityTemplate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplate.hpp; sourceTree = "<group>"; };
 		37B8F2FB19F2DFCC00995B61 /* EntityTemplateCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplateCollection.cpp; sourceTree = "<group>"; };
 		37B8F2FC19F2DFCC00995B61 /* EntityTemplateCollection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplateCollection.hpp; sourceTree = "<group>"; };
-		37B8F2FD19F2DFCC00995B61 /* EntityTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTypes.hpp; sourceTree = "<group>"; };
 		37B8F2FE19F2DFCC00995B61 /* Simulation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Simulation.cpp; sourceTree = "<group>"; };
 		37B8F2FF19F2DFCC00995B61 /* Simulation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Simulation.hpp; sourceTree = "<group>"; };
 		37B8F30019F2DFCC00995B61 /* World.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
@@ -157,6 +172,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		375DA36C1A212E9E00EB0D63 /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				375DA36F1A213BD600EB0D63 /* SimulationCommandTask.hpp */,
+			);
+			name = Tasks;
+			sourceTree = "<group>";
+		};
+		375DA36E1A21328400EB0D63 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */,
+				377AB2E81A298AFE00B66D91 /* CreateEntityEvent.hpp */,
+				377AB2EA1A2992E600B66D91 /* SimEventClassIds.hpp */,
+			);
+			name = Events;
+			sourceTree = "<group>";
+		};
+		375DA3701A21436900EB0D63 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				375DA3831A22D35F00EB0D63 /* CreateEntityResponse.hpp */,
+				375EB2DD1A26BF97001EB283 /* CreateEntityResponse.cpp */,
+				375DA3821A22D08100EB0D63 /* CreateEntityRequest.hpp */,
+				375EB2DF1A26BFAA001EB283 /* CreateEntityRequest.cpp */,
+				375EB2E11A26C471001EB283 /* SimMessageClassIds.hpp */,
+				377AB2E11A29699900B66D91 /* CommandResponse.hpp */,
+				377AB2E21A296ABB00B66D91 /* CommandResponse.cpp */,
+			);
+			name = Messages;
+			sourceTree = "<group>";
+		};
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,6 +234,9 @@
 		37B8F2F519F2DFCC00995B61 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				375DA3701A21436900EB0D63 /* Messages */,
+				375DA36E1A21328400EB0D63 /* Events */,
+				375DA36C1A212E9E00EB0D63 /* Tasks */,
 				375DA3671A12F99C00EB0D63 /* WorldObject.cpp */,
 				375DA3681A12F99C00EB0D63 /* WorldObject.hpp */,
 				37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */,
@@ -198,14 +248,14 @@
 				37B8F2FA19F2DFCC00995B61 /* EntityTemplate.hpp */,
 				37B8F2FB19F2DFCC00995B61 /* EntityTemplateCollection.cpp */,
 				37B8F2FC19F2DFCC00995B61 /* EntityTemplateCollection.hpp */,
-				37B8F2FD19F2DFCC00995B61 /* EntityTypes.hpp */,
 				37B8F2FE19F2DFCC00995B61 /* Simulation.cpp */,
 				37B8F2FF19F2DFCC00995B61 /* Simulation.hpp */,
 				37B8F30019F2DFCC00995B61 /* World.cpp */,
 				37B8F30119F2DFCC00995B61 /* World.hpp */,
 				37B8F30219F2DFCC00995B61 /* WorldTypes.hpp */,
-				374C29E81A0ECE9000940936 /* EntitySimResult.cpp */,
-				374C29E91A0ECE9000940936 /* EntitySimResult.hpp */,
+				375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */,
+				377AB2E41A297BA400B66D91 /* SimulationContext.hpp */,
+				377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */,
 			);
 			name = Game;
 			path = ../Game;
@@ -392,16 +442,20 @@
 				37B8F31C19F2DFCC00995B61 /* GameTemplates.cpp in Sources */,
 				37B8F31D19F2DFCC00995B61 /* GameView.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
+				377AB2E31A296ABB00B66D91 /* CommandResponse.cpp in Sources */,
 				37B8F31919F2DFCC00995B61 /* EntityTemplateCollection.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
 				37DFA0951850108200382685 /* ApplicationController.cpp in Sources */,
+				377AB2E61A297CEA00B66D91 /* SimulationContext.cpp in Sources */,
+				375EB2DE1A26BF97001EB283 /* CreateEntityResponse.cpp in Sources */,
 				37B8F31819F2DFCC00995B61 /* EntityTemplate.cpp in Sources */,
 				37B8F31B19F2DFCC00995B61 /* World.cpp in Sources */,
 				37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */,
 				37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */,
-				374C29EA1A0ECE9000940936 /* EntitySimResult.cpp in Sources */,
 				37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */,
+				377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */,
 				37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */,
+				375EB2E01A26BFAA001EB283 /* CreateEntityRequest.cpp in Sources */,
 				375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */,
 				37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */,
 				37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */,
@@ -517,14 +571,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					GOOGLE_PROTOBUF_NO_RTTI,
-					"DEBUG=1",
-				);
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					GOOGLE_PROTOBUF_NO_RTTI,
-					"DEBUG=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "DEBUG=1";
 				HEADER_SEARCH_PATHS = (
 					..,
 					../..,
@@ -558,7 +606,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = GOOGLE_PROTOBUF_NO_RTTI;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "";
 				HEADER_SEARCH_PATHS = (
 					..,
 					../..,

@@ -9,7 +9,7 @@
 #ifndef Overview_EntityTemplate_hpp
 #define Overview_EntityTemplate_hpp
 
-#include "Game/EntityTypes.hpp"
+#include "Game/SimulationTypes.hpp"
 
 #include "cinek/string.hpp"
 

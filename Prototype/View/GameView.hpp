@@ -24,6 +24,8 @@
 #include "Graphics/BitmapLibrary.hpp"
 #include "Graphics/FontLibrary.hpp"
 #include "Core/JsonUtilities.hpp"
+#include "Core/MessageQueue.hpp"
+#include "Core/MessageDispatcher.hpp"
 
 #include "cinek/allocator.hpp"
 #include "cinek/map.hpp"
@@ -35,7 +37,7 @@ namespace cinek {
     class EventBase;
     
     namespace overview {
-        class EntitySimResult;
+        class EntityStateEvent;
         class IsoScene;
         class WorldObject;
     }
@@ -93,9 +95,9 @@ namespace cinek {
         void renderBitmap(const glx::Texture& texture, const glx::BitmapInfo& bitmap,
                           int32_t sx, int32_t sy);
 
-        void handleSimResults(const EventBase* evt);
+        void handleSimResults(const EventBase* evt, uint32_t timeMs);
         
-        void entitySimResult(const EntitySimResult* result);
+        void entitySimResult(const EntityStateEvent* result, uint32_t timeMs);
         
         SpriteInstancePtr allocateSprite(const std::string& spriteClassName);
         void freeSprite(SpriteInstancePtr ptr);
@@ -111,15 +113,25 @@ namespace cinek {
         glx::Graphics2D _graphics;
 
         unique_ptr<overview::GameTemplates> _gameTemplates;
-
         unique_ptr<Simulation> _simulation;
+        
+        MessageQueue _simCommandQueue;
+        MessageQueue _simResponseQueue;
+        MessageDispatcher _simMessageDispatcher;
         
         ObjectPool<SpriteInstance> _sprites;
         unordered_map<EntityId, SpriteInstancePtr> _entitySpritePtrs;
         std::shared_ptr<overview::Stage> _stage;
+        unique_ptr<overview::IsoScene> _isoScene;
 
         Point _viewPos;
-        unique_ptr<overview::IsoScene> _isoScene;
+        EntityId _playerEntityId;
+        
+    private:
+        struct GameContext
+        {
+            uint32_t timeMs;
+        };
     };
 
     }
