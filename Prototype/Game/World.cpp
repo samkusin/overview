@@ -8,10 +8,15 @@
 
 #include "Game/World.hpp"
 #include "Game/WorldObject.hpp"
+#include "Core/MessageQueue.hpp"
+
 #include "cinek/objectpool.hpp"
 #include "cinek/map.hpp"
 
 #include "btBulletCollisionCommon.h"
+
+#include "Game/Events/SimEventClassIds.hpp"
+#include "Game/Events/MoveEntityEvent.hpp"
 
 
 namespace cinek { namespace overview {
@@ -27,7 +32,7 @@ namespace cinek { namespace overview {
                                   const AABB<Point>& bbox);
         void destroyObject(WorldObject* body);
         
-        void update(uint32_t deltaTimeMs);
+        void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);
 
     private:
         Allocator _allocator;
@@ -77,7 +82,8 @@ namespace cinek { namespace overview {
             if (object)
             {
                 object->setCollisionShape(box);
-                WorldObject* worldObject = _worldObjects.construct(pos, front, 0.f, object);
+                WorldObjectTransform transform = { pos, front, 0.f };
+                WorldObject* worldObject = _worldObjects.construct(transform, object);
                 if (worldObject)
                 {
                     worldObject->writeToTransform(object->getWorldTransform(), boxHalfExt);
@@ -117,9 +123,60 @@ namespace cinek { namespace overview {
         _worldObjects.destruct(object);
     }
     
-    void World::Impl::update(uint32_t deltaTimeMs)
+    void World::Impl::update(MessageQueue& eventQueue, uint32_t deltaTimeMs)
     {
+        float deltaTime = deltaTimeMs*0.001f;
+        //  physics pass on all btObjects within the btWorld in preparation for
+        //  collision detection
+        btCollisionObjectArray& btObjects = _btWorld.getCollisionObjectArray();
+        for (int objIndex = 0; objIndex < btObjects.size(); ++objIndex)
+        {
+            btCollisionObject* collObj = btObjects.at(objIndex);
+            if (!collObj)
+                continue;
+            
+            //  update our btObject with the new transform
+            WorldObject* worldObj =
+                reinterpret_cast<WorldObject*>(collObj->getUserPointer());
+            btBoxShape* shape =
+                static_cast<btBoxShape*>(collObj->getCollisionShape());
+            btTransform& btObjTransform = collObj->getWorldTransform();
+            worldObj->writeToTransform(btObjTransform,
+                                       shape->getHalfExtentsWithoutMargin());
+            
+            //  apply updated position
+            btVector3 nextPos = btObjTransform.getOrigin() +
+                (btObjTransform.getBasis() * (kWorldRefDir *
+                                              worldObj->transform().speed *
+                                              deltaTime));
+            btObjTransform.setOrigin(nextPos);
+        }
+        
+        //  perform collision detections
         _btWorld.performDiscreteCollisionDetection();
+        
+        //  update all WorldObject positions accordingly
+        for (int objIndex = 0; objIndex < btObjects.size(); ++objIndex)
+        {
+            btCollisionObject* collObj = btObjects.at(objIndex);
+            if (!collObj)
+                continue;
+            
+            //  update our btObject with the new transform
+            WorldObject* worldObj =
+                reinterpret_cast<WorldObject*>(collObj->getUserPointer());
+            btBoxShape* shape =
+                static_cast<btBoxShape*>(collObj->getCollisionShape());
+            const btTransform& btObjTransform = collObj->getWorldTransform();
+            if (!worldObj->readFromTransform(btObjTransform,
+                                             shape->getHalfExtentsWithoutMargin()))
+            {
+                MoveEntityEvent evt;
+                evt.setEntityId(worldObj->id());
+                evt.setTransform(worldObj->transform());
+                eventQueue.push(SimEvent::kMoveEntity, evt);
+            }
+        }
     }
     
     
@@ -149,9 +206,9 @@ namespace cinek { namespace overview {
         _impl->destroyObject(obj);
     }
     
-    void World::update(uint32_t frameTimeMS)
+    void World::update(MessageQueue& eventQueue, uint32_t frameTimeMS)
     {
-        _impl->update(frameTimeMS);
+        _impl->update(eventQueue, frameTimeMS);
     }
 
 } /* namespace overview */ } /* namespace cinek */

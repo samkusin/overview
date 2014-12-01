@@ -36,13 +36,19 @@ MessageDispatcher::~MessageDispatcher()
     //  release master list of delegates
     for (auto& del : _delegates)
     {
-        releaseDelegateEntry(del.second);
+        if (del.second)
+        {
+            _delegatePool.destruct(del.second);
+        }
         del.second = nullptr;
     }
     //  release head list nodes from the class delegates table
     for (auto& classDel : _classDelegates)
     {
-        releaseDelegateEntry(classDel.second);
+        if (classDel.second)
+        {
+            _delegatePool.destruct(classDel.second);
+        }
         classDel.second = nullptr;
     }
 }
@@ -208,12 +214,16 @@ void MessageDispatcher::dispatch(MessageQueue& queue, uint32_t deltaMs,
             if (it != _sequenceDelegates.end())
             {
                 auto entry = it->second;
-                obtainDelegateEntry(entry);
-                entry->del(msg.data.get(), entry->seqId, context);
-                //  invalidate sequence entry before releasing to prevent an
-                //  unnecessary lookup of the entry during release.
-                entry->seqId = 0;
-                _sequenceDelegates.erase(it);
+                {
+                    obtainDelegateEntry(entry);
+                    entry->del(msg.data.get(), entry->seqId, context);
+                    //  invalidate sequence entry before releasing to prevent an
+                    //  unnecessary lookup of the entry during release.
+                    releaseDelegateEntry(entry);
+                    entry->seqId = 0;
+                    _sequenceDelegates.erase(it);
+                }
+                //  done with the delegate.  release the dispatcher's instance
                 releaseDelegateEntry(entry);
             }
         }

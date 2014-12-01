@@ -33,6 +33,7 @@ namespace cinek {
         
         class CreateEntityRequest;
         class CreateEntityResponse;
+        class MoveEntityRequest;
         
     } /* namespace overview */
 
@@ -103,7 +104,10 @@ namespace cinek { namespace overview {
 
         void createEntityCommand(
             const CreateEntityRequest& req,
-            ResponseCallback<CreateEntityResponse> respCb);
+            const ResponseCallback<CreateEntityResponse>& respCb);
+        void moveEntityCommand(
+            const MoveEntityRequest& req,
+            const ResponseCallback<CommandResponse>& respCb);
     };
 
 } /* namespace overview */ } /* namespace cinek */

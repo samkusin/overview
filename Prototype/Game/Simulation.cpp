@@ -16,9 +16,11 @@
 #include "Game/Messages/SimMessageClassIds.hpp"
 #include "Game/Messages/CreateEntityRequest.hpp"
 #include "Game/Messages/CreateEntityResponse.hpp"
+#include "Game/Messages/MoveEntityRequest.hpp"
 
 #include "Game/Events/SimEventClassIds.hpp"
 #include "Game/Events/CreateEntityEvent.hpp"
+#include "Game/Events/MoveEntityEvent.hpp"
 
 namespace cinek {
     using namespace overview;
@@ -79,6 +81,23 @@ Simulation::Simulation(
             }
         });
     
+    _commandDispatcher.on(SimCommand::kMoveEntity,
+        [this](const SDO* data, Message::SequenceId seqId, void* context)
+        {
+            SimulationContext& simContext = *reinterpret_cast<SimulationContext*>(context);
+            auto req = sdo_cast<const MoveEntityRequest*>(data);
+            if (req)
+            {
+                simContext.sequenceId = seqId;
+                moveEntityCommand(*req,
+                    [&simContext](const CommandResponse& resp) {
+                        simContext.resultMsgQueue->push(SimCommand::kMoveEntity,
+                            resp,
+                            simContext.sequenceId);
+                    });
+            }
+        });
+    
     _eventDispatcher.on(SimEvent::kCreateEntity,
         [this](const SDO* data, Message::SequenceId, void* context)
         {
@@ -87,6 +106,17 @@ Simulation::Simulation(
             if (evt)
             {
                 simContext.resultMsgQueue->push(SimEvent::kCreateEntity, *evt);
+            }
+        });
+    
+    _eventDispatcher.on(SimEvent::kMoveEntity,
+        [this](const SDO* data, Message::SequenceId, void* context)
+        {
+            SimulationContext& simContext = *reinterpret_cast<SimulationContext*>(context);
+            auto evt = sdo_cast<const MoveEntityEvent*>(data);
+            if (evt)
+            {
+                simContext.resultMsgQueue->push(SimEvent::kMoveEntity, *evt);
             }
         });
 }
@@ -107,7 +137,7 @@ void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
     _systemTimeMs = timeMs;
     
     SimulationContext simContext;
-    simContext.eventQueue = &_eventQueues[_activeEventQueue];
+    simContext.eventQueue = &activeEventQueue();
     simContext.resultMsgQueue = &outQueue;
     simContext.scheduler = &_scheduler;
     simContext.allocator = _allocator;
@@ -118,7 +148,7 @@ void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
     
     //  update simulation subsystems
     //
-    _world->update(deltaTimeMs);
+    _world->update(activeEventQueue(), deltaTimeMs);
     _scheduler.process(deltaTimeMs);
     
     //  process events created during world/task execution
@@ -252,7 +282,7 @@ Entity* Simulation::entity(EntityId entityId)
 
 void Simulation::createEntityCommand(
     const CreateEntityRequest& req,
-    ResponseCallback<CreateEntityResponse> respCb
+    const ResponseCallback<CreateEntityResponse>& respCb
 )
 {
     CreateEntityResponse resp;
@@ -279,7 +309,7 @@ void Simulation::createEntityCommand(
             if (entityIt != _entityMap.end())
             {
                 _nextObjectId = newEntityId;
-
+    
                 entityIt->second.attachBody(body);
 
                 resp.setEntityId(newEntityId);
@@ -302,7 +332,41 @@ void Simulation::createEntityCommand(
                           req.templateId().c_str());
         resp.setResponseCode(CommandResponse::kInvalidParameter);
     }
-    respCb(resp);
+    if (respCb)
+    {
+        respCb(resp);
+    }
+}
+
+void Simulation::moveEntityCommand(
+    const MoveEntityRequest &req,
+    const ResponseCallback<cinek::overview::CommandResponse>& respCb)
+{
+    CommandResponse resp;
+    
+    auto entity = this->entity(req.entityId());
+    if (entity)
+    {
+        auto body = entity->body();
+        if (body)
+        {
+            //  update the entity's movement attributes.  The WorldObject body
+            //  will be processed accordingly during its update
+            body->applyTransform(req.transform());
+        }
+        else
+        {
+            resp.setResponseCode(CommandResponse::kFailure);
+        }
+    }
+    else
+    {
+        resp.setResponseCode(CommandResponse::kNotFound);
+    }
+    if (respCb)
+    {
+        respCb(resp);
+    }
 }
 
 

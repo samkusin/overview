@@ -31,8 +31,10 @@
 #include "Game/Messages/SimMessageClassIds.hpp"
 #include "Game/Messages/CreateEntityRequest.hpp"
 #include "Game/Messages/CreateEntityResponse.hpp"
+#include "Game/Messages/MoveEntityRequest.hpp"
 #include "Game/Events/SimEventClassIds.hpp"
 #include "Game/Events/CreateEntityEvent.hpp"
+#include "Game/Events/MoveEntityEvent.hpp"
 
 
 /////////////////////////////////////////////////////////////
@@ -105,7 +107,14 @@ namespace cinek {
         _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
         
         CreateEntityRequest createReq("avatar", _viewPos, Point(0,1,0));
-        _simMessageDispatcher.queue(_simCommandQueue, SimCommand::kCreateEntity, createReq);
+        _simMessageDispatcher.queue(_simCommandQueue, SimCommand::kCreateEntity, createReq,
+            [this](const SDO* data, Message::SequenceId, void*) {
+                auto resp = sdo_cast<const CreateEntityResponse*>(data);
+                if (resp->responseCode() == CommandResponse::kSuccess)
+                {
+                    _playerEntityId = resp->entityId();
+                }
+            });
         
         _simMessageDispatcher.on(SimEvent::kCreateEntity,
             [this](const SDO* data, Message::SequenceId, void* context)
@@ -118,8 +127,23 @@ namespace cinek {
                     auto sprite = allocateSprite(entity->sourceTemplate().spriteName());
                     _entitySpritePtrs.emplace(entity->id(), sprite);
                     auto body = entity->body();
-                    applyObjectStateToSprite(sprite, *body, gameContext.timeMs);
+                    applyObjectStateToSprite(sprite, body->transform(), gameContext.timeMs);
                     _stage->attachSpriteInstance(sprite);
+                }
+            });
+        _simMessageDispatcher.on(SimEvent::kMoveEntity,
+            [this](const SDO* data, Message::SequenceId, void* context)
+            {
+                GameContext& gameContext = *reinterpret_cast<GameContext*>(context);
+                auto event = sdo_cast<const MoveEntityEvent*>(data);
+                auto entity = _simulation->entity(event->entityId());
+                if (entity)
+                {
+                    auto it = _entitySpritePtrs.find(event->entityId());
+                    if (it != _entitySpritePtrs.end())
+                    {
+                        applyObjectStateToSprite(it->second, event->transform(), gameContext.timeMs);
+                    }
                 }
             });
     }
@@ -187,18 +211,18 @@ namespace cinek {
     }
     
     void GameView::applyObjectStateToSprite(SpriteInstancePtr sprite,
-                                            const WorldObject& body,
+                                            const WorldObjectTransform& body,
                                             uint32_t timeMs)
     {
         //  direction using (0,1,0) as a reference to South
         //  dir.x determines the side ('west', 'east')
         //  dot product determines direction.
         //
-        auto& dir = body.frontDirection();
-        float speed = body.speed();
+        auto& dir = body.dir;
+        float speed = body.speed;
         float dp = glm::dot(dir, Point(0,1,0));
         
-        AnimationStateId animId = kAnimationState_Idle;
+        AnimationStateId animId = sprite->state();
         if (dp >= 0.75f)
         {
             animId = speed > 0.f ? kAnimationState_Walk_South : kAnimationState_Idle_South;
@@ -229,9 +253,11 @@ namespace cinek {
             animId = speed > 0.f ? kAnimationState_Walk_North : kAnimationState_Idle_North;
         }
         
-
-        sprite->setState(animId, timeMs);
-        sprite->setPosition(body.position());
+        if (animId != sprite->state())
+        {
+            sprite->setState(animId, timeMs);
+        }
+        sprite->setPosition(body.pos);
     }
 
     //  Main render pipeline
@@ -275,7 +301,11 @@ namespace cinek {
         style.fillColor = glx::RGBAColor(0,0,255,255);
         _graphics.drawText("Welcome to the overview 2D project by Samir Sinha.",
                             20, 160, style);
+
         /*
+        style.lineMethod = glx::kLineMethod_Solid;
+        style.lineColor = glx::RGBAColor(0,255,0,255);
+        _graphics.drawLine(glm::ivec2(25,25), glm::ivec2(648,648), style);
         _graphics.drawRect(glx::Rect(100,100,200,200), style);
 
         glm::ivec2 polyVerts[5];
@@ -329,34 +359,71 @@ namespace cinek {
 
     void GameView::onKeyDown(SDL_Keycode keycode, uint16_t keymod)
     {
-        glm::vec3 newPos(0,0,0);
+        if (!_playerEntityId)
+            return;
+        
+        glm::vec3 newDir(0,0,0);
 
-        const float kAdjX = 0.125f;
-        const float kAdjY = 0.125f;
+        const float kAdjX = 1.0f;
+        const float kAdjY = 1.0f;
 
         switch (keycode)
         {
-            case SDLK_e:    newPos.y = -kAdjY; break;
-            case SDLK_z:    newPos.y = kAdjY; break;
-            case SDLK_q:    newPos.x = -kAdjX; break;
-            case SDLK_c:    newPos.x = kAdjX; break;
-            case SDLK_w:    newPos.x = -kAdjX; newPos.y = -kAdjY; break;
-            case SDLK_x:    newPos.x = kAdjX; newPos.y = kAdjY; break;
-            case SDLK_a:    newPos.x = -kAdjX; newPos.y = kAdjY; break;
-            case SDLK_d:    newPos.x = kAdjX; newPos.y = -kAdjY; break;
+            case SDLK_e:    newDir.y = -kAdjY; break;
+            case SDLK_z:    newDir.y = kAdjY; break;
+            case SDLK_q:    newDir.x = -kAdjX; break;
+            case SDLK_c:    newDir.x = kAdjX; break;
+            case SDLK_w:    newDir.x = -kAdjX; newDir.y = -kAdjY; break;
+            case SDLK_x:    newDir.x = kAdjX; newDir.y = kAdjY; break;
+            case SDLK_a:    newDir.x = -kAdjX; newDir.y = kAdjY; break;
+            case SDLK_d:    newDir.x = kAdjX; newDir.y = -kAdjY; break;
             default:
                 break;
         }
 
-        if (newPos.x || newPos.y || newPos.z)
+        if (newDir.x || newDir.y || newDir.z)
         {
-            _viewPos += newPos;
-            //_playerSprite->setPosition(_viewPos);
+            WorldObjectTransform transform;
+            transform.setDirty(WorldObjectTransform::kDirection);
+            transform.setDirty(WorldObjectTransform::kSpeed);
+            transform.dir = glm::normalize(newDir);
+            transform.speed = 4.0f;
+            
+            MoveEntityRequest req;
+            req.setEntityId(_playerEntityId);
+            req.setTransform(transform);
+            _simMessageDispatcher.queue(_simCommandQueue, SimCommand::kMoveEntity, req);
         }
     }
 
     void GameView::onKeyUp(SDL_Keycode keycode, uint16_t keymod)
     {
+        bool stopMove = false;
+        switch (keycode)
+        {
+            case SDLK_e:    stopMove = true; break;
+            case SDLK_z:    stopMove = true; break;
+            case SDLK_q:    stopMove = true; break;
+            case SDLK_c:    stopMove = true; break;
+            case SDLK_w:    stopMove = true; break;
+            case SDLK_x:    stopMove = true; break;
+            case SDLK_a:    stopMove = true; break;
+            case SDLK_d:    stopMove = true; break;
+            default:
+                break;
+        }
+        
+        if (stopMove)
+        {
+            WorldObjectTransform transform;
+            transform.setDirty(WorldObjectTransform::kSpeed);
+            transform.speed = 0.f;
+            
+            MoveEntityRequest req;
+            req.setEntityId(_playerEntityId);
+            req.setTransform(transform);
+            _simMessageDispatcher.queue(_simCommandQueue, SimCommand::kMoveEntity, req);
+        }
 
     }
 

@@ -25,11 +25,13 @@ Entity::Entity(EntityId id, const EntityTemplate& entityTempl) :
 void Entity::attachBody(WorldObject* body)
 {
     _body = body;
+    _body->setId(_id);
 }
 
 WorldObject* Entity::detachBody()
 {
     WorldObject* obj = _body;
+    _body->setId(0);
     _body = nullptr;
     return obj;
 }

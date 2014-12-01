@@ -13,11 +13,12 @@
 
 namespace cinek { namespace overview {
 
-    namespace SimCommand
-    {
-        const Message::ClassId kCreateEntity            = 0x00010000;
-        const Message::ClassId kDestroyEntity           = 0x00010001;
-    }
+namespace SimCommand
+{
+    constexpr auto kCreateEntity         = Message::createClassId(Message::kCommandMessage, 0x01, 0x0000);
+    constexpr auto kDestroyEntity        = Message::createClassId(Message::kCommandMessage, 0x01, 0x0001);
+    constexpr auto kMoveEntity           = Message::createClassId(Message::kCommandMessage, 0x01, 0x0002);
+}
 
 } /* namespace overview */ } /* namespace cinek */
 

@@ -22,7 +22,8 @@ public:
     {
         kSuccess,
         kFailure,
-        kInvalidParameter
+        kInvalidParameter,
+        kNotFound
     };
 
     CommandResponse() = default;
@@ -31,7 +32,7 @@ public:
     Code responseCode() const { return _code; }
     
 private:
-    Code _code;
+    Code _code = kSuccess;
 };
 
 } /* namespace overview */ } /* namespace cinek */

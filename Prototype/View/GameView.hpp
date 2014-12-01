@@ -102,8 +102,9 @@ namespace cinek {
         SpriteInstancePtr allocateSprite(const std::string& spriteClassName);
         void freeSprite(SpriteInstancePtr ptr);
         
-        void applyObjectStateToSprite(SpriteInstancePtr sprite, const WorldObject& body,
-                                      uint32_t timeMs);
+        void applyObjectStateToSprite(SpriteInstancePtr sprite,
+                        const WorldObjectTransform& body,
+                        uint32_t timeMs);
         
     private:
         ApplicationController& _application;

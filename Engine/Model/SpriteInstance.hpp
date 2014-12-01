@@ -79,6 +79,11 @@ namespace cinek {
          */
         void setState(AnimationStateId stateId,
                       uint32_t startTime);
+        
+        /**
+         * @return The sprite's current animation state identifier.
+         */
+        AnimationStateId state() const { return _stateId; }
 
         /** @return The world position of the sprite */
         const Point& position() const {

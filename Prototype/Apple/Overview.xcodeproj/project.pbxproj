@@ -18,6 +18,9 @@
 		377AB2E31A296ABB00B66D91 /* CommandResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E21A296ABB00B66D91 /* CommandResponse.cpp */; };
 		377AB2E61A297CEA00B66D91 /* SimulationContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */; };
 		377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */; };
+		377AB2ED1A2A642600B66D91 /* MoveEntityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2EB1A2A642600B66D91 /* MoveEntityEvent.cpp */; };
+		377AB2F21A2A68FC00B66D91 /* MoveEntityRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */; };
+		377AB2F51A2BD5F800B66D91 /* SimulationTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */; };
 		3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; };
 		3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; };
 		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -99,6 +102,11 @@
 		377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CreateEntityEvent.cpp; path = Events/CreateEntityEvent.cpp; sourceTree = "<group>"; };
 		377AB2E81A298AFE00B66D91 /* CreateEntityEvent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CreateEntityEvent.hpp; path = Events/CreateEntityEvent.hpp; sourceTree = "<group>"; };
 		377AB2EA1A2992E600B66D91 /* SimEventClassIds.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SimEventClassIds.hpp; path = Events/SimEventClassIds.hpp; sourceTree = "<group>"; };
+		377AB2EB1A2A642600B66D91 /* MoveEntityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MoveEntityEvent.cpp; path = Events/MoveEntityEvent.cpp; sourceTree = "<group>"; };
+		377AB2EC1A2A642600B66D91 /* MoveEntityEvent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MoveEntityEvent.hpp; path = Events/MoveEntityEvent.hpp; sourceTree = "<group>"; };
+		377AB2F01A2A68A000B66D91 /* MoveEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MoveEntityRequest.hpp; path = Messages/MoveEntityRequest.hpp; sourceTree = "<group>"; };
+		377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MoveEntityRequest.cpp; path = Messages/MoveEntityRequest.cpp; sourceTree = "<group>"; };
+		377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationTypes.cpp; sourceTree = "<group>"; };
 		3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.2.82.dylib; path = ../../External/lib/libBulletCollision.2.82.dylib; sourceTree = "<group>"; };
 		3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.2.82.dylib; path = ../../External/lib/libLinearMath.2.82.dylib; sourceTree = "<group>"; };
 		37AAC1C519F42A3600C32899 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
@@ -186,6 +194,8 @@
 				377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */,
 				377AB2E81A298AFE00B66D91 /* CreateEntityEvent.hpp */,
 				377AB2EA1A2992E600B66D91 /* SimEventClassIds.hpp */,
+				377AB2EB1A2A642600B66D91 /* MoveEntityEvent.cpp */,
+				377AB2EC1A2A642600B66D91 /* MoveEntityEvent.hpp */,
 			);
 			name = Events;
 			sourceTree = "<group>";
@@ -197,6 +207,8 @@
 				375EB2DD1A26BF97001EB283 /* CreateEntityResponse.cpp */,
 				375DA3821A22D08100EB0D63 /* CreateEntityRequest.hpp */,
 				375EB2DF1A26BFAA001EB283 /* CreateEntityRequest.cpp */,
+				377AB2F01A2A68A000B66D91 /* MoveEntityRequest.hpp */,
+				377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */,
 				375EB2E11A26C471001EB283 /* SimMessageClassIds.hpp */,
 				377AB2E11A29699900B66D91 /* CommandResponse.hpp */,
 				377AB2E21A296ABB00B66D91 /* CommandResponse.cpp */,
@@ -256,6 +268,7 @@
 				375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */,
 				377AB2E41A297BA400B66D91 /* SimulationContext.hpp */,
 				377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */,
+				377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */,
 			);
 			name = Game;
 			path = ../Game;
@@ -453,11 +466,14 @@
 				37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */,
 				37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */,
 				37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */,
+				377AB2F21A2A68FC00B66D91 /* MoveEntityRequest.cpp in Sources */,
 				377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */,
 				37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */,
 				375EB2E01A26BFAA001EB283 /* CreateEntityRequest.cpp in Sources */,
+				377AB2ED1A2A642600B66D91 /* MoveEntityEvent.cpp in Sources */,
 				375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */,
 				37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */,
+				377AB2F51A2BD5F800B66D91 /* SimulationTypes.cpp in Sources */,
 				37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */,
 				37B8F31E19F2DFCC00995B61 /* IsoNode.cpp in Sources */,
 				37B8F32419F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp in Sources */,

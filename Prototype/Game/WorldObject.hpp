@@ -27,25 +27,25 @@ class WorldObject
 {
 public:
     WorldObject() = default;
-    WorldObject(const Point& pos, const Point& dir, float speed,
-                void* context);
+    WorldObject(const WorldObjectTransform& transform, void* context);
     
-    const Point& position() const { return _position; }
-    const Point& frontDirection() const { return _direction; }
-    float speed() const { return _speed; }
+    void setId(SimObjectId objId) { _objectId = objId; }
+    SimObjectId id() const { return _objectId; }
     
-    void readFromTransform(const btTransform& transform,
-                           const btVector3& halfExtents);
-    void writeToTransform(btTransform& transform,
-                          const btVector3& halfExtents);
-    void setSpeed(float speed);
-    
+    const WorldObjectTransform& transform() const { return _transform; }
+    void setTransform(const WorldObjectTransform& transform) { _transform = transform; }
+    void applyTransform(const WorldObjectTransform& transform);
+
     void* context() { return _context; }
     
+    bool readFromTransform(const btTransform& transform,
+                           const btVector3& halfExtents);
+    void writeToTransform(btTransform& transform,
+                          const btVector3& halfExtents) const;
+    
 private:
-    Point _position;
-    Point _direction;
-    float _speed;
+    WorldObjectTransform _transform;
+    SimObjectId _objectId;
     void* _context;
 };
         

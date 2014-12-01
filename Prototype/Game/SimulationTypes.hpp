@@ -16,6 +16,54 @@ namespace cinek { namespace overview {
 using SimObjectId = uint32_t;
 using EntityId = SimObjectId;
 
+struct WorldObjectTransform
+{
+    Point pos;
+    Point dir;
+    float speed;
+    
+    enum Attribute
+    {
+        kPosition    = (1 << 0),
+        kDirection   = (1 << 1),
+        kSpeed       = (1 << 2)
+    };
+    
+    WorldObjectTransform() : speed(0.f), _dirtyFlags(0) {}
+    WorldObjectTransform(const Point& pos_, const Point& dir_, float speed_);
+
+    void setDirty(Attribute attr);
+    bool isDirty(Attribute attr) const;
+    void clearDirtyFlags() { _dirtyFlags = 0; }
+    
+    WorldObjectTransform& operator|=(const WorldObjectTransform& transform);
+    
+private:
+    uint32_t _dirtyFlags;
+};
+
+inline WorldObjectTransform::WorldObjectTransform(
+    const Point& pos_,
+    const Point& dir_,
+    float speed_
+) :
+    pos(pos_),
+    dir(dir_),
+    speed(speed_),
+    _dirtyFlags(kPosition | kDirection | kSpeed)
+{
+}
+
+inline bool WorldObjectTransform::isDirty(Attribute attr) const
+{
+    return (_dirtyFlags & static_cast<uint32_t>(attr)) != 0;
+}
+
+inline void WorldObjectTransform::setDirty(Attribute attr)
+{
+    _dirtyFlags |= static_cast<uint32_t>(attr);
+}
+
 } /* namespace overview */ } /* namespace cinek */
 
 #endif

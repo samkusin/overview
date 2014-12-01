@@ -15,6 +15,9 @@
 #include "cinek/allocator.hpp"
 
 namespace cinek {
+
+    class MessageQueue;
+    
     namespace overview {
         class Entity;
         class WorldObject;
@@ -43,7 +46,7 @@ namespace cinek {
                                   const AABB<Point>& bbox);
         void destroyObject(WorldObject* body);
 
-        void update(uint32_t deltaTimeMs);
+        void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);
 
     private:
         class Impl;
