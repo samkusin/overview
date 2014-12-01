@@ -109,6 +109,7 @@ namespace cinek {
         GLShaderLibrary _shaderLibrary;
         GLuint _standardShader;
         GLuint _textShader;
+        GLuint _notextureShader;
         GLuint _currentShader;
         GLint _projectionMatUniform;
         GLint _texSamplerUniform;

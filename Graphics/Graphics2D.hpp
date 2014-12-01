@@ -60,8 +60,15 @@ namespace cinek {
         Graphics2D(RendererCLI& renderer, BitmapLibrary& bitmapLibrary,
                    FontLibrary& fontLibrary);
         ~Graphics2D();
-
-        //  Draws a rectangle
+        
+        /**
+         * Draws a line
+         */
+        void drawLine(const glm::ivec2& v0, const glm::ivec2& v1,
+                      const Style& style);
+        /**
+         * Draws a rectangle
+         */
         void drawRect(const Rect& rect, const Style& style);
         /**
          * Draws a convex polygon given an array of vertices

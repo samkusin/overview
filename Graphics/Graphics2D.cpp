@@ -107,6 +107,32 @@ namespace cinek {
         _polyVertsPos.clear();
         _polyVertsUV.clear();
     }
+    
+    void Graphics2D::drawLine(const glm::ivec2& v0, const glm::ivec2& v1,
+                              const Style& style)
+    {
+        _polyVertsPos.emplace_back((float)v0.x, (float)v0.y);
+        _polyVertsPos.emplace_back((float)v1.x, (float)v1.y);
+        _polyVertsUV.emplace_back(0.0f, 0.0f);
+        _polyVertsUV.emplace_back(1.0f, 1.0f);
+        if (style.lineMethod != kLineMethod_NoLine)
+        {
+            glm::vec4 color(style.lineColor.r/255.0f,
+                            style.lineColor.g/255.0f,
+                            style.lineColor.b/255.0f,
+                            style.lineColor.a/255.0f);
+            _polyVertsColor.emplace_back(color);
+            _polyVertsColor.emplace_back(color);
+        }
+        
+        _renderer.drawVertices(*_solidTexture, Mesh::kLines,
+                               _polyVertsPos,
+                               _polyVertsUV,
+                               _polyVertsColor);
+        _polyVertsColor.clear();
+        _polyVertsPos.clear();
+        _polyVertsUV.clear();
+    }
 
     void Graphics2D::drawPolygon(const glm::ivec2* vertices, size_t numVertices, const Style& style)
     {

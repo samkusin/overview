@@ -52,6 +52,7 @@ namespace cinek {
         // load default shaders
         _standardShader = _shaderLibrary.loadProgram("standard.json");
         _textShader = _shaderLibrary.loadProgram("text.json");
+        _notextureShader = _shaderLibrary.loadProgram("notexture.json");
         if (!_standardShader || !_textShader)
         {
             SDL_GL_DeleteContext(_glContext);
@@ -260,6 +261,8 @@ namespace cinek {
             drawMode = GL_TRIANGLES;
         else if (meshType == Mesh::kTriangleFan)
             drawMode = GL_TRIANGLE_FAN;
+        else if (meshType == Mesh::kLines)
+            drawMode = GL_LINES;
         else
             return;
 
@@ -382,6 +385,7 @@ namespace cinek {
                 program = _textShader;
                 break;
             default:
+                program = _notextureShader;
                 break;
         }
 
@@ -394,14 +398,23 @@ namespace cinek {
         {
             drawMode = GL_TRIANGLE_FAN;
         }
+        else if (_batchState.drawMode == Mesh::kLines)
+        {
+            drawMode = GL_LINES;
+        }
         else
         {
             RENDER_LOG_WARN("GL3Renderer.flushBatch Undefined draw mode (%d) specified", _batchState.drawMode);
         }
-        if (texture)
+        if (texture && _batchState.textureSamplerFormat != GL3Texture::kFormatNone)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
+        }
+        else
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
         if (program)
         {
@@ -433,11 +446,6 @@ namespace cinek {
                                 kGL_ShaderUniformProjectionMat);
             }
             _texSamplerUniform = glGetUniformLocation(shader, kGL_ShaderUniformTextureSampler0);
-            if (_texSamplerUniform < 0)
-            {
-                RENDER_LOG_WARN("GL3Renderer.selectShader - selected shader does not have a uniform: %s",
-                                kGL_ShaderUniformTextureSampler0);
-            }
             _positionUniform = glGetUniformLocation(shader, kGL_ShaderUniformPosition);
             if (_positionUniform < 0)
             {
@@ -447,7 +455,10 @@ namespace cinek {
             }
         }
         glUniformMatrix4fv(_projectionMatUniform, 1, GL_FALSE, glm::value_ptr(_projectionMat));
-        glUniform1i(_texSamplerUniform, 0);
+        if (_texSamplerUniform >= 0)
+        {
+            glUniform1i(_texSamplerUniform, 0);
+        }
         glUniform2f(_positionUniform, position.x, position.y);
     }
 

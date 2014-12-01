@@ -50,7 +50,8 @@ namespace cinek {
         {
             kUndefined,             /**< Undefined */
             kTriangles,             /**< Render as a list of triangles */
-            kTriangleFan            /**< Render as a 'fan' of triangles */
+            kTriangleFan,           /**< Render as a 'fan' of triangles */
+            kLines                  /**< Render as a list of lines */
         };
     public:
         virtual ~Mesh() {}
