@@ -36,6 +36,7 @@ Simulation::Simulation(
     _entityAllocator(_allocator),
     _gameTemplates(gameTemplates),
     _systemTimeMs(0),
+    _debugMessages(_allocator),
     _commandDispatcher(128, 32, 0, _allocator),
     _eventDispatcher(128, 16, 128, _allocator),
     _activeEventQueue(0),
@@ -44,6 +45,7 @@ Simulation::Simulation(
     _entityMap(_entityAllocator)
 {
     _entityMap.reserve(params.entityLimit);
+    _debugMessages.reserve(params.debugMsgLimit);
     
     for (auto& eventQueue : _eventQueues)
     {
@@ -59,6 +61,8 @@ Simulation::Simulation(
     worldParams.bounds.min = Point(0,0,0);
     worldParams.bounds.max = Point(tileDims.x, tileHeight, tileDims.y);
     worldParams.objectLimit = 1024;
+    worldParams.debugMessageVector = &_debugMessages;
+    worldParams.visualDebug = true;
 
     _world = allocate_unique<World>(_allocator,
                                     worldParams,
@@ -136,6 +140,8 @@ void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
     uint32_t deltaTimeMs = timeMs - _systemTimeMs;
     _systemTimeMs = timeMs;
     
+    _debugMessages.clear();
+    
     SimulationContext simContext;
     simContext.eventQueue = &activeEventQueue();
     simContext.resultMsgQueue = &outQueue;
@@ -158,114 +164,10 @@ void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
     _eventDispatcher.dispatch(events, timeMs, &simContext);
 }
 
-
-/*
-void Simulation::createEntity(const std::string& templateId,
-                              const SimulationCallback<CreateEntityResponse>& cb)
+void Simulation::syncDebugMessages(vector<SimDebugMessage> &messages)
 {
-    auto& tmpl = _gameTemplates.entityTemplateCollection()[templateId];
-    if (!tmpl)
-    {
-        OVENGINE_LOG_WARN("Simulation.createEntity - invalid template %s specified",
-                          templateId.c_str());
-        return 0;
-    }
-    EntityId newEntityId = (_nextObjectId+1);
-    if (!newEntityId)
-        newEntityId = 1;
-    
-    auto entityIt = _entityMap.emplace(std::piecewise_construct,
-                        std::forward_as_tuple(newEntityId),
-                        std::forward_as_tuple(newEntityId, tmpl)).first;
-    
-    if (entityIt != _entityMap.end())
-    {
-        _nextObjectId = newEntityId;
-        return _nextObjectId;
-    }
-    
-    OVENGINE_LOG_WARN("Simulation.createEntity - failed to create entity");
-    return 0;
+    messages = std::move(_debugMessages);
 }
-    
-void Simulation::activateEntity(EntityId id, const Point& pos,
-                                const Point& front)
-{
-    // add to or validate that the entity is in the World
-    // attach entity to the world
-    
-    // TODO: create the WorldBody here instead of createEntity
-    auto entityIt = _entityMap.find(id);
-    if (entityIt == _entityMap.end())
-    {
-        OVENGINE_LOG_WARN("Simulation.activateEntity - no entity found (%u)", id);
-        return;
-    }
-    auto& entity = entityIt->second;
-    auto& tmpl = entity.sourceTemplate();
-    auto& spriteTmpl = _gameTemplates.spriteLibrary().spriteByName(tmpl.spriteName());
-    WorldObject* body = _world->createObject(pos, front, spriteTmpl.aabb());
-    if (!body)
-    {
-        OVENGINE_LOG_WARN("Simulation.createEntity - failed to create body");
-        return;
-    }
-    
-    entity.attachBody(body);
-    
-    auto event = allocate_unique<EntityStateEvent>(
-                                _allocator,
-                                entity.id(),
-                                EntityStateEvent::kActivated
-                            );
-    _eventQueue.queue(std::move(event));
-}
-    
-void Simulation::deactivateEntity(EntityId id)
-{
-    auto entityIt = _entityMap.find(id);
-    if (entityIt == _entityMap.end())
-    {
-        OVENGINE_LOG_WARN("deactivateEntity - no entity found (%u)", id);
-        return;
-    }
-    auto& entity = entityIt->second;
-    deactivateEntity(entity);
-}
-    
-void Simulation::destroyEntity(EntityId id)
-{
-    auto entityIt = _entityMap.find(id);
-    if (entityIt == _entityMap.end())
-    {
-        OVENGINE_LOG_WARN("destroyEntity - no entity found (%u)", id);
-        return;
-    }
-    auto& entity = entityIt->second;
-    deactivateEntity(entity);
-    auto event = allocate_unique<EntityStateEvent>(
-                                _allocator,
-                                entity.id(),
-                                EntityStateEvent::kDestroyed
-                            );
-    _eventQueue.queue(std::move(event));
-}
-    
-void Simulation::deactivateEntity(Entity& entity)
-{
-    auto body = entity.detachBody();
-    if (!body)
-        return;
-    _world->destroyObject(body);
-
-    auto event = allocate_unique<EntityStateEvent>(
-                                _allocator,
-                                entity.id(),
-                                EntityStateEvent::kDeactivated
-                            );
-    _eventQueue.queue(std::move(event));
-}
-*/
 
 const Entity* Simulation::entity(EntityId entityId) const
 {

@@ -14,12 +14,79 @@
 #include "cinek/map.hpp"
 
 #include "btBulletCollisionCommon.h"
+#include "LinearMath/btIDebugDraw.h"
 
 #include "Game/Events/SimEventClassIds.hpp"
 #include "Game/Events/MoveEntityEvent.hpp"
 
+#include "cinek/debug.hpp"
+
+
 
 namespace cinek { namespace overview {
+
+    class WorldDebugDraw : public btIDebugDraw
+    {
+        CK_CLASS_NON_COPYABLE(WorldDebugDraw);
+        
+    public:
+        WorldDebugDraw(vector<SimDebugMessage>& messages) :
+            _debugMode(0),
+            _messages(messages)
+        {
+        }
+        virtual ~WorldDebugDraw()
+        {
+        }
+        
+        virtual void drawLine(const btVector3& from,
+            const btVector3& to,
+            const btVector3& color)
+        {
+            _messages.emplace_back();
+            _messages.back().type = SimDebugMessage::kDrawLine;
+            _messages.back().p0 = toPoint(from);
+            _messages.back().p1 = toPoint(to);
+            _messages.back().color = toPoint(color);
+        }
+        
+    	virtual void drawContactPoint(const btVector3& PointOnB,
+            const btVector3& normalOnB,
+            btScalar distance,
+            int lifeTime,
+            const btVector3& color)
+        {
+            _messages.emplace_back();
+            _messages.back().type = SimDebugMessage::kDrawPoint;
+            _messages.back().p0 = toPoint(PointOnB);
+            _messages.back().color = toPoint(color);
+        }
+
+        virtual void reportErrorWarning(const char* warningString)
+        {
+            CK_LOG_WARN("Simulation::World", warningString);
+        }
+
+        virtual void draw3dText(const btVector3& ,const char* )
+        {
+        }
+	
+        virtual void setDebugMode(int debugMode)
+        {
+            _debugMode = debugMode;
+        }
+	
+        virtual int	getDebugMode() const
+        {
+            return _debugMode;
+        }
+        
+    private:
+        int _debugMode;
+        vector<SimDebugMessage>& _messages;
+    };
+    
+    /////////////////////////////////////////////////////////////////////
 
     class World::Impl
     {
@@ -36,6 +103,8 @@ namespace cinek { namespace overview {
 
     private:
         Allocator _allocator;
+        
+        unique_ptr<WorldDebugDraw> _debugDraw;
         
         //  Bullet physics world
         btDefaultCollisionConfiguration _btConfig;
@@ -59,12 +128,18 @@ namespace cinek { namespace overview {
         _boxPool(params.objectLimit, _allocator),
         _worldObjects(params.objectLimit, _allocator)
     {
-
+        _debugDraw = allocate_unique<WorldDebugDraw>(_allocator, *params.debugMessageVector);
+        _btWorld.setDebugDrawer(_debugDraw.get());
+        
+        if (params.visualDebug)
+        {
+            _btWorld.getDebugDrawer()->setDebugMode(WorldDebugDraw::DBG_DrawWireframe);
+        }
     }
 
     World::Impl::~Impl()
     {
-
+        _btWorld.setDebugDrawer(nullptr);
     }
 
     WorldObject* World::Impl::createObject(const Point& pos,
@@ -177,6 +252,8 @@ namespace cinek { namespace overview {
                 eventQueue.push(SimEvent::kMoveEntity, evt);
             }
         }
+        
+        _btWorld.debugDrawWorld();
     }
     
     

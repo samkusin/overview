@@ -56,6 +56,7 @@ namespace cinek {
         _simResponseQueue(512, _allocator),
         _simMessageDispatcher(64, 32, 32, _allocator),
         _sprites(1024, _allocator),
+        _simDebugMessages(_allocator),
         _entitySpritePtrs(_allocator),
         _playerEntityId(0)
     {
@@ -160,14 +161,17 @@ namespace cinek {
 
     void GameView::update(uint32_t ticks)
     {
+        GameContext context;
+        context.timeMs = ticks;
+        _simMessageDispatcher.dispatch(_simResponseQueue, ticks, &context);
+        _simulation->syncDebugMessages(_simDebugMessages);
+        
+        
         // update systems (at some point these could be parallel jobs, so
         // it doesn't matter what order thse updates are called)
         _isoScene->update(ticks, _viewPos);
         _simulation->update(_simCommandQueue, _simResponseQueue, ticks);
-        
-        GameContext context;
-        context.timeMs = ticks;
-        _simMessageDispatcher.dispatch(_simResponseQueue, ticks, &context);
+
     }
     
     /*
@@ -295,6 +299,30 @@ namespace cinek {
 
 
         glx::Style style;
+        
+        style.lineColor = glx::RGBAColor(192,192,192,255);
+        style.lineMethod = glx::kLineMethod_Solid;
+        
+        for (auto& debugMsg : _simDebugMessages)
+        {
+            switch (debugMsg.type)
+            {
+            case SimDebugMessage::kDrawLine:
+                {
+                    style.lineColor = glx::RGBAColor(debugMsg.color.r*255,
+                                                     debugMsg.color.g*255,
+                                                     debugMsg.color.b*255,
+                                                     255);
+                    _graphics.drawLine(_isoScene->isoToScreenPos(debugMsg.p0),
+                        _isoScene->isoToScreenPos(debugMsg.p1),
+                        style);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        
         style.textColor = glx::RGBAColor(255,0,255,255);
         style.textFont = glx::kFontHandle_Default;
         style.fillMethod = glx::kFillMethod_SolidFill;

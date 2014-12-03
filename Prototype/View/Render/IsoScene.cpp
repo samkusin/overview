@@ -123,10 +123,12 @@ namespace cinek { namespace overview {
                                            auto viewPos = scene->isoToViewPos(isoPos);
                                            if (scene->_viewAlignedBounds.contains(viewPos))
                                            {
-                                               viewPos -= scene->_viewBounds.min;
+                                               viewPos.x -= scene->_viewBounds.min.x;
+                                               viewPos.y -= scene->_viewBounds.min.y;
                                                glm::ivec2 viewAnchor = scene->_screenOffset;
                                                viewAnchor.x += viewPos.x;
                                                viewAnchor.y += viewPos.y + scene->_tileDim.y;
+                                               viewAnchor.y -= viewPos.z;
                                                viewAnchor -= instance.anchor();
                                                AABB<Point> isoBox =  instance.aabb() + isoPos;
                                                scene->_isoNodeGraph.obtainNode(instance.bitmapFromTime(context.ticks),
@@ -185,13 +187,27 @@ namespace cinek { namespace overview {
         }
     }
 
-    void IsoScene::visit(std::function<void(const IsoNode*)> fn)
+    void IsoScene::visit(const std::function<void(const IsoNode*)>& fn)
     {
         auto& nodes = _isoNodeGraph.nodes();
         for (auto& node : nodes)
         {
             fn(node);
         }
+    }
+    
+    glm::ivec2 IsoScene::isoToScreenPos(const Point& pt) const
+    {
+        auto viewPos = isoToViewPos(pt);
+        viewPos.x -= _viewBounds.min.x;
+        viewPos.y -= _viewBounds.min.y;
+        
+        glm::ivec2 viewAnchor = _screenOffset;
+        viewAnchor.x += viewPos.x;
+        viewAnchor.y += viewPos.y;
+        viewAnchor.y -= viewPos.z;
+        
+        return viewAnchor;
     }
 
     glm::vec3 IsoScene::isoToViewPos(const Point& isoPos) const

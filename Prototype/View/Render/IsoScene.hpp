@@ -43,7 +43,9 @@ namespace cinek { namespace overview {
 
         void update(uint32_t ticks, const Point& pos);
 
-        void visit(std::function<void(const IsoNode*)> fn);
+        void visit(const std::function<void(const IsoNode*)>& fn);
+
+        glm::ivec2 isoToScreenPos(const Point& pt) const;
 
     private:
         void setupViewBounds(const Point& viewPos);

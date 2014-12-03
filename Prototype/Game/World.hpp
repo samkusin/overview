@@ -9,10 +9,12 @@
 #ifndef Overview_Game_Model_World_hpp
 #define Overview_Game_Model_World_hpp
 
+#include "Game/SimulationTypes.hpp"
+
 #include "Engine/Model/AABB.hpp"
-#include "Engine/Model/ModelTypes.hpp"
 
 #include "cinek/allocator.hpp"
+#include "cinek/vector.hpp"
 
 namespace cinek {
 
@@ -26,8 +28,7 @@ namespace cinek {
 
 namespace cinek {
     namespace overview {
-
-
+    
     class World
     {
         CK_CLASS_NON_COPYABLE(World);
@@ -36,7 +37,9 @@ namespace cinek {
         struct CreateParams
         {
             AABB<Point> bounds;
-            uint32_t objectLimit;
+            uint32_t objectLimit = 128;
+            vector<SimDebugMessage>* debugMessageVector = nullptr;
+            bool visualDebug = false;
         };
         World(const CreateParams& params, Allocator& allocator);
         ~World();
@@ -47,6 +50,7 @@ namespace cinek {
         void destroyObject(WorldObject* body);
 
         void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);
+        
 
     private:
         class Impl;

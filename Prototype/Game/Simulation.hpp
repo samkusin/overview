@@ -44,6 +44,7 @@ namespace cinek { namespace overview {
     struct SimulationParams
     {
         uint32_t entityLimit;
+        uint32_t debugMsgLimit;
         Allocator allocator;
     };
     
@@ -79,6 +80,14 @@ namespace cinek { namespace overview {
         void update(MessageQueue& inMsgQueue,
                     MessageQueue& outMsgQueue,
                     uint32_t timeMs);
+        
+        /// Obtains debug messages from the Simulation for display
+        ///
+        /// @param messages A vector that receives SimDebugMessage objects
+        ///                 from the Simulation.
+        /// @param timeMs   The current simulation time.
+        ///
+        void syncDebugMessages(vector<SimDebugMessage>& messages);
 
     private:
         Allocator _allocator;
@@ -86,6 +95,8 @@ namespace cinek { namespace overview {
         const overview::GameTemplates& _gameTemplates;
         
         uint32_t _systemTimeMs;
+        
+        vector<SimDebugMessage> _debugMessages;
 
         std::array<MessageQueue, 2> _eventQueues;
         uint32_t _activeEventQueue;

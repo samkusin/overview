@@ -16,6 +16,20 @@ namespace cinek { namespace overview {
 using SimObjectId = uint32_t;
 using EntityId = SimObjectId;
 
+struct SimDebugMessage
+{
+    enum
+    {
+        kDrawLine,
+        kDrawPoint
+    }
+    type;
+    
+    Point p0;
+    Point p1;
+    glm::vec3 color;
+};
+    
 struct WorldObjectTransform
 {
     Point pos;

@@ -13,6 +13,7 @@
 
 #include "Shared/GameTemplates.hpp"
 #include "View/Stage.hpp"
+#include "Game/SimulationTypes.hpp"
 
 #include "Engine/View.hpp"
 #include "Engine/Model/Sprite.hpp"
@@ -119,6 +120,8 @@ namespace cinek {
         MessageQueue _simCommandQueue;
         MessageQueue _simResponseQueue;
         MessageDispatcher _simMessageDispatcher;
+        
+        vector<SimDebugMessage> _simDebugMessages;
         
         ObjectPool<SpriteInstance> _sprites;
         unordered_map<EntityId, SpriteInstancePtr> _entitySpritePtrs;

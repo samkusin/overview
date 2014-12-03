@@ -265,9 +265,9 @@
 				37B8F30019F2DFCC00995B61 /* World.cpp */,
 				37B8F30119F2DFCC00995B61 /* World.hpp */,
 				37B8F30219F2DFCC00995B61 /* WorldTypes.hpp */,
-				375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */,
 				377AB2E41A297BA400B66D91 /* SimulationContext.hpp */,
 				377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */,
+				375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */,
 				377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */,
 			);
 			name = Game;
