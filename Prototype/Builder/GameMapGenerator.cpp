@@ -8,6 +8,7 @@
 
 #include "Builder/GameMapGenerator.hpp"
 #include "Shared/GameTemplates.hpp"
+#include "Shared/StaticWorldMap.hpp"
 
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/RoomGraph.hpp"
@@ -21,16 +22,18 @@
 namespace cinek { namespace overview {
 
 
-    overview::GameTemplates& generateMapFromTemplates(
-                                            overview::GameTemplates& gameTemplates,
-                                            const GenerateMapParams& params)
+    unique_ptr<StaticWorldMap> generateMapFromTemplates
+    (
+        const GameTemplates& gameTemplates,
+        const GenerateMapParams& params
+    )
     {
-        Allocator& allocator = gameTemplates.allocator();
-
+        Allocator allocator = gameTemplates.allocator();
+        
         overview::BlockLibrary blockLibrary(128, allocator);
         FileStreamBuf dbStream(params.blocksPathname);
         if (!dbStream)
-            return gameTemplates;
+            return allocate_unique<StaticWorldMap>(allocator, gameTemplates);
 
         overview::BlockCollectionLoader loader([&blockLibrary](overview::BlockCollection&& collection)
                                                {
@@ -105,11 +108,13 @@ namespace cinek { namespace overview {
                                       style, blockCollection, tileCollectionSlot);
         overview::room_builder::paint(southRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
+        
+        auto staticWorldMap = allocate_unique<StaticWorldMap>(allocator, gameTemplates);
 
-        gameTemplates.loadTileGridMap(std::move(tileGridMap));
-        gameTemplates.loadRoomGraph(std::move(roomGraph));
+        staticWorldMap->loadTileGridMap(std::move(tileGridMap));
+        staticWorldMap->loadRoomGraph(std::move(roomGraph));
 
-        return gameTemplates;
+        return std::move(staticWorldMap);
     }
 
 

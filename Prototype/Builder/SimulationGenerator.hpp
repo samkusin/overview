@@ -13,6 +13,7 @@
 
 namespace cinek { namespace overview {
     class GameTemplates;
+    class StaticWorldMap;
 } /* namespace overview */ } /* namespace cinek */
 
 namespace cinek { namespace overview {
@@ -22,6 +23,7 @@ namespace cinek { namespace overview {
     struct CreateSimulationParams
     {
         Allocator allocator = Allocator();
+        const StaticWorldMap* staticWorldMap = nullptr;
     };
 
     unique_ptr<Simulation> generateSimulation(const overview::GameTemplates& gameTemplates,

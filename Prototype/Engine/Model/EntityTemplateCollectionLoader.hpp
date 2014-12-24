@@ -11,7 +11,7 @@
 #ifndef Overview_Game_Model_EntityTemplateCollectionLoader_hpp
 #define Overview_Game_Model_EntityTemplateCollectionLoader_hpp
 
-#include "Game/EntityTemplateCollection.hpp"
+#include "Engine/Model/EntityTemplateCollection.hpp"
 #include "Engine/Model/ModelCollectionLoader.hpp"
 
 #include "cinek/vector.hpp"

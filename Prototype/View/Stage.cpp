@@ -9,6 +9,7 @@
 
 #include "View/Stage.hpp"
 #include "Shared/GameTemplates.hpp"
+#include "Shared/StaticWorldMap.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Engine/Model/TileLibrary.hpp"
@@ -17,15 +18,19 @@
 
 namespace cinek { namespace overview {
 
-Stage::Stage(const GameTemplates& gameTemplates) :
-    _tileLibrary(gameTemplates.tileLibrary()),
-    _tileGridMap(*gameTemplates.tileGridMap())
+Stage::Stage(const GameTemplates& gameTemplates,
+             const StaticWorldMap& staticWorldMap) :
+    _staticWorldMap(staticWorldMap)
 {
 }
 
+const TileGridMap& Stage::tileGridMap() const
+{
+    return *_staticWorldMap.tileGridMap();
+}
 const Tile& Stage::tileInfo(TileId tileId) const
 {
-    return _tileLibrary.tileFromCollectionAtIndex(slotFromTileId(tileId),
+    return _staticWorldMap.tileLibrary().tileFromCollectionAtIndex(slotFromTileId(tileId),
                                                   indexFromTileId(tileId));
 }
 
@@ -54,11 +59,12 @@ void Stage::detachSpriteInstance(SpriteInstancePtr instance)
 void Stage::selectInstanceLists(const AABB<Point>& bounds,
                                 std::function<void(const SpriteInstanceList&)> cb) const
 {
-    auto overlayDims = _tileGridMap.overlayDimensions();
+    auto& gridMap = *_staticWorldMap.tileGridMap();
+    auto overlayDims = gridMap.overlayDimensions();
     AABB<Point> quadBounds(Point(0,0,0),
                            Point(overlayDims.x,
                                  overlayDims.y,
-                                 _tileGridMap.overlayToFloorRatio()*2.f) /* z-coord HACK */);
+                                 gridMap.overlayToFloorRatio()*2.f) /* z-coord HACK */);
 
     if (bounds.intersects(quadBounds) && cb)
     {

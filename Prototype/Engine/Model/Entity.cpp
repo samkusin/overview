@@ -6,8 +6,8 @@
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Game/Entity.hpp"
-#include "Game/EntityTemplate.hpp"
+#include "Engine/Model/Entity.hpp"
+#include "Engine/Model/EntityTemplate.hpp"
 
 namespace cinek {
     namespace overview {

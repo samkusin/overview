@@ -21,19 +21,17 @@
 		377AB2ED1A2A642600B66D91 /* MoveEntityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2EB1A2A642600B66D91 /* MoveEntityEvent.cpp */; };
 		377AB2F21A2A68FC00B66D91 /* MoveEntityRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */; };
 		377AB2F51A2BD5F800B66D91 /* SimulationTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */; };
-		3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; };
-		3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; };
-		3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		37AAC1C919F42A3600C32899 /* libCKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C519F42A3600C32899 /* libCKCore.a */; };
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
 		37AAC1CB19F42A3600C32899 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C719F42A3600C32899 /* libCKGL.a */; };
 		37AAC1CC19F42A3600C32899 /* libCKOVEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C819F42A3600C32899 /* libCKOVEngine.a */; };
+		37B618A61A3A7B2C00847F04 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6189D1A3A7B2C00847F04 /* Entity.cpp */; };
+		37B618A71A3A7B2C00847F04 /* Entity.inl in Resources */ = {isa = PBXBuildFile; fileRef = 37B6189F1A3A7B2C00847F04 /* Entity.inl */; };
+		37B618A81A3A7B2C00847F04 /* EntityTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B618A01A3A7B2C00847F04 /* EntityTemplate.cpp */; };
+		37B618A91A3A7B2C00847F04 /* EntityTemplateCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B618A21A3A7B2C00847F04 /* EntityTemplateCollection.cpp */; };
+		37B618AA1A3A7B2C00847F04 /* EntityTemplateCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B618A41A3A7B2C00847F04 /* EntityTemplateCollectionLoader.cpp */; };
 		37B8F31419F2DFCC00995B61 /* GameMapGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F119F2DFCC00995B61 /* GameMapGenerator.cpp */; };
 		37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F319F2DFCC00995B61 /* SimulationGenerator.cpp */; };
-		37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F619F2DFCC00995B61 /* Entity.cpp */; };
-		37B8F31819F2DFCC00995B61 /* EntityTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2F919F2DFCC00995B61 /* EntityTemplate.cpp */; };
-		37B8F31919F2DFCC00995B61 /* EntityTemplateCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2FB19F2DFCC00995B61 /* EntityTemplateCollection.cpp */; };
 		37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F2FE19F2DFCC00995B61 /* Simulation.cpp */; };
 		37B8F31B19F2DFCC00995B61 /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30019F2DFCC00995B61 /* World.cpp */; };
 		37B8F31C19F2DFCC00995B61 /* GameTemplates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30419F2DFCC00995B61 /* GameTemplates.cpp */; };
@@ -42,7 +40,7 @@
 		37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30C19F2DFCC00995B61 /* IsoNodeGraph.cpp */; };
 		37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30E19F2DFCC00995B61 /* IsoScene.cpp */; };
 		37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F31119F2DFCC00995B61 /* Stage.cpp */; };
-		37B8F32419F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */; };
+		37B9FD461A4A460200B477B5 /* StaticWorldMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */; };
 		37DFA0951850108200382685 /* ApplicationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* ApplicationController.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
@@ -72,8 +70,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3783684719DD164F009EEE83 /* libBulletCollision.2.82.dylib in Copy Files */,
-				3783684619DD1649009EEE83 /* libLinearMath.2.82.dylib in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -107,24 +103,24 @@
 		377AB2F01A2A68A000B66D91 /* MoveEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MoveEntityRequest.hpp; path = Messages/MoveEntityRequest.hpp; sourceTree = "<group>"; };
 		377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MoveEntityRequest.cpp; path = Messages/MoveEntityRequest.cpp; sourceTree = "<group>"; };
 		377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationTypes.cpp; sourceTree = "<group>"; };
-		3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.2.82.dylib; path = ../../External/lib/libBulletCollision.2.82.dylib; sourceTree = "<group>"; };
-		3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.2.82.dylib; path = ../../External/lib/libLinearMath.2.82.dylib; sourceTree = "<group>"; };
 		37AAC1C519F42A3600C32899 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37AAC1C719F42A3600C32899 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKGL.a"; sourceTree = "<group>"; };
 		37AAC1C819F42A3600C32899 /* libCKOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKOVEngine.a"; sourceTree = "<group>"; };
 		37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../../External/lib/libprotobuf-lite.a"; sourceTree = "<group>"; };
+		37B6189D1A3A7B2C00847F04 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Entity.cpp; path = ../Engine/Model/Entity.cpp; sourceTree = "<group>"; };
+		37B6189E1A3A7B2C00847F04 /* Entity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Entity.hpp; path = ../Engine/Model/Entity.hpp; sourceTree = "<group>"; };
+		37B6189F1A3A7B2C00847F04 /* Entity.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Entity.inl; path = ../Engine/Model/Entity.inl; sourceTree = "<group>"; };
+		37B618A01A3A7B2C00847F04 /* EntityTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityTemplate.cpp; path = ../Engine/Model/EntityTemplate.cpp; sourceTree = "<group>"; };
+		37B618A11A3A7B2C00847F04 /* EntityTemplate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EntityTemplate.hpp; path = ../Engine/Model/EntityTemplate.hpp; sourceTree = "<group>"; };
+		37B618A21A3A7B2C00847F04 /* EntityTemplateCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityTemplateCollection.cpp; path = ../Engine/Model/EntityTemplateCollection.cpp; sourceTree = "<group>"; };
+		37B618A31A3A7B2C00847F04 /* EntityTemplateCollection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EntityTemplateCollection.hpp; path = ../Engine/Model/EntityTemplateCollection.hpp; sourceTree = "<group>"; };
+		37B618A41A3A7B2C00847F04 /* EntityTemplateCollectionLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityTemplateCollectionLoader.cpp; path = ../Engine/Model/EntityTemplateCollectionLoader.cpp; sourceTree = "<group>"; };
+		37B618A51A3A7B2C00847F04 /* EntityTemplateCollectionLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EntityTemplateCollectionLoader.hpp; path = ../Engine/Model/EntityTemplateCollectionLoader.hpp; sourceTree = "<group>"; };
 		37B8F2F119F2DFCC00995B61 /* GameMapGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameMapGenerator.cpp; sourceTree = "<group>"; };
 		37B8F2F219F2DFCC00995B61 /* GameMapGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameMapGenerator.hpp; sourceTree = "<group>"; };
 		37B8F2F319F2DFCC00995B61 /* SimulationGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationGenerator.cpp; sourceTree = "<group>"; };
 		37B8F2F419F2DFCC00995B61 /* SimulationGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SimulationGenerator.hpp; sourceTree = "<group>"; };
-		37B8F2F619F2DFCC00995B61 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
-		37B8F2F719F2DFCC00995B61 /* Entity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
-		37B8F2F819F2DFCC00995B61 /* Entity.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Entity.inl; sourceTree = "<group>"; };
-		37B8F2F919F2DFCC00995B61 /* EntityTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplate.cpp; sourceTree = "<group>"; };
-		37B8F2FA19F2DFCC00995B61 /* EntityTemplate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplate.hpp; sourceTree = "<group>"; };
-		37B8F2FB19F2DFCC00995B61 /* EntityTemplateCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplateCollection.cpp; sourceTree = "<group>"; };
-		37B8F2FC19F2DFCC00995B61 /* EntityTemplateCollection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplateCollection.hpp; sourceTree = "<group>"; };
 		37B8F2FE19F2DFCC00995B61 /* Simulation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Simulation.cpp; sourceTree = "<group>"; };
 		37B8F2FF19F2DFCC00995B61 /* Simulation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Simulation.hpp; sourceTree = "<group>"; };
 		37B8F30019F2DFCC00995B61 /* World.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
@@ -144,8 +140,10 @@
 		37B8F31119F2DFCC00995B61 /* Stage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Stage.cpp; sourceTree = "<group>"; };
 		37B8F31219F2DFCC00995B61 /* Stage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Stage.hpp; sourceTree = "<group>"; };
 		37B8F31319F2DFCC00995B61 /* StageTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StageTypes.hpp; sourceTree = "<group>"; };
-		37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplateCollectionLoader.cpp; sourceTree = "<group>"; };
-		37B8F32319F2FB0500995B61 /* EntityTemplateCollectionLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplateCollectionLoader.hpp; sourceTree = "<group>"; };
+		37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticWorldMap.cpp; sourceTree = "<group>"; };
+		37B9FD451A4A460200B477B5 /* StaticWorldMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StaticWorldMap.hpp; sourceTree = "<group>"; };
+		37CDCCD71A33E17D00D05A8C /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = ../../External/lib/libBulletCollision.a; sourceTree = "<group>"; };
+		37CDCCD81A33E17D00D05A8C /* libLinearMath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLinearMath.a; path = ../../External/lib/libLinearMath.a; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* ApplicationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApplicationController.cpp; path = ../ApplicationController.cpp; sourceTree = "<group>"; };
 		37DFA0931850108200382685 /* ApplicationController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ApplicationController.hpp; path = ../ApplicationController.hpp; sourceTree = "<group>"; };
 		37E76A0D17C6EC34009EAA97 /* Overview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Overview.cpp; path = ../Overview.cpp; sourceTree = "<group>"; };
@@ -163,8 +161,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3783684019DD11C3009EEE83 /* libBulletCollision.2.82.dylib in Frameworks */,
-				3783684119DD11C3009EEE83 /* libLinearMath.2.82.dylib in Frameworks */,
 				37AAC1C919F42A3600C32899 /* libCKCore.a in Frameworks */,
 				37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */,
 				37AAC1CB19F42A3600C32899 /* libCKGL.a in Frameworks */,
@@ -219,6 +215,7 @@
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
+				37B6188D1A3A7A9A00847F04 /* Engine */,
 				37B8F2F019F2DFCC00995B61 /* Builder */,
 				37B8F2F519F2DFCC00995B61 /* Game */,
 				37B8F30319F2DFCC00995B61 /* Shared */,
@@ -229,6 +226,30 @@
 				37E76A0E17C6EC34009EAA97 /* Overview.hpp */,
 			);
 			name = Prototype;
+			sourceTree = "<group>";
+		};
+		37B6188D1A3A7A9A00847F04 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				37B6189C1A3A7B0B00847F04 /* Model */,
+			);
+			name = Engine;
+			sourceTree = "<group>";
+		};
+		37B6189C1A3A7B0B00847F04 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				37B6189D1A3A7B2C00847F04 /* Entity.cpp */,
+				37B6189E1A3A7B2C00847F04 /* Entity.hpp */,
+				37B6189F1A3A7B2C00847F04 /* Entity.inl */,
+				37B618A01A3A7B2C00847F04 /* EntityTemplate.cpp */,
+				37B618A11A3A7B2C00847F04 /* EntityTemplate.hpp */,
+				37B618A21A3A7B2C00847F04 /* EntityTemplateCollection.cpp */,
+				37B618A31A3A7B2C00847F04 /* EntityTemplateCollection.hpp */,
+				37B618A41A3A7B2C00847F04 /* EntityTemplateCollectionLoader.cpp */,
+				37B618A51A3A7B2C00847F04 /* EntityTemplateCollectionLoader.hpp */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 		37B8F2F019F2DFCC00995B61 /* Builder */ = {
@@ -251,15 +272,6 @@
 				375DA36C1A212E9E00EB0D63 /* Tasks */,
 				375DA3671A12F99C00EB0D63 /* WorldObject.cpp */,
 				375DA3681A12F99C00EB0D63 /* WorldObject.hpp */,
-				37B8F32219F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp */,
-				37B8F32319F2FB0500995B61 /* EntityTemplateCollectionLoader.hpp */,
-				37B8F2F619F2DFCC00995B61 /* Entity.cpp */,
-				37B8F2F719F2DFCC00995B61 /* Entity.hpp */,
-				37B8F2F819F2DFCC00995B61 /* Entity.inl */,
-				37B8F2F919F2DFCC00995B61 /* EntityTemplate.cpp */,
-				37B8F2FA19F2DFCC00995B61 /* EntityTemplate.hpp */,
-				37B8F2FB19F2DFCC00995B61 /* EntityTemplateCollection.cpp */,
-				37B8F2FC19F2DFCC00995B61 /* EntityTemplateCollection.hpp */,
 				37B8F2FE19F2DFCC00995B61 /* Simulation.cpp */,
 				37B8F2FF19F2DFCC00995B61 /* Simulation.hpp */,
 				37B8F30019F2DFCC00995B61 /* World.cpp */,
@@ -279,6 +291,8 @@
 			children = (
 				37B8F30419F2DFCC00995B61 /* GameTemplates.cpp */,
 				37B8F30519F2DFCC00995B61 /* GameTemplates.hpp */,
+				37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */,
+				37B9FD451A4A460200B477B5 /* StaticWorldMap.hpp */,
 			);
 			name = Shared;
 			path = ../Shared;
@@ -335,6 +349,8 @@
 		37F64A931780EA2C009116E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				37CDCCD71A33E17D00D05A8C /* libBulletCollision.a */,
+				37CDCCD81A33E17D00D05A8C /* libLinearMath.a */,
 				37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */,
 				37AAC1C519F42A3600C32899 /* libCKCore.a */,
 				37AAC1C619F42A3600C32899 /* libCKFramework.a */,
@@ -379,8 +395,6 @@
 		37F64ACC1780F041009116E7 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				3783683E19DD11C3009EEE83 /* libBulletCollision.2.82.dylib */,
-				3783683F19DD11C3009EEE83 /* libLinearMath.2.82.dylib */,
 				374931401904A707002C7DE3 /* libiconv.dylib */,
 			);
 			name = Libraries;
@@ -439,6 +453,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37B618A71A3A7B2C00847F04 /* Entity.inl in Resources */,
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
 			);
@@ -451,32 +466,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37B9FD461A4A460200B477B5 /* StaticWorldMap.cpp in Sources */,
 				37B8F31419F2DFCC00995B61 /* GameMapGenerator.cpp in Sources */,
 				37B8F31C19F2DFCC00995B61 /* GameTemplates.cpp in Sources */,
 				37B8F31D19F2DFCC00995B61 /* GameView.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
 				377AB2E31A296ABB00B66D91 /* CommandResponse.cpp in Sources */,
-				37B8F31919F2DFCC00995B61 /* EntityTemplateCollection.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
 				37DFA0951850108200382685 /* ApplicationController.cpp in Sources */,
 				377AB2E61A297CEA00B66D91 /* SimulationContext.cpp in Sources */,
 				375EB2DE1A26BF97001EB283 /* CreateEntityResponse.cpp in Sources */,
-				37B8F31819F2DFCC00995B61 /* EntityTemplate.cpp in Sources */,
 				37B8F31B19F2DFCC00995B61 /* World.cpp in Sources */,
+				37B618A91A3A7B2C00847F04 /* EntityTemplateCollection.cpp in Sources */,
 				37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */,
 				37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */,
+				37B618AA1A3A7B2C00847F04 /* EntityTemplateCollectionLoader.cpp in Sources */,
 				37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */,
 				377AB2F21A2A68FC00B66D91 /* MoveEntityRequest.cpp in Sources */,
 				377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */,
-				37B8F31619F2DFCC00995B61 /* Entity.cpp in Sources */,
 				375EB2E01A26BFAA001EB283 /* CreateEntityRequest.cpp in Sources */,
 				377AB2ED1A2A642600B66D91 /* MoveEntityEvent.cpp in Sources */,
 				375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */,
 				37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */,
+				37B618A61A3A7B2C00847F04 /* Entity.cpp in Sources */,
+				37B618A81A3A7B2C00847F04 /* EntityTemplate.cpp in Sources */,
 				377AB2F51A2BD5F800B66D91 /* SimulationTypes.cpp in Sources */,
 				37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */,
 				37B8F31E19F2DFCC00995B61 /* IsoNode.cpp in Sources */,
-				37B8F32419F2FB0500995B61 /* EntityTemplateCollectionLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,6 +615,7 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
+					/Users/samir/Development/cinekine/overview/External/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
@@ -607,6 +624,10 @@
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
 					"$(PACKAGES_ROOT)/lib/libRocket_d.a",
 					"$(PACKAGES_ROOT)/lib/libfreetype.a",
+					"$(PACKAGES_ROOT)/lib/libLinearMath.a",
+					"$(PACKAGES_ROOT)/lib/libBulletCollision.a",
+					"$(PACKAGES_ROOT)/lib/libHACD.a",
+					"$(PACKAGES_ROOT)/lib/libConvexDecomposition.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.9;
@@ -634,6 +655,7 @@
 					"$(inherited)",
 					"$(PACKAGES_ROOT)/lib",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug",
+					/Users/samir/Development/cinekine/overview/External/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
@@ -642,6 +664,10 @@
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
 					"$(PACKAGES_ROOT)/lib/libRocket_d.a",
 					"$(PACKAGES_ROOT)/lib/libfreetype.a",
+					"$(PACKAGES_ROOT)/lib/libLinearMath.a",
+					"$(PACKAGES_ROOT)/lib/libBulletCollision.a",
+					"$(PACKAGES_ROOT)/lib/libHACD.a",
+					"$(PACKAGES_ROOT)/lib/libConvexDecomposition.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.9;

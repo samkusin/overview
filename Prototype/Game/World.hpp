@@ -23,6 +23,9 @@ namespace cinek {
     namespace overview {
         class Entity;
         class WorldObject;
+        class TileLibrary;
+        class TileGridMap;
+        class RoomGraph;
     }
 }
 
@@ -37,8 +40,10 @@ namespace cinek {
         struct CreateParams
         {
             AABB<Point> bounds;
+            const TileLibrary* tileLibrary = nullptr;
+            const TileGridMap* tileGridMap = nullptr;
+            const RoomGraph* roomGraph = nullptr;
             uint32_t objectLimit = 128;
-            vector<SimDebugMessage>* debugMessageVector = nullptr;
             bool visualDebug = false;
         };
         World(const CreateParams& params, Allocator& allocator);
@@ -51,6 +56,7 @@ namespace cinek {
 
         void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);
         
+        void appendDebugMessages(vector<SimDebugMessage>& output);
 
     private:
         class Impl;

@@ -30,11 +30,13 @@ namespace cinek { namespace overview {
         CK_CLASS_NON_COPYABLE(WorldDebugDraw);
         
     public:
-        WorldDebugDraw(vector<SimDebugMessage>& messages) :
+        WorldDebugDraw(const Allocator& allocator) :
             _debugMode(0),
-            _messages(messages)
+            _messages(allocator)
         {
+            _messages.reserve(4096);
         }
+        
         virtual ~WorldDebugDraw()
         {
         }
@@ -81,9 +83,18 @@ namespace cinek { namespace overview {
             return _debugMode;
         }
         
+        void appendDebugMessages(vector<SimDebugMessage>& msgs)
+        {
+            msgs.insert(msgs.end(),
+                std::make_move_iterator(_messages.begin()),
+                std::make_move_iterator(_messages.end()));
+            
+            _messages.clear();
+        }
+        
     private:
         int _debugMode;
-        vector<SimDebugMessage>& _messages;
+        vector<SimDebugMessage> _messages;
     };
     
     /////////////////////////////////////////////////////////////////////
@@ -100,11 +111,18 @@ namespace cinek { namespace overview {
         void destroyObject(WorldObject* body);
         
         void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);
+        
+        WorldDebugDraw* debugDraw() { return _debugDraw.get(); }
 
     private:
         Allocator _allocator;
         
         unique_ptr<WorldDebugDraw> _debugDraw;
+        
+        //  Map data
+        const TileLibrary* _tileLibrary;
+        const TileGridMap* _tileGridMap;
+        const RoomGraph* _roomGraph;
         
         //  Bullet physics world
         btDefaultCollisionConfiguration _btConfig;
@@ -120,6 +138,9 @@ namespace cinek { namespace overview {
 
     World::Impl::Impl(const CreateParams& params, const Allocator& allocator) :
         _allocator(allocator),
+        _tileLibrary(params.tileLibrary),
+        _tileGridMap(params.tileGridMap),
+        _roomGraph(params.roomGraph),
         _btConfig(),
         _btDispatcher(&_btConfig),
         _btBroadphase(toBtVector3(params.bounds.min), toBtVector3(params.bounds.max)),
@@ -128,7 +149,7 @@ namespace cinek { namespace overview {
         _boxPool(params.objectLimit, _allocator),
         _worldObjects(params.objectLimit, _allocator)
     {
-        _debugDraw = allocate_unique<WorldDebugDraw>(_allocator, *params.debugMessageVector);
+        _debugDraw = allocate_unique<WorldDebugDraw>(_allocator, _allocator);
         _btWorld.setDebugDrawer(_debugDraw.get());
         
         if (params.visualDebug)
@@ -286,6 +307,11 @@ namespace cinek { namespace overview {
     void World::update(MessageQueue& eventQueue, uint32_t frameTimeMS)
     {
         _impl->update(eventQueue, frameTimeMS);
+    }
+    
+    void World::appendDebugMessages(vector<SimDebugMessage>& output)
+    {
+        _impl->debugDraw()->appendDebugMessages(output);
     }
 
 } /* namespace overview */ } /* namespace cinek */

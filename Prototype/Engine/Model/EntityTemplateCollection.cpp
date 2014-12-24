@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/EntityTemplateCollection.hpp"
+#include "Engine/Model/EntityTemplateCollection.hpp"
 
 namespace cinek { namespace overview {
 

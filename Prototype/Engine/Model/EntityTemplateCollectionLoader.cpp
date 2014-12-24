@@ -6,7 +6,7 @@
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Game/EntityTemplateCollectionLoader.hpp"
+#include "Engine/Model/EntityTemplateCollectionLoader.hpp"
 
 #include "Engine/Debug.hpp"
 #include "Core/StreamBufRapidJson.hpp"

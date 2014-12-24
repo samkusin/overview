@@ -10,7 +10,7 @@
 #define Overview_Game_Simulation_hpp
 
 #include "Game/SimulationTypes.hpp"
-#include "Game/Entity.hpp"
+#include "Engine/Model/Entity.hpp"
 #include "Game/SimulationContext.hpp"
 #include "Core/MessageDispatcher.hpp"
 
@@ -30,6 +30,7 @@ namespace cinek {
     namespace overview {
         class GameTemplates;
         class World;
+        class StaticWorldMap;
         
         class CreateEntityRequest;
         class CreateEntityResponse;
@@ -43,6 +44,8 @@ namespace cinek { namespace overview {
     
     struct SimulationParams
     {
+        const GameTemplates* templates;
+        const StaticWorldMap* staticWorldMap;
         uint32_t entityLimit;
         uint32_t debugMsgLimit;
         Allocator allocator;
@@ -50,9 +53,10 @@ namespace cinek { namespace overview {
     
     class Simulation
     {
+        CK_CLASS_NON_COPYABLE(Simulation);
+        
     public:
-        Simulation(const overview::GameTemplates& gameTemplates,
-                   const SimulationParams& params);
+        Simulation(const SimulationParams& params);
         ~Simulation();
 
         /// Obtain a const pointer to the entity.
@@ -93,6 +97,7 @@ namespace cinek { namespace overview {
         Allocator _allocator;
         Allocator _entityAllocator;
         const overview::GameTemplates& _gameTemplates;
+        const StaticWorldMap& _staticWorldMap;
         
         uint32_t _systemTimeMs;
         

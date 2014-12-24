@@ -7,7 +7,7 @@
 //
 
 #include "Shared/GameTemplates.hpp"
-#include "Game/EntityTemplateCollectionLoader.hpp"
+#include "Engine/Model/EntityTemplateCollectionLoader.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/RoomGraph.hpp"
 #include "Engine/Model/TileCollectionLoader.hpp"
@@ -106,16 +106,6 @@ namespace cinek { namespace overview {
 
 
         unserializeFromJSON(dbStream, loader);
-    }
-
-    void GameTemplates::loadTileGridMap(unique_ptr<overview::TileGridMap>&& tileGridMap)
-    {
-        _tileGridMap = std::move(tileGridMap);
-    }
-
-    void GameTemplates::loadRoomGraph(unique_ptr<overview::RoomGraph>&& roomGraph)
-    {
-        _roomGraph = std::move(roomGraph);
     }
 
 } /* namespace overview */ } /* namespace cinek */

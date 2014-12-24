@@ -93,6 +93,6 @@ namespace cinek {
     }   /* namespace overview */
 }   /* namespace cinek */
 
-#include "Game/Entity.inl"
+#include "Engine/Model/Entity.inl"
 
 #endif

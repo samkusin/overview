@@ -26,6 +26,7 @@ namespace cinek {
         class GameTemplates;
         class TileLibrary;
         class TileGridMap;
+        class StaticWorldMap;
     }
 }
 
@@ -43,12 +44,11 @@ namespace cinek { namespace overview {
 class Stage
 {
 public:
-    Stage(const GameTemplates& gameTemplates);
+    Stage(const GameTemplates& gameTemplates,
+          const StaticWorldMap& staticWorldMap);
 
     /** @return A const reference to a tile map. */
-    const TileGridMap& tileGridMap() const {
-        return _tileGridMap;
-    }
+    const TileGridMap& tileGridMap() const;
     /**
      * @param  tileId A TileGridMap tile identifier
      * @return A TileInfo mapped to the supplied TileId
@@ -86,8 +86,7 @@ public:
                              std::function<void(const SpriteInstanceList&)> cb) const;
 
 private:
-    const TileLibrary& _tileLibrary;
-    const TileGridMap& _tileGridMap;
+    const StaticWorldMap& _staticWorldMap;
 
     SpriteInstanceList _sprites;
 };

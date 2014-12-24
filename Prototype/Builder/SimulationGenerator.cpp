@@ -9,7 +9,7 @@
 #include "Builder/SimulationGenerator.hpp"
 #include "Game/Simulation.hpp"
 #include "Game/World.hpp"
-#include "Game/Entity.hpp"
+#include "Engine/Model/Entity.hpp"
 #include "Shared/GameTemplates.hpp"
 
 #include "Engine/Model/TileGridMap.hpp"
@@ -26,12 +26,13 @@ unique_ptr<Simulation> generateSimulation(const GameTemplates& gameTemplates,
     Allocator allocator = createParams.allocator;
 
     SimulationParams params;
+    params.templates = &gameTemplates;
+    params.staticWorldMap = createParams.staticWorldMap;
     params.entityLimit = 256;
     params.debugMsgLimit = 4096;
     params.allocator = allocator;
 
     auto simulation = allocate_unique<Simulation>(allocator,
-                                                  gameTemplates,
                                                   params);
     return std::move(simulation);
 }

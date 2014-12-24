@@ -9,6 +9,7 @@
 #include "Game/Simulation.hpp"
 #include "Game/World.hpp"
 #include "Shared/GameTemplates.hpp"
+#include "Shared/StaticWorldMap.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/SpriteLibrary.hpp"
 #include "Core/MessageQueue.hpp"
@@ -28,13 +29,14 @@ namespace cinek {
 
 namespace cinek { namespace overview {
 
-Simulation::Simulation(
-    const GameTemplates& gameTemplates,
+Simulation::Simulation
+(
     const SimulationParams& params
 ) :
     _allocator(params.allocator),
     _entityAllocator(_allocator),
-    _gameTemplates(gameTemplates),
+    _gameTemplates(*params.templates),
+    _staticWorldMap(*params.staticWorldMap),
     _systemTimeMs(0),
     _debugMessages(_allocator),
     _commandDispatcher(128, 32, 0, _allocator),
@@ -53,15 +55,14 @@ Simulation::Simulation(
         eventQueue = std::move(q);
     }
     
-    auto tileDims = gameTemplates.tileGridMap()->overlayDimensions();
-    auto tileHeight = gameTemplates.tileGridMap()->overlayToFloorRatio();
+    auto tileDims = _staticWorldMap.tileGridMap()->overlayDimensions();
+    auto tileHeight = _staticWorldMap.tileGridMap()->overlayToFloorRatio();
 
     //  Note, the 'World' is a virtual 3D world (XZ plane with an up +Y)
     World::CreateParams worldParams;
     worldParams.bounds.min = Point(0,0,0);
     worldParams.bounds.max = Point(tileDims.x, tileHeight, tileDims.y);
     worldParams.objectLimit = 1024;
-    worldParams.debugMessageVector = &_debugMessages;
     worldParams.visualDebug = true;
 
     _world = allocate_unique<World>(_allocator,
@@ -155,6 +156,8 @@ void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
     //  update simulation subsystems
     //
     _world->update(activeEventQueue(), deltaTimeMs);
+    _world->appendDebugMessages(_debugMessages);
+    
     _scheduler.process(deltaTimeMs);
     
     //  process events created during world/task execution

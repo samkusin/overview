@@ -9,15 +9,9 @@
 #ifndef Overview_Game_Builder_MapGenerator_hpp
 #define Overview_Game_Builder_MapGenerator_hpp
 
-#include "cinek/types.hpp"
+#include "Shared/StaticWorldMap.hpp"
 
 namespace cinek { namespace overview {
-    class GameTemplates;
-} /* namespace overview */ } /* namespace cinek */
-
-namespace cinek { namespace overview {
-
-    class GameTemplates;
 
     struct GenerateMapParams
     {
@@ -28,11 +22,9 @@ namespace cinek { namespace overview {
         int32_t roomLimit = 1;
     };
 
-    overview::GameTemplates& generateMapFromTemplates(
-                                            overview::GameTemplates& gameTemplates,
-                                            const GenerateMapParams& params);
-
-
+    unique_ptr<StaticWorldMap> generateMapFromTemplates(
+            const GameTemplates& gameTemplates,
+            const GenerateMapParams& params);
 
 } /* namespace overview */ } /* namespace cinek */
 

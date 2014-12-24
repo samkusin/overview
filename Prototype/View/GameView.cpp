@@ -7,6 +7,7 @@
 //
 
 #include "View/GameView.hpp"
+#include "Shared/StaticWorldMap.hpp"
 #include "Game/Simulation.hpp"
 
 #include "Builder/GameMapGenerator.hpp"
@@ -66,7 +67,6 @@ namespace cinek {
         //  load game document
         overview::GameTemplates::InitParams initParams;
         initParams.gameDefinitionPath = "game.json";
-        initParams.tileSlotLimit = 32;
         initParams.spriteLimit = 256;
 
         _gameTemplates = allocate_unique<overview::GameTemplates>(_allocator, initParams, _allocator);
@@ -83,9 +83,9 @@ namespace cinek {
         generateMapParams.overlayToFloorRatio = 4;
         generateMapParams.roomLimit = 8;
 
-        generateMapFromTemplates(*_gameTemplates, generateMapParams);
+        _staticWorldMap = generateMapFromTemplates(*_gameTemplates, generateMapParams);
 
-        _stage = allocate_unique<overview::Stage>(_allocator, *_gameTemplates);
+        _stage = allocate_unique<overview::Stage>(_allocator, *_gameTemplates, *_staticWorldMap);
         _entitySpritePtrs.reserve(1024);
 
         //  create our scene graph from the stage
@@ -105,6 +105,8 @@ namespace cinek {
         
         //  create simulation using GameTemplates
         CreateSimulationParams simParams;
+        simParams.allocator = _allocator;
+        simParams.staticWorldMap = _staticWorldMap.get();
         _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
         
         CreateEntityRequest createReq("avatar", _viewPos, Point(0,1,0));

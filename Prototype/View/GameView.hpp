@@ -41,6 +41,7 @@ namespace cinek {
         class EntityStateEvent;
         class IsoScene;
         class WorldObject;
+        class StaticWorldMap;
     }
 }
 
@@ -115,6 +116,7 @@ namespace cinek {
         glx::Graphics2D _graphics;
 
         unique_ptr<overview::GameTemplates> _gameTemplates;
+        unique_ptr<StaticWorldMap> _staticWorldMap;
         unique_ptr<Simulation> _simulation;
         
         MessageQueue _simCommandQueue;
