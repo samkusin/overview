@@ -34,4 +34,13 @@ void StaticWorldMap::loadRoomGraph(unique_ptr<overview::RoomGraph>&& roomGraph)
     _roomGraph = std::move(roomGraph);
 }
 
+AABB<Point> StaticWorldMap::bounds() const
+{
+    AABB<Point> aabb;
+    auto gridDims = _tileGridMap->overlayDimensions();
+    aabb.min = Point(0,0,0);
+    aabb.max = Point(gridDims.x, gridDims.y, _tileGridMap->overlayToFloorRatio());
+    return aabb;
+}
+
 } /* namespace overview */ } /* namespace cinek */

@@ -37,11 +37,15 @@ namespace cinek { namespace overview {
         int32_t layerIndex;     /**< Maps to a TileGridMap layer */
     };
 
-    enum class CollisionType
+    struct CollisionInfo
     {
-        kNone,                  /** Ignored by any collision engine */
-        kStatic,                /** Collisions with any non-static object */
-        kDynamic                /** Collisions with any object, static, etc. */
+        enum class Shape
+        {
+            kNone,
+            kFloor,
+            kBox
+        };
+        Shape shape = Shape::kNone;
     };
 
 } /* namespace overview */ } /* namespace cinek */

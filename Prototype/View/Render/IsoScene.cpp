@@ -160,8 +160,10 @@ namespace cinek { namespace overview {
             if (tileId)
             {
                 auto& tileInfo = _stage.tileInfo(tileId);
-
-                isoBox =  tileInfo.aabb + isoPos;
+                //  aabb assumes an anchor to the X,Y max of the tile
+                //  (lower/right on a 2d grid)
+                isoBox = tileInfo.aabb + isoPos +
+                         Point(kOverlayTilePerFloor,kOverlayTilePerFloor,0);
 
                 glm::ivec2 viewAnchor = _screenOffset;
                 viewAnchor.x += viewPos.x - tileInfo.anchor.x;
@@ -176,8 +178,9 @@ namespace cinek { namespace overview {
         if (tileId)
         {
             auto& tileInfo = _stage.tileInfo(tileId);
-
-            isoBox = tileInfo.aabb + isoPos;
+            //  aabb assumes an anchor to the X,Y max of the tile
+            //  (lower/right on a 2d grid)
+            isoBox = tileInfo.aabb + isoPos + Point(1,1,0); //
 
             glm::ivec2 viewAnchor = _screenOffset;
             viewAnchor.x += viewPos.x - tileInfo.anchor.x;

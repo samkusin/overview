@@ -35,6 +35,8 @@ struct Tile
     uint32_t flags = 0;         ///< Application defined flags for the tile
     AABB<Point> aabb;           ///< An axis-aligned bounding box for the tile
     glm::ivec2 anchor;          ///< 2D Anchor from tile origin
+
+    CollisionInfo collision;    ///< Information used by the Collision system
 };
 
 } /* namespace overview */ } /* namespace cinek */

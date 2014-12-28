@@ -26,7 +26,7 @@ Stage::Stage(const GameTemplates& gameTemplates,
 
 const TileGridMap& Stage::tileGridMap() const
 {
-    return *_staticWorldMap.tileGridMap();
+    return _staticWorldMap.tileGridMap();
 }
 const Tile& Stage::tileInfo(TileId tileId) const
 {
@@ -59,7 +59,7 @@ void Stage::detachSpriteInstance(SpriteInstancePtr instance)
 void Stage::selectInstanceLists(const AABB<Point>& bounds,
                                 std::function<void(const SpriteInstanceList&)> cb) const
 {
-    auto& gridMap = *_staticWorldMap.tileGridMap();
+    auto& gridMap = _staticWorldMap.tileGridMap();
     auto overlayDims = gridMap.overlayDimensions();
     AABB<Point> quadBounds(Point(0,0,0),
                            Point(overlayDims.x,

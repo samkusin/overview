@@ -80,6 +80,16 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
             tile.anchor.x = parseInt(attr.value["x"]);
             tile.anchor.y = parseInt(attr.value["y"]);
         }
+        else if (!strcmp(attrName, "collide"))
+        {
+            const char* collisionShape = attr.value["type"].GetString();
+            if (!strcasecmp(collisionShape, "box"))
+                tile.collision.shape = CollisionInfo::Shape::kBox;
+            else if (!strcasecmp(collisionShape, "floor"))
+                tile.collision.shape = CollisionInfo::Shape::kFloor;
+            else
+                tile.collision.shape = CollisionInfo::Shape::kNone;
+        }
     }
     uint16_t tileIndex = (uint16_t)strtoul(key, nullptr, 16);
     _tiles.emplace_back(tileIndex, tile);

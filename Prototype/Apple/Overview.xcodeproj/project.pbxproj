@@ -41,6 +41,7 @@
 		37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F30E19F2DFCC00995B61 /* IsoScene.cpp */; };
 		37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F31119F2DFCC00995B61 /* Stage.cpp */; };
 		37B9FD461A4A460200B477B5 /* StaticWorldMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */; };
+		37B9FD491A4BA2B100B477B5 /* WorldMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B9FD471A4BA2B100B477B5 /* WorldMap.cpp */; };
 		37DFA0951850108200382685 /* ApplicationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* ApplicationController.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
@@ -142,6 +143,8 @@
 		37B8F31319F2DFCC00995B61 /* StageTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StageTypes.hpp; sourceTree = "<group>"; };
 		37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticWorldMap.cpp; sourceTree = "<group>"; };
 		37B9FD451A4A460200B477B5 /* StaticWorldMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StaticWorldMap.hpp; sourceTree = "<group>"; };
+		37B9FD471A4BA2B100B477B5 /* WorldMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldMap.cpp; sourceTree = "<group>"; };
+		37B9FD481A4BA2B100B477B5 /* WorldMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldMap.hpp; sourceTree = "<group>"; };
 		37CDCCD71A33E17D00D05A8C /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = ../../External/lib/libBulletCollision.a; sourceTree = "<group>"; };
 		37CDCCD81A33E17D00D05A8C /* libLinearMath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLinearMath.a; path = ../../External/lib/libLinearMath.a; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* ApplicationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApplicationController.cpp; path = ../ApplicationController.cpp; sourceTree = "<group>"; };
@@ -281,6 +284,8 @@
 				377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */,
 				375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */,
 				377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */,
+				37B9FD471A4BA2B100B477B5 /* WorldMap.cpp */,
+				37B9FD481A4BA2B100B477B5 /* WorldMap.hpp */,
 			);
 			name = Game;
 			path = ../Game;
@@ -471,6 +476,7 @@
 				37B8F31C19F2DFCC00995B61 /* GameTemplates.cpp in Sources */,
 				37B8F31D19F2DFCC00995B61 /* GameView.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
+				37B9FD491A4BA2B100B477B5 /* WorldMap.cpp in Sources */,
 				377AB2E31A296ABB00B66D91 /* CommandResponse.cpp in Sources */,
 				37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */,
 				37DFA0951850108200382685 /* ApplicationController.cpp in Sources */,

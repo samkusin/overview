@@ -32,6 +32,7 @@ namespace cinek { namespace overview {
             kNull,
             kBitmap
         };
+        
     public:
         IsoNode(const cinek_bitmap& bitmap,
                 const glm::ivec2& viewPos,

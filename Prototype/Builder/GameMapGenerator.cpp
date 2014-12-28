@@ -108,6 +108,13 @@ namespace cinek { namespace overview {
                                       style, blockCollection, tileCollectionSlot);
         overview::room_builder::paint(southRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
+
+        /*
+        GridBuilder overlayBuilder(tileGridMap->overlay(), 1);
+        auto& wallBlock = blockCollection["brick_wall"];
+        overlayBuilder.drawLine(glm::ivec2(24,16), 16, GridBuilder::kDrawDirection_Vertical,
+                         wallBlock, GridBuilder::kBlockSide_Right, tileCollectionSlot);
+        */
         
         auto staticWorldMap = allocate_unique<StaticWorldMap>(allocator, gameTemplates);
 

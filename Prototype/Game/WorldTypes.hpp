@@ -12,10 +12,12 @@
 #include "Game/SimulationTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btMatrix3x3.h"
 
 namespace cinek { namespace overview {
     
     const btVector3 kWorldRefDir = btVector3(0,1,0);
+    const Point kObjectRefDir = Point(0,1,0);
     
     //  Utilities used for converting between coordinate systems
     inline Point toPoint(const btVector3& btv3) {
@@ -27,6 +29,42 @@ namespace cinek { namespace overview {
         btVector3 ret(vec3.x, vec3.y, vec3.z);
         return ret;
     }
+    
+    inline btVector3 translateToBtPosition(const Point& vec3,
+                                           const btVector3& halfExtents)
+    {
+        return btVector3(vec3.x - halfExtents.x(),
+                         vec3.y - halfExtents.y(),
+                         vec3.z + halfExtents.z());
+    }
+    
+    inline btMatrix3x3 orientToBtDirection(const Point& dir)
+    {
+        btMatrix3x3 basis;
+        basis[2] = btVector3(0,0,1);
+        basis[1] = btVector3(dir.x, dir.y, dir.z);
+        basis[0] = basis[2].cross(basis[1]);
+        return basis;
+    }
+    
+    class WorldObjectBase
+    {
+    public:
+        enum class ClassId
+        {
+            kWorldObject,
+            kWorldMap
+        };
+        
+        ClassId classId() const { return _classId; }
+        
+    protected:
+        WorldObjectBase(ClassId classId) : _classId(classId) {}
+        ~WorldObjectBase() = default;
+        
+    private:
+        ClassId _classId;
+    };
 
 } /* namespace overview */ } /* namespace overview */
 

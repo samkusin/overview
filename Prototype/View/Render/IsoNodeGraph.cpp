@@ -78,8 +78,6 @@ namespace cinek { namespace overview {
                   {
                       return l->depth() < r->depth();
                   });
-
-
     }
 
     void IsoNodeGraph::fixupNode(IsoNode* node)

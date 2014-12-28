@@ -54,14 +54,10 @@ Simulation::Simulation
         MessageQueue q(1024, _allocator);
         eventQueue = std::move(q);
     }
-    
-    auto tileDims = _staticWorldMap.tileGridMap()->overlayDimensions();
-    auto tileHeight = _staticWorldMap.tileGridMap()->overlayToFloorRatio();
 
     //  Note, the 'World' is a virtual 3D world (XZ plane with an up +Y)
     World::CreateParams worldParams;
-    worldParams.bounds.min = Point(0,0,0);
-    worldParams.bounds.max = Point(tileDims.x, tileHeight, tileDims.y);
+    worldParams.staticWorldMap = &_staticWorldMap;
     worldParams.objectLimit = 1024;
     worldParams.visualDebug = true;
 

@@ -23,10 +23,10 @@ class World;
 /// @brief WorldObject is a wrapper object for the underlying representation of a
 ///        World body object.
 ///
-class WorldObject
+class WorldObject : public WorldObjectBase
 {
 public:
-    WorldObject() = default;
+    WorldObject();
     WorldObject(const WorldObjectTransform& transform, void* context);
     
     void setId(SimObjectId objId) { _objectId = objId; }

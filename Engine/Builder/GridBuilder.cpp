@@ -236,6 +236,7 @@ namespace cinek { namespace overview {
         //  <<<
 
         glm::ivec2 srcTilePosOffset;
+        glm::ivec2 srcTileStageDims = tilePosIncr * block.granularity();
 
         while (destTilePos.x < destTilePosEnd.x ||
                destTilePos.y < destTilePosEnd.y)
@@ -254,8 +255,15 @@ namespace cinek { namespace overview {
                                    (srcTilePos.y + srcTilePosOffset.y) % srcGrid.rowCount(),
                                    srcTileDim.x, srcTileDim.y);
             }
-
-            srcTilePosOffset += tilePosIncr;
+            
+            if (srcTileStageDims.x != 0)
+            {
+                srcTilePosOffset.x = (srcTilePosOffset.x + tilePosIncr.x) % srcTileStageDims.x;
+            }
+            if (srcTileStageDims.y != 0)
+            {
+                srcTilePosOffset.y = (srcTilePosOffset.y + tilePosIncr.y) % srcTileStageDims.y;
+            }
             destTilePos += tilePosIncr;
 
             if (block.paintStyle() == kBuilderPaintStyle_Stretch)
@@ -271,10 +279,10 @@ namespace cinek { namespace overview {
                         srcTileUnitStage = kSrcTileStretchUnit;
 
                         destTilePosStageEnd = destTilePosEnd - (tilePosIncr * block.granularity());
-                        srcTilePosStageEnd.x = std::max(tilePosIncr.x * block.granularity(),
-                                                        (int)srcGrid.columnCount() - tilePosIncr.x * block.granularity());
-                        srcTilePosStageEnd.y = std::max(tilePosIncr.x * block.granularity(),
-                                                        (int)srcGrid.rowCount() - tilePosIncr.y * block.granularity());
+                        srcTilePosStageEnd.x = std::max(block.granularity(),
+                                                        (int)srcGrid.columnCount() - block.granularity());
+                        srcTilePosStageEnd.y = std::max(block.granularity(),
+                                                        (int)srcGrid.rowCount() - block.granularity());
                     }
                     else if (srcTileUnitStage == kSrcTileStretchUnit)
                     {
@@ -288,6 +296,8 @@ namespace cinek { namespace overview {
                         srcTileUnitStage = kSrcTileCompleteUnit;
                         break;
                     }
+                    srcTilePosStageEnd *= tilePosIncr;
+                    srcTileStageDims = srcTilePosStageEnd - srcTilePos;
                 }
             }
         }

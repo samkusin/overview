@@ -23,9 +23,7 @@ namespace cinek {
     namespace overview {
         class Entity;
         class WorldObject;
-        class TileLibrary;
-        class TileGridMap;
-        class RoomGraph;
+        class StaticWorldMap;
     }
 }
 
@@ -39,10 +37,7 @@ namespace cinek {
     public:
         struct CreateParams
         {
-            AABB<Point> bounds;
-            const TileLibrary* tileLibrary = nullptr;
-            const TileGridMap* tileGridMap = nullptr;
-            const RoomGraph* roomGraph = nullptr;
+            const StaticWorldMap* staticWorldMap = nullptr;
             uint32_t objectLimit = 128;
             bool visualDebug = false;
         };

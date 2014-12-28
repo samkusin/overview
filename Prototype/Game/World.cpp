@@ -8,7 +8,12 @@
 
 #include "Game/World.hpp"
 #include "Game/WorldObject.hpp"
+#include "Game/WorldMap.hpp"
+#include "Shared/GameTemplates.hpp"
+#include "Shared/StaticWorldMap.hpp"
 #include "Core/MessageQueue.hpp"
+#include "Engine/Model/TileGridMap.hpp"
+#include "Engine/Model/TileLibrary.hpp"
 
 #include "cinek/objectpool.hpp"
 #include "cinek/map.hpp"
@@ -101,6 +106,8 @@ namespace cinek { namespace overview {
 
     class World::Impl
     {
+        CK_CLASS_NON_COPYABLE(Impl);
+        
     public:
         Impl(const CreateParams& params, const Allocator& allocator);
         ~Impl();
@@ -113,41 +120,43 @@ namespace cinek { namespace overview {
         void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);
         
         WorldDebugDraw* debugDraw() { return _debugDraw.get(); }
+        
+    private:
+        btBoxShape* constructBox(const AABB<Point>& aabb);
 
     private:
         Allocator _allocator;
         
+        //  Collection of WorldObjects for external usage
+        ObjectPool<WorldObject> _worldObjects;
+        
+        // Bullet objects for btWorld usage
+        ObjectPool<btCollisionObject> _objectPool;
+        ObjectPool<btBoxShape> _boxPool;
+        
         unique_ptr<WorldDebugDraw> _debugDraw;
         
         //  Map data
-        const TileLibrary* _tileLibrary;
-        const TileGridMap* _tileGridMap;
-        const RoomGraph* _roomGraph;
+        WorldMap _worldMap;
         
         //  Bullet physics world
         btDefaultCollisionConfiguration _btConfig;
         btCollisionDispatcher _btDispatcher;
         btAxisSweep3 _btBroadphase;
         btCollisionWorld _btWorld;
-        ObjectPool<btCollisionObject> _objectPool;
-        ObjectPool<btBoxShape> _boxPool;
-        
-        //  Collection of WorldObjects for external usage
-        ObjectPool<WorldObject> _worldObjects;
     };
 
     World::Impl::Impl(const CreateParams& params, const Allocator& allocator) :
         _allocator(allocator),
-        _tileLibrary(params.tileLibrary),
-        _tileGridMap(params.tileGridMap),
-        _roomGraph(params.roomGraph),
-        _btConfig(),
-        _btDispatcher(&_btConfig),
-        _btBroadphase(toBtVector3(params.bounds.min), toBtVector3(params.bounds.max)),
-        _btWorld(&_btDispatcher, &_btBroadphase, &_btConfig),
+        _worldObjects(params.objectLimit, _allocator),
         _objectPool(params.objectLimit, _allocator),
         _boxPool(params.objectLimit, _allocator),
-        _worldObjects(params.objectLimit, _allocator)
+        _worldMap(*params.staticWorldMap),
+        _btConfig(),
+        _btDispatcher(&_btConfig),
+        _btBroadphase(toBtVector3(_worldMap.bounds().min),
+                      toBtVector3(_worldMap.bounds().max)),
+        _btWorld(&_btDispatcher, &_btBroadphase, &_btConfig)
     {
         _debugDraw = allocate_unique<WorldDebugDraw>(_allocator, _allocator);
         _btWorld.setDebugDrawer(_debugDraw.get());
@@ -156,23 +165,107 @@ namespace cinek { namespace overview {
         {
             _btWorld.getDebugDrawer()->setDebugMode(WorldDebugDraw::DBG_DrawWireframe);
         }
+        // Using the StaticWorldMap, add btCollisionObjects for every collidible
+        // tile.
+        //
+        // Phase 1: Overlay
+        // Phase 2: Terrain Triangle Mesh
+        // Phase 3: Merge Overlay boxes into Concave Shape (Triangle Meshes)
+        //
+        auto staticWorldMap = params.staticWorldMap;
+        auto& overlay = staticWorldMap->tileGridMap().overlay();
+        Point mapTilePos;
+        for (int row = 0; row < overlay.rowCount(); ++row)
+        {
+            mapTilePos.x = 1.0f;
+            mapTilePos.y = row + 1.0f;
+            mapTilePos.z = 0;
+            
+            auto strip = overlay.atRow(row, 0);
+            for (auto tilep = strip.first; tilep != strip.second; ++tilep, mapTilePos.x += 1.0f)
+            {
+                TileId tileId = *tilep;
+                if (!tileId)
+                    continue;
+                
+                auto& tile = staticWorldMap->tileLibrary().tileFromCollectionAtIndex(
+                    slotFromTileId(tileId),
+                    indexFromTileId(tileId));
+                btBoxShape* shape = nullptr;
+                if (tile.collision.shape == CollisionInfo::Shape::kBox)
+                {
+                    shape = constructBox(tile.aabb);
+                }
+                if (shape)
+                {
+                    shape->setMargin(0.f);
+                    btCollisionObject* object = _objectPool.construct();
+                    if (object)
+                    {
+                        object->setCollisionShape(shape);
+                        object->setUserPointer(reinterpret_cast<void*>(&_worldMap));
+                        
+                        btTransform transform;
+                        transform.setBasis(orientToBtDirection(kObjectRefDir));
+                        transform.setOrigin(translateToBtPosition(mapTilePos, shape->getHalfExtentsWithoutMargin()));
+                        object->setWorldTransform(transform);
+                        _btWorld.addCollisionObject(object);
+                    }
+                    else
+                    {
+                        _boxPool.destruct(shape);
+                    }
+                }
+            }
+        }
     }
 
     World::Impl::~Impl()
     {
+        //  kill all static WorldMap based objects
+        vector<btCollisionObject*> staticObjects;
+        auto& objects = _btWorld.getCollisionObjectArray();
+        staticObjects.reserve(objects.size());
+        
+        for (auto i = 0; i < objects.size(); ++i)
+        {
+            if (objects[i]->getUserPointer() == &_worldMap)
+            {
+                staticObjects.push_back(objects[i]);
+            }
+        }
+        for (auto i = 0; i < staticObjects.size(); ++i)
+        {
+            btCollisionObject* object = staticObjects[i];
+            btCollisionShape* shape = object->getCollisionShape();
+            if (shape->getShapeType() == BOX_SHAPE_PROXYTYPE)
+            {
+                object->setCollisionShape(nullptr);
+                _boxPool.destruct(static_cast<btBoxShape*>(shape));
+            }
+            _btWorld.removeCollisionObject(object);
+            _objectPool.destruct(object);
+        }
+
         _btWorld.setDebugDrawer(nullptr);
+    }
+
+    btBoxShape* World::Impl::constructBox(const AABB<Point>& aabb)
+    {
+        auto boxDims = aabb.dimensions();
+        btVector3 boxHalfExt(boxDims.x, boxDims.y, boxDims.z);
+        boxHalfExt *= 0.5f;
+        return _boxPool.construct(boxHalfExt);
     }
 
     WorldObject* World::Impl::createObject(const Point& pos,
                                            const Point& front,
                                            const AABB<Point>& bbox)
     {
-        auto boxDims = bbox.dimensions();
-        btVector3 boxHalfExt(boxDims.x, boxDims.y, boxDims.z);
-        boxHalfExt *= 0.5f;
-        btBoxShape* box = _boxPool.construct(boxHalfExt);
+        btBoxShape* box = constructBox(bbox);
         if (box)
         {
+            const btVector3& boxHalfExt = box->getHalfExtentsWithoutMargin();
             box->setMargin(0.f);
             btCollisionObject* object = _objectPool.construct();
             if (object)
@@ -232,20 +325,23 @@ namespace cinek { namespace overview {
                 continue;
             
             //  update our btObject with the new transform
-            WorldObject* worldObj =
-                reinterpret_cast<WorldObject*>(collObj->getUserPointer());
-            btBoxShape* shape =
-                static_cast<btBoxShape*>(collObj->getCollisionShape());
-            btTransform& btObjTransform = collObj->getWorldTransform();
-            worldObj->writeToTransform(btObjTransform,
-                                       shape->getHalfExtentsWithoutMargin());
-            
-            //  apply updated position
-            btVector3 nextPos = btObjTransform.getOrigin() +
-                (btObjTransform.getBasis() * (kWorldRefDir *
-                                              worldObj->transform().speed *
-                                              deltaTime));
-            btObjTransform.setOrigin(nextPos);
+            WorldObjectBase* extObj = reinterpret_cast<WorldObjectBase*>(collObj->getUserPointer());
+            if (extObj->classId() == WorldObjectBase::ClassId::kWorldObject)
+            {
+                WorldObject* worldObj = static_cast<WorldObject*>(extObj);
+                btBoxShape* shape =
+                    static_cast<btBoxShape*>(collObj->getCollisionShape());
+                btTransform& btObjTransform = collObj->getWorldTransform();
+                worldObj->writeToTransform(btObjTransform,
+                                           shape->getHalfExtentsWithoutMargin());
+                
+                //  apply updated position
+                btVector3 nextPos = btObjTransform.getOrigin() +
+                    (btObjTransform.getBasis() * (kWorldRefDir *
+                                                  worldObj->transform().speed *
+                                                  deltaTime));
+                btObjTransform.setOrigin(nextPos);
+            }
         }
         
         //  perform collision detections
@@ -258,19 +354,23 @@ namespace cinek { namespace overview {
             if (!collObj)
                 continue;
             
-            //  update our btObject with the new transform
-            WorldObject* worldObj =
-                reinterpret_cast<WorldObject*>(collObj->getUserPointer());
-            btBoxShape* shape =
-                static_cast<btBoxShape*>(collObj->getCollisionShape());
-            const btTransform& btObjTransform = collObj->getWorldTransform();
-            if (!worldObj->readFromTransform(btObjTransform,
-                                             shape->getHalfExtentsWithoutMargin()))
+            WorldObjectBase* extObj = reinterpret_cast<WorldObjectBase*>(collObj->getUserPointer());
+            if (extObj->classId() == WorldObjectBase::ClassId::kWorldObject)
             {
-                MoveEntityEvent evt;
-                evt.setEntityId(worldObj->id());
-                evt.setTransform(worldObj->transform());
-                eventQueue.push(SimEvent::kMoveEntity, evt);
+                //  update our btObject with the new transform
+                WorldObject* worldObj =
+                    reinterpret_cast<WorldObject*>(extObj);
+                btBoxShape* shape =
+                    static_cast<btBoxShape*>(collObj->getCollisionShape());
+                const btTransform& btObjTransform = collObj->getWorldTransform();
+                if (!worldObj->readFromTransform(btObjTransform,
+                                                 shape->getHalfExtentsWithoutMargin()))
+                {
+                    MoveEntityEvent evt;
+                    evt.setEntityId(worldObj->id());
+                    evt.setTransform(worldObj->transform());
+                    eventQueue.push(SimEvent::kMoveEntity, evt);
+                }
             }
         }
         
