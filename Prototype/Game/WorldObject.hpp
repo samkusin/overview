@@ -35,8 +35,6 @@ public:
     const WorldObjectTransform& transform() const { return _transform; }
     void setTransform(const WorldObjectTransform& transform) { _transform = transform; }
     void applyTransform(const WorldObjectTransform& transform);
-
-    void* context() { return _context; }
     
     bool readFromTransform(const btTransform& transform,
                            const btVector3& halfExtents);
@@ -46,7 +44,6 @@ public:
 private:
     WorldObjectTransform _transform;
     SimObjectId _objectId;
-    void* _context;
 };
         
     } /* namespace overview */

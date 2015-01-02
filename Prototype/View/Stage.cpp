@@ -13,7 +13,7 @@
 
 #include "Engine/Debug.hpp"
 #include "Engine/Model/TileLibrary.hpp"
-#include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/SpriteCollection.hpp"
 #include "Engine/Model/TileGridMap.hpp"
 
 namespace cinek { namespace overview {

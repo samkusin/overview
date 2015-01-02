@@ -30,6 +30,8 @@ public:
     typedef _Collection         CollectionType;
     /// The Slot index type for used for collections in this library
     typedef _SlotType           SlotType;
+    /// The Invalid Slot index constant
+    static const _SlotType      InvalidSlot = _InvalidSlot;
 
 public:
     /// Default Constructor
@@ -70,11 +72,32 @@ public:
     /// @return The Slot
     ///
     SlotType slotByCollectionName(const std::string& name) const;
+    
     /// Retrieves the null collection.
     ///
     /// @return A null/empty ModelCollection.
     ///
     const CollectionType& nullCollection() const;
+    /// @return The current maxium number of collection slots.  This is useful
+    /// for iteration
+    ///
+    uint32_t numCollectionSlots() const;
+    /// Returns the number of items in the library.  This method will calculate
+    /// the total item count iterating through each Collection.
+    ///
+    /// @return The number of items
+    ///
+    uint32_t totalCount() const;
+    /// Passes a Slot and Collection to the callback for every Collection in
+    /// the library.
+    ///
+    /// @param  cb  The specified functor must have the signature
+    ///             bool(SlotType slot, const CollectionType& type)
+    /// @return If the callback aborts iteration by returning false, returns
+    ///         the Slot of the Collection at that iteration.  Otherwise
+    ///         returns the InvalidSlot value.
+    template<typename Callback>
+    SlotType forEach(Callback cb) const;
 
 protected:
     vector<CollectionType> _collections;
@@ -156,6 +179,33 @@ auto ModelLibrary<_Collection,
     return _InvalidSlot;
 }
 
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+uint32_t ModelLibrary<_Collection,
+                  _SlotType,
+                  _InvalidSlot>::totalCount() const
+{
+    uint32_t cnt = 0;
+    for (SlotType slot = 0; slot < _collections.size(); ++slot)
+    {
+        cnt += _collections[slot].count();
+    }
+    return _InvalidSlot;
+}
+
+
+template<class _Collection, class _SlotType, _SlotType _InvalidSlot>
+template<typename Callback>
+auto ModelLibrary<_Collection,
+                  _SlotType,
+                  _InvalidSlot>::forEach(Callback cb) const -> SlotType
+{
+    for (SlotType slot = 0; slot < _collections.size(); ++slot)
+    {
+        if (!cb(slot, _collections[slot]))
+            return slot;
+    }
+    return InvalidSlot;
+}
 
 }   /* namespace overview */ }   /* namespace cinek */
 

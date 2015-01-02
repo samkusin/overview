@@ -20,7 +20,7 @@
 #include "Engine/Debug.hpp"
 #include "Graphics/RendererCLI.hpp"
 
-#include "Engine/Model/SpriteLibraryLoader.hpp"
+#include "Engine/Model/SpriteCollectionLoader.hpp"
 #include "Engine/Model/TileCollectionLoader.hpp"
 #include "Core/FileStreamBuf.hpp"
 #include "Core/StreamBufRapidJson.hpp"
@@ -78,8 +78,8 @@ namespace cinek {
 
         GenerateMapParams generateMapParams;
         generateMapParams.blocksPathname = "blocks.json";
-        generateMapParams.floorX = 12;
-        generateMapParams.floorY = 12;
+        generateMapParams.floorX = 3;
+        generateMapParams.floorY = 3;
         generateMapParams.overlayToFloorRatio = 4;
         generateMapParams.roomLimit = 8;
 
@@ -109,7 +109,7 @@ namespace cinek {
         simParams.staticWorldMap = _staticWorldMap.get();
         _simulation = std::move(generateSimulation(*_gameTemplates, simParams));
         
-        CreateEntityRequest createReq("avatar", _viewPos, Point(0,1,0));
+        CreateEntityRequest createReq("avatar", _viewPos, kObjectRefDir);
         _simMessageDispatcher.queue(_simCommandQueue, SimCommand::kCreateEntity, createReq,
             [this](const SDO* data, Message::SequenceId, void*) {
                 auto resp = sdo_cast<const CreateEntityResponse*>(data);
@@ -206,7 +206,7 @@ namespace cinek {
     
     SpriteInstancePtr GameView::allocateSprite(const std::string& spriteClassName)
     {
-        auto& spriteClass = _gameTemplates->spriteLibrary().spriteByName(spriteClassName);
+        auto& spriteClass = _gameTemplates->spriteCollection().find(spriteClassName);
         SpriteInstancePtr ptr = _sprites.construct(spriteClass);
         return ptr;
     }
@@ -226,7 +226,7 @@ namespace cinek {
         //
         auto& dir = body.dir;
         float speed = body.speed;
-        float dp = glm::dot(dir, Point(0,1,0));
+        float dp = glm::dot(dir, kObjectRefDir);
         
         AnimationStateId animId = sprite->state();
         if (dp >= 0.75f)

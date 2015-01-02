@@ -115,9 +115,9 @@ set( PROJECT_SOURCES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileCollectionLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibrary.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteCollection.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.cpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteCollectionLoader.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Room.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Internal/RoomGraphImpl.cpp
@@ -142,8 +142,8 @@ set( PROJECT_INCLUDES
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileLibrary.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/Sprite.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteAnimation.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibrary.hpp
-     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteLibraryLoader.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteCollection.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteCollectionLoader.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/SpriteInstance.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGrid.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/Model/TileGridMap.hpp

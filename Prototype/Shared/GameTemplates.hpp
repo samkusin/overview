@@ -12,7 +12,7 @@
 #include "Engine/Model/EntityTemplateCollection.hpp"
 
 #include "Engine/Model/TileLibrary.hpp"
-#include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/SpriteCollection.hpp"
 #include "Core/JsonUtilities.hpp"
 
 #include "cinek/allocator.hpp"
@@ -49,8 +49,8 @@ namespace cinek { namespace overview {
         const TileLibrary& tileLibrary() const {
             return _tileLibrary;
         }
-        const SpriteLibrary& spriteLibrary() const {
-            return _spriteLibrary;
+        const SpriteCollection& spriteCollection() const {
+            return _spriteCollection;
         }
         const EntityTemplateCollection& entityTemplateCollection() const {
             return _entityTemplColl;
@@ -67,7 +67,7 @@ namespace cinek { namespace overview {
         Allocator _allocator;
         JsonDocument _gameDefinition;
         TileLibrary _tileLibrary;
-        SpriteLibrary _spriteLibrary;
+        SpriteCollection _spriteCollection;
         EntityTemplateCollection _entityTemplColl;
     };
 

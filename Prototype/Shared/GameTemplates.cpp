@@ -11,7 +11,7 @@
 #include "Engine/Model/TileGridMap.hpp"
 #include "Engine/Model/RoomGraph.hpp"
 #include "Engine/Model/TileCollectionLoader.hpp"
-#include "Engine/Model/SpriteLibraryLoader.hpp"
+#include "Engine/Model/SpriteCollectionLoader.hpp"
 #include "Graphics/BitmapLibrary.hpp"
 #include "Core/FileStreamBuf.hpp"
 #include "Core/StreamBufRapidJson.hpp"
@@ -21,8 +21,7 @@ namespace cinek { namespace overview {
     GameTemplates::GameTemplates(const InitParams& params,
                                  const Allocator& allocator) :
         _allocator(allocator),
-        _tileLibrary(params.tileSlotLimit, _allocator),
-        _spriteLibrary(params.spriteLimit, _allocator)
+        _tileLibrary(params.tileSlotLimit, _allocator)
     {
         FileStreamBuf gameStream(params.gameDefinitionPath);
         RapidJsonStdStreamBuf jsonStream(gameStream);
@@ -71,7 +70,7 @@ namespace cinek { namespace overview {
                                "Cannot find collection %s", pathname);
             return;
         }
-        unserializeFromJSON(_spriteLibrary, dbStream,
+        SpriteCollectionLoader spriteLoader(_gameDefinition["model"]["sprites"],
                             [&bitmapLibrary](const char* atlasName) -> cinek_bitmap_atlas
                             {
                                 char path[MAX_PATH];
@@ -84,8 +83,13 @@ namespace cinek { namespace overview {
                                 if (!bitmapAtlas)
                                     return kCinekBitmapIndex_Invalid;
                                 return bitmapAtlas->getBitmapIndex(name);
-                            });
-
+                            },
+                            [this](SpriteCollection&& collection)
+                            {
+                                _spriteCollection = std::move(collection);
+                            },
+                            _allocator);
+        unserializeFromJSON(dbStream, spriteLoader);
     }
 
     void GameTemplates::loadEntityTemplateCollection(const char* pathname)

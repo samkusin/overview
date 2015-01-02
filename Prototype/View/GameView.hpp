@@ -18,7 +18,7 @@
 #include "Engine/View.hpp"
 #include "Engine/Model/Sprite.hpp"
 #include "Engine/Model/TileLibrary.hpp"
-#include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/SpriteCollection.hpp"
 #include "Engine/Model/ModelTypes.hpp"
 #include "Graphics/Graphics2D.hpp"
 #include "Graphics/RenderTypes.hpp"

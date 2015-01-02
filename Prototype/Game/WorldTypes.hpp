@@ -16,7 +16,7 @@
 
 namespace cinek { namespace overview {
     
-    const btVector3 kWorldRefDir = btVector3(0,1,0);
+    const btVector3 kWorldRefDir = btVector3(0,-1,0);
     const Point kObjectRefDir = Point(0,1,0);
     
     //  Utilities used for converting between coordinate systems
@@ -41,9 +41,9 @@ namespace cinek { namespace overview {
     inline btMatrix3x3 orientToBtDirection(const Point& dir)
     {
         btMatrix3x3 basis;
-        basis[2] = btVector3(0,0,1);
-        basis[1] = btVector3(dir.x, dir.y, dir.z);
-        basis[0] = basis[2].cross(basis[1]);
+        basis[2] = btVector3(0,0,1);                    // Z
+        basis[1] = btVector3(dir.x, -dir.y, -dir.z);   // Y
+        basis[0] = basis[1].cross(basis[2]);            // X
         return basis;
     }
     
@@ -56,15 +56,30 @@ namespace cinek { namespace overview {
             kWorldMap
         };
         
+        enum
+        {
+            kFlag_Transformed           = (1 << 0)
+        };
+        
         ClassId classId() const { return _classId; }
+        void* context() { return _context; }
+        
+        void setUserFlags(uint32_t flag) { _userFlags |= flag; }
+        void clearUserFlags(uint32_t flag=0xffffffff) { _userFlags &= (~flag); }
+        uint32_t userFlags() const { return _userFlags; }
+        bool testUserFlag(uint32_t flag) const { return (_userFlags & flag) != 0; }
         
     protected:
-        WorldObjectBase(ClassId classId) : _classId(classId) {}
+        WorldObjectBase(ClassId classId, void* context) :
+            _classId(classId), _userFlags(0), _context(context) {}
         ~WorldObjectBase() = default;
         
     private:
         ClassId _classId;
+        uint32_t _userFlags;
+        void* _context;
     };
+
 
 } /* namespace overview */ } /* namespace overview */
 

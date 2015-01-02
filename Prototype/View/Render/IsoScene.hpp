@@ -26,7 +26,7 @@ namespace cinek { namespace overview {
 
     class TileGridMap;
     class TileLibrary;
-    class SpriteLibrary;
+    class SpriteCollection;
 
     /// @class   IsoScene
     /// @ingroup IsoScene

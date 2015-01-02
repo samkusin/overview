@@ -11,7 +11,7 @@
 #include "Shared/GameTemplates.hpp"
 #include "Shared/StaticWorldMap.hpp"
 #include "Engine/Model/TileGridMap.hpp"
-#include "Engine/Model/SpriteLibrary.hpp"
+#include "Engine/Model/SpriteCollection.hpp"
 #include "Core/MessageQueue.hpp"
 
 #include "Game/Messages/SimMessageClassIds.hpp"
@@ -57,6 +57,7 @@ Simulation::Simulation
 
     //  Note, the 'World' is a virtual 3D world (XZ plane with an up +Y)
     World::CreateParams worldParams;
+    worldParams.gameTemplates = &_gameTemplates;
     worldParams.staticWorldMap = &_staticWorldMap;
     worldParams.objectLimit = 1024;
     worldParams.visualDebug = true;
@@ -190,8 +191,7 @@ void Simulation::createEntityCommand(
     auto& tmpl = _gameTemplates.entityTemplateCollection()[req.templateId()];
     if (tmpl)
     {
-        auto& spriteTmpl = _gameTemplates.spriteLibrary().spriteByName(tmpl.spriteName());
-        WorldObject* body = _world->createObject(req.position(), req.direction(), spriteTmpl.aabb());
+        WorldObject* body = _world->createObject(req.position(), req.direction(), tmpl.spriteName());
         if (!body)
         {
             OVENGINE_LOG_WARN("Simulation.createEntity - failed to create body");

@@ -48,6 +48,7 @@ struct WorldObjectTransform
 
     void setDirty(Attribute attr);
     bool isDirty(Attribute attr) const;
+    bool isDirty() const { return _dirtyFlags != 0; }
     void clearDirtyFlags() { _dirtyFlags = 0; }
     
     WorldObjectTransform& operator|=(const WorldObjectTransform& transform);

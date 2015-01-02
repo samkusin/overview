@@ -108,7 +108,6 @@
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37AAC1C719F42A3600C32899 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKGL.a"; sourceTree = "<group>"; };
 		37AAC1C819F42A3600C32899 /* libCKOVEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKOVEngine.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKOVEngine.a"; sourceTree = "<group>"; };
-		37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../../External/lib/libprotobuf-lite.a"; sourceTree = "<group>"; };
 		37B6189D1A3A7B2C00847F04 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Entity.cpp; path = ../Engine/Model/Entity.cpp; sourceTree = "<group>"; };
 		37B6189E1A3A7B2C00847F04 /* Entity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Entity.hpp; path = ../Engine/Model/Entity.hpp; sourceTree = "<group>"; };
 		37B6189F1A3A7B2C00847F04 /* Entity.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Entity.inl; path = ../Engine/Model/Entity.inl; sourceTree = "<group>"; };
@@ -356,7 +355,6 @@
 			children = (
 				37CDCCD71A33E17D00D05A8C /* libBulletCollision.a */,
 				37CDCCD81A33E17D00D05A8C /* libLinearMath.a */,
-				37AAC1CE19F4347600C32899 /* libprotobuf-lite.a */,
 				37AAC1C519F42A3600C32899 /* libCKCore.a */,
 				37AAC1C619F42A3600C32899 /* libCKFramework.a */,
 				37AAC1C719F42A3600C32899 /* libCKGL.a */,
@@ -625,7 +623,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"$(PACKAGES_ROOT)/lib/libprotobuf-lite.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
 					"$(PACKAGES_ROOT)/lib/libRocket_d.a",
@@ -665,7 +662,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"$(PACKAGES_ROOT)/lib/libprotobuf-lite.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libSDL2_image.a",
 					"$(PACKAGES_ROOT)/lib/libRocket_d.a",

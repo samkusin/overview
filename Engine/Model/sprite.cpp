@@ -22,12 +22,14 @@ Sprite::Sprite() :
 {
 }
 
-Sprite::Sprite(cinek_bitmap_atlas bitmapClass,
+Sprite::Sprite(const std::string& name,
+               cinek_bitmap_atlas bitmapClass,
                const glm::ivec2& anchor,
                const AABB<Point>& aabb,
                uint16_t numStates,
                const Allocator& allocator) :
     _allocator( allocator ),
+    _name(name),
     _bitmapClass( bitmapClass ),
     _anchor( anchor ),
     _aabb(aabb),
@@ -47,8 +49,10 @@ Sprite::~Sprite()
 
 Sprite::Sprite(Sprite&& other) :
     _allocator(std::move(other._allocator)),
+    _name(std::move(other._name)),
     _bitmapClass(other._bitmapClass),
     _anchor(std::move(other._anchor)),
+    _aabb(std::move(other._aabb)),
     _statePool(std::move(other._statePool)),
     _states(std::move(other._states))
 {
@@ -57,12 +61,15 @@ Sprite::Sprite(Sprite&& other) :
 
 Sprite& Sprite::operator=(Sprite&& other)
 {
-    _bitmapClass = other._bitmapClass;
     _allocator = std::move(other._allocator);
-    other._bitmapClass = kCinekBitmapAtlas_Invalid;
-    other._anchor = std::move(other._anchor);
+    _name = std::move(other._name);
+    _bitmapClass = other._bitmapClass;
+    _anchor = std::move(other._anchor);
+    _aabb = std::move(other._aabb);
     _statePool = std::move(other._statePool);
     _states = std::move(other._states);
+
+    other._bitmapClass = kCinekBitmapAtlas_Invalid;
     return *this;
 }
 

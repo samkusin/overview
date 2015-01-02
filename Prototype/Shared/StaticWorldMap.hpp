@@ -38,7 +38,9 @@ namespace overview {
         const TileLibrary& tileLibrary() const {
             return _templates->tileLibrary();
         }
-    
+        const SpriteCollection& spriteCollection() const {
+            return _templates->spriteCollection();
+        }
         const TileGridMap& tileGridMap() const {
             return *_tileGridMap;
         }

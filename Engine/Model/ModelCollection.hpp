@@ -38,6 +38,9 @@ public:
     /// @param  tiles       The tiles defined for this collection
     ///
     ModelCollection(const char* name, Container&& models);
+    /// @return True if an empty collection
+    ///
+    bool empty() const;
     /// @return The number of tiles in the collection
     ///
     size_t count() const;
@@ -76,6 +79,12 @@ template<class _Model>
 size_t ModelCollection<_Model>::count() const
 {
     return _models.size();
+}
+
+template<class _Model>
+bool ModelCollection<_Model>::empty() const
+{
+    return _models.empty();
 }
 
 template<class _Model>

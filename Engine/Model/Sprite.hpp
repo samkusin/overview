@@ -17,6 +17,7 @@
 #include "cinek/allocator.hpp"
 #include "cinek/objectstack.hpp"
 #include "cinek/vector.hpp"
+#include "cinek/string.hpp"
 
 #include <glm/glm.hpp>
 
@@ -38,12 +39,14 @@ public:
      * Constructor reserving memory for a number of states for later definition,
      * serialization.
      *
+     * @param name          The sprite name
      * @param bitmapClass   The bitmap class of bitmaps used for this sprite.
      * @param anchor        The sprite's offset from the origin
      * @param numStates     Number of states to reserve in the state table.
      * @param allocator     An optional allocator.
      */
-    Sprite(cinek_bitmap_atlas bitmapClass,
+    Sprite(const std::string& name,
+           cinek_bitmap_atlas bitmapClass,
            const glm::ivec2& anchor,
            const AABB<Point>& aabb,
            uint16_t numStates,
@@ -54,6 +57,10 @@ public:
     Sprite(Sprite&& other);
     Sprite& operator=(Sprite&& other);
     /** @endcond */
+
+    const std::string& name() const {
+        return _name;
+    }
 
     /** @return Returns the bitmap class for bitmaps used in the sprite. */
     cinek_bitmap_atlas getBitmapClass() const {
@@ -92,6 +99,7 @@ public:
 
 private:
     Allocator _allocator;
+    std::string _name;
     cinek_bitmap_atlas _bitmapClass;
     glm::ivec2 _anchor;
     AABB<Point> _aabb;

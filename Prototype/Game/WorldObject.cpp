@@ -12,15 +12,14 @@ namespace cinek {
     namespace overview {
     
     WorldObject::WorldObject() :
-        WorldObjectBase(ClassId::kWorldObject)
+        WorldObjectBase(ClassId::kWorldObject, nullptr)
     {
     }
     
     WorldObject::WorldObject(const WorldObjectTransform& transform,
                              void* context) :
-        WorldObjectBase(ClassId::kWorldObject),
-        _transform(transform),
-        _context(context)
+        WorldObjectBase(ClassId::kWorldObject, context),
+        _transform(transform)
     {
     }
     
@@ -44,6 +43,7 @@ namespace cinek {
         }
         
         auto newDir = toPoint(transform.getBasis() * kWorldRefDir);
+        
         if (newDir != _transform.dir)
         {
             _transform.dir = newDir;
@@ -76,9 +76,6 @@ namespace cinek {
         
         if (_transform.isDirty(WorldObjectTransform::kDirection))
         {
-            // basis back  / MAP Z
-            // basis up    / MAP Y
-            // basis right / MAP X
             btMatrix3x3 basis = orientToBtDirection(_transform.dir);
             transform.setBasis(basis);
         }

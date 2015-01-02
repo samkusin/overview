@@ -24,6 +24,7 @@ namespace cinek {
         class Entity;
         class WorldObject;
         class StaticWorldMap;
+        class GameTemplates;
     }
 }
 
@@ -37,6 +38,7 @@ namespace cinek {
     public:
         struct CreateParams
         {
+            const GameTemplates* gameTemplates = nullptr;
             const StaticWorldMap* staticWorldMap = nullptr;
             uint32_t objectLimit = 128;
             bool visualDebug = false;
@@ -46,7 +48,7 @@ namespace cinek {
         
         WorldObject* createObject(const Point& pos,
                                   const Point& front,
-                                  const AABB<Point>& bbox);
+                                  const std::string& spriteName);
         void destroyObject(WorldObject* body);
 
         void update(MessageQueue& eventQueue, uint32_t deltaTimeMs);

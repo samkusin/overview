@@ -12,7 +12,7 @@
 namespace cinek { namespace overview {
 
 WorldMap::WorldMap(const StaticWorldMap& worldMap) :
-    WorldObjectBase(ClassId::kWorldMap),
+    WorldObjectBase(ClassId::kWorldMap, nullptr),
     _worldMap(worldMap)
 {
 }
