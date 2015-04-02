@@ -9,7 +9,7 @@
 #ifndef Overview_Game_CreateEntityRequest_hpp
 #define Overview_Game_CreateEntityRequest_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 #include "Core/SDO/SDO.hpp"
 
 #include <string>

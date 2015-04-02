@@ -10,7 +10,7 @@
 #define Overview_Game_CreateEntityResponse_hpp
 
 #include "Game/Messages/CommandResponse.hpp"
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 
 namespace cinek { namespace overview {
 

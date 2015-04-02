@@ -9,7 +9,7 @@
 #ifndef Overview_Game_Model_WorldTypes_hpp
 #define Overview_Game_Model_WorldTypes_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 #include "Engine/Model/AABB.hpp"
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btMatrix3x3.h"

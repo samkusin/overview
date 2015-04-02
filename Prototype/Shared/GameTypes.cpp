@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 
 namespace cinek { namespace overview {
 

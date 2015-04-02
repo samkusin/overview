@@ -97,6 +97,14 @@ namespace cinek {
         const AABB<Point>& aabb() const;
         /** @return The 2D anchor pixel offset from center, bottom */
         const glm::ivec2& anchor() const;
+        /**
+         * Allows applications to store a model identifier tied to the Sprite
+         * Instance.  
+         * @param A model identifier defined by the application.
+         */
+        void setModelId(CommonModelId modelId) { _modelId = modelId; }
+        /** @return The model identifier set by setModelId */
+        CommonModelId modelId() const { return _modelId; }
 
     private:
         friend SpriteInstanceList;
@@ -111,6 +119,8 @@ namespace cinek {
         AnimationStateId _stateId;
         //  cached pointer from the Sprite template
         const SpriteAnimation* _animation;
+        
+        CommonModelId _modelId;
     };
 
     } /* rendermodel */

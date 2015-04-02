@@ -53,7 +53,7 @@ namespace cinek { namespace overview {
 
         auto& blockCollection = blockLibrary.collectionAtSlot(0);
         auto tileCollectionSlot = gameTemplates.tileLibrary().slotByCollectionName("dungeon");
-/*
+
         overview::GridBuilder floorBuilder(tileGridMap->floor(), tileGridMap->overlayToFloorRatio());
         auto floorDims = floorBuilder.dimensions();
         floorBuilder.fillBox(overview::RoomVertex(0,0),
@@ -108,12 +108,12 @@ namespace cinek { namespace overview {
                                       style, blockCollection, tileCollectionSlot);
         overview::room_builder::paint(southRoom, *tileGridMap,
                                       style, blockCollection, tileCollectionSlot);
-*/
+/*
         GridBuilder overlayBuilder(tileGridMap->overlay(), 1);
         auto& wallBlock = blockCollection["brick_wall"];
         overlayBuilder.drawLine(glm::ivec2(12,4), 4, GridBuilder::kDrawDirection_Vertical,
                          wallBlock, GridBuilder::kBlockSide_Right, tileCollectionSlot);
-        
+*/
         auto staticWorldMap = allocate_unique<StaticWorldMap>(allocator, gameTemplates);
 
         staticWorldMap->loadTileGridMap(std::move(tileGridMap));

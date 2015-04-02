@@ -13,7 +13,7 @@
 
 #include "Shared/GameTemplates.hpp"
 #include "View/Stage.hpp"
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 
 #include "Engine/View.hpp"
 #include "Engine/Model/Sprite.hpp"

@@ -38,7 +38,7 @@ public:
     /// @param  allocator   The allocator for memory operations
     ///
     TileCollectionLoader(
-        const JsonValue& tileFlagConsts,
+        const JsonValue& modelConsts,
         std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
         std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
         std::function<void(TileCollection&&)> collectionCb,
@@ -50,7 +50,7 @@ public:
     bool endCollection();
 
 private:
-    const JsonValue& _tileFlagConsts;
+    const JsonValue& _modelConsts;
 
     std::function<cinek_bitmap_atlas(const char*)> _atlasReqCb;
     std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _bitmapReqCb;

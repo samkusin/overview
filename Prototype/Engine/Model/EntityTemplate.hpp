@@ -9,7 +9,7 @@
 #ifndef Overview_EntityTemplate_hpp
 #define Overview_EntityTemplate_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 
 #include "cinek/string.hpp"
 
@@ -22,7 +22,8 @@ namespace cinek {
 
     public:
         EntityTemplate() = default;
-        EntityTemplate(const std::string& name, const std::string& spriteName);
+        EntityTemplate(const std::string& name, const std::string& spriteName,
+                       const std::string& controllerName);
         EntityTemplate(EntityTemplate&& other);
         EntityTemplate& operator=(EntityTemplate&& other);
         
@@ -30,10 +31,12 @@ namespace cinek {
 
         const std::string& name() const { return _name; }
         const std::string& spriteName() const { return _spriteName; }
+        const std::string& controllerName() const { return _controllerName; }
 
     private:
         std::string _name;
         std::string _spriteName;
+        std::string _controllerName;
     };
 
     }   // ovengine

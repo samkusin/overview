@@ -25,9 +25,12 @@ namespace cinek { namespace overview {
     }
 
     IsoNode* IsoNodeGraph::obtainNode(const cinek_bitmap& bitmap,
-                                      const glm::ivec2& viewPos, const AABB<glm::vec3>& box)
+                                      const glm::ivec2& viewPos,
+                                      const AABB<glm::vec3>& box,
+                                      IsoNode::Context context,
+                                      CommonModelId modelId)
     {
-        auto node = _nodePool.allocateAndConstruct(bitmap, viewPos, box);
+        auto node = _nodePool.allocateAndConstruct(bitmap, viewPos, box, context, modelId);
         _nodes.push_back(node);
         return node;
     }

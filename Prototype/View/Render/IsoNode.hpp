@@ -17,7 +17,7 @@ namespace cinek { namespace overview {
 
     class IsoNodeGraph;
     struct Tile;
-
+    
     /// @class   IsoNode
     /// @ingroup IsoScene
     /// @brief   A render node within an IsoScene
@@ -33,24 +33,40 @@ namespace cinek { namespace overview {
             kBitmap
         };
         
+        enum Context
+        {
+            kTile       = 0x1,
+            kObject     = 0x2
+        };
+        
     public:
         IsoNode(const cinek_bitmap& bitmap,
                 const glm::ivec2& viewPos,
-                const AABB<glm::vec3>& box);
-
+                const AABB<glm::vec3>& box,
+                Context context,
+                CommonModelId modelId);
+        
         bool behind(const IsoNode& b) const;
-        void clearBehindList();
-        void addIndexToBehindList(uint32_t index);
+        
+        Context context() const { return _context; }
+        CommonModelId modelId() const { return _modelId; }
+
         bool visited() const { return _visited; }
         uint32_t depth() const { return _depth; }
 
         const std::pair<uint32_t, uint32_t> behindRange() const;
 
         const glm::ivec2& viewPos() const { return _viewPos; }
+        
         Type type() const { return _renderType; }
         cinek_bitmap bitmap() const { return _bitmap; }
+        
+        const AABB<Point>& box() const { return _box; }
 
     private:
+        void clearBehindList();
+        void addIndexToBehindList(uint32_t index);
+        
         friend class IsoNodeGraph;
         glm::ivec2 _viewPos;
         AABB<glm::vec3> _box;          // In IsoScene view coordinates
@@ -59,7 +75,9 @@ namespace cinek { namespace overview {
 
         Type _renderType;
         cinek_bitmap _bitmap;
-
+        Context _context;
+        CommonModelId _modelId;
+        
         uint32_t _depth;
         bool _visited;
     };

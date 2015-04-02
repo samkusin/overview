@@ -9,7 +9,7 @@
 #ifndef Overview_Game_Model_World_hpp
 #define Overview_Game_Model_World_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 
 #include "Engine/Model/AABB.hpp"
 

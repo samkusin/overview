@@ -30,22 +30,26 @@ namespace cinek { namespace overview {
     /** Define for a null sprite animation template. */
     const AnimationStateId kNullAnimation = (AnimationStateId)0;
 
-    struct TileHandle
-    {
-        int32_t x;
-        int32_t y;
-        int32_t layerIndex;     /**< Maps to a TileGridMap layer */
-    };
+    /**
+     *  A generic model identifier used by clients.  Its defined
+     *  for applications to pass model identifiers across systems.
+     *  It is up to the application to define how this identifier
+     *  gets mapped to tiles, sprites, or whatever model types the
+     *  title supports.
+     */
+    using CommonModelId = uint32_t;
 
     struct CollisionInfo
     {
         enum class Shape
         {
             kNone,
-            kFloor,
+            kPlane,
             kBox
         };
         Shape shape = Shape::kNone;
+        uint16_t access = 0;
+        uint16_t impedence = 0;
     };
 
 } /* namespace overview */ } /* namespace cinek */

@@ -9,7 +9,7 @@
 #ifndef Overview_Game_Simulation_hpp
 #define Overview_Game_Simulation_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 #include "Engine/Model/Entity.hpp"
 #include "Game/SimulationContext.hpp"
 #include "Core/MessageDispatcher.hpp"
@@ -35,6 +35,7 @@ namespace cinek {
         class CreateEntityRequest;
         class CreateEntityResponse;
         class MoveEntityRequest;
+        class PathEntityRequest;
         
     } /* namespace overview */
 
@@ -109,9 +110,11 @@ namespace cinek { namespace overview {
         MessageDispatcher _eventDispatcher;
         TaskScheduler _scheduler;
         
-        SimObjectId _nextObjectId;
+        GameObjectId _nextObjectId;
         unordered_map<EntityId, overview::Entity> _entityMap;
         unique_ptr<overview::World> _world;
+        
+        SimulationContext _context;
         
     private:
         MessageQueue& activeEventQueue() { return _eventQueues[_activeEventQueue]; }
@@ -123,6 +126,9 @@ namespace cinek { namespace overview {
             const ResponseCallback<CreateEntityResponse>& respCb);
         void moveEntityCommand(
             const MoveEntityRequest& req,
+            const ResponseCallback<CommandResponse>& respCb);
+        void pathEntityCommand(
+            const PathEntityRequest& req,
             const ResponseCallback<CommandResponse>& respCb);
     };
 

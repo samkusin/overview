@@ -8,6 +8,7 @@
 
 #include "Game/Simulation.hpp"
 #include "Game/World.hpp"
+
 #include "Shared/GameTemplates.hpp"
 #include "Shared/StaticWorldMap.hpp"
 #include "Engine/Model/TileGridMap.hpp"
@@ -18,6 +19,7 @@
 #include "Game/Messages/CreateEntityRequest.hpp"
 #include "Game/Messages/CreateEntityResponse.hpp"
 #include "Game/Messages/MoveEntityRequest.hpp"
+#include "Game/Messages/PathEntityRequest.hpp"
 
 #include "Game/Events/SimEventClassIds.hpp"
 #include "Game/Events/CreateEntityEvent.hpp"
@@ -140,28 +142,29 @@ void Simulation::update(MessageQueue& inQueue, MessageQueue& outQueue,
     
     _debugMessages.clear();
     
-    SimulationContext simContext;
-    simContext.eventQueue = &activeEventQueue();
-    simContext.resultMsgQueue = &outQueue;
-    simContext.scheduler = &_scheduler;
-    simContext.allocator = _allocator;
+    _context.eventQueue = &activeEventQueue();
+    _context.resultMsgQueue = &outQueue;
+    _context.scheduler = &_scheduler;
+    _context.allocator = _allocator;
+    
     //  process commands
     //  every command has a "command" key. dispatch the handler matching
     //  the command's key.
-    _commandDispatcher.dispatch(inQueue, timeMs, &simContext);
+    _commandDispatcher.dispatch(inQueue, timeMs, &_context);
     
     //  update simulation subsystems
     //
     _world->update(activeEventQueue(), deltaTimeMs);
     _world->appendDebugMessages(_debugMessages);
     
+    //  job execution
     _scheduler.process(deltaTimeMs);
     
     //  process events created during world/task execution
     //  the process will also fill our result queue
     MessageQueue& events = activeEventQueue();
     _activeEventQueue = (_activeEventQueue+1) % _eventQueues.size();
-    _eventDispatcher.dispatch(events, timeMs, &simContext);
+    _eventDispatcher.dispatch(events, timeMs, &_context);
 }
 
 void Simulation::syncDebugMessages(vector<SimDebugMessage> &messages)
@@ -182,7 +185,8 @@ Entity* Simulation::entity(EntityId entityId)
     return const_cast<Entity*>(static_cast<const Simulation*>(this)->entity(entityId));
 }
 
-void Simulation::createEntityCommand(
+void Simulation::createEntityCommand
+(
     const CreateEntityRequest& req,
     const ResponseCallback<CreateEntityResponse>& respCb
 )
@@ -192,12 +196,16 @@ void Simulation::createEntityCommand(
     if (tmpl)
     {
         WorldObject* body = _world->createObject(req.position(), req.direction(), tmpl.spriteName());
+        
+        
+        // controller
+        
         if (!body)
         {
-            OVENGINE_LOG_WARN("Simulation.createEntity - failed to create body");
             resp.setResponseCode(CommandResponse::kFailure);
         }
-        else
+        
+        if (resp.responseCode() == CommandResponse::kSuccess)
         {
             EntityId newEntityId = (_nextObjectId+1);
             if (!newEntityId)
@@ -213,6 +221,8 @@ void Simulation::createEntityCommand(
     
                 entityIt->second.attachBody(body);
 
+
+
                 resp.setEntityId(newEntityId);
                 
                 CreateEntityEvent evt;
@@ -221,10 +231,14 @@ void Simulation::createEntityCommand(
             }
             else
             {
-                OVENGINE_LOG_WARN("Simulation.createEntity - failed to create body");
-                _world->destroyObject(body);
                 resp.setResponseCode(CommandResponse::kFailure);
             }
+        }
+        
+        if (resp.responseCode() != CommandResponse::kSuccess)
+        {
+            OVENGINE_LOG_WARN("Simulation.createEntity - failed to create entity");
+            _world->destroyObject(body);
         }
     }
     else
@@ -233,15 +247,18 @@ void Simulation::createEntityCommand(
                           req.templateId().c_str());
         resp.setResponseCode(CommandResponse::kInvalidParameter);
     }
+    
     if (respCb)
     {
         respCb(resp);
     }
 }
 
-void Simulation::moveEntityCommand(
+void Simulation::moveEntityCommand
+(
     const MoveEntityRequest &req,
-    const ResponseCallback<cinek::overview::CommandResponse>& respCb)
+    const ResponseCallback<cinek::overview::CommandResponse>& respCb
+)
 {
     CommandResponse resp;
     
@@ -270,5 +287,27 @@ void Simulation::moveEntityCommand(
     }
 }
 
+void Simulation::pathEntityCommand
+(
+    const PathEntityRequest &req,
+    const ResponseCallback<cinek::overview::CommandResponse>& respCb
+)
+{
+    CommandResponse resp;
+    
+    auto entity = this->entity(req.entityId());
+    if (entity)
+    {
+
+    }
+    else
+    {
+        resp.setResponseCode(CommandResponse::kNotFound);
+    }
+    if (respCb)
+    {
+        respCb(resp);
+    }
+}
 
 } /* namespace overview */ } /* namespace cinek */

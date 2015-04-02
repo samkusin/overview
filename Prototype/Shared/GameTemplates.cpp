@@ -37,7 +37,7 @@ namespace cinek { namespace overview {
         if (!dbStream)
             return;
 
-        TileCollectionLoader tileLoader(_gameDefinition["model"]["tiles"]["flags"],
+        TileCollectionLoader tileLoader(_gameDefinition["model"],
                                         [&bitmapLibrary](const char* atlasName) -> cinek_bitmap_atlas
                                         {
                                             char path[MAX_PATH];

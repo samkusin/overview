@@ -15,7 +15,6 @@ namespace cinek {
 Entity::Entity(EntityId id, const EntityTemplate& entityTempl) :
     _template(entityTempl),
     _id(id),
-    _updateFlags(0),
     _body(nullptr)
 {
 

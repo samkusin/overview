@@ -34,7 +34,10 @@ namespace cinek { namespace overview {
         ///         node.
         ///
         IsoNode* obtainNode(const cinek_bitmap& bitmap,
-                            const glm::ivec2& viewPos, const AABB<glm::vec3>& box);
+                            const glm::ivec2& viewPos,
+                            const AABB<glm::vec3>& box,
+                            IsoNode::Context context,
+                            CommonModelId modelId);
 
         /// Sort the graph based on the current node list
         /// The current version makes this operation an n^2 one.  we could probably

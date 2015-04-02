@@ -78,8 +78,8 @@ namespace cinek {
 
         GenerateMapParams generateMapParams;
         generateMapParams.blocksPathname = "blocks.json";
-        generateMapParams.floorX = 3;
-        generateMapParams.floorY = 3;
+        generateMapParams.floorX = 12; // 3;
+        generateMapParams.floorY = 12; // 3;
         generateMapParams.overlayToFloorRatio = 4;
         generateMapParams.roomLimit = 8;
 
@@ -128,6 +128,7 @@ namespace cinek {
                 if (entity)
                 {
                     auto sprite = allocateSprite(entity->sourceTemplate().spriteName());
+                    sprite->setModelId(event->entityId());
                     _entitySpritePtrs.emplace(entity->id(), sprite);
                     auto body = entity->body();
                     applyObjectStateToSprite(sprite, body->transform(), gameContext.timeMs);
@@ -375,6 +376,9 @@ namespace cinek {
 
     void GameView::onMouseButtonDown(MouseButton button, int32_t x, int32_t y)
     {
+        //  pick node on the scene graph
+        auto node = _isoScene->pickNode(glm::ivec2(x,y),
+                        IsoNode::kTile | IsoNode::kObject, 1);
 
     }
 

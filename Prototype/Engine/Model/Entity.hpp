@@ -9,7 +9,7 @@
 #ifndef Overview_Game_ModelEntity_hpp
 #define Overview_Game_ModelEntity_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 #include "Game/WorldObject.hpp"
 
 //  Engine forward declarations
@@ -38,21 +38,6 @@ namespace cinek {
         /// @ return The Entity's template object
         const EntityTemplate& sourceTemplate() const;
 
-        /// @return The accumulation of changes/results to the Entity this
-        ///         frame.  These flags are defined in EntityTypes.hpp
-        ///
-        uint32_t resultFlags() const;
-        
-        /// Resets result flags (typically on simulation update start.)
-        ///
-        void resetResultFlags();
-        
-        /// Sets the change/result state for the Entity
-        ///
-        /// @param  resultFlag  One or more flags to set (or clear)
-        /// @param  state       (Optional) set or clear, defaulting to set.
-        void setResult(uint32_t resultFlag, bool state=true);
-        
         /// @return Returns the body (physical) object
         ///
         const WorldObject* body() const { return _body; }
@@ -84,8 +69,6 @@ namespace cinek {
     private:
         const EntityTemplate& _template;
         EntityId _id;
-        
-        uint32_t _updateFlags;
         
         WorldObject* _body;
     };

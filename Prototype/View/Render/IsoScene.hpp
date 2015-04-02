@@ -19,6 +19,7 @@
 namespace cinek {
     namespace overview {
         class Stage;
+        class IsoNode;
     } /* namespace overview */
 } /* namespace cinek */
 
@@ -46,13 +47,24 @@ namespace cinek { namespace overview {
         void visit(const std::function<void(const IsoNode*)>& fn);
 
         glm::ivec2 isoToScreenPos(const Point& pt) const;
+        Point screenToIsoPos(const glm::ivec2& pt, float z) const;
+        
+        //  Using the current graph, pick the "shallowest" node (smallest depth)
+        //  where the node's AABB contains the specified screen point.  Flags
+        //  are used for filtering.
+        const IsoNode* pickNode(const glm::ivec2& screenPt,
+                                uint32_t contexts, uint32_t categories) const;
+                            
 
     private:
         void setupViewBounds(const Point& viewPos);
-        glm::vec3 isoToViewPos(const Point& isoPos) const;
-        glm::vec3 viewToIsoPos(const Point& viewPos) const;
+        Point isoToViewPos(const Point& isoPos) const;
+        Point viewToIsoPos(const Point& viewPos) const;
 
         void attachTileToGraph(const Point& viewPos, const Point& isoPos);
+        
+        int determineSideOfLineIsPoint(const glm::ivec2& pt,
+            const glm::ivec2& p0, const glm::ivec2& p1) const;
 
     private:
         const overview::Stage& _stage;

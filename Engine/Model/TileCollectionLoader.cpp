@@ -20,12 +20,12 @@ namespace cinek {
     namespace overview {
 
 TileCollectionLoader::TileCollectionLoader(
-        const JsonValue& tileFlagConsts,
+        const JsonValue& modelConsts,
         std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
         std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
         std::function<void(TileCollection&&)> collectionCb,
         const Allocator& allocator) :
-    _tileFlagConsts(tileFlagConsts),
+    _modelConsts(modelConsts),
     _atlasReqCb(atlasReqCb),
     _bitmapReqCb(bitmapReqCb),
     _collectionCb(collectionCb),
@@ -65,10 +65,10 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
             tile.bitmap.bmpAtlas = _atlasId;
             tile.bitmap.bmpIndex = _bitmapReqCb(_atlasId, attr.value.GetString());
         }
-        else if (!strcmp(attrName, "flags"))
+        else if (!strcmp(attrName, "categories"))
         {
             const char* flagsStr = attr.value.GetString();
-            tile.flags = parseFlagsToUint(_tileFlagConsts, flagsStr);
+            tile.categories = parseFlagsToUint(_modelConsts["categories"], flagsStr);
         }
         else if (!strcmp(attrName, "aabb"))
         {
@@ -85,10 +85,20 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
             const char* collisionShape = attr.value["type"].GetString();
             if (!strcasecmp(collisionShape, "box"))
                 tile.collision.shape = CollisionInfo::Shape::kBox;
-            else if (!strcasecmp(collisionShape, "floor"))
-                tile.collision.shape = CollisionInfo::Shape::kFloor;
+            else if (!strcasecmp(collisionShape, "plane"))
+                tile.collision.shape = CollisionInfo::Shape::kPlane;
             else
                 tile.collision.shape = CollisionInfo::Shape::kNone;
+
+            if (attr.value.HasMember("access"))
+            {
+                const char* flagsStr = attr.value["access"].GetString();
+                tile.collision.access = parseFlagsToUint(_modelConsts["access"], flagsStr);
+            }
+            if (attr.value.HasMember("impedence"))
+            {
+                tile.collision.impedence = parseInt(attr.value["impedence"]);
+            }
         }
     }
     uint16_t tileIndex = (uint16_t)strtoul(key, nullptr, 16);

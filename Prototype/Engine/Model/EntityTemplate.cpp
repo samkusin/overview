@@ -10,15 +10,22 @@
 
 namespace cinek { namespace overview {
 
-    EntityTemplate::EntityTemplate(const std::string& name, const std::string& spriteName) :
+    EntityTemplate::EntityTemplate
+    (
+        const std::string& name,
+        const std::string& spriteName,
+        const std::string& controllerName
+    ) :
         _name(name),
-        _spriteName(spriteName)
+        _spriteName(spriteName),
+        _controllerName(controllerName)
     {
     }
 
     EntityTemplate::EntityTemplate(EntityTemplate&& other) :
         _name(std::move(other._name)),
-        _spriteName(std::move(other._spriteName))
+        _spriteName(std::move(other._spriteName)),
+        _controllerName(std::move(other._controllerName))
     {
     }
 
@@ -26,6 +33,7 @@ namespace cinek { namespace overview {
     {
         _name = std::move(other._name);
         _spriteName = std::move(other._spriteName);
+        _controllerName = std::move(other._controllerName);
         return *this;
     }
 

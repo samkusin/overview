@@ -285,7 +285,6 @@ namespace cinek { namespace overview {
                         _btWorld.addCollisionObject(object,
                                     btBroadphaseProxy::StaticFilter,
                                     btBroadphaseProxy::KinematicFilter);
-                        return;
                     }
                 }
             }
@@ -298,30 +297,10 @@ namespace cinek { namespace overview {
 
     World::Impl::~Impl()
     {
-        //  kill all static WorldMap based objects
-        vector<btCollisionObject*> staticObjects;
-        auto& objects = _btWorld.getCollisionObjectArray();
-        staticObjects.reserve(objects.size());
-        
-        for (auto i = 0; i < objects.size(); ++i)
-        {
-            if (objects[i]->getUserPointer() == &_worldMap)
-            {
-                staticObjects.push_back(objects[i]);
-            }
-        }
-        for (auto i = 0; i < staticObjects.size(); ++i)
-        {
-            btCollisionObject* object = staticObjects[i];
-            btCollisionShape* shape = object->getCollisionShape();
-            if (shape->getShapeType() == BOX_SHAPE_PROXYTYPE)
-            {
-                object->setCollisionShape(nullptr);
-            }
-            _btWorld.removeCollisionObject(object);
-            _objectPool.destruct(object);
-        }
-
+        //  all btObjects and WorldObjects reside in pools that are destroyed
+        //  after btWorld is destroyed.
+        //  so this constructor might be trivial.
+    
         _btWorld.setDebugDrawer(nullptr);
     }
 

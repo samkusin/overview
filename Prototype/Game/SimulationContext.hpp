@@ -9,7 +9,7 @@
 #ifndef Overview_Game_SimulationContext_hpp
 #define Overview_Game_SimulationContext_hpp
 
-#include "Game/SimulationTypes.hpp"
+#include "Shared/GameTypes.hpp"
 #include "Game/Messages/CommandResponse.hpp"
 #include "Core/MessageQueue.hpp"
 #include "cinek/taskscheduler.hpp"

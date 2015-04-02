@@ -24,7 +24,6 @@ namespace cinek {
 using SpriteInstancePtr = SpriteInstance*;
 using ConstSpriteInstancePtr = const SpriteInstance*;
 
-
     } /* overview */
 } /* cinekine */
 

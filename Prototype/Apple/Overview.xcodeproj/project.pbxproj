@@ -20,7 +20,8 @@
 		377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2E71A298AFE00B66D91 /* CreateEntityEvent.cpp */; };
 		377AB2ED1A2A642600B66D91 /* MoveEntityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2EB1A2A642600B66D91 /* MoveEntityEvent.cpp */; };
 		377AB2F21A2A68FC00B66D91 /* MoveEntityRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */; };
-		377AB2F51A2BD5F800B66D91 /* SimulationTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */; };
+		37A9D31E1A990DDD001F0714 /* PathEntityRequest.cpp in Resources */ = {isa = PBXBuildFile; fileRef = 37A9D31D1A990DDD001F0714 /* PathEntityRequest.cpp */; };
+		37A9D3221A9926B3001F0714 /* EntityMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A9D3201A9926B3001F0714 /* EntityMap.cpp */; };
 		37AAC1C919F42A3600C32899 /* libCKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C519F42A3600C32899 /* libCKCore.a */; };
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
 		37AAC1CB19F42A3600C32899 /* libCKGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C719F42A3600C32899 /* libCKGL.a */; };
@@ -42,6 +43,7 @@
 		37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8F31119F2DFCC00995B61 /* Stage.cpp */; };
 		37B9FD461A4A460200B477B5 /* StaticWorldMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */; };
 		37B9FD491A4BA2B100B477B5 /* WorldMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B9FD471A4BA2B100B477B5 /* WorldMap.cpp */; };
+		37BC27731A5A1249006B32FA /* GameTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BC27711A5A1249006B32FA /* GameTypes.cpp */; };
 		37DFA0951850108200382685 /* ApplicationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DFA0921850108200382685 /* ApplicationController.cpp */; };
 		37E76A0F17C6EC34009EAA97 /* Overview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E76A0D17C6EC34009EAA97 /* Overview.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
@@ -85,8 +87,6 @@
 		374931481904A75B002C7DE3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		375DA3671A12F99C00EB0D63 /* WorldObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldObject.cpp; sourceTree = "<group>"; };
 		375DA3681A12F99C00EB0D63 /* WorldObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldObject.hpp; sourceTree = "<group>"; };
-		375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SimulationTypes.hpp; sourceTree = "<group>"; };
-		375DA36F1A213BD600EB0D63 /* SimulationCommandTask.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SimulationCommandTask.hpp; path = Tasks/SimulationCommandTask.hpp; sourceTree = "<group>"; };
 		375DA3821A22D08100EB0D63 /* CreateEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CreateEntityRequest.hpp; path = Messages/CreateEntityRequest.hpp; sourceTree = "<group>"; };
 		375DA3831A22D35F00EB0D63 /* CreateEntityResponse.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CreateEntityResponse.hpp; path = Messages/CreateEntityResponse.hpp; sourceTree = "<group>"; };
 		375EB2DD1A26BF97001EB283 /* CreateEntityResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CreateEntityResponse.cpp; path = Messages/CreateEntityResponse.cpp; sourceTree = "<group>"; };
@@ -101,9 +101,12 @@
 		377AB2EA1A2992E600B66D91 /* SimEventClassIds.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SimEventClassIds.hpp; path = Events/SimEventClassIds.hpp; sourceTree = "<group>"; };
 		377AB2EB1A2A642600B66D91 /* MoveEntityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MoveEntityEvent.cpp; path = Events/MoveEntityEvent.cpp; sourceTree = "<group>"; };
 		377AB2EC1A2A642600B66D91 /* MoveEntityEvent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MoveEntityEvent.hpp; path = Events/MoveEntityEvent.hpp; sourceTree = "<group>"; };
-		377AB2F01A2A68A000B66D91 /* MoveEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MoveEntityRequest.hpp; path = Messages/MoveEntityRequest.hpp; sourceTree = "<group>"; };
+		377AB2F01A2A68A000B66D91 /* PathEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = PathEntityRequest.hpp; path = Messages/PathEntityRequest.hpp; sourceTree = "<group>"; };
 		377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MoveEntityRequest.cpp; path = Messages/MoveEntityRequest.cpp; sourceTree = "<group>"; };
-		377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulationTypes.cpp; sourceTree = "<group>"; };
+		37A9D31D1A990DDD001F0714 /* PathEntityRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathEntityRequest.cpp; path = Messages/PathEntityRequest.cpp; sourceTree = "<group>"; };
+		37A9D31F1A990EBB001F0714 /* MoveEntityRequest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MoveEntityRequest.hpp; path = Messages/MoveEntityRequest.hpp; sourceTree = "<group>"; };
+		37A9D3201A9926B3001F0714 /* EntityMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityMap.cpp; sourceTree = "<group>"; };
+		37A9D3211A9926B3001F0714 /* EntityMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityMap.hpp; sourceTree = "<group>"; };
 		37AAC1C519F42A3600C32899 /* libCKCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKCore.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKCore.a"; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37AAC1C719F42A3600C32899 /* libCKGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKGL.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKGL.a"; sourceTree = "<group>"; };
@@ -144,6 +147,8 @@
 		37B9FD451A4A460200B477B5 /* StaticWorldMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StaticWorldMap.hpp; sourceTree = "<group>"; };
 		37B9FD471A4BA2B100B477B5 /* WorldMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldMap.cpp; sourceTree = "<group>"; };
 		37B9FD481A4BA2B100B477B5 /* WorldMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldMap.hpp; sourceTree = "<group>"; };
+		37BC27711A5A1249006B32FA /* GameTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameTypes.cpp; sourceTree = "<group>"; };
+		37BC27721A5A1249006B32FA /* GameTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameTypes.hpp; sourceTree = "<group>"; };
 		37CDCCD71A33E17D00D05A8C /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = ../../External/lib/libBulletCollision.a; sourceTree = "<group>"; };
 		37CDCCD81A33E17D00D05A8C /* libLinearMath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLinearMath.a; path = ../../External/lib/libLinearMath.a; sourceTree = "<group>"; };
 		37DFA0921850108200382685 /* ApplicationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApplicationController.cpp; path = ../ApplicationController.cpp; sourceTree = "<group>"; };
@@ -181,7 +186,6 @@
 		375DA36C1A212E9E00EB0D63 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				375DA36F1A213BD600EB0D63 /* SimulationCommandTask.hpp */,
 			);
 			name = Tasks;
 			sourceTree = "<group>";
@@ -205,7 +209,9 @@
 				375EB2DD1A26BF97001EB283 /* CreateEntityResponse.cpp */,
 				375DA3821A22D08100EB0D63 /* CreateEntityRequest.hpp */,
 				375EB2DF1A26BFAA001EB283 /* CreateEntityRequest.cpp */,
-				377AB2F01A2A68A000B66D91 /* MoveEntityRequest.hpp */,
+				377AB2F01A2A68A000B66D91 /* PathEntityRequest.hpp */,
+				37A9D31D1A990DDD001F0714 /* PathEntityRequest.cpp */,
+				37A9D31F1A990EBB001F0714 /* MoveEntityRequest.hpp */,
 				377AB2F11A2A68FC00B66D91 /* MoveEntityRequest.cpp */,
 				375EB2E11A26C471001EB283 /* SimMessageClassIds.hpp */,
 				377AB2E11A29699900B66D91 /* CommandResponse.hpp */,
@@ -281,10 +287,10 @@
 				37B8F30219F2DFCC00995B61 /* WorldTypes.hpp */,
 				377AB2E41A297BA400B66D91 /* SimulationContext.hpp */,
 				377AB2E51A297CEA00B66D91 /* SimulationContext.cpp */,
-				375DA36D1A212F9E00EB0D63 /* SimulationTypes.hpp */,
-				377AB2F31A2BD5F800B66D91 /* SimulationTypes.cpp */,
 				37B9FD471A4BA2B100B477B5 /* WorldMap.cpp */,
 				37B9FD481A4BA2B100B477B5 /* WorldMap.hpp */,
+				37A9D3201A9926B3001F0714 /* EntityMap.cpp */,
+				37A9D3211A9926B3001F0714 /* EntityMap.hpp */,
 			);
 			name = Game;
 			path = ../Game;
@@ -293,6 +299,8 @@
 		37B8F30319F2DFCC00995B61 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				37BC27711A5A1249006B32FA /* GameTypes.cpp */,
+				37BC27721A5A1249006B32FA /* GameTypes.hpp */,
 				37B8F30419F2DFCC00995B61 /* GameTemplates.cpp */,
 				37B8F30519F2DFCC00995B61 /* GameTemplates.hpp */,
 				37B9FD441A4A460200B477B5 /* StaticWorldMap.cpp */,
@@ -456,6 +464,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37A9D31E1A990DDD001F0714 /* PathEntityRequest.cpp in Resources */,
 				37B618A71A3A7B2C00847F04 /* Entity.inl in Resources */,
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
@@ -485,16 +494,17 @@
 				37B8F31A19F2DFCC00995B61 /* Simulation.cpp in Sources */,
 				37B8F31F19F2DFCC00995B61 /* IsoNodeGraph.cpp in Sources */,
 				37B618AA1A3A7B2C00847F04 /* EntityTemplateCollectionLoader.cpp in Sources */,
+				37A9D3221A9926B3001F0714 /* EntityMap.cpp in Sources */,
 				37B8F32019F2DFCC00995B61 /* IsoScene.cpp in Sources */,
 				377AB2F21A2A68FC00B66D91 /* MoveEntityRequest.cpp in Sources */,
 				377AB2E91A298AFE00B66D91 /* CreateEntityEvent.cpp in Sources */,
 				375EB2E01A26BFAA001EB283 /* CreateEntityRequest.cpp in Sources */,
 				377AB2ED1A2A642600B66D91 /* MoveEntityEvent.cpp in Sources */,
+				37BC27731A5A1249006B32FA /* GameTypes.cpp in Sources */,
 				375DA3691A12F99C00EB0D63 /* WorldObject.cpp in Sources */,
 				37B8F31519F2DFCC00995B61 /* SimulationGenerator.cpp in Sources */,
 				37B618A61A3A7B2C00847F04 /* Entity.cpp in Sources */,
 				37B618A81A3A7B2C00847F04 /* EntityTemplate.cpp in Sources */,
-				377AB2F51A2BD5F800B66D91 /* SimulationTypes.cpp in Sources */,
 				37B8F32119F2DFCC00995B61 /* Stage.cpp in Sources */,
 				37B8F31E19F2DFCC00995B61 /* IsoNode.cpp in Sources */,
 			);

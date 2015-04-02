@@ -10,6 +10,7 @@
 #include "View/Stage.hpp"
 #include "Graphics/RendererCLI.hpp"
 #include "Graphics/Rect.hpp"
+#include "Graphics/BitmapLibrary.hpp"
 
 namespace cinek { namespace overview {
 
@@ -133,7 +134,9 @@ namespace cinek { namespace overview {
                                                AABB<Point> isoBox =  instance.aabb() + isoPos;
                                                scene->_isoNodeGraph.obtainNode(instance.bitmapFromTime(context.ticks),
                                                                                viewAnchor,
-                                                                               isoBox);
+                                                                               isoBox,
+                                                                               IsoNode::kObject,
+                                                                               instance.modelId());
                                            }
                                        }
                                    });
@@ -169,7 +172,8 @@ namespace cinek { namespace overview {
                 viewAnchor.x += viewPos.x - tileInfo.anchor.x;
                 viewAnchor.y += viewPos.y + (_tileDim.y * kOverlayTilePerFloor) - tileInfo.anchor.y;
 
-                _isoNodeGraph.obtainNode(tileInfo.bitmap, viewAnchor, isoBox);
+                _isoNodeGraph.obtainNode(tileInfo.bitmap, viewAnchor, isoBox,
+                                         IsoNode::kTile, tileId);
             }
         }
 
@@ -186,7 +190,8 @@ namespace cinek { namespace overview {
             viewAnchor.x += viewPos.x - tileInfo.anchor.x;
             viewAnchor.y += viewPos.y + _tileDim.y - tileInfo.anchor.y;
 
-            _isoNodeGraph.obtainNode(tileInfo.bitmap, viewAnchor, isoBox);
+            _isoNodeGraph.obtainNode(tileInfo.bitmap, viewAnchor, isoBox,
+                                     IsoNode::kTile, tileId);
         }
     }
 
@@ -212,8 +217,18 @@ namespace cinek { namespace overview {
         
         return viewAnchor;
     }
+    
+    Point IsoScene::screenToIsoPos(const glm::ivec2& pt, float z) const
+    {
+        Point viewPos(pt.x - _screenOffset.x,
+            (pt.y - _screenOffset.y) + (z * _tileDim.z),
+            z * _tileDim.z);
+        viewPos.x += _viewBounds.min.x;
+        viewPos.y += _viewBounds.min.y;
+        return viewToIsoPos(viewPos);
+    }
 
-    glm::vec3 IsoScene::isoToViewPos(const Point& isoPos) const
+    Point IsoScene::isoToViewPos(const Point& isoPos) const
     {
         Point viewPos(_tileDim.x * (isoPos.x - isoPos.y)/2,
                       _tileDim.y * (isoPos.x + isoPos.y)/2,
@@ -221,7 +236,7 @@ namespace cinek { namespace overview {
         return viewPos;
     }
 
-    glm::vec3 IsoScene::viewToIsoPos(const Point& viewPos) const
+    Point IsoScene::viewToIsoPos(const Point& viewPos) const
     {
         Point isoPos;
         isoPos.x = viewPos.x/_tileDim.x + viewPos.y/_tileDim.y;
@@ -256,6 +271,87 @@ namespace cinek { namespace overview {
         _screenOffset.x = (_viewDim.x - _viewBounds.max.x + _viewBounds.min.x);
         _screenOffset.y = (_viewDim.y - _viewBounds.max.y + _viewBounds.min.y);
         _screenOffset /= 2;
+    }
+    
+    
+            
+    const IsoNode* IsoScene::pickNode(const glm::ivec2& screenPt,
+                                      uint32_t contexts, uint32_t categories) const
+    {
+        //  Using the current graph, pick the "shallowest" node (smallest depth)
+        //  where the node's AABB contains the specified screen point.  Flags
+        //  are used for filtering.
+        
+        //  Note: Since we're testing whether a 2d point resides within an isometric
+        //  box, we'll treat the isobox as a hexagon.  The vertices of this hexagon
+        //  come from the AABB, translated to screen coordinates.
+        
+        //  frontmost nodes (screen-wise) are at the end of the list.
+        
+        auto& nodes = _isoNodeGraph.nodes();
+        for (auto it = nodes.rbegin(); it != nodes.rend(); ++it)
+        {
+            auto node = *it;
+            if (!(contexts & node->context()))
+                continue;
+            if (node->context() == IsoNode::kTile && categories)
+            {
+                auto& tileInfo = _stage.tileInfo(node->modelId());
+                if (!(tileInfo.categories & categories))
+                    continue;
+            }
+            auto& box = node->box();
+            
+            glm::ivec2 pts[6];  // clockwise from topmost point
+            
+            //  For each node, check whether screenPt is below the topmost box point
+            //  and above the bottommost box point.
+            //  use points 0 and 3 are our top and bottom-most points.
+            pts[3] = isoToScreenPos(Point(box.max.x, box.max.y, box.min.z));
+            if (screenPt.y > pts[3].y)
+                break;      // done?
+            
+            pts[0] = isoToScreenPos(Point(box.min.x, box.min.y, box.max.z));
+            if (screenPt.y < pts[0].y)
+                continue;   // next node?
+            
+            //  use points 1 and 4 to filter out points to the right and left
+            pts[1] = isoToScreenPos(Point(box.max.x, box.min.y, box.max.z));
+            if (screenPt.x > pts[1].x)
+                continue;
+            pts[4] = isoToScreenPos(Point(box.min.x, box.max.y, box.min.z));
+            if (screenPt.x < pts[4].x)
+                continue;
+            //  construct points 2 and 5, then perform our comprehesive edge check
+            pts[2] = isoToScreenPos(Point(box.max.x, box.min.y, box.min.z));
+            pts[5] = isoToScreenPos(Point(box.min.x, box.max.y, box.max.z));
+            
+            if (determineSideOfLineIsPoint(screenPt, pts[0], pts[1]) > 0)
+                continue;
+            if (determineSideOfLineIsPoint(screenPt, pts[1], pts[2]) > 0)
+                continue;
+            if (determineSideOfLineIsPoint(screenPt, pts[2], pts[3]) > 0)
+                continue;
+            if (determineSideOfLineIsPoint(screenPt, pts[3], pts[4]) > 0)
+                continue;
+            if (determineSideOfLineIsPoint(screenPt, pts[4], pts[5]) > 0)
+                continue;
+            if (determineSideOfLineIsPoint(screenPt, pts[5], pts[0]) > 0)
+                continue;
+         
+            // hit
+            return node;
+        }
+        
+        return nullptr;
+    }
+
+
+    int IsoScene::determineSideOfLineIsPoint(const glm::ivec2& pt,
+            const glm::ivec2& p0, const glm::ivec2& p1) const
+    {
+        //d=(x−x1)(y2−y1)−(y−y1)(x2−x1)
+        return (pt.x-p0.x)*(p1.y-p0.y) - (pt.y-p0.y)*(p1.x-p0.x);
     }
 
 } /* namespace overview */ } /* namespace cinek */

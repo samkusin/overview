@@ -43,6 +43,8 @@ namespace cinek { namespace overview {
  */
 class Stage
 {
+    CK_CLASS_NON_COPYABLE(Stage);
+    
 public:
     Stage(const GameTemplates& gameTemplates,
           const StaticWorldMap& staticWorldMap);
@@ -86,6 +88,7 @@ public:
                              std::function<void(const SpriteInstanceList&)> cb) const;
 
 private:
+    const GameTemplates& _gameTemplates;
     const StaticWorldMap& _staticWorldMap;
 
     SpriteInstanceList _sprites;

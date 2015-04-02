@@ -29,8 +29,8 @@ public:
     WorldObject();
     WorldObject(const WorldObjectTransform& transform, void* context);
     
-    void setId(SimObjectId objId) { _objectId = objId; }
-    SimObjectId id() const { return _objectId; }
+    void setId(GameObjectId objId) { _objectId = objId; }
+    GameObjectId id() const { return _objectId; }
     
     const WorldObjectTransform& transform() const { return _transform; }
     void setTransform(const WorldObjectTransform& transform) { _transform = transform; }
@@ -43,7 +43,7 @@ public:
     
 private:
     WorldObjectTransform _transform;
-    SimObjectId _objectId;
+    GameObjectId _objectId;
 };
         
     } /* namespace overview */

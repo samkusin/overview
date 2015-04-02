@@ -20,6 +20,7 @@ namespace cinek { namespace overview {
 
 Stage::Stage(const GameTemplates& gameTemplates,
              const StaticWorldMap& staticWorldMap) :
+    _gameTemplates(gameTemplates),
     _staticWorldMap(staticWorldMap)
 {
 }

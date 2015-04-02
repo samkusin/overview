@@ -6,15 +6,20 @@
 //  Copyright (c) 2014 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Game_SimulationTypes_hpp
-#define Overview_Game_SimulationTypes_hpp
+#ifndef Overview_Game_Types_hpp
+#define Overview_Game_Types_hpp
 
 #include "Engine/Model/ModelTypes.hpp"
 
 namespace cinek { namespace overview {
 
-using SimObjectId = uint32_t;
-using EntityId = SimObjectId;
+//////////////////////////////////////////////////////////////////////////
+
+using GameObjectId = CommonModelId;
+using EntityId = GameObjectId;
+
+
+//////////////////////////////////////////////////////////////////////////
 
 struct SimDebugMessage
 {
@@ -30,6 +35,8 @@ struct SimDebugMessage
     glm::vec3 color;
 };
     
+//////////////////////////////////////////////////////////////////////////
+
 struct WorldObjectTransform
 {
     Point pos;
@@ -78,6 +85,8 @@ inline void WorldObjectTransform::setDirty(Attribute attr)
 {
     _dirtyFlags |= static_cast<uint32_t>(attr);
 }
+
+//////////////////////////////////////////////////////////////////////////
 
 } /* namespace overview */ } /* namespace cinek */
 

@@ -13,12 +13,16 @@ namespace cinek { namespace overview {
 
     IsoNode::IsoNode(const cinek_bitmap& bitmap,
                      const glm::ivec2& viewPos,
-                     const AABB<glm::vec3>& box) :
+                     const AABB<glm::vec3>& box,
+                     Context context,
+                     CommonModelId modelId) :
         _viewPos(viewPos),
         _box(box),
         _behindRange(0,0),
         _renderType(kBitmap),
         _bitmap(bitmap),
+        _context(context),
+        _modelId(modelId),
         _depth(0),
         _visited(false)
     {

@@ -46,6 +46,7 @@ bool EntityTemplateCollectionLoader::parseAttribute(const char* key, const JsonV
 bool EntityTemplateCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
     std::string spriteName;
+    std::string controllerName;
     for (auto attrIt = object.MemberBegin(), attrItEnd = object.MemberEnd();
          attrIt != attrItEnd;
          ++attrIt)
@@ -56,9 +57,13 @@ bool EntityTemplateCollectionLoader::parseModel(const char* key, JsonValue& obje
         {
             spriteName = attr.value.GetString();
         }
+        if (!strcmp(attrName, "controller"))
+        {
+            controllerName = attr.value.GetString();
+        }
     }
 
-    EntityTemplate et(key, spriteName);
+    EntityTemplate et(key, spriteName, controllerName);
     _templates.emplace_back(std::move(et));
     return true;
 }
