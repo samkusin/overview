@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
                                               SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
         if (window)
         {
-            result = OverviewSDLMain(window, argc, argv);
+            //result = OverviewSDLMain(window, argc, argv);
         }
         else
         {

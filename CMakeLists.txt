@@ -13,7 +13,7 @@ endif( )
 
 #   Global build setup
 #
-set( CINEK_EXT_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External"
+set( CINEK_EXT_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext"
      CACHE FILEPATH "Path to directory containing external packages needed to build projects" )
 
 set( CINEK_SDK_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -31,9 +31,6 @@ set( CMAKE_PREFIX_PATH "${CINEK_EXT_PACKAGE_DIR}" ${CMAKE_PREFIX_PATH} )
 #   Libraries to build
 #
 add_subdirectory( cinek )
-add_subdirectory( Core )
-add_subdirectory( Graphics )
-add_subdirectory( Engine )
 
 #   Build the remaining source in one sweep as an executable - all source from
 #   subdirectories is included in the final project.

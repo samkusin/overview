@@ -9,7 +9,7 @@
 #ifndef Overview_Defines_hpp
 #define Overview_Defines_hpp
 
-#include "cinek/types.hpp"
+#include <cinek/types.hpp>
 
 namespace cinek {
     namespace overview {

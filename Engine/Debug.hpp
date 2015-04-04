@@ -10,7 +10,7 @@
 #ifndef Overview_Debug_hpp
 #define Overview_Debug_hpp
 
-#include "cinek/debug.hpp"
+#include <cinek/debug.hpp>
 
 /*****************************************************************************/
 

@@ -10,8 +10,8 @@
 #ifndef CINEK_OVERVIEW_GRID_HPP
 #define CINEK_OVERVIEW_GRID_HPP
 
-#include "cinek/types.hpp"
-#include "cinek/allocator.hpp"
+#include <cinek/types.hpp>
+#include <cinek/allocator.hpp>
 
 #include <iterator>
 #include <algorithm>
