@@ -12,7 +12,6 @@
 #define Overview_Model_ModelTypes_hpp
 
 #include <cinek/types.hpp>
-#include <cinek/rendertypes.h>
 #include <glm/glm.hpp>
 
 namespace cinek { namespace overview {

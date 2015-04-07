@@ -71,14 +71,20 @@ uint16_t SpriteInstance::bitmapFrameCount() const
     return _animation->getFrameCount();
 }
 
-cinek_bitmap SpriteInstance::bitmapFromTime(uint32_t currentTime) const
+gfx::BitmapHandle SpriteInstance::bitmapFromTime(uint32_t currentTime) const
 {
-    return { _template.getBitmapClass(), _animation->getFrameByTime(currentTime - _startTime) };
+    gfx::BitmapHandle h;
+    h.atlas = _template.getBitmapClass();
+    h.index = _animation->getFrameByTime(currentTime - _startTime);
+    return h;
 }
 
-cinek_bitmap SpriteInstance::bitmapFrame(uint16_t index) const
+gfx::BitmapHandle SpriteInstance::bitmapFrame(uint16_t index) const
 {
-    return { _template.getBitmapClass(), _animation->getFrame(index) };
+    gfx::BitmapHandle h;
+    h.atlas = _template.getBitmapClass();
+    h.index = _animation->getFrame(index);
+    return h;
 }
 
 const AABB<Point>& SpriteInstance::aabb() const

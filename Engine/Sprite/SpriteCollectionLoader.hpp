@@ -10,22 +10,31 @@
 #ifndef Overview_Model_SpriteCollectionLoader_hpp
 #define Overview_Model_SpriteCollectionLoader_hpp
 
-#include "Engine/ModelCollectionLoader.hpp"
 #include "Engine/Sprite/Sprite.hpp"
 
+#include <cinek/json/jsoncollectionloader.hpp>
 #include <cinek/allocator.hpp>
 #include <cinek/vector.hpp>
-#include <cinek/rendertypes.h>
 #include <functional>
 #include <streambuf>
+
+namespace cinek {
+    namespace gfx {
+        class BitmapLibrary;
+    }
+}
 
 namespace cinek { namespace overview {
 
 class SpriteCollection;
 
-class SpriteCollectionLoader : public ModelCollectionLoader
+class SpriteCollectionLoader : public JsonCollectionLoader
 {
 public:
+    using RequestAtlasCb = std::function<gfx::BitmapAtlasHandle(const char* atlasName)>;
+    using CollectionLoadedCb = std::function<void(SpriteCollection&& )>;
+    
+
     /// Constructor
     /// Applications supply event handlers called during unserialization
     /// @param  tileFlagConsts An object containing a bitflag enum for the
@@ -36,12 +45,14 @@ public:
     /// @param  collectionCb Issued when a TileCollection has been unserialized
     /// @param  allocator   The allocator for memory operations
     ///
-    SpriteCollectionLoader(
+    SpriteCollectionLoader
+    (
+        const gfx::BitmapLibrary& bitmapLibrary,
         const JsonValue& spriteConsts,
-        std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
-        std::function<void(SpriteCollection&&)> collectionCb,
-        const Allocator& allocator);
+        const RequestAtlasCb& reqAtlasCb,
+        const CollectionLoadedCb& collectionLoadedCb,
+        const Allocator& allocator
+    );
 
     bool startCollection(const char* name, uint32_t modelCount);
     bool parseAttribute(const char* key, const JsonValue& value);
@@ -49,14 +60,13 @@ public:
     bool endCollection();
 
 private:
-    const JsonValue& _spriteConsts;
+    const gfx::BitmapLibrary* _bitmapLibrary;
+    const JsonValue* _spriteConsts;
 
-    std::function<cinek_bitmap_atlas(const char*)> _atlasReqCb;
-    std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _bitmapReqCb;
-    std::function<void(SpriteCollection&&)> _collectionCb;
+    RequestAtlasCb _reqAtlasCb;
+    CollectionLoadedCb _collectionLoadedCb;
 
     std::string _name;
-    cinek_bitmap_atlas _atlasId;
     vector< Sprite > _sprites;
 };
 

@@ -11,24 +11,27 @@
 #include "Engine/Sprite/SpriteCollection.hpp"
 #include "Engine/Debug.hpp"
 
-#include <cinek/json/jsonstreambuf.hpp>
+#include "CKGfx/BitmapLibrary.hpp"
+#include "CKGfx/BitmapAtlas.hpp"
+
 #include <cinek/json/json.hpp>
 
 
 namespace cinek {
     namespace overview {
 
-SpriteCollectionLoader::SpriteCollectionLoader(
-        const JsonValue& spriteConsts,
-        std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
-        std::function<void(SpriteCollection&&)> collectionCb,
-        const Allocator& allocator) :
-    _spriteConsts(spriteConsts),
-    _atlasReqCb(atlasReqCb),
-    _bitmapReqCb(bitmapReqCb),
-    _collectionCb(collectionCb),
-    _atlasId(kCinekBitmapAtlas_Invalid),
+SpriteCollectionLoader::SpriteCollectionLoader
+(
+    const gfx::BitmapLibrary& bitmapLibrary,
+    const JsonValue& spriteConsts,
+    const RequestAtlasCb& loadAtlasCb,
+    const CollectionLoadedCb& collectionLoadedCb,
+    const Allocator& allocator
+):
+    _bitmapLibrary(&bitmapLibrary),
+    _spriteConsts(&spriteConsts),
+    _reqAtlasCb(loadAtlasCb),
+    _collectionLoadedCb(collectionLoadedCb),
     _sprites(allocator)
 {
 }
@@ -39,7 +42,6 @@ bool SpriteCollectionLoader::startCollection(const char* name, uint32_t modelCou
     _sprites.clear();
     _sprites.reserve(modelCount);
     _name = name;
-    _atlasId = _atlasReqCb(name);
     return true;
 }
 
@@ -51,7 +53,7 @@ bool SpriteCollectionLoader::parseAttribute(const char* key, const JsonValue& va
 
 bool SpriteCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
-    const rapidjson::Value& stateConsts = _spriteConsts["states"];
+    const rapidjson::Value& stateConsts = (*_spriteConsts)["states"];
 
     if (!object.HasMember("class"))
     {
@@ -72,7 +74,6 @@ bool SpriteCollectionLoader::parseModel(const char* key, JsonValue& object)
         return false;
     }
     // create the template.
-    cinek_bitmap_atlas bitmapClass = _atlasReqCb(object["class"].GetString());
     auto& jsonAnchor = object["anchor"];
     glm::ivec2 anchor(jsonAnchor["x"].GetInt(), jsonAnchor["y"].GetInt());
     AABB<Point> aabb;
@@ -83,7 +84,13 @@ bool SpriteCollectionLoader::parseModel(const char* key, JsonValue& object)
         aabb.max = parseVec3(value["max"]);
     }
 
+    auto bitmapClass = _reqAtlasCb(object["class"].GetString());
+    auto bitmapAtlas = _bitmapLibrary->atlas(bitmapClass);
+    if (!bitmapAtlas)
+        return false;
+    
     Sprite sprite(key, bitmapClass, anchor, aabb, stateCount);
+
 
     //  generate states for the sprite template.
     for (rapidjson::Value::ConstMemberIterator stateIt = states.MemberBegin(), stateItEnd = states.MemberEnd();
@@ -134,9 +141,9 @@ bool SpriteCollectionLoader::parseModel(const char* key, JsonValue& object)
             for (uint16_t frameIndex = 0; frameIndex < frames.Size(); ++frameIndex)
             {
                 const rapidjson::Value& frame = frames[frameIndex];
-                if (frame.IsString())
+                if (frame.IsString() && bitmapClass)
                 {
-                    cinek_bitmap_index bitmapIndex = _bitmapReqCb(bitmapClass, frame.GetString());
+                    auto bitmapIndex = bitmapAtlas->bitmapIndexFromName(frame.GetString());
                     animation->setFrame(frameIndex, bitmapIndex);
                 }
             }
@@ -159,7 +166,8 @@ bool SpriteCollectionLoader::endCollection()
         return false;
 
     SpriteCollection collection(_name.c_str(), std::move(_sprites));
-    _collectionCb(std::move(collection));
+    _collectionLoadedCb(std::move(collection));
+    
     return true;
 }
 

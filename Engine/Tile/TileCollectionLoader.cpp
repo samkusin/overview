@@ -9,6 +9,8 @@
 #include "Engine/Tile/TileCollectionLoader.hpp"
 #include "Engine/Tile/TileCollection.hpp"
 #include "Engine/Debug.hpp"
+#include "CKGfx/BitmapLibrary.hpp"
+#include "CKGfx/BitmapAtlas.hpp"
 
 #include <cinek/json/jsonstreambuf.hpp>
 #include <cinek/json/json.hpp>
@@ -18,17 +20,18 @@
 namespace cinek {
     namespace overview {
 
-TileCollectionLoader::TileCollectionLoader(
-        const JsonValue& modelConsts,
-        std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
-        std::function<void(TileCollection&&)> collectionCb,
-        const Allocator& allocator) :
-    _modelConsts(modelConsts),
+TileCollectionLoader::TileCollectionLoader
+(
+    const gfx::BitmapLibrary& bitmapLibrary,
+    const JsonValue& modelConsts,
+    const RequestAtlasCb& atlasReqCb,
+    const CollectionLoadedCb& collectionCb,
+    const Allocator& allocator
+) :
+    _bitmapLibrary(&bitmapLibrary),
+    _modelConsts(&modelConsts),
     _atlasReqCb(atlasReqCb),
-    _bitmapReqCb(bitmapReqCb),
     _collectionCb(collectionCb),
-    _atlasId(kCinekBitmapAtlas_Invalid),
     _tiles(allocator)
 {
 }
@@ -52,6 +55,10 @@ bool TileCollectionLoader::parseAttribute(const char* key, const JsonValue& valu
 bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
 {
     Tile tile;
+    
+    auto atlas = _bitmapLibrary->atlas(_atlasId);
+    if (!atlas)
+        return false;
 
     for (auto attrIt = object.MemberBegin(), attrItEnd = object.MemberEnd();
          attrIt != attrItEnd;
@@ -61,13 +68,13 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
         const char* attrName = attr.name.GetString();
         if (!strcmp(attrName, "name"))
         {
-            tile.bitmap.bmpAtlas = _atlasId;
-            tile.bitmap.bmpIndex = _bitmapReqCb(_atlasId, attr.value.GetString());
+            tile.bitmap.atlas = _atlasId;
+            tile.bitmap.index = atlas->bitmapIndexFromName(attr.value.GetString());
         }
         else if (!strcmp(attrName, "categories"))
         {
             const char* flagsStr = attr.value.GetString();
-            tile.categories = parseFlagsToUint(_modelConsts["categories"], flagsStr);
+            tile.categories = parseFlagsToUint((*_modelConsts)["categories"], flagsStr);
         }
         else if (!strcmp(attrName, "aabb"))
         {
@@ -92,7 +99,7 @@ bool TileCollectionLoader::parseModel(const char* key, JsonValue& object)
             if (attr.value.HasMember("access"))
             {
                 const char* flagsStr = attr.value["access"].GetString();
-                tile.collision.access = parseFlagsToUint(_modelConsts["access"], flagsStr);
+                tile.collision.access = parseFlagsToUint((*_modelConsts)["access"], flagsStr);
             }
             if (attr.value.HasMember("impedence"))
             {

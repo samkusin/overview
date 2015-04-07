@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */; };
+		373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBE91AD0A2400082DB63 /* BitmapAtlasLoader.cpp */; };
+		373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBEB1AD0A2400082DB63 /* BitmapLibrary.cpp */; };
+		373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBF11AD1E6960082DB63 /* TextureAtlas.cpp */; };
+		373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBF61AD31B4E0082DB63 /* stb.cpp */; };
 		378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1E21ACF6AB2004C8004 /* AABB.cpp */; };
 		378DC20C1ACF6AB2004C8004 /* EntityTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1EB1ACF6AB2004C8004 /* EntityTemplate.cpp */; };
 		378DC20D1ACF6AB2004C8004 /* EntityTemplateCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1ED1ACF6AB2004C8004 /* EntityTemplateCollection.cpp */; };
 		378DC20E1ACF6AB2004C8004 /* EntityTemplateCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1EF1ACF6AB2004C8004 /* EntityTemplateCollectionLoader.cpp */; };
-		378DC2101ACF6AB2004C8004 /* ModelCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1F41ACF6AB2004C8004 /* ModelCollectionLoader.cpp */; };
 		378DC2111ACF6AB2004C8004 /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1F91ACF6AB2004C8004 /* Sprite.cpp */; };
 		378DC2121ACF6AB2004C8004 /* SpriteAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1FB1ACF6AB2004C8004 /* SpriteAnimation.cpp */; };
 		378DC2131ACF6AB2004C8004 /* SpriteCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1FD1ACF6AB2004C8004 /* SpriteCollection.cpp */; };
@@ -19,6 +23,7 @@
 		378DC2151ACF6AB2004C8004 /* SpriteInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2011ACF6AB2004C8004 /* SpriteInstance.cpp */; };
 		378DC2161ACF6AB2004C8004 /* TileCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2061ACF6AB2004C8004 /* TileCollectionLoader.cpp */; };
 		378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2181ACF7112004C8004 /* GameTypes.cpp */; };
+		378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2201ACF757D004C8004 /* OVMain.cpp */; };
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
 		37F368FD1ACDFEE600314DB2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FC1ACDFEE600314DB2 /* Carbon.framework */; };
 		37F368FF1ACDFEF300314DB2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FE1ACDFEF300314DB2 /* Cocoa.framework */; };
@@ -58,6 +63,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapAtlas.cpp; path = ../../CKGfx/BitmapAtlas.cpp; sourceTree = "<group>"; };
+		373ACBE81AD0A2400082DB63 /* BitmapAtlas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapAtlas.hpp; path = ../../CKGfx/BitmapAtlas.hpp; sourceTree = "<group>"; };
+		373ACBE91AD0A2400082DB63 /* BitmapAtlasLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapAtlasLoader.cpp; path = ../../CKGfx/BitmapAtlasLoader.cpp; sourceTree = "<group>"; };
+		373ACBEA1AD0A2400082DB63 /* BitmapAtlasLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapAtlasLoader.hpp; path = ../../CKGfx/BitmapAtlasLoader.hpp; sourceTree = "<group>"; };
+		373ACBEB1AD0A2400082DB63 /* BitmapLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapLibrary.cpp; path = ../../CKGfx/BitmapLibrary.cpp; sourceTree = "<group>"; };
+		373ACBEC1AD0A2400082DB63 /* BitmapLibrary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapLibrary.hpp; path = ../../CKGfx/BitmapLibrary.hpp; sourceTree = "<group>"; };
+		373ACBF01AD1B44B0082DB63 /* GfxTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = GfxTypes.hpp; path = ../../CKGfx/GfxTypes.hpp; sourceTree = "<group>"; };
+		373ACBF11AD1E6960082DB63 /* TextureAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureAtlas.cpp; path = ../../CKGfx/TextureAtlas.cpp; sourceTree = "<group>"; };
+		373ACBF21AD1E6960082DB63 /* TextureAtlas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TextureAtlas.hpp; path = ../../CKGfx/TextureAtlas.hpp; sourceTree = "<group>"; };
+		373ACBF51AD31B440082DB63 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stb_image.h; path = ../../CKGfx/External/stb/stb_image.h; sourceTree = "<group>"; };
+		373ACBF61AD31B4E0082DB63 /* stb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stb.cpp; path = ../../CKGfx/External/stb/stb.cpp; sourceTree = "<group>"; };
 		378DC1CA1ACF6346004C8004 /* Grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Grid.hpp; path = ../../Engine/Grid.hpp; sourceTree = "<group>"; };
 		378DC1E21ACF6AB2004C8004 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AABB.cpp; path = ../../Engine/AABB.cpp; sourceTree = "<group>"; };
 		378DC1E31ACF6AB2004C8004 /* AABB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AABB.hpp; path = ../../Engine/AABB.hpp; sourceTree = "<group>"; };
@@ -68,8 +84,6 @@
 		378DC1EF1ACF6AB2004C8004 /* EntityTemplateCollectionLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTemplateCollectionLoader.cpp; sourceTree = "<group>"; };
 		378DC1F01ACF6AB2004C8004 /* EntityTemplateCollectionLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTemplateCollectionLoader.hpp; sourceTree = "<group>"; };
 		378DC1F31ACF6AB2004C8004 /* ModelCollection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ModelCollection.hpp; path = ../../Engine/ModelCollection.hpp; sourceTree = "<group>"; };
-		378DC1F41ACF6AB2004C8004 /* ModelCollectionLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelCollectionLoader.cpp; path = ../../Engine/ModelCollectionLoader.cpp; sourceTree = "<group>"; };
-		378DC1F51ACF6AB2004C8004 /* ModelCollectionLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ModelCollectionLoader.hpp; path = ../../Engine/ModelCollectionLoader.hpp; sourceTree = "<group>"; };
 		378DC1F61ACF6AB2004C8004 /* ModelLibrary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ModelLibrary.hpp; path = ../../Engine/ModelLibrary.hpp; sourceTree = "<group>"; };
 		378DC1F71ACF6AB2004C8004 /* ModelTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ModelTypes.hpp; path = ../../Engine/ModelTypes.hpp; sourceTree = "<group>"; };
 		378DC1F91ACF6AB2004C8004 /* Sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sprite.cpp; sourceTree = "<group>"; };
@@ -89,6 +103,7 @@
 		378DC2081ACF6AB2004C8004 /* TileLibrary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileLibrary.hpp; sourceTree = "<group>"; };
 		378DC2181ACF7112004C8004 /* GameTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameTypes.cpp; path = ../GameTypes.cpp; sourceTree = "<group>"; };
 		378DC2191ACF7112004C8004 /* GameTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameTypes.hpp; path = ../GameTypes.hpp; sourceTree = "<group>"; };
+		378DC2201ACF757D004C8004 /* OVMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OVMain.cpp; path = ../Client/OVMain.cpp; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37F368FC1ACDFEE600314DB2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		37F368FE1ACDFEF300314DB2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -121,6 +136,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		373ACBF41AD31B320082DB63 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				373ACBF61AD31B4E0082DB63 /* stb.cpp */,
+				373ACBF51AD31B440082DB63 /* stb_image.h */,
+			);
+			name = External;
+			sourceTree = "<group>";
+		};
 		378DC1E71ACF6AB2004C8004 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +193,7 @@
 		378DC21B1ACF7148004C8004 /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				378DC2201ACF757D004C8004 /* OVMain.cpp */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -211,8 +236,6 @@
 				378DC1E21ACF6AB2004C8004 /* AABB.cpp */,
 				378DC1E31ACF6AB2004C8004 /* AABB.hpp */,
 				378DC1F31ACF6AB2004C8004 /* ModelCollection.hpp */,
-				378DC1F41ACF6AB2004C8004 /* ModelCollectionLoader.cpp */,
-				378DC1F51ACF6AB2004C8004 /* ModelCollectionLoader.hpp */,
 				378DC1F61ACF6AB2004C8004 /* ModelLibrary.hpp */,
 				378DC1F71ACF6AB2004C8004 /* ModelTypes.hpp */,
 				37F369041ACE00E100314DB2 /* Debug.hpp */,
@@ -224,11 +247,21 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		37F369A41ACE0E5E00314DB2 /* Graphics */ = {
+		37F369A41ACE0E5E00314DB2 /* CKGfx */ = {
 			isa = PBXGroup;
 			children = (
+				373ACBF41AD31B320082DB63 /* External */,
+				373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */,
+				373ACBE81AD0A2400082DB63 /* BitmapAtlas.hpp */,
+				373ACBE91AD0A2400082DB63 /* BitmapAtlasLoader.cpp */,
+				373ACBEA1AD0A2400082DB63 /* BitmapAtlasLoader.hpp */,
+				373ACBEB1AD0A2400082DB63 /* BitmapLibrary.cpp */,
+				373ACBEC1AD0A2400082DB63 /* BitmapLibrary.hpp */,
+				373ACBF01AD1B44B0082DB63 /* GfxTypes.hpp */,
+				373ACBF11AD1E6960082DB63 /* TextureAtlas.cpp */,
+				373ACBF21AD1E6960082DB63 /* TextureAtlas.hpp */,
 			);
-			name = Graphics;
+			name = CKGfx;
 			path = ..;
 			sourceTree = "<group>";
 		};
@@ -274,7 +307,7 @@
 			children = (
 				37B1FE661789F68F00C38E18 /* Prototype */,
 				37F368FB1ACDFE8500314DB2 /* Engine */,
-				37F369A41ACE0E5E00314DB2 /* Graphics */,
+				37F369A41ACE0E5E00314DB2 /* CKGfx */,
 				37F64A9B1780EA2C009116E7 /* Supporting Files */,
 			);
 			path = Overview;
@@ -365,11 +398,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				378DC20C1ACF6AB2004C8004 /* EntityTemplate.cpp in Sources */,
-				378DC2101ACF6AB2004C8004 /* ModelCollectionLoader.cpp in Sources */,
+				373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */,
+				378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */,
+				373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.m in Sources */,
 				378DC2131ACF6AB2004C8004 /* SpriteCollection.cpp in Sources */,
 				378DC2151ACF6AB2004C8004 /* SpriteInstance.cpp in Sources */,
 				378DC2161ACF6AB2004C8004 /* TileCollectionLoader.cpp in Sources */,
+				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
+				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
 				378DC20E1ACF6AB2004C8004 /* EntityTemplateCollectionLoader.cpp in Sources */,
 				378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */,
 				378DC20D1ACF6AB2004C8004 /* EntityTemplateCollection.cpp in Sources */,
@@ -377,6 +414,7 @@
 				378DC2111ACF6AB2004C8004 /* Sprite.cpp in Sources */,
 				378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */,
 				378DC2141ACF6AB2004C8004 /* SpriteCollectionLoader.cpp in Sources */,
+				373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +546,7 @@
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libLinearMath.a",
 					"$(PACKAGES_ROOT)/lib/libBulletCollision.a",
+					"$(PACKAGES_ROOT)/lib/libbgfxDebug.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.9;
@@ -541,6 +580,7 @@
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
 					"$(PACKAGES_ROOT)/lib/libLinearMath.a",
 					"$(PACKAGES_ROOT)/lib/libBulletCollision.a",
+					"$(PACKAGES_ROOT)/lib/libbgfxRelease.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.9;

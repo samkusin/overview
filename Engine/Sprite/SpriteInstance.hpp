@@ -12,6 +12,7 @@
 
 #include "Engine/ModelTypes.hpp"
 #include "Engine/AABB.hpp"
+#include "CKGFx/GfxTypes.hpp"
 
 #include <cinek/intrusive_list.hpp>
 #include <glm/glm.hpp>
@@ -63,13 +64,13 @@ namespace cinek {
          * @param  currentTime Time value following the time specified in setState
          * @return             [description]
          */
-        cinek_bitmap bitmapFromTime(uint32_t currentTime) const;
+        gfx::BitmapHandle bitmapFromTime(uint32_t currentTime) const;
          /**
          * Returns the bitmap at the specified frame index.
          * @param  index Frame index.
          * @return       Bitmap index.
          */
-        cinek_bitmap bitmapFrame(uint16_t index) const;
+        gfx::BitmapHandle bitmapFrame(uint16_t index) const;
 
         /**
          * Sets the sprite's state.  State relies on the sprite template's

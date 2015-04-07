@@ -13,7 +13,6 @@
 #include "Engine/Sprite/SpriteAnimation.hpp"
 #include "Engine/AABB.hpp"
 
-#include <cinek/rendertypes.h>
 #include <cinek/allocator.hpp>
 #include <cinek/objectstack.hpp>
 #include <cinek/vector.hpp>
@@ -46,7 +45,7 @@ public:
      * @param allocator     An optional allocator.
      */
     Sprite(const std::string& name,
-           cinek_bitmap_atlas bitmapClass,
+           gfx::BitmapAtlasHandle bitmapClass,
            const glm::ivec2& anchor,
            const AABB<Point>& aabb,
            uint16_t numStates,
@@ -63,7 +62,7 @@ public:
     }
 
     /** @return Returns the bitmap class for bitmaps used in the sprite. */
-    cinek_bitmap_atlas getBitmapClass() const {
+    gfx::BitmapAtlasHandle getBitmapClass() const {
         return _bitmapClass;
     }
     /** @return The x,y anchor from the sprite's origin */
@@ -100,7 +99,7 @@ public:
 private:
     Allocator _allocator;
     std::string _name;
-    cinek_bitmap_atlas _bitmapClass;
+    gfx::BitmapAtlasHandle _bitmapClass;
     glm::ivec2 _anchor;
     AABB<Point> _aabb;
 

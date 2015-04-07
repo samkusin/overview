@@ -11,8 +11,7 @@
 #define Overview_Model_SpriteAnimation_hpp
 
 #include "Engine/ModelTypes.hpp"
-
-#include <cinek/rendertypes.h>
+#include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {
     namespace overview {
@@ -34,14 +33,14 @@ namespace cinek {
          * \param frameCount Number of frames in the state animation.
          */
         SpriteAnimation(AnimationStateId id, uint16_t frameCount,
-                        cinek_bitmap_index* frames,
+                        gfx::BitmapIndex* frames,
                         uint32_t duration);
         /**
          * Returns the bitmap at the specified frame index.
          * @param  index Frame index.
          * @return       Bitmap index.
          */
-        cinek_bitmap_index getFrame(uint16_t index) const {
+        gfx::BitmapIndex getFrame(uint16_t index) const {
             return _frames[index % _frameCount];
         }
         /**
@@ -49,7 +48,7 @@ namespace cinek {
          * @param  timeValue The time index.
          * @return           The bitmap frame index.
          */
-        cinek_bitmap_index getFrameByTime(uint32_t timeValue) const;
+        gfx::BitmapIndex getFrameByTime(uint32_t timeValue) const;
         /**
          * \return Returns the number of frames in the state animation.
          */
@@ -63,7 +62,7 @@ namespace cinek {
          * @param index  Index into animation.
          * @param bitmap Bitmap index.
          */
-        void setFrame(uint16_t index, cinek_bitmap_index bitmap) {
+        void setFrame(uint16_t index, gfx::BitmapIndex bitmap) {
             _frames[index % _frameCount] = bitmap;
         }
 
@@ -71,7 +70,7 @@ namespace cinek {
         AnimationStateId _id;
         uint32_t _duration;
         uint16_t _frameCount;
-        cinek_bitmap_index* _frames;
+        gfx::BitmapIndex* _frames;
     };
 
     }   // namespace overview

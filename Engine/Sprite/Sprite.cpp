@@ -16,14 +16,13 @@ namespace cinek {
     namespace overview {
 
 Sprite::Sprite() :
-    _bitmapClass(kCinekBitmapAtlas_Invalid),
     _statePool(1, _allocator),
     _states(_allocator)
 {
 }
 
 Sprite::Sprite(const std::string& name,
-               cinek_bitmap_atlas bitmapClass,
+               gfx::BitmapAtlasHandle bitmapClass,
                const glm::ivec2& anchor,
                const AABB<Point>& aabb,
                uint16_t numStates,
@@ -56,7 +55,7 @@ Sprite::Sprite(Sprite&& other) :
     _statePool(std::move(other._statePool)),
     _states(std::move(other._states))
 {
-    other._bitmapClass = kCinekBitmapAtlas_Invalid;
+    other._bitmapClass = nullptr;
 }
 
 Sprite& Sprite::operator=(Sprite&& other)
@@ -69,7 +68,7 @@ Sprite& Sprite::operator=(Sprite&& other)
     _statePool = std::move(other._statePool);
     _states = std::move(other._states);
 
-    other._bitmapClass = kCinekBitmapAtlas_Invalid;
+    other._bitmapClass = nullptr;
     return *this;
 }
 
@@ -92,7 +91,7 @@ SpriteAnimation* Sprite::createAnimation(
     SpriteAnimation* state = nullptr;
     if (stateIt == _states.end() || (*stateIt)->getId() != animId)
     {
-        cinek_bitmap_index* frames = _allocator.allocItems<cinek_bitmap_index>(frameCount);
+        gfx::BitmapIndex* frames = _allocator.allocItems<gfx::BitmapIndex>(frameCount);
         state = _statePool.allocateAndConstruct(animId, frameCount, frames, duration);
         _states.emplace(stateIt, state);
     }
@@ -101,7 +100,7 @@ SpriteAnimation* Sprite::createAnimation(
         state = (*stateIt);
         _allocator.free(state->_frames);
         state->~SpriteAnimation();
-        cinek_bitmap_index* frames = _allocator.allocItems<cinek_bitmap_index>(frameCount);
+        gfx::BitmapIndex* frames = _allocator.allocItems<gfx::BitmapIndex>(frameCount);
         ::new(state) SpriteAnimation(animId, frameCount, frames, duration);
     }
 

@@ -13,6 +13,7 @@
 
 #include "Engine/ModelTypes.hpp"
 #include "Engine/AABB.hpp"
+#include "CKGfx/GfxTypes.hpp"
 
 namespace cinek { namespace overview {
 
@@ -28,10 +29,7 @@ namespace cinek { namespace overview {
 struct Tile
 {
     /// Points to the bitmap representing the tile
-    cinek_bitmap bitmap = {
-        kCinekBitmapAtlas_Invalid,
-        kCinekBitmapIndex_Invalid
-    };
+    gfx::BitmapHandle bitmap;
     uint32_t categories = 0;    ///< Application defined flags for the tile
     AABB<Point> aabb;           ///< An axis-aligned bounding box for the tile
     glm::ivec2 anchor;          ///< 2D Anchor from tile origin

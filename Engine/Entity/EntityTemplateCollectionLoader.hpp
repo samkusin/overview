@@ -12,8 +12,8 @@
 #define Overview_Game_Model_EntityTemplateCollectionLoader_hpp
 
 #include "Engine/Entity/EntityTemplateCollection.hpp"
-#include "Engine/ModelCollectionLoader.hpp"
 
+#include <cinek/json/jsoncollectionloader.hpp>
 #include <cinek/vector.hpp>
 
 namespace cinek { namespace overview {
@@ -22,7 +22,7 @@ namespace cinek { namespace overview {
 /// @brief   Handler for unserializing EntityTemplateCollection objects
 ///          from an input JSON stream.
 ///
-class EntityTemplateCollectionLoader : public ModelCollectionLoader
+class EntityTemplateCollectionLoader : public JsonCollectionLoader
 {
 public:
     /// Constructor

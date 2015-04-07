@@ -10,11 +10,17 @@
 #ifndef Overview_Model_TileCollectionLoader_hpp
 #define Overview_Model_TileCollectionLoader_hpp
 
-#include "Engine/ModelCollectionLoader.hpp"
 #include "Engine/Tile/TileCollection.hpp"
 
+#include <cinek/json/jsoncollectionloader.hpp>
 #include <cinek/string.hpp>
 #include <functional>
+
+namespace cinek {
+    namespace gfx {
+        class BitmapLibrary;
+    }
+}
 
 namespace cinek { namespace overview {
 
@@ -23,9 +29,12 @@ namespace cinek { namespace overview {
 /// @brief   Handler for unserializing TileCollection objects from an input JSON
 ///          stream.
 ///
-class TileCollectionLoader : public ModelCollectionLoader
+class TileCollectionLoader : public JsonCollectionLoader
 {
 public:
+    using RequestAtlasCb = std::function<gfx::BitmapAtlasHandle(const char* atlasName)>;
+    using CollectionLoadedCb = std::function<void(TileCollection&& atlas)>;
+    
     /// Constructor
     /// Applications supply event handlers called during unserialization
     /// @param  tileFlagConsts An object containing a bitflag enum for the
@@ -36,12 +45,14 @@ public:
     /// @param  collectionCb Issued when a TileCollection has been unserialized
     /// @param  allocator   The allocator for memory operations
     ///
-    TileCollectionLoader(
+    TileCollectionLoader
+    (
+        const gfx::BitmapLibrary& bitmapLibrary,
         const JsonValue& modelConsts,
-        std::function<cinek_bitmap_atlas(const char*)> atlasReqCb,
-        std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> bitmapReqCb,
-        std::function<void(TileCollection&&)> collectionCb,
-        const Allocator& allocator);
+        const RequestAtlasCb& atlasReqCb,
+        const CollectionLoadedCb& collectionCb,
+        const Allocator& allocator
+    );
 
     bool startCollection(const char* name, uint32_t modelCount);
     bool parseAttribute(const char* key, const JsonValue& value);
@@ -49,14 +60,14 @@ public:
     bool endCollection();
 
 private:
-    const JsonValue& _modelConsts;
+    const gfx::BitmapLibrary* _bitmapLibrary;
+    const JsonValue* _modelConsts;
 
-    std::function<cinek_bitmap_atlas(const char*)> _atlasReqCb;
-    std::function<cinek_bitmap_index(cinek_bitmap_atlas, const char*)> _bitmapReqCb;
-    std::function<void(TileCollection&&)> _collectionCb;
+    RequestAtlasCb _atlasReqCb;
+    CollectionLoadedCb _collectionCb;
 
     std::string _name;
-    cinek_bitmap_atlas _atlasId;
+    gfx::BitmapAtlasHandle _atlasId;
     typedef std::pair<uint16_t, Tile> TilePair;
     vector< TilePair > _tiles;
 };
