@@ -1,19 +1,19 @@
-/**
- * @file    Core/MessageDispatcher.cpp
- * @author  Samir Sinha
- * @date    11/15/2014
- * @brief   Handles queueing and dispatch of events to their delgates
- * @copyright Copyright 2014 Samir Sinha.  All rights reserved.
- * @license ISC
- *          (http://www.isc.org/downloads/software-support-policy/isc-license/)
- */
+//
+//  MessageDispatcher.hpp
+//  Overview
+//
+//  Created by Samir Sinha on 11/15/14.
+//  Copyright (c) 2014 Cinekine. All rights reserved.
+//
+
 
 #include "messagedispatcher.hpp"
-#include "messagequeue.hpp"
+#include "messagestream.hpp"
 
-#include "cinek/debug.hpp"
+#include <cinek/debug.hpp>
+#include <capnp/serialize.h>
 
-namespace cinek {
+namespace cinek { namespace overview {
 
 MessageDispatcher::MessageDispatcher(size_t delegateCount, size_t classCount,
                                      size_t sequenceCount,
@@ -53,11 +53,13 @@ MessageDispatcher::~MessageDispatcher()
     }
 }
 
-
-MessageDelegateHandle MessageDispatcher::queue(MessageQueue& msgQueue,
-        const Message::ClassId& msgClass,
-        const SDO& msgData,
-        const Delegate& cb)
+MessageDelegateHandle MessageDispatcher::queue
+(
+    MessageStream& stream,
+    capnp::MessageBuilder& msg,
+    const MessageHeader::ClassId& msgClass,
+    const Delegate& cb
+)
 {
     if (cb)
     {
@@ -97,37 +99,21 @@ MessageDelegateHandle MessageDispatcher::queue(MessageQueue& msgQueue,
         entry->seqId = _nextSeqId;
     }
 
-    msgQueue.push(msgClass, msgData, _nextSeqId);
-
+    MessageHeader header;
+    header.classId = msgClass;
+    header.type = MessageHeader::kCommand;
+    header.seqId = _nextSeqId;
+    writeMessageHeader(stream, header);
+    writeMessage(stream, msg);
+    
     return cb ? _nextDelegateHandle : 0;
 }
 
-void MessageDispatcher::send(const Message::ClassId& classId, const SDO& data,
-                             Message::ClassId seqId,
-                             void* context)
-{
-    auto it = lowerBoundIterator(classId, _classDelegates);
-    if (it == _classDelegates.end() || it->first != classId)
-        return;
-
-    auto head = it->second;
-    auto entry = head->next;
-    while (entry != head)
-    {
-        //  handle case where delegate deregisters the current delegate
-        obtainDelegateEntry(entry);
-
-        entry->del(&data, seqId, context);
-        auto next = entry->next;
-
-        releaseDelegateEntry(entry);
-
-        entry = next;
-    }
-}
-
-MessageDelegateHandle MessageDispatcher::on(const Message::ClassId& id,
-                                            const Delegate& del)
+MessageDelegateHandle MessageDispatcher::on
+(
+    const MessageHeader::ClassId& id,
+    const Delegate& del
+)
 {
     auto it = lowerBoundIterator(id, _classDelegates);
 
@@ -201,22 +187,26 @@ void MessageDispatcher::remove(MessageDelegateHandle delegateHandle)
     releaseDelegateEntry(entry);
 }
 
-void MessageDispatcher::dispatch(MessageQueue& queue, uint32_t deltaMs,
-                                 void* context)
+void MessageDispatcher::dispatch(MessageStream& stream, void* context)
 {
-    while (!queue.empty())
+    MessageHeader hdr;
+    do
     {
-        auto& msg = queue.front();
-        //  first, dispatch to any sequence based listeners
-        if (msg.sequenceId)
+        readMessageHeader(stream, hdr);
+        if (hdr.type <= MessageHeader::kEnd)
+            continue;
+   
+        capnp::InputStreamMessageReader reader(stream);
+        
+        if (hdr.seqId)
         {
-            auto it = _sequenceDelegates.find(msg.sequenceId);
+            auto it = _sequenceDelegates.find(hdr.seqId);
             if (it != _sequenceDelegates.end())
             {
                 auto entry = it->second;
                 {
                     obtainDelegateEntry(entry);
-                    entry->del(msg.data.get(), entry->seqId, context);
+                    entry->del(reader, entry->seqId, context);
                     //  invalidate sequence entry before releasing to prevent an
                     //  unnecessary lookup of the entry during release.
                     releaseDelegateEntry(entry);
@@ -227,11 +217,30 @@ void MessageDispatcher::dispatch(MessageQueue& queue, uint32_t deltaMs,
                 releaseDelegateEntry(entry);
             }
         }
-        //  dispatch to any class-based listeners
-        send(msg.classId, *msg.data.get(), msg.sequenceId, context);
-        queue.pop();
-    }
+        else
+        {
+            //  dispatch to any class-based listeners
+            auto it = lowerBoundIterator(hdr.classId, _classDelegates);
+            if (it == _classDelegates.end() || it->first != hdr.classId)
+                return;
 
+            auto head = it->second;
+            auto entry = head->next;
+            while (entry != head)
+            {
+                //  handle case where delegate deregisters the current delegate
+                obtainDelegateEntry(entry);
+
+                entry->del(reader, 0, context);
+                auto next = entry->next;
+
+                releaseDelegateEntry(entry);
+
+                entry = next;
+            }
+        }
+    }
+    while(hdr.type > MessageHeader::kEnd);
 }
 
 void MessageDispatcher::obtainDelegateEntry(DelegateEntry* entry)
@@ -269,4 +278,4 @@ void MessageDispatcher::releaseDelegateEntry(DelegateEntry* entry)
     }
 }
 
-} /* namespace cinek */
+} /* namespace overview */ } /* namespace cinek */

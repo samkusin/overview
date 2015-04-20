@@ -24,28 +24,34 @@
 		378DC2161ACF6AB2004C8004 /* TileCollectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2061ACF6AB2004C8004 /* TileCollectionLoader.cpp */; };
 		378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2181ACF7112004C8004 /* GameTypes.cpp */; };
 		378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC2201ACF757D004C8004 /* OVMain.cpp */; };
+		37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A546F81AE2E50900341500 /* JsonParseExtensions.cpp */; };
+		37A546FF1AE3020E00341500 /* appevents.capnp in Resources */ = {isa = PBXBuildFile; fileRef = 37A546FE1AE3020E00341500 /* appevents.capnp */; };
+		37A547001AE3022700341500 /* appevents.capnp in Sources */ = {isa = PBXBuildFile; fileRef = 37A546FE1AE3020E00341500 /* appevents.capnp */; };
+		37A547041AE313FF00341500 /* MessageDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A547011AE313FF00341500 /* MessageDispatcher.cpp */; };
+		37A547061AE32B5B00341500 /* MessageStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A547051AE32B5B00341500 /* MessageStream.cpp */; };
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
+		37AE99171ADF0C4D00497B6F /* ClientController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AE99151ADF0C4D00497B6F /* ClientController.cpp */; };
 		37F368FD1ACDFEE600314DB2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FC1ACDFEE600314DB2 /* Carbon.framework */; };
 		37F368FF1ACDFEF300314DB2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FE1ACDFEF300314DB2 /* Cocoa.framework */; };
 		37F369011ACDFEFA00314DB2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369001ACDFEFA00314DB2 /* IOKit.framework */; };
 		37F369031ACDFF0A00314DB2 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369021ACDFF0A00314DB2 /* libiconv.dylib */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
-		37F64AA11780EA2C009116E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.m */; };
+		37F64AA11780EA2C009116E7 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.mm */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-		37AAC1C419F358FE00C32899 /* PBXBuildRule */ = {
+		37A546F31AE2DCC400341500 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.proto";
+			filePatterns = "*.capnp";
 			fileType = pattern.proxy;
 			isEditable = 1;
 			outputFiles = (
-				"${PROJECT_DIR}/../Gen/$(INPUT_FILE_BASE).pb.h",
-				"${PROJECT_DIR}/../Gen/$(INPUT_FILE_BASE).pb.cc",
+				"$(DERIVED_FILE_DIR)/Gen/$(INPUT_FILE_BASE).capnp.c++",
+				"$(DERIVED_FILE_DIR)/Gen/$(INPUT_FILE_BASE).capnp.h",
 			);
-			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/protoc --proto_path=${INPUT_FILE_DIR} ${INPUT_FILE_PATH} --cpp_out=${PROJECT_DIR}/../Gen\n";
+			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/capnp compile -o${PACKAGES_ROOT}/bin/capnpc-c++:${DERIVED_FILE_DIR}/Gen ${INPUT_FILE_NAME}\n";
 		};
 /* End PBXBuildRule section */
 
@@ -104,7 +110,17 @@
 		378DC2181ACF7112004C8004 /* GameTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameTypes.cpp; path = ../GameTypes.cpp; sourceTree = "<group>"; };
 		378DC2191ACF7112004C8004 /* GameTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameTypes.hpp; path = ../GameTypes.hpp; sourceTree = "<group>"; };
 		378DC2201ACF757D004C8004 /* OVMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OVMain.cpp; path = ../Client/OVMain.cpp; sourceTree = "<group>"; };
+		37A546F81AE2E50900341500 /* JsonParseExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JsonParseExtensions.cpp; path = ../../Engine/Utils/JsonParseExtensions.cpp; sourceTree = "<group>"; };
+		37A546F91AE2E50900341500 /* JsonParseExtensions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JsonParseExtensions.hpp; path = ../../Engine/Utils/JsonParseExtensions.hpp; sourceTree = "<group>"; };
+		37A546FE1AE3020E00341500 /* appevents.capnp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = appevents.capnp; path = ../Objects/appevents.capnp; sourceTree = "<group>"; };
+		37A547011AE313FF00341500 /* MessageDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDispatcher.cpp; path = ../MessageDispatcher.cpp; sourceTree = "<group>"; };
+		37A547021AE313FF00341500 /* MessageDispatcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageDispatcher.hpp; path = ../MessageDispatcher.hpp; sourceTree = "<group>"; };
+		37A547031AE313FF00341500 /* MessageStream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageStream.hpp; path = ../MessageStream.hpp; sourceTree = "<group>"; };
+		37A547051AE32B5B00341500 /* MessageStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStream.cpp; path = ../MessageStream.cpp; sourceTree = "<group>"; };
+		37A547071AE5992A00341500 /* MessageTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = MessageTypes.hpp; path = ../MessageTypes.hpp; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
+		37AE99151ADF0C4D00497B6F /* ClientController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClientController.cpp; path = ../Client/ClientController.cpp; sourceTree = "<group>"; };
+		37AE99161ADF0C4D00497B6F /* ClientController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ClientController.hpp; path = ../Client/ClientController.hpp; sourceTree = "<group>"; };
 		37F368FC1ACDFEE600314DB2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		37F368FE1ACDFEF300314DB2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		37F369001ACDFEFA00314DB2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -115,7 +131,7 @@
 		37F64A911780EA2C009116E7 /* Overview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Overview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37F64A9C1780EA2C009116E7 /* Overview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Overview-Info.plist"; sourceTree = "<group>"; };
 		37F64A9E1780EA2C009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		37F64AA01780EA2C009116E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Overview/main.m; sourceTree = "<group>"; };
+		37F64AA01780EA2C009116E7 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = Overview/main.mm; sourceTree = "<group>"; };
 		37F64AA41780EA2D009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		37F64ACD1780F295009116E7 /* Settings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Settings.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -194,6 +210,8 @@
 			isa = PBXGroup;
 			children = (
 				378DC2201ACF757D004C8004 /* OVMain.cpp */,
+				37AE99151ADF0C4D00497B6F /* ClientController.cpp */,
+				37AE99161ADF0C4D00497B6F /* ClientController.hpp */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -201,18 +219,41 @@
 		378DC21C1ACF735A004C8004 /* Apple */ = {
 			isa = PBXGroup;
 			children = (
-				37F64AA01780EA2C009116E7 /* main.m */,
+				37F64AA01780EA2C009116E7 /* main.mm */,
 			);
 			name = Apple;
+			sourceTree = "<group>";
+		};
+		37A546F41AE2E3D700341500 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				37A546FE1AE3020E00341500 /* appevents.capnp */,
+			);
+			name = Objects;
+			sourceTree = "<group>";
+		};
+		37A546F71AE2E4E200341500 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				37A546F81AE2E50900341500 /* JsonParseExtensions.cpp */,
+				37A546F91AE2E50900341500 /* JsonParseExtensions.hpp */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
-				378DC21C1ACF735A004C8004 /* Apple */,
-				378DC21B1ACF7148004C8004 /* Client */,
+				37A547011AE313FF00341500 /* MessageDispatcher.cpp */,
+				37A547021AE313FF00341500 /* MessageDispatcher.hpp */,
+				37A547051AE32B5B00341500 /* MessageStream.cpp */,
+				37A547031AE313FF00341500 /* MessageStream.hpp */,
+				37A547071AE5992A00341500 /* MessageTypes.hpp */,
 				378DC2181ACF7112004C8004 /* GameTypes.cpp */,
 				378DC2191ACF7112004C8004 /* GameTypes.hpp */,
+				378DC21C1ACF735A004C8004 /* Apple */,
+				37A546F41AE2E3D700341500 /* Objects */,
+				378DC21B1ACF7148004C8004 /* Client */,
 				37B8F2F519F2DFCC00995B61 /* Sim */,
 			);
 			name = Prototype;
@@ -230,6 +271,7 @@
 		37F368FB1ACDFE8500314DB2 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				37A546F71AE2E4E200341500 /* Utils */,
 				378DC1F81ACF6AB2004C8004 /* Sprite */,
 				378DC2031ACF6AB2004C8004 /* Tile */,
 				378DC1E71ACF6AB2004C8004 /* Entity */,
@@ -345,7 +387,7 @@
 				37CEF196179F9AD1007AB3A6 /* Copy Files */,
 			);
 			buildRules = (
-				37AAC1C419F358FE00C32899 /* PBXBuildRule */,
+				37A546F31AE2DCC400341500 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -386,6 +428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
+				37A546FF1AE3020E00341500 /* appevents.capnp in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -397,20 +440,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37A547041AE313FF00341500 /* MessageDispatcher.cpp in Sources */,
+				37A547001AE3022700341500 /* appevents.capnp in Sources */,
 				378DC20C1ACF6AB2004C8004 /* EntityTemplate.cpp in Sources */,
 				373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */,
 				378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */,
 				373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */,
-				37F64AA11780EA2C009116E7 /* main.m in Sources */,
+				37F64AA11780EA2C009116E7 /* main.mm in Sources */,
 				378DC2131ACF6AB2004C8004 /* SpriteCollection.cpp in Sources */,
 				378DC2151ACF6AB2004C8004 /* SpriteInstance.cpp in Sources */,
 				378DC2161ACF6AB2004C8004 /* TileCollectionLoader.cpp in Sources */,
 				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
+				37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */,
 				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
 				378DC20E1ACF6AB2004C8004 /* EntityTemplateCollectionLoader.cpp in Sources */,
 				378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */,
 				378DC20D1ACF6AB2004C8004 /* EntityTemplateCollection.cpp in Sources */,
+				37A547061AE32B5B00341500 /* MessageStream.cpp in Sources */,
 				378DC2121ACF6AB2004C8004 /* SpriteAnimation.cpp in Sources */,
+				37AE99171ADF0C4D00497B6F /* ClientController.cpp in Sources */,
 				378DC2111ACF6AB2004C8004 /* Sprite.cpp in Sources */,
 				378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */,
 				378DC2141ACF6AB2004C8004 /* SpriteCollectionLoader.cpp in Sources */,
@@ -544,6 +592,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
+					"$(PACKAGES_ROOT)/lib/libkj.a",
+					"$(PACKAGES_ROOT)/lib/libcapnp.a",
 					"$(PACKAGES_ROOT)/lib/libLinearMath.a",
 					"$(PACKAGES_ROOT)/lib/libBulletCollision.a",
 					"$(PACKAGES_ROOT)/lib/libbgfxDebug.a",
@@ -578,6 +628,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
+					"$(PACKAGES_ROOT)/lib/libkj.a",
+					"$(PACKAGES_ROOT)/lib/libcapnp.a",
 					"$(PACKAGES_ROOT)/lib/libLinearMath.a",
 					"$(PACKAGES_ROOT)/lib/libBulletCollision.a",
 					"$(PACKAGES_ROOT)/lib/libbgfxRelease.a",

@@ -11,6 +11,7 @@
 #define Overview_Model_TileCollectionLoader_hpp
 
 #include "Engine/Tile/TileCollection.hpp"
+#include "Engine/Utils/JsonParseExtensions.hpp"
 
 #include <cinek/json/jsoncollectionloader.hpp>
 #include <cinek/string.hpp>

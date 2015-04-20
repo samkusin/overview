@@ -10,6 +10,7 @@
 #include "Engine/Sprite/Sprite.hpp"
 #include "Engine/Sprite/SpriteCollection.hpp"
 #include "Engine/Debug.hpp"
+#include "Engine/Utils/JsonParseExtensions.hpp"
 
 #include "CKGfx/BitmapLibrary.hpp"
 #include "CKGfx/BitmapAtlas.hpp"
