@@ -12,6 +12,8 @@
 		373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBEB1AD0A2400082DB63 /* BitmapLibrary.cpp */; };
 		373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBF11AD1E6960082DB63 /* TextureAtlas.cpp */; };
 		373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBF61AD31B4E0082DB63 /* stb.cpp */; };
+		378A996C1AEAE2BD008BD771 /* ShaderLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378A996A1AEAE2BD008BD771 /* ShaderLibrary.cpp */; };
+		378A996F1AEB107F008BD771 /* VertexTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378A996D1AEB107F008BD771 /* VertexTypes.cpp */; };
 		378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1E21ACF6AB2004C8004 /* AABB.cpp */; };
 		378DC20C1ACF6AB2004C8004 /* EntityTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1EB1ACF6AB2004C8004 /* EntityTemplate.cpp */; };
 		378DC20D1ACF6AB2004C8004 /* EntityTemplateCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1ED1ACF6AB2004C8004 /* EntityTemplateCollection.cpp */; };
@@ -30,7 +32,11 @@
 		37A547041AE313FF00341500 /* MessageDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A547011AE313FF00341500 /* MessageDispatcher.cpp */; };
 		37A547061AE32B5B00341500 /* MessageStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A547051AE32B5B00341500 /* MessageStream.cpp */; };
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
-		37AE99171ADF0C4D00497B6F /* ClientController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AE99151ADF0C4D00497B6F /* ClientController.cpp */; };
+		37B30CB81AED74870029887F /* GameStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B30CB61AED74870029887F /* GameStage.cpp */; };
+		37B30CBD1AED81BC0029887F /* fs_cubes.fs in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBB1AED81BC0029887F /* fs_cubes.fs */; };
+		37B30CBE1AED81BC0029887F /* vs_cubes.vs in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBC1AED81BC0029887F /* vs_cubes.vs */; };
+		37B30CC01AED85E20029887F /* varying.def.sc in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBF1AED85E20029887F /* varying.def.sc */; };
+		37B30CC21AED85ED0029887F /* shaderlib.sh in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CC11AED85ED0029887F /* shaderlib.sh */; };
 		37F368FD1ACDFEE600314DB2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FC1ACDFEE600314DB2 /* Carbon.framework */; };
 		37F368FF1ACDFEF300314DB2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FE1ACDFEF300314DB2 /* Cocoa.framework */; };
 		37F369011ACDFEFA00314DB2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369001ACDFEFA00314DB2 /* IOKit.framework */; };
@@ -52,6 +58,28 @@
 				"$(DERIVED_FILE_DIR)/Gen/$(INPUT_FILE_BASE).capnp.h",
 			);
 			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/capnp compile -o${PACKAGES_ROOT}/bin/capnpc-c++:${DERIVED_FILE_DIR}/Gen ${INPUT_FILE_NAME}\n";
+		};
+		37B30CBA1AED81A10029887F /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.vs";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"$(DATA_ROOT)/Shaders/$(INPUT_FILE_BASE).bin",
+			);
+			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/shaderc --type v --platform osx -i ${PACKAGES_ROOT}/include/bgfx -f ${INPUT_FILE_NAME} -o ${DATA_ROOT}/Shaders/${INPUT_FILE_BASE}.bin";
+		};
+		37B30CC31AED861A0029887F /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.fs";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"$(DATA_ROOT)/Shaders/$(INPUT_FILE_BASE).bin",
+			);
+			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/shaderc --type f --platform osx -i ${PACKAGES_ROOT}/include/bgfx -f ${INPUT_FILE_NAME} -o ${DATA_ROOT}/Shaders/${INPUT_FILE_BASE}.bin";
 		};
 /* End PBXBuildRule section */
 
@@ -80,6 +108,11 @@
 		373ACBF21AD1E6960082DB63 /* TextureAtlas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TextureAtlas.hpp; path = ../../CKGfx/TextureAtlas.hpp; sourceTree = "<group>"; };
 		373ACBF51AD31B440082DB63 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stb_image.h; path = ../../CKGfx/External/stb/stb_image.h; sourceTree = "<group>"; };
 		373ACBF61AD31B4E0082DB63 /* stb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stb.cpp; path = ../../CKGfx/External/stb/stb.cpp; sourceTree = "<group>"; };
+		378A99641AEAD1A3008BD771 /* RenderResources.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderResources.hpp; path = ../Client/Render/RenderResources.hpp; sourceTree = "<group>"; };
+		378A996A1AEAE2BD008BD771 /* ShaderLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderLibrary.cpp; path = ../../CKGfx/ShaderLibrary.cpp; sourceTree = "<group>"; };
+		378A996B1AEAE2BD008BD771 /* ShaderLibrary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ShaderLibrary.hpp; path = ../../CKGfx/ShaderLibrary.hpp; sourceTree = "<group>"; };
+		378A996D1AEB107F008BD771 /* VertexTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertexTypes.cpp; path = ../../CKGfx/VertexTypes.cpp; sourceTree = "<group>"; };
+		378A996E1AEB107F008BD771 /* VertexTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VertexTypes.hpp; path = ../../CKGfx/VertexTypes.hpp; sourceTree = "<group>"; };
 		378DC1CA1ACF6346004C8004 /* Grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Grid.hpp; path = ../../Engine/Grid.hpp; sourceTree = "<group>"; };
 		378DC1E21ACF6AB2004C8004 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AABB.cpp; path = ../../Engine/AABB.cpp; sourceTree = "<group>"; };
 		378DC1E31ACF6AB2004C8004 /* AABB.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AABB.hpp; path = ../../Engine/AABB.hpp; sourceTree = "<group>"; };
@@ -119,8 +152,13 @@
 		37A547051AE32B5B00341500 /* MessageStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStream.cpp; path = ../MessageStream.cpp; sourceTree = "<group>"; };
 		37A547071AE5992A00341500 /* MessageTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = MessageTypes.hpp; path = ../MessageTypes.hpp; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
-		37AE99151ADF0C4D00497B6F /* ClientController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClientController.cpp; path = ../Client/ClientController.cpp; sourceTree = "<group>"; };
-		37AE99161ADF0C4D00497B6F /* ClientController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ClientController.hpp; path = ../Client/ClientController.hpp; sourceTree = "<group>"; };
+		37AE99161ADF0C4D00497B6F /* Stage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Stage.hpp; path = ../Client/Stage.hpp; sourceTree = "<group>"; };
+		37B30CB61AED74870029887F /* GameStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameStage.cpp; path = ../Client/GameStage/GameStage.cpp; sourceTree = "<group>"; };
+		37B30CB71AED74870029887F /* GameStage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameStage.hpp; path = ../Client/GameStage/GameStage.hpp; sourceTree = "<group>"; };
+		37B30CBB1AED81BC0029887F /* fs_cubes.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_cubes.fs; path = ../Client/Shaders/fs_cubes.fs; sourceTree = "<group>"; };
+		37B30CBC1AED81BC0029887F /* vs_cubes.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_cubes.vs; path = ../Client/Shaders/vs_cubes.vs; sourceTree = "<group>"; };
+		37B30CBF1AED85E20029887F /* varying.def.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = varying.def.sc; path = ../Client/Shaders/varying.def.sc; sourceTree = "<group>"; };
+		37B30CC11AED85ED0029887F /* shaderlib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = shaderlib.sh; path = ../Client/Shaders/shaderlib.sh; sourceTree = "<group>"; };
 		37F368FC1ACDFEE600314DB2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		37F368FE1ACDFEF300314DB2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		37F369001ACDFEFA00314DB2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -159,6 +197,14 @@
 				373ACBF51AD31B440082DB63 /* stb_image.h */,
 			);
 			name = External;
+			sourceTree = "<group>";
+		};
+		378A99621AEAD006008BD771 /* Render */ = {
+			isa = PBXGroup;
+			children = (
+				378A99641AEAD1A3008BD771 /* RenderResources.hpp */,
+			);
+			name = Render;
 			sourceTree = "<group>";
 		};
 		378DC1E71ACF6AB2004C8004 /* Entity */ = {
@@ -209,9 +255,11 @@
 		378DC21B1ACF7148004C8004 /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				37B30CB91AED80830029887F /* Shaders */,
+				37B30CB51AED72C70029887F /* GameStage */,
+				378A99621AEAD006008BD771 /* Render */,
+				37AE99161ADF0C4D00497B6F /* Stage.hpp */,
 				378DC2201ACF757D004C8004 /* OVMain.cpp */,
-				37AE99151ADF0C4D00497B6F /* ClientController.cpp */,
-				37AE99161ADF0C4D00497B6F /* ClientController.hpp */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -260,6 +308,26 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		37B30CB51AED72C70029887F /* GameStage */ = {
+			isa = PBXGroup;
+			children = (
+				37B30CB61AED74870029887F /* GameStage.cpp */,
+				37B30CB71AED74870029887F /* GameStage.hpp */,
+			);
+			name = GameStage;
+			sourceTree = "<group>";
+		};
+		37B30CB91AED80830029887F /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				37B30CC11AED85ED0029887F /* shaderlib.sh */,
+				37B30CBF1AED85E20029887F /* varying.def.sc */,
+				37B30CBB1AED81BC0029887F /* fs_cubes.fs */,
+				37B30CBC1AED81BC0029887F /* vs_cubes.vs */,
+			);
+			name = Shaders;
+			sourceTree = "<group>";
+		};
 		37B8F2F519F2DFCC00995B61 /* Sim */ = {
 			isa = PBXGroup;
 			children = (
@@ -302,6 +370,10 @@
 				373ACBF01AD1B44B0082DB63 /* GfxTypes.hpp */,
 				373ACBF11AD1E6960082DB63 /* TextureAtlas.cpp */,
 				373ACBF21AD1E6960082DB63 /* TextureAtlas.hpp */,
+				378A996A1AEAE2BD008BD771 /* ShaderLibrary.cpp */,
+				378A996B1AEAE2BD008BD771 /* ShaderLibrary.hpp */,
+				378A996D1AEB107F008BD771 /* VertexTypes.cpp */,
+				378A996E1AEB107F008BD771 /* VertexTypes.hpp */,
 			);
 			name = CKGfx;
 			path = ..;
@@ -387,6 +459,8 @@
 				37CEF196179F9AD1007AB3A6 /* Copy Files */,
 			);
 			buildRules = (
+				37B30CC31AED861A0029887F /* PBXBuildRule */,
+				37B30CBA1AED81A10029887F /* PBXBuildRule */,
 				37A546F31AE2DCC400341500 /* PBXBuildRule */,
 			);
 			dependencies = (
@@ -428,7 +502,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
+				37B30CC01AED85E20029887F /* varying.def.sc in Resources */,
+				37B30CBD1AED81BC0029887F /* fs_cubes.fs in Resources */,
+				37B30CC21AED85ED0029887F /* shaderlib.sh in Resources */,
 				37A546FF1AE3020E00341500 /* appevents.capnp in Resources */,
+				37B30CBE1AED81BC0029887F /* vs_cubes.vs in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -449,7 +527,9 @@
 				37F64AA11780EA2C009116E7 /* main.mm in Sources */,
 				378DC2131ACF6AB2004C8004 /* SpriteCollection.cpp in Sources */,
 				378DC2151ACF6AB2004C8004 /* SpriteInstance.cpp in Sources */,
+				378A996C1AEAE2BD008BD771 /* ShaderLibrary.cpp in Sources */,
 				378DC2161ACF6AB2004C8004 /* TileCollectionLoader.cpp in Sources */,
+				37B30CB81AED74870029887F /* GameStage.cpp in Sources */,
 				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
 				37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */,
 				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
@@ -458,9 +538,9 @@
 				378DC20D1ACF6AB2004C8004 /* EntityTemplateCollection.cpp in Sources */,
 				37A547061AE32B5B00341500 /* MessageStream.cpp in Sources */,
 				378DC2121ACF6AB2004C8004 /* SpriteAnimation.cpp in Sources */,
-				37AE99171ADF0C4D00497B6F /* ClientController.cpp in Sources */,
 				378DC2111ACF6AB2004C8004 /* Sprite.cpp in Sources */,
 				378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */,
+				378A996F1AEB107F008BD771 /* VertexTypes.cpp in Sources */,
 				378DC2141ACF6AB2004C8004 /* SpriteCollectionLoader.cpp in Sources */,
 				373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */,
 			);

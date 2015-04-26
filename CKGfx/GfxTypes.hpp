@@ -33,6 +33,10 @@ struct BitmapInfo
     const char* name;
 };
 
+
+class TextureAtlas;
+class ShaderLibrary;
+
     }   // namespace gfx
 }   // namespace cinek
 

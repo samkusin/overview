@@ -22,10 +22,11 @@ namespace cinek {
         CK_CLASS_NON_COPYABLE(TextureAtlas);
 
     public:
+        TextureAtlas() = default;
         TextureAtlas
         (
             uint16_t textureCount,
-            const Allocator& allocator
+            const Allocator& allocator = Allocator()
         );
         TextureAtlas(TextureAtlas&& other);
         TextureAtlas& operator=(TextureAtlas&& other);

@@ -28,22 +28,17 @@ bool TextureAtlas::Texture::matchesHandle(TextureHandle h) const
 
 static int stbi_read_cb(void* user, char* data, int size)
 {
-    return (int)getFileOps().readCb(getFileOps().context,
-        reinterpret_cast<FileHandle>(user),
-        (uint8_t*)data,
-        size);
+    return (int)file::read(reinterpret_cast<FileHandle>(user), (uint8_t*)data, size);
 }
 
 static void stbi_skip_cb(void* user, int n)
 {
-    getFileOps().seekCb(getFileOps().context, reinterpret_cast<FileHandle>(user),
-                    FileOps::kSeekCur,
-                    n);
+    file::seek(reinterpret_cast<FileHandle>(user), file::Ops::kSeekCur, n);
 }
 
 static int stbi_eof_cb(void *user)
 {
-    return getFileOps().eofCb(getFileOps().context, reinterpret_cast<FileHandle>(user)) != 0;
+    return file::eof(reinterpret_cast<FileHandle>(user)) != 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +101,7 @@ TextureHandle TextureAtlas::loadTexture(const char* path)
     {
         //  load using an image loader api
         stbi_io_callbacks cbs = { &stbi_read_cb, &stbi_skip_cb, &stbi_eof_cb };
-        FileHandle fh = getFileOps().openCb(getFileOps().context, path, FileOps::kReadAccess);
+        FileHandle fh = file::open(path, file::Ops::kReadAccess);
         int width = 0;
         int height = 0;
         int comp = 0;
@@ -118,37 +113,38 @@ TextureHandle TextureAtlas::loadTexture(const char* path)
                             &comp,
                             0
                         );
-        if (!data)
-            return nullptr;
-        
-        Texture texture;
-        texture.bgfxHandle = bgfx::createTexture2D
-                             (
-                                width, height, 1,
-                                bgfx::TextureFormat::RGBA8,
-                                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
-                                bgfx::copy(data, width*height*comp)
-                             );
-        stbi_image_free(data);
-        
-        // allocate a texture handle
-        handle = ++_nextTextureHandle;
-        if (_freed.empty())
+        if (data)
         {
-            handle.offs = (uint32_t)_textures.size();
-            _textures.emplace_back();
+            Texture texture;
+            texture.bgfxHandle = bgfx::createTexture2D
+                                 (
+                                    width, height, 1,
+                                    bgfx::TextureFormat::RGBA8,
+                                    BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+                                    bgfx::copy(data, width*height*comp)
+                                 );
+            stbi_image_free(data);
+            
+            // allocate a texture handle
+            handle = ++_nextTextureHandle;
+            if (_freed.empty())
+            {
+                handle.offs = (uint32_t)_textures.size();
+                _textures.emplace_back();
+            }
+            else
+            {
+                handle.offs = _freed.back();
+                _freed.pop_back();
+            }
+            
+            texture.name = duplicateCString(path, _allocator);
+            texture.handleIter = handle.iter;
+            texture.refCnt = 1;
+            
+            _textures[handle.offs] = texture;
         }
-        else
-        {
-            handle.offs = _freed.back();
-            _freed.pop_back();
-        }
-        
-        texture.name = duplicateCString(path, _allocator);
-        texture.handleIter = handle.iter;
-        texture.refCnt = 1;
-        
-        _textures[handle.offs] = texture;
+        file::close(fh);
     }
     else
     {

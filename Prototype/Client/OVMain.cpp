@@ -6,16 +6,16 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "ClientController.hpp"
 #include "MessageDispatcher.hpp"
 
+#include "GameStage/GameStage.hpp"
+
+#include <cinek/file.hpp>
 #include <SDL2/SDL.h>
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
 
-using namespace cinek;
-
-namespace cinek { namespace ovproto {
+namespace cinek { namespace overview {
 
 enum
 {
@@ -40,21 +40,15 @@ static uint32_t PollSDLEvents()
     return flags;
 }
 
-} /* namespace ovproto */ } /* namespace cinek */
-
-
-int OverviewMain(SDL_Window* window, int argc, char* argv[])
+void run(SDL_Window* window)
 {
+    Allocator allocator;
+    
     int viewWidth = 0;
     int viewHeight = 0;
     
     SDL_GetWindowSize(window, &viewWidth, &viewHeight);
-    
-    //  renderer initialization
-    //
-    bgfx::sdlSetWindow(window);
-    bgfx::init();
-    
+
     bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
     bgfx::setDebug(BGFX_DEBUG_TEXT);
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
@@ -62,29 +56,63 @@ int OverviewMain(SDL_Window* window, int argc, char* argv[])
         1.0f,
         0);
     
-    overview::MessageDispatcher dispatcher;
-    overview::MessageBuffer msgBuffer(32*1024);
+    //  application
+    //
+    overview::RenderResources renderResources(
+        {
+            gfx::createVertexDefinitions(),
+            128
+        },
+        allocator
+    );
+    
+    renderResources.shaders.loadProgram(0x00000001, "Shaders/vs_cubes.bin", "Shaders/fs_cubes.bin");
+    
+    auto stage = allocate_unique<ovproto::GameStage>(allocator);
+    
+    //  main loop
+    //
+    MessageDispatcher dispatcher;
+    MessageBuffer msgBuffer(32*1024);
     
     while (true)
     {
-        uint32_t sdlEvents = ovproto::PollSDLEvents();
-        if (sdlEvents & ovproto::kPollSDLEvent_Quit)
+        uint32_t sdlEvents = PollSDLEvents();
+        if (sdlEvents & kPollSDLEvent_Quit)
             break;
         
         bgfx::setViewRect(0, 0, 0, viewWidth, viewHeight);
-        bgfx::submit(0);
         
-        msgBuffer = cinek::ovproto::run(std::move(msgBuffer));
-        
-        overview::MessageStream msgStream(msgBuffer);
+        //  update stage
+        msgBuffer = stage->update(std::move(msgBuffer), renderResources);
+
+        MessageStream msgStream(msgBuffer);
         dispatcher.dispatch(msgStream);
         
+        bgfx::submit(0);
         bgfx::frame();
     }
     
+    stage = nullptr;
+}
+
+} /* namespace overview */ } /* namespace cinek */
+
+
+int OverviewMain(SDL_Window* window, int argc, char* argv[])
+{
+    cinek::file::setOpsStdio();
+    
+    //  renderer initialization
+    //
+    bgfx::sdlSetWindow(window);
+    bgfx::init();
+    
+    cinek::overview::run(window);
+    
     //  subsystem termination
+    //
     bgfx::shutdown();
     
     return 0;
-
 }

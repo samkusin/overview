@@ -12,6 +12,7 @@
 .svn/
 Prototype-Data/
 ext/
+Data/
 
 *.sublime-project
 *.sublime-workspace
