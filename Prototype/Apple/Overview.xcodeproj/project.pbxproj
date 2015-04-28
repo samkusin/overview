@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37240E1D1AEED89A005D6048 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37240E1B1AEED89A005D6048 /* Mesh.cpp */; };
 		373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */; };
 		373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBE91AD0A2400082DB63 /* BitmapAtlasLoader.cpp */; };
 		373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBEB1AD0A2400082DB63 /* BitmapLibrary.cpp */; };
@@ -97,6 +98,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		37240E1B1AEED89A005D6048 /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mesh.cpp; path = ../../CKGfx/Mesh.cpp; sourceTree = "<group>"; };
+		37240E1C1AEED89A005D6048 /* Mesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Mesh.hpp; path = ../../CKGfx/Mesh.hpp; sourceTree = "<group>"; };
 		373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapAtlas.cpp; path = ../../CKGfx/BitmapAtlas.cpp; sourceTree = "<group>"; };
 		373ACBE81AD0A2400082DB63 /* BitmapAtlas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BitmapAtlas.hpp; path = ../../CKGfx/BitmapAtlas.hpp; sourceTree = "<group>"; };
 		373ACBE91AD0A2400082DB63 /* BitmapAtlasLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitmapAtlasLoader.cpp; path = ../../CKGfx/BitmapAtlasLoader.cpp; sourceTree = "<group>"; };
@@ -374,6 +377,8 @@
 				378A996B1AEAE2BD008BD771 /* ShaderLibrary.hpp */,
 				378A996D1AEB107F008BD771 /* VertexTypes.cpp */,
 				378A996E1AEB107F008BD771 /* VertexTypes.hpp */,
+				37240E1B1AEED89A005D6048 /* Mesh.cpp */,
+				37240E1C1AEED89A005D6048 /* Mesh.hpp */,
 			);
 			name = CKGfx;
 			path = ..;
@@ -522,6 +527,7 @@
 				37A547001AE3022700341500 /* appevents.capnp in Sources */,
 				378DC20C1ACF6AB2004C8004 /* EntityTemplate.cpp in Sources */,
 				373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */,
+				37240E1D1AEED89A005D6048 /* Mesh.cpp in Sources */,
 				378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */,
 				373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.mm in Sources */,

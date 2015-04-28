@@ -10,6 +10,8 @@
 
 #include "GameStage/GameStage.hpp"
 
+#include "CKGfx/VertexTypes.hpp"
+
 #include <cinek/file.hpp>
 #include <SDL2/SDL.h>
 #include <bgfx/bgfxplatform.h>
@@ -56,11 +58,12 @@ void run(SDL_Window* window)
         1.0f,
         0);
     
+    gfx::VertexTypes::initialize();
+    
     //  application
     //
     overview::RenderResources renderResources(
         {
-            gfx::createVertexDefinitions(),
             128
         },
         allocator

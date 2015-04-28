@@ -18,13 +18,11 @@ namespace cinek { namespace overview {
 
 struct RenderResources
 {
-    cinek::gfx::VertexDefintions vertexDecls;
     cinek::gfx::ShaderLibrary shaders;
     cinek::gfx::TextureAtlas textures;
     
     struct InitParams
     {
-        gfx::VertexDefintions vertexDefs;
         uint32_t textureCount;
     };
     
@@ -37,7 +35,6 @@ inline RenderResources::RenderResources
     const InitParams& params,
     const Allocator& allocator
 ) :
-    vertexDecls(std::move(params.vertexDefs)),
     shaders(allocator),
     textures(params.textureCount, allocator)
 {

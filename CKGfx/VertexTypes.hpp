@@ -17,31 +17,58 @@
 namespace cinek {
     namespace gfx {
     
+    /// A 4x4 uniform
+    struct Matrix4
+    {
+        float comp[16];
+    };
+    
+    /// A 4x1 uniform
+    struct Vector4
+    {
+        float comp[4];
+    };
+    
+    
     /// Vertex types, acting as indices into a VertexDefinitions container
     namespace VertexTypes
     {
-        enum
+        enum Format
         {
-            kVec3_RGBA,         ///< VertexPosColor structure
+            kVec3,              ///< Pos structure
+            kVec3_RGBA,         ///< PosColor structure
             
-            kCount
+            kPresetCount,
+            
+            kFormatLimit = kPresetCount + 16
         };
         
-        /// XYZ position, ABGR packed color (uint8 components)
-        struct PosColor
+        /// XYZ position
+        struct Pos
         {
             float x;
             float y;
             float z;
-            uint32_t abgr;
         };
+        
+        /// ABGR color
+        struct Color
+        {
+            float a;
+            float b;
+            float g;
+            float r;
+        };
+        
+        /// Creates the base set of vertex definitions.  Applications may add
+        /// their own custom declarations, but this function will initialize
+        /// the base set of declarations.  Calling this function will also reset
+        /// the global declarations array
+        void initialize();
+                
+        /// Return a vertex declaration by format type
+        const bgfx::VertexDecl& declaration(Format tex);
     };
-    
-    using VertexDefintions = vector<bgfx::VertexDecl>;
-    
-    /// Creates the base set of vertex definitions.  Applications may append
-    /// this vector as needed
-    VertexDefintions createVertexDefinitions();
     
     }   // namespace gfx
 }   // namespace cinek
