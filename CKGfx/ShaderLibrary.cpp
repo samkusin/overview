@@ -142,7 +142,7 @@ int ShaderLibrary::loadShader(const char* path)
     return shaderIndex;
 }
 
-bgfx::ProgramHandle ShaderLibrary::program(uint32_t programId)
+bgfx::ProgramHandle ShaderLibrary::program(uint32_t programId) const
 {
     auto itProgram = _programs.find(programId);
     if (itProgram == _programs.end())

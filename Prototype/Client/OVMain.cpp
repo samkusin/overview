@@ -64,7 +64,9 @@ void run(SDL_Window* window)
     //
     overview::RenderResources renderResources(
         {
-            128
+            128,
+            (uint32_t)viewWidth,
+            (uint32_t)viewHeight
         },
         allocator
     );

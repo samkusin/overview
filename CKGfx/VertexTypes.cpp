@@ -16,11 +16,14 @@ namespace cinek {
     
 namespace VertexTypes
 {
+    static bgfx::VertexDecl s_nullDecl;
     static bgfx::VertexDecl s_decls[kFormatLimit];
     static uint32_t s_declCount = 0;
     
     void initialize()
     {
+        s_nullDecl.begin().end();
+    
         s_declCount = 0;
         
         // struct VertexTypes::Pos
@@ -39,11 +42,10 @@ namespace VertexTypes
     
     const bgfx::VertexDecl& declaration(Format tex)
     {
-        static bgfx::VertexDecl kNullDecl;
         if (tex >=s_declCount)
         {
             CK_ASSERT(false);
-            return kNullDecl;
+            return s_nullDecl;
         }
         return s_decls[tex];
     }

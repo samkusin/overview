@@ -21,9 +21,14 @@ struct RenderResources
     cinek::gfx::ShaderLibrary shaders;
     cinek::gfx::TextureAtlas textures;
     
+    uint32_t viewWidth;
+    uint32_t viewHeight;
+    
     struct InitParams
     {
         uint32_t textureCount;
+        uint32_t width;
+        uint32_t height;
     };
     
     RenderResources(const InitParams& params,
@@ -36,7 +41,9 @@ inline RenderResources::RenderResources
     const Allocator& allocator
 ) :
     shaders(allocator),
-    textures(params.textureCount, allocator)
+    textures(params.textureCount, allocator),
+    viewWidth(params.width),
+    viewHeight(params.height)
 {
 }
 

@@ -34,7 +34,7 @@ namespace cinek {
             const char* fragShaderPath
         );
         
-        bgfx::ProgramHandle program(uint32_t programId);
+        bgfx::ProgramHandle program(uint32_t programId) const;
         
     private:
         //  Loading a program will involve an O(n) search for existing

@@ -11,6 +11,12 @@
 
 #include "Client/Stage.hpp"
 
+namespace cinek { namespace gfx {
+
+class Mesh;
+
+} /* namespace gfx */ } /* namespace cinek */
+
 namespace cinek { namespace ovproto {
 
 class GameStage: public overview::Stage
@@ -23,6 +29,9 @@ public:
         overview::MessageBuffer msgStream,
         const overview::RenderResources& renderResources
     );
+    
+private:
+    unique_ptr<gfx::Mesh> _sphere;
 };
 
 } /* namespace ovproto */ } /* namespace cinek */

@@ -13,6 +13,7 @@
 
 #include <cinek/vector.hpp>
 #include <bgfx/bgfx.h>
+#include <bx/fpumath.h>
 
 namespace cinek {
     namespace gfx {
@@ -21,43 +22,37 @@ namespace cinek {
     struct Matrix4
     {
         float comp[16];
+        operator float*() { return comp; }
+        operator const float*() const { return comp; }
     };
     
     /// A 4x1 uniform
     struct Vector4
     {
         float comp[4];
+        operator float*() { return comp; }
+        operator const float*() const { return comp; }
     };
     
+    /// A 3x1 uniform
+    struct Vector3
+    {
+        float comp[3];
+        operator float*() { return comp; }
+        operator const float*() const { return comp; }
+    };
     
     /// Vertex types, acting as indices into a VertexDefinitions container
     namespace VertexTypes
     {
         enum Format
         {
-            kVec3,              ///< Pos structure
-            kVec3_RGBA,         ///< PosColor structure
+            kVec3,              ///< XYZ floats only
+            kVec3_RGBA,         ///< XYZ floats + ARGB byte components
             
-            kPresetCount,
-            
-            kFormatLimit = kPresetCount + 16
-        };
-        
-        /// XYZ position
-        struct Pos
-        {
-            float x;
-            float y;
-            float z;
-        };
-        
-        /// ABGR color
-        struct Color
-        {
-            float a;
-            float b;
-            float g;
-            float r;
+            kPresetCount,       ///< Preset Limit
+            kFormatLimit = kPresetCount + 16,
+            kInvalid = -1
         };
         
         /// Creates the base set of vertex definitions.  Applications may add

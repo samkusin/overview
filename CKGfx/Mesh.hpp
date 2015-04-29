@@ -35,9 +35,15 @@ class Mesh
 
 public:
     Mesh(VertexTypes::Format format,
-         uint32_t elementCount,
+         const Matrix4& transform,
+         const bgfx::Memory* vertexData,
+         const bgfx::Memory* indexData,
+         uint32_t elementCount = 1,
          const Allocator& allocator=Allocator());
     ~Mesh();
+    
+    Mesh(Mesh&& other);
+    Mesh& operator=(Mesh&& other);
 
     VertexTypes::Format format() const;
 
@@ -56,8 +62,20 @@ private:
         MeshElement element;
     };
     vector<Node> _nodes;
+    
+    int32_t createNode(int parentIndex, const Matrix4& transform,
+         const bgfx::Memory* vertexData,
+         const bgfx::Memory* indexData);
 };
 
+/// Generates an IcoSphere mesh using the given format and number of passes.)
+unique_ptr<Mesh> createIcoSphere(float radius, int subdividePasses,
+                                 VertexTypes::Format vertexType,
+                                 const Vector4& color = {{ 1.f,1.f,1.f,1.f }},
+                                 const Allocator& allocator=Allocator());
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 inline VertexTypes::Format Mesh::format() const
 {
