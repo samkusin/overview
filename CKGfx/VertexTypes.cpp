@@ -26,16 +26,23 @@ namespace VertexTypes
     
         s_declCount = 0;
         
-        // struct VertexTypes::Pos
+        // kVec3
         s_decls[s_declCount].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .end();
         ++s_declCount;
         
-        // struct VertexTypes::PosColor
+        // kVec3_RGBA
         s_decls[s_declCount].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+        ++s_declCount;
+        
+        // kVec3_Normal
+        s_decls[s_declCount].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
             .end();
         ++s_declCount;
     }

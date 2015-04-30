@@ -49,6 +49,7 @@ namespace cinek {
         {
             kVec3,              ///< XYZ floats only
             kVec3_RGBA,         ///< XYZ floats + ARGB byte components
+            kVec3_Normal,       ///< XYZ floats + Normals
             
             kPresetCount,       ///< Preset Limit
             kFormatLimit = kPresetCount + 16,

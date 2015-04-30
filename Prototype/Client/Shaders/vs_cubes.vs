@@ -1,4 +1,4 @@
-$input a_position, a_color0
+$input a_position, a_normal
 $output v_color0
 
 /*
@@ -11,6 +11,15 @@ $output v_color0
 
 void main()
 {
+    vec3 lightPos = mul(u_modelView, vec4(1.0, 3.0, -5.0, 1.0)).xyz;
+    vec3 normal = mul(u_modelView, vec4(a_normal, 0.0)).xyz;
+    vec3 eyePos = mul(u_modelView, vec4(a_position, 1.0)).xyz;
+    vec3 s = normalize(lightPos - eyePos);
+    
+    vec3 Kd = vec3(0, 0.9, 1.0);  // diffuse reflectivity
+    vec3 Ld = vec3(1.0, 1.0, 0.5);  // diffuse color
+    vec3 light = mul(mul(Ld, Kd), max(dot(s, normal), 0.0));
+    
 	gl_Position = mul(u_modelViewProj, vec4(a_position, 1.0) );
-	v_color0 = a_color0;
+	v_color0 = vec4(light, 1.0);
 }

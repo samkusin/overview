@@ -15,7 +15,7 @@ namespace cinek { namespace ovproto {
 
 GameStage::GameStage()
 {
-    _sphere = gfx::createIcoSphere(1.0f, 2, gfx::VertexTypes::kVec3_RGBA);
+    _sphere = gfx::createIcoSphere(1.0f, 2, gfx::VertexTypes::kVec3_Normal);
 }
 
 GameStage::~GameStage()
@@ -31,7 +31,7 @@ overview::MessageBuffer GameStage::update
 
     gfx::Matrix4 viewMat;
     gfx::Vector3 viewAt = {{ 0.f, 0.f, 0.f }};
-    gfx::Vector3 viewEye = {{ 0.0f, 0.0f, -5.f }};
+    gfx::Vector3 viewEye = {{ 0.0f, 0.0f, -7.5f }};
 
     bx::mtxLookAt(viewMat, viewEye, viewAt);
 
@@ -48,9 +48,7 @@ overview::MessageBuffer GameStage::update
     {
         bgfx::ProgramHandle program = renderResources.shaders.program(0x00000001);
         
-        gfx::Matrix4 meshTransform;
-        bx::mtxIdentity(meshTransform);
-    
+        gfx::Matrix4 meshTransform = meshElement->transform;
         bgfx::setTransform(meshTransform);
         bgfx::setProgram(program);
         bgfx::setVertexBuffer(meshElement->vertBufH);

@@ -13,6 +13,8 @@
 #include <cinek/vector.hpp>
 #include <bx/fpumath.h>
 
+#include <array>
+
 namespace cinek {
     namespace gfx {
 
@@ -23,23 +25,34 @@ struct IcoSphereUtility
     using key_type = KeyType;
     
     unordered_map<KeyType, IndexType> midpointIndices;
+    vector<std::array<IndexType, 7>> vertexAdjFaces;// [0]=faceCnt,[1-6]=faceIdx
+    
     vector<Vector3> vertices;
     vector<IndexType> indices;
+    vector<Vector3> faceNormals;
     
     IcoSphereUtility(int passes, const Allocator& allocator) :
         midpointIndices(allocator),
         vertices(allocator),
         indices(allocator)
     {
-        vertices.reserve(12 + 30 * passes*passes);
+        const uint32_t kNumVerts = 12 + 30 * passes*passes;
+        vertices.reserve(kNumVerts);
+        vertexAdjFaces.reserve(kNumVerts);
+        
+        uint32_t numFaces = 1;
+        for (int i = 1; i <= passes; ++i)
+            numFaces *= 4;
+        
+        numFaces *= 20;
+        
+        faceNormals.reserve( numFaces );
+        
         //  We're using the same index vector for current indices
         //  and the new index vector created after a recursive/subdivide pass.
         //  So make room for additional indices by adding an extra pass.
-        int faceMult = 1;
-        for (int i = 1; i <= passes+1; ++i)
-            faceMult *= 4;
         
-        indices.reserve( 3 * (20 * faceMult));
+        indices.reserve( (numFaces * 4) * 3 );  // tris
     }
     
     IndexType addVertex(const Vector3& v)
@@ -101,6 +114,43 @@ struct IcoSphereUtility
         //  erase the old faces.
         indices.erase(indices.begin(), indices.begin() + offset);
     }
+    
+    void finalize()
+    {
+        vertexAdjFaces.clear();
+        
+        typename decltype(vertexAdjFaces)::value_type adjFaces = { 0, };
+        vertexAdjFaces.assign(vertices.size(), adjFaces);
+
+        faceNormals.clear();
+        
+        for (size_t i = 0; i < indices.size(); i+=3)
+        {
+            // left-handed
+            Vector3 v0, v1;
+            auto i0 = indices[i+0], i1 = indices[i+1], i2 = indices[i+2];
+            bx::vec3Sub(v0, vertices[i0], vertices[i1]);
+            bx::vec3Sub(v1, vertices[i2], vertices[i0]);
+            bx::vec3Norm(v0, v0);
+            bx::vec3Norm(v1, v1);
+            faceNormals.emplace_back();
+            bx::vec3Cross(faceNormals.back(), v0, v1);
+            
+            IndexType faceIndex = (IndexType)faceNormals.size()-1;
+            addFaceToVertex(faceIndex, i0);
+            addFaceToVertex(faceIndex, i1);
+            addFaceToVertex(faceIndex, i2);
+        }
+    }
+    
+    void addFaceToVertex(IndexType faceIndex, IndexType vertexIndex)
+    {
+        auto& adjFaces = vertexAdjFaces[vertexIndex];
+        auto& faceCnt = adjFaces[0];
+        CK_ASSERT(faceCnt+1 < adjFaces.size());
+        ++faceCnt;
+        adjFaces[faceCnt] = faceIndex;
+    }
 };
         
 unique_ptr<Mesh> createIcoSphere
@@ -121,7 +171,7 @@ unique_ptr<Mesh> createIcoSphere
     IcoSphereUtility<uint32_t, uint16_t, 16> utility(subdividePasses, allocator);
     
     const float kSqrt5 = 2.23606797749979f;
-    float t = (radius + kSqrt5) * 0.5f;
+    float t = (1.f + kSqrt5) * 0.5f;
     
     utility.addVertex({{ -1.f,    t,  0.f}});
     utility.addVertex({{  1.f,    t,  0.f}});
@@ -170,6 +220,8 @@ unique_ptr<Mesh> createIcoSphere
         utility.subdivide();
     }
     
+    utility.finalize();
+    
     //  allocate packed buffers based on vertex declaration
     //
     uint32_t vertBufSize = vertexDecl.getSize((uint32_t)utility.vertices.size());
@@ -195,6 +247,25 @@ unique_ptr<Mesh> createIcoSphere
                 vertexMemory->data,
                 iv);
         }
+        if (vertexDecl.has(bgfx::Attrib::Normal))
+        {
+            //  add all face normals attached to this vertex and normalize for
+            //  the vertex normal
+            auto& adjFaces = utility.vertexAdjFaces[iv];
+            auto numFaces = adjFaces[0]+1;
+            Vector3 normal = {{ 0.f,0.f,0.f }};
+            for (decltype(numFaces) iaf = 1; iaf < numFaces; ++iaf)
+            {
+                auto& faceNormal = utility.faceNormals[adjFaces[iaf]];
+                bx::vec3Add(normal, normal, faceNormal);
+            }
+            bx::vec3Norm(normal, normal);
+            bgfx::vertexPack(normal, false,
+                bgfx::Attrib::Normal,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
+        }
         /*
         if (vertexDecl.has(bgfx::Attrib::TexCoord0))
         {
@@ -208,7 +279,7 @@ unique_ptr<Mesh> createIcoSphere
     Allocator meshalloc(allocator);
     
     Matrix4 transform;
-    bx::mtxIdentity(transform.comp);
+    bx::mtxScale(transform.comp, radius, radius, radius);
     auto mesh = allocate_unique<Mesh>(meshalloc,
         vertexType,
         transform,

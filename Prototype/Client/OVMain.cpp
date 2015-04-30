@@ -54,7 +54,7 @@ void run(SDL_Window* window)
     bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
     bgfx::setDebug(BGFX_DEBUG_TEXT);
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-        0x333333ff,
+        0x111111ff,
         1.0f,
         0);
     
