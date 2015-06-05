@@ -8,7 +8,8 @@
 
 #include "GameTypes.hpp"
 
-namespace cinek { namespace overview {
+
+namespace cinek { namespace ovproto {
     
 
 } /* namespace overview */ } /* namespace cinek */

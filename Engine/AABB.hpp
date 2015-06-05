@@ -11,7 +11,7 @@
 #ifndef Overview_Model_AABB_hpp
 #define Overview_Model_AABB_hpp
 
-#include "Engine/ModelTypes.hpp"
+#include <array>
 
 namespace cinek { namespace overview {
 
@@ -21,13 +21,19 @@ namespace cinek { namespace overview {
     template<class _Point>
     struct AABB
     {
-        typedef _Point                       point_type;
+        typedef _Point                   point_type;
+        typedef AABB<_Point>             this_type;
+
         point_type min;          ///< The min coordinate
         point_type max;          ///< The max coordinate
 
         /// Default Constructor
         ///
-        AABB() = default;
+        AABB();
+        /// Constructor
+        /// @param halfDim  Radius of the box
+        ///
+        AABB(const point_type& halfDim);
         /// Constructor
         /// @param min  Min point of the box
         /// @param max  Max point of the box
@@ -70,11 +76,6 @@ namespace cinek { namespace overview {
          * ///
          * AABB intersection(const AABB& box) const;
         */
-        /// Calculates the bounding box from the supplied box and this box
-        /// @param  bounds  The box included within our calculated bounding
-        ///                 volume
-        /// @return The bounding box between this box and the supplied box
-        AABB boundTo(const AABB& box) const;
         /// @param  box The box to test
         /// @return True if the box equals this box
         bool operator==(const AABB& box) const;
@@ -88,9 +89,36 @@ namespace cinek { namespace overview {
         /// @return The center point
         ///
         point_type center() const;
+        /// Generate vertices from this AABB
+        /// @param verts An array of vertices to be filled in
+        ///
+        void generateVertices(std::array<point_type, 8>& verts);
+        /// Rotates, generating a new AABB bounding the rotated box
+        /// @param mtxRot Rotation and Translation matrix
+        ///
+        template<class _Matrix>
+        void rotate(const _Matrix& mtxRot);
+        /// Merges another AABB with this AABB.  The result is stored in this
+        /// @param  aabb  The AABB to merge
+        /// @return A reference to this AABB
+        ///
+        AABB& merge(const AABB& aabb);
     };
 
     ////////////////////////////////////////////////////////////////////////////
+    template<class _Point>
+    AABB<_Point>::AABB()
+    {
+        clear();
+    }
+
+    template<class _Point>
+    AABB<_Point>::AABB(const point_type& halfDim)
+    {
+        clear();
+        min -= halfDim;
+        max += halfDim;
+    }
 
     template<class _Point>
     AABB<_Point>::AABB(const point_type& min, const point_type& max) : min(min), max(max)
@@ -125,13 +153,6 @@ namespace cinek { namespace overview {
     bool AABB<_Point>::operator!=(const AABB<_Point>& box) const
     {
         return min != box.min || max != box.max;
-    }
-
-    template<class _Point>
-    void AABB<_Point>::clear()
-    {
-        min = Point();
-        max = Point();
     }
 
     template<class _Point>

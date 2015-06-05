@@ -9,7 +9,11 @@
 #ifndef Overview_App_Stage_Game_hpp
 #define Overview_App_Stage_Game_hpp
 
+#include "GameTypes.hpp"
 #include "Client/Stage.hpp"
+#include "MessageTypes.hpp"
+
+#include <array>
 
 namespace cinek { namespace gfx {
 
@@ -19,19 +23,18 @@ class Mesh;
 
 namespace cinek { namespace ovproto {
 
-class GameStage: public overview::Stage
+class GameStage: public Stage
 {
 public:
     GameStage();
     virtual ~GameStage();
     
-    virtual overview::MessageBuffer update(
-        overview::MessageBuffer msgStream,
-        const overview::RenderResources& renderResources
-    );
+    virtual void update(overview::EngineContext& context) override;
     
 private:
-    unique_ptr<gfx::Mesh> _sphere;
+    Allocator _allocator;
+    
+    //void render(overview::RenderResources& resources);
 };
 
 } /* namespace ovproto */ } /* namespace cinek */

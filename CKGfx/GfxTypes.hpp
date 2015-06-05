@@ -15,6 +15,8 @@ namespace cinek {
     namespace gfx {
 
 using TextureHandle = OffsetHandle;
+using MeshHandle = OffsetHandle;
+
 using BitmapAtlasHandle = OffsetHandle;
 using BitmapIndex = uint32_t;
 
@@ -36,6 +38,7 @@ struct BitmapInfo
 
 class TextureAtlas;
 class ShaderLibrary;
+class MeshLibrary;
 
     }   // namespace gfx
 }   // namespace cinek

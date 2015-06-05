@@ -23,7 +23,7 @@ bool TextureAtlas::Texture::operator==(const char* texName) const
 
 bool TextureAtlas::Texture::matchesHandle(TextureHandle h) const
 {
-    return (h.iter == handleIter);
+    return (h.data.iter == handleIter);
 }
 
 static int stbi_read_cb(void* user, char* data, int size)
@@ -51,6 +51,7 @@ TextureAtlas::TextureAtlas
     _allocator(allocator),
     _textures(allocator)
 {
+    _textures.reserve(textureCount);
 }
 
 TextureAtlas::TextureAtlas(TextureAtlas&& other) :
@@ -102,6 +103,11 @@ TextureHandle TextureAtlas::loadTexture(const char* path)
         //  load using an image loader api
         stbi_io_callbacks cbs = { &stbi_read_cb, &stbi_skip_cb, &stbi_eof_cb };
         FileHandle fh = file::open(path, file::Ops::kReadAccess);
+        if (!fh)
+        {
+            //  return a place holder texture (remember to increment refcnt)
+            return TextureHandle();
+        }
         int width = 0;
         int height = 0;
         int comp = 0;
@@ -129,29 +135,29 @@ TextureHandle TextureAtlas::loadTexture(const char* path)
             handle = ++_nextTextureHandle;
             if (_freed.empty())
             {
-                handle.offs = (uint32_t)_textures.size();
+                handle.data.offs = (uint32_t)_textures.size();
                 _textures.emplace_back();
             }
             else
             {
-                handle.offs = _freed.back();
+                handle.data.offs = _freed.back();
                 _freed.pop_back();
             }
             
             texture.name = duplicateCString(path, _allocator);
-            texture.handleIter = handle.iter;
+            texture.handleIter = handle.data.iter;
             texture.refCnt = 1;
             
-            _textures[handle.offs] = texture;
+            _textures[handle.data.offs] = texture;
         }
         file::close(fh);
     }
     else
     {
-        Texture& texture = _textures[handle.offs];
+        Texture& texture = _textures[handle.data.offs];
         if (!texture.matchesHandle(handle))
             return TextureHandle();
-        ++_textures[handle.offs].refCnt;
+        ++_textures[handle.data.offs].refCnt;
     }
     
     return handle;
@@ -163,7 +169,7 @@ void TextureAtlas::unloadTexture(TextureHandle handle)
     if (!handle)
         return;
     
-    Texture& texture = _textures[handle.offs];
+    Texture& texture = _textures[handle.data.offs];
     if (!texture.matchesHandle(handle))
         return;
     
@@ -172,7 +178,7 @@ void TextureAtlas::unloadTexture(TextureHandle handle)
         return;
     
     destroy(texture);
-    _freed.push_back(handle.offs);
+    _freed.push_back(handle.data.offs);
 }
 
 //  use to retrieve texture information.
@@ -183,8 +189,8 @@ TextureHandle TextureAtlas::textureHandleFromName(const char* name) const
         return nullptr;
     
     TextureHandle h;
-    h.iter = it->handleIter;
-    h.offs = (uint32_t)(it - _textures.begin());
+    h.data.iter = it->handleIter;
+    h.data.offs = (uint32_t)(it - _textures.begin());
     return h;
     
 }
@@ -194,7 +200,7 @@ bgfx::TextureHandle TextureAtlas::texture(TextureHandle handle) const
     if (!handle)
         return BGFX_INVALID_HANDLE;
     
-    auto& texture = _textures[handle.offs];
+    auto& texture = _textures[handle.data.offs];
     return texture.bgfxHandle;
 }
         

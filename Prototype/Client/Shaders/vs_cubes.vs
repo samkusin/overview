@@ -11,7 +11,7 @@ $output v_color0
 
 void main()
 {
-    vec3 lightPos = mul(u_modelView, vec4(1.0, 3.0, -5.0, 1.0)).xyz;
+    vec3 lightPos = mul(u_modelView, vec4(1.0, 5.0, -5.0, 1.0)).xyz;
     vec3 normal = mul(u_modelView, vec4(a_normal, 0.0)).xyz;
     vec3 eyePos = mul(u_modelView, vec4(a_position, 1.0)).xyz;
     vec3 s = normalize(lightPos - eyePos);

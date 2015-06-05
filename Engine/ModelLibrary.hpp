@@ -10,8 +10,6 @@
 #ifndef Overview_Model_ModelLibrary_hpp
 #define Overview_Model_ModelLibrary_hpp
 
-#include "Engine/Tile/Tile.hpp"
-#include "Engine/Tile/TileCollection.hpp"
 #include "Engine/Debug.hpp"
 
 #include <cinek/vector.hpp>

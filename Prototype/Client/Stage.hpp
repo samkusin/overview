@@ -9,22 +9,21 @@
 #ifndef Overview_App_Stage_hpp
 #define Overview_App_Stage_hpp
 
-#include "MessageStream.hpp"
-#include "Render/RenderResources.hpp"
+#include "GameTypes.hpp"
+#include "Engine/EngineContext.hpp"
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ovproto {
 
-class Stage
+class Stage 
 {
 public:
     virtual ~Stage() {}
     
-    virtual MessageBuffer update(MessageBuffer msgStream,
-                                 const RenderResources& renderResources) = 0;
+    virtual void update(overview::EngineContext& context) = 0;
 };
 
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ovproto */ } /* namespace cinek */
 
 
 #endif /* ifdef Overview_App_Stage_hpp */

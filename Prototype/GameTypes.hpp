@@ -9,34 +9,46 @@
 #ifndef Overview_Game_Types_hpp
 #define Overview_Game_Types_hpp
 
-#include "Engine/ModelTypes.hpp"
+#include "Engine/EngineTypes.hpp"
+#include "Engine/MessageTypes.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/Render/RenderTypes.hpp"
 
-namespace cinek { namespace overview {
+#include <cinek/json/jsontypes.hpp>
+#include <cinek/map.hpp>
+#include <cinek/string.hpp>
 
-//////////////////////////////////////////////////////////////////////////
-
-using GameObjectId = CommonModelId;
-using EntityId = GameObjectId;
-
-
-//////////////////////////////////////////////////////////////////////////
-
-struct SimDebugMessage
-{
+namespace cinek {
+    namespace ovproto {
+        
+    using EntityId = overview::EntityId;
+    
+    //  JsonDocument doesn't allow copy or move - so we must persist by pointer
+    using AppDocumentMap = unordered_map<uint32_t, unique_ptr<cinek::JsonDocument>>;
+    
+    struct AppContext
+    {
+        //  objects
+        Allocator* allocator;
+        overview::MessagePublisher* messagePublisher;
+        overview::EntityDatabase* entityDb;
+        overview::RenderResources* renderResources;
+        AppDocumentMap* documentMap;
+        
+        //  callbacks
+        overview::CustomComponentCreateFn createComponentCb;
+    };
+    
+    
+    class AppInterface;
+    
+    //  Document IDs
     enum
     {
-        kDrawLine,
-        kDrawPoint
-    }
-    type;
+        kDocumentId_EntityTemplates
+    };
     
-    Point p0;
-    Point p1;
-    glm::vec3 color;
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-} /* namespace overview */ } /* namespace cinek */
+    } /* namespace overview */
+} /* namespace cinek */
 
 #endif

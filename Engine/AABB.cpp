@@ -6,138 +6,124 @@
 //  Author: Samir Sinha
 //  License: The MIT License (MIT)
 
-#include "Engine/AABB.hpp"
-
-#include <glm/glm.hpp>
-#include <algorithm>
+#include "AABB.hpp"
+#include "EngineTypes.hpp"
 
 namespace cinek { namespace overview {
 
     template<>
-    bool AABB<glm::ivec2>::inside(const AABB<glm::ivec2>& box) const
+    void AABB<Vector3>::clear()
     {
-        return (min.x >= box.min.x && max.x <= box.max.x &&
-                min.y >= box.min.y && max.y <= box.max.y);
-    }
-    template<>
-    bool AABB<glm::vec2>::inside(const AABB<glm::vec2>& box) const
-    {
-        return (min.x >= box.min.x && max.x <= box.max.x &&
-                min.y >= box.min.y && max.y <= box.max.y);
-    }
-    template<>
-    bool AABB<glm::ivec3>::inside(const AABB<glm::ivec3>& box) const
-    {
-        return (min.x >= box.min.x && max.x <= box.max.x &&
-                min.y >= box.min.y && max.y <= box.max.y &&
-                min.z >= box.min.z && max.z <= box.max.z);
-    }
-    template<>
-    bool AABB<glm::vec3>::inside(const AABB<glm::vec3>& box) const
-    {
-        return (min.x >= box.min.x && max.x <= box.max.x &&
-                min.y >= box.min.y && max.y <= box.max.y &&
-                min.z >= box.min.z && max.z <= box.max.z);
+        min.comp[0] = min.comp[1] = min.comp[2] = 0.f;
+        max.comp[0] = max.comp[1] = max.comp[2] = 0.f;
     }
 
     template<>
-    bool AABB<glm::ivec2>::contains(const point_type& pt) const
+    bool AABB<Vector3>::inside(const AABB<Vector3>& box) const
     {
-        return (pt.x >= min.x && pt.x <= max.x &&
-                pt.y >= min.y && pt.y <= max.y);
-    }
-    template<>
-    bool AABB<glm::vec2>::contains(const point_type& pt) const
-    {
-        return (pt.x >= min.x && pt.x <= max.x &&
-                pt.y >= min.y && pt.y <= max.y);
-    }
-    template<>
-    bool AABB<glm::ivec3>::contains(const point_type& pt) const
-    {
-        return (pt.x >= min.x && pt.x <= max.x &&
-                pt.y >= min.y && pt.y <= max.y &&
-                pt.z >= min.z && pt.z <= max.z);
-    }
-    template<>
-    bool AABB<glm::vec3>::contains(const point_type& pt) const
-    {
-        return (pt.x >= min.x && pt.x <= max.x &&
-                pt.y >= min.y && pt.y <= max.y &&
-                pt.z >= min.z && pt.z <= max.z);
+        return (min.comp[0] >= box.min.comp[0] && max.comp[0] <= box.max.comp[0] &&
+                min.comp[1] >= box.min.comp[1] && max.comp[1] <= box.max.comp[1] &&
+                min.comp[2] >= box.min.comp[2] && max.comp[2] <= box.max.comp[2]);
     }
 
     template<>
-    bool AABB<glm::ivec2>::outside(const AABB<glm::ivec2>& box) const
+    bool AABB<Vector3>::contains(const point_type& pt) const
     {
-        return (min.x > box.max.x || box.min.x > max.x ||
-                min.y > box.max.y || box.min.y > max.y);
-    }
-    template<>
-    bool AABB<glm::vec2>::outside(const AABB<glm::vec2>& box) const
-    {
-        return (min.x > box.max.x || box.min.x > max.x ||
-                min.y > box.max.y || box.min.y > max.y);
-    }
-    template<>
-    bool AABB<glm::ivec3>::outside(const AABB<glm::ivec3>& box) const
-    {
-        return (min.x > box.max.x || box.min.x > max.x ||
-                min.y > box.max.y || box.min.y > max.y ||
-                min.z > box.max.z || box.min.z > max.z);
-    }
-    template<>
-    bool AABB<glm::vec3>::outside(const AABB<glm::vec3>& box) const
-    {
-        return (min.x > box.max.x || box.min.x > max.x ||
-                min.y > box.max.y || box.min.y > max.y ||
-                min.z > box.max.z || box.min.z > max.z);
+        return (pt.comp[0] >= min.comp[0] && pt.comp[0] <= max.comp[0] &&
+                pt.comp[1] >= min.comp[1] && pt.comp[1] <= max.comp[1] &&
+                pt.comp[2] >= min.comp[2] && pt.comp[2] <= max.comp[2]);
     }
 
     template<>
-    AABB<glm::ivec2> AABB<glm::ivec2>::boundTo(const AABB<glm::ivec2>& box) const
+    bool AABB<Vector3>::outside(const AABB<Vector3>& box) const
     {
-        AABB<glm::ivec2> result;
-        result.min.x = std::min(box.min.x, min.x);
-        result.min.y = std::min(box.min.y, min.y);
-        result.max.x = std::max(box.max.x, max.x);
-        result.max.y = std::max(box.max.y, max.y);
-        return result;
+        return (min.comp[0] > box.max.comp[0] || box.min.comp[0] > max.comp[0] ||
+                min.comp[1] > box.max.comp[1] || box.min.comp[1] > max.comp[1] ||
+                min.comp[2] > box.max.comp[2] || box.min.comp[2] > max.comp[2]);
     }
+    
     template<>
-    AABB<glm::vec2> AABB<glm::vec2>::boundTo(const AABB<glm::vec2>& box) const
+    void AABB<Vector3>::generateVertices(std::array<point_type, 8>& verts)
     {
-        AABB<glm::vec2> result;
-        result.min.x = std::min(box.min.x, min.x);
-        result.min.y = std::min(box.min.y, min.y);
-        result.max.x = std::max(box.max.x, max.x);
-        result.max.y = std::max(box.max.y, max.y);
-        return result;
-    }
-    template<>
-    AABB<glm::ivec3> AABB<glm::ivec3>::boundTo(const AABB<glm::ivec3>& box) const
-    {
-        AABB<glm::ivec3> result;
-        result.min.x = std::min(box.min.x, min.x);
-        result.min.y = std::min(box.min.y, min.y);
-        result.min.z = std::min(box.min.z, min.z);
-        result.max.x = std::max(box.max.x, max.x);
-        result.max.y = std::max(box.max.y, max.y);
-        result.max.z = std::max(box.max.z, max.z);
-        return result;
-    }
-    template<>
-    AABB<glm::vec3> AABB<glm::vec3>::boundTo(const AABB<glm::vec3>& box) const
-    {
-        AABB<glm::vec3> result;
-        result.min.x = std::min(box.min.x, min.x);
-        result.min.y = std::min(box.min.y, min.y);
-        result.min.z = std::min(box.min.z, min.z);
-        result.max.x = std::max(box.max.x, max.x);
-        result.max.y = std::max(box.max.y, max.y);
-        result.max.z = std::max(box.max.z, max.z);
-        return result;
+        //  -y vertices, clockwise from -x,-z
+        verts[0].comp[0] = min.comp[0];     // v0 (-x,-y,-z)
+        verts[0].comp[1] = min.comp[1];
+        verts[0].comp[2] = min.comp[2];
+        verts[1].comp[0] = min.comp[0];     // v1 (-x,-y,+z)
+        verts[1].comp[1] = min.comp[1];
+        verts[1].comp[2] = max.comp[2];
+        verts[2].comp[0] = max.comp[0];     // v2 (+x,-y,+z)
+        verts[2].comp[1] = min.comp[1];
+        verts[2].comp[2] = max.comp[2];
+        verts[3].comp[0] = max.comp[0];     // v3 (+x,-y,-z)
+        verts[3].comp[1] = min.comp[1];
+        verts[3].comp[2] = min.comp[2];
+        
+        //  +y vertices
+        verts[4].comp[0] = min.comp[0];     // v4 (-x,+y,-z)
+        verts[4].comp[1] = max.comp[1];
+        verts[4].comp[2] = min.comp[2];
+        verts[5].comp[0] = min.comp[0];     // v5 (-x,+y,+z)
+        verts[5].comp[1] = max.comp[1];
+        verts[5].comp[2] = max.comp[2];
+        verts[6].comp[0] = max.comp[0];     // v6 (+x,+y,+z)
+        verts[6].comp[1] = max.comp[1];
+        verts[6].comp[2] = max.comp[2];
+        verts[7].comp[0] = max.comp[0];     // v7 (+x,+y,-z)
+        verts[7].comp[1] = max.comp[1];
+        verts[7].comp[2] = min.comp[2];
     }
 
+    template<>
+    template<class _Matrix>
+    void AABB<Vector3>::rotate(const _Matrix& mtxRot)
+    {
+        std::array<point_type, 8> box;
+        generateVertices(box);
+        
+        for (auto& pt : box)
+        {
+            Vector4 pt4;
+            pt4.comp[0] = pt.comp[0];
+            pt4.comp[1] = pt.comp[1];
+            pt4.comp[2] = pt.comp[2];
+            pt4.comp[3] = 1.f;
+            bx::vec4MulMtx(pt4, pt4, mtxRot);
+            
+            if (pt.comp[0] < min.comp[0])
+                min.comp[0] = pt.comp[0];
+            if (pt.comp[0] > max.comp[0])
+                max.comp[0] = pt.comp[0];
+
+            if (pt.comp[1] < min.comp[1])
+                min.comp[1] = pt.comp[1];
+            if (pt.comp[1] > max.comp[1])
+                max.comp[1] = pt.comp[1];
+
+            if (pt.comp[2] < min.comp[2])
+                min.comp[2] = pt.comp[2];
+            if (pt.comp[2] > max.comp[2])
+                max.comp[2] = pt.comp[2];
+        }
+    }
+    
+    template<>
+    AABB<Vector3>& AABB<Vector3>::merge(const AABB<Vector3>& aabb)
+    {
+        if (aabb.min.comp[0] < min.comp[0])
+            min.comp[0] = aabb.min.comp[0];
+        if (aabb.min.comp[1] < min.comp[1])
+            min.comp[1] = aabb.min.comp[1];
+        if (aabb.min.comp[2] < min.comp[2])
+            min.comp[2] = aabb.min.comp[2];
+        if (aabb.max.comp[0] > max.comp[0])
+            max.comp[0] = aabb.max.comp[0];
+        if (aabb.max.comp[1] > max.comp[1])
+            max.comp[1] = aabb.max.comp[1];
+        if (aabb.max.comp[2] > max.comp[2])
+            max.comp[2] = aabb.max.comp[2];
+        
+        return *this;
+    }
 
 } /* namespace overview */ } /* namespace cinek */

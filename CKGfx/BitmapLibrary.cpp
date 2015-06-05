@@ -66,17 +66,17 @@ BitmapAtlasHandle BitmapLibrary::loadAtlas(const char* atlasName)
     BitmapAtlasHandle atlasHandle = ++_nextAtlasHandle;
     if (_freed.empty())
     {
-        atlasHandle.offs = (int)_atlases.size();
+        atlasHandle.data.offs = (int)_atlases.size();
         _atlases.emplace_back();
     }
     else
     {
-        atlasHandle.offs = _freed.back();
+        atlasHandle.data.offs = _freed.back();
         _freed.pop_back();
     }
     
-    _atlases[atlasHandle.offs].first = atlasHandle;
-    _atlases[atlasHandle.offs].second = std::move(atlas);
+    _atlases[atlasHandle.data.offs].first = atlasHandle;
+    _atlases[atlasHandle.data.offs].second = std::move(atlas);
 
     return atlasHandle;
 }
@@ -86,23 +86,23 @@ void BitmapLibrary::unloadAtlas(BitmapAtlasHandle handle)
     if (!handle)
         return;
     
-    auto& atlasRecord = _atlases[handle.offs];
+    auto& atlasRecord = _atlases[handle.data.offs];
     if (atlasRecord.first != handle)
         return;
     
-    _atlases[handle.offs].second = nullptr;
-    _atlases[handle.offs].first = nullptr;
-    _freed.push_back(handle.offs);
+    _atlases[handle.data.offs].second = nullptr;
+    _atlases[handle.data.offs].first = nullptr;
+    _freed.push_back(handle.data.offs);
 }
 
 const BitmapAtlas* BitmapLibrary::atlas(BitmapAtlasHandle handle) const
 {
     if (!handle)
         return nullptr;
-    if (handle.offs >= _atlases.size())
+    if (handle.data.offs >= _atlases.size())
         return nullptr;
     
-    auto& atlasRecord = _atlases[handle.offs];
+    auto& atlasRecord = _atlases[handle.data.offs];
     if (atlasRecord.first != handle)
         return nullptr;
         

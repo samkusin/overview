@@ -9,7 +9,7 @@
 #ifndef Overview_Utils_JsonParse_hpp
 #define Overview_Utils_JsonParse_hpp
 
-#include "Engine/Defines.hpp"
+#include <cinek/types.hpp>
 #include <cinek/json/json.hpp>
 
 #include <glm/glm.hpp>

@@ -11,8 +11,6 @@
 #ifndef Overview_Model_Collection_hpp
 #define Overview_Model_Collection_hpp
 
-#include "Engine/ModelTypes.hpp"
-
 #include <cinek/string.hpp>
 #include <cinek/vector.hpp>
 
@@ -35,13 +33,13 @@ public:
     ModelCollection() = default;
     /// Constructor
     /// @param  name        The name of the collection
-    /// @param  tiles       The tiles defined for this collection
+    /// @param  models      The models defined for this collection
     ///
     ModelCollection(const char* name, Container&& models);
     /// @return True if an empty collection
     ///
     bool empty() const;
-    /// @return The number of tiles in the collection
+    /// @return The number of models in the collection
     ///
     size_t count() const;
     /// @return The collection name
