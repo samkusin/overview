@@ -1,4 +1,4 @@
-$input v_color0
+$input v_color0, v_texcoord0
 
 /*
  * Copyright 2011-2015 Branimir Karadzic. All rights reserved.
@@ -8,7 +8,10 @@ $input v_color0
 #include  <bgfx_shader.sh>
 #include "shaderlib.sh"
 
+SAMPLER2D(u_texColor, 0);
+
 void main()
 {
-	gl_FragColor = v_color0;
+    vec4 color = texture2D(u_texColor, v_texcoord0);
+	gl_FragColor = color * v_color0;
 }

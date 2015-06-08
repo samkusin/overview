@@ -131,8 +131,6 @@
 		37A546F91AE2E50900341500 /* JsonParseExtensions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JsonParseExtensions.hpp; path = ../../Engine/Utils/JsonParseExtensions.hpp; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
 		37AE99161ADF0C4D00497B6F /* Stage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Stage.hpp; path = ../Client/Stage.hpp; sourceTree = "<group>"; };
-		37B30CB61AED74870029887F /* GameStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameStage.cpp; path = ../Client/GameStage/GameStage.cpp; sourceTree = "<group>"; };
-		37B30CB71AED74870029887F /* GameStage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameStage.hpp; path = ../Client/GameStage/GameStage.hpp; sourceTree = "<group>"; };
 		37B30CBB1AED81BC0029887F /* fs_cubes.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_cubes.fs; path = ../Client/Shaders/fs_cubes.fs; sourceTree = "<group>"; };
 		37B30CBC1AED81BC0029887F /* vs_cubes.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_cubes.vs; path = ../Client/Shaders/vs_cubes.vs; sourceTree = "<group>"; };
 		37B30CBF1AED85E20029887F /* varying.def.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = varying.def.sc; path = ../Client/Shaders/varying.def.sc; sourceTree = "<group>"; };
@@ -237,7 +235,6 @@
 			children = (
 				37C94ECF1B1D078500F35CD5 /* Tasks */,
 				37B30CB91AED80830029887F /* Shaders */,
-				37B30CB51AED72C70029887F /* GameStage */,
 				378DC2201ACF757D004C8004 /* OVMain.cpp */,
 				37AE99161ADF0C4D00497B6F /* Stage.hpp */,
 				37E604A51B0FCE0C009C916D /* StageApplication.cpp */,
@@ -285,15 +282,6 @@
 			);
 			name = Prototype;
 			path = ..;
-			sourceTree = "<group>";
-		};
-		37B30CB51AED72C70029887F /* GameStage */ = {
-			isa = PBXGroup;
-			children = (
-				37B30CB61AED74870029887F /* GameStage.cpp */,
-				37B30CB71AED74870029887F /* GameStage.hpp */,
-			);
-			name = GameStage;
 			sourceTree = "<group>";
 		};
 		37B30CB91AED80830029887F /* Shaders */ = {

@@ -45,6 +45,14 @@ namespace VertexTypes
             .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
             .end();
         ++s_declCount;
+        
+        // kVec3_Normal_Tex0
+        s_decls[s_declCount].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+            .end();
+        ++s_declCount;
     }
     
     const bgfx::VertexDecl& declaration(Format tex)

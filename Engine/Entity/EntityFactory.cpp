@@ -47,7 +47,8 @@ namespace component
         
         if (data.HasMember("bitmap"))
         {
-            object.renderable().texHandle = renderResources.textureAtlas->loadTexture(dataName).data;
+            const char* bmpName = data["bitmap"].GetString();
+            object.renderable().texHandle = renderResources.textureAtlas->loadTexture(bmpName).data;
         }
     }
 }

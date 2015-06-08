@@ -27,14 +27,19 @@ struct IcoSphereUtility
     unordered_map<KeyType, IndexType> midpointIndices;
     vector<std::array<IndexType, 7>> vertexAdjFaces;// [0]=faceCnt,[1-6]=faceIdx
     
+    struct Face
+    {
+        IndexType idx[3];
+    };
+    
     vector<Vector3> vertices;
-    vector<IndexType> indices;
+    vector<Face> faces;
     vector<Vector3> faceNormals;
     
     IcoSphereUtility(int passes, const Allocator& allocator) :
         midpointIndices(allocator),
         vertices(allocator),
-        indices(allocator)
+        faces(allocator)
     {
         const uint32_t kNumVerts = 12 + 30 * passes*passes;
         vertices.reserve(kNumVerts);
@@ -52,7 +57,7 @@ struct IcoSphereUtility
         //  and the new index vector created after a recursive/subdivide pass.
         //  So make room for additional indices by adding an extra pass.
         
-        indices.reserve( (numFaces * 4) * 3 );  // tris
+        faces.reserve( (numFaces * 4) );
     }
     
     IndexType addVertex(const Vector3& v)
@@ -87,32 +92,31 @@ struct IcoSphereUtility
     
     void addFace(IndexType v0, IndexType v1, IndexType v2)
     {
-        indices.push_back(v0);
-        indices.push_back(v1);
-        indices.push_back(v2);
+        faces.push_back({v0, v1, v2});
     }
     
     void subdivide()
     {
-        if (indices.empty())
+        if (faces.empty())
             return;
         
-        IndexType offset = indices.size();
+        auto offset = faces.size();
         
-        for (IndexType i = 0; i < offset; i+=3)
+        for (auto i = 0; i < offset; ++i)
         {
-            IndexType a = addMiddlePoint(indices[i+0], indices[i+1]);
-            IndexType b = addMiddlePoint(indices[i+1], indices[i+2]);
-            IndexType c = addMiddlePoint(indices[i+2], indices[i+0]);
+            Face& face = faces[i];
+            IndexType a = addMiddlePoint(face.idx[0], face.idx[1]);
+            IndexType b = addMiddlePoint(face.idx[1], face.idx[2]);
+            IndexType c = addMiddlePoint(face.idx[2], face.idx[0]);
             
-            addFace( indices[i+0], a, c );
-            addFace( indices[i+1], b, a );
-            addFace( indices[i+2], c, b );
+            addFace( face.idx[0], a, c );
+            addFace( face.idx[1], b, a );
+            addFace( face.idx[2], c, b );
             addFace( a, b, c );
         }
         
         //  erase the old faces.
-        indices.erase(indices.begin(), indices.begin() + offset);
+        faces.erase(faces.begin(), faces.begin() + offset);
     }
     
     void finalize()
@@ -124,11 +128,12 @@ struct IcoSphereUtility
 
         faceNormals.clear();
         
-        for (size_t i = 0; i < indices.size(); i+=3)
+        for (size_t i = 0; i < faces.size(); ++i)
         {
+            Face& face = faces[i];
             // left-handed
             Vector3 v0, v1;
-            auto i0 = indices[i+0], i1 = indices[i+1], i2 = indices[i+2];
+            auto i0 = face.idx[0], i1 = face.idx[1], i2 = face.idx[2];
             bx::vec3Sub(v0, vertices[i0], vertices[i1]);
             bx::vec3Sub(v1, vertices[i2], vertices[i0]);
             bx::vec3Norm(v0, v0);
@@ -150,6 +155,66 @@ struct IcoSphereUtility
         CK_ASSERT(faceCnt+1 < adjFaces.size());
         ++faceCnt;
         adjFaces[faceCnt] = faceIndex;
+    }
+    
+    Vector3 vertexNormal(int vertIdx)
+    {
+        Vector3 normal = {{ 0.f,0.f,0.f }};
+        //  add all face normals attached to this vertex and normalize for
+        //  the vertex normal
+        auto& adjFaces = vertexAdjFaces[vertIdx];
+        auto numFaces = adjFaces[0]+1;
+        for (decltype(numFaces) iaf = 1; iaf < numFaces; ++iaf)
+        {
+            auto& faceNormal = faceNormals[adjFaces[iaf]];
+            bx::vec3Add(normal, normal, faceNormal);
+        }
+        bx::vec3Norm(normal, normal);
+        return normal;
+    }
+    
+    
+    void fixupEdgeUVs(vector<Vector2>& vertexUVs, vector<Vector3>& normals,
+                      Face& face,
+                      int index0, int index1)
+    {
+        //  if a boundary face, update the face with the corrected UV and
+        //  duplicated vertex.
+        //  we also need to generate a normal for any new vertices created
+        
+        //  do not fixup pole vertices - their UVs will be fixed up in another
+        //  step
+        auto& n0 = normals[face.idx[index0]];
+        auto& n1 = normals[face.idx[index1]];
+        if (n0.comp[1] == 1.f || n0.comp[1] == -1.f)
+            return;
+        if (n1.comp[1] == 1.f || n1.comp[1] == -1.f)
+            return;
+        
+        auto& uv0 = vertexUVs[face.idx[index0]];
+        auto& uv1 = vertexUVs[face.idx[index1]];
+        auto uDiff = std::fabs(uv0.comp[0] - uv1.comp[0]);
+        if (uDiff > 0.25f)
+        {
+            //  new vertex,normal and UV required - update the face with the
+            //  new vert-index.
+            if (uv0.comp[0] > uv1.comp[0])
+            {
+                vertexUVs.push_back(uv1);
+                vertexUVs.back().comp[0] += 1.0f;
+                vertices.push_back(vertices[face.idx[index1]]);
+                normals.push_back(normals[face.idx[index1]]);
+                face.idx[index1] = vertices.size()-1;
+            }
+            else
+            {
+                vertexUVs.push_back(uv0);
+                vertexUVs.back().comp[0] += 1.0f;
+                vertices.push_back(vertices[face.idx[index0]]);
+                normals.push_back(normals[face.idx[index0]]);
+                face.idx[index0] = vertices.size()-1;
+            }
+        }
     }
 };
         
@@ -222,11 +287,118 @@ unique_ptr<Mesh> createIcoSphere
     
     utility.finalize();
     
-    //  allocate packed buffers based on vertex declaration
-    //
+    //  calculate normals and UVs, reserving extra space for duplicate face
+    //  generation (re: UV wrapping)
+    vector<Vector2> vertexUVs;
+    vector<Vector3> normals;
+    
+    bool hasUVs = vertexDecl.has(bgfx::Attrib::TexCoord0);
+    
+    vertexUVs.reserve(utility.vertices.size() + utility.vertices.size()/4);
+    normals.reserve(utility.vertices.size() + utility.vertices.size()/4);
+    
+    for (int iv = 0; iv < utility.vertices.size(); ++iv)
+    {
+        normals.emplace_back(utility.vertexNormal(iv));
+        if (hasUVs)
+        {
+            const Vector3& normal = normals.back();
+        
+                //  invert our y normal coordinate - this is aesthetic choice since
+            //  we want the top of the texture to match positive Y in 3dspace
+            Vector2 uv;
+            if (normal.comp[2] || normal.comp[0])
+            {
+                uv.comp[0] = atan2f(normal.comp[2], normal.comp[0])/(2*bx::pi) + 0.5f;
+            }
+            else
+            {
+                uv.comp[0] = 0.0f;
+            }
+            uv.comp[1] = 0.5f - asinf(normal.comp[1])/bx::pi;
+            vertexUVs.emplace_back(uv);
+        }
+    }
+    
+    if (hasUVs)
+    {
+        //  Fixup UVs for faces that lie on or past the boundary Umax, Vmax.
+        //  -Iterate through all faces to find such "boundary faces".
+        //  -Create new vertices when needed so the face UVs correctly wrap the'
+        //  sphere.
+        //
+        for (auto it = utility.faces.begin(); it != utility.faces.end(); ++it)
+        {
+            auto& face = *it;
+            
+            utility.fixupEdgeUVs(vertexUVs, normals, face, 0, 1);
+            utility.fixupEdgeUVs(vertexUVs, normals, face, 1, 2);
+            utility.fixupEdgeUVs(vertexUVs, normals, face, 2, 0);
+            
+        }
+        
+        bool yPosNormalFound = false;
+        bool yNegNormalFound = false;
+        for (auto it = utility.faces.begin(); it != utility.faces.end(); ++it)
+        {
+            auto& face = *it;
+  
+            //  find the pole vertices - they'll have +-1 Y axis normals
+            //  create new verices
+            for (int i = 0; i < 3; ++i)
+            {
+                auto& normal = normals[face.idx[i]];
+                
+                //  don't duplicate the first pole vertex found to prevent
+                //  creating vertices that aren't used
+                bool newVertex = false;
+                if (normal.comp[1] == 1.0f)
+                {
+                    newVertex = yPosNormalFound;
+                    yPosNormalFound = true;
+                }
+                else if (normal.comp[1] == -1.0f)
+                {
+                    newVertex = yNegNormalFound;
+                    yNegNormalFound = true;
+                }
+                if (normal.comp[1] == 1.0f || normal.comp[1] == -1.0f)
+                {
+                    
+                    if (newVertex)
+                    {
+                        vertexUVs.push_back(vertexUVs[face.idx[i]]);
+                        utility.vertices.push_back(utility.vertices[face.idx[i]]);
+                        normals.push_back(normal);
+                        face.idx[i] = utility.vertices.size()-1;
+                    }
+                    //  our "new U" will be the average of the other two vertices
+                    //  U values (http://sol.gfxile.net/sphere/)
+                    float vertAU = vertexUVs[face.idx[(i+1)%3]].comp[0];
+                    float vertBU = vertexUVs[face.idx[(i+2)%3]].comp[0];
+                    vertexUVs[face.idx[i]].comp[0] = (vertAU+vertBU)*0.5f;
+                    /*
+                    printf("UV[%d]=(%.2f,%.2f), ", i,
+                        vertexUVs[face.idx[i]].comp[0],
+                        vertexUVs[face.idx[i]].comp[1]);
+                    printf("UV[%d]=(%.2f,%.2f), ", (i+1)%3,
+                        vertexUVs[face.idx[(i+1)%3]].comp[0],
+                        vertexUVs[face.idx[(i+1)%3]].comp[1]);
+                    printf("UV[%d]=(%.2f,%.2f) \n ", (i+2)%3,
+                        vertexUVs[face.idx[(i+2)%3]].comp[0],
+                        vertexUVs[face.idx[(i+2)%3]].comp[1]);
+                    */
+                    break;
+                }
+            }
+        }
+    }
+    
+    //  allocate packed buffers based on vertex declaration and generate our
+    //  hardware buffers
     uint32_t vertBufSize = vertexDecl.getSize((uint32_t)utility.vertices.size());
     const bgfx::Memory* vertexMemory = bgfx::alloc(vertBufSize);
-    uint32_t idxBufSize =  (uint32_t)(utility.indices.size()*sizeof(decltype(utility)::index_type));
+    uint32_t idxBufSize =  (uint32_t)(utility.faces.size()*sizeof(decltype(utility)::index_type)*3);
     const bgfx::Memory* indexMemory = bgfx::alloc(idxBufSize);
     
     for (int iv = 0; iv < utility.vertices.size(); ++iv)
@@ -249,32 +421,31 @@ unique_ptr<Mesh> createIcoSphere
         }
         if (vertexDecl.has(bgfx::Attrib::Normal))
         {
-            //  add all face normals attached to this vertex and normalize for
-            //  the vertex normal
-            auto& adjFaces = utility.vertexAdjFaces[iv];
-            auto numFaces = adjFaces[0]+1;
-            Vector3 normal = {{ 0.f,0.f,0.f }};
-            for (decltype(numFaces) iaf = 1; iaf < numFaces; ++iaf)
-            {
-                auto& faceNormal = utility.faceNormals[adjFaces[iaf]];
-                bx::vec3Add(normal, normal, faceNormal);
-            }
-            bx::vec3Norm(normal, normal);
-            bgfx::vertexPack(normal, false,
+            bgfx::vertexPack(normals[iv], false,
                 bgfx::Attrib::Normal,
                 vertexDecl,
                 vertexMemory->data,
                 iv);
         }
-        /*
         if (vertexDecl.has(bgfx::Attrib::TexCoord0))
         {
+            bgfx::vertexPack(vertexUVs[iv], false,
+                bgfx::Attrib::TexCoord0,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
         }
-        */
     }
     
     CK_ASSERT(idxBufSize == indexMemory->size);
-    memcpy(indexMemory->data, utility.indices.data(), idxBufSize);
+    auto indexMemoryPtr = reinterpret_cast<decltype(utility)::index_type*>(indexMemory->data);
+    for (auto& face : utility.faces)
+    {
+        indexMemoryPtr[0] = face.idx[0];
+        indexMemoryPtr[1] = face.idx[1];
+        indexMemoryPtr[2] = face.idx[2];
+        indexMemoryPtr += 3;
+    }
     
     Allocator meshalloc(allocator);
     

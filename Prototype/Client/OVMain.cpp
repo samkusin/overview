@@ -86,9 +86,16 @@ void run(SDL_Window* window)
         &shaderLibrary
     };
     
+    //  should load shaders from a JSON collection to handle uniforms, etc.
+    vector<bgfx::UniformHandle> shaderUniforms;
+    shaderUniforms.resize(4, BGFX_INVALID_HANDLE);
+    shaderUniforms[overview::kRenderShaderUniform_ColorTexture] =
+        bgfx::createUniform("u_texColor", bgfx::UniformType::Uniform1iv);
+    
     shaderLibrary.loadProgram(0x00000001,
         "Shaders/vs_cubes.bin",
-        "Shaders/fs_cubes.bin");
+        "Shaders/fs_cubes.bin",
+        std::move(shaderUniforms));
     
     overview::EntityDatabase entityDb(2048, {
         { overview::component::Camera::kComponentType, 4 },
@@ -126,7 +133,7 @@ void run(SDL_Window* window)
         };
     
     //  should be moved into a task for "initialization"
-    auto starMesh = gfx::createIcoSphere(1.0f, 3, gfx::VertexTypes::kVec3_Normal);
+    auto starMesh = gfx::createIcoSphere(1.0f, 3, gfx::VertexTypes::kVec3_Normal_Tex0);
     meshLibrary.acquire(std::move(starMesh), "star");
     
     //  start app

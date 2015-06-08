@@ -28,6 +28,8 @@ protected:
     
 private:
     AppInterface _API;
+    
+    EntityId _bodyEntityId;
 };
 
 

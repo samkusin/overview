@@ -16,6 +16,7 @@
 
 #include "CKGfx/MeshLibrary.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
+#include "CKGfx/TextureAtlas.hpp"
 
 #include <cinek/vector.hpp>
 
@@ -43,14 +44,21 @@ struct RenderObjectFn
         {
             auto meshElement = mesh->element(0);
             bgfx::ProgramHandle program = context.resources->shaderLibrary->program(0x00000001);
-            
-            gfx::Matrix4 meshTransform = meshElement->transform;
-            
-            bx::mtxMul(meshTransform, meshTransform, transform.matrix);
+            bgfx::UniformHandle uTexColor =
+                context.resources->shaderLibrary->uniformFromProgram(
+                    kRenderShaderUniform_ColorTexture,
+                    0x00000001
+                );
+            gfx::Matrix4 meshTransform;
+            bx::mtxMul(meshTransform, meshElement->transform, transform.matrix);
+
             bgfx::setTransform(meshTransform);
             bgfx::setProgram(program);
             bgfx::setVertexBuffer(meshElement->vertBufH);
             bgfx::setIndexBuffer(meshElement->idxBufH);
+            
+            bgfx::TextureHandle texture = context.resources->textureAtlas->texture(renderable.texHandle);
+            bgfx::setTexture(0, uTexColor, texture);
             bgfx::setState(BGFX_STATE_DEFAULT);
             bgfx::submit(0);
         }

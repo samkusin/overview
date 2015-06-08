@@ -117,7 +117,7 @@ TextureHandle TextureAtlas::loadTexture(const char* path)
                             &width,
                             &height,
                             &comp,
-                            0
+                            4
                         );
         if (data)
         {
@@ -127,7 +127,7 @@ TextureHandle TextureAtlas::loadTexture(const char* path)
                                     width, height, 1,
                                     bgfx::TextureFormat::RGBA8,
                                     BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
-                                    bgfx::copy(data, width*height*comp)
+                                    bgfx::copy(data, width*height*4)
                                  );
             stbi_image_free(data);
             

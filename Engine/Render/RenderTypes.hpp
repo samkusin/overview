@@ -16,6 +16,11 @@ namespace cinek { namespace overview {
     class RenderScene;
     class RenderResources;
     
+    enum
+    {
+        kRenderShaderUniform_ColorTexture = 0
+    };
+    
 } /* namespace overview */ } /* namespace cinek */
 
 

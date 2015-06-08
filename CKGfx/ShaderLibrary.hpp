@@ -31,10 +31,12 @@ namespace cinek {
         (
             uint32_t progId,
             const char* vertexShaderPath,
-            const char* fragShaderPath
+            const char* fragShaderPath,
+            vector<bgfx::UniformHandle>&& uniforms
         );
         
         bgfx::ProgramHandle program(uint32_t programId) const;
+        bgfx::UniformHandle uniformFromProgram(uint32_t uniformIndex, uint32_t progId) const;
         
     private:
         //  Loading a program will involve an O(n) search for existing
@@ -59,6 +61,7 @@ namespace cinek {
             bgfx::ProgramHandle program = BGFX_INVALID_HANDLE;
             int32_t vsIndex = -1;
             int32_t fsIndex = -1;
+            vector<bgfx::UniformHandle> uniforms;
         };
         unordered_map<uint32_t, ProgramReference> _programs;
         

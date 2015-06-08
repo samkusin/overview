@@ -42,6 +42,13 @@ namespace cinek {
         operator const float*() const { return comp; }
     };
     
+    struct Vector2
+    {
+        float comp[2];
+        operator float*() { return comp; }
+        operator const float*() const { return comp; }
+    };
+    
     /// Vertex types, acting as indices into a VertexDefinitions container
     namespace VertexTypes
     {
@@ -50,6 +57,7 @@ namespace cinek {
             kVec3,              ///< XYZ floats only
             kVec3_RGBA,         ///< XYZ floats + ARGB byte components
             kVec3_Normal,       ///< XYZ floats + Normals
+            kVec3_Normal_Tex0,  ///< XYZ floats + Normals + Vector2 UVs
             
             kPresetCount,       ///< Preset Limit
             kFormatLimit = kPresetCount + 16,

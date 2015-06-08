@@ -39,6 +39,10 @@ public:
     overview::EntityObject* createEntity(uint32_t srcTemplatesDocId,
             const char* templateName);
     
+    //  return the entity object given its ID
+    overview::EntityObject* entityById(EntityId eid);
+    
+    overview::EntityDatabase* entityDb();
     
 private:
     AppContext* _context;

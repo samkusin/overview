@@ -9,6 +9,7 @@
 #include "AppInterface.hpp"
 
 #include "Engine/Entity/EntityFactory.hpp"
+#include "Engine/Entity/EntityDatabase.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/json/jsonstreambuf.hpp>
@@ -94,6 +95,17 @@ overview::EntityObject* AppInterface::createEntity
         templateName,
         _context->messagePublisher,
         _context->createComponentCb);
+}
+
+
+overview::EntityDatabase* AppInterface::entityDb()
+{
+    return _context->entityDb;
+}
+
+overview::EntityObject* AppInterface::entityById(EntityId eid)
+{
+    return _context->entityDb->entityObjectFromId(eid);
 }
     
 
