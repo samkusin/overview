@@ -36,31 +36,34 @@ struct RenderObjectFn
     
     void operator()(EntityObject& entity)
     {
-        auto& renderable = entity.renderable();
-        auto& transform = entity.transform();
-        
-        auto mesh = context.resources->meshLibrary->mesh(renderable.meshHandle);
-        if (mesh)
+        auto renderable = context.entityDb->componentFromEntity<component::Renderable>(entity.id());
+        if (renderable)
         {
-            auto meshElement = mesh->element(0);
-            bgfx::ProgramHandle program = context.resources->shaderLibrary->program(0x00000001);
-            bgfx::UniformHandle uTexColor =
-                context.resources->shaderLibrary->uniformFromProgram(
-                    kRenderShaderUniform_ColorTexture,
-                    0x00000001
-                );
-            gfx::Matrix4 meshTransform;
-            bx::mtxMul(meshTransform, meshElement->transform, transform.matrix);
-
-            bgfx::setTransform(meshTransform);
-            bgfx::setProgram(program);
-            bgfx::setVertexBuffer(meshElement->vertBufH);
-            bgfx::setIndexBuffer(meshElement->idxBufH);
+            auto& matrix = entity.matrix();
             
-            bgfx::TextureHandle texture = context.resources->textureAtlas->texture(renderable.texHandle);
-            bgfx::setTexture(0, uTexColor, texture);
-            bgfx::setState(BGFX_STATE_DEFAULT);
-            bgfx::submit(0);
+            auto mesh = context.resources->meshLibrary->mesh(renderable->meshHandle);
+            if (mesh)
+            {
+                auto meshElement = mesh->element(0);
+                bgfx::ProgramHandle program = context.resources->shaderLibrary->program(0x00000001);
+                bgfx::UniformHandle uTexColor =
+                    context.resources->shaderLibrary->uniformFromProgram(
+                        kRenderShaderUniform_ColorTexture,
+                        0x00000001
+                    );
+                gfx::Matrix4 meshTransform;
+                bx::mtxMul(meshTransform, meshElement->transform, matrix);
+
+                bgfx::setTransform(meshTransform);
+                bgfx::setProgram(program);
+                bgfx::setVertexBuffer(meshElement->vertBufH);
+                bgfx::setIndexBuffer(meshElement->idxBufH);
+                
+                bgfx::TextureHandle texture = context.resources->textureAtlas->texture(renderable->texHandle);
+                bgfx::setTexture(0, uTexColor, texture);
+                bgfx::setState(BGFX_STATE_DEFAULT);
+                bgfx::submit(0);
+            }
         }
     }
 };

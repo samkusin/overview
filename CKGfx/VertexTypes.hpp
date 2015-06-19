@@ -21,7 +21,8 @@ namespace cinek {
     /// A 4x4 uniform
     struct Matrix4
     {
-        float comp[16];
+        typedef float value_type;
+        value_type comp[16];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
     };
@@ -29,7 +30,8 @@ namespace cinek {
     /// A 4x1 uniform
     struct Vector4
     {
-        float comp[4];
+        typedef float value_type;
+        value_type comp[4];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
     };
@@ -37,14 +39,16 @@ namespace cinek {
     /// A 3x1 uniform
     struct Vector3
     {
-        float comp[3];
+        typedef float value_type;
+        value_type comp[3];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
     };
     
     struct Vector2
     {
-        float comp[2];
+        typedef float value_type;
+        value_type comp[2];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
     };

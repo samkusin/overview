@@ -15,6 +15,7 @@
 
 namespace cinek { namespace overview {
 
+using Vector2 = gfx::Vector2;
 using Vector3 = gfx::Vector3;
 using Vector4 = gfx::Vector4;
 using Matrix4 = gfx::Matrix4;
@@ -55,6 +56,19 @@ inline bool operator!=(const Vector3& l, const Vector3& r)
     return l.comp[0]!=r.comp[0] || l.comp[1]!=r.comp[1] || l.comp[2]!=r.comp[2];
 }
 
+inline Vector3 operator*(const Vector3& v0, const Vector3& v1)
+{
+    Vector3 vr;
+    bx::vec3Mul(vr, v0, v1);
+    return vr;
+}
+
+inline Vector3& operator*=(Vector3& v0, const Vector3& v1)
+{
+    bx::vec3Mul(v0, v0, v1);
+    return v0;
+}
+
 inline Vector3 operator/(const Vector3& v, float scalar)
 {
     Vector3 result;
@@ -62,6 +76,11 @@ inline Vector3 operator/(const Vector3& v, float scalar)
     return result;
 }
 
+inline Vector3& operator/=(Vector3& v, float scalar)
+{
+    bx::vec3Mul(v, v, 1/scalar);
+    return v;
+}
 
 inline Vector3 Matrix4TranslateComponent(const Matrix4& mat)
 {

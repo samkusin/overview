@@ -19,7 +19,17 @@ namespace component
     {
         COMPONENT_DEFINITION(Transform, kTransform);
         
-        Matrix4 matrix;
+        enum
+        {
+            kScale      = 0x0001,
+            kRotate     = 0x0002,
+            kTranslate  = 0x0004
+        };
+        
+        uint32_t flags;
+        Vector3 scale;
+        Vector3 rotate;
+        Vector3 translate;
     };
 }
 

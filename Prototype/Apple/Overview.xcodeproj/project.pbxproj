@@ -46,6 +46,8 @@
 		37F368FF1ACDFEF300314DB2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FE1ACDFEF300314DB2 /* Cocoa.framework */; };
 		37F369011ACDFEFA00314DB2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369001ACDFEFA00314DB2 /* IOKit.framework */; };
 		37F369031ACDFF0A00314DB2 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369021ACDFF0A00314DB2 /* libiconv.dylib */; };
+		37F43E581B31E6E20065D8E9 /* BVHGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E571B31E6E20065D8E9 /* BVHGraph.cpp */; };
+		37F43E5E1B33A4340065D8E9 /* CustomComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
 		37F64AA11780EA2C009116E7 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.mm */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
@@ -146,8 +148,9 @@
 		37C94EDD1B1D2DB000F35CD5 /* MessageHandlers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageHandlers.hpp; path = ../MessageHandlers.hpp; sourceTree = "<group>"; };
 		37C94EDF1B1D31F500F35CD5 /* AppInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppInterface.cpp; path = ../AppInterface.cpp; sourceTree = "<group>"; };
 		37C94EE01B1D31F500F35CD5 /* AppInterface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AppInterface.hpp; path = ../AppInterface.hpp; sourceTree = "<group>"; };
-		37DD564B1B0848420091C9EB /* BVHStaticGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BVHStaticGraph.hpp; path = ../../Engine/BVH/BVHStaticGraph.hpp; sourceTree = "<group>"; };
-		37DD564D1B084C7D0091C9EB /* BVHTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = BVHTypes.hpp; path = ../../Engine/BVH/BVHTypes.hpp; sourceTree = "<group>"; };
+		37D2FDE31B2B3B9200C67E60 /* BVHGraph.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = BVHGraph.hpp; path = ../../Engine/Graphs/BVHGraph.hpp; sourceTree = "<group>"; };
+		37D2FDE41B2B3B9200C67E60 /* BVHTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = BVHTypes.hpp; path = ../../Engine/Graphs/BVHTypes.hpp; sourceTree = "<group>"; };
+		37D2FDE51B2B3BC600C67E60 /* Octree.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Octree.hpp; path = ../../Engine/Graphs/Octree.hpp; sourceTree = "<group>"; };
 		37E604811B0A6B81009C916D /* EntityDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDatabase.cpp; sourceTree = "<group>"; };
 		37E604821B0A6B81009C916D /* EntityDatabase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityDatabase.hpp; sourceTree = "<group>"; };
 		37E604841B0A93F3009C916D /* EntityObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EntityObject.hpp; sourceTree = "<group>"; };
@@ -181,6 +184,10 @@
 		37F369021ACDFF0A00314DB2 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
 		37F369041ACE00E100314DB2 /* Debug.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Debug.hpp; path = ../../Engine/Debug.hpp; sourceTree = "<group>"; };
 		37F369071ACE00E100314DB2 /* EngineTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EngineTypes.hpp; path = ../../Engine/EngineTypes.hpp; sourceTree = "<group>"; };
+		37F43E571B31E6E20065D8E9 /* BVHGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BVHGraph.cpp; path = ../../Engine/Graphs/BVHGraph.cpp; sourceTree = "<group>"; };
+		37F43E5B1B33A1220065D8E9 /* StellarSystem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = StellarSystem.hpp; path = ../Custom/Comp/StellarSystem.hpp; sourceTree = "<group>"; };
+		37F43E5C1B33A2040065D8E9 /* CustomComponentTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CustomComponentTypes.hpp; path = ../Custom/Comp/CustomComponentTypes.hpp; sourceTree = "<group>"; };
+		37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomComponents.cpp; path = ../Custom/Comp/CustomComponents.cpp; sourceTree = "<group>"; };
 		37F64A911780EA2C009116E7 /* Overview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Overview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37F64A9C1780EA2C009116E7 /* Overview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Overview-Info.plist"; sourceTree = "<group>"; };
 		37F64A9E1780EA2C009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -270,6 +277,7 @@
 		37B1FE661789F68F00C38E18 /* Prototype */ = {
 			isa = PBXGroup;
 			children = (
+				37F43E591B339FBF0065D8E9 /* Comp */,
 				378DC21C1ACF735A004C8004 /* Apple */,
 				37A546F41AE2E3D700341500 /* Objects */,
 				378DC21B1ACF7148004C8004 /* Client */,
@@ -318,13 +326,15 @@
 			name = Tasks;
 			sourceTree = "<group>";
 		};
-		37DD56491B0847DE0091C9EB /* BVH */ = {
+		37DD56491B0847DE0091C9EB /* Graphs */ = {
 			isa = PBXGroup;
 			children = (
-				37DD564B1B0848420091C9EB /* BVHStaticGraph.hpp */,
-				37DD564D1B084C7D0091C9EB /* BVHTypes.hpp */,
+				37D2FDE31B2B3B9200C67E60 /* BVHGraph.hpp */,
+				37F43E571B31E6E20065D8E9 /* BVHGraph.cpp */,
+				37D2FDE41B2B3B9200C67E60 /* BVHTypes.hpp */,
+				37D2FDE51B2B3BC600C67E60 /* Octree.hpp */,
 			);
-			name = BVH;
+			name = Graphs;
 			sourceTree = "<group>";
 		};
 		37E6048F1B0FAECD009C916D /* Render */ = {
@@ -351,7 +361,7 @@
 			children = (
 				37E604A81B0FE656009C916D /* Objects */,
 				37E6048F1B0FAECD009C916D /* Render */,
-				37DD56491B0847DE0091C9EB /* BVH */,
+				37DD56491B0847DE0091C9EB /* Graphs */,
 				37A546F71AE2E4E200341500 /* Utils */,
 				378DC1E71ACF6AB2004C8004 /* Entity */,
 				378DC1E21ACF6AB2004C8004 /* AABB.cpp */,
@@ -399,6 +409,24 @@
 			);
 			name = CKGfx;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		37F43E591B339FBF0065D8E9 /* Comp */ = {
+			isa = PBXGroup;
+			children = (
+				37F43E5A1B339FD50065D8E9 /* Custom */,
+			);
+			name = Comp;
+			sourceTree = "<group>";
+		};
+		37F43E5A1B339FD50065D8E9 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				37F43E5C1B33A2040065D8E9 /* CustomComponentTypes.hpp */,
+				37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */,
+				37F43E5B1B33A1220065D8E9 /* StellarSystem.hpp */,
+			);
+			name = Custom;
 			sourceTree = "<group>";
 		};
 		37F64A881780EA2C009116E7 = {
@@ -552,12 +580,14 @@
 				373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.mm in Sources */,
 				37E6048B1B0D0037009C916D /* EntityObject.cpp in Sources */,
+				37F43E5E1B33A4340065D8E9 /* CustomComponents.cpp in Sources */,
 				37C94EE11B1D31F500F35CD5 /* AppInterface.cpp in Sources */,
 				37E604861B0AACFC009C916D /* Components.cpp in Sources */,
 				378A996C1AEAE2BD008BD771 /* ShaderLibrary.cpp in Sources */,
 				37E604931B0FAEDC009C916D /* RenderScene.cpp in Sources */,
 				37E604831B0A6B81009C916D /* EntityDatabase.cpp in Sources */,
 				37E604A41B0FCBE6009C916D /* MessageStream.cpp in Sources */,
+				37F43E581B31E6E20065D8E9 /* BVHGraph.cpp in Sources */,
 				37E604891B0AC333009C916D /* DataRowset.cpp in Sources */,
 				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
 				37C94ED81B1D122F00F35CD5 /* GameTask.cpp in Sources */,

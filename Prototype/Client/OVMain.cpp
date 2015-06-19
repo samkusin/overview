@@ -12,6 +12,8 @@
 #include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 
+#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Render/RenderScene.hpp"
 #include "Engine/Entity/EntityDatabase.hpp"
 #include "Engine/MessageDispatcher.hpp"
@@ -30,6 +32,8 @@
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
+
+#include "Custom/Comp/StellarSystem.hpp"
 
 
 namespace cinek { namespace ovproto {
@@ -97,9 +101,12 @@ void run(SDL_Window* window)
         "Shaders/fs_cubes.bin",
         std::move(shaderUniforms));
     
-    overview::EntityDatabase entityDb(2048, {
+    overview::EntityDatabase entityDb(65536, 0, {
+        { overview::component::Transform::kComponentType, 32768 },
+        { overview::component::Renderable::kComponentType, 32768 },
         { overview::component::Camera::kComponentType, 4 },
-        { overview::component::Light::kComponentType, 8 }
+        { overview::component::Light::kComponentType, 8 },
+        { component::StellarSystem::kComponentType, 32768 }
     });
     
     overview::RenderContext renderContext;
@@ -133,7 +140,7 @@ void run(SDL_Window* window)
         };
     
     //  should be moved into a task for "initialization"
-    auto starMesh = gfx::createIcoSphere(1.0f, 3, gfx::VertexTypes::kVec3_Normal_Tex0);
+    auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);
     meshLibrary.acquire(std::move(starMesh), "star");
     
     //  start app

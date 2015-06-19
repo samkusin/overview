@@ -13,6 +13,7 @@
 #include "Engine/MessageTypes.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
 #include "Engine/Render/RenderTypes.hpp"
+#include "Engine/AABB.hpp"
 
 #include <cinek/json/jsontypes.hpp>
 #include <cinek/map.hpp>
@@ -20,8 +21,13 @@
 
 namespace cinek {
     namespace ovproto {
-        
+    
+    //  bring certain Engine types over into our namespace
     using EntityId = overview::EntityId;
+    using Vector2 = overview::Vector2;
+    using Vector3 = overview::Vector3;
+    using Matrix4 = overview::Matrix4;
+    template<typename Point> using AABB = overview::AABB<Point>;
     
     //  JsonDocument doesn't allow copy or move - so we must persist by pointer
     using AppDocumentMap = unordered_map<uint32_t, unique_ptr<cinek::JsonDocument>>;

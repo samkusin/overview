@@ -15,12 +15,14 @@ namespace cinek { namespace overview {
 EntityDatabase::EntityDatabase
 (
     uint32_t numEntities,
+    uint16_t dbId,
     const vector<std::pair<component::Descriptor, uint32_t>>& components,
     const Allocator& allocator
 ) :
     _allocator(allocator),
     _objects(allocator),
     _freeObjectIndices(allocator),
+    _dbId(dbId),
     _entityIdIteration(0),
     _components(allocator)
 {
@@ -66,7 +68,7 @@ EntityObject* EntityDatabase::createEntity()
     if (!_entityIdIteration)
         _entityIdIteration = 1;
     
-    EntityId eid = makeEntityId(_entityIdIteration, index);
+    EntityId eid = makeEntityId(_dbId, _entityIdIteration, index);
     if (index == _objects.size())
     {
         _objects.emplace_back(eid, _allocator);
@@ -134,17 +136,26 @@ const EntityObject* EntityDatabase::entityObjectFromId(EntityId eid) const
     return object;
 }
     
+const void* EntityDatabase::componentFromIndex
+(
+    ComponentId compId,
+    ComponentRowIndex compRowIdx
+) const
+{
+    auto componentIt = _components.find(compId);
+    if (componentIt == _components.end())
+           return nullptr;
+    const component::DataRowset& rowset = componentIt->second;
+    return rowset[compRowIdx];
+}
+
 void* EntityDatabase::componentFromIndex
 (
     ComponentId compId,
     ComponentRowIndex compRowIdx
 )
 {
-    auto componentIt = _components.find(compId);
-    if (componentIt == _components.end())
-           return nullptr;
-    component::DataRowset& rowset = componentIt->second;
-    return rowset[compRowIdx];
+    return const_cast<void*>(static_cast<const EntityDatabase*>(this)->componentFromIndex(compId, compRowIdx));
 }
 
 ComponentRowIndex EntityDatabase::addComponentRow(ComponentId compId, EntityId eid)
@@ -179,55 +190,6 @@ void EntityDatabase::removeComponentFromEntityById(EntityId eid, ComponentId id)
     
     auto index = obj->removeComponent(id);
     removeComponentRow(id, index);;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//  built-ins - specialized versions of templated method
-//
-template<> component::Renderable*
-EntityDatabase::addComponentToEntity<component::Renderable>(EntityId eid)
-{
-    return componentFromEntity<component::Renderable>(eid);
-}
-
-template<> component::Transform*
-EntityDatabase::addComponentToEntity<component::Transform>(EntityId eid)
-{
-    return componentFromEntity<component::Transform>(eid);
-}
-
-template<> component::Renderable*
-EntityDatabase::componentFromEntity<component::Renderable>(EntityId eid)
-{
-    return const_cast<component::Renderable*>(
-        static_cast<EntityDatabase*>(this)->componentFromEntity<component::Renderable>(eid)
-    );
-}
-
-template<> const component::Renderable*
-EntityDatabase::componentFromEntity<component::Renderable>(EntityId eid) const
-{
-    const EntityObject* obj = entityObjectFromId(eid);
-    if (!obj)
-        return nullptr;
-    return &obj->renderable();
-}
-
-template<> component::Transform*
-EntityDatabase::componentFromEntity<component::Transform>(EntityId eid)
-{
-    return const_cast<component::Transform*>(
-        static_cast<EntityDatabase*>(this)->componentFromEntity<component::Transform>(eid)
-    );
-}
-
-template<> const component::Transform*
-EntityDatabase::componentFromEntity<component::Transform>(EntityId eid) const
-{
-    const EntityObject* obj = entityObjectFromId(eid);
-    if (!obj)
-        return nullptr;
-    return &obj->transform();
 }
 
 

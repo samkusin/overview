@@ -24,6 +24,7 @@ class EntityDatabase
     
 public:        
     EntityDatabase(uint32_t numEntities,
+        uint16_t id,
         const vector<std::pair<component::Descriptor, uint32_t>>& components,
         const Allocator& allocator=Allocator());
     
@@ -55,6 +56,7 @@ private:
     friend class EntityObject;
 
     void* componentFromIndex(ComponentId compId, ComponentRowIndex index);
+    const void* componentFromIndex(ComponentId compId, ComponentRowIndex index) const;
     ComponentRowIndex addComponentRow(ComponentId compId, EntityId eid);
     void removeComponentRow(ComponentId compId, ComponentRowIndex index);
     
@@ -63,17 +65,10 @@ private:
     //  objects indexed by the offset value of the EntityId
     vector<EntityObject> _objects;
     vector<uint32_t> _freeObjectIndices;
-    uint32_t _entityIdIteration;
+    uint16_t _dbId;
+    uint16_t _entityIdIteration;
     unordered_map<ComponentId, component::DataRowset> _components;
 };
-
-//  built-ins
-template<> component::Renderable*
-EntityDatabase::addComponentToEntity<component::Renderable>(EntityId eid);
-
-template<> component::Transform*
-EntityDatabase::addComponentToEntity<component::Transform>(EntityId eid);
-
 
 template<typename Component>
 Component* EntityDatabase::addComponentToEntity(EntityId eid)
@@ -93,22 +88,10 @@ Component* EntityDatabase::addComponentToEntity(EntityId eid)
     return reinterpret_cast<Component* >(componentFromIndex(Component::kComponentId, index));
 }
 
-template<> component::Renderable*
-EntityDatabase::componentFromEntity<component::Renderable>(EntityId eid);
-
-template<> const component::Renderable*
-EntityDatabase::componentFromEntity<component::Renderable>(EntityId eid) const;
-
-template<> component::Transform*
-EntityDatabase::componentFromEntity<component::Transform>(EntityId eid);
-
-template<> const component::Transform*
-EntityDatabase::componentFromEntity<component::Transform>(EntityId eid) const;
-
 template<typename Component>
 Component* EntityDatabase::componentFromEntity(EntityId eid)
 {
-    return const_cast<Component*>(static_cast<EntityDatabase*>(this)->componentFromEntity<Component>(eid));
+    return const_cast<Component*>(static_cast<const EntityDatabase*>(this)->componentFromEntity<Component>(eid));
 }
 
 template<typename Component>
@@ -134,7 +117,7 @@ Component* EntityDatabase::component(ComponentRowIndex index)
 template<typename Component>
 const Component* EntityDatabase::component(ComponentRowIndex index) const
 {
-    return reinterpret_cast<Component*>(componentFromIndex(Component::kComponentId, index));
+    return reinterpret_cast<const Component*>(componentFromIndex(Component::kComponentId, index));
 }
 
 template<typename Fn, typename Component>

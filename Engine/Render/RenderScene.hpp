@@ -11,7 +11,7 @@
 
 #include "Engine/Render/RenderTypes.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/BVH/BVHStaticGraph.hpp"
+
 
 #include <cinek/objectpool.hpp>
 

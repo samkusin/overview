@@ -1,17 +1,18 @@
 //
-//  BVHStaticGraph.hpp
+//  Graphs/BVHGraph.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 5/16/15.
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_BVH_StaticGraph_hpp
-#define Overview_BVH_StaticGraph_hpp
+#ifndef Overview_Graphs_BVHGraph_hpp
+#define Overview_Graphs_BVHGraph_hpp
 
 #include "BVHTypes.hpp"
 
 #include <cinek/vector.hpp>
+#include <functional>
 
 namespace cinek { namespace overview {
 
@@ -19,7 +20,7 @@ namespace cinek { namespace overview {
 //  for collision and raycasting.  Most implementations end up referencing
 //  Bullet or educational resources.
 
-//  BVHStaticGraph
+//  BVHTree
 //
 //  Specialized for trees that are infrequently rebalanced (i.e. static)
 //  Balancing starts with a single AABB and all objects, digging down until
@@ -29,58 +30,169 @@ namespace cinek { namespace overview {
 
 //  Type _Object must implement the following:
 //
-//  struct _ObjectUtility
+//  struct _Utility
 //  {
-//      static bool compare(_ObjectIdType l, _ObjectIdType r);
-//      static const Vector3& halfDimensions(_ObjectIdType objId);
-//      static const Matrix4& transform(_ObjectIdType objId);
-//      static void setImplData(_ObjectIdType objId, intptr_t data);
+//      void setObjectData(intptr_t objId, intptr_t data);
+//      float objectRadius(intptr_t objId) const;
+//      Vector3 position(intptr_t objId) const;
 //  };
 //
 
-template<typename _ObjectIdType>
-struct BVHStaticGraph
+class BVHTree
 {
-    using ObjectIdType = _ObjectIdType;
-  
-    vector<BVHNode<ObjectIdType>> nodes;
-    vector<ObjectIdType> objects;
+public:
+    using NodeType = BVHNode;
+    
+    BVHTree() = default;
+    BVHTree(int32_t nodeCnt, const Allocator& allocator=Allocator());
+    
+    //  adds an object to the hierarchy
+    template<typename _Utility>
+    int32_t insertObject(intptr_t objectId, _Utility& util);
+    
+    using Callback = std::function<bool(intptr_t)>;
+    
+    //  tests if at least one object intersects with the specified sphere
+    bool testIntersectWithSphere(const Vector3& center, float radius,
+        const Callback& cb=Callback());
+    
+private:
+    template<typename _Utility>
+    int32_t insertObjectIntoBVH(intptr_t objectId,
+        int32_t atNodeIdx,
+        int32_t parentNodeIdx,
+        _Utility& util);
+    
+    int32_t allocateNode();
+    void freeNode(int32_t node);
+    
+    template<typename _Utility>
+    AABB<Vector3> makeAABBForObject(intptr_t objectId, _Utility& util) const;
+    
+    bool testIntersectWithSphere(const Vector3& center, float radius,
+        int32_t atNodeIdx,
+        const Callback& cb);
+
+    //  graph data.
+    vector<NodeType> _nodes;
+    vector<int32_t> _freeNodes;
 };
 
-template<typename _ObjectIdType, int _ObjectsPerNode, typename _ObjectUtility>
-BVHStaticGraph<_ObjectIdType> generateBVH(vector<_ObjectIdType> objects);
 
-
-template<typename _ObjectIdType, int _ObjectsPerNode, typename _ObjectUtility>
-int32_t partitionBVH(BVHStaticGraph<_ObjectIdType>& graph,
-    int32_t parentNodeIdx,
-    const std::pair<int32_t, int32_t>& objectRange,
-    BVHPartitionPlane::Axis axis
-);
-
-
-template<typename _ObjectIdType, int _ObjectsPerNode, typename _ObjectUtility>
-BVHStaticGraph<_ObjectIdType> generateBVH(vector<_ObjectIdType> objects)
+template<typename _Utility>
+AABB<Vector3> BVHTree::makeAABBForObject(intptr_t objectId, _Utility& util) const
 {
-    BVHStaticGraph<_ObjectIdType> graph;
- 
-    graph.nodes.reserve(objects.size());
-    graph.objects = std::move(objects);
-    
-    partitionBVH<_ObjectIdType, _ObjectsPerNode, _ObjectUtility>(
-        graph,
-        -1,
-        std::make_pair(0, (int32_t)objects.size()),
-        BVHPartitionPlane::kX
-    );
-    
-    return graph;
+    AABB<Vector3> aabb(util.objectRadius(objectId));
+    aabb += util.position(objectId);
+    return aabb;
 }
+
+
+template<typename _Utility>
+int32_t BVHTree::insertObject(intptr_t objectId, _Utility& util)
+{
+    int32_t nodeIdx = -1;
+    if (!_nodes.empty())
+    {
+        nodeIdx = 0;
+    }
+    return insertObjectIntoBVH(objectId, nodeIdx, -1, util);
+}
+
+template<typename _Utility>
+int32_t BVHTree::insertObjectIntoBVH(intptr_t objectId,
+        int32_t atNodeIdx,
+        int32_t parentNodeIdx,
+        _Utility& util)
+{
+    if (atNodeIdx < 0)
+    {
+        //  allocate leaf
+        atNodeIdx = allocateNode();
+        if (atNodeIdx < 0)
+            return atNodeIdx;
+
+        auto& node = _nodes[atNodeIdx];
+        
+        node.initAsLeaf();
+        node.objectId = objectId;
+        
+        node.aabb = makeAABBForObject(objectId, util);
+        util.setObjectData(objectId, atNodeIdx);
+    }
+    else
+    {
+        auto& node = _nodes[atNodeIdx];
+
+        intptr_t children[2];
+        
+        if (node.isLeaf())
+        {
+            util.setObjectData(node.objectId, -1);
+            children[0] = node.objectId;
+            children[1] = objectId;
+            node.initAsFork();
+        }
+        else
+        {
+            //  use bounding volumes of child nodes to determine which
+            //  bounding volume to add this object to
+            //  compare the AABBs of the children *combined* with the object's
+            //  AABB.  The smaller of the two AABBs will be chosen.
+            
+            AABB<Vector3> leftAABB = _nodes[node.children.left].aabb;
+            AABB<Vector3> rightAABB = _nodes[node.children.right].aabb;
+            AABB<Vector3> objectAABB = makeAABBForObject(objectId, util);
+            leftAABB.merge(objectAABB);
+            rightAABB.merge(objectAABB);
+            
+            if (leftAABB.volume() < rightAABB.volume())
+            {
+                children[0] = objectId;
+                children[1] = -1;
+            }
+            else
+            {
+                children[0] = -1;
+                children[1] = objectId;
+            }
+        }
+        
+        //  note - we do not
+        if (children[0] >= 0)
+        {
+            _nodes[atNodeIdx].children.left = insertObjectIntoBVH(children[0],
+                _nodes[atNodeIdx].children.left,
+                atNodeIdx,
+                util);
+        }
+        if (children[1] >= 0)
+        {
+            _nodes[atNodeIdx].children.right = insertObjectIntoBVH(children[1],
+                _nodes[atNodeIdx].children.right,
+                atNodeIdx,
+                util);
+        }
+    }
+    
+    //  update our parent's AABB (remember, we're recursively calling this
+    //  method.
+    if (parentNodeIdx >= 0)
+    {
+        _nodes[parentNodeIdx].aabb.merge(_nodes[atNodeIdx].aabb);
+    }
+    
+    _nodes[atNodeIdx].parent = parentNodeIdx;
+    
+    return atNodeIdx;
+}
+
+/*
 
 //  returns the index of the created node.
 //  algo adapted from 3dmuve.com
 //
-template<typename _ObjectIdType, int _ObjectsPerNode, typename _ObjectUtility>
+template<typename _ObjectIdType, typename _ObjectUtility>
 int32_t partitionBVH
 (
     BVHStaticGraph<_ObjectIdType>& graph,
@@ -185,7 +297,7 @@ int32_t partitionBVH
     }
     return nodeIndex;
 }
-
+*/
 
 } /* namespace overview */ } /* namespace cinek */
 

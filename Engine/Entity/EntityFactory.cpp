@@ -9,6 +9,8 @@
 #include "EntityFactory.hpp"
 #include "EntityDatabase.hpp"
 
+#include "Comp/Renderable.hpp"
+
 #include "Engine/MessagePublisher.hpp"
 #include "Engine/Debug.hpp"
 #include "Engine/Render/RenderScene.hpp"
@@ -33,22 +35,32 @@ namespace component
     {
         const char* typeName = data["type"].GetString();
         const char* dataName = data["name"].GetString();
-
-        object.renderable().viewFilterMask = parseFlagsToUint(
-            definitions["renderable_filter_flags"],
-            data["filter"].GetString()
-        );
-
-        if (!strcmp(typeName, "mesh"))
-        {
-            //  preload mesh
-            object.renderable().meshHandle = renderResources.meshLibrary->load(dataName).data;
-        }
         
-        if (data.HasMember("bitmap"))
+        auto comp = db.addComponentToEntity<overview::component::Renderable>(object.id());
+        if (comp)
         {
-            const char* bmpName = data["bitmap"].GetString();
-            object.renderable().texHandle = renderResources.textureAtlas->loadTexture(bmpName).data;
+            comp->viewFilterMask = parseFlagsToUint(
+                definitions["renderable_filter_flags"],
+                data["filter"].GetString()
+            );
+
+            if (!strcmp(typeName, "mesh"))
+            {
+                //  preload mesh
+                comp->meshHandle = renderResources.meshLibrary->load(dataName).data;
+            }
+            
+            if (data.HasMember("bitmap"))
+            {
+                const char* bmpName = data["bitmap"].GetString();
+                comp->texHandle = renderResources.textureAtlas->loadTexture(bmpName).data;
+            }
+        }
+        else
+        {
+            OVENGINE_LOG_ERROR("createRenderable - "
+                               "unable to allocate a Renderable for entity %" PRIu64 ".",
+                               object.id());
         }
     }
 }
@@ -64,37 +76,40 @@ EntityObject* createEntity
     const CustomComponentCreateFn& customCompFn
 )
 {
-    const cinek::JsonValue& templates = definitions["entity"];
-    
-    //  generate an entity and its base components using a template
-    if (!definitions["entity"].HasMember(name))
-        return nullptr;
-    
     EntityObject* entity = db.createEntity();
     
-    const cinek::JsonValue& templ = templates[name];
-    for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
-         it != templ.MemberEnd();
-         ++it)
+    //  generate an entity and its base components using a template
+    if (name && name[0])
     {
-        const char* componentName = it->name.GetString();
-        const cinek::JsonValue& componentData = it->value;
-        
-        //  renderable
-        //      load resources based on type
-        if (!strcmp(componentName, "renderable"))
+        const cinek::JsonValue& templates = definitions["entity"];
+   
+        if (!templates.HasMember(name))
+            return nullptr;
+    
+        const cinek::JsonValue& templ = templates[name];
+        for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
+             it != templ.MemberEnd();
+             ++it)
         {
-            component::createRenderable(db, renderResources,
-                *entity,
-                definitions,
-                componentData);
-        }
-        
-        //  allow customizations, extensions to the factory for custom
-        //  components
-        if (customCompFn)
-        {
-            customCompFn(*entity, definitions, componentData);
+            const char* componentName = it->name.GetString();
+            const cinek::JsonValue& componentData = it->value;
+            
+            //  renderable
+            //      load resources based on type
+            if (!strcmp(componentName, "renderable"))
+            {
+                component::createRenderable(db, renderResources,
+                    *entity,
+                    definitions,
+                    componentData);
+            }
+            
+            //  allow customizations, extensions to the factory for custom
+            //  components
+            if (customCompFn)
+            {
+                customCompFn(*entity, definitions, componentData);
+            }
         }
     }
     

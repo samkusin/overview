@@ -10,8 +10,6 @@
 #define Overview_Entity_Object_hpp
 
 #include "EntityTypes.hpp"
-#include "Comp/Transform.hpp"
-#include "Comp/Renderable.hpp"
 
 #include <cinek/vector.hpp>
 
@@ -34,18 +32,11 @@ public:
         return _eid;
     }
     
-    //  elementary components - allow regular read/write hence the getters
-    const component::Renderable& renderable() const {
-        return _renderable;
+    const Matrix4& matrix() const {
+        return _matrix;
     }
-    component::Renderable& renderable() {
-        return _renderable;
-    }
-    const component::Transform& transform() const {
-        return _transform;
-    }
-    component::Transform& transform() {
-        return _transform;
+    Matrix4& matrix() {
+        return _matrix;
     }
     
     ComponentRowIndex componentIndexFromId(ComponentId id) const;
@@ -57,8 +48,7 @@ private:
     ComponentRowIndex removeComponent(ComponentId id);
 
     EntityId _eid = kNullEntity;
-    component::Transform _transform;
-    component::Renderable _renderable;
+    Matrix4 _matrix;
     
     vector<std::pair<ComponentId, ComponentRowIndex>> _components;
 };

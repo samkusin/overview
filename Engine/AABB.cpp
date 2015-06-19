@@ -11,6 +11,22 @@
 
 namespace cinek { namespace overview {
 
+    static AABB<Vector3>::comp_type square2(AABB<Vector3>::comp_type val)
+    {
+        return val*val;
+    }
+
+    template<>
+    AABB<Vector3>::AABB(comp_type length)
+    {
+        min.comp[0] = -length;
+        min.comp[1] = -length;
+        min.comp[2] = -length;
+        max.comp[0] = length;
+        max.comp[1] = length;
+        max.comp[2] = length;
+    }
+
     template<>
     void AABB<Vector3>::clear()
     {
@@ -124,6 +140,38 @@ namespace cinek { namespace overview {
             max.comp[2] = aabb.max.comp[2];
         
         return *this;
+    }
+    
+    template<>
+    AABB<Vector3>::comp_type AABB<Vector3>::volume() const
+    {
+        return (max.comp[0] - min.comp[0]) * (max.comp[1] - min.comp[1]) *
+               (max.comp[2] - min.comp[2]);
+    }
+    
+    template<>
+    bool AABB<Vector3>::intersectsWithSphere
+    (
+        const point_type& center,
+        comp_type radius
+    )
+    {
+        comp_type dist2 = square2(radius);
+        
+        if (center.comp[0] < min.comp[0])
+            dist2 -= square2(center.comp[0]-min.comp[0]);
+        else if (center.comp[0] > max.comp[0])
+            dist2 -= square2(center.comp[0]-max.comp[0]);
+        if (center.comp[1] < min.comp[1])
+            dist2 -= square2(center.comp[1]-min.comp[1]);
+        else if (center.comp[1] > max.comp[1])
+            dist2 -= square2(center.comp[1]-max.comp[1]);
+        if (center.comp[2] < min.comp[2])
+            dist2 -= square2(center.comp[2]-min.comp[2]);
+        else if (center.comp[2] > max.comp[2])
+            dist2 -= square2(center.comp[2]-max.comp[2]);
+        
+        return dist2 > 0;
     }
 
 } /* namespace overview */ } /* namespace cinek */

@@ -18,8 +18,7 @@ EntityObject::EntityObject(EntityId eid, const Allocator& allocator) :
 
 EntityObject::EntityObject(EntityObject&& other) :
     _eid(other._eid),
-    _transform(other._transform),
-    _renderable(other._renderable),
+    _matrix(other._matrix),
     _components(std::move(other._components))
 {
     other._eid = kNullEntity;
@@ -29,8 +28,7 @@ EntityObject& EntityObject::operator=(EntityObject&& other)
 {
     _eid = other._eid;
     other._eid = kNullEntity;
-    _transform = other._transform;
-    _renderable = other._renderable;
+    _matrix = other._matrix;
     _components = std::move(other._components);
     
     return *this;

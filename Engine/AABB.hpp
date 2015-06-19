@@ -21,15 +21,20 @@ namespace cinek { namespace overview {
     template<class _Point>
     struct AABB
     {
-        typedef _Point                   point_type;
-        typedef AABB<_Point>             this_type;
-
+        typedef _Point                       point_type;
+        typedef AABB<_Point>                 this_type;
+        typedef typename _Point::value_type  comp_type;
+        
         point_type min;          ///< The min coordinate
         point_type max;          ///< The max coordinate
 
         /// Default Constructor
         ///
         AABB();
+        /// Constructor
+        /// @param length   Sets min to -length and max to +length
+        ///
+        AABB(comp_type length);
         /// Constructor
         /// @param halfDim  Radius of the box
         ///
@@ -69,6 +74,11 @@ namespace cinek { namespace overview {
         /// @return True if the box intersects this box
         ///
         bool intersects(const AABB& box) const;
+        /// Test intersection with sphere
+        /// @param  center  The sphere's center point
+        /// @param  radius  The sphere's radius
+        ///
+        bool intersectsWithSphere(const point_type& center, comp_type radius);
         /*
          * /// Calculates the intersection between a box and this box
          * /// @param  box The box to check
@@ -81,7 +91,11 @@ namespace cinek { namespace overview {
         bool operator==(const AABB& box) const;
         /// @param  box The box to test
         /// @return True if the box does not equal this box
-        bool operator!=(const AABB& box) const ;
+        bool operator!=(const AABB& box) const;
+        /// @param  pt  Point to offset existing AABB
+        /// @return Reference to the offsetted AABB
+        ///
+        AABB& operator+=(const point_type& pt);
         /// Zeros out the box
         ///
         void clear();
@@ -103,6 +117,10 @@ namespace cinek { namespace overview {
         /// @return A reference to this AABB
         ///
         AABB& merge(const AABB& aabb);
+        
+        /// @return The volume of the AABB based on the point type
+        ///
+        comp_type volume() const;
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -159,6 +177,14 @@ namespace cinek { namespace overview {
     typename AABB<_Point>::point_type AABB<_Point>::center() const
     {
         return (min + max)/2.f;
+    }
+    
+    template<class _Point>
+    AABB<_Point>& AABB<_Point>::operator+=(const point_type& pt)
+    {
+        min += pt;
+        max += pt;
+        return *this;
     }
 
     template<class _Point>

@@ -21,14 +21,18 @@ namespace cinek { namespace overview {
 
 constexpr uint32_t kNullEntity = 0;
 
-inline EntityId makeEntityId(uint32_t iteration, uint32_t index) {
-    return (((uint64_t)iteration) << 32) | index;
+inline EntityId makeEntityId(uint16_t shard, uint16_t iteration, uint32_t index) {
+    return (((uint64_t)shard) << 48) | (((uint64_t)iteration) << 32) | index;
 }
 
 inline uint32_t entityIndexFromId(EntityId eid) {
     //  explicit masking as a hint to compilers that we really want to downcast
     //  this, losing precision.
     return ((uint32_t)eid & 0xffffffff);
+}
+
+inline uint16_t entityShardFromId(EntityId eid) {
+    return (uint16_t)(eid >> 48);
 }
 
 //  Forward decls --------------------------------------------------------------
@@ -52,11 +56,11 @@ constexpr ComponentRowIndex kNullComponentRow = UINT32_MAX;
 
 #define COMPONENT_DEFINITION(_type_, _id_) \
     using this_type = _type_; \
-    static const ComponentId kComponentId = _id_; \
-    static const component::Descriptor kComponentType;
+    static const ::cinek::overview::ComponentId kComponentId = _id_; \
+    static const ::cinek::overview::component::Descriptor kComponentType;
 
 #define COMPONENT_IMPLEMENTATION(_type_) \
-    const component::Descriptor _type_::kComponentType =  \
+    const ::cinek::overview::component::Descriptor _type_::kComponentType =  \
         { _type_::kComponentId, sizeof(_type_) };
 
 namespace component
@@ -74,8 +78,10 @@ namespace component
 
     enum
     {
-        kEntitySpace,
-        kRenderSpace
+        kEntitySpace    = 0x0000,
+        kUtilitySpace   = 0x0001,
+        kRenderSpace    = 0x0002,
+        kCustomSpace0   = 0x8000
     };
 
     constexpr ComponentId MakeComponentId(uint16_t category, uint16_t id)
@@ -83,12 +89,12 @@ namespace component
         return (((ComponentId)category) << 16) | id;
     }
 
-    enum Index
+    enum
     {
         kLight      = MakeComponentId(kRenderSpace, 0x0001),
         kCamera     = MakeComponentId(kRenderSpace, 0x0002),
-        kTransform  = MakeComponentId(kEntitySpace, 0x0000),
-        kRenderable = MakeComponentId(kEntitySpace, 0x0001),
+        kTransform  = MakeComponentId(kUtilitySpace,0x0000),
+        kRenderable = MakeComponentId(kEntitySpace, 0x0000),
         kEmpty      = MakeComponentId(0xffff, 0xffff)
     };
 
