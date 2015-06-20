@@ -23,7 +23,7 @@ namespace cinek {
     namespace ovproto {
     
     //  bring certain Engine types over into our namespace
-    using EntityId = overview::EntityId;
+    using Entity = overview::Entity;
     using Vector2 = overview::Vector2;
     using Vector3 = overview::Vector3;
     using Matrix4 = overview::Matrix4;

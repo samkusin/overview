@@ -17,7 +17,7 @@ namespace component
 {
     struct StellarSystem
     {
-        COMPONENT_DEFINITION(StellarSystem, kStellarSystem);
+        COMPONENT_DEFINITION(StellarSystem);
 
         uint32_t seed;
         intptr_t graphData;

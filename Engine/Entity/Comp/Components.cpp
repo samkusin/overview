@@ -17,10 +17,10 @@ namespace cinek { namespace overview {
 
 namespace component
 {
-    COMPONENT_IMPLEMENTATION(Light);
-    COMPONENT_IMPLEMENTATION(Camera);
-    COMPONENT_IMPLEMENTATION(Transform);
-    COMPONENT_IMPLEMENTATION(Renderable);
+    COMPONENT_TYPE_IMPL(Light, kLight, {}, {});
+    COMPONENT_TYPE_IMPL(Camera, kCamera, {}, {});
+    COMPONENT_TYPE_IMPL(Transform, kTransform, {}, {});
+    COMPONENT_TYPE_IMPL(Renderable, kRenderable, {}, {});
 }
 
 } /* namespace overview */ } /* namespace cinek */

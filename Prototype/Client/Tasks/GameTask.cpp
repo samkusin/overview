@@ -7,7 +7,6 @@
 //
 
 #include "GameTask.hpp"
-#include "EntityObject.hpp"
 
 //  used for building a galactic "cell"
 #include "Engine/Graphs/BVHGraph.hpp"
@@ -461,7 +460,7 @@ private:
 
 GameTask::GameTask(AppInterface api) :
     _API(api),
-    _bodyEntityId(0)
+    _bodyEntityId { 0 }
 {
 }
 
@@ -469,22 +468,22 @@ void GameTask::onBegin()
 {
     _API.createJsonDocumentFromFile(kDocumentId_EntityTemplates, "entity.json");
     
-    EntityObject* entityObj = _API.createEntity(
+    _bodyEntityId = _API.createEntity(
         kDocumentId_EntityTemplates,
         "star"
     );
-    _bodyEntityId = entityObj->id();
     
     //  position our new star entity - note, this is a brute force method that
     //  bypasses any notification, etc.  use a proper physics system or add
     //  a utility to manipulate entities that sends out the appropriate
     //  notification
     
-    
+    /*
     auto& entityMatrix = entityObj->matrix();
     bx::mtxSRT(entityMatrix, 2.0f, 2.0f, 2.0f, 0.f, 0.f, 0.f,
         0.f, 0.f, 0.f);
-
+    */
+    
     BuildCellFunction cellGenFn;
     
     vector<SpectralClass> spectralClasses =
@@ -562,6 +561,7 @@ void GameTask::onUpdate(uint32_t deltaTimeMs)
     //bx::mtxIdentity(rotMat);
     bx::mtxRotateXYZ(rotMat, 0.f, bx::piHalf*0.10f*deltaTimeMs/1000.f, 0.f);
     
+    /*
     auto object = _API.entityById(_bodyEntityId);
     if (object)
     {
@@ -571,6 +571,7 @@ void GameTask::onUpdate(uint32_t deltaTimeMs)
         bx::mtxMul(transform, entityMatrix, rotMat);
         object->matrix() = transform;
     }
+    */
 }
 
 void GameTask::onEnd()

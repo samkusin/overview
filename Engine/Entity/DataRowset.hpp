@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Entity_Component_DataRowset_hpp
-#define Overview_Entity_Component_DataRowset_hpp
+#ifndef Overview_Entity_DataRowset_hpp
+#define Overview_Entity_DataRowset_hpp
 
-#include "Engine/Entity/EntityTypes.hpp"
+#include "EntityTypes.hpp"
 
 #include <cinek/allocator.hpp>
 #include <cinek/types.hpp>
@@ -37,7 +37,7 @@ namespace component
         DataRowset(DataRowset&& other);
         DataRowset& operator=(DataRowset&& other);
         
-        index_type allocate(EntityId eid);
+        index_type allocate(Entity eid);
         void free(index_type index);
         
         uint32_t size() const;
@@ -52,7 +52,7 @@ namespace component
         uint8_t* at(index_type index);
         const uint8_t* at(index_type index) const;
         
-        EntityId entityAt(index_type index) const;
+        Entity entityAt(index_type index) const;
         
         index_type firstIndex(index_type idx=0) const;
         index_type nextIndex(index_type) const;
@@ -73,8 +73,8 @@ namespace component
         uint32_t* _freeend;
         uint32_t* _freelimit;
         
-        EntityId* rowAt(index_type index);
-        const EntityId* rowAt(index_type index) const;
+        Entity::value_type* rowAt(index_type index);
+        const Entity::value_type* rowAt(index_type index) const;
     };
 
     template<typename Component>
@@ -100,4 +100,4 @@ namespace component
 
 } /* namespace overview */ } /* namespace cinek */
 
-#endif /* defined(__Overview__DataRowset__) */
+#endif /* defined(Overview_Entity_DataRowset_hpp) */

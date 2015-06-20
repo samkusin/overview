@@ -36,6 +36,7 @@ struct RenderObjectFn
     
     void operator()(EntityObject& entity)
     {
+        /*
         auto renderable = context.entityDb->componentFromEntity<component::Renderable>(entity.id());
         if (renderable)
         {
@@ -65,6 +66,7 @@ struct RenderObjectFn
                 bgfx::submit(0);
             }
         }
+        */
     }
 };
 
@@ -91,8 +93,10 @@ void renderScene
     );
     bgfx::setViewTransform(0, viewMat, projMat);
 
+    /*
     RenderObjectFn renderObjectFn(context);
     entityDb.forEachObject(renderObjectFn);
+    */
 }
 
 } /* namespace ovproto */ } /* namespace cinek */

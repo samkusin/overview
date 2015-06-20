@@ -17,7 +17,7 @@ namespace component
 {
     struct Renderable
     {
-        COMPONENT_DEFINITION(Renderable, kRenderable);
+        COMPONENT_DEFINITION(Renderable);
         uint32_t viewFilterMask;
         cinek::gfx::MeshHandle::pod_type meshHandle;
         cinek::gfx::TextureHandle::pod_type texHandle;

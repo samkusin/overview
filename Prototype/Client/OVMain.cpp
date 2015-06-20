@@ -101,7 +101,7 @@ void run(SDL_Window* window)
         "Shaders/fs_cubes.bin",
         std::move(shaderUniforms));
     
-    overview::EntityDatabase entityDb(65536, 0, {
+    overview::EntityDatabase entityDb(65536, {
         { overview::component::Transform::kComponentType, 32768 },
         { overview::component::Renderable::kComponentType, 32768 },
         { overview::component::Camera::kComponentType, 4 },
@@ -133,7 +133,7 @@ void run(SDL_Window* window)
     context.documentMap = &appDocumentMap;
     context.allocator = &allocator;
     context.createComponentCb =
-        [&entityDb](overview::EntityObject& obj,
+        [&entityDb](overview::Entity entity,
                     const cinek::JsonValue& definitions,
                     const cinek::JsonValue& data)
         {

@@ -17,7 +17,7 @@ namespace component
 {
     struct Camera
     {
-        COMPONENT_DEFINITION(Camera, kCamera);
+        COMPONENT_DEFINITION(Camera);
         
         float fov;          // in degrees
         float nearZClip;

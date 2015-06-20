@@ -29,14 +29,16 @@ namespace component
     (
         EntityDatabase& db,
         RenderResources& renderResources,
-        EntityObject& object,
+        Entity entity,
         const cinek::JsonValue& definitions,
         const cinek::JsonValue& data)
     {
         const char* typeName = data["type"].GetString();
         const char* dataName = data["name"].GetString();
         
-        auto comp = db.addComponentToEntity<overview::component::Renderable>(object.id());
+        auto table = db.table<overview::component::Renderable>();
+        
+        auto comp = table.addComponentToEntity(entity);
         if (comp)
         {
             comp->viewFilterMask = parseFlagsToUint(
@@ -60,13 +62,13 @@ namespace component
         {
             OVENGINE_LOG_ERROR("createRenderable - "
                                "unable to allocate a Renderable for entity %" PRIu64 ".",
-                               object.id());
+                               entity.id);
         }
     }
 }
 
 
-EntityObject* createEntity
+Entity createEntity
 (
     EntityDatabase& db,
     RenderResources& renderResources,
@@ -76,7 +78,7 @@ EntityObject* createEntity
     const CustomComponentCreateFn& customCompFn
 )
 {
-    EntityObject* entity = db.createEntity();
+    Entity entity = db.create();
     
     //  generate an entity and its base components using a template
     if (name && name[0])
@@ -84,7 +86,7 @@ EntityObject* createEntity
         const cinek::JsonValue& templates = definitions["entity"];
    
         if (!templates.HasMember(name))
-            return nullptr;
+            return Entity::null();
     
         const cinek::JsonValue& templ = templates[name];
         for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
@@ -99,7 +101,7 @@ EntityObject* createEntity
             if (!strcmp(componentName, "renderable"))
             {
                 component::createRenderable(db, renderResources,
-                    *entity,
+                    entity,
                     definitions,
                     componentData);
             }
@@ -108,7 +110,7 @@ EntityObject* createEntity
             //  components
             if (customCompFn)
             {
-                customCompFn(*entity, definitions, componentData);
+                customCompFn(entity, definitions, componentData);
             }
         }
     }
@@ -117,11 +119,22 @@ EntityObject* createEntity
     {
         capnp::MallocMessageBuilder message;
         msg::EntityCreatedEvent::Builder evt = message.initRoot<msg::EntityCreatedEvent>();
-        evt.setEntityId(entity->id());
+        evt.setEntityId(entity.id);
         eventPublisher->queue(message, msg::kEntityCreatedEvent);
     }
     
     return entity;
+}
+
+void destroyEntity
+(
+    Entity entity,
+    EntityDatabase& db,
+    RenderResources& renderResources,
+    MessagePublisher* eventPublisher,
+    const CustomComponentDestroyFn& customCompFn
+)
+{
 }
 
 

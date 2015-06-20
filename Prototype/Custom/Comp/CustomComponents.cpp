@@ -14,7 +14,7 @@ namespace cinek { namespace ovproto {
 
 namespace component
 {
-    COMPONENT_IMPLEMENTATION(StellarSystem);
+    COMPONENT_TYPE_IMPL(StellarSystem, kStellarSystem, {}, {});
 }
 
 } /* namespace overview */ } /* namespace cinek */

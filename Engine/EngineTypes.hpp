@@ -91,8 +91,6 @@ inline Vector3 Matrix4TranslateComponent(const Matrix4& mat)
     return res;
 }
 
-using EntityId = uint64_t;
-
 } /* namespace overview */ } /* namespace cinek */
 
 #endif

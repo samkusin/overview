@@ -17,7 +17,7 @@ namespace component
 {
     struct Light
     {
-        COMPONENT_DEFINITION(Light, kLight);
+        COMPONENT_DEFINITION(Light);
         
         enum Type { kPoint, kDirectional };
         

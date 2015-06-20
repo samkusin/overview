@@ -36,11 +36,8 @@ public:
     const JsonDocument& jsonDocument(uint32_t id) const;
     
     //  creates an entity and broadcasts the event to subscribers
-    overview::EntityObject* createEntity(uint32_t srcTemplatesDocId,
+    overview::Entity createEntity(uint32_t srcTemplatesDocId,
             const char* templateName);
-    
-    //  return the entity object given its ID
-    overview::EntityObject* entityById(EntityId eid);
     
     overview::EntityDatabase* entityDb();
     

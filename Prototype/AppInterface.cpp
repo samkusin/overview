@@ -83,7 +83,7 @@ const JsonDocument& AppInterface::jsonDocument(uint32_t id) const
     return *it->second;
 }
 
-overview::EntityObject* AppInterface::createEntity
+overview::Entity AppInterface::createEntity
 (
     uint32_t srcTemplatesDocId,
     const char* templateName
@@ -102,14 +102,7 @@ overview::EntityDatabase* AppInterface::entityDb()
 {
     return _context->entityDb;
 }
-
-overview::EntityObject* AppInterface::entityById(EntityId eid)
-{
-    return _context->entityDb->entityObjectFromId(eid);
-}
-    
-
-
+  
         
     } /* namespace ovproto */
 } /* namespace cinek */

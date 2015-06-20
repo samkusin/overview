@@ -29,8 +29,6 @@
 		37C94EE11B1D31F500F35CD5 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C94EDF1B1D31F500F35CD5 /* AppInterface.cpp */; };
 		37E604831B0A6B81009C916D /* EntityDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604811B0A6B81009C916D /* EntityDatabase.cpp */; };
 		37E604861B0AACFC009C916D /* Components.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604851B0AACFC009C916D /* Components.cpp */; };
-		37E604891B0AC333009C916D /* DataRowset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604871B0AC333009C916D /* DataRowset.cpp */; };
-		37E6048B1B0D0037009C916D /* EntityObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6048A1B0D0037009C916D /* EntityObject.cpp */; };
 		37E604931B0FAEDC009C916D /* RenderScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604911B0FAEDC009C916D /* RenderScene.cpp */; };
 		37E6049A1B0FCBCF009C916D /* EntityFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604981B0FCBCF009C916D /* EntityFactory.cpp */; };
 		37E604A21B0FCBE6009C916D /* MessageDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6049B1B0FCBE6009C916D /* MessageDispatcher.cpp */; };
@@ -48,6 +46,9 @@
 		37F369031ACDFF0A00314DB2 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369021ACDFF0A00314DB2 /* libiconv.dylib */; };
 		37F43E581B31E6E20065D8E9 /* BVHGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E571B31E6E20065D8E9 /* BVHGraph.cpp */; };
 		37F43E5E1B33A4340065D8E9 /* CustomComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */; };
+		37F43E611B34CB820065D8E9 /* DataRowset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E5F1B34CB810065D8E9 /* DataRowset.cpp */; };
+		37F43E641B34D7870065D8E9 /* EntityTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E631B34D7870065D8E9 /* EntityTypes.cpp */; };
+		37F43E661B34DBEE0065D8E9 /* EntityDataTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37F43E651B34DBEE0065D8E9 /* EntityDataTable.cpp */; };
 		37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37F64A9D1780EA2C009116E7 /* InfoPlist.strings */; };
 		37F64AA11780EA2C009116E7 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F64AA01780EA2C009116E7 /* main.mm */; };
 		37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37F64AA31780EA2D009116E7 /* Credits.rtf */; };
@@ -153,11 +154,7 @@
 		37D2FDE51B2B3BC600C67E60 /* Octree.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Octree.hpp; path = ../../Engine/Graphs/Octree.hpp; sourceTree = "<group>"; };
 		37E604811B0A6B81009C916D /* EntityDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDatabase.cpp; sourceTree = "<group>"; };
 		37E604821B0A6B81009C916D /* EntityDatabase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityDatabase.hpp; sourceTree = "<group>"; };
-		37E604841B0A93F3009C916D /* EntityObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EntityObject.hpp; sourceTree = "<group>"; };
 		37E604851B0AACFC009C916D /* Components.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Components.cpp; path = Comp/Components.cpp; sourceTree = "<group>"; };
-		37E604871B0AC333009C916D /* DataRowset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataRowset.cpp; path = Comp/DataRowset.cpp; sourceTree = "<group>"; };
-		37E604881B0AC333009C916D /* DataRowset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DataRowset.hpp; path = Comp/DataRowset.hpp; sourceTree = "<group>"; };
-		37E6048A1B0D0037009C916D /* EntityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityObject.cpp; sourceTree = "<group>"; };
 		37E604911B0FAEDC009C916D /* RenderScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderScene.cpp; path = ../../Engine/Render/RenderScene.cpp; sourceTree = "<group>"; };
 		37E604921B0FAEDC009C916D /* RenderScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderScene.hpp; path = ../../Engine/Render/RenderScene.hpp; sourceTree = "<group>"; };
 		37E604941B0FAF00009C916D /* RenderTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RenderTypes.hpp; path = ../../Engine/Render/RenderTypes.hpp; sourceTree = "<group>"; };
@@ -188,6 +185,11 @@
 		37F43E5B1B33A1220065D8E9 /* StellarSystem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = StellarSystem.hpp; path = ../Custom/Comp/StellarSystem.hpp; sourceTree = "<group>"; };
 		37F43E5C1B33A2040065D8E9 /* CustomComponentTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CustomComponentTypes.hpp; path = ../Custom/Comp/CustomComponentTypes.hpp; sourceTree = "<group>"; };
 		37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomComponents.cpp; path = ../Custom/Comp/CustomComponents.cpp; sourceTree = "<group>"; };
+		37F43E5F1B34CB810065D8E9 /* DataRowset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataRowset.cpp; sourceTree = "<group>"; };
+		37F43E601B34CB810065D8E9 /* DataRowset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DataRowset.hpp; sourceTree = "<group>"; };
+		37F43E621B34CBE20065D8E9 /* EntityDataTable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EntityDataTable.hpp; sourceTree = "<group>"; };
+		37F43E631B34D7870065D8E9 /* EntityTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityTypes.cpp; sourceTree = "<group>"; };
+		37F43E651B34DBEE0065D8E9 /* EntityDataTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDataTable.cpp; sourceTree = "<group>"; };
 		37F64A911780EA2C009116E7 /* Overview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Overview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37F64A9C1780EA2C009116E7 /* Overview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Overview-Info.plist"; sourceTree = "<group>"; };
 		37F64A9E1780EA2C009116E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -225,13 +227,16 @@
 			isa = PBXGroup;
 			children = (
 				37B50EEF1AF436C900EE8213 /* Comp */,
+				37F43E621B34CBE20065D8E9 /* EntityDataTable.hpp */,
+				37F43E651B34DBEE0065D8E9 /* EntityDataTable.cpp */,
+				37F43E5F1B34CB810065D8E9 /* DataRowset.cpp */,
+				37F43E601B34CB810065D8E9 /* DataRowset.hpp */,
 				37B50EE91AF41F9C00EE8213 /* EntityTypes.hpp */,
 				37E604991B0FCBCF009C916D /* EntityFactory.hpp */,
 				37E604981B0FCBCF009C916D /* EntityFactory.cpp */,
 				37E604821B0A6B81009C916D /* EntityDatabase.hpp */,
 				37E604811B0A6B81009C916D /* EntityDatabase.cpp */,
-				37E604841B0A93F3009C916D /* EntityObject.hpp */,
-				37E6048A1B0D0037009C916D /* EntityObject.cpp */,
+				37F43E631B34D7870065D8E9 /* EntityTypes.cpp */,
 			);
 			name = Entity;
 			path = ../../Engine/Entity;
@@ -311,8 +316,6 @@
 				37B50EED1AF4330900EE8213 /* Transform.hpp */,
 				37B50EEE1AF434A600EE8213 /* Renderable.hpp */,
 				37E604851B0AACFC009C916D /* Components.cpp */,
-				37E604871B0AC333009C916D /* DataRowset.cpp */,
-				37E604881B0AC333009C916D /* DataRowset.hpp */,
 			);
 			name = Comp;
 			sourceTree = "<group>";
@@ -571,6 +574,8 @@
 			files = (
 				37E604AD1B0FE6E6009C916D /* entityevents.capnp in Sources */,
 				37E604AE1B0FE6E6009C916D /* ovtypes.capnp in Sources */,
+				37F43E641B34D7870065D8E9 /* EntityTypes.cpp in Sources */,
+				37F43E661B34DBEE0065D8E9 /* EntityDataTable.cpp in Sources */,
 				37C94EDE1B1D2DB000F35CD5 /* MessageHandlers.cpp in Sources */,
 				373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */,
 				37E604B11B0FEE32009C916D /* ObjectTypes.cpp in Sources */,
@@ -579,7 +584,6 @@
 				378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */,
 				373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */,
 				37F64AA11780EA2C009116E7 /* main.mm in Sources */,
-				37E6048B1B0D0037009C916D /* EntityObject.cpp in Sources */,
 				37F43E5E1B33A4340065D8E9 /* CustomComponents.cpp in Sources */,
 				37C94EE11B1D31F500F35CD5 /* AppInterface.cpp in Sources */,
 				37E604861B0AACFC009C916D /* Components.cpp in Sources */,
@@ -588,10 +592,10 @@
 				37E604831B0A6B81009C916D /* EntityDatabase.cpp in Sources */,
 				37E604A41B0FCBE6009C916D /* MessageStream.cpp in Sources */,
 				37F43E581B31E6E20065D8E9 /* BVHGraph.cpp in Sources */,
-				37E604891B0AC333009C916D /* DataRowset.cpp in Sources */,
 				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
 				37C94ED81B1D122F00F35CD5 /* GameTask.cpp in Sources */,
 				37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */,
+				37F43E611B34CB820065D8E9 /* DataRowset.cpp in Sources */,
 				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
 				37E604A31B0FCBE6009C916D /* MessagePublisher.cpp in Sources */,
 				378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */,

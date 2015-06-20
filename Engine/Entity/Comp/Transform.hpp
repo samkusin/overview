@@ -17,7 +17,7 @@ namespace component
 {
     struct Transform
     {
-        COMPONENT_DEFINITION(Transform, kTransform);
+        COMPONENT_DEFINITION(Transform);
         
         enum
         {

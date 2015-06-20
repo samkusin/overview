@@ -29,7 +29,7 @@ protected:
 private:
     AppInterface _API;
     
-    EntityId _bodyEntityId;
+    Entity _bodyEntityId;
 };
 
 

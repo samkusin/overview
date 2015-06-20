@@ -31,7 +31,7 @@ namespace component
     {
         CK_ASSERT(rowCount != npos);
         
-        _header.recordSize += sizeof(EntityId); // flags included in record
+        _header.recordSize += sizeof(Entity::value_type); // flags included in record
         _rowstart = (uint8_t*)_allocator.alloc(_header.recordSize * rowCount);
         _rowend = _rowstart;
         _rowlimit = _rowstart + _header.recordSize*rowCount;
@@ -92,17 +92,17 @@ namespace component
         return *this;
     }
     
-    EntityId* DataRowset::rowAt(index_type index)
+    Entity::value_type* DataRowset::rowAt(index_type index)
     {
-        return const_cast<EntityId*>(static_cast<const DataRowset*>(this)->rowAt(index));
+        return const_cast<Entity::value_type*>(static_cast<const DataRowset*>(this)->rowAt(index));
     }
     
-    const EntityId* DataRowset::rowAt(index_type index) const
+    const Entity::value_type* DataRowset::rowAt(index_type index) const
     {
-        return reinterpret_cast<const EntityId*>(_rowstart + index*_header.recordSize);
+        return reinterpret_cast<const Entity::value_type*>(_rowstart + index*_header.recordSize);
     }
         
-    auto DataRowset::allocate(EntityId eid) -> index_type
+    auto DataRowset::allocate(Entity eid) -> index_type
     {
         index_type idx = npos;
         //  remove from free list first
@@ -118,8 +118,8 @@ namespace component
         }
         if (idx != npos)
         {
-            EntityId* p = rowAt(idx);
-            *p = eid;
+            Entity::value_type* p = rowAt(idx);
+            *p = eid.value();
             memset(p+1, 0, _header.recordSize-sizeof(uint32_t));
         }
         return idx;
@@ -129,10 +129,10 @@ namespace component
     {
         if (index >= size())
             return;
-        EntityId* p = rowAt(index);
+        Entity::value_type* p = rowAt(index);
         if (p[0])
         {
-            p[0] = kNullEntity;
+            p[0] = Entity::null_value;
             CK_ASSERT(_freeend != _freelimit);
             if (_freeend != _freelimit)
             {
@@ -171,14 +171,13 @@ namespace component
     {
         CK_ASSERT(index < size() && index != npos);
         
-        const EntityId* p = rowAt(index);
+        const Entity::value_type* p = rowAt(index);
         return p[0] ? reinterpret_cast<const uint8_t*>(p+1) : nullptr;
     }
     
-    EntityId DataRowset::entityAt(index_type index) const
+    Entity DataRowset::entityAt(index_type index) const
     {
-        const EntityId* p = rowAt(index);
-        return p[0];
+        return { *rowAt(index) };
     }
     
     auto DataRowset::firstIndex(index_type idx) const -> index_type
@@ -189,7 +188,7 @@ namespace component
         {
             if (_rowstart != _rowend)
             {
-                const EntityId* row = rowAt(0);
+                const Entity::value_type* row = rowAt(0);
                 if (row[0])
                     return 0;
                 
@@ -212,7 +211,7 @@ namespace component
             while (idx < sz-1)
             {
                 ++idx;
-                const EntityId* row = rowAt(idx);
+                const Entity::value_type* row = rowAt(idx);
                 if (row[0])
                     return idx;
             }
@@ -232,7 +231,7 @@ namespace component
             while (idx > 0)
             {
                 --idx;
-                const EntityId* row = rowAt(idx);
+                const Entity::value_type* row = rowAt(idx);
                 if (row[0])
                     return idx;
             }

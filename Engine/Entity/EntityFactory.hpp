@@ -10,7 +10,7 @@
 #define Overview_Entity_Factory_hpp
 
 #include "Engine/Render/RenderTypes.hpp"
-#include "Engine/Entity/EntityObject.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
 #include "Engine/MessageTypes.hpp"
 
 #include <cinek/allocator.hpp>
@@ -19,13 +19,21 @@
 
 namespace cinek { namespace overview {
 
-EntityObject* createEntity(
+Entity createEntity(
     EntityDatabase& db,
     RenderResources& renderResources,
     const cinek::JsonValue& definitions,
     const char* name,
     MessagePublisher* eventPublisher = nullptr,
     const CustomComponentCreateFn& customCompFn = CustomComponentCreateFn()
+);
+
+void destroyEntity(
+    Entity entity,
+    EntityDatabase& db,
+    RenderResources& renderResources,
+    MessagePublisher* eventPublisher = nullptr,
+    const CustomComponentDestroyFn& customCompFn = CustomComponentDestroyFn()
 );
     
 } /* namespace ovproto */ } /* namespace cinek */
