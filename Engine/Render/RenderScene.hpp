@@ -11,11 +11,13 @@
 
 #include "Engine/Render/RenderTypes.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
+#include "CKGfx/GfxTypes.hpp"
 
-
-#include <cinek/objectpool.hpp>
+#include "Engine/BVH/AABBTree.hpp"
 
 namespace cinek { namespace overview {
+
+class Scene;
 
 struct RenderResources
 {
@@ -26,12 +28,13 @@ struct RenderResources
 
 struct RenderContext
 {
-    EntityDatabase* entityDb;
+    EntityStore* entityStore;
     RenderResources* resources;
     
     int32_t viewWidth;
     int32_t viewHeight;
 };
+
 
 void renderScene(RenderContext& context);
 

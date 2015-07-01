@@ -11,6 +11,9 @@
 
 #include "Engine/Entity/EntityTypes.hpp"
 
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+
 namespace cinek { namespace overview {
 
 namespace component
@@ -19,17 +22,35 @@ namespace component
     {
         COMPONENT_DEFINITION(Transform);
         
-        enum
-        {
-            kScale      = 0x0001,
-            kRotate     = 0x0002,
-            kTranslate  = 0x0004
-        };
+        void setLocalPosition(const glm::dvec3& pos) {
+            _localPosition = pos;
+            _isDirty = true;
+        }
+        const glm::dvec3& localPosition() const {
+            return _localPosition;
+        }
+        bool isDirty() const {
+            return _isDirty;
+        }
+
+        const glm::dmat4& worldSRT() const {
+            return _worldSRT;
+        }
         
-        uint32_t flags;
-        Vector3 scale;
-        Vector3 rotate;
-        Vector3 translate;
+        void calculateWorldSRTFromParent(const glm::dmat4& parent);
+
+        void setDirty(bool dirty) {
+            _isDirty = dirty;
+        }
+        
+    private:
+        //  local components for the entity owning this Transform
+        ckm::vec3 _localPosition;
+        //  the SRT matrix used as the world space representation
+        ckm::mat4 _worldSRT;
+        
+        //  flags used during Transform calculations
+        bool _isDirty;
     };
 }
 

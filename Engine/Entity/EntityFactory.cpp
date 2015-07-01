@@ -7,7 +7,7 @@
 //
 
 #include "EntityFactory.hpp"
-#include "EntityDatabase.hpp"
+#include "EntityStore.hpp"
 
 #include "Comp/Renderable.hpp"
 
@@ -27,7 +27,7 @@ namespace component
 {
     static void createRenderable
     (
-        EntityDatabase& db,
+        EntityStore& store,
         RenderResources& renderResources,
         Entity entity,
         const cinek::JsonValue& definitions,
@@ -36,7 +36,7 @@ namespace component
         const char* typeName = data["type"].GetString();
         const char* dataName = data["name"].GetString();
         
-        auto table = db.table<overview::component::Renderable>();
+        auto table = store.table<overview::component::Renderable>();
         
         auto comp = table.addComponentToEntity(entity);
         if (comp)
@@ -70,7 +70,7 @@ namespace component
 
 Entity createEntity
 (
-    EntityDatabase& db,
+    EntityStore& store,
     RenderResources& renderResources,
     const cinek::JsonValue& definitions,
     const char* name,
@@ -78,7 +78,7 @@ Entity createEntity
     const CustomComponentCreateFn& customCompFn
 )
 {
-    Entity entity = db.create();
+    Entity entity = store.create();
     
     //  generate an entity and its base components using a template
     if (name && name[0])
@@ -100,7 +100,7 @@ Entity createEntity
             //      load resources based on type
             if (!strcmp(componentName, "renderable"))
             {
-                component::createRenderable(db, renderResources,
+                component::createRenderable(store, renderResources,
                     entity,
                     definitions,
                     componentData);
@@ -129,7 +129,7 @@ Entity createEntity
 void destroyEntity
 (
     Entity entity,
-    EntityDatabase& db,
+    EntityStore& store,
     RenderResources& renderResources,
     MessagePublisher* eventPublisher,
     const CustomComponentDestroyFn& customCompFn

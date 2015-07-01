@@ -1,44 +1,50 @@
 //
-//  Graphs/BVHTypes.hpp
+//  BVH/AABBTypes.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 5/16/15.
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Graphs_BVHTypes_hpp
-#define Overview_Graphs_BVHTypes_hpp
+#ifndef Overview_BVH_AABBTypes_hpp
+#define Overview_BVH_AABBTypes_hpp
 
 #include "Engine/EngineTypes.hpp"
 #include "Engine/AABB.hpp"
+
+#include <glm/vec3.hpp>
 
 namespace cinek { namespace overview {
 
 //  The BVHNode uses indices into arrays for references to BVHNode objects
 //
-struct BVHNode
+template<typename _ObjectId>
+struct AABBNode
 {
+    using ObjectId = _ObjectId;
+    using Index = int32_t;
+    
     enum
     {
         kFlag_Valid     = 0x80000000,
         kFlag_Leaf      = 0x40000000
     };
 
-    int32_t parent = -1;
+    Index parent = -1;
     uint32_t flags = 0;
 
-    AABB<Vector3> aabb;
+    AABB<ckm::vec3> aabb;
     
     union           // 8 bytes max
     {
         struct
         {
-            int32_t left;
-            int32_t right;
+            Index left;
+            Index right;
         }
         children;
         
-        intptr_t objectId;
+        ObjectId objectId;
     };
    
     void initAsLeaf()
@@ -55,6 +61,10 @@ struct BVHNode
     
     bool isValid() const { return (flags & kFlag_Valid)!=0; }
     bool isLeaf() const { return (flags & kFlag_Leaf)!=0; }
+
+    bool intersectsWithSphere(const ckm::vec3& center, ckm::vec3::value_type radius) const {
+        return aabb.intersectsWithSphere(center, radius);
+    }
 };
 
 

@@ -17,13 +17,16 @@ namespace cinek { namespace overview {
 
     /// @struct AABB
     /// @brief  An axis-aligned box in 3D space
+    /// @detail Default template definition assumes Point and Matrix types are
+    ///         GLM-based.  For custom point/matrix types, specialization is
+    ///         required.
     ///
     template<class _Point>
     struct AABB
     {
         typedef _Point                       point_type;
         typedef AABB<_Point>                 this_type;
-        typedef typename _Point::value_type  comp_type;
+        typedef typename _Point::value_type  value_type;
         
         point_type min;          ///< The min coordinate
         point_type max;          ///< The max coordinate
@@ -34,7 +37,7 @@ namespace cinek { namespace overview {
         /// Constructor
         /// @param length   Sets min to -length and max to +length
         ///
-        AABB(comp_type length);
+        AABB(value_type length);
         /// Constructor
         /// @param halfDim  Radius of the box
         ///
@@ -78,7 +81,7 @@ namespace cinek { namespace overview {
         /// @param  center  The sphere's center point
         /// @param  radius  The sphere's radius
         ///
-        bool intersectsWithSphere(const point_type& center, comp_type radius);
+        bool intersectsWithSphere(const point_type& center, value_type radius) const;
         /*
          * /// Calculates the intersection between a box and this box
          * /// @param  box The box to check
@@ -120,7 +123,11 @@ namespace cinek { namespace overview {
         
         /// @return The volume of the AABB based on the point type
         ///
-        comp_type volume() const;
+        value_type volume() const;
+        
+        static value_type squared(value_type val) {
+            return val*val;
+        }
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -194,6 +201,158 @@ namespace cinek { namespace overview {
         result.min = box.min + off;
         result.max = box.max + off;
         return result;
+    }
+    
+    template<class _Point>
+    AABB<_Point>::AABB(value_type length)
+    {
+        min = point_type(-length, -length, -length);
+        max = point_type(length, length, length);
+    }
+
+    template<class _Point>
+    void AABB<_Point>::clear()
+    {
+        min.x = min.y = min.z = 0;
+        max.x = max.y = max.z = 0;
+    }
+
+    template<class _Point>
+    bool AABB<_Point>::inside(const AABB<_Point>& box) const
+    {
+        return (min.x >= box.min.x && max.x <= box.max.x &&
+                min.y >= box.min.y && max.y <= box.max.y &&
+                min.z >= box.min.z && max.z <= box.max.z);
+    }
+
+    template<class _Point>
+    bool AABB<_Point>::contains(const point_type& pt) const
+    {
+        return (pt.x >= min.x && pt.x <= max.x &&
+                pt.y >= min.y && pt.y <= max.y &&
+                pt.z >= min.z && pt.z <= max.z);
+    }
+
+    template<class _Point>
+    bool AABB<_Point>::outside(const AABB<_Point>& box) const
+    {
+        return (min.x > box.max.x || box.min.x > max.x ||
+                min.y > box.max.y || box.min.y > max.y ||
+                min.z > box.max.z || box.min.z > max.z);
+    }
+    
+    template<class _Point>
+    void AABB<_Point>::generateVertices(std::array<point_type, 8>& verts)
+    {
+        //  -y vertices, clockwise from -x,-z
+        verts[0].x = min.x;     // v0 (-x,-y,-z)
+        verts[0].y = min.y;
+        verts[0].z = min.z;
+        verts[1].x = min.x;     // v1 (-x,-y,+z)
+        verts[1].y = min.y;
+        verts[1].z = max.z;
+        verts[2].x = max.x;     // v2 (+x,-y,+z)
+        verts[2].y = min.y;
+        verts[2].z = max.z;
+        verts[3].x = max.x;     // v3 (+x,-y,-z)
+        verts[3].y = min.y;
+        verts[3].z = min.z;
+        
+        //  +y vertices
+        verts[4].x = min.x;     // v4 (-x,+y,-z)
+        verts[4].y = max.y;
+        verts[4].z = min.z;
+        verts[5].x = min.x;     // v5 (-x,+y,+z)
+        verts[5].y = max.y;
+        verts[5].z = max.z;
+        verts[6].x = max.x;     // v6 (+x,+y,+z)
+        verts[6].y = max.y;
+        verts[6].z = max.z;
+        verts[7].x = max.x;     // v7 (+x,+y,-z)
+        verts[7].y = max.y;
+        verts[7].z = min.z;
+    }
+
+    template<class _Point>
+    template<class _Matrix>
+    void AABB<_Point>::rotate(const _Matrix& mtxRot)
+    {
+        std::array<point_type, 8> box;
+        generateVertices(box);
+        
+        typedef typename _Matrix::col_type column;
+        
+        for (auto& pt : box)
+        {
+            column col = column(pt, (typename column::value_type)1);
+            col *= mtxRot;
+            
+            if (pt.x < min.x)
+                min.x = pt.x;
+            if (pt.x > max.x)
+                max.x = pt.x;
+
+            if (pt.y < min.y)
+                min.y = pt.y;
+            if (pt.y > max.y)
+                max.y = pt.y;
+
+            if (pt.z < min.z)
+                min.z = pt.z;
+            if (pt.z > max.z)
+                max.z = pt.z;
+        }
+    }
+    
+    template<class _Point>
+    AABB<_Point>& AABB<_Point>::merge(const AABB<_Point>& aabb)
+    {
+        if (aabb.min.x < min.x)
+            min.x = aabb.min.x;
+        if (aabb.min.y < min.y)
+            min.y = aabb.min.y;
+        if (aabb.min.z < min.z)
+            min.z = aabb.min.z;
+        if (aabb.max.x > max.x)
+            max.x = aabb.max.x;
+        if (aabb.max.y > max.y)
+            max.y = aabb.max.y;
+        if (aabb.max.z > max.z)
+            max.z = aabb.max.z;
+        
+        return *this;
+    }
+    
+    template<class _Point>
+    typename AABB<_Point>::value_type AABB<_Point>::volume() const
+    {
+        return (max.x - min.x) * (max.y - min.y) * (max.z - min.z);
+    }
+    
+    template<class _Point>
+    bool AABB<_Point>::intersectsWithSphere
+    (
+        const point_type& center,
+        value_type radius
+    )
+    const
+    {
+        auto dist2 = squared(radius);
+        
+        if (center.x < min.x)
+            dist2 -= squared(center.x-min.x);
+        else if (center.x > max.x)
+            dist2 -= squared(center.x-max.x);
+        if (center.y < min.y)
+            dist2 -= squared(center.y-min.y);
+        else if (center.y > max.y)
+            dist2 -= squared(center.y-max.y);
+        if (center.z < min.z)
+            dist2 -= squared(center.z-min.z);
+        else if (center.z > max.z)
+            dist2 -= squared(center.z-max.z);
+        
+        return dist2 > 0;
     }
 
 } /* namespace overview */ } /* namespace cinek */

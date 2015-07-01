@@ -1,17 +1,18 @@
 //
-//  EntityDatabase.hpp
+//  EntityStore.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 5/18/15.
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Entity_Database_hpp
-#define Overview_Entity_Database_hpp
+#ifndef Overview_Entity_Store_hpp
+#define Overview_Entity_Store_hpp
 
 #include "EntityTypes.hpp"
 #include "EntityDataTable.hpp"
 
+#include <cinek/vector.hpp>
 #include <cinek/map.hpp>
 #include <cinek/allocator.hpp>
 
@@ -20,14 +21,21 @@ namespace cinek { namespace overview {
 // using techniques from:
 // http://bitsquid.blogspot.com/2014/08/building-data-oriented-entity-system.html
 //
-class EntityDatabase
+class EntityStore
 {
-    CK_CLASS_NON_COPYABLE(EntityDatabase);
+    CK_CLASS_NON_COPYABLE(EntityStore);
     
-public:        
-    EntityDatabase(uint32_t numEntities,
+public:
+    EntityStore();
+    
+    EntityStore(uint32_t numEntities,
         const vector<std::pair<component::Descriptor, uint32_t>>& components,
         const Allocator& allocator=Allocator());
+    
+    EntityStore(EntityStore&& other);
+    EntityStore& operator=(EntityStore&& other);
+    
+    uint32_t capacity() const { return (uint32_t)_iterations.capacity(); }
     
     Entity create();
     void destroy(Entity eid);
@@ -43,7 +51,7 @@ private:
 };
 
 template<typename Component>
-component::Table<Component> EntityDatabase::table() const
+component::Table<Component> EntityStore::table() const
 {
     auto componentIt = _components.find(Component::kComponentId);
     if (componentIt == _components.end())

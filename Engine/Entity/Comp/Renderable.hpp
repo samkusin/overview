@@ -10,6 +10,7 @@
 #define Overview_Entity_Component_Renderable_hpp
 
 #include "Engine/Entity/EntityTypes.hpp"
+#include "CKGfx/VertexTypes.hpp"
 
 namespace cinek { namespace overview {
 
@@ -21,6 +22,8 @@ namespace component
         uint32_t viewFilterMask;
         cinek::gfx::MeshHandle::pod_type meshHandle;
         cinek::gfx::TextureHandle::pod_type texHandle;
+      
+        gfx::Matrix4 worldSRT;
     };
 }
 

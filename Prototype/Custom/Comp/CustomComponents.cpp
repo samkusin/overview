@@ -8,6 +8,7 @@
 
 #include "CustomComponentTypes.hpp"
 #include "StellarSystem.hpp"
+#include "StarBody.hpp"
 
 
 namespace cinek { namespace ovproto {
@@ -15,6 +16,7 @@ namespace cinek { namespace ovproto {
 namespace component
 {
     COMPONENT_TYPE_IMPL(StellarSystem, kStellarSystem, {}, {});
+    COMPONENT_TYPE_IMPL(StarBody, kStarBody, {}, {});
 }
 
 } /* namespace overview */ } /* namespace cinek */

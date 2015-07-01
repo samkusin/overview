@@ -9,7 +9,7 @@
 #ifndef Overview_App_AppInterface_hpp
 #define Overview_App_AppInterface_hpp
 
-#include "GameTypes.hpp"
+#include "AppContext.hpp"
 
 #include <cinek/json/json.hpp>
 
@@ -39,7 +39,7 @@ public:
     overview::Entity createEntity(uint32_t srcTemplatesDocId,
             const char* templateName);
     
-    overview::EntityDatabase* entityDb();
+    overview::EntityStore* entityStore();
     
 private:
     AppContext* _context;

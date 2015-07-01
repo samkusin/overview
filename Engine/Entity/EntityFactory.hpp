@@ -20,7 +20,7 @@
 namespace cinek { namespace overview {
 
 Entity createEntity(
-    EntityDatabase& db,
+    EntityStore& store,
     RenderResources& renderResources,
     const cinek::JsonValue& definitions,
     const char* name,
@@ -30,7 +30,7 @@ Entity createEntity(
 
 void destroyEntity(
     Entity entity,
-    EntityDatabase& db,
+    EntityStore& store,
     RenderResources& renderResources,
     MessagePublisher* eventPublisher = nullptr,
     const CustomComponentDestroyFn& customCompFn = CustomComponentDestroyFn()

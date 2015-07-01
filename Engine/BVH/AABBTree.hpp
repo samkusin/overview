@@ -1,18 +1,18 @@
 //
-//  Graphs/BVHGraph.hpp
+//  BVH/AABBTree.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 5/16/15.
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_Graphs_BVHGraph_hpp
-#define Overview_Graphs_BVHGraph_hpp
+#ifndef Overview_BVH_AABBTree_hpp
+#define Overview_BVH_AABBTree_hpp
 
-#include "BVHTypes.hpp"
+#include "AABBTypes.hpp"
+#include "BVHRayTest.hpp"
 
 #include <cinek/vector.hpp>
-#include <functional>
 
 namespace cinek { namespace overview {
 
@@ -20,7 +20,7 @@ namespace cinek { namespace overview {
 //  for collision and raycasting.  Most implementations end up referencing
 //  Bullet or educational resources.
 
-//  BVHTree
+//  AABBTree
 //
 //  Specialized for trees that are infrequently rebalanced (i.e. static)
 //  Balancing starts with a single AABB and all objects, digging down until
@@ -38,72 +38,134 @@ namespace cinek { namespace overview {
 //  };
 //
 
-class BVHTree
+template<typename _ObjectId, typename _Utility>
+class AABBTree
 {
 public:
-    using NodeType = BVHNode;
+    using Node = AABBNode<_ObjectId>;
+    using Key = typename Node::ObjectId;
+    using Utility = _Utility;
     
-    BVHTree() = default;
-    BVHTree(int32_t nodeCnt, const Allocator& allocator=Allocator());
+    AABBTree() = default;
+    AABBTree(int32_t nodeCnt, const _Utility& util,
+             const Allocator& allocator=Allocator());
     
     //  adds an object to the hierarchy
-    template<typename _Utility>
-    int32_t insertObject(intptr_t objectId, _Utility& util);
+    int32_t insertObject(Key objectId);
     
-    using Callback = std::function<bool(intptr_t)>;
+    bool empty() const { return _nodes.empty() || !_nodes[0].isValid(); }
+
+    const Node& node(typename Node::Index index=0) const;
     
-    //  tests if at least one object intersects with the specified sphere
-    bool testIntersectWithSphere(const Vector3& center, float radius,
-        const Callback& cb=Callback());
+    struct Test
+    {
+        using IntersectWithSphere = BVHTestIntersectWithSphere<AABBTree>;
+    };
+    
+    template<typename _Test> _Test test() const {
+        return _Test(*this);
+    }
     
 private:
-    template<typename _Utility>
-    int32_t insertObjectIntoBVH(intptr_t objectId,
+    Utility _util;
+    
+    int32_t insertObjectIntoBVH(Key objectId,
         int32_t atNodeIdx,
-        int32_t parentNodeIdx,
-        _Utility& util);
+        int32_t parentNodeIdx);
     
     int32_t allocateNode();
     void freeNode(int32_t node);
+    AABB<ckm::vec3> makeAABBForObject(Key objectId) const;
     
-    template<typename _Utility>
-    AABB<Vector3> makeAABBForObject(intptr_t objectId, _Utility& util) const;
-    
-    bool testIntersectWithSphere(const Vector3& center, float radius,
-        int32_t atNodeIdx,
-        const Callback& cb);
-
     //  graph data.
-    vector<NodeType> _nodes;
+    vector<Node> _nodes;
     vector<int32_t> _freeNodes;
 };
 
-
-template<typename _Utility>
-AABB<Vector3> BVHTree::makeAABBForObject(intptr_t objectId, _Utility& util) const
+template<typename _ObjectId, typename _Utility>
+AABBTree<_ObjectId, _Utility>::AABBTree
+(
+    int32_t nodeCnt,
+    const _Utility& util,
+    const Allocator& allocator
+) :
+    _util(util),
+    _nodes(allocator),
+    _freeNodes(allocator)
 {
-    AABB<Vector3> aabb(util.objectRadius(objectId));
-    aabb += util.position(objectId);
+    _nodes.reserve(nodeCnt);
+    _freeNodes.reserve(nodeCnt);
+}
+
+template<typename _ObjectId, typename _Utility>
+AABB<ckm::vec3> AABBTree<_ObjectId, _Utility>::makeAABBForObject
+(
+    Key objectId
+)
+const
+{
+    AABB<ckm::vec3> aabb(_util.objectRadius(objectId));
+    aabb += _util.position(objectId);
     return aabb;
 }
 
+template<typename _ObjectId, typename _Utility>
+auto AABBTree<_ObjectId, _Utility>::node(typename Node::Index index) const
+    -> const Node&
+{
+    return _nodes[index];
+}
 
-template<typename _Utility>
-int32_t BVHTree::insertObject(intptr_t objectId, _Utility& util)
+
+template<typename _ObjectId, typename _Utility>
+int32_t AABBTree<_ObjectId, _Utility>::insertObject(Key objectId)
 {
     int32_t nodeIdx = -1;
     if (!_nodes.empty())
     {
         nodeIdx = 0;
     }
-    return insertObjectIntoBVH(objectId, nodeIdx, -1, util);
+    return insertObjectIntoBVH(objectId, nodeIdx, -1);
 }
 
-template<typename _Utility>
-int32_t BVHTree::insertObjectIntoBVH(intptr_t objectId,
-        int32_t atNodeIdx,
-        int32_t parentNodeIdx,
-        _Utility& util)
+template<typename _ObjectId, typename _Utility>
+int32_t AABBTree<_ObjectId, _Utility>::allocateNode()
+{
+    int32_t nodeIdx = -1;
+    if (!_freeNodes.empty())
+    {
+        nodeIdx = _freeNodes.back();
+        _freeNodes.pop_back();
+    }
+    else
+    {
+        nodeIdx = (int32_t)_nodes.size();
+        _nodes.emplace_back();
+    }
+    if (nodeIdx >= 0)
+    {
+        _nodes[nodeIdx].flags = AABBTree::Node::kFlag_Valid;
+    }
+    return nodeIdx;
+}
+
+template<typename _ObjectId, typename _Utility>
+void AABBTree<_ObjectId, _Utility>::freeNode(int32_t nodeIdx)
+{
+    if (nodeIdx >= 0)
+    {
+        _nodes[nodeIdx].flags = 0;
+    }
+    _freeNodes.push_back(nodeIdx);
+}
+
+template<typename _ObjectId, typename _Utility>
+int32_t AABBTree<_ObjectId, _Utility>::insertObjectIntoBVH
+(
+    Key objectId,
+    int32_t atNodeIdx,
+    int32_t parentNodeIdx
+)
 {
     if (atNodeIdx < 0)
     {
@@ -116,19 +178,20 @@ int32_t BVHTree::insertObjectIntoBVH(intptr_t objectId,
         
         node.initAsLeaf();
         node.objectId = objectId;
-        
-        node.aabb = makeAABBForObject(objectId, util);
-        util.setObjectData(objectId, atNodeIdx);
+        node.aabb = makeAABBForObject(objectId);
+        _util.setObjectData(objectId, atNodeIdx);
     }
     else
     {
         auto& node = _nodes[atNodeIdx];
-
-        intptr_t children[2];
+        if (!node.isValid())
+            return -1;
+        
+        Key children[2];
         
         if (node.isLeaf())
         {
-            util.setObjectData(node.objectId, -1);
+            _util.setObjectData(node.objectId, -1);
             children[0] = node.objectId;
             children[1] = objectId;
             node.initAsFork();
@@ -140,38 +203,36 @@ int32_t BVHTree::insertObjectIntoBVH(intptr_t objectId,
             //  compare the AABBs of the children *combined* with the object's
             //  AABB.  The smaller of the two AABBs will be chosen.
             
-            AABB<Vector3> leftAABB = _nodes[node.children.left].aabb;
-            AABB<Vector3> rightAABB = _nodes[node.children.right].aabb;
-            AABB<Vector3> objectAABB = makeAABBForObject(objectId, util);
+            auto leftAABB = _nodes[node.children.left].aabb;
+            auto rightAABB = _nodes[node.children.right].aabb;
+            auto objectAABB = makeAABBForObject(objectId);
             leftAABB.merge(objectAABB);
             rightAABB.merge(objectAABB);
             
             if (leftAABB.volume() < rightAABB.volume())
             {
                 children[0] = objectId;
-                children[1] = -1;
+                children[1] = nullptr;
             }
             else
             {
-                children[0] = -1;
+                children[0] = nullptr;
                 children[1] = objectId;
             }
         }
         
         //  note - we do not
-        if (children[0] >= 0)
+        if (children[0])
         {
             _nodes[atNodeIdx].children.left = insertObjectIntoBVH(children[0],
                 _nodes[atNodeIdx].children.left,
-                atNodeIdx,
-                util);
+                atNodeIdx);
         }
-        if (children[1] >= 0)
+        if (children[1])
         {
             _nodes[atNodeIdx].children.right = insertObjectIntoBVH(children[1],
                 _nodes[atNodeIdx].children.right,
-                atNodeIdx,
-                util);
+                atNodeIdx);
         }
     }
     

@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#ifndef Overview_App_Comp_Custom_StellarSystem_hpp
-#define Overview_App_Comp_Custom_StellarSystem_hpp
+#ifndef Overview_App_Custom_Comp_StellarSystem_hpp
+#define Overview_App_Custom_Comp_StellarSystem_hpp
 
 #include "CustomComponentTypes.hpp"
 
@@ -19,8 +19,12 @@ namespace component
     {
         COMPONENT_DEFINITION(StellarSystem);
 
+        //  seed used to generate planets for this system
         uint32_t seed;
-        intptr_t graphData;
+        //  filled in by the StellarSystemUtility
+        intptr_t indexToTreeNode;
+        //  radius of the system
+        ckm::scalar radius;
     };
 }
 

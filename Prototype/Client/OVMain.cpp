@@ -12,16 +12,17 @@
 #include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 
-#include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Render/RenderScene.hpp"
-#include "Engine/Entity/EntityDatabase.hpp"
+#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/MessageDispatcher.hpp"
 #include "Engine/MessagePublisher.hpp"
 #include "Engine/MessageStream.hpp"
 
 #include "Engine/Entity/Comp/Camera.hpp"
 #include "Engine/Entity/Comp/Light.hpp"
+#include "Engine/Entity/Comp/EntityHierarchy.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/Comp/Renderable.hpp"
 
 #include "CKGfx/VertexTypes.hpp"
 
@@ -34,6 +35,7 @@
 #include <bgfx/bgfx.h>
 
 #include "Custom/Comp/StellarSystem.hpp"
+#include "Custom/Comp/StarBody.hpp"
 
 
 namespace cinek { namespace ovproto {
@@ -101,18 +103,20 @@ void run(SDL_Window* window)
         "Shaders/fs_cubes.bin",
         std::move(shaderUniforms));
     
-    overview::EntityDatabase entityDb(65536, {
-        { overview::component::Transform::kComponentType, 32768 },
-        { overview::component::Renderable::kComponentType, 32768 },
+    overview::EntityStore entityStore(64*1024, {
+        { overview::component::Transform::kComponentType, 64*1024 },
+        { overview::component::EntityHierarchy::kComponentType, 64*1024 },
+        { overview::component::Renderable::kComponentType, 64*1024 },
+        { component::StellarSystem::kComponentType, 16*1024 },
+        { component::StarBody::kComponentType, 48*1024 },
         { overview::component::Camera::kComponentType, 4 },
-        { overview::component::Light::kComponentType, 8 },
-        { component::StellarSystem::kComponentType, 32768 }
+        { overview::component::Light::kComponentType, 8 }
     });
     
     overview::RenderContext renderContext;
-    renderContext.entityDb = &entityDb;
+    renderContext.entityStore = &entityStore;
     renderContext.resources = &renderResources;
-   
+    
     TaskScheduler taskScheduler(64, allocator);
     
     //  messaging - use two streams, one that is active, and one for the next
@@ -127,13 +131,14 @@ void run(SDL_Window* window)
     //  schedule an application task
     AppContext context;
     
-    context.entityDb = &entityDb;
+//    context.scene = &scene;
+    context.entityStore = &entityStore;
     context.messagePublisher = &messagePublisher;
     context.renderResources = &renderResources;
     context.documentMap = &appDocumentMap;
     context.allocator = &allocator;
     context.createComponentCb =
-        [&entityDb](overview::Entity entity,
+        [&entityStore](overview::Entity entity,
                     const cinek::JsonValue& definitions,
                     const cinek::JsonValue& data)
         {

@@ -55,7 +55,15 @@ class Table
 public:
     using value_type = Component;
     
+    Table() : _table(nullptr) {}
     Table(EntityDataTable* dataTable) : _table(dataTable) {}
+    Table(const Table& other) : _table(other._table) {}
+    Table& operator=(const Table& other) { _table = other._table; return *this; }
+    
+    Table(Table&& other) : _table(other._table) { other._table = nullptr; }
+    Table& operator=(Table&& other) { _table = other._table; other._table = nullptr; return *this; }
+    
+    operator bool() const { return _table != nullptr; }
     
     Component* addComponentToEntity(Entity eid);
     void removeComponentFromEntity(Entity eid);

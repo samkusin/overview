@@ -6,13 +6,18 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "EntityDatabase.hpp"
+#include "EntityStore.hpp"
 
 #include "Engine/Debug.hpp"
 
 namespace cinek { namespace overview {
 
-EntityDatabase::EntityDatabase
+EntityStore::EntityStore() :
+    _entityIdIteration(0)
+{
+}
+
+EntityStore::EntityStore
 (
     uint32_t numEntities,
     const vector<std::pair<component::Descriptor, uint32_t>>& components,
@@ -31,8 +36,30 @@ EntityDatabase::EntityDatabase
         _components.emplace(component.first.id, std::move(rowset));
     }
 }
+
+
+EntityStore::EntityStore(EntityStore&& other) :
+    _iterations(std::move(other._iterations)),
+    _freed(std::move(other._freed)),
+    _entityIdIteration(other._entityIdIteration),
+    _components(std::move(other._entityIdIteration))
+{
+    other._entityIdIteration = 0;
+}
+
+EntityStore& EntityStore::operator=(EntityStore&& other)
+{
+    _iterations = std::move(other._iterations);
+    _freed = std::move(other._freed);
+    _entityIdIteration = other._entityIdIteration;
+    _components = std::move(other._components);
     
-Entity EntityDatabase::create()
+    other._entityIdIteration = 0;
+    
+    return *this;
+}
+    
+Entity EntityStore::create()
 {
     Entity::index_type index;
     
@@ -52,7 +79,7 @@ Entity EntityDatabase::create()
     return eid;
 }
 
-void EntityDatabase::destroy(Entity eid)
+void EntityStore::destroy(Entity eid)
 {
     if (!eid)
         return;

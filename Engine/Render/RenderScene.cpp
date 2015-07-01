@@ -9,7 +9,7 @@
 #include "RenderScene.hpp"
 
 #include "Engine/AABB.hpp"
-#include "Engine/Entity/EntityDatabase.hpp"
+#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 #include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Debug.hpp"
@@ -75,7 +75,7 @@ void renderScene
     RenderContext& context
 )
 {
-    auto& entityDb = *context.entityDb;
+    auto& entityStore = *context.entityStore;
    
     
     //  render scene

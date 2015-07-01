@@ -11,7 +11,8 @@
 #include "Camera.hpp"
 #include "Renderable.hpp"
 #include "Transform.hpp"
-
+#include "EntityHierarchy.hpp"
+#include "Body.hpp"
 
 namespace cinek { namespace overview {
 
@@ -19,8 +20,9 @@ namespace component
 {
     COMPONENT_TYPE_IMPL(Light, kLight, {}, {});
     COMPONENT_TYPE_IMPL(Camera, kCamera, {}, {});
-    COMPONENT_TYPE_IMPL(Transform, kTransform, {}, {});
     COMPONENT_TYPE_IMPL(Renderable, kRenderable, {}, {});
+    COMPONENT_TYPE_IMPL(EntityHierarchy, kEntityHierarchy, {}, {});
+    COMPONENT_TYPE_IMPL(Body, kBody, {}, {});
 }
 
 } /* namespace overview */ } /* namespace cinek */

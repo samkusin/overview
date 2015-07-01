@@ -10,6 +10,7 @@
 #define Overview_Entity_Component_Light_hpp
 
 #include "Engine/Entity/EntityTypes.hpp"
+#include "CKGfx/VertexTypes.hpp"
 
 namespace cinek { namespace overview {
 
@@ -22,7 +23,8 @@ namespace component
         enum Type { kPoint, kDirectional };
         
         Type type;
-        Vector4 color;
+        
+        gfx::Vector3 color;
         float strength;
         float falloffDistance;
         float falloffLimit;

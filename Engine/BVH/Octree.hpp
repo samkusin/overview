@@ -28,8 +28,8 @@ struct OctreeNode
     static constexpr int kMaxObjects = (sizeof(int32_t)*8) / sizeof(intptr_t);
 
     //  define the octant
-    AABB<Vector3> tightBounds;  // tight bounds of the octant
-    AABB<Vector3> looseBounds;  // loose bounds of the octant
+    AABB<ckm::vec3> tightBounds;  // tight bounds of the octant
+    AABB<ckm::vec3> looseBounds;  // loose bounds of the octant
     
     union
     {

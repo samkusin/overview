@@ -9,7 +9,7 @@
 #include "AppInterface.hpp"
 
 #include "Engine/Entity/EntityFactory.hpp"
-#include "Engine/Entity/EntityDatabase.hpp"
+#include "Engine/Entity/EntityStore.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/json/jsonstreambuf.hpp>
@@ -89,7 +89,7 @@ overview::Entity AppInterface::createEntity
     const char* templateName
 )
 {
-    return overview::createEntity(*_context->entityDb,
+    return overview::createEntity(*_context->entityStore,
         *_context->renderResources,
         *_context->documentMap->find(srcTemplatesDocId)->second,
         templateName,
@@ -98,9 +98,9 @@ overview::Entity AppInterface::createEntity
 }
 
 
-overview::EntityDatabase* AppInterface::entityDb()
+overview::EntityStore* AppInterface::entityStore()
 {
-    return _context->entityDb;
+    return _context->entityStore;
 }
   
         

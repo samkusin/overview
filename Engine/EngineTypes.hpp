@@ -10,86 +10,50 @@
 #ifndef Overview_Engine_hpp
 #define Overview_Engine_hpp
 
-#include "CKGfx/VertexTypes.hpp"
 #include <cinek/types.hpp>
+#include <glm/fwd.hpp>
+
+namespace ckm
+{
+    using scalar = glm::float64;
+    using vec3 = glm::tvec3<scalar, glm::highp>;
+    using vec4 = glm::tvec4<scalar, glm::highp>;
+    using mat3 = glm::tmat3x3<scalar, glm::highp>;
+    using mat4 = glm::tmat4x4<scalar, glm::highp>;
+}
 
 namespace cinek { namespace overview {
 
-using Vector2 = gfx::Vector2;
-using Vector3 = gfx::Vector3;
-using Vector4 = gfx::Vector4;
-using Matrix4 = gfx::Matrix4;
+//  The Entity is the one of the few engine-wide types.  EntityTypes.hpp
+//  contains prototypes for other Entity related objects.
 
-inline Vector3& operator+=(Vector3& l, const Vector3& r)
+struct Entity
 {
-    bx::vec3Add(l, l, r);
-    return l;
-}
+    using value_type = uint64_t;
+    using index_type = uint32_t;
+    using iteration_type = uint16_t;
+    static constexpr value_type null_value = 0;
+    static Entity null()  { Entity eid; eid.id = 0; return eid; }
+    
+    void makeEntityId(iteration_type iteration, index_type index) {
+        id = (((value_type)iteration) << 48) | index;
+    }
+    
+    operator bool() const {
+        return id != null_value;
+    }
+    Entity& operator=(std::nullptr_t)
+    {
+        id = null_value;
+        return *this;
+    }
 
-inline Vector3& operator-=(Vector3& l, const Vector3& r)
-{
-    bx::vec3Sub(l, l, r);
-    return l;
-}
-
-inline Vector3 operator+(const Vector3& l, const Vector3& r)
-{
-    Vector3 result;
-    bx::vec3Add(result, l, r);
-    return result;
-}
-
-inline Vector3 operator-(const Vector3& l, const Vector3& r)
-{
-    Vector3 result;
-    bx::vec3Sub(result, l, r);
-    return result;
-}
-
-inline bool operator==(const Vector3& l, const Vector3& r)
-{
-    return l.comp[0]==r.comp[0] && l.comp[1]==r.comp[1] && l.comp[2]==r.comp[2];
-}
-
-inline bool operator!=(const Vector3& l, const Vector3& r)
-{
-    return l.comp[0]!=r.comp[0] || l.comp[1]!=r.comp[1] || l.comp[2]!=r.comp[2];
-}
-
-inline Vector3 operator*(const Vector3& v0, const Vector3& v1)
-{
-    Vector3 vr;
-    bx::vec3Mul(vr, v0, v1);
-    return vr;
-}
-
-inline Vector3& operator*=(Vector3& v0, const Vector3& v1)
-{
-    bx::vec3Mul(v0, v0, v1);
-    return v0;
-}
-
-inline Vector3 operator/(const Vector3& v, float scalar)
-{
-    Vector3 result;
-    bx::vec3Mul(result, v, 1/scalar);
-    return result;
-}
-
-inline Vector3& operator/=(Vector3& v, float scalar)
-{
-    bx::vec3Mul(v, v, 1/scalar);
-    return v;
-}
-
-inline Vector3 Matrix4TranslateComponent(const Matrix4& mat)
-{
-    Vector3 res;
-    res.comp[0] = mat.comp[12];
-    res.comp[1] = mat.comp[13];
-    res.comp[2] = mat.comp[13];
-    return res;
-}
+    value_type value() const { return id; }
+    index_type index() const { return ((index_type)id & 0xffffffff); }
+    iteration_type iteration() const { return (iteration_type)(id >> 48); }
+    
+    value_type id;
+};
 
 } /* namespace overview */ } /* namespace cinek */
 
