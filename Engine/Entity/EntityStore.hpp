@@ -39,6 +39,11 @@ public:
     
     Entity create();
     void destroy(Entity eid);
+    
+    bool valid(Entity eid) const;
+    
+    //  garbage collects unused components - run once per frame
+    void gc();
 
     template<typename Component> component::Table<Component> table() const;
     

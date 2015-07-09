@@ -34,6 +34,7 @@ class Mesh
     CK_CLASS_NON_COPYABLE(Mesh);
 
 public:
+    Mesh();
     Mesh(VertexTypes::Format format,
          const Matrix4& transform,
          const bgfx::Memory* vertexData,
@@ -69,11 +70,21 @@ private:
 };
 
 /// Generates an IcoSphere mesh using the given format and number of passes.)
+///
+/// Note for UVs, currently uses sphere mapping to generate U and V coords
+/// Future: support multiple types of texture mapping
+///
 unique_ptr<Mesh> createIcoSphere(float radius, int subdividePasses,
                                  VertexTypes::Format vertexType,
                                  const Vector4& color = {{ 1.f,1.f,1.f,1.f }},
                                  const Allocator& allocator=Allocator());
 
+/// Generates a cube
+/// No UV coordinate generation supported at this time.
+///
+unique_ptr<Mesh> createCube(float radius, VertexTypes::Format vertexType,
+                            const Vector4& color = {{ 1.f,1.f,1.f,1.f }},
+                            const Allocator& allocator=Allocator());
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -19,9 +19,24 @@ namespace component
     {
         COMPONENT_DEFINITION(Camera);
         
-        float fov;          // in degrees
-        float nearZClip;
-        float farZClip;
+        void init(int viewIndex, ckm::scalar fovRads,
+                  ckm::scalar nearZ,
+                  ckm::scalar farZ);
+        
+        void setDirty(bool dirty) { _dirty = dirty; }
+        bool dirty() const { return _dirty; }
+        
+        ckm::scalar fov() const { return _fov; }
+        ckm::scalar nearZ() const { return _nearZClip; }
+        ckm::scalar farZ() const { return _farZClip; }
+        int viewIndex() const { return _viewIndex; }
+        
+    private:
+        ckm::scalar _fov;          // in degrees
+        ckm::scalar _nearZClip;
+        ckm::scalar _farZClip;
+        int _viewIndex;
+        bool _dirty;
     };
 }
 

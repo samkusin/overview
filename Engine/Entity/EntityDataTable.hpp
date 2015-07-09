@@ -54,6 +54,7 @@ class Table
 {
 public:
     using value_type = Component;
+    using index_type = DataRowset::index_type;
     
     Table() : _table(nullptr) {}
     Table(EntityDataTable* dataTable) : _table(dataTable) {}
@@ -71,9 +72,12 @@ public:
     const Component* rowForEntity(Entity eid) const;
     Component* rowForEntity(Entity eid);
     
+    const EntityDataTable* data() const { return _table; }
+    EntityDataTable* data() { return _table; }
+    
     //  iterate through all objects in the DB with the specified component
     //  Function signature should be:
-    //      void fn(EntityId eid, Component& component);
+    //      void fn(Entity eid, Component& component);
     template<typename Fn> Fn forEach(Fn fn);
     
 private:
@@ -83,7 +87,7 @@ private:
 template<typename Component>
 Component* Table<Component>::addComponentToEntity(Entity eid)
 {
-    if (!eid)
+    if (eid==0)
         return nullptr;
     
     auto index = _table->allocateIndexForEntity(eid);

@@ -10,17 +10,10 @@
 #ifndef Overview_Engine_hpp
 #define Overview_Engine_hpp
 
-#include <cinek/types.hpp>
-#include <glm/fwd.hpp>
+#include "EngineMathTypes.hpp"
 
-namespace ckm
-{
-    using scalar = glm::float64;
-    using vec3 = glm::tvec3<scalar, glm::highp>;
-    using vec4 = glm::tvec4<scalar, glm::highp>;
-    using mat3 = glm::tmat3x3<scalar, glm::highp>;
-    using mat4 = glm::tmat4x4<scalar, glm::highp>;
-}
+#include <cinek/types.hpp>
+
 
 namespace cinek { namespace overview {
 
@@ -39,14 +32,26 @@ struct Entity
         id = (((value_type)iteration) << 48) | index;
     }
     
-    operator bool() const {
+    bool operator==(std::nullptr_t) const {
+        return id == null_value;
+    }
+    bool operator!=(std::nullptr_t) const {
         return id != null_value;
     }
+    bool operator==(const Entity& other) const {
+        return id == other.id;
+    }
+    bool operator!=(const Entity& other) const {
+        return id != other.id;
+    }
+    
     Entity& operator=(std::nullptr_t)
     {
         id = null_value;
         return *this;
     }
+    bool valid() const { return id != null_value; }
+    
 
     value_type value() const { return id; }
     index_type index() const { return ((index_type)id & 0xffffffff); }

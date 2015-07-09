@@ -97,10 +97,15 @@ overview::Entity AppInterface::createEntity
         _context->createComponentCb);
 }
 
-
-overview::EntityStore* AppInterface::entityStore()
+overview::Entity AppInterface::createEntity()
 {
-    return _context->entityStore;
+    return _context->entityStore->create();
+}
+
+
+overview::EntityStore& AppInterface::entityStore()
+{
+    return *_context->entityStore;
 }
   
         

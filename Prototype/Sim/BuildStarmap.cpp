@@ -10,7 +10,6 @@
 
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/Comp/EntityHierarchy.hpp"
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 
@@ -43,7 +42,7 @@ struct BuildStarmapFunction::Randomizer
     }
     ckm::scalar uniformPct() {
         auto v = uint16Dist(rand) / (ckm::scalar)(uint16Dist.max() - uint16Dist.min());
-        return v * 100.0;
+        return v * 100;
     }
 };
 
@@ -107,7 +106,7 @@ auto BuildStarmapFunction::operator()
     const vector<SpectralClass>& spectralClasses,
     vector<SpectralInput> spectralInputs,
     int spectralIndexMax,
-    AABB<ckm::vec3> bounds,
+    ckm::AABB<ckm::vec3> bounds,
     ckm::scalar minSystemRadius,
     ckm::scalar maxSystemRadius
 )
@@ -151,14 +150,12 @@ auto BuildStarmapFunction::operator()
     ////////////////////////////////////////////////////////////////////////
     overview::EntityStore entityStore(64*1024, {
         { overview::component::Transform::kComponentType, 64*1024 },
-        { overview::component::EntityHierarchy::kComponentType, 64*1024 },
         { ovproto::component::StellarSystem::kComponentType, 16*1024 },
         { ovproto::component::StarBody::kComponentType, 48*1024 }
     });
     
     StandardTables standardTables;
     standardTables.transform = entityStore.table<overview::component::Transform>();
-    standardTables.hierarchy = entityStore.table<overview::component::EntityHierarchy>();
     standardTables.systemTable = entityStore.table<ovproto::component::StellarSystem>();
     standardTables.starTable = entityStore.table<ovproto::component::StarBody>();
     
@@ -337,7 +334,7 @@ auto BuildStarmapFunction::createSystem
 (
     CommonState& CS,
     int bodyClassIndex,
-    const AABB<ckm::vec3>& bounds,
+    const ckm::AABB<ckm::vec3>& bounds,
     const std::array<StarTemplate, kMaxBodiesPerSystem>& starTemplates,
     ckm::scalar minRadius,
     ckm::scalar maxRadius
@@ -381,16 +378,19 @@ auto BuildStarmapFunction::createSystem
         stellarSystem->seed = randomizer.uniformInt();
         
         //  Create Bodies (with no position)
-        auto hierarchy = CS.standardTables.hierarchy.addComponentToEntity(systemEntity);
-        if (!hierarchy)
-            return Result::kOutOfMemory;
         
         printf("\n======================================\n");
-        printf("Creating System: radius=%lf\n", stellarSystem->radius);
+        printf("Creating System: at=(%.5lf,%.5lf,%.5lf) radius=%lf\n",
+            systemPosition.first.x, systemPosition.first.y, systemPosition.first.z,
+            stellarSystem->radius);
         
-        hierarchy->firstChild = createBodies(CS, starTemplates, systemEntity, systemRadius);
-        if (!hierarchy->firstChild)
+        transform->setChild(
+            createBodies(CS, starTemplates, systemEntity, systemRadius)
+        );
+        if (!transform->child().valid())
             return Result::kOutOfMemory;
+
+        //  transform object prior to inserting.
 
         CS.stellarSystemTree.insertObject(systemEntity);
     }
@@ -412,32 +412,21 @@ Entity BuildStarmapFunction::createBodies
 {
     std::array<Entity, kMaxBodiesPerSystem> bodies;
     
-    for (int i = 0; i < starTemplates.size(); ++i)
+    int numStars = 0;
+    
+    for (; numStars < starTemplates.size(); ++numStars)
     {
-        auto& starTemplate  = starTemplates[i];
+        auto& starTemplate  = starTemplates[numStars];
         if (starTemplate.classIndex < 0)
         {
-            bodies[i] = Entity::null();
+            bodies[numStars] = Entity::null();
             break;
         }
         auto entity = state.entityStore.create();
-        auto transform = state.standardTables.transform.addComponentToEntity(entity);
-        if (!transform)
-            return Entity::null();
-        
-        auto hierarchy = state.standardTables.hierarchy.addComponentToEntity(entity);
-        if (!hierarchy)
-            return Entity::null();
-        
         auto star = state.standardTables.starTable.addComponentToEntity(entity);
         if (!star)
             return Entity::null();
         
-        ckm::vec3 offset(0.0);
-        
-        //  transformation props
-        transform->setLocalPosition(offset);
-    
         //  star props
         star->solarMass = starTemplate.mass;
         star->solarLuminosity = massToLuminosity(star->solarMass);
@@ -450,31 +439,85 @@ Entity BuildStarmapFunction::createBodies
             star->solarRadius,
             star->solarLuminosity);
     
-       
-        bodies[i] = entity;
+        bodies[numStars] = entity;
     }
     
-    //  fixup each entity's sibling links
-        
-    for (int bodyIndex = 0; bodyIndex < bodies.size(); ++bodyIndex)
+    if (!numStars)
+        return Entity::null();      // bad input
+    
+    //  fixup each entity's sibling links and determine starting offsets from the
+    //  center of mass.
+    
+    // use AU as our basic unit,  converting to our LY unit once finished
+    // calculating of center of mass.
+    ckm::scalar totalMass = 0;
+    ckm::scalar totalMassMulOffset = 0;
+    
+    std::array<ckm::scalar, kMaxBodiesPerSystem> offsets;
+    const ckm::scalar kOffsetLimit = systemRadius * kSystemInnerRadiusFraction;
+    std::pair<ckm::scalar, ckm::scalar> offsetRange = { 0, 0 };
+    
+    int offsetFraction = 1;
+    for (int i = 1; i < numStars; ++i)
+        offsetFraction *= 10;
+    
+    for (int starIndex = 0; starIndex < numStars; ++starIndex)
     {
-        if (!bodies[bodyIndex])
-            break;
-
-        auto hierarchy = state.standardTables.hierarchy.rowForEntity(bodies[bodyIndex]);
-    
-        hierarchy->parent = parentSystemEntity;
+        Entity entity = bodies[starIndex];
         
-        if (bodyIndex < bodies.size()-1)
+        auto transform = state.standardTables.transform.addComponentToEntity(entity);
+        if (!transform)
+            return Entity::null();
+        
+        transform->setParent(parentSystemEntity);
+        if (starIndex < bodies.size()-1)
         {
-            hierarchy->nextSibling = bodies[bodyIndex+1];
+            transform->setSibling(bodies[starIndex+1]);
         }
-        else
+        
+        auto star = state.standardTables.starTable.rowForEntity(entity);
+        
+        totalMass += star->solarMass;
+        totalMassMulOffset += offsetRange.first*star->solarMass;
+        
+        offsets[starIndex] = offsetRange.first;
+        
+        auto& randomizer = state.spectralRandomizers[starTemplates[starIndex].classIndex];
+        
+        offsetRange.first = offsetRange.first +
+            (star->solarRadius + kMaxStarPairDistInSolRadius * randomizer.uniformPct()*0.01)/kSolRadiusPerAU;
+        
+        //  if numStars == 1, this block is never executed, and numStars > 2
+        //      then offsetFraction will be 10^(numStars)
+        if (starIndex+1 < numStars)
         {
-            hierarchy->nextSibling = Entity::null();
+            offsetFraction /= 10;
+            offsetRange.second = (kOffsetLimit/offsetFraction) * kAUPerLYR;
+            
+            auto baseModifier = randomizer.uniformPct()/100;
+            auto modifier = baseModifier;
+            for (int i = starIndex; i < kMaxBodiesPerSystem; ++i)
+            {
+                modifier *= baseModifier;
+            }
+            offsetRange.first += (offsetRange.second - offsetRange.first) * modifier;
         }
+        
     }
-
+    
+    //  now calculate center of mass and offset every body by the center
+    //  so that offset 0 = center of the system
+    auto starOffset = totalMassMulOffset/totalMass;
+    for (int starIndex = 0; starIndex < numStars; ++starIndex)
+    {
+        auto transform = state.standardTables.transform.rowForEntity(bodies[starIndex]);
+        
+        ckm::scalar lyOffset = (offsets[starIndex] - starOffset) / kAUPerLYR;
+        
+        ckm::vec3 offset(lyOffset, 0, 0);
+        transform->setLocalPosition(offset);
+    }
+    
     return bodies[0];
 }
     
@@ -529,13 +572,13 @@ const
     tempRatio = std::sqrt(tempRatio);
     tempRatio = 1/tempRatio;
     
-    return tempRatio * kSolarEffTemp;
+    return tempRatio * kSolEffTemp;
 }
 
 std::pair<ckm::vec3, bool> BuildStarmapFunction::randomPositionInWorld
 (
     const StellarSystemTree& world,
-    const AABB<ckm::vec3>& bounds,
+    const ckm::AABB<ckm::vec3>& bounds,
     ckm::scalar systemRadius,
     Randomizer& randomizer
 )
@@ -568,7 +611,7 @@ std::pair<ckm::vec3, bool> BuildStarmapFunction::randomPositionInWorld
 ckm::vec3 BuildStarmapFunction::randomPositionWithinBounds
 (
     Randomizer& randomizer,
-    const AABB<ckm::vec3>& bounds
+    const ckm::AABB<ckm::vec3>& bounds
 )
 const
 {
@@ -584,19 +627,22 @@ const
     //       LLVM #18767"
     //  http://en.cppreference.com/w/cpp/numeric/random/generate_canonical
     
-    if (pos.x < 0.01)
-        pos.x = 0.01;
-    if (pos.y < 0.01)
-        pos.y = 0.01;
-    if (pos.z < 0.01)
-        pos.z = 0.01;
+    const ckm::scalar kMin = (ckm::scalar)0.1;
+    const ckm::scalar kMax = (ckm::scalar)0.99;
     
-    if (pos.x > 0.99)
-        pos.x = 0.99;
-    if (pos.y > 0.99)
-        pos.y = 0.99;
-    if (pos.z > 0.99)
-        pos.z = 0.99;
+    if (pos.x < kMin)
+        pos.x = kMin;
+    if (pos.y < kMin)
+        pos.y = kMin;
+    if (pos.z < kMin)
+        pos.z = kMin;
+    
+    if (pos.x > kMax)
+        pos.x = kMax;
+    if (pos.y > kMax)
+        pos.y = kMax;
+    if (pos.z > kMax)
+        pos.z = kMax;
     
     pos *= bounds.dimensions();
     pos += bounds.min;

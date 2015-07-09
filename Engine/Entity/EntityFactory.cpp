@@ -10,10 +10,11 @@
 #include "EntityStore.hpp"
 
 #include "Comp/Renderable.hpp"
+#include "Comp/MeshRenderable.hpp"
 
 #include "Engine/MessagePublisher.hpp"
 #include "Engine/Debug.hpp"
-#include "Engine/Render/RenderScene.hpp"
+#include "Engine/Render/RenderTypes.hpp"
 #include "CKGfx/MeshLibrary.hpp"
 #include "CKGfx/TextureAtlas.hpp"
 
@@ -37,6 +38,7 @@ namespace component
         const char* dataName = data["name"].GetString();
         
         auto table = store.table<overview::component::Renderable>();
+        auto meshTable = store.table<overview::component::MeshRenderable>();
         
         auto comp = table.addComponentToEntity(entity);
         if (comp)
@@ -46,16 +48,20 @@ namespace component
                 data["filter"].GetString()
             );
 
-            if (!strcmp(typeName, "mesh"))
+            if (meshTable)
             {
-                //  preload mesh
-                comp->meshHandle = renderResources.meshLibrary->load(dataName).data;
-            }
-            
-            if (data.HasMember("bitmap"))
-            {
-                const char* bmpName = data["bitmap"].GetString();
-                comp->texHandle = renderResources.textureAtlas->loadTexture(bmpName).data;
+                if (!strcmp(typeName, "mesh"))
+                {
+                    auto meshComp = meshTable.addComponentToEntity(entity);
+                    //  preload mesh
+                    meshComp->meshHandle = renderResources.meshLibrary->load(dataName).data;
+                
+                    if (data.HasMember("bitmap"))
+                    {
+                        const char* bmpName = data["bitmap"].GetString();
+                        meshComp->texHandle = renderResources.textureAtlas->loadTexture(bmpName).data;
+                    }
+                }
             }
         }
         else

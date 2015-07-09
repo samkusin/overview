@@ -70,7 +70,6 @@ private:
     struct StandardTables
     {
         component::Table<overview::component::Transform> transform;
-        component::Table<overview::component::EntityHierarchy> hierarchy;
         component::Table<component::StellarSystem> systemTable;
         component::Table<component::StarBody> starTable;
     };
@@ -110,7 +109,7 @@ public:
         const vector<SpectralClass>& spectralClasses,
         vector<SpectralInput> spectralInputs,
         int spectralIndexMax,
-        AABB<ckm::vec3> bounds,
+        ckm::AABB<ckm::vec3> bounds,
         ckm::scalar minSystemRadius,
         ckm::scalar maxSystemRadius
     );
@@ -134,7 +133,7 @@ private:
         Randomizer& randomizer);
     
     Result::Enum createSystem(CommonState& state, int bodyClassIndex,
-        const AABB<ckm::vec3>& bounds,
+        const ckm::AABB<ckm::vec3>& bounds,
         const std::array<StarTemplate, kMaxBodiesPerSystem>& starTemplates,
         ckm::scalar minRadius,
         ckm::scalar maxRadius);
@@ -147,13 +146,13 @@ private:
     std::pair<ckm::vec3, bool> randomPositionInWorld
     (
         const StellarSystemTree& world,
-        const AABB<ckm::vec3>& bounds,
+        const ckm::AABB<ckm::vec3>& bounds,
         ckm::scalar systemRadius,
         Randomizer& randomizer
     );
   
     ckm::vec3 randomPositionWithinBounds(Randomizer& randomizer,
-        const AABB<ckm::vec3>& bounds) const;
+        const ckm::AABB<ckm::vec3>& bounds) const;
 
     //  a variant of the equations here:
     //  https://en.wikipedia.org/wiki/Mass%E2%80%93luminosity_relation

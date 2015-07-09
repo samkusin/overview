@@ -22,7 +22,7 @@ namespace component
         //  seed used to generate planets for this system
         uint32_t seed;
         //  filled in by the StellarSystemUtility
-        intptr_t indexToTreeNode;
+        int indexToTreeNode;
         //  radius of the system
         ckm::scalar radius;
     };

@@ -304,7 +304,7 @@ unique_ptr<Mesh> createIcoSphere
         {
             const Vector3& normal = normals.back();
         
-                //  invert our y normal coordinate - this is aesthetic choice since
+            //  invert our y normal coordinate - this is aesthetic choice since
             //  we want the top of the texture to match positive Y in 3dspace
             Vector2 uv;
             if (normal.comp[2] || normal.comp[0])
@@ -411,18 +411,18 @@ unique_ptr<Mesh> createIcoSphere
                 vertexMemory->data,
                 iv);
         }
-        if (vertexDecl.has(bgfx::Attrib::Color0))
-        {
-            bgfx::vertexPack(color.comp, true,
-                bgfx::Attrib::Color0,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
         if (vertexDecl.has(bgfx::Attrib::Normal))
         {
             bgfx::vertexPack(normals[iv], false,
                 bgfx::Attrib::Normal,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
+        }
+        if (vertexDecl.has(bgfx::Attrib::Color0))
+        {
+            bgfx::vertexPack(color.comp, true,
+                bgfx::Attrib::Color0,
                 vertexDecl,
                 vertexMemory->data,
                 iv);
@@ -460,7 +460,194 @@ unique_ptr<Mesh> createIcoSphere
     return mesh;
 }
 
+Vector3 cubicMapReflectVector(const Vector3& normal, const Vector3& v)
+{
+    Vector3 r;
+    float dotNV2 = 2 * bx::vec3Dot(normal, v);
+    bx::vec3Mul(r, r, dotNV2);
+    bx::vec3Sub(r, r, v);
+    return r;
+}
+
+unique_ptr<Mesh> createCube
+(
+    float radius,
+    VertexTypes::Format vertexType,
+    const Vector4& color,
+    const Allocator& allocator
+)
+{
+    const bgfx::VertexDecl& vertexDecl = VertexTypes::declaration(vertexType);
+    
+    if (vertexDecl.getStride()==0)
+        return nullptr;
+ 
+    struct Face
+    {
+        int idx[3];
+    };
+ 
+    std::array<Vector3, 24> vertices;   // cubic uvs requires dup vertices
+    std::array<Vector3, 24> normals;
+    int numVertices = 0;
+    
+    //  create base set of vertices, faces and normals.
+    vertices[0] = {{  0.5f,  0.5f, -0.5f }};    // +X
+    vertices[1] = {{  0.5f,  0.5f,  0.5f }};
+    vertices[2] = {{  0.5f, -0.5f,  0.5f }};
+    vertices[3] = {{  0.5f, -0.5f, -0.5f }};
+    vertices[4] = {{  0.5f,  0.5f, -0.5f }};    // -X
+    vertices[5] = {{  0.5f,  0.5f,  0.5f }};
+    vertices[6] = {{  0.5f, -0.5f,  0.5f }};
+    vertices[7] = {{  0.5f, -0.5f, -0.5f }};
+    numVertices = 8;
+    
+    if (vertexDecl.has(bgfx::Attrib::Normal))
+    {
+        // since vertices are equally distant from the origin...
+        for (int i = 0; i < 8; ++i)
+        {
+            bx::vec3Norm(normals[i], vertices[i]);
+        }
+    }
+    
+    //  faces are ordered, +X,-X,+Y,-Y,+Z,-Z
+    std::array<Face, 12> faces;         // 6 sides, 2 tris per side
+ 
+    faces[0].idx[0] = 0;                // +X face
+    faces[0].idx[1] = 2;
+    faces[0].idx[2] = 3;
+    faces[1].idx[0] = 0;
+    faces[1].idx[1] = 1;
+    faces[1].idx[2] = 2;
+    
+    faces[2].idx[0] = 4;                // -X face
+    faces[2].idx[1] = 5;
+    faces[2].idx[2] = 6;
+    faces[3].idx[0] = 4;
+    faces[3].idx[1] = 6;
+    faces[3].idx[2] = 7;
+    
+    faces[4].idx[0] = 0;                // +Y face
+    faces[4].idx[1] = 4;
+    faces[4].idx[2] = 7;
+    faces[5].idx[0] = 0;
+    faces[5].idx[1] = 7;
+    faces[5].idx[2] = 1;
+    
+    faces[6].idx[0] = 5;                // -Y face
+    faces[6].idx[1] = 3;
+    faces[6].idx[2] = 2;
+    faces[7].idx[0] = 5;
+    faces[7].idx[1] = 2;
+    faces[7].idx[2] = 6;
+    
+    faces[8].idx[0] = 1;                // +Z face
+    faces[8].idx[1] = 7;
+    faces[8].idx[2] = 6;
+    faces[9].idx[0] = 1;
+    faces[9].idx[1] = 6;
+    faces[9].idx[2] = 2;
+    
+    faces[10].idx[0] = 4;                // -Z face
+    faces[10].idx[1] = 3;
+    faces[10].idx[2] = 5;
+    faces[11].idx[0] = 4;
+    faces[11].idx[1] = 0;
+    faces[11].idx[2] = 3;
+    
+    //  add uvs and duplicate vertices as needed
+    /*
+    std::array<Vector2, 24> texUVs;
+    
+    if (vertexDecl.has(bgfx::Attrib::TexCoord0))
+    {
+        Vector3 faceNorm;
+        faceNorm.from(1,0,0);
+        int vidx = faces[0].idx[0];
+        Vector3 r = cubicMapReflectVector(faceNorm, vertices[vidx]);
+        //  x-major
+        if (r.x() >= r.y() && r.x() >= r.z())
+        {
+            float sc
+        }
+        
+    }
+    */
+    
+    uint32_t vertBufSize = vertexDecl.getSize(numVertices);
+    const bgfx::Memory* vertexMemory = bgfx::alloc(vertBufSize);
+    uint32_t idxBufSize =  (uint32_t)(12*sizeof(uint16_t)*3);
+    const bgfx::Memory* indexMemory = bgfx::alloc(idxBufSize);
+    
+    for (int iv = 0; iv < numVertices; ++iv)
+    {
+        if (vertexDecl.has(bgfx::Attrib::Position))
+        {
+            bgfx::vertexPack(vertices[iv].comp, false,
+                bgfx::Attrib::Position,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
+        }
+        if (vertexDecl.has(bgfx::Attrib::Normal))
+        {
+            bgfx::vertexPack(normals[iv], false,
+                bgfx::Attrib::Normal,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
+        }
+        if (vertexDecl.has(bgfx::Attrib::Color0))
+        {
+            bgfx::vertexPack(color.comp, true,
+                bgfx::Attrib::Color0,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
+        }
+        /*
+        if (vertexDecl.has(bgfx::Attrib::TexCoord0))
+        {
+            bgfx::vertexPack(vertexUVs[iv], false,
+                bgfx::Attrib::TexCoord0,
+                vertexDecl,
+                vertexMemory->data,
+                iv);
+        }
+        */
+    }
+    
+    CK_ASSERT(idxBufSize == indexMemory->size);
+    auto indexMemoryPtr = reinterpret_cast<uint16_t*>(indexMemory->data);
+    for (auto& face : faces)
+    {
+        indexMemoryPtr[0] = face.idx[0];
+        indexMemoryPtr[1] = face.idx[1];
+        indexMemoryPtr[2] = face.idx[2];
+        indexMemoryPtr += 3;
+    }
+    
+    Matrix4 transform;
+    bx::mtxScale(transform.comp, radius, radius, radius);
+    
+    Allocator meshalloc(allocator);
+    
+    auto mesh = allocate_unique<Mesh>(meshalloc,
+        vertexType,
+        transform,
+        vertexMemory, indexMemory,
+        1, meshalloc);
+
+    return mesh;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
+
+Mesh::Mesh() :
+    _format(VertexTypes::kInvalid)
+{
+}
 
 Mesh::Mesh
 (

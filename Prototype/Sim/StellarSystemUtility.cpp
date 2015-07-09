@@ -10,6 +10,7 @@
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/TransformEntity.hpp"
 
 namespace cinek { namespace ovproto {
 
@@ -37,7 +38,7 @@ void StellarSystemUtility::setObjectData
     auto data = _stellarSystemTable.rowForEntity(objIdx);
     if (!data)
         return;
-    data->indexToTreeNode = objData;
+    data->indexToTreeNode = (int)objData;
 }
 
 intptr_t StellarSystemUtility::getObjectData(Entity objIdx) const
@@ -55,8 +56,8 @@ ckm::scalar StellarSystemUtility::objectRadius(Entity objIdx) const
 ckm::vec3 StellarSystemUtility::position(Entity objIdx) const
 {
     ckm::vec3 pos;
-    
-    auto transform = _transformTable.rowForEntity(objIdx);
+   
+    auto transform = overview::component::TransformEntity()(objIdx, _transformTable);
     if (!transform)
         return ckm::vec3 { 0.0 };
     

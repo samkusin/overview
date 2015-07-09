@@ -40,6 +40,28 @@ class TextureAtlas;
 class ShaderLibrary;
 class MeshLibrary;
 
+namespace LODIndex
+{
+    enum Enum
+    {
+        kHigh,
+        kMedium,
+        kLow,
+        kSmall,
+        kCount
+    };
+};
+
+using ShaderProgramId = uint32_t;
+
+inline ShaderProgramId makeShaderProgramId(
+    uint16_t vertexType,
+    uint16_t shaderType
+)
+{
+    return ((ShaderProgramId)vertexType<<16) | shaderType;
+}
+
     }   // namespace gfx
 }   // namespace cinek
 

@@ -7,10 +7,7 @@
 //  License: The MIT License (MIT)
 
 #include "AABB.hpp"
-#include "EngineTypes.hpp"
 
-namespace cinek { namespace overview {
+namespace ckm {
 
-//  for specialized versions
-
-} /* namespace overview */ } /* namespace cinek */
+}

@@ -74,8 +74,8 @@ namespace component
     struct Light;
     struct Camera;
     struct Renderable;
+    struct MeshRenderable;
     struct Transform;
-    struct EntityHierarchy;
     struct Body;
     
     template<typename _Component> class Table;
@@ -104,6 +104,7 @@ namespace component
     enum
     {
         kRenderable         = MakeComponentId(kRenderSpace, 0x0000),
+        kMeshRenderable     = MakeComponentId(kRenderSpace, 0x0001),
         kLight              = MakeComponentId(kRenderSpace, 0x0001),
         kCamera             = MakeComponentId(kRenderSpace, 0x0002),
         kTransform          = MakeComponentId(kEntitySpace, 0x0000),
@@ -121,7 +122,7 @@ namespace std {
     {
         size_t operator()(const cinek::overview::Entity& entity) const
         {
-            return entity.index();
+            return entity.id;
         }
     };
 }

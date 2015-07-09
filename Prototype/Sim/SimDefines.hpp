@@ -13,7 +13,14 @@
 
 namespace cinek { namespace ovproto {
 
-constexpr ckm::scalar kSolarEffTemp = 5780;
+constexpr ckm::scalar kSolEffTemp = 5780;
+constexpr ckm::scalar kKmPerLYR = 9.4605284e12;
+constexpr ckm::scalar kKmPerAU = 149597871;
+constexpr ckm::scalar kAUPerLYR = 63239.726183647;
+constexpr ckm::scalar kKmPerSolRadius = 695800;
+constexpr ckm::scalar kSolRadiusPerAU = 215.00125180;
+constexpr ckm::scalar kMaxStarPairDistInSolRadius = 10;
+constexpr ckm::scalar kSystemInnerRadiusFraction = 0.33;
 
 struct SpectralClass
 {

@@ -12,7 +12,6 @@
 #include "Engine/EngineTypes.hpp"
 #include "Engine/MessageTypes.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/Render/RenderTypes.hpp"
 #include "Engine/AABB.hpp"
 
 namespace cinek {
@@ -22,8 +21,6 @@ namespace cinek {
     
     //  bring certain Engine types over into our namespace
     using Entity = overview::Entity;
-
-    template<typename Point> using AABB = overview::AABB<Point>;
           
     class AppInterface;
     class AppContext;

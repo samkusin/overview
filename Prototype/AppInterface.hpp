@@ -15,7 +15,6 @@
 
 namespace cinek {
     namespace ovproto {
-        
 
 class AppInterface
 {
@@ -39,15 +38,20 @@ public:
     overview::Entity createEntity(uint32_t srcTemplatesDocId,
             const char* templateName);
     
-    overview::EntityStore* entityStore();
+    overview::Entity createEntity();
+    
+    //  obtain the global EntityStore object
+    overview::EntityStore& entityStore();
     
 private:
+    friend class RenderInterface;
+    
     AppContext* _context;
     
     static JsonDocument sNullDocument;
 };
     
-    } /* namespace overview */
+    } /* namespace ovproto */
 } /* namespace cinek */
 
-#endif /* defined(Overview_App_AppInterface_hpp) */
+#endif

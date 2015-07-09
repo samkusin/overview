@@ -11,6 +11,7 @@
 
 #include "AABBTypes.hpp"
 #include "BVHRayTest.hpp"
+#include "BVHFrustrumTest.hpp"
 
 #include <cinek/vector.hpp>
 
@@ -56,10 +57,16 @@ public:
     bool empty() const { return _nodes.empty() || !_nodes[0].isValid(); }
 
     const Node& node(typename Node::Index index=0) const;
+    //  return a writable node - note, this should only be used by systems
+    //  that know what they're doing as modifying what object resides
+    //  within a node.  also note, this method only works on leaf nodes.
+    //  operations on non-leaf nodes are ignored.
+    void setNodeObjectId(typename Node::Index index, Key key);
     
     struct Test
     {
         using IntersectWithSphere = BVHTestIntersectWithSphere<AABBTree>;
+        using FrustrumSweep = BVHTestFrustrumSweep<AABBTree>;
     };
     
     template<typename _Test> _Test test() const {
@@ -75,7 +82,7 @@ private:
     
     int32_t allocateNode();
     void freeNode(int32_t node);
-    AABB<ckm::vec3> makeAABBForObject(Key objectId) const;
+    ckm::AABB<ckm::vec3> makeAABBForObject(Key objectId) const;
     
     //  graph data.
     vector<Node> _nodes;
@@ -98,13 +105,13 @@ AABBTree<_ObjectId, _Utility>::AABBTree
 }
 
 template<typename _ObjectId, typename _Utility>
-AABB<ckm::vec3> AABBTree<_ObjectId, _Utility>::makeAABBForObject
+ckm::AABB<ckm::vec3> AABBTree<_ObjectId, _Utility>::makeAABBForObject
 (
     Key objectId
 )
 const
 {
-    AABB<ckm::vec3> aabb(_util.objectRadius(objectId));
+    ckm::AABB<ckm::vec3> aabb(_util.objectRadius(objectId));
     aabb += _util.position(objectId);
     return aabb;
 }
@@ -114,6 +121,19 @@ auto AABBTree<_ObjectId, _Utility>::node(typename Node::Index index) const
     -> const Node&
 {
     return _nodes[index];
+}
+
+template<typename _ObjectId, typename _Utility>
+void AABBTree<_ObjectId, _Utility>::setNodeObjectId
+(
+    typename Node::Index index,
+    Key key
+)
+{
+    if (index < 0 || index >= _nodes.size() || !_nodes[index].isValid() || !_nodes[index].isLeaf())
+        return;
+    
+    _nodes[index].objectId = key;
 }
 
 
@@ -222,13 +242,13 @@ int32_t AABBTree<_ObjectId, _Utility>::insertObjectIntoBVH
         }
         
         //  note - we do not
-        if (children[0])
+        if (children[0]!=0)
         {
             _nodes[atNodeIdx].children.left = insertObjectIntoBVH(children[0],
                 _nodes[atNodeIdx].children.left,
                 atNodeIdx);
         }
-        if (children[1])
+        if (children[1]!=0)
         {
             _nodes[atNodeIdx].children.right = insertObjectIntoBVH(children[1],
                 _nodes[atNodeIdx].children.right,

@@ -33,7 +33,7 @@ struct AABBNode
     Index parent = -1;
     uint32_t flags = 0;
 
-    AABB<ckm::vec3> aabb;
+    ckm::AABB<ckm::vec3> aabb;
     
     union           // 8 bytes max
     {

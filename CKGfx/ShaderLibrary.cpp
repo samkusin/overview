@@ -63,7 +63,7 @@ ShaderLibrary::~ShaderLibrary()
         
 bgfx::ProgramHandle ShaderLibrary::loadProgram
 (
-    uint32_t progId,
+    ShaderProgramId progId,
     const char* vertexShaderPath,
     const char* fragShaderPath,
     vector<bgfx::UniformHandle>&& uniforms
@@ -152,7 +152,7 @@ int ShaderLibrary::loadShader(const char* path)
     return shaderIndex;
 }
 
-bgfx::ProgramHandle ShaderLibrary::program(uint32_t programId) const
+bgfx::ProgramHandle ShaderLibrary::program(ShaderProgramId programId) const
 {
     auto itProgram = _programs.find(programId);
     if (itProgram == _programs.end())
@@ -164,8 +164,9 @@ bgfx::ProgramHandle ShaderLibrary::program(uint32_t programId) const
 bgfx::UniformHandle ShaderLibrary::uniformFromProgram
 (
     uint32_t uniformIndex,
-    uint32_t progId
-) const
+    ShaderProgramId progId
+)
+const
 {
     auto itProgram = _programs.find(progId);
     if (itProgram == _programs.end())

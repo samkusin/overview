@@ -12,7 +12,6 @@
 #include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 
-#include "Engine/Render/RenderScene.hpp"
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/MessageDispatcher.hpp"
 #include "Engine/MessagePublisher.hpp"
@@ -20,11 +19,9 @@
 
 #include "Engine/Entity/Comp/Camera.hpp"
 #include "Engine/Entity/Comp/Light.hpp"
-#include "Engine/Entity/Comp/EntityHierarchy.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 #include "Engine/Entity/Comp/Renderable.hpp"
-
-#include "CKGfx/VertexTypes.hpp"
+#include "Engine/Entity/Comp/MeshRenderable.hpp"
 
 #include <cinek/file.hpp>
 #include <cinek/taskscheduler.hpp>
@@ -37,6 +34,9 @@
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
 
+#include "Engine/Render/Renderer.hpp"
+#include "Render/RenderShaders.hpp"
+#include "CKGfx/VertexTypes.hpp"
 
 namespace cinek { namespace ovproto {
 
@@ -75,12 +75,16 @@ void run(SDL_Window* window)
 
     bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
     bgfx::setDebug(BGFX_DEBUG_TEXT);
-    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-        0x111111ff,
-        1.0f,
-        0);
     
     gfx::VertexTypes::initialize();
+    
+    overview::Renderer::InitParams renderInitParams;
+    renderInitParams.objectCnt = 16384;
+    renderInitParams.commandCnt = 32;
+    renderInitParams.pipelineCnt = 16;
+    renderInitParams.width = viewWidth;
+    renderInitParams.height = viewHeight;
+    overview::Renderer renderer(renderInitParams, allocator);
     
     gfx::TextureAtlas textureAtlas(256, allocator);
     gfx::MeshLibrary meshLibrary(256, allocator);
@@ -92,31 +96,24 @@ void run(SDL_Window* window)
         &shaderLibrary
     };
     
-    //  should load shaders from a JSON collection to handle uniforms, etc.
-    vector<bgfx::UniformHandle> shaderUniforms;
-    shaderUniforms.resize(4, BGFX_INVALID_HANDLE);
-    shaderUniforms[overview::kRenderShaderUniform_ColorTexture] =
-        bgfx::createUniform("u_texColor", bgfx::UniformType::Uniform1iv);
-    
-    shaderLibrary.loadProgram(0x00000001,
-        "Shaders/vs_cubes.bin",
-        "Shaders/fs_cubes.bin",
-        std::move(shaderUniforms));
+    render::registerShaders(shaderLibrary);
     
     overview::EntityStore entityStore(64*1024, {
         { overview::component::Transform::kComponentType, 64*1024 },
-        { overview::component::EntityHierarchy::kComponentType, 64*1024 },
         { overview::component::Renderable::kComponentType, 64*1024 },
+        { overview::component::MeshRenderable::kComponentType, 48*1024 },
         { component::StellarSystem::kComponentType, 16*1024 },
         { component::StarBody::kComponentType, 48*1024 },
         { overview::component::Camera::kComponentType, 4 },
         { overview::component::Light::kComponentType, 8 }
     });
     
+    //  Renderer Utilities
     overview::RenderContext renderContext;
     renderContext.entityStore = &entityStore;
     renderContext.resources = &renderResources;
     
+    //  Application utilitites
     TaskScheduler taskScheduler(64, allocator);
     
     //  messaging - use two streams, one that is active, and one for the next
@@ -131,10 +128,10 @@ void run(SDL_Window* window)
     //  schedule an application task
     AppContext context;
     
-//    context.scene = &scene;
     context.entityStore = &entityStore;
     context.messagePublisher = &messagePublisher;
     context.renderResources = &renderResources;
+    context.renderer = &renderer;
     context.documentMap = &appDocumentMap;
     context.allocator = &allocator;
     context.createComponentCb =
@@ -146,7 +143,8 @@ void run(SDL_Window* window)
     
     //  should be moved into a task for "initialization"
     auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);
-    meshLibrary.acquire(std::move(starMesh), "star");
+    auto starMeshHandle = meshLibrary.create("star");
+    meshLibrary.setMeshForLOD(starMeshHandle, std::move(starMesh), gfx::LODIndex::kHigh);
     
     //  start app
     
@@ -184,16 +182,16 @@ void run(SDL_Window* window)
         messages = std::move(messagesForDispatch);
 
         //  render scene
-        bgfx::setViewRect(0, 0, 0, viewWidth, viewHeight);
-        
         renderContext.viewWidth = viewWidth;
         renderContext.viewHeight = viewHeight;
         
-        overview::renderScene(renderContext);
-
+        renderer.render(renderContext);
+        
         bgfx::submit(0);
         bgfx::frame();
-    
+
+        entityStore.gc();
+
         lastSystemTime = thisSystemTime;
     }
 }

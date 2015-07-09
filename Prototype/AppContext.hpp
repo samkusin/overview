@@ -10,6 +10,7 @@
 #define Overview_App_Context_hpp
 
 #include "GameTypes.hpp"
+#include "Engine/Render/RenderTypes.hpp"
 
 #include <cinek/json/jsontypes.hpp>
 #include <cinek/map.hpp>
@@ -17,7 +18,7 @@
 
 namespace cinek { namespace ovproto {
 
-  //  JsonDocument doesn't allow copy or move - so we must persist by pointer
+    //  JsonDocument doesn't allow copy or move - so we must persist by pointer
     using AppDocumentMap = unordered_map<uint32_t, unique_ptr<cinek::JsonDocument>>;
     
     struct AppContext
@@ -26,9 +27,11 @@ namespace cinek { namespace ovproto {
         Allocator* allocator;
         overview::MessagePublisher* messagePublisher;
         overview::EntityStore* entityStore;
-        overview::RenderResources* renderResources;
         overview::EntityTransformWorld* scene;
         AppDocumentMap* documentMap;
+        
+        overview::RenderResources* renderResources;
+        overview::Renderer* renderer;
         
         //  callbacks
         overview::CustomComponentCreateFn createComponentCb;

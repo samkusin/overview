@@ -34,6 +34,17 @@ namespace cinek {
         value_type comp[4];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
+        Vector4& from(value_type x, value_type y, value_type z, value_type w) {
+            comp[0] = x;
+            comp[1] = y;
+            comp[2] = z;
+            comp[3] = w;
+            return *this;
+        }
+        value_type x() const { return comp[0]; }
+        value_type y() const { return comp[1]; }
+        value_type z() const { return comp[2]; }
+        value_type w() const { return comp[3]; }
     };
     
     /// A 3x1 uniform
@@ -43,6 +54,15 @@ namespace cinek {
         value_type comp[3];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
+        Vector3& from(value_type x, value_type y, value_type z) {
+            comp[0] = x;
+            comp[1] = y;
+            comp[2] = z;
+            return *this;
+        }
+        value_type x() const { return comp[0]; }
+        value_type y() const { return comp[1]; }
+        value_type z() const { return comp[2]; }
     };
     
     struct Vector2
@@ -51,6 +71,13 @@ namespace cinek {
         value_type comp[2];
         operator float*() { return comp; }
         operator const float*() const { return comp; }
+        Vector2& from(value_type x, value_type y) {
+            comp[0] = x;
+            comp[1] = y;
+            return *this;
+        }
+        value_type x() const { return comp[0]; }
+        value_type y() const { return comp[1]; }
     };
     
     /// Vertex types, acting as indices into a VertexDefinitions container
@@ -61,6 +88,7 @@ namespace cinek {
             kVec3,              ///< XYZ floats only
             kVec3_RGBA,         ///< XYZ floats + ARGB byte components
             kVec3_Normal,       ///< XYZ floats + Normals
+            kVec3_Normal_RGBA,  ///< XYZ floats + Normals + ARGB byte components
             kVec3_Normal_Tex0,  ///< XYZ floats + Normals + Vector2 UVs
             
             kPresetCount,       ///< Preset Limit

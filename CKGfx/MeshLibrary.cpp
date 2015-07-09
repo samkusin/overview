@@ -38,6 +38,8 @@ MeshLibrary::MeshLibrary
     _meshes(allocator)
 {
     _meshes.reserve(meshCount);
+    
+    _placeholderMesh = createCube(1.0, VertexTypes::kVec3_Normal_RGBA, {{0,1,0}});
 }
 
 MeshLibrary::MeshLibrary(MeshLibrary&& other) :
@@ -72,7 +74,11 @@ void MeshLibrary::destroy(Record& record)
         _allocator.free(record.name);
         record.name = nullptr;
     }
-    record.mesh = nullptr;
+    for (int i = 0; i < LODIndex::kCount; ++i)
+    {
+        record.levels[i] = nullptr;
+        record.levelIndex[i] = -1;
+    }
     record.handleIter = 0;
 }
 
@@ -96,7 +102,7 @@ MeshHandle MeshLibrary::load(const char* path)
         
 }
 
-MeshHandle MeshLibrary::acquire(unique_ptr<Mesh>&& mesh, const char* name)
+MeshHandle MeshLibrary::create(const char* name)
 {
     MeshHandle handle = handleFromName(name);
     if (!handle)
@@ -116,7 +122,12 @@ MeshHandle MeshLibrary::acquire(unique_ptr<Mesh>&& mesh, const char* name)
             _freed.pop_back();
         }
         
-        record.mesh = std::move(mesh);
+        //  create reference to placeholder
+        for (int i = 0; i < LODIndex::kCount; ++i)
+        {
+            record.levelIndex[i] = LODIndex::kSmall;
+            record.levels[i] = nullptr;
+        }
         record.name = duplicateCString(name, _allocator);
         record.handleIter = handle.data.iter;
         record.refCnt = 1;
@@ -128,11 +139,43 @@ MeshHandle MeshLibrary::acquire(unique_ptr<Mesh>&& mesh, const char* name)
         Record& record = _meshes[handle.data.offs];
         if (!record.matchesHandle(handle))
             return MeshHandle();
-        record.mesh = std::move(mesh);
         ++_meshes[handle.data.offs].refCnt;
     }
-    
     return handle;
+}
+
+void MeshLibrary::setMeshForLOD
+(
+    MeshHandle handle,
+    unique_ptr<Mesh>&& mesh,
+    LODIndex::Enum lod
+)
+{
+    if (!handle)
+        return;
+
+    Record& record = _meshes[handle.data.offs];
+    if (!record.matchesHandle(handle))
+        return;
+    
+    record.levels[lod] = std::move(mesh);
+    
+    //  remap lod level indices, preferring higher LODs
+    int meshIndex = 0;
+    int lodToMeshIndex = 0;
+    for (; meshIndex < LODIndex::kCount; ++meshIndex)
+    {
+        if (record.levels[meshIndex])
+        {
+            while (lodToMeshIndex < LODIndex::kCount &&
+                   (!record.levels[lodToMeshIndex] || lodToMeshIndex != meshIndex))
+            {
+                record.levelIndex[lodToMeshIndex] = meshIndex;
+                ++lodToMeshIndex;
+            }
+        }
+        ++meshIndex;
+    }
 }
 
 void MeshLibrary::unload(MeshHandle handle)
@@ -165,13 +208,22 @@ MeshHandle MeshLibrary::handleFromName(const char* name) const
     return h;
 }
 
-const Mesh* MeshLibrary::mesh(MeshHandle handle) const
+const Mesh& MeshLibrary::mesh(MeshHandle handle, LODIndex::Enum lod) const
 {
-    if (!handle)
-        return nullptr;
-    
-    auto& mesh = _meshes[handle.data.offs];
-    return mesh.mesh.get();
+    if (handle)
+    {
+        auto& record = _meshes[handle.data.offs];
+        auto index = record.levelIndex[lod];
+        if (index >= 0)
+        {
+            auto& level = record.levels[index];
+            if (level)
+            {
+                return *level.get();
+            }
+        }
+    }
+    return *_placeholderMesh.get();
 }
         
     }   // namespace gfx

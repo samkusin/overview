@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "RenderScene.hpp"
+#include "RenderSceneOld.hpp"
 
 #include "Engine/AABB.hpp"
 #include "Engine/Entity/EntityStore.hpp"
@@ -77,7 +77,6 @@ void renderScene
 {
     auto& entityStore = *context.entityStore;
    
-    
     //  render scene
     gfx::Matrix4 viewMat;
     gfx::Vector3 viewAt = {{ 0.f, 0.f, 0.f }};

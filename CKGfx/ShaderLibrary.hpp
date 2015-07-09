@@ -9,6 +9,7 @@
 #ifndef CK_Graphics_ShaderLibrary_hpp
 #define CK_Graphics_ShaderLibrary_hpp
 
+#include "GfxTypes.hpp"
 #include <cinek/map.hpp>
 #include <cinek/vector.hpp>
 #include <cinek/string.hpp>
@@ -29,14 +30,14 @@ namespace cinek {
         
         bgfx::ProgramHandle loadProgram
         (
-            uint32_t progId,
+            ShaderProgramId progId,
             const char* vertexShaderPath,
             const char* fragShaderPath,
             vector<bgfx::UniformHandle>&& uniforms
         );
         
-        bgfx::ProgramHandle program(uint32_t programId) const;
-        bgfx::UniformHandle uniformFromProgram(uint32_t uniformIndex, uint32_t progId) const;
+        bgfx::ProgramHandle program(ShaderProgramId programId) const;
+        bgfx::UniformHandle uniformFromProgram(uint32_t uniformIndex, ShaderProgramId progId) const;
         
     private:
         //  Loading a program will involve an O(n) search for existing
@@ -63,7 +64,7 @@ namespace cinek {
             int32_t fsIndex = -1;
             vector<bgfx::UniformHandle> uniforms;
         };
-        unordered_map<uint32_t, ProgramReference> _programs;
+        unordered_map<ShaderProgramId, ProgramReference> _programs;
         
         int loadShader(const char* path);
     };

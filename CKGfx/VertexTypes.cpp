@@ -46,6 +46,14 @@ namespace VertexTypes
             .end();
         ++s_declCount;
         
+        // kVec3_Normal_RGBA
+        s_decls[s_declCount].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+        ++s_declCount;
+        
         // kVec3_Normal_Tex0
         s_decls[s_declCount].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)

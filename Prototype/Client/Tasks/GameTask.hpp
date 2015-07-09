@@ -19,7 +19,8 @@ class GameTask : public Task
 {
 public:
     GameTask(AppInterface api);
-
+    virtual ~GameTask();
+    
 protected:
     void onBegin() override;
     void onUpdate(uint32_t deltaTimeMs) override;
@@ -27,9 +28,15 @@ protected:
     void onFail() override;
     
 private:
+    Allocator _allocator;
     AppInterface _API;
     
-    Entity _bodyEntityId;
+    struct Starmap;
+    unique_ptr<Starmap> _starmap;
+    
+    Handle _buildStarmapRenderHandler;
+    
+    Entity _camera;
 };
 
 

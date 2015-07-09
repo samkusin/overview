@@ -9,13 +9,14 @@
 #ifndef Overview_Entity_Factory_hpp
 #define Overview_Entity_Factory_hpp
 
-#include "Engine/Render/RenderTypes.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/Render/RenderTypes.hpp"
 #include "Engine/MessageTypes.hpp"
 
 #include <cinek/allocator.hpp>
 
 #include <functional>
+
 
 namespace cinek { namespace overview {
 

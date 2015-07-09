@@ -42,7 +42,7 @@ EntityStore::EntityStore(EntityStore&& other) :
     _iterations(std::move(other._iterations)),
     _freed(std::move(other._freed)),
     _entityIdIteration(other._entityIdIteration),
-    _components(std::move(other._entityIdIteration))
+    _components(std::move(other._components))
 {
     other._entityIdIteration = 0;
 }
@@ -81,7 +81,7 @@ Entity EntityStore::create()
 
 void EntityStore::destroy(Entity eid)
 {
-    if (!eid)
+    if (eid==0)
         return;
     
     auto index = eid.index();
@@ -92,5 +92,14 @@ void EntityStore::destroy(Entity eid)
     _freed.push_back(index);
 }
 
+bool EntityStore::valid(Entity eid) const
+{
+    return (_iterations[eid.index()] == eid.iteration());
+}
+
+void EntityStore::gc()
+{
+    //TODO
+}
 
 } /* namespace overview */ } /* namespace cinek */

@@ -12,6 +12,7 @@
 #include "Mesh.hpp"
 
 #include <cinek/vector.hpp>
+#include <array>
 
 namespace cinek {
     namespace gfx {
@@ -34,12 +35,14 @@ namespace cinek {
         
         //  use to build the atlas.
         MeshHandle load(const char* path);
-        MeshHandle acquire(unique_ptr<Mesh>&& mesh, const char* name);
+        MeshHandle create(const char* name);
+        void setMeshForLOD(MeshHandle handle, unique_ptr<Mesh>&& mesh,
+                           LODIndex::Enum lod);
         void unload(MeshHandle handle);
 
         //  use to retrieve texture information.
         MeshHandle handleFromName(const char* name) const;
-        const Mesh* mesh(MeshHandle handle) const;
+        const Mesh& mesh(MeshHandle handle, LODIndex::Enum lod) const;
 
     private:
         Allocator _allocator;
@@ -48,7 +51,8 @@ namespace cinek {
         struct Record
         {
             char* name;
-            unique_ptr<Mesh> mesh;
+            std::array<unique_ptr<Mesh>, LODIndex::kCount> levels;
+            std::array<int8_t, LODIndex::kCount> levelIndex;
             
             uint32_t handleIter;
             uint32_t refCnt;
@@ -58,6 +62,8 @@ namespace cinek {
         };
         vector<Record> _meshes;
         vector<uint32_t> _freed;
+        
+        unique_ptr<Mesh> _placeholderMesh;
         
         void destroy(Record& mesh);
     };
