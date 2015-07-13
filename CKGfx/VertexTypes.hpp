@@ -41,6 +41,20 @@ namespace cinek {
             comp[3] = w;
             return *this;
         }
+        Vector4& fromABGR(uint32_t abgr) {
+            comp[3] = (abgr >> 24)/255.0f;
+            comp[2] = ((abgr >> 16) & 0xff)/255.0f;
+            comp[1] = ((abgr >> 8) & 0xff)/255.0f;
+            comp[0] = (abgr & 0xff)/255.0f;
+            return *this;
+        }
+        
+        uint32_t toABGR() const {
+            return ((uint32_t)(comp[3]*255.0f) << 24) |
+                   ((uint32_t)(comp[2]*255.0f) << 16) |
+                   ((uint32_t)(comp[1]*255.0f) << 8) |
+                   ((uint32_t)(comp[0]*255.0f));
+        }
         value_type x() const { return comp[0]; }
         value_type y() const { return comp[1]; }
         value_type z() const { return comp[2]; }
@@ -86,13 +100,24 @@ namespace cinek {
         enum Format
         {
             kVec3,              ///< XYZ floats only
-            kVec3_RGBA,         ///< XYZ floats + ARGB byte components
+            kVec3_RGBA,         ///< XYZ floats + ABGR byte comps
             kVec3_Normal,       ///< XYZ floats + Normals
-            kVec3_Normal_RGBA,  ///< XYZ floats + Normals + ARGB byte components
-            kVec3_Normal_Tex0,  ///< XYZ floats + Normals + Vector2 UVs
+            kVec3_Normal_RGBA,  ///< XYZ floats + Normals + ABGR byte components
+            kVec3_Normal_Tex0,  ///< XYZ floats + Normals + vec2 UVs
+            kVec3_RGBA_Tex0,    ///< XYZ floats + ABGR byte comps + vec2 UV
             
             kPresetCount,       ///< Preset Limit
-            kFormatLimit = kPresetCount + 16,
+            
+            kCustomPreset0 = kPresetCount,  ///< First Custom Preset index
+            kCustomPreset1,
+            kCustomPreset2,
+            kCustomPreset3,
+            kCustomPreset4,
+            kCustomPreset5,
+            kCustomPreset6,
+            kCustomPreset7,
+            
+            kFormatLimit,
             kInvalid = -1
         };
         
@@ -101,9 +126,14 @@ namespace cinek {
         /// the base set of declarations.  Calling this function will also reset
         /// the global declarations array
         void initialize();
+        
+        /// Creates a custom preset with the specified ID. The ID must be in the
+        /// range of kPresetCount to kFormatLimit-1, or otherwise this function
+        /// will return nullptr.
+        bgfx::VertexDecl* createCustomPreset(int formatId);
                 
         /// Return a vertex declaration by format type
-        const bgfx::VertexDecl& declaration(Format tex);
+        const bgfx::VertexDecl& declaration(int tex);
     };
     
     }   // namespace gfx

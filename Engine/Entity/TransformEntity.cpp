@@ -78,7 +78,45 @@ namespace component
             child = _transforms.rowForEntity(child)->sibling();
         }
     }
+    
+
+    bool TransformVisitor::operator()
+    (
+        Entity entity,
+        Table<Transform> transforms
+    )
+    {
+        _transforms = transforms;
         
+        Transform* transform = _transforms.rowForEntity(entity);
+        if (!transform)
+            return true;
+            
+        return visitLocal(entity, *transform);
+    }
+    
+    bool TransformVisitor::visitLocal(Entity e, Transform& t)
+    {
+        if (!visit(e, t))
+            return false;
+        
+        //  iterate through children
+        Entity child = t.child();
+        while (child.valid())
+        {
+            //  we assume that if there are valid entities set for child and
+            //  sibling, that they have transform components.  if this
+            //  assumption fails, then there's a problem with how entities
+            //  and their parent-child-sibling relationships are cleaned up
+            //  upon entity destruction.
+            auto childTransform = _transforms.rowForEntity(child);
+            if (!visitLocal(child, *childTransform))
+                return false;
+            
+            child = _transforms.rowForEntity(child)->sibling();
+        }
+        return true;
+    }
     
 }
 

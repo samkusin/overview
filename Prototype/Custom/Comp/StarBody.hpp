@@ -20,10 +20,15 @@ namespace component
     {
         COMPONENT_DEFINITION(StarBody);
 
+        //  basic properties
         ckm::scalar solarMass;
         ckm::scalar solarRadius;
         ckm::scalar solarLuminosity;
-        int effectiveTemp;
+        int32_t effectiveTemp;
+        
+        //  calculated values from basic properties
+        uint32_t argbColor;             // color from effectiveTemp
+        ckm::scalar visualMag;          // visual magnitude
     };
 }
 

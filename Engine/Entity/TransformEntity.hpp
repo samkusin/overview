@@ -28,6 +28,19 @@ namespace component
         
         void runTransform(Transform& transform, const ckm::mat4& parentSRT);
     };
+    
+    
+    struct TransformVisitor
+    {
+        bool operator()(Entity entity, Table<Transform> transforms);
+        
+        virtual bool visit(Entity entity, Transform& transform) = 0;
+    
+    private:
+        Table<Transform> _transforms;
+        
+        bool visitLocal(Entity entity, Transform& transform);
+    };
 }
 
 } /* namespace overview */ } /* namespace cinek */

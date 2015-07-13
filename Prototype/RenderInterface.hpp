@@ -10,6 +10,7 @@
 #define Overview_App_RenderInterface_hpp
 
 #include "AppContext.hpp"
+#include "Client/Render/RenderDefines.hpp"
 
 #include <cinek/json/json.hpp>
 

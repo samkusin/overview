@@ -36,6 +36,10 @@
 
 #include "Engine/Render/Renderer.hpp"
 #include "Render/RenderShaders.hpp"
+#include "Render/StarmapRenderPipeline.hpp"
+
+#include "Sim/SpectralClassUtility.hpp"
+
 #include "CKGfx/VertexTypes.hpp"
 
 namespace cinek { namespace ovproto {
@@ -81,7 +85,7 @@ void run(SDL_Window* window)
     overview::Renderer::InitParams renderInitParams;
     renderInitParams.objectCnt = 16384;
     renderInitParams.commandCnt = 32;
-    renderInitParams.pipelineCnt = 16;
+    renderInitParams.pipelineCnt = kRenderPipeline_Count;
     renderInitParams.width = viewWidth;
     renderInitParams.height = viewHeight;
     overview::Renderer renderer(renderInitParams, allocator);
@@ -96,7 +100,7 @@ void run(SDL_Window* window)
         &shaderLibrary
     };
     
-    render::registerShaders(shaderLibrary);
+    registerShaders(shaderLibrary);
     
     overview::EntityStore entityStore(64*1024, {
         { overview::component::Transform::kComponentType, 64*1024 },
@@ -142,6 +146,14 @@ void run(SDL_Window* window)
         };
     
     //  should be moved into a task for "initialization"
+    if (!SpectralUtility::loadTables())
+        return;
+    
+    
+    StarmapRenderPipeline starmapRenderer;
+    starmapRenderer.loadResources(renderResources);
+    renderer.setPipelineCallback(kRenderPipeline_Starmap, starmapRenderer);
+    
     auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);
     auto starMeshHandle = meshLibrary.create("star");
     meshLibrary.setMeshForLOD(starMeshHandle, std::move(starMesh), gfx::LODIndex::kHigh);
@@ -194,6 +206,10 @@ void run(SDL_Window* window)
 
         lastSystemTime = thisSystemTime;
     }
+    
+    starmapRenderer.unloadResources(renderResources);
+    
+    SpectralUtility::unloadTables();
 }
 
 } /* namespace ovproto */ } /* namespace cinek */

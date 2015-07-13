@@ -90,6 +90,38 @@ RenderObject RenderObjectListReader::pop()
     return _renderList->at(_command.listStartIndex++);
 }
 
+struct RendererCameraTranslate
+{
+    component::Table<overview::component::Renderable> renderables;
+    component::Table<overview::component::Transform> transforms;
+    ckm::vec4 offset;
+    
+    void onEntity(Entity e, overview::component::Renderable& r)
+    {
+        auto transform = transforms.rowForEntity(e);
+        if (transform)
+        {
+            auto srt = transform->worldSRT();
+            srt[3] -= offset;
+            ckm::convert(srt, r.worldSRT);
+            
+            //  iterate through children
+            Entity child = transform->child();
+            while (child.valid())
+            {
+                auto childRenderable = renderables.rowForEntity(child);
+                
+                if (childRenderable)
+                {
+                    onEntity(child, *childRenderable);
+                }
+                auto childTransform = transforms.rowForEntity(child);
+                child = childTransform->sibling();
+            }
+        }
+    }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 Renderer::Renderer
@@ -235,7 +267,6 @@ void Renderer::render(RenderContext context)
             
             ckm::mat4 cameraSRT = cameraTransform ? cameraTransform->worldSRT() : ckm::mat4(1);
             ckm::mat3 cameraBasis(cameraSRT);
-            ckm::vec4 cameraTranslate(cameraSRT[3]);
         
             auto aspect = (ckm::scalar)viewDim.x / viewDim.y;
             
@@ -245,7 +276,7 @@ void Renderer::render(RenderContext context)
                                     aspect
                                  ).transform(
                                     cameraBasis,
-                                    ckm::vec3(cameraTranslate)
+                                    ckm::vec3(cameraSRT[3])
                                  );
             
             //  construct our render list
@@ -265,17 +296,19 @@ void Renderer::render(RenderContext context)
             //  do that?!)
             //
             //  Rotations and scale remain as they are in world space
-            auto& renderables = entityStore.table<overview::component::Renderable>().data()->rowset();
+            auto renderables = entityStore.table<overview::component::Renderable>();
+
+            RendererCameraTranslate cameraTranslate;
+            cameraTranslate.offset = cameraSRT[3];
+            cameraTranslate.renderables = renderables;
+            cameraTranslate.transforms = transformTable;
+            
             for (auto& renderObject : objects)
             {
-                auto entity = renderables.entityAt(renderObject.renderableIdx);
-                auto renderable = renderables.at<overview::component::Renderable>(renderObject.renderableIdx);
-                auto transform = transformTable.rowForEntity(entity);
-                if (transform)
+                auto renderable = renderables.rowAtIndex(renderObject.renderableIdx);
+                if (renderable.second)
                 {
-                    auto srt = transform->worldSRT();
-                    srt[3] -= cameraTranslate;
-                    ckm::convert(srt, renderable->worldSRT);
+                    cameraTranslate.onEntity(renderable.first, *renderable.second);
                 }
             }
          

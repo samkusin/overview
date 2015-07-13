@@ -12,29 +12,27 @@
 
 namespace cinek { namespace ovproto {
 
-namespace render {
-
 void registerShaders(gfx::ShaderLibrary& shaderLibrary)
 {
-    //  should load shaders from a JSON collection to handle uniforms, etc.
-    vector<bgfx::UniformHandle> shaderUniforms;
-    shaderUniforms.resize(4, BGFX_INVALID_HANDLE);
-    shaderUniforms[kShaderUniform_ColorTexture] =
-        bgfx::createUniform("u_texColor", bgfx::UniformType::Uniform1iv);
+    //  create custom vertex decls
+    bgfx::VertexDecl& decl =
+        *gfx::VertexTypes::createCustomPreset(kVertexType_Vec3_UV);
     
+    decl.begin()
+        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+        .end();
+    
+    //  common shaders
     shaderLibrary.loadProgram(
         gfx::makeShaderProgramId(gfx::VertexTypes::kVec3_Normal_Tex0, 0),
-        "Shaders/vs_stdpos_uv.bin",
-        "Shaders/fs_stdtex_2d.bin",
-        std::move(shaderUniforms));
+        "shaders/vs_stdpos_uv.bin",
+        "shaders/fs_stdtex_2d.bin");
 
     shaderLibrary.loadProgram(
         gfx::makeShaderProgramId(gfx::VertexTypes::kVec3_Normal_RGBA, 0),
-        "Shaders/vs_stdpos_rgba.bin",
-        "Shaders/fs_stdcol_rgba.bin",
-        std::move(shaderUniforms));
-
-}
+        "shaders/vs_stdpos_rgba.bin",
+        "shaders/fs_stdcol_rgba.bin");
 
 }
 

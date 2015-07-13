@@ -70,7 +70,7 @@ struct Body
 
 struct BuildStarmapFunction::CommonState
 {
-    const vector<SpectralClass>& spectralClasses;
+    const vector<SpectralClassDesc>& spectralClasses;
     vector<SpectralInput>& spectralInputs;
     int spectralIndexMax;
     vector<Randomizer>& spectralRandomizers;
@@ -80,7 +80,7 @@ struct BuildStarmapFunction::CommonState
     StellarSystemTree& stellarSystemTree;
     StandardTables& standardTables;
     
-    CommonState(const vector<SpectralClass>& specClasses,
+    CommonState(const vector<SpectralClassDesc>& specClasses,
         vector<SpectralInput>& specInputs,
         int specIndexMax,
         vector<Randomizer>& specRandomizers,
@@ -103,7 +103,7 @@ struct BuildStarmapFunction::CommonState
 auto BuildStarmapFunction::operator()
 (
     uint32_t masterSeed,
-    const vector<SpectralClass>& spectralClasses,
+    const vector<SpectralClassDesc>& spectralClasses,
     vector<SpectralInput> spectralInputs,
     int spectralIndexMax,
     ckm::AABB<ckm::vec3> bounds,
@@ -189,7 +189,7 @@ auto BuildStarmapFunction::operator()
         {
             auto& spectralClass = common.spectralClasses[classIndex];
             
-            while (spectralInput.solarMassPool >= spectralClass.minSolarMass &&
+            while (spectralInput.solarMassPool >= spectralClass.minInitialSolarMass &&
                    result.result == Result::kPending)
             {
                 //  Determine base system radius - which relies on the amount
@@ -216,8 +216,8 @@ auto BuildStarmapFunction::operator()
                     auto& randomizer = common.spectralRandomizers[bodyClassIndex];
                     auto& thisInput = common.spectralInputs[bodyClassIndex];
                     
-                    bodyTemplate.mass = calcBodyMass(prevSpectral.minSolarMass,
-                        thisSpectral.minSolarMass,
+                    bodyTemplate.mass = calcBodyMass(prevSpectral.minInitialSolarMass,
+                        thisSpectral.minInitialSolarMass,
                         randomizer
                     );
                     //  on first iteration, the initial solarMassPool will be
@@ -273,18 +273,18 @@ auto BuildStarmapFunction::operator()
 ckm::scalar BuildStarmapFunction::calcBodyMass
 (
     ckm::scalar maxSolarMass,
-    ckm::scalar minSolarMass,
+    ckm::scalar minInitialSolarMass,
     Randomizer& randomizer
 )
 const
 {
-    return minSolarMass + (maxSolarMass-minSolarMass)*randomizer.uniformPct() * 0.01;
+    return minInitialSolarMass + (maxSolarMass-minInitialSolarMass)*randomizer.uniformPct() * 0.01;
 }
 
 int BuildStarmapFunction::determineCompanionBodyClass
 (
     int bodyClassIndex,
-    const vector<SpectralClass>& spectralClasses,
+    const vector<SpectralClassDesc>& spectralClasses,
     vector<SpectralInput>& spectralInputs,
     Randomizer& randomizer
 )
@@ -322,7 +322,7 @@ int BuildStarmapFunction::determineCompanionBodyClass
     while (bodyClassIndex >= 0)
     {
         if (spectralInputs[bodyClassIndex].solarMassPool >=
-            spectralClasses[bodyClassIndex].minSolarMass)
+            spectralClasses[bodyClassIndex].minInitialSolarMass)
     break;
         --bodyClassIndex;
     }

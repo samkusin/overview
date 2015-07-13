@@ -38,14 +38,6 @@ ShaderLibrary::~ShaderLibrary()
     //  cleanup programs and shaders
     for (auto& program : _programs)
     {
-        auto& uniforms = program.second.uniforms;
-        for (auto& uniform : uniforms)
-        {
-            if (bgfx::isValid(uniform))
-            {
-                bgfx::destroyUniform(uniform);
-            }
-        }
         if (bgfx::isValid(program.second.program))
         {
             bgfx::destroyProgram(program.second.program);
@@ -61,36 +53,37 @@ ShaderLibrary::~ShaderLibrary()
     }
 }
         
-bgfx::ProgramHandle ShaderLibrary::loadProgram
+ShaderProgramId ShaderLibrary::loadProgram
 (
     ShaderProgramId progId,
     const char* vertexShaderPath,
-    const char* fragShaderPath,
-    vector<bgfx::UniformHandle>&& uniforms
+    const char* fragShaderPath
 )
 {
     int vsIdx = loadShader(vertexShaderPath);
-    int fsIdx = loadShader(fragShaderPath);
-    
     if (vsIdx == -1)
-        return BGFX_INVALID_HANDLE;
+        return kNullHandle;
+    
+    int fsIdx = loadShader(fragShaderPath);
     if (fsIdx == -1)
-        return BGFX_INVALID_HANDLE;
+    {
+        unloadShader(vsIdx);
+        return kNullHandle;
+    }
 
     bgfx::ProgramHandle prog = bgfx::createProgram(
         _shaders[vsIdx].shader,
         _shaders[fsIdx].shader
     );
     if (!bgfx::isValid(prog))
-        return BGFX_INVALID_HANDLE;
+        return kNullHandle;
     
     ProgramReference ref;
     ref.program = prog;
     ref.vsIndex = vsIdx;
     ref.fsIndex = fsIdx;
-    ref.uniforms = std::move(uniforms);
     _programs.emplace(progId, ref);
-    return prog;
+    return progId;
 }
 
 int ShaderLibrary::loadShader(const char* path)
@@ -131,7 +124,7 @@ int ShaderLibrary::loadShader(const char* path)
         }
     }
     if (!bgfx::isValid(handle))
-        return BGFX_INVALID_HANDLE;
+        return -1;
     
     if (shaderIndex < 0)
     {
@@ -152,6 +145,37 @@ int ShaderLibrary::loadShader(const char* path)
     return shaderIndex;
 }
 
+void ShaderLibrary::unloadShader(int32_t index)
+{
+    if (index < 0 || index >= _shaders.size())
+        return;
+    
+    auto& shader = _shaders[index];
+    if (shader.refcnt > 0)
+    {
+        --shader.refcnt;
+        if (!shader.refcnt && bgfx::isValid(shader.shader))
+        {
+            bgfx::destroyShader(shader.shader);
+            shader.shader = BGFX_INVALID_HANDLE;
+        }
+    }
+}
+
+void ShaderLibrary::unloadProgram(ShaderProgramId programId)
+{
+    auto itProgram = _programs.find(programId);
+    if (itProgram == _programs.end())
+        return;
+    
+    auto& entry = itProgram->second;
+    
+    unloadShader(entry.vsIndex);
+    unloadShader(entry.fsIndex);
+    
+    _programs.erase(itProgram);
+}
+
 bgfx::ProgramHandle ShaderLibrary::program(ShaderProgramId programId) const
 {
     auto itProgram = _programs.find(programId);
@@ -161,23 +185,6 @@ bgfx::ProgramHandle ShaderLibrary::program(ShaderProgramId programId) const
     return (*itProgram).second.program;
 }
 
-bgfx::UniformHandle ShaderLibrary::uniformFromProgram
-(
-    uint32_t uniformIndex,
-    ShaderProgramId progId
-)
-const
-{
-    auto itProgram = _programs.find(progId);
-    if (itProgram == _programs.end())
-        return BGFX_INVALID_HANDLE;
-    
-    auto& uniforms = itProgram->second.uniforms;
-    if (uniformIndex >= uniforms.size())
-        return BGFX_INVALID_HANDLE;
-    
-    return uniforms[uniformIndex];
-}
         
     }   // namespace gfx
 }   // namespace cinek

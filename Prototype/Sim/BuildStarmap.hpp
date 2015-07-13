@@ -106,7 +106,7 @@ public:
     Result operator()
     (
         uint32_t masterSeed,
-        const vector<SpectralClass>& spectralClasses,
+        const vector<SpectralClassDesc>& spectralClasses,
         vector<SpectralInput> spectralInputs,
         int spectralIndexMax,
         ckm::AABB<ckm::vec3> bounds,
@@ -121,14 +121,14 @@ private:
         int classIndex;
     };
     
-    static constexpr int kMaxBodiesPerSystem = 4;
+    static constexpr int kMaxBodiesPerSystem = kMaxStarsPerSystem;
 
     ckm::scalar calcBodyMass(ckm::scalar maxSolarMass,
-        ckm::scalar minSolarMass,
+        ckm::scalar minInitialSolarMass,
         Randomizer& randomizer) const;
     
     int determineCompanionBodyClass(int bodyClassIndex,
-        const vector<SpectralClass>& spectralClasses,
+        const vector<SpectralClassDesc>& spectralClasses,
         vector<SpectralInput>& spectralInputs,
         Randomizer& randomizer);
     

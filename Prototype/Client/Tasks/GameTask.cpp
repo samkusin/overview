@@ -201,7 +201,7 @@ struct GameTask::Starmap
         Callback cb(store, writer);
      
         RenderCommand::Params params;
-        params.pipelineIdx = 0;
+        params.pipelineIdx = kRenderPipeline_Starmap;
         
         writer.beginCommand(params);
         
@@ -238,16 +238,16 @@ void GameTask::onBegin()
     
     BuildStarmapFunction cellGenFn;
     
-    vector<SpectralClass> spectralClasses =
+    vector<SpectralClassDesc> spectralClasses =
     {
-        {   55000, 275.0,  38.0, 1000000,    0.0,  0,  SpectralClass::kWeibull  },
-        {   30000,  16.0,   6.6,   30000,   15.0,  5,  SpectralClass::kWeibull  },
-        {   10000,   2.1,   1.8,      25,   20.0,  5,  SpectralClass::kUniform  },
-        {   7500,    1.4,   1.4,       5,   25.0,  4,  SpectralClass::kUniform  },
-        {   6000,   1.04,  1.15,     1.5,   30.0,  3,  SpectralClass::kUniform  },
-        {   5200,    0.8,  0.96,     0.6,   35.0,  3,  SpectralClass::kUniform  },
-        {   3700,   0.45,   0.7,    0.08,   45.0,  2,  SpectralClass::kUniform  },
-        {   2400,   0.08,   0.1,  5.3e-6,   50.0,  1,  SpectralClass::kUniform  }
+        {   55000, 275.0,    0.0,  0,  SpectralClassDesc::kWeibull  },
+        {   30000,  16.0,   15.0,  5,  SpectralClassDesc::kWeibull  },
+        {   10000,   2.1,   20.0,  5,  SpectralClassDesc::kUniform  },
+        {   7500,    1.4,   25.0,  4,  SpectralClassDesc::kUniform  },
+        {   6000,   1.04,   30.0,  3,  SpectralClassDesc::kUniform  },
+        {   5200,    0.8,   35.0,  3,  SpectralClassDesc::kUniform  },
+        {   3700,   0.45,   45.0,  2,  SpectralClassDesc::kUniform  },
+        {   2400,   0.08,   50.0,  1,  SpectralClassDesc::kUniform  }
     };
     /*
     vector<BuildCellFunction::SpectralInput> spectralInputs =

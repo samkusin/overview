@@ -105,7 +105,7 @@ public:
     void clearPipelineCallback(int32_t pipeline);
 
     void render(RenderContext context);
-    
+     
 private:
     unordered_map<Handle, BuildRenderObjectListCb> _buildObjectListHandlers;
     vector<RenderPipelineCb> _pipelines;

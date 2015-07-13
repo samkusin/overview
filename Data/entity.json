@@ -1,0 +1,25 @@
+{
+    "renderable_filter_flags": {
+        "galaxy" : 1,
+        "starsystem" : 2,
+        "planet": 4
+    },
+    "entity" : {
+        "star" : {
+            "renderable" : {
+                "filter": "galaxy,starsystem,planet",
+                "type": "mesh",
+                "name": "star",
+                "bitmap": "textures/sun.png"
+            }
+        },
+        "planet" : {
+            "renderable" : {
+                "filter": "starsystem,planet",
+                "type": "mesh",
+                "name": "planet",
+                "bitmap": "textures/earth.png"
+            }
+        }
+    }
+}

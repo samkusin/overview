@@ -9,19 +9,11 @@
 #ifndef Overview_App_Render_Shaders_hpp
 #define Overview_App_Render_Shaders_hpp
 
-#include "Engine/Render/RenderTypes.hpp"
+#include "RenderDefines.hpp"
 
 namespace cinek { namespace ovproto {
 
-namespace render {
-
-    enum
-    {
-        kShaderUniform_ColorTexture = 0
-    };
-
-    void registerShaders(gfx::ShaderLibrary& shaderLibrary);
-}
+void registerShaders(gfx::ShaderLibrary& shaderLibrary);
 
 } /* namespace ovproto */ } /* namespace cinek */
 

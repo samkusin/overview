@@ -11,6 +11,8 @@
 		3705C1A01B45D35800DBB38B /* fs_stdcol_rgba.fs in Resources */ = {isa = PBXBuildFile; fileRef = 3705C19F1B45D35800DBB38B /* fs_stdcol_rgba.fs */; };
 		37121D371B4EDC3700E35C54 /* TransformEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D351B4EDC3700E35C54 /* TransformEntity.cpp */; };
 		37121D3A1B4F01C700E35C54 /* EngineMathGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D381B4F01C700E35C54 /* EngineMathGfx.cpp */; };
+		37121D3D1B4F237700E35C54 /* StarmapRenderPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D3B1B4F237700E35C54 /* StarmapRenderPipeline.cpp */; };
+		37121D421B517D7500E35C54 /* SpectralClassUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D401B517D7500E35C54 /* SpectralClassUtility.cpp */; };
 		372383101B4B150B005B1BA4 /* EngineGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3723830F1B4B150B005B1BA4 /* EngineGeometry.cpp */; };
 		37240E1D1AEED89A005D6048 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37240E1B1AEED89A005D6048 /* Mesh.cpp */; };
 		373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */; };
@@ -122,6 +124,11 @@
 		37121D361B4EDC3700E35C54 /* TransformEntity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TransformEntity.hpp; sourceTree = "<group>"; };
 		37121D381B4F01C700E35C54 /* EngineMathGfx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EngineMathGfx.cpp; path = ../../Engine/EngineMathGfx.cpp; sourceTree = "<group>"; };
 		37121D391B4F01C700E35C54 /* EngineMathGfx.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EngineMathGfx.hpp; path = ../../Engine/EngineMathGfx.hpp; sourceTree = "<group>"; };
+		37121D3B1B4F237700E35C54 /* StarmapRenderPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StarmapRenderPipeline.cpp; path = ../Client/Render/StarmapRenderPipeline.cpp; sourceTree = "<group>"; };
+		37121D3C1B4F237700E35C54 /* StarmapRenderPipeline.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StarmapRenderPipeline.hpp; path = ../Client/Render/StarmapRenderPipeline.hpp; sourceTree = "<group>"; };
+		37121D3F1B4F2B7600E35C54 /* RenderDefines.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderDefines.hpp; path = ../Client/Render/RenderDefines.hpp; sourceTree = "<group>"; };
+		37121D401B517D7500E35C54 /* SpectralClassUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpectralClassUtility.cpp; path = ../Sim/SpectralClassUtility.cpp; sourceTree = "<group>"; };
+		37121D411B517D7500E35C54 /* SpectralClassUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SpectralClassUtility.hpp; path = ../Sim/SpectralClassUtility.hpp; sourceTree = "<group>"; };
 		3723830C1B4AEB45005B1BA4 /* BVHFrustrumTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = BVHFrustrumTest.hpp; path = ../../Engine/BVH/BVHFrustrumTest.hpp; sourceTree = "<group>"; };
 		3723830D1B4B0323005B1BA4 /* EngineMath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EngineMath.hpp; path = ../../Engine/EngineMath.hpp; sourceTree = "<group>"; };
 		3723830E1B4B118E005B1BA4 /* EngineGeometry.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EngineGeometry.hpp; path = ../../Engine/EngineGeometry.hpp; sourceTree = "<group>"; };
@@ -258,8 +265,11 @@
 		37599AFF1B49E3F500CA3E9B /* Render */ = {
 			isa = PBXGroup;
 			children = (
+				37121D3F1B4F2B7600E35C54 /* RenderDefines.hpp */,
 				37E8170E1B4C84E000482CE4 /* RenderShaders.cpp */,
 				37E8170F1B4C84E000482CE4 /* RenderShaders.hpp */,
+				37121D3B1B4F237700E35C54 /* StarmapRenderPipeline.cpp */,
+				37121D3C1B4F237700E35C54 /* StarmapRenderPipeline.hpp */,
 			);
 			name = Render;
 			sourceTree = "<group>";
@@ -312,6 +322,8 @@
 				37A0FD641B41C52600188B7A /* StellarSystemUtility.cpp */,
 				37A0FD651B41C52600188B7A /* StellarSystemUtility.hpp */,
 				37A327A31B437234009FCDA4 /* SimDefines.hpp */,
+				37121D401B517D7500E35C54 /* SpectralClassUtility.cpp */,
+				37121D411B517D7500E35C54 /* SpectralClassUtility.hpp */,
 			);
 			name = Sim;
 			sourceTree = "<group>";
@@ -644,6 +656,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37121D3D1B4F237700E35C54 /* StarmapRenderPipeline.cpp in Sources */,
 				37E604AD1B0FE6E6009C916D /* entityevents.capnp in Sources */,
 				37121D371B4EDC3700E35C54 /* TransformEntity.cpp in Sources */,
 				37E604AE1B0FE6E6009C916D /* ovtypes.capnp in Sources */,
@@ -683,6 +696,7 @@
 				37E604A21B0FCBE6009C916D /* MessageDispatcher.cpp in Sources */,
 				373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */,
 				37E6049A1B0FCBCF009C916D /* EntityFactory.cpp in Sources */,
+				37121D421B517D7500E35C54 /* SpectralClassUtility.cpp in Sources */,
 				37121D3A1B4F01C700E35C54 /* EngineMathGfx.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

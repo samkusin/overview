@@ -75,6 +75,9 @@ public:
     const EntityDataTable* data() const { return _table; }
     EntityDataTable* data() { return _table; }
     
+    std::pair<Entity, Component*> rowAtIndex(index_type index);
+    std::pair<Entity, const Component*> rowAtIndex(index_type index) const;
+    
     //  iterate through all objects in the DB with the specified component
     //  Function signature should be:
     //      void fn(Entity eid, Component& component);
@@ -110,6 +113,20 @@ Component* Table<Component>::rowForEntity(Entity eid)
     return const_cast<Component*>(
         static_cast<const Table*>(this)->rowForEntity(eid)
     );
+}
+
+template<typename Component>
+std::pair<Entity, Component*> Table<Component>::rowAtIndex(index_type index)
+{
+    auto ret = static_cast<const Table*>(this)->rowAtIndex(index);
+    return std::make_pair(ret.first, const_cast<Component*>(ret.second));
+}
+
+template<typename Component>
+std::pair<Entity, const Component*> Table<Component>::rowAtIndex(index_type index) const
+{
+    auto& rowset = _table->rowset();
+    return std::make_pair(rowset.entityAt(index), rowset.at<Component>(index));
 }
 
 //  iterate through all objects in the DB with the specified component
