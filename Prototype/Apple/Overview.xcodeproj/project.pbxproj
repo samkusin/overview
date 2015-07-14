@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3705C19E1B45D2D100DBB38B /* vs_stdpos_rgba.vs in Resources */ = {isa = PBXBuildFile; fileRef = 3705C19D1B45D2D100DBB38B /* vs_stdpos_rgba.vs */; };
-		3705C1A01B45D35800DBB38B /* fs_stdcol_rgba.fs in Resources */ = {isa = PBXBuildFile; fileRef = 3705C19F1B45D35800DBB38B /* fs_stdcol_rgba.fs */; };
+		3705C19E1B45D2D100DBB38B /* vs_std_rgba.vs in Resources */ = {isa = PBXBuildFile; fileRef = 3705C19D1B45D2D100DBB38B /* vs_std_rgba.vs */; };
+		3705C1A01B45D35800DBB38B /* fs_std_rgba.fs in Resources */ = {isa = PBXBuildFile; fileRef = 3705C19F1B45D35800DBB38B /* fs_std_rgba.fs */; };
 		37121D371B4EDC3700E35C54 /* TransformEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D351B4EDC3700E35C54 /* TransformEntity.cpp */; };
 		37121D3A1B4F01C700E35C54 /* EngineMathGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D381B4F01C700E35C54 /* EngineMathGfx.cpp */; };
 		37121D3D1B4F237700E35C54 /* StarmapRenderPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D3B1B4F237700E35C54 /* StarmapRenderPipeline.cpp */; };
 		37121D421B517D7500E35C54 /* SpectralClassUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D401B517D7500E35C54 /* SpectralClassUtility.cpp */; };
+		37121D441B54352D00E35C54 /* vs_starmap.vs in Resources */ = {isa = PBXBuildFile; fileRef = 37121D431B54352D00E35C54 /* vs_starmap.vs */; };
+		37121D461B54354000E35C54 /* fs_starmap.fs in Resources */ = {isa = PBXBuildFile; fileRef = 37121D451B54354000E35C54 /* fs_starmap.fs */; };
+		37121D7D1B5484F000E35C54 /* StandardMeshPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37121D7B1B5484F000E35C54 /* StandardMeshPipeline.cpp */; };
 		372383101B4B150B005B1BA4 /* EngineGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3723830F1B4B150B005B1BA4 /* EngineGeometry.cpp */; };
 		37240E1D1AEED89A005D6048 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37240E1B1AEED89A005D6048 /* Mesh.cpp */; };
 		373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373ACBE71AD0A2400082DB63 /* BitmapAtlas.cpp */; };
@@ -29,8 +32,8 @@
 		37A0FD661B41C52600188B7A /* StellarSystemUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A0FD641B41C52600188B7A /* StellarSystemUtility.cpp */; };
 		37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A546F81AE2E50900341500 /* JsonParseExtensions.cpp */; };
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
-		37B30CBD1AED81BC0029887F /* fs_stdtex_2d.fs in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBB1AED81BC0029887F /* fs_stdtex_2d.fs */; };
-		37B30CBE1AED81BC0029887F /* vs_stdpos_uv.vs in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBC1AED81BC0029887F /* vs_stdpos_uv.vs */; };
+		37B30CBD1AED81BC0029887F /* fs_std_tex.fs in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBB1AED81BC0029887F /* fs_std_tex.fs */; };
+		37B30CBE1AED81BC0029887F /* vs_std_uv.vs in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBC1AED81BC0029887F /* vs_std_uv.vs */; };
 		37B30CC01AED85E20029887F /* varying.def.sc in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CBF1AED85E20029887F /* varying.def.sc */; };
 		37B30CC21AED85ED0029887F /* shaderlib.sh in Resources */ = {isa = PBXBuildFile; fileRef = 37B30CC11AED85ED0029887F /* shaderlib.sh */; };
 		37BB62E21B3DF43C0096CDA1 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BB62E11B3DF43C0096CDA1 /* Transform.cpp */; };
@@ -88,7 +91,7 @@
 			outputFiles = (
 				"$(DATA_ROOT)/Shaders/$(INPUT_FILE_BASE).bin",
 			);
-			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/shaderc --type v --platform osx -i ${PACKAGES_ROOT}/include/bgfx -f ${INPUT_FILE_NAME} -o ${DATA_ROOT}/Shaders/${INPUT_FILE_BASE}.bin";
+			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/shaderc --type v --platform linux -p 140 -i ${PACKAGES_ROOT}/include/bgfx -f ${INPUT_FILE_NAME} -o ${DATA_ROOT}/Shaders/${INPUT_FILE_BASE}.bin";
 		};
 		37B30CC31AED861A0029887F /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -99,7 +102,7 @@
 			outputFiles = (
 				"$(DATA_ROOT)/Shaders/$(INPUT_FILE_BASE).bin",
 			);
-			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/shaderc --type f --platform osx -i ${PACKAGES_ROOT}/include/bgfx -f ${INPUT_FILE_NAME} -o ${DATA_ROOT}/Shaders/${INPUT_FILE_BASE}.bin";
+			script = "cd ${INPUT_FILE_DIR}\n${PACKAGES_ROOT}/bin/shaderc --type f --platform linux -p 140 -i ${PACKAGES_ROOT}/include/bgfx -f ${INPUT_FILE_NAME} -o ${DATA_ROOT}/Shaders/${INPUT_FILE_BASE}.bin";
 		};
 /* End PBXBuildRule section */
 
@@ -117,8 +120,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3705C19D1B45D2D100DBB38B /* vs_stdpos_rgba.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_stdpos_rgba.vs; path = ../Client/Shaders/vs_stdpos_rgba.vs; sourceTree = "<group>"; };
-		3705C19F1B45D35800DBB38B /* fs_stdcol_rgba.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_stdcol_rgba.fs; path = ../Client/Shaders/fs_stdcol_rgba.fs; sourceTree = "<group>"; };
+		3705C19D1B45D2D100DBB38B /* vs_std_rgba.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_std_rgba.vs; path = ../Client/Shaders/vs_std_rgba.vs; sourceTree = "<group>"; };
+		3705C19F1B45D35800DBB38B /* fs_std_rgba.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_std_rgba.fs; path = ../Client/Shaders/fs_std_rgba.fs; sourceTree = "<group>"; };
 		37121D341B4DDACD00E35C54 /* EngineMathTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EngineMathTypes.hpp; path = ../../Engine/EngineMathTypes.hpp; sourceTree = "<group>"; };
 		37121D351B4EDC3700E35C54 /* TransformEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformEntity.cpp; sourceTree = "<group>"; };
 		37121D361B4EDC3700E35C54 /* TransformEntity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TransformEntity.hpp; sourceTree = "<group>"; };
@@ -129,6 +132,10 @@
 		37121D3F1B4F2B7600E35C54 /* RenderDefines.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderDefines.hpp; path = ../Client/Render/RenderDefines.hpp; sourceTree = "<group>"; };
 		37121D401B517D7500E35C54 /* SpectralClassUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpectralClassUtility.cpp; path = ../Sim/SpectralClassUtility.cpp; sourceTree = "<group>"; };
 		37121D411B517D7500E35C54 /* SpectralClassUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SpectralClassUtility.hpp; path = ../Sim/SpectralClassUtility.hpp; sourceTree = "<group>"; };
+		37121D431B54352D00E35C54 /* vs_starmap.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_starmap.vs; path = ../Client/Shaders/vs_starmap.vs; sourceTree = "<group>"; };
+		37121D451B54354000E35C54 /* fs_starmap.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_starmap.fs; path = ../Client/Shaders/fs_starmap.fs; sourceTree = "<group>"; };
+		37121D7B1B5484F000E35C54 /* StandardMeshPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StandardMeshPipeline.cpp; path = ../Client/Render/StandardMeshPipeline.cpp; sourceTree = "<group>"; };
+		37121D7C1B5484F000E35C54 /* StandardMeshPipeline.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StandardMeshPipeline.hpp; path = ../Client/Render/StandardMeshPipeline.hpp; sourceTree = "<group>"; };
 		3723830C1B4AEB45005B1BA4 /* BVHFrustrumTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = BVHFrustrumTest.hpp; path = ../../Engine/BVH/BVHFrustrumTest.hpp; sourceTree = "<group>"; };
 		3723830D1B4B0323005B1BA4 /* EngineMath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EngineMath.hpp; path = ../../Engine/EngineMath.hpp; sourceTree = "<group>"; };
 		3723830E1B4B118E005B1BA4 /* EngineGeometry.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EngineGeometry.hpp; path = ../../Engine/EngineGeometry.hpp; sourceTree = "<group>"; };
@@ -169,8 +176,8 @@
 		37A546F81AE2E50900341500 /* JsonParseExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JsonParseExtensions.cpp; path = ../../Engine/Utils/JsonParseExtensions.cpp; sourceTree = "<group>"; };
 		37A546F91AE2E50900341500 /* JsonParseExtensions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JsonParseExtensions.hpp; path = ../../Engine/Utils/JsonParseExtensions.hpp; sourceTree = "<group>"; };
 		37AAC1C619F42A3600C32899 /* libCKFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCKFramework.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Prototype-busevatmdawlcjggxdwanwesvkef/Build/Products/Debug/libCKFramework.a"; sourceTree = "<group>"; };
-		37B30CBB1AED81BC0029887F /* fs_stdtex_2d.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_stdtex_2d.fs; path = ../Client/Shaders/fs_stdtex_2d.fs; sourceTree = "<group>"; };
-		37B30CBC1AED81BC0029887F /* vs_stdpos_uv.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_stdpos_uv.vs; path = ../Client/Shaders/vs_stdpos_uv.vs; sourceTree = "<group>"; };
+		37B30CBB1AED81BC0029887F /* fs_std_tex.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_std_tex.fs; path = ../Client/Shaders/fs_std_tex.fs; sourceTree = "<group>"; };
+		37B30CBC1AED81BC0029887F /* vs_std_uv.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_std_uv.vs; path = ../Client/Shaders/vs_std_uv.vs; sourceTree = "<group>"; };
 		37B30CBF1AED85E20029887F /* varying.def.sc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = varying.def.sc; path = ../Client/Shaders/varying.def.sc; sourceTree = "<group>"; };
 		37B30CC11AED85ED0029887F /* shaderlib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = shaderlib.sh; path = ../Client/Shaders/shaderlib.sh; sourceTree = "<group>"; };
 		37B50EE91AF41F9C00EE8213 /* EntityTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EntityTypes.hpp; sourceTree = "<group>"; };
@@ -270,6 +277,8 @@
 				37E8170F1B4C84E000482CE4 /* RenderShaders.hpp */,
 				37121D3B1B4F237700E35C54 /* StarmapRenderPipeline.cpp */,
 				37121D3C1B4F237700E35C54 /* StarmapRenderPipeline.hpp */,
+				37121D7B1B5484F000E35C54 /* StandardMeshPipeline.cpp */,
+				37121D7C1B5484F000E35C54 /* StandardMeshPipeline.hpp */,
 			);
 			name = Render;
 			sourceTree = "<group>";
@@ -371,10 +380,12 @@
 			children = (
 				37B30CC11AED85ED0029887F /* shaderlib.sh */,
 				37B30CBF1AED85E20029887F /* varying.def.sc */,
-				37B30CBB1AED81BC0029887F /* fs_stdtex_2d.fs */,
-				3705C19F1B45D35800DBB38B /* fs_stdcol_rgba.fs */,
-				37B30CBC1AED81BC0029887F /* vs_stdpos_uv.vs */,
-				3705C19D1B45D2D100DBB38B /* vs_stdpos_rgba.vs */,
+				37B30CBC1AED81BC0029887F /* vs_std_uv.vs */,
+				37B30CBB1AED81BC0029887F /* fs_std_tex.fs */,
+				3705C19D1B45D2D100DBB38B /* vs_std_rgba.vs */,
+				3705C19F1B45D35800DBB38B /* fs_std_rgba.fs */,
+				37121D431B54352D00E35C54 /* vs_starmap.vs */,
+				37121D451B54354000E35C54 /* fs_starmap.fs */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -637,12 +648,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				37F64A9F1780EA2C009116E7 /* InfoPlist.strings in Resources */,
-				3705C19E1B45D2D100DBB38B /* vs_stdpos_rgba.vs in Resources */,
-				3705C1A01B45D35800DBB38B /* fs_stdcol_rgba.fs in Resources */,
+				37121D461B54354000E35C54 /* fs_starmap.fs in Resources */,
+				3705C19E1B45D2D100DBB38B /* vs_std_rgba.vs in Resources */,
+				3705C1A01B45D35800DBB38B /* fs_std_rgba.fs in Resources */,
 				37B30CC01AED85E20029887F /* varying.def.sc in Resources */,
-				37B30CBD1AED81BC0029887F /* fs_stdtex_2d.fs in Resources */,
+				37B30CBD1AED81BC0029887F /* fs_std_tex.fs in Resources */,
 				37B30CC21AED85ED0029887F /* shaderlib.sh in Resources */,
-				37B30CBE1AED81BC0029887F /* vs_stdpos_uv.vs in Resources */,
+				37B30CBE1AED81BC0029887F /* vs_std_uv.vs in Resources */,
+				37121D441B54352D00E35C54 /* vs_starmap.vs in Resources */,
 				37E604AB1B0FE6AB009C916D /* entityevents.capnp in Resources */,
 				37E604AC1B0FE6AB009C916D /* ovtypes.capnp in Resources */,
 				37F64AA51780EA2D009116E7 /* Credits.rtf in Resources */,
@@ -686,6 +699,7 @@
 				37F43E611B34CB820065D8E9 /* DataRowset.cpp in Sources */,
 				37A0FD661B41C52600188B7A /* StellarSystemUtility.cpp in Sources */,
 				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
+				37121D7D1B5484F000E35C54 /* StandardMeshPipeline.cpp in Sources */,
 				37E604A31B0FCBE6009C916D /* MessagePublisher.cpp in Sources */,
 				37E817101B4C84E000482CE4 /* RenderShaders.cpp in Sources */,
 				378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */,

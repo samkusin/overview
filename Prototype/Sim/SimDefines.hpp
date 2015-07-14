@@ -18,6 +18,11 @@ namespace cinek { namespace ovproto {
 constexpr ckm::scalar kMaxStarPairDistInSolRadius = 10;
 constexpr ckm::scalar kSystemInnerRadiusFraction = 0.33;
 constexpr int kMaxStarsPerSystem = 4;
+constexpr int kMaxStarSystems = 512*1024;
+constexpr int kMaxStars = kMaxStarSystems * kMaxStarsPerSystem;
+constexpr int kMaxTransforms = kMaxStarSystems + kMaxStars;
+constexpr int kMaxRenderables = kMaxStarSystems + kMaxStars;
+constexpr int kMaxEntities = kMaxTransforms * 2;
 
 //  References:
 //      Basic Distance Constants: Wikipedia

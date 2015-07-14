@@ -245,7 +245,6 @@ bool loadTables()
     sTables->bcTable = std::move(bcValues);
     sTables->colorTable = std::move(colorValues);
     
-    colorABGRFromClass(48000);
     return true;
 }
 
@@ -297,7 +296,7 @@ ckm::scalar bolmetricCorrection(int tempK, SpectralClass mkClass)
 
 //  lookup based on temperature and spectral class
 //  using the table constructed by Mitchell Charity (see references)
-uint32_t colorABGRFromClass(int tempK)
+uint32_t colorABGRFromTemp(int tempK)
 {
     //  total black
     if (tempK <= 0)

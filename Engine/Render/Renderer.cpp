@@ -84,7 +84,7 @@ RenderObjectListReader::RenderObjectListReader
 RenderObject RenderObjectListReader::pop()
 {
     if (_command.listStartIndex >= _command.listEndIndex ||
-        _command.listEndIndex >= _renderList->size())
+        _command.listEndIndex > _renderList->size())
         return RenderObject();
     
     return _renderList->at(_command.listStartIndex++);
@@ -148,8 +148,9 @@ Renderer::Renderer
     }
     
     RenderView view0;
-    view0.rect = ckm::ivec2(params.width, params.height);
-    view0.clearColor = 0x000000ff,
+    view0.rect.min = ckm::ivec2(0);
+    view0.rect.max = ckm::ivec2(params.width, params.height);
+    view0.clearColor = 0x000011ff,
     view0.clearDepth = 1.0f;
     view0.clearStencil = 0;
     view0.hasDepth = true;
@@ -259,6 +260,8 @@ void Renderer::render(RenderContext context)
             bgfx::setViewRect(viewId, view.rect.min.x, view.rect.min.y,
                 viewDim.x, viewDim.y);
             
+            bgfx::submit(viewId);
+            
             //  calculate camera frustrum (view-space) and the view-to-world
             //  transformation used by object list providers to cull entities
             //  from world space
@@ -311,20 +314,25 @@ void Renderer::render(RenderContext context)
                     cameraTranslate.onEntity(renderable.first, *renderable.second);
                 }
             }
-         
+            
+            //  center our camera at 0,0,0 (since our render objects are now
+            //  positioned relative to the origin.)
+            cameraSRT[3].x = 0;
+            cameraSRT[3].y = 0;
+            cameraSRT[3].z = 0;
+            
             //  generate our bgfx view and projection matrices
             //  2d notes: if the camera is 2d, we create an orthogonal matrix
             //  general notes: near and far are assumed to be 'reasonable'
             //  values (meaning within float range)
             //
-            gfx::Matrix4 gfxProjMat;
-            gfx::Matrix4 gfxViewMat;
-            bx::mtxInverse(gfxViewMat, ckm::convert(cameraSRT, gfxViewMat));
-            bx::mtxProj(gfxProjMat, 180.0f * (camera.fov()/M_PI), (float)aspect,
+            RenderCameraContext cameraContext(viewId);
+            bx::mtxInverse(cameraContext.mtxView,
+                ckm::convert(cameraSRT, cameraContext.mtxView));
+            bx::mtxProj(cameraContext.mtxProj,
+                180.0f * (camera.fov()/M_PI), (float)aspect,
                 (float)camera.nearZ(),
                 (float)camera.farZ());
-            
-            bgfx::setViewTransform(viewId, gfxViewMat, gfxProjMat);
             
             //  run commands through the various registered pipelines
             for (auto& command : commands)
@@ -336,7 +344,7 @@ void Renderer::render(RenderContext context)
                     if (pipeline)
                     {
                         RenderObjectListReader listReader(command, objects);
-                        pipeline(*lc.rc, listReader);
+                        pipeline(*lc.rc, cameraContext, listReader);
                     }
                 }
             }

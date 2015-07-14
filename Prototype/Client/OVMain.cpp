@@ -28,6 +28,7 @@
 #include <cinek/json/json.hpp>
 
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
+#include <SDL2/SDL_syswm.h>
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
 
@@ -83,7 +84,7 @@ void run(SDL_Window* window)
     gfx::VertexTypes::initialize();
     
     overview::Renderer::InitParams renderInitParams;
-    renderInitParams.objectCnt = 16384;
+    renderInitParams.objectCnt = 32768;
     renderInitParams.commandCnt = 32;
     renderInitParams.pipelineCnt = kRenderPipeline_Count;
     renderInitParams.width = viewWidth;
@@ -102,12 +103,12 @@ void run(SDL_Window* window)
     
     registerShaders(shaderLibrary);
     
-    overview::EntityStore entityStore(64*1024, {
-        { overview::component::Transform::kComponentType, 64*1024 },
-        { overview::component::Renderable::kComponentType, 64*1024 },
-        { overview::component::MeshRenderable::kComponentType, 48*1024 },
-        { component::StellarSystem::kComponentType, 16*1024 },
-        { component::StarBody::kComponentType, 48*1024 },
+    overview::EntityStore entityStore(kMaxEntities, {
+        { overview::component::Transform::kComponentType, kMaxTransforms },
+        { overview::component::Renderable::kComponentType, kMaxRenderables },
+        { overview::component::MeshRenderable::kComponentType, 16*1024 },
+        { component::StellarSystem::kComponentType, kMaxStarSystems },
+        { component::StarBody::kComponentType, kMaxStars },
         { overview::component::Camera::kComponentType, 4 },
         { overview::component::Light::kComponentType, 8 }
     });
@@ -199,7 +200,6 @@ void run(SDL_Window* window)
         
         renderer.render(renderContext);
         
-        bgfx::submit(0);
         bgfx::frame();
 
         entityStore.gc();

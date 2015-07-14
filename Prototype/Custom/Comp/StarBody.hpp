@@ -27,7 +27,7 @@ namespace component
         int32_t effectiveTemp;
         
         //  calculated values from basic properties
-        uint32_t argbColor;             // color from effectiveTemp
+        uint32_t abgrColor;             // color from effectiveTemp
         ckm::scalar visualMag;          // visual magnitude
     };
 }

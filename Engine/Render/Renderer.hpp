@@ -78,6 +78,14 @@ private:
     RenderObjectList* _renderList;
 };
 
+struct RenderCameraContext
+{
+    int viewId;
+    gfx::Matrix4 mtxView;
+    gfx::Matrix4 mtxProj;
+    
+    RenderCameraContext(int vid) : viewId(vid) {}
+};
 
 class Renderer
 {

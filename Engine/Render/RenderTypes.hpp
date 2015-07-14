@@ -40,9 +40,12 @@ class Renderer;
 class RenderObjectListWriter;
 class RenderObjectListReader;
 
+struct RenderCameraContext;
+
 using BuildRenderObjectListCb = std::function<void(const ckm::Frustrum&,
     RenderObjectListWriter&)>;
 using RenderPipelineCb = std::function<void(RenderContext,
+    RenderCameraContext&,
     RenderObjectListReader&)>;
     
 } /* namespace overview */ } /* namespace cinek */

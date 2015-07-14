@@ -7,6 +7,7 @@
 //
 
 #include "BuildStarmap.hpp"
+#include "SpectralClassUtility.hpp"
 
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
@@ -148,10 +149,10 @@ auto BuildStarmapFunction::operator()
     }
     
     ////////////////////////////////////////////////////////////////////////
-    overview::EntityStore entityStore(64*1024, {
-        { overview::component::Transform::kComponentType, 64*1024 },
-        { ovproto::component::StellarSystem::kComponentType, 16*1024 },
-        { ovproto::component::StarBody::kComponentType, 48*1024 }
+    overview::EntityStore entityStore(kMaxEntities, {
+        { overview::component::Transform::kComponentType, kMaxTransforms },
+        { ovproto::component::StellarSystem::kComponentType, kMaxStarSystems},
+        { ovproto::component::StarBody::kComponentType, kMaxStars }
     });
     
     StandardTables standardTables;
@@ -260,7 +261,7 @@ auto BuildStarmapFunction::operator()
     }
     
     //  finish the cell
-    if (result.result == Result::kPending)
+    if (result.result == Result::kPending || result.result == Result::kRegionFull)
     {
         result.result = Result::kSuccess;
         result.entityStore = std::move(entityStore);
@@ -378,12 +379,12 @@ auto BuildStarmapFunction::createSystem
         stellarSystem->seed = randomizer.uniformInt();
         
         //  Create Bodies (with no position)
-        
+        /*
         printf("\n======================================\n");
         printf("Creating System: at=(%.5lf,%.5lf,%.5lf) radius=%lf\n",
             systemPosition.first.x, systemPosition.first.y, systemPosition.first.z,
             stellarSystem->radius);
-        
+        */
         transform->setChild(
             createBodies(CS, starTemplates, systemEntity, systemRadius)
         );
@@ -432,12 +433,20 @@ Entity BuildStarmapFunction::createBodies
         star->solarLuminosity = massToLuminosity(star->solarMass);
         star->solarRadius = massToRadius(star->solarMass);
         star->effectiveTemp = radiusAndLuminosityToEffTemp(star->solarRadius, star->solarLuminosity);
-       
-        printf("Creating Star: temp=%u, mass=%lf, radius=%lf, luminosity=%lf\n",
+    
+        star->abgrColor = SpectralUtility::colorABGRFromTemp(star->effectiveTemp);
+        
+        SpectralClass mkClass;
+        star->visualMag = SpectralUtility::bolometricMagFromLuminosity(star->solarLuminosity);
+        star->visualMag = star->visualMag - SpectralUtility::bolmetricCorrection(star->effectiveTemp, mkClass);
+       /*
+         printf("Creating Star: temp=%u, mass=%lf, radius=%lf, luminosity=%lf, Mv=%lf\n",
             star->effectiveTemp,
             star->solarMass,
             star->solarRadius,
-            star->solarLuminosity);
+            star->solarLuminosity,
+            star->visualMag);
+        */
     
         bodies[numStars] = entity;
     }

@@ -262,30 +262,34 @@ void GameTask::onBegin()
         { 76.45 }
     };
     */
-    constexpr double kSolarMassTotal = 20.0;
+    constexpr ckm::scalar kCellBoundZ = 16;
+    constexpr ckm::scalar kCellBoundXY = 16;
+    constexpr ckm::scalar kSolarMassTotal = 0.04 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
     vector<BuildStarmapFunction::SpectralInput> spectralInputs =
     {
         { 0.0 },
-        { kSolarMassTotal * 0.0 },
-        { kSolarMassTotal * 0.01 },
-        { kSolarMassTotal * 0.09 },
-        { kSolarMassTotal * 0.25 },
-        { kSolarMassTotal * 0.35 },
-        { kSolarMassTotal * 0.20 },
-        { kSolarMassTotal * 0.10 }
+        { kSolarMassTotal * 0.001 },
+        { kSolarMassTotal * 0.008 },
+        { kSolarMassTotal * 0.010 },
+        { kSolarMassTotal * 0.055 },
+        { kSolarMassTotal * 0.076 },
+        { kSolarMassTotal * 0.150 },
+        { kSolarMassTotal * 0.700 }
     };
-    ckm::vec3 cellMin( -8,-8,-8 );
-    ckm::vec3 cellMax( 8, 8, 8 );
+    
+    ckm::vec3 cellMin( -kCellBoundXY,-kCellBoundXY,-kCellBoundZ );
+    ckm::vec3 cellMax( kCellBoundXY, kCellBoundXY, kCellBoundZ );
     ckm::AABB<ckm::vec3> cellBounds(cellMin, cellMax);
     
-    auto cell = cellGenFn(10245,
+    auto cell = cellGenFn(32768,
         spectralClasses,
         spectralInputs,
         7,
         cellBounds,
         0.1, 1.5);
     
-    if (cell.result == BuildStarmapFunction::Result::kSuccess)
+    if (cell.result == BuildStarmapFunction::Result::kSuccess ||
+        cell.result == BuildStarmapFunction::Result::kRegionFull)
     {
         //  merge results with our global entity store
         MergeStarmapWithEntityStore mergeFn;
@@ -293,6 +297,10 @@ void GameTask::onBegin()
 
         _starmap = allocate_unique<Starmap>(_allocator);
         _starmap->tree = std::move(cell.stellarSystemTree);
+    }
+    else
+    {
+        return;
     }
     
     RenderInterface _render(_API);
@@ -309,7 +317,7 @@ void GameTask::onBegin()
         .addComponentToEntity(_camera);
     if (camera)
     {
-        camera->init(0, 90/M_PI, 0.1, 10000.0);
+        camera->init(0, M_PI * 90/180.0 , 0.5, 500.0);
     }
     //  create entities from cell
     //  iterate through systems, creating entities from systems and bodies

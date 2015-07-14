@@ -22,20 +22,20 @@ namespace ckm {
     )
     {
         dest[0]     = src[0].x;
-        dest[4]     = src[0].y;
-        dest[8]     = src[0].z;
-        dest[12]    = src[0].w;
-        dest[1]     = src[1].x;
+        dest[1]     = src[0].y;
+        dest[2]     = src[0].z;
+        dest[3]     = src[0].w;
+        dest[4]     = src[1].x;
         dest[5]     = src[1].y;
-        dest[9]     = src[1].z;
-        dest[13]    = src[1].w;
-        dest[2]     = src[2].x;
-        dest[6]     = src[2].y;
+        dest[6]     = src[1].z;
+        dest[7]     = src[1].w;
+        dest[8]     = src[2].x;
+        dest[9]     = src[2].y;
         dest[10]    = src[2].z;
-        dest[14]    = src[2].w;
-        dest[3]     = src[3].x;
-        dest[7]     = src[3].y;
-        dest[11]    = src[3].z;
+        dest[11]    = src[2].w;
+        dest[12]    = src[3].x;
+        dest[13]    = src[3].y;
+        dest[14]    = src[3].z;
         dest[15]    = src[3].w;
         
         return dest;

@@ -58,7 +58,7 @@ ckm::scalar bolmetricCorrection(int tempK, SpectralClass mkClass);
 
 //  lookup based on temperature
 //  using the table constructed by Mitchell Charity (see references)
-uint32_t colorABGRFromClass(int tempK);
+uint32_t colorABGRFromTemp(int tempK);
 
 }
 

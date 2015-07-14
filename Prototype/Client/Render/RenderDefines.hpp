@@ -15,11 +15,6 @@ namespace cinek { namespace ovproto {
 
 enum
 {
-    kVertexType_Vec3_UV     = cinek::gfx::VertexTypes::kCustomPreset0
-};
-
-enum
-{
     kShaderIndex_Default    = 0,
     
     //  Variants
