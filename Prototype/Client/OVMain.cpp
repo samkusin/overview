@@ -11,6 +11,7 @@
 #include "CKGfx/MeshLibrary.hpp"
 #include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
+#include "CKGfx/VertexTypes.hpp"
 
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/MessageDispatcher.hpp"
@@ -41,7 +42,7 @@
 
 #include "Sim/SpectralClassUtility.hpp"
 
-#include "CKGfx/VertexTypes.hpp"
+#include "CKGfx/External/nanovg/nanovg.h"
 
 namespace cinek { namespace ovproto {
 

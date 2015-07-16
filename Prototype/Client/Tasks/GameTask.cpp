@@ -262,9 +262,9 @@ void GameTask::onBegin()
         { 76.45 }
     };
     */
-    constexpr ckm::scalar kCellBoundZ = 16;
-    constexpr ckm::scalar kCellBoundXY = 16;
-    constexpr ckm::scalar kSolarMassTotal = 0.04 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
+    constexpr ckm::scalar kCellBoundZ = 32;
+    constexpr ckm::scalar kCellBoundXY = 32;
+    constexpr ckm::scalar kSolarMassTotal = 0.018 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
     vector<BuildStarmapFunction::SpectralInput> spectralInputs =
     {
         { 0.0 },

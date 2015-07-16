@@ -88,7 +88,7 @@ MeshHandle MeshLibrary::load(const char* path)
     MeshHandle handle = handleFromName(path);
     if (!handle)
     {
-        CK_LOG_ERROR("MeshLibrary.load - unimplemented %s", path);
+        CK_LOG_ERROR("ckgfx", "MeshLibrary.load - unimplemented %s", path);
     }
     else
     {
