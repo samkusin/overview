@@ -23,7 +23,6 @@
 		3749D0F21B572A32009F280E /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3749D0F11B572A32009F280E /* libbz2.dylib */; };
 		3749D0F41B572A4A009F280E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3749D0F31B572A4A009F280E /* libz.dylib */; };
 		3749D0F61B572B40009F280E /* nanovg_bgfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3749D0F51B572B40009F280E /* nanovg_bgfx.cpp */; };
-		3749D0FD1B573249009F280E /* oui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3749D0FB1B573249009F280E /* oui.cpp */; };
 		3749D1061B573C3D009F280E /* fs_nanovg_fill.hfs in Sources */ = {isa = PBXBuildFile; fileRef = 3749D0E71B56F469009F280E /* fs_nanovg_fill.hfs */; };
 		3749D1071B573C3D009F280E /* vs_nanovg_fill.hvs in Sources */ = {isa = PBXBuildFile; fileRef = 3749D0EC1B56F469009F280E /* vs_nanovg_fill.hvs */; };
 		3749D10E1B574025009F280E /* fs_starmap.fs in Sources */ = {isa = PBXBuildFile; fileRef = 3749D1081B574025009F280E /* fs_starmap.fs */; };
@@ -32,6 +31,8 @@
 		3749D1111B574025009F280E /* vs_starmap.vs in Sources */ = {isa = PBXBuildFile; fileRef = 3749D10B1B574025009F280E /* vs_starmap.vs */; };
 		3749D1121B574025009F280E /* vs_std_rgba.vs in Sources */ = {isa = PBXBuildFile; fileRef = 3749D10C1B574025009F280E /* vs_std_rgba.vs */; };
 		3749D1131B574025009F280E /* vs_std_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 3749D10D1B574025009F280E /* vs_std_uv.vs */; };
+		3749D1171B581EE5009F280E /* oui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3749D1151B581EE5009F280E /* oui.cpp */; };
+		3749D11A1B583036009F280E /* UISystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3749D1181B583036009F280E /* UISystem.cpp */; };
 		378A996C1AEAE2BD008BD771 /* ShaderLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378A996A1AEAE2BD008BD771 /* ShaderLibrary.cpp */; };
 		378A996F1AEB107F008BD771 /* VertexTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378A996D1AEB107F008BD771 /* VertexTypes.cpp */; };
 		378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378DC1E21ACF6AB2004C8004 /* AABB.cpp */; };
@@ -183,14 +184,17 @@
 		3749D0F11B572A32009F280E /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
 		3749D0F31B572A4A009F280E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		3749D0F51B572B40009F280E /* nanovg_bgfx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nanovg_bgfx.cpp; path = ../../CKGfx/External/nanovg/nanovg_bgfx.cpp; sourceTree = "<group>"; };
-		3749D0FB1B573249009F280E /* oui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oui.cpp; path = ../Client/OUI/oui.cpp; sourceTree = "<group>"; };
-		3749D0FC1B573249009F280E /* oui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oui.h; path = ../Client/OUI/oui.h; sourceTree = "<group>"; };
 		3749D1081B574025009F280E /* fs_starmap.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_starmap.fs; path = ../Client/Shaders/fs_starmap.fs; sourceTree = "<group>"; };
 		3749D1091B574025009F280E /* fs_std_rgba.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_std_rgba.fs; path = ../Client/Shaders/fs_std_rgba.fs; sourceTree = "<group>"; };
 		3749D10A1B574025009F280E /* fs_std_tex.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fs_std_tex.fs; path = ../Client/Shaders/fs_std_tex.fs; sourceTree = "<group>"; };
 		3749D10B1B574025009F280E /* vs_starmap.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_starmap.vs; path = ../Client/Shaders/vs_starmap.vs; sourceTree = "<group>"; };
 		3749D10C1B574025009F280E /* vs_std_rgba.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_std_rgba.vs; path = ../Client/Shaders/vs_std_rgba.vs; sourceTree = "<group>"; };
 		3749D10D1B574025009F280E /* vs_std_uv.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vs_std_uv.vs; path = ../Client/Shaders/vs_std_uv.vs; sourceTree = "<group>"; };
+		3749D1141B581EE5009F280E /* blendish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = blendish.h; path = ../Client/UI/blendish.h; sourceTree = "<group>"; };
+		3749D1151B581EE5009F280E /* oui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oui.cpp; path = ../Client/UI/oui.cpp; sourceTree = "<group>"; };
+		3749D1161B581EE5009F280E /* oui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oui.h; path = ../Client/UI/oui.h; sourceTree = "<group>"; };
+		3749D1181B583036009F280E /* UISystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UISystem.cpp; path = ../Client/UI/UISystem.cpp; sourceTree = "<group>"; };
+		3749D1191B583036009F280E /* UISystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UISystem.hpp; path = ../Client/UI/UISystem.hpp; sourceTree = "<group>"; };
 		37599B041B4A006C00CA3E9B /* RenderTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RenderTypes.hpp; path = ../../Engine/Render/RenderTypes.hpp; sourceTree = "<group>"; };
 		378A996A1AEAE2BD008BD771 /* ShaderLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderLibrary.cpp; path = ../../CKGfx/ShaderLibrary.cpp; sourceTree = "<group>"; };
 		378A996B1AEAE2BD008BD771 /* ShaderLibrary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ShaderLibrary.hpp; path = ../../CKGfx/ShaderLibrary.hpp; sourceTree = "<group>"; };
@@ -330,13 +334,16 @@
 			name = nanovg;
 			sourceTree = "<group>";
 		};
-		3749D0F91B57313C009F280E /* OUI */ = {
+		3749D0F91B57313C009F280E /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				3749D0FB1B573249009F280E /* oui.cpp */,
-				3749D0FC1B573249009F280E /* oui.h */,
+				3749D1141B581EE5009F280E /* blendish.h */,
+				3749D1151B581EE5009F280E /* oui.cpp */,
+				3749D1161B581EE5009F280E /* oui.h */,
+				3749D1181B583036009F280E /* UISystem.cpp */,
+				3749D1191B583036009F280E /* UISystem.hpp */,
 			);
-			name = OUI;
+			name = UI;
 			sourceTree = "<group>";
 		};
 		37599AFF1B49E3F500CA3E9B /* Render */ = {
@@ -377,7 +384,7 @@
 		378DC21B1ACF7148004C8004 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				3749D0F91B57313C009F280E /* OUI */,
+				3749D0F91B57313C009F280E /* UI */,
 				37599AFF1B49E3F500CA3E9B /* Render */,
 				37C94ECF1B1D078500F35CD5 /* Tasks */,
 				37B30CB91AED80830029887F /* Shaders */,
@@ -765,13 +772,13 @@
 				378A996C1AEAE2BD008BD771 /* ShaderLibrary.cpp in Sources */,
 				37E604831B0A6B81009C916D /* EntityStore.cpp in Sources */,
 				37E604A41B0FCBE6009C916D /* MessageStream.cpp in Sources */,
+				3749D11A1B583036009F280E /* UISystem.cpp in Sources */,
 				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
 				37C94ED81B1D122F00F35CD5 /* GameTask.cpp in Sources */,
 				3749D0EE1B56F469009F280E /* nanovg.cpp in Sources */,
 				37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */,
 				372383101B4B150B005B1BA4 /* EngineGeometry.cpp in Sources */,
 				37E817131B4C8F0B00482CE4 /* RenderInterface.cpp in Sources */,
-				3749D0FD1B573249009F280E /* oui.cpp in Sources */,
 				37F43E611B34CB820065D8E9 /* DataRowset.cpp in Sources */,
 				37A0FD661B41C52600188B7A /* StellarSystemUtility.cpp in Sources */,
 				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
@@ -786,6 +793,7 @@
 				37E604A21B0FCBE6009C916D /* MessageDispatcher.cpp in Sources */,
 				373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */,
 				37E6049A1B0FCBCF009C916D /* EntityFactory.cpp in Sources */,
+				3749D1171B581EE5009F280E /* oui.cpp in Sources */,
 				37121D421B517D7500E35C54 /* SpectralClassUtility.cpp in Sources */,
 				37121D3A1B4F01C700E35C54 /* EngineMathGfx.cpp in Sources */,
 			);

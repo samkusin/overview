@@ -21,17 +21,18 @@ RenderInterface::RenderInterface(AppInterface& api) :
 {
 }
 
-Handle RenderInterface::registerObjectListHandler
+void RenderInterface::registerObjectListHandler
 (
+    uint32_t viewIndex,
     const overview::BuildRenderObjectListCb& cb
 )
 {
-    return _context->renderer->onBuildObjectList(cb);
+    _context->renderer->onBuildObjectList(viewIndex, cb);
 }
 
-void RenderInterface::unregisterObjectListHandler(Handle handle)
+void RenderInterface::unregisterObjectListHandler(uint32_t viewIndex)
 {
-    _context->renderer->delBuildObjectListHandler(handle);
+    _context->renderer->delBuildObjectListHandler(viewIndex);
 }
 
         

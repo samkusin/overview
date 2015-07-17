@@ -24,7 +24,6 @@ namespace cinek { namespace overview {
 class EntityStore;
 class EntityFactory;
 class EntityObject;
-class EntityTransformWorld;
 
 //  Components -----------------------------------------------------------------
 

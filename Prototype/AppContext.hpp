@@ -27,7 +27,6 @@ namespace cinek { namespace ovproto {
         Allocator* allocator;
         overview::MessagePublisher* messagePublisher;
         overview::EntityStore* entityStore;
-        overview::EntityTransformWorld* scene;
         AppDocumentMap* documentMap;
         
         overview::RenderResources* renderResources;

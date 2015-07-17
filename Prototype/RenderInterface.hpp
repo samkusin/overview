@@ -24,11 +24,11 @@ public:
     
     //  register an object list handler executed before any rendering is
     //  performed
-    Handle registerObjectListHandler(const overview::BuildRenderObjectListCb& cb);
+    void registerObjectListHandler(uint32_t viewIndex,
+        const overview::BuildRenderObjectListCb& cb);
 
     //  remove an object list handler
-    void unregisterObjectListHandler(Handle handle);
-    
+    void unregisterObjectListHandler(uint32_t viewIndex);
     
     
 private:

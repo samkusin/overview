@@ -26,12 +26,16 @@ struct RenderView
     uint32_t clearColor;
     float clearDepth;
     uint8_t clearStencil;
+    bool hasClear : 1;
     bool hasDepth : 1;
     bool hasStencil : 1;
+    bool sequentialSubmit : 1;
     
     operator bool() const {
         return rect;
     }
+    RenderView() = default;
+    RenderView(int x, int y, int w, int h);
 };
 
 struct RenderCommand
@@ -105,8 +109,8 @@ public:
     void initView(uint32_t index, const RenderView& view);
     
     //  Note - do not call these methods outside of the main thread
-    Handle onBuildObjectList(const BuildRenderObjectListCb& cb);
-    void delBuildObjectListHandler(Handle handle);
+    void onBuildObjectList(uint32_t viewIndex, const BuildRenderObjectListCb& cb);
+    void delBuildObjectListHandler(uint32_t viewIndex);
     
     //  these methods extend the functionality of the Renderer
     void setPipelineCallback(int32_t pipeline, const RenderPipelineCb& cb);
@@ -115,13 +119,12 @@ public:
     void render(RenderContext context);
      
 private:
-    unordered_map<Handle, BuildRenderObjectListCb> _buildObjectListHandlers;
-    vector<RenderPipelineCb> _pipelines;
     RenderCommandList _commands;
     RenderObjectList _objects;
-    Handle _listHandlerHandle;
     
     vector<RenderView> _views;
+    vector<BuildRenderObjectListCb> _viewCallbacks;
+    vector<RenderPipelineCb> _pipelines;
 };
 
 

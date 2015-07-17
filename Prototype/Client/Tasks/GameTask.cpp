@@ -212,8 +212,7 @@ struct GameTask::Starmap
 
 
 GameTask::GameTask(AppInterface api) :
-    _API(api),
-    _buildStarmapRenderHandler(kNullHandle)
+    _API(api)
 {
 }
 
@@ -304,7 +303,7 @@ void GameTask::onBegin()
     }
     
     RenderInterface _render(_API);
-    _buildStarmapRenderHandler = _render.registerObjectListHandler(
+    _render.registerObjectListHandler(0,
         [this](const ckm::Frustrum& frustrum, RenderObjectListWriter& writer)
         {
             _starmap->buildObjectList(_API.entityStore(), frustrum, writer);
@@ -370,7 +369,7 @@ void GameTask::onEnd()
 {
     _API.entityStore().destroy(_camera);
     
-    RenderInterface(_API).unregisterObjectListHandler(_buildStarmapRenderHandler);
+    RenderInterface(_API).unregisterObjectListHandler(0);
     _starmap = nullptr;
 }
 

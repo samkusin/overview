@@ -34,8 +34,6 @@ private:
     struct Starmap;
     unique_ptr<Starmap> _starmap;
     
-    Handle _buildStarmapRenderHandler;
-    
     Entity _camera;
 };
 

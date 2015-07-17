@@ -17,9 +17,20 @@
 #include "Engine/EngineMath.hpp"
 #include "Engine/EngineMathGfx.hpp"
 
+#include <cinek/debug.hpp>
 #include <glm/ext.hpp>
 
 namespace cinek { namespace overview {
+
+RenderView::RenderView(int x, int y, int w, int h) :
+    rect(ckm::ivec2(x,y), ckm::ivec2(w,h)),
+    hasClear(false),
+    hasDepth(false),
+    hasStencil(false),
+    sequentialSubmit(false)
+    
+{
+}
 
 RenderObjectListWriter::RenderObjectListWriter
 (
@@ -129,11 +140,11 @@ Renderer::Renderer
     const InitParams& params,
     const Allocator& allocator
 ) :
-    _buildObjectListHandlers(allocator),
-    _pipelines(allocator),
     _commands(allocator),
     _objects(allocator),
-    _listHandlerHandle(kNullHandle)
+    _views(allocator),
+    _viewCallbacks(allocator),
+    _pipelines(allocator)
 {
     _pipelines.resize(params.pipelineCnt);
     _commands.reserve(params.commandCnt);
@@ -141,6 +152,7 @@ Renderer::Renderer
 
     const bgfx::Caps* halCaps = bgfx::getCaps();
     _views.resize(halCaps->maxViews);
+    _viewCallbacks.resize(halCaps->maxViews);
     
     for (auto& view : _views)
     {
@@ -150,12 +162,13 @@ Renderer::Renderer
     RenderView view0;
     view0.rect.min = ckm::ivec2(0);
     view0.rect.max = ckm::ivec2(params.width, params.height);
-    view0.clearColor = 0x000011ff,
-    view0.clearDepth = 1.0f;
-    view0.clearStencil = 0;
+    view0.hasClear = true;
     view0.hasDepth = true;
     view0.hasStencil = false;
-    
+    view0.clearColor = 0x000011ff;
+    view0.clearDepth = 1.0f;
+    view0.clearStencil = 0;
+
     initView(0, view0);
 }
 
@@ -165,46 +178,56 @@ void Renderer::initView(uint32_t index, const RenderView& view)
         return;
     
     _views[index] = view;
+    
     auto& renderView = _views[index];
     
-    uint32_t flags = BGFX_CLEAR_COLOR;
-    if (renderView.hasDepth)
-    {
-        flags |= BGFX_CLEAR_DEPTH;
-    }
-    else
-    {
-        renderView.clearDepth = 0.f;
-    }
-    if (renderView.hasStencil)
-    {
-        flags |= BGFX_CLEAR_STENCIL;
-    }
-    else
-    {
-        renderView.clearStencil = 0;
-    }
+    bgfx::setViewSeq(index, renderView.sequentialSubmit);
     
-    bgfx::setViewClear(index, flags,
-        renderView.clearColor,
-        renderView.clearDepth,
-        renderView.clearStencil);
+    if (renderView.hasClear)
+    {
+        uint32_t flags = 0;
+        if (renderView.clearColor != 0)
+        {
+            flags |= BGFX_CLEAR_COLOR;
+        }
+        if (renderView.hasDepth)
+        {
+            flags |= BGFX_CLEAR_DEPTH;
+        }
+        else
+        {
+            renderView.clearDepth = 0.f;
+        }
+        if (renderView.hasStencil)
+        {
+            flags |= BGFX_CLEAR_STENCIL;
+        }
+        else
+        {
+            renderView.clearStencil = 0;
+        }
+        
+        bgfx::setViewClear(index, flags,
+            renderView.clearColor,
+            renderView.clearDepth,
+            renderView.clearStencil);
+    }
 }
     
-Handle Renderer::onBuildObjectList(const BuildRenderObjectListCb& cb)
+void Renderer::onBuildObjectList
+(
+    uint32_t viewIndex,
+    const BuildRenderObjectListCb& cb
+)
 {
-    ++_listHandlerHandle;
-    if (_listHandlerHandle == kNullHandle)
-        _listHandlerHandle = 1;
-    
-    _buildObjectListHandlers.emplace(_listHandlerHandle, cb);
-    
-    return _listHandlerHandle;
+    CK_ASSERT_RETURN(viewIndex < _viewCallbacks.size());
+    _viewCallbacks[viewIndex] = cb;
 }
 
-void Renderer::delBuildObjectListHandler(Handle handle)
+void Renderer::delBuildObjectListHandler(uint32_t viewIndex)
 {
-    _buildObjectListHandlers.erase(_listHandlerHandle);
+    CK_ASSERT_RETURN(viewIndex < _viewCallbacks.size());
+    _viewCallbacks[viewIndex] = BuildRenderObjectListCb();
 }
 
 void Renderer::setPipelineCallback
@@ -253,7 +276,7 @@ void Renderer::render(RenderContext context)
             auto& view = lc.self->_views[viewId];
             auto& commands = lc.self->_commands;
             auto& objects = lc.self->_objects;
-            auto& objectListHandlers = lc.self->_buildObjectListHandlers;
+            auto& objectListHandlers = lc.self->_viewCallbacks;
             auto& pipelines = lc.self->_pipelines;
             
             auto viewDim = view.rect.dimensions();
@@ -273,21 +296,26 @@ void Renderer::render(RenderContext context)
         
             auto aspect = (ckm::scalar)viewDim.x / viewDim.y;
             
-            auto worldFrustrum = ckm::Frustrum(camera.nearZ(),
-                                    camera.farZ(),
-                                    camera.fov(),
-                                    aspect
-                                 ).transform(
-                                    cameraBasis,
-                                    ckm::vec3(cameraSRT[3])
-                                 );
+            ckm::Frustrum worldFrustrum;
+            
+            if (camera.kPerspective)
+            {
+                worldFrustrum = ckm::Frustrum(camera.nearZ(),
+                                camera.farZ(),
+                                camera.fov(),
+                                aspect
+                            ).transform(
+                                cameraBasis,
+                                ckm::vec3(cameraSRT[3])
+                            );
+            }
             
             //  construct our render list
             RenderObjectListWriter listWriter(commands, objects);
             
-            for (auto& listHandler : objectListHandlers)
+            if (objectListHandlers[viewId])
             {
-                listHandler.second(worldFrustrum, listWriter);
+                objectListHandlers[viewId](worldFrustrum, listWriter);
             }
             
             //  We translate renderable objects so that our render camera is at

@@ -42,7 +42,7 @@
 
 #include "Sim/SpectralClassUtility.hpp"
 
-#include "CKGfx/External/nanovg/nanovg.h"
+#include "UI/UISystem.hpp"
 
 namespace cinek { namespace ovproto {
 
@@ -118,6 +118,13 @@ void run(SDL_Window* window)
     overview::RenderContext renderContext;
     renderContext.entityStore = &entityStore;
     renderContext.resources = &renderResources;
+    
+    //  UI
+    //overview::RenderView uiView(0,0,viewWidth,viewHeight);
+    //uiView.sequentialSubmit = true;
+    //renderer.initView(16, uiView);
+    
+    //UISystem uiSystem(16, renderer);
     
     //  Application utilitites
     TaskScheduler taskScheduler(64, allocator);

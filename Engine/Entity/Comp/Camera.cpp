@@ -27,6 +27,27 @@ void Camera::init
     _nearZClip = nearZ;
     _farZClip = farZ;
     _fov = fovRads;
+    _type = kPerspective;
+    _dirty = true;
+}
+
+void Camera::initOrtho(int viewIndex, ckm::scalar nearZ, ckm::scalar farZ)
+{
+    _viewIndex = viewIndex;
+    _nearZClip = nearZ;
+    _farZClip = farZ;
+    _fov = 0;
+    _type = kOrthogonal;
+    _dirty = true;
+}
+
+void Camera::initNull(int viewIndex)
+{
+    _viewIndex = viewIndex;
+    _nearZClip = 0;
+    _farZClip = 0;
+    _fov = 0;
+    _type = kNull;
     _dirty = true;
 }
 
