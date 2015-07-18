@@ -22,31 +22,11 @@ struct RenderResources
     cinek::gfx::ShaderLibrary* shaderLibrary;
 };
 
-struct RenderContext
-{
-    overview::EntityStore* entityStore;
-    overview::RenderResources* resources;
-    
-    int32_t viewWidth;
-    int32_t viewHeight;
-};
-
 struct RenderObject
 {
     int32_t renderableIdx;
 };
 
-class Renderer;
-class RenderObjectListWriter;
-class RenderObjectListReader;
-
-struct RenderCameraContext;
-
-using BuildRenderObjectListCb = std::function<void(const ckm::Frustrum&,
-    RenderObjectListWriter&)>;
-using RenderPipelineCb = std::function<void(RenderContext,
-    RenderCameraContext&,
-    RenderObjectListReader&)>;
     
 } /* namespace overview */ } /* namespace cinek */
 

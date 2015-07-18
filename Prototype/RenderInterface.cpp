@@ -9,7 +9,8 @@
 #include "RenderInterface.hpp"
 #include "AppInterface.hpp"
 
-#include "Engine/Render/Renderer.hpp"
+#include "CKGfx/ShaderLibrary.hpp"
+#include "CKGfx/TextureAtlas.hpp"
 
 #include <cinek/debug.hpp>
 
@@ -21,20 +22,15 @@ RenderInterface::RenderInterface(AppInterface& api) :
 {
 }
 
-void RenderInterface::registerObjectListHandler
-(
-    uint32_t viewIndex,
-    const overview::BuildRenderObjectListCb& cb
-)
+overview::RenderResources& RenderInterface::renderResources()
 {
-    _context->renderer->onBuildObjectList(viewIndex, cb);
+    return *_context->renderResources;
 }
 
-void RenderInterface::unregisterObjectListHandler(uint32_t viewIndex)
+gfx::Rect RenderInterface::viewRect() const
 {
-    _context->renderer->delBuildObjectListHandler(viewIndex);
+    return _context->viewRect;
 }
-
         
     } /* namespace ovproto */
 } /* namespace cinek */

@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "Tasks/GameTask.hpp"
+#include "AppContext.hpp"
 
 #include "CKGfx/MeshLibrary.hpp"
 #include "CKGfx/TextureAtlas.hpp"
@@ -24,8 +24,9 @@
 #include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Entity/Comp/MeshRenderable.hpp"
 
+#include "Engine/ViewStack.hpp"
+
 #include <cinek/file.hpp>
-#include <cinek/taskscheduler.hpp>
 #include <cinek/json/json.hpp>
 
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
@@ -36,13 +37,14 @@
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
 
-#include "Engine/Render/Renderer.hpp"
 #include "Render/RenderShaders.hpp"
-#include "Render/StarmapRenderPipeline.hpp"
 
 #include "Sim/SpectralClassUtility.hpp"
 
 #include "UI/UISystem.hpp"
+
+#include "GalaxyViewController.hpp"
+
 
 namespace cinek { namespace ovproto {
 
@@ -82,15 +84,12 @@ void run(SDL_Window* window)
     bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
     bgfx::setDebug(BGFX_DEBUG_TEXT);
     
-    gfx::VertexTypes::initialize();
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
+        0x111111ff,
+        1.0f,
+        0);
     
-    overview::Renderer::InitParams renderInitParams;
-    renderInitParams.objectCnt = 32768;
-    renderInitParams.commandCnt = 32;
-    renderInitParams.pipelineCnt = kRenderPipeline_Count;
-    renderInitParams.width = viewWidth;
-    renderInitParams.height = viewHeight;
-    overview::Renderer renderer(renderInitParams, allocator);
+    gfx::VertexTypes::initialize();
     
     gfx::TextureAtlas textureAtlas(256, allocator);
     gfx::MeshLibrary meshLibrary(256, allocator);
@@ -114,20 +113,12 @@ void run(SDL_Window* window)
         { overview::component::Light::kComponentType, 8 }
     });
     
-    //  Renderer Utilities
-    overview::RenderContext renderContext;
-    renderContext.entityStore = &entityStore;
-    renderContext.resources = &renderResources;
-    
     //  UI
     //overview::RenderView uiView(0,0,viewWidth,viewHeight);
     //uiView.sequentialSubmit = true;
     //renderer.initView(16, uiView);
     
     //UISystem uiSystem(16, renderer);
-    
-    //  Application utilitites
-    TaskScheduler taskScheduler(64, allocator);
     
     //  messaging - use two streams, one that is active, and one for the next
     //  frame
@@ -139,12 +130,14 @@ void run(SDL_Window* window)
     AppDocumentMap appDocumentMap(allocator);
     
     //  schedule an application task
+    overview::ViewStack viewStack(allocator);
     AppContext context;
     
     context.entityStore = &entityStore;
+    context.viewStack = &viewStack;
     context.messagePublisher = &messagePublisher;
     context.renderResources = &renderResources;
-    context.renderer = &renderer;
+    context.viewRect = { 0, 0, viewWidth, viewHeight };
     context.documentMap = &appDocumentMap;
     context.allocator = &allocator;
     context.createComponentCb =
@@ -158,20 +151,29 @@ void run(SDL_Window* window)
     if (!SpectralUtility::loadTables())
         return;
     
-    
-    StarmapRenderPipeline starmapRenderer;
-    starmapRenderer.loadResources(renderResources);
-    renderer.setPipelineCallback(kRenderPipeline_Starmap, starmapRenderer);
-    
     auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);
     auto starMeshHandle = meshLibrary.create("star");
     meshLibrary.setMeshForLOD(starMeshHandle, std::move(starMesh), gfx::LODIndex::kHigh);
     
-    //  start app
-    
-    auto initialTask = allocate_unique<GameTask>(allocator, context);
-    
-    taskScheduler.schedule(std::move(initialTask));
+    viewStack.setFactory(
+        [&context](int viewId) -> unique_ptr<overview::ViewController>
+        {
+            unique_ptr<overview::ViewController> vc;
+            Allocator allocator;
+            switch (viewId)
+            {
+            case kViewControllerId_Galaxy:
+                vc = allocate_unique<GalaxyViewController, overview::ViewController>(
+                    allocator,
+                    AppInterface(context)
+                );
+                break;
+            }
+            
+            return vc;
+        });
+
+    viewStack.present(kViewControllerId_Galaxy);
     
     ////////////////////////////////////////////////////////////////////////////
     //  the main loop
@@ -183,9 +185,6 @@ void run(SDL_Window* window)
     {
         uint32_t thisSystemTime = SDL_GetTicks();
         uint32_t frameTimeMs = thisSystemTime - lastSystemTime;
-        
-        //  run tasks (including the application)
-        taskScheduler.update(frameTimeMs);
 
         //  queue inputs
         uint32_t sdlEvents = PollSDLEvents();
@@ -201,12 +200,10 @@ void run(SDL_Window* window)
         overview::dispatchMessageStreamToPublisher(messagesForDispatch, messagePublisher);
 
         messages = std::move(messagesForDispatch);
-
-        //  render scene
-        renderContext.viewWidth = viewWidth;
-        renderContext.viewHeight = viewHeight;
         
-        renderer.render(renderContext);
+        viewStack.process();
+
+        viewStack.render();
         
         bgfx::frame();
 
@@ -214,8 +211,6 @@ void run(SDL_Window* window)
 
         lastSystemTime = thisSystemTime;
     }
-    
-    starmapRenderer.unloadResources(renderResources);
     
     SpectralUtility::unloadTables();
 }

@@ -35,6 +35,12 @@ struct BitmapInfo
     const char* name;
 };
 
+struct Rect
+{
+    int x, y;
+    int w, h;
+};
+
 
 class TextureAtlas;
 class ShaderLibrary;

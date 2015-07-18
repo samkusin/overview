@@ -17,6 +17,8 @@
 
 namespace cinek { namespace overview {
 
+class ViewStack;
+
 //  The Entity is the one of the few engine-wide types.  EntityTypes.hpp
 //  contains prototypes for other Entity related objects.
 

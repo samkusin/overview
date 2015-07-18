@@ -27,10 +27,13 @@ namespace cinek { namespace ovproto {
         Allocator* allocator;
         overview::MessagePublisher* messagePublisher;
         overview::EntityStore* entityStore;
+        overview::ViewStack* viewStack;
         AppDocumentMap* documentMap;
         
         overview::RenderResources* renderResources;
-        overview::Renderer* renderer;
+        
+        //  viewport
+        gfx::Rect viewRect;
         
         //  callbacks
         overview::CustomComponentCreateFn createComponentCb;

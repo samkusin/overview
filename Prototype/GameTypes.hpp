@@ -26,6 +26,11 @@ namespace cinek {
     class AppContext;
     
     
+    enum
+    {
+        kViewControllerId_Galaxy
+    };
+    
     } /* namespace overview */
 } /* namespace cinek */
 

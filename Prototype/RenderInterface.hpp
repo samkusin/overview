@@ -22,14 +22,9 @@ class RenderInterface
 public:
     RenderInterface(AppInterface& context);
     
-    //  register an object list handler executed before any rendering is
-    //  performed
-    void registerObjectListHandler(uint32_t viewIndex,
-        const overview::BuildRenderObjectListCb& cb);
-
-    //  remove an object list handler
-    void unregisterObjectListHandler(uint32_t viewIndex);
+    overview::RenderResources& renderResources();
     
+    gfx::Rect viewRect() const;
     
 private:
     AppContext* _context;
