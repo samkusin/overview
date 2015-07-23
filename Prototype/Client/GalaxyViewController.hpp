@@ -10,6 +10,7 @@
 #define Overview_App_GalaxyViewController_hpp
 
 #include "GameTypes.hpp"
+#include "UI/UITypes.hpp"
 #include "AppInterface.hpp"
 #include "Engine/ViewController.hpp"
 
@@ -17,7 +18,7 @@
 
 namespace cinek { namespace ovproto {
 
-class GalaxyViewController : public overview::ViewController
+class GalaxyViewController : public overview::ViewController, public UISubscriber
 {
 public:
     GalaxyViewController(AppInterface api);
@@ -34,6 +35,8 @@ public:
     virtual void renderView() override;
     virtual int viewId() const override { return kViewControllerId_Galaxy; }
     
+    virtual void onUIEvent(int evtId, int evtType) override;
+    
 private:
     Allocator _allocator;
     AppInterface _API;
@@ -42,6 +45,13 @@ private:
     unique_ptr<Starmap> _starmap;
     
     Entity _camera;
+    
+    //  UI defines
+    enum
+    {
+        kID_VIEW,
+        kID_BUTTON
+    };
     
     //  starmap rendering
     gfx::ShaderProgramId _shaderProgram;

@@ -10,6 +10,8 @@
 #define Overview_App_Context_hpp
 
 #include "GameTypes.hpp"
+#include "Client/UI/UITypes.hpp"
+
 #include "Engine/Render/RenderTypes.hpp"
 
 #include <cinek/json/jsontypes.hpp>
@@ -34,6 +36,7 @@ namespace cinek { namespace ovproto {
         
         //  viewport
         gfx::Rect viewRect;
+        NVGcontext* nvg;
         
         //  callbacks
         overview::CustomComponentCreateFn createComponentCb;

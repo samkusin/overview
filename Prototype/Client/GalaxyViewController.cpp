@@ -20,6 +20,8 @@
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
 
+#include "UI/UIBuilder.hpp"
+
 //  used for building a galactic "cell"
 #include "Sim/BuildStarmap.hpp"
 #include "Engine/BVH/AABBTree.hpp"
@@ -264,7 +266,7 @@ void GalaxyViewController::onViewLoad()
     */
     constexpr ckm::scalar kCellBoundZ = 32;
     constexpr ckm::scalar kCellBoundXY = 32;
-    constexpr ckm::scalar kSolarMassTotal = 0.018 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
+    constexpr ckm::scalar kSolarMassTotal = 0.0008 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
     vector<BuildStarmapFunction::SpectralInput> spectralInputs =
     {
         { 0.0 },
@@ -421,6 +423,33 @@ void GalaxyViewController::updateView()
         object->matrix() = transform;
     }
     */
+}
+
+void GalaxyViewController::layoutView()
+{
+    UILayout layout;
+    
+    auto viewRect = RenderInterface(_API).viewRect();
+    
+    layout.frame().
+        events(UI_BUTTON0_DOWN, this, kID_VIEW).
+        size(viewRect.w, viewRect.h).
+        column(UI_FILL).
+            button(UITHEME_ICON_GHOST, "Button", this, kID_BUTTON).
+        end().
+    end();
+}
+
+void GalaxyViewController::onUIEvent(int evtId, int evtType)
+{
+    if (evtId == kID_VIEW)
+    {
+        printf("View Hit\n");
+    }
+    else if (evtId == kID_BUTTON)
+    {
+        printf("Button Hit\n");
+    }
 }
 
 struct RendererCameraTranslate
@@ -707,12 +736,6 @@ void GalaxyViewController::renderView()
             bgfx::submit(0);
         }
     }
-
-
-}
-
-void GalaxyViewController::layoutView()
-{
 }
 
 } /* namespace ovproto */

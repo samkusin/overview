@@ -76,6 +76,7 @@ struct BuildStarmapFunction::CommonState
     int spectralIndexMax;
     vector<Randomizer>& spectralRandomizers;
     simtime ageInYears = 0;
+    int starCount;
     
     overview::EntityStore& entityStore;
     StellarSystemTree& stellarSystemTree;
@@ -95,7 +96,8 @@ struct BuildStarmapFunction::CommonState
         spectralRandomizers(specRandomizers),
         entityStore(store),
         stellarSystemTree(world),
-        standardTables(tables)
+        standardTables(tables),
+        starCount(0)
     {
     }
 };
@@ -267,6 +269,9 @@ auto BuildStarmapFunction::operator()
         result.entityStore = std::move(entityStore);
         result.stellarSystemTree = std::move(stellarSystemTree);
     }
+    
+    //  returned values that are useful for debugging
+    result.starCount = common.starCount;
     
     return result;
 };
@@ -526,6 +531,8 @@ Entity BuildStarmapFunction::createBodies
         ckm::vec3 offset(lyOffset, 0, 0);
         transform->setLocalPosition(offset);
     }
+    
+    state.starCount += numStars;
     
     return bodies[0];
 }

@@ -15,6 +15,8 @@
 
 namespace cinek {
     namespace ovproto {
+    
+class UIRenderer;
 
 class AppInterface
 {

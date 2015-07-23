@@ -26,6 +26,9 @@ public:
     
     gfx::Rect viewRect() const;
     
+    //  obtain an instance of a 2D renderer bound to a specific view
+    NVGcontext* obtain2DAPI();
+    
 private:
     AppContext* _context;
 };

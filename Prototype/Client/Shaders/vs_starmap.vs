@@ -25,8 +25,10 @@ uniform vec4 u_scale;
 */
 // log scale - so the larger = fainter stars more visible
 const float MAG_LIMIT =  32.0;
-
+const float POINT_SCALE = 0.5;
+const float POINT_FALLOFF = 1.25;   //  the higher, the steeper
 const float ONE_DIV_LOG10 = 1.0 / log2(10.0);
+const float BRIGHTNESS_POW = 1.25;
 
 float log10(float v) {
     return log2(v) * ONE_DIV_LOG10;
@@ -44,7 +46,7 @@ void main()
     /*  adjust color and size based on our apparent (relative to eye) mag */
     float appMag = a_texcoord0.x - 5.0 * (1.0 - log10(dist));
     float appMagExp = 1.0 - appMag;
-    float scale = 0.25 * pow(1.25, appMagExp);
+    float scale = POINT_SCALE * pow(POINT_FALLOFF, appMagExp);
    
     vec2 scalexy = mul(u_scale.xy, scale);
     
@@ -86,7 +88,7 @@ void main()
     }
     
     float brightness = clamp((MAG_LIMIT + appMagExp)/MAG_LIMIT, 0.0, 1.0);
-    v_color0 = mul(a_color0, pow(brightness, 1.5));
+    v_color0 = mul(a_color0, pow(brightness, BRIGHTNESS_POW));
     
     gl_Position = mul(u_proj, cvert);
 }

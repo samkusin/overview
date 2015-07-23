@@ -31,6 +31,12 @@ gfx::Rect RenderInterface::viewRect() const
 {
     return _context->viewRect;
 }
+
+
+NVGcontext* RenderInterface::obtain2DAPI()
+{
+    return _context->nvg;
+}
         
     } /* namespace ovproto */
 } /* namespace cinek */

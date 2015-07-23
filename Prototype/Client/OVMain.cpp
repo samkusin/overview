@@ -41,12 +41,29 @@
 
 #include "Sim/SpectralClassUtility.hpp"
 
-#include "UI/UISystem.hpp"
-
 #include "GalaxyViewController.hpp"
+
+#include "UI/UIRenderer.hpp"
+#include "UI/UIEngine.hpp"
+#include "UI/oui.h"
 
 
 namespace cinek { namespace ovproto {
+
+static int SDLCALL CustomSDLEventFilter(void *userdata, SDL_Event * event)
+{
+    //  these events do not need to be queued - the event values are obtained
+    //  via polling as we use an IMGUI architecture relying on fast framerates
+    switch (event->type)
+    {
+    case SDL_MOUSEMOTION:
+    case SDL_MOUSEBUTTONUP:
+    case SDL_MOUSEBUTTONDOWN:
+        return 0;
+    }
+    
+    return 1;
+}
 
 enum
 {
@@ -56,8 +73,18 @@ enum
 
 static uint32_t PollSDLEvents()
 {
-    uint32_t flags = 0;
+    int mx, my;
     
+    //  handle Mouse UI, which is polled per frame instead of set per event.
+    uint32_t mbtn = SDL_GetMouseState(&mx, &my);
+    
+    uiSetCursor(mx, my);
+    
+    uiSetButton(0, 0, (mbtn & SDL_BUTTON_LMASK) != 0);
+    uiSetButton(2, 0, (mbtn & SDL_BUTTON_RMASK) != 0);
+    
+    //  poll system and key events
+    uint32_t flags = 0;
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
@@ -65,6 +92,25 @@ static uint32_t PollSDLEvents()
         {
             flags |= kPollSDLEvent_Quit;
             break;
+        }
+        else if (event.type == SDL_MOUSEWHEEL)
+        {
+            if (event.wheel.which != SDL_TOUCH_MOUSEID)
+            {
+                uiSetScroll(event.wheel.x, event.wheel.y);
+            }
+        }
+        else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+        {
+            SDL_KeyboardEvent& kevt = event.key;
+            if (!kevt.repeat)
+            {
+                uiSetKey(kevt.keysym.scancode, kevt.keysym.mod, kevt.state);
+            }
+        }
+        else if (event.type == SDL_TEXTINPUT)
+        {
+            uiSetChar(event.text.text[0]);
         }
     }
     
@@ -80,12 +126,19 @@ void run(SDL_Window* window)
     int viewHeight = 0;
     
     SDL_GetWindowSize(window, &viewWidth, &viewHeight);
-
-    bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
-    bgfx::setDebug(BGFX_DEBUG_TEXT);
     
+    SDL_SetEventFilter(CustomSDLEventFilter, NULL);
+    
+    bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
+    bgfx::setDebug(0
+                    | BGFX_DEBUG_TEXT
+                  //  | BGFX_DEBUG_STATS
+                  );
+    
+    //const bgfx::Caps& bgfxCaps = *bgfx::getCaps();
+
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-        0x111111ff,
+        0x000000ff,
         1.0f,
         0);
     
@@ -114,11 +167,16 @@ void run(SDL_Window* window)
     });
     
     //  UI
-    //overview::RenderView uiView(0,0,viewWidth,viewHeight);
-    //uiView.sequentialSubmit = true;
-    //renderer.initView(16, uiView);
+    UIcontext* uiContext = uiCreateContext(4096, 1<<20);
+    uiMakeCurrent(uiContext);
+    uiSetHandler(OUIHandler);
     
-    //UISystem uiSystem(16, renderer);
+    auto nvgContext = createUIRenderingContext(1);
+    if (!nvgContext)
+    {
+        CK_LOG_ERROR("OVMain", "Failed to initialize UI Context");
+        return;
+    }
     
     //  messaging - use two streams, one that is active, and one for the next
     //  frame
@@ -138,6 +196,7 @@ void run(SDL_Window* window)
     context.messagePublisher = &messagePublisher;
     context.renderResources = &renderResources;
     context.viewRect = { 0, 0, viewWidth, viewHeight };
+    context.nvg = nvgContext;
     context.documentMap = &appDocumentMap;
     context.allocator = &allocator;
     context.createComponentCb =
@@ -203,7 +262,15 @@ void run(SDL_Window* window)
         
         viewStack.process();
 
+        uiBeginLayout();
+        viewStack.layout();
+        uiEndLayout();
+        
         viewStack.render();
+        
+        renderUI(context.nvg, context.viewRect);
+        
+        uiProcess(thisSystemTime);
         
         bgfx::frame();
 
@@ -213,6 +280,9 @@ void run(SDL_Window* window)
     }
     
     SpectralUtility::unloadTables();
+    
+    destroyUIRenderingContext(nvgContext);
+    nvgContext = nullptr;
 }
 
 } /* namespace ovproto */ } /* namespace cinek */

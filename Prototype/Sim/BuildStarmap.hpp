@@ -99,6 +99,7 @@ public:
         
         overview::EntityStore entityStore;
         StellarSystemTree stellarSystemTree;
+        int starCount;
     };
     
     static constexpr auto kBaseSystemRadius = 0.10; // lyr

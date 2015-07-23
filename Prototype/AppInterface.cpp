@@ -8,6 +8,8 @@
 
 #include "AppInterface.hpp"
 
+#include "Client/UI/UIRenderer.hpp"
+
 #include "Engine/Entity/EntityFactory.hpp"
 #include "Engine/Entity/EntityStore.hpp"
 
@@ -107,7 +109,6 @@ overview::EntityStore& AppInterface::entityStore()
 {
     return *_context->entityStore;
 }
-  
         
     } /* namespace ovproto */
 } /* namespace cinek */
