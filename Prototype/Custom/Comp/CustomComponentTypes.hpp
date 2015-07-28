@@ -29,10 +29,6 @@ namespace component
         kStellarSystem      = overview::component::MakeComponentId(kStellarSpace, 0x0000),
         kStarBody           = overview::component::MakeComponentId(kStellarSpace, 0x0001)
     };
-
-
-    template<typename _Component>
-    using Table = overview::component::Table<_Component>;
 }
 
 } /* namespace ovproto */ } /* namespace cinek */

@@ -7,19 +7,15 @@
 //
 
 #include "EntityTypes.hpp"
-#include "Light.hpp"
 #include "Renderable.hpp"
 #include "MeshRenderable.hpp"
-#include "Body.hpp"
 
 namespace cinek { namespace overview {
 
 namespace component
 {
-    COMPONENT_TYPE_IMPL(Light, kLight, {}, {});
     COMPONENT_TYPE_IMPL(Renderable, kRenderable, {}, {});
     COMPONENT_TYPE_IMPL(MeshRenderable, kMeshRenderable, {}, {});
-    COMPONENT_TYPE_IMPL(Body, kBody, {}, {});
 }
 
 } /* namespace overview */ } /* namespace cinek */

@@ -10,18 +10,24 @@
 #define Overview_App_GalaxyViewController_hpp
 
 #include "GameTypes.hpp"
+#include "AppContext.hpp"
+
 #include "UI/UITypes.hpp"
-#include "AppInterface.hpp"
 #include "Engine/ViewController.hpp"
 
+#include "AppInterface.hpp"
+#include "Services/RenderService.hpp"
+#include "Services/EntityService.hpp"
+
 #include <cinek/vector.hpp>
+#include <array>
 
 namespace cinek { namespace ovproto {
 
 class GalaxyViewController : public overview::ViewController, public UISubscriber
 {
 public:
-    GalaxyViewController(AppInterface api);
+    GalaxyViewController(AppContext context);
     virtual ~GalaxyViewController();
     
     virtual void onViewLoad() override;
@@ -39,7 +45,10 @@ public:
     
 private:
     Allocator _allocator;
+    
     AppInterface _API;
+    RenderService _Render;
+    EntityService _Entity;
     
     struct Starmap;
     unique_ptr<Starmap> _starmap;

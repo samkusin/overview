@@ -69,9 +69,9 @@ struct BuildStarmapFunction
 private:
     struct StandardTables
     {
-        component::Table<overview::component::Transform> transform;
-        component::Table<component::StellarSystem> systemTable;
-        component::Table<component::StarBody> starTable;
+        overview::component::Table<overview::component::Transform> transform;
+        overview::component::Table<component::StellarSystem> systemTable;
+        overview::component::Table<component::StarBody> starTable;
     };
     
     struct Randomizer;

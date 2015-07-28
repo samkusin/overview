@@ -1,10 +1,31 @@
 {
-    "renderable_filter_flags": {
-        "galaxy" : 1,
-        "starsystem" : 2,
-        "planet": 4
-    },
     "entity" : {
+        "player_user": {
+            "container" : {
+                "type" : "player"
+            },
+            "health" : {
+                "type" : "body",
+                "limit" : "1"
+            },
+            "character" : {
+                "loadout" : "player"
+            },
+            "transform" : {}
+        },
+        "ship_gilgerard" : {
+            "container" : {
+                "type" : "small_starship"
+            },
+            "health" : {
+                "type" : "structural",
+                "limit" : "1"
+            },
+            "character" : {
+                "loadout" : "small_starship"
+            },
+            "transform" : {}
+        },
         "star" : {
             "renderable" : {
                 "filter": "galaxy,starsystem,planet",

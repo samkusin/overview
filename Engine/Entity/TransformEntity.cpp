@@ -20,11 +20,11 @@ namespace component
     {
         _transforms = transforms;
         
-        Transform* transform = _transforms.rowForEntity(entity);
+        Transform* transform = _transforms.dataForEntity(entity);
         if (transform && transform->dirty())
         {
             const Transform* parentTransform = transform->parent().valid() ?
-                _transforms.rowForEntity(transform->parent()) :
+                _transforms.dataForEntity(transform->parent()) :
                 nullptr;
             auto& parentSRT = parentTransform ? parentTransform->worldSRT() : ckm::mat4(1);
             
@@ -73,9 +73,9 @@ namespace component
             //  assumption fails, then there's a problem with how entities
             //  and their parent-child-sibling relationships are cleaned up
             //  upon entity destruction.
-            auto childTransform = _transforms.rowForEntity(child);
+            auto childTransform = _transforms.dataForEntity(child);
             runTransform(*childTransform, transform.worldSRT());
-            child = _transforms.rowForEntity(child)->sibling();
+            child = _transforms.dataForEntity(child)->sibling();
         }
     }
     
@@ -88,7 +88,7 @@ namespace component
     {
         _transforms = transforms;
         
-        Transform* transform = _transforms.rowForEntity(entity);
+        Transform* transform = _transforms.dataForEntity(entity);
         if (!transform)
             return true;
             
@@ -109,11 +109,11 @@ namespace component
             //  assumption fails, then there's a problem with how entities
             //  and their parent-child-sibling relationships are cleaned up
             //  upon entity destruction.
-            auto childTransform = _transforms.rowForEntity(child);
+            auto childTransform = _transforms.dataForEntity(child);
             if (!visitLocal(child, *childTransform))
                 return false;
             
-            child = _transforms.rowForEntity(child)->sibling();
+            child = _transforms.dataForEntity(child)->sibling();
         }
         return true;
     }

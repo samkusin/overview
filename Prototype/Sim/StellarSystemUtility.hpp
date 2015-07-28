@@ -30,8 +30,8 @@ public:
 
 private:
     overview::EntityStore* _entityStore = nullptr;
-    component::Table<overview::component::Transform> _transformTable;
-    component::Table<component::StellarSystem> _stellarSystemTable;
+    overview::component::Table<overview::component::Transform> _transformTable;
+    overview::component::Table<component::StellarSystem> _stellarSystemTable;
 };
 
 using StellarSystemTree = overview::AABBTree<Entity, StellarSystemUtility>;

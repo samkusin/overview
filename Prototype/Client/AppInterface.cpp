@@ -8,7 +8,7 @@
 
 #include "AppInterface.hpp"
 
-#include "Client/UI/UIRenderer.hpp"
+#include "UI/UIRenderer.hpp"
 
 #include "Engine/Entity/EntityFactory.hpp"
 #include "Engine/Entity/EntityStore.hpp"
@@ -26,7 +26,7 @@ namespace cinek {
 JsonDocument AppInterface::sNullDocument;
 
 AppInterface::AppInterface(AppContext& context) :
-    _context(&context)
+    _context(context._o)
 {
 }
 
@@ -84,31 +84,6 @@ const JsonDocument& AppInterface::jsonDocument(uint32_t id) const
     
     return *it->second;
 }
-
-overview::Entity AppInterface::createEntity
-(
-    uint32_t srcTemplatesDocId,
-    const char* templateName
-)
-{
-    return overview::createEntity(*_context->entityStore,
-        *_context->renderResources,
-        *_context->documentMap->find(srcTemplatesDocId)->second,
-        templateName,
-        _context->messagePublisher,
-        _context->createComponentCb);
-}
-
-overview::Entity AppInterface::createEntity()
-{
-    return _context->entityStore->create();
-}
-
-
-overview::EntityStore& AppInterface::entityStore()
-{
-    return *_context->entityStore;
-}
-        
+     
     } /* namespace ovproto */
 } /* namespace cinek */

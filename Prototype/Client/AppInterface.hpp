@@ -35,20 +35,12 @@ public:
     //  Returns a document by name - if not found, returns a null, immutable
     //  document.
     const JsonDocument& jsonDocument(uint32_t id) const;
-    
-    //  creates an entity and broadcasts the event to subscribers
-    overview::Entity createEntity(uint32_t srcTemplatesDocId,
-            const char* templateName);
-    
-    overview::Entity createEntity();
-    
-    //  obtain the global EntityStore object
-    overview::EntityStore& entityStore();
+    //  Return a copy of the app context used to create services.
+    //
+    AppContext appContext() const { return AppContext(*_context); }
     
 private:
-    friend class RenderInterface;
-    
-    AppContext* _context;
+    AppObjects* _context;
     
     static JsonDocument sNullDocument;
 };

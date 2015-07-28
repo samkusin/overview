@@ -19,7 +19,6 @@
 #include "Engine/MessageStream.hpp"
 
 #include "Engine/Entity/Comp/Camera.hpp"
-#include "Engine/Entity/Comp/Light.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 #include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Entity/Comp/MeshRenderable.hpp"
@@ -36,6 +35,7 @@
 
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
+#include "Custom/Comp/ComponentCreationCallback.hpp"
 
 #include "Render/RenderShaders.hpp"
 
@@ -156,16 +156,6 @@ void run(SDL_Window* window)
     
     registerShaders(shaderLibrary);
     
-    overview::EntityStore entityStore(kMaxEntities, {
-        { overview::component::Transform::kComponentType, kMaxTransforms },
-        { overview::component::Renderable::kComponentType, kMaxRenderables },
-        { overview::component::MeshRenderable::kComponentType, 16*1024 },
-        { component::StellarSystem::kComponentType, kMaxStarSystems },
-        { component::StarBody::kComponentType, kMaxStars },
-        { overview::component::Camera::kComponentType, 4 },
-        { overview::component::Light::kComponentType, 8 }
-    });
-    
     //  UI
     UIcontext* uiContext = uiCreateContext(4096, 1<<20);
     uiMakeCurrent(uiContext);
@@ -184,38 +174,48 @@ void run(SDL_Window* window)
     overview::MessagePublisher messagePublisher(std::move(messages), 64, 32, 32, allocator);
     messages = std::move(overview::MessageStream(256, allocator));
     
-    //  setup application master template
-    AppDocumentMap appDocumentMap(allocator);
-    
-    //  schedule an application task
-    overview::ViewStack viewStack(allocator);
-    AppContext context;
-    
-    context.entityStore = &entityStore;
-    context.viewStack = &viewStack;
-    context.messagePublisher = &messagePublisher;
-    context.renderResources = &renderResources;
-    context.viewRect = { 0, 0, viewWidth, viewHeight };
-    context.nvg = nvgContext;
-    context.documentMap = &appDocumentMap;
-    context.allocator = &allocator;
-    context.createComponentCb =
-        [&entityStore](overview::Entity entity,
-                    const cinek::JsonValue& definitions,
-                    const cinek::JsonValue& data)
-        {
-        };
-    
+    //  Simulation Parameters
+    //
+    overview::EntityStore entityStore(kMaxEntities, {
+        { overview::component::Transform::kComponentType, kMaxTransforms },
+        { overview::component::Renderable::kComponentType, kMaxRenderables },
+        { overview::component::MeshRenderable::kComponentType, 16*1024 },
+        { component::StellarSystem::kComponentType, kMaxStarSystems },
+        { component::StarBody::kComponentType, kMaxStars },
+        { overview::component::Camera::kComponentType, 4 }
+    });
+
     //  should be moved into a task for "initialization"
     if (!SpectralUtility::loadTables())
         return;
     
+    //  setup application master template
+    AppDocumentMap appDocumentMap(allocator);
+    
+    overview::ViewStack viewStack(allocator);
+    AppObjects appObjects;
+    
+    appObjects.entityStore = &entityStore;
+    appObjects.viewStack = &viewStack;
+    appObjects.messagePublisher = &messagePublisher;
+    appObjects.renderResources = &renderResources;
+    appObjects.viewRect = { 0, 0, viewWidth, viewHeight };
+    appObjects.nvg = nvgContext;
+    appObjects.documentMap = &appDocumentMap;
+    appObjects.allocator = &allocator;
+        
+    AppContext appContext(appObjects);
+    
+    /*
     auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);
     auto starMeshHandle = meshLibrary.create("star");
     meshLibrary.setMeshForLOD(starMeshHandle, std::move(starMesh), gfx::LODIndex::kHigh);
+    */
     
+    //  schedule an application task
+    //
     viewStack.setFactory(
-        [&context](int viewId) -> unique_ptr<overview::ViewController>
+        [&appContext](int viewId) -> unique_ptr<overview::ViewController>
         {
             unique_ptr<overview::ViewController> vc;
             Allocator allocator;
@@ -224,7 +224,7 @@ void run(SDL_Window* window)
             case kViewControllerId_Galaxy:
                 vc = allocate_unique<GalaxyViewController, overview::ViewController>(
                     allocator,
-                    AppInterface(context)
+                    appContext
                 );
                 break;
             }
@@ -268,7 +268,7 @@ void run(SDL_Window* window)
         
         viewStack.render();
         
-        renderUI(context.nvg, context.viewRect);
+        renderUI(appObjects.nvg, appObjects.viewRect);
         
         uiProcess(thisSystemTime);
         

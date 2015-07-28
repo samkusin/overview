@@ -35,7 +35,7 @@ void StellarSystemUtility::setObjectData
     intptr_t objData
 )
 {
-    auto data = _stellarSystemTable.rowForEntity(objIdx);
+    auto data = _stellarSystemTable.dataForEntity(objIdx);
     if (!data)
         return;
     data->indexToTreeNode = (int)objData;
@@ -43,13 +43,13 @@ void StellarSystemUtility::setObjectData
 
 intptr_t StellarSystemUtility::getObjectData(Entity objIdx) const
 {
-    auto data = _stellarSystemTable.rowForEntity(objIdx);
+    auto data = _stellarSystemTable.dataForEntity(objIdx);
     return data != nullptr ? data->indexToTreeNode : -1;
 }
 
 ckm::scalar StellarSystemUtility::objectRadius(Entity objIdx) const
 {
-    auto data = _stellarSystemTable.rowForEntity(objIdx);
+    auto data = _stellarSystemTable.dataForEntity(objIdx);
     return data != nullptr ? data->radius : 0;
 }
 

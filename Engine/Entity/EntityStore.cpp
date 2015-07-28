@@ -59,7 +59,7 @@ EntityStore& EntityStore::operator=(EntityStore&& other)
     return *this;
 }
     
-Entity EntityStore::create()
+Entity EntityStore::create(Entity::context_type context)
 {
     Entity::index_type index;
     
@@ -75,7 +75,7 @@ Entity EntityStore::create()
     }
     
     Entity eid;
-    eid.makeEntityId(_iterations[index], index);
+    eid.makeEntityId(_iterations[index], context, index);
     return eid;
 }
 

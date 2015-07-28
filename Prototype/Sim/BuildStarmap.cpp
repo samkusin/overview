@@ -369,14 +369,14 @@ auto BuildStarmapFunction::createSystem
     {
         auto systemEntity = CS.entityStore.create();
         
-        auto transform = CS.standardTables.transform.addComponentToEntity(systemEntity);
+        auto transform = CS.standardTables.transform.addDataToEntity(systemEntity);
         if (!transform)
             return Result::kOutOfMemory;
     
         transform->setLocalPosition(systemPosition.first);
         
         auto stellarSystem =
-            CS.standardTables.systemTable.addComponentToEntity(systemEntity);
+            CS.standardTables.systemTable.addDataToEntity(systemEntity);
         if (!stellarSystem)
             return Result::kOutOfMemory;
         
@@ -429,7 +429,7 @@ Entity BuildStarmapFunction::createBodies
             break;
         }
         auto entity = state.entityStore.create();
-        auto star = state.standardTables.starTable.addComponentToEntity(entity);
+        auto star = state.standardTables.starTable.addDataToEntity(entity);
         if (!star)
             return Entity::null();
         
@@ -479,7 +479,7 @@ Entity BuildStarmapFunction::createBodies
     {
         Entity entity = bodies[starIndex];
         
-        auto transform = state.standardTables.transform.addComponentToEntity(entity);
+        auto transform = state.standardTables.transform.addDataToEntity(entity);
         if (!transform)
             return Entity::null();
         
@@ -489,7 +489,7 @@ Entity BuildStarmapFunction::createBodies
             transform->setSibling(bodies[starIndex+1]);
         }
         
-        auto star = state.standardTables.starTable.rowForEntity(entity);
+        auto star = state.standardTables.starTable.dataForEntity(entity);
         
         totalMass += star->solarMass;
         totalMassMulOffset += offsetRange.first*star->solarMass;
@@ -524,7 +524,7 @@ Entity BuildStarmapFunction::createBodies
     auto starOffset = totalMassMulOffset/totalMass;
     for (int starIndex = 0; starIndex < numStars; ++starIndex)
     {
-        auto transform = state.standardTables.transform.rowForEntity(bodies[starIndex]);
+        auto transform = state.standardTables.transform.dataForEntity(bodies[starIndex]);
         
         ckm::scalar lyOffset = (offsets[starIndex] - starOffset) / kAUPerLYR;
         

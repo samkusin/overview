@@ -9,7 +9,7 @@
 #ifndef Overview_Sim_Defines_hpp
 #define Overview_Sim_Defines_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "GameTypes.hpp"
 
 namespace cinek { namespace ovproto {
 

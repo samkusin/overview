@@ -37,7 +37,7 @@ public:
     
     uint32_t capacity() const { return (uint32_t)_iterations.capacity(); }
     
-    Entity create();
+    Entity create(Entity::context_type context=0);
     void destroy(Entity eid);
     
     bool valid(Entity eid) const;

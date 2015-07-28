@@ -22,7 +22,6 @@ namespace cinek { namespace overview {
 //  Forward decls --------------------------------------------------------------
 
 class EntityStore;
-class EntityFactory;
 class EntityObject;
 
 //  Components -----------------------------------------------------------------
@@ -32,9 +31,6 @@ using CustomComponentCreateFn =
                        const cinek::JsonValue& definitions,
                        const cinek::JsonValue& data)>;
     
-using CustomComponentDestroyFn =
-    std::function<void(Entity entity)>;
-
 using ComponentId = uint32_t;
 
 using ComponentRowIndex = uint32_t;
@@ -70,14 +66,12 @@ constexpr ComponentRowIndex kNullComponentRow = UINT32_MAX;
 
 namespace component
 {
-    struct Light;
     struct Camera;
     struct Renderable;
     struct MeshRenderable;
     struct Transform;
-    struct Body;
     
-    template<typename _Component> class Table;
+    template<typename _Component, typename _Container> class Table;
 
     struct Descriptor
     {
@@ -104,11 +98,9 @@ namespace component
     {
         kRenderable         = MakeComponentId(kRenderSpace, 0x0000),
         kMeshRenderable     = MakeComponentId(kRenderSpace, 0x0001),
-        kLight              = MakeComponentId(kRenderSpace, 0x0001),
         kCamera             = MakeComponentId(kRenderSpace, 0x0002),
         kTransform          = MakeComponentId(kEntitySpace, 0x0000),
         kEntityHierarchy    = MakeComponentId(kEntitySpace, 0x0001),
-        kBody               = MakeComponentId(kEntitySpace, 0x0002),
         kEmpty              = MakeComponentId(0xffff, 0xffff)
     };
 

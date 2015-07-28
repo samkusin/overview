@@ -21,21 +21,14 @@
 namespace cinek { namespace overview {
 
 Entity createEntity(
+    Entity::context_type context,
     EntityStore& store,
     RenderResources& renderResources,
     const cinek::JsonValue& definitions,
     const char* name,
-    MessagePublisher* eventPublisher = nullptr,
     const CustomComponentCreateFn& customCompFn = CustomComponentCreateFn()
 );
 
-void destroyEntity(
-    Entity entity,
-    EntityStore& store,
-    RenderResources& renderResources,
-    MessagePublisher* eventPublisher = nullptr,
-    const CustomComponentDestroyFn& customCompFn = CustomComponentDestroyFn()
-);
     
 } /* namespace ovproto */ } /* namespace cinek */
 

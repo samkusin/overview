@@ -40,7 +40,7 @@ namespace component
         auto table = store.table<overview::component::Renderable>();
         auto meshTable = store.table<overview::component::MeshRenderable>();
         
-        auto comp = table.addComponentToEntity(entity);
+        auto comp = table.addDataToEntity(entity);
         if (comp)
         {
             comp->viewFilterMask = parseFlagsToUint(
@@ -52,7 +52,7 @@ namespace component
             {
                 if (!strcmp(typeName, "mesh"))
                 {
-                    auto meshComp = meshTable.addComponentToEntity(entity);
+                    auto meshComp = meshTable.addDataToEntity(entity);
                     //  preload mesh
                     meshComp->meshHandle = renderResources.meshLibrary->load(dataName).data;
                 
@@ -76,15 +76,15 @@ namespace component
 
 Entity createEntity
 (
+    Entity::context_type context,
     EntityStore& store,
     RenderResources& renderResources,
     const cinek::JsonValue& definitions,
     const char* name,
-    MessagePublisher* eventPublisher,
     const CustomComponentCreateFn& customCompFn
 )
 {
-    Entity entity = store.create();
+    Entity entity = store.create(context);
     
     //  generate an entity and its base components using a template
     if (name && name[0])
@@ -121,6 +121,7 @@ Entity createEntity
         }
     }
     
+    /*
     if (eventPublisher)
     {
         capnp::MallocMessageBuilder message;
@@ -128,19 +129,9 @@ Entity createEntity
         evt.setEntityId(entity.id);
         eventPublisher->queue(message, msg::kEntityCreatedEvent);
     }
+    */
     
     return entity;
-}
-
-void destroyEntity
-(
-    Entity entity,
-    EntityStore& store,
-    RenderResources& renderResources,
-    MessagePublisher* eventPublisher,
-    const CustomComponentDestroyFn& customCompFn
-)
-{
 }
 
 

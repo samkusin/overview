@@ -1,5 +1,5 @@
 //
-//  SimulationTypes.hpp
+//  GameTypes.hpp
 //  Overview
 //
 //  Created by Samir Sinha on 11/22/14.
@@ -11,8 +11,6 @@
 
 #include "Engine/EngineTypes.hpp"
 #include "Engine/MessageTypes.hpp"
-#include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/AABB.hpp"
 
 namespace cinek {
     namespace ovproto {
@@ -21,11 +19,12 @@ namespace cinek {
     
     //  bring certain Engine types over into our namespace
     using Entity = overview::Entity;
-          
+    
+    //  prototypes
     class AppInterface;
     class AppContext;
     
-    
+    //  game states
     enum
     {
         kViewControllerId_Galaxy

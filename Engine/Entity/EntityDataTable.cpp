@@ -25,7 +25,7 @@ EntityDataTable::EntityDataTable
 {
 }
 
-DataRowset::index_type EntityDataTable::allocateIndexForEntity(Entity eid)
+auto EntityDataTable::allocateIndexForEntity(Entity eid) -> index_type
 {
     auto indexIt = _entityToRow.find(eid);
     if (indexIt == _entityToRow.end())
@@ -37,7 +37,7 @@ DataRowset::index_type EntityDataTable::allocateIndexForEntity(Entity eid)
     return indexIt->second;
 }
 
-void EntityDataTable::removeComponentFromEntity
+void EntityDataTable::removeDataFromEntity
 (
     Entity eid
 )
