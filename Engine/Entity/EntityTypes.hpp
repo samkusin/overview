@@ -23,46 +23,59 @@ namespace cinek { namespace overview {
 
 class EntityStore;
 class EntityObject;
+class EntityGroup;
+class EntityGroupMap;
 
 //  Components -----------------------------------------------------------------
 
 using CustomComponentCreateFn =
     std::function<void(Entity entity,
                        const cinek::JsonValue& definitions,
+                       const char* componentName,
                        const cinek::JsonValue& data)>;
     
 using ComponentId = uint32_t;
-
 using ComponentRowIndex = uint32_t;
-    
 constexpr ComponentRowIndex kNullComponentRow = UINT32_MAX;
 
-#define COMPONENT_DEFINITION(_type_) \
+using EntityGroupMapId = uint32_t;
+
+#define COMPONENT_DEFINITION(_type_, _context_type_) \
     using this_type = _type_; \
+    using context_type = _context_type_; \
     static const ::cinek::overview::ComponentId kComponentId; \
     static const ::cinek::overview::component::Descriptor kComponentType; \
-    static void initialize(this_type* data); \
-    static void terminate(this_type* data);
+    static ::cinek::overview::component::MakeDescriptor makeDescriptor( \
+        uint32_t cnt, context_type* context=nullptr); \
+    void initialize(::cinek::overview::Entity entity, context_type* context); \
+    void terminate(::cinek::overview::Entity entity, context_type* context);
 
 #define COMPONENT_TYPE_IMPL(_type_, _id_, _init_body_, _term_body_ ) \
-    void _type_::initialize(_type_* data) { \
+    void _type_::initialize(::cinek::overview::Entity entity, context_type* context) { \
         _init_body_ \
     } \
-    void _type_::terminate(_type_* data) { \
+    void _type_::terminate(::cinek::overview::Entity entity, context_type* context) { \
         _term_body_ \
     }\
-    void _type_ ## initialize_hook(void* pdata) { \
-        _type_::this_type* data = reinterpret_cast<_type_::this_type*>(pdata); \
-        _type_::initialize(data); \
+    ::cinek::overview::component::MakeDescriptor _type_::makeDescriptor ( \
+        uint32_t cnt, context_type* context) { \
+        ::cinek::overview::component::MakeDescriptor md; \
+        md.desc = kComponentType; \
+        md.cnt = cnt; \
+        md.context = reinterpret_cast<void*>(context); \
+        return md; \
     } \
-    void _type_ ## terminate_hook(void* pdata) { \
+    void _type_ ## initialize_hook(::cinek::overview::Entity e, void* pdata, void* context) { \
         _type_::this_type* data = reinterpret_cast<_type_::this_type*>(pdata); \
-        _type_::terminate(data); \
+        data->initialize(e, reinterpret_cast<_type_::context_type*>(context)); \
+    } \
+    void _type_ ## terminate_hook(::cinek::overview::Entity e, void* pdata, void* context) { \
+        _type_::this_type* data = reinterpret_cast<_type_::this_type*>(pdata); \
+        data->terminate(e, reinterpret_cast<_type_::context_type*>(context)); \
     }\
     const ::cinek::overview::ComponentId _type_::kComponentId = _id_; \
     const ::cinek::overview::component::Descriptor _type_::kComponentType =  \
         { _type_::kComponentId, sizeof(_type_), _type_ ## initialize_hook, _type_ ## terminate_hook };
-
 
 namespace component
 {
@@ -77,8 +90,15 @@ namespace component
     {
         ComponentId id;
         size_t recordSize;
-        void (*initCb)(void*);
-        void (*termCb)(void*);
+        void (*initCb)(::cinek::overview::Entity, void*, void*);
+        void (*termCb)(::cinek::overview::Entity, void*, void*);
+    };
+    
+    struct MakeDescriptor
+    {
+        Descriptor desc;
+        uint32_t cnt;
+        void* context;
     };
 
     enum

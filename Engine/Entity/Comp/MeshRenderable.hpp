@@ -10,7 +10,7 @@
 #define Overview_Entity_Component_MeshRenderable_hpp
 
 #include "Engine/Entity/EntityTypes.hpp"
-#include "CKGfx/VertexTypes.hpp"
+#include "Engine/Render/RenderTypes.hpp"\
 
 namespace cinek { namespace overview {
 
@@ -18,7 +18,7 @@ namespace component
 {
     struct MeshRenderable
     {
-        COMPONENT_DEFINITION(MeshRenderable);
+        COMPONENT_DEFINITION(MeshRenderable, RenderResources);
 
         cinek::gfx::MeshHandle::pod_type meshHandle;
         cinek::gfx::TextureHandle::pod_type texHandle;

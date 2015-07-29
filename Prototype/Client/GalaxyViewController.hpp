@@ -54,6 +54,7 @@ private:
     unique_ptr<Starmap> _starmap;
     
     Entity _camera;
+    Entity _ship;
     
     //  UI defines
     enum

@@ -16,8 +16,8 @@ namespace cinek { namespace overview {
 namespace component
 {
     COMPONENT_TYPE_IMPL(Transform, kTransform, {
-        data->_isDirty = false;
-        data->_worldSRT = glm::dmat4(1.0);
+        _isDirty = false;
+        _worldSRT = glm::dmat4(1.0);
     },
     {
     });

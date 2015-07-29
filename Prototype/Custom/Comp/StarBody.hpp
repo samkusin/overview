@@ -18,7 +18,7 @@ namespace component
 {
     struct StarBody
     {
-        COMPONENT_DEFINITION(StarBody);
+        COMPONENT_DEFINITION(StarBody, void);
 
         //  basic properties
         ckm::scalar solarMass;

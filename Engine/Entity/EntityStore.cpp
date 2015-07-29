@@ -20,7 +20,8 @@ EntityStore::EntityStore() :
 EntityStore::EntityStore
 (
     uint32_t numEntities,
-    const vector<std::pair<component::Descriptor, uint32_t>>& components,
+    const vector<component::MakeDescriptor>& components,
+    const vector<EntityGroupMap::MakeDescriptor>& entityGroups,
     const Allocator& allocator
 ) :
     _iterations(allocator),
@@ -32,8 +33,13 @@ EntityStore::EntityStore
     _freed.reserve(numEntities);
     for (auto& component : components)
     {
-        component::EntityDataTable rowset(component.first, component.second, allocator);
-        _components.emplace(component.first.id, std::move(rowset));
+        component::EntityDataTable rowset(component, allocator);
+        _components.emplace(component.desc.id, std::move(rowset));
+    }
+    for (auto& group : entityGroups)
+    {
+        EntityGroupMap rowset(group, allocator);
+        _entityGroups.emplace(group.id, std::move(rowset));
     }
 }
 
@@ -101,5 +107,17 @@ void EntityStore::gc()
 {
     //TODO
 }
+
+component::EntityGroupTable EntityStore::entityGroupTable(EntityGroupMapId id) const
+{
+    auto it = _entityGroups.find(id);
+    if (it == _entityGroups.end())
+        return component::EntityGroupTable();
+    
+    const EntityGroupMap& entityGroupMap = it->second;
+    return component::EntityGroupTable(const_cast<EntityGroupMap*>(&entityGroupMap));
+}
+
+
 
 } /* namespace overview */ } /* namespace cinek */

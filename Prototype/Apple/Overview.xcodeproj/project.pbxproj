@@ -49,6 +49,7 @@
 		37AAC1CA19F42A3600C32899 /* libCKFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AAC1C619F42A3600C32899 /* libCKFramework.a */; };
 		37B661401B66A548005930B8 /* EntityGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6613C1B66A548005930B8 /* EntityGroup.cpp */; };
 		37B661411B66A548005930B8 /* EntityGroupMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6613E1B66A548005930B8 /* EntityGroupMap.cpp */; };
+		37B6614E1B684804005930B8 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6614C1B684804005930B8 /* Character.cpp */; };
 		37BB62E21B3DF43C0096CDA1 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BB62E11B3DF43C0096CDA1 /* Transform.cpp */; };
 		37C94EDE1B1D2DB000F35CD5 /* MessageHandlers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */; };
 		37CC94D41B61C11D0057D745 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37CC94D01B61C11D0057D745 /* AppInterface.cpp */; };
@@ -244,6 +245,11 @@
 		37B6613E1B66A548005930B8 /* EntityGroupMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityGroupMap.cpp; sourceTree = "<group>"; };
 		37B6613F1B66A548005930B8 /* EntityGroupMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityGroupMap.hpp; sourceTree = "<group>"; };
 		37B661451B6725A2005930B8 /* VectorDataRowset.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = VectorDataRowset.hpp; path = ../../Engine/VectorDataRowset.hpp; sourceTree = "<group>"; };
+		37B661491B681A18005930B8 /* Loadout.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Loadout.hpp; path = ../Custom/Comp/Loadout.hpp; sourceTree = "<group>"; };
+		37B6614A1B681BE7005930B8 /* Party.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Party.hpp; path = ../Custom/Comp/Party.hpp; sourceTree = "<group>"; };
+		37B6614B1B6830B7005930B8 /* EntityRoles.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EntityRoles.hpp; path = ../Sim/EntityRoles.hpp; sourceTree = "<group>"; };
+		37B6614C1B684804005930B8 /* Character.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Character.cpp; path = ../Custom/Comp/Character.cpp; sourceTree = "<group>"; };
+		37B6614D1B684804005930B8 /* Character.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Character.hpp; path = ../Custom/Comp/Character.hpp; sourceTree = "<group>"; };
 		37BB62E11B3DF43C0096CDA1 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Transform.cpp; path = Comp/Transform.cpp; sourceTree = "<group>"; };
 		37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageHandlers.cpp; path = ../MessageHandlers.cpp; sourceTree = "<group>"; };
 		37C94EDD1B1D2DB000F35CD5 /* MessageHandlers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageHandlers.hpp; path = ../MessageHandlers.hpp; sourceTree = "<group>"; };
@@ -373,8 +379,8 @@
 			children = (
 				3754EC7D1B62C59900118965 /* RenderService.cpp */,
 				3754EC7E1B62C59900118965 /* RenderService.hpp */,
-				3754EC801B62E95300118965 /* EntityService.cpp */,
 				3754EC811B62E95300118965 /* EntityService.hpp */,
+				3754EC801B62E95300118965 /* EntityService.cpp */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -426,8 +432,8 @@
 				37CC94CF1B61C11D0057D745 /* AppContext.hpp */,
 				37CC94D11B61C11D0057D745 /* AppInterface.hpp */,
 				37CC94D01B61C11D0057D745 /* AppInterface.cpp */,
-				3749D1561B5AC0EF009F280E /* GalaxyViewController.cpp */,
 				3749D1571B5AC0EF009F280E /* GalaxyViewController.hpp */,
+				3749D1561B5AC0EF009F280E /* GalaxyViewController.cpp */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -450,6 +456,7 @@
 				37A0FD641B41C52600188B7A /* StellarSystemUtility.cpp */,
 				37121D411B517D7500E35C54 /* SpectralClassUtility.hpp */,
 				37121D401B517D7500E35C54 /* SpectralClassUtility.cpp */,
+				37B6614B1B6830B7005930B8 /* EntityRoles.hpp */,
 			);
 			name = Sim;
 			sourceTree = "<group>";
@@ -628,11 +635,15 @@
 			isa = PBXGroup;
 			children = (
 				37F43E5C1B33A2040065D8E9 /* CustomComponentTypes.hpp */,
-				37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */,
 				3754EC841B63226300118965 /* ComponentCreationCallback.hpp */,
 				3754EC831B63226300118965 /* ComponentCreationCallback.cpp */,
 				37F43E5B1B33A1220065D8E9 /* StellarSystem.hpp */,
 				37A327A21B432A0F009FCDA4 /* StarBody.hpp */,
+				37B661491B681A18005930B8 /* Loadout.hpp */,
+				37B6614A1B681BE7005930B8 /* Party.hpp */,
+				37F43E5D1B33A4340065D8E9 /* CustomComponents.cpp */,
+				37B6614D1B684804005930B8 /* Character.hpp */,
+				37B6614C1B684804005930B8 /* Character.cpp */,
 			);
 			name = Comp;
 			sourceTree = "<group>";
@@ -778,6 +789,7 @@
 				3749D1061B573C3D009F280E /* fs_nanovg_fill.hfs in Sources */,
 				3749D1071B573C3D009F280E /* vs_nanovg_fill.hvs in Sources */,
 				3749D1131B574025009F280E /* vs_std_uv.vs in Sources */,
+				37B6614E1B684804005930B8 /* Character.cpp in Sources */,
 				3749D10E1B574025009F280E /* fs_starmap.fs in Sources */,
 				3749D1121B574025009F280E /* vs_std_rgba.vs in Sources */,
 				3754EC851B63226300118965 /* ComponentCreationCallback.cpp in Sources */,

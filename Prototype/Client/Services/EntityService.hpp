@@ -12,6 +12,7 @@
 #include "Client/AppContext.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
+#include "Engine/Entity/EntityGroupMap.hpp"
 #include "Engine/Entity/EntityStore.hpp"
 
 namespace cinek {
@@ -41,6 +42,9 @@ public:
     template<typename _Component>
     overview::component::Table<_Component> table() const;
     
+    //  Returns an EntityGroup Table
+    overview::component::EntityGroupTable entityGroupTable(overview::EntityGroupMapId id) const;
+    
     //  Sets the Custom Component generation handler
     //
     void setCreateComponentCallback(const overview::CustomComponentCreateFn& cb);
@@ -53,6 +57,12 @@ template<typename _Component>
 overview::component::Table<_Component> EntityService::table() const
 {
     return _context->entityStore->table<_Component>();
+}
+
+inline auto EntityService::entityGroupTable(overview::EntityGroupMapId id) const
+    -> overview::component::EntityGroupTable
+{
+    return _context->entityStore->entityGroupTable(id);
 }
 
     

@@ -16,11 +16,10 @@ namespace cinek { namespace overview {
 
 EntityGroupMap::EntityGroupMap
 (
-    const EntityGroup::RoleLimits& roleLimits,
-    uint32_t groupLimit,
+    const MakeDescriptor& makeDesc,
     const Allocator& allocator
 ) :
-    _rowset(groupLimit, allocator),
+    _rowset(makeDesc.cnt, makeDesc.roleLimits, allocator),
     _entityToGroupIndex(allocator)
 {
 }
@@ -69,6 +68,23 @@ auto EntityGroupMap::rowIndexFromEntity(Entity entity) const -> index_type
     uint32_t idx = it->second;
     CK_ASSERT(idx < _rowset.size());
     return idx;
+}
+
+namespace component
+{
+
+//template<> class Table<EntityGroup, EntityGroupMap>;
+
+//  specialization of constructor - no need to verify ComponentId of dataTable
+//  matches the Component (which is the EntityGroup object - a dynamic type)
+template<>
+Table<EntityGroup, EntityGroupMap>::Table(EntityGroupMap* dataTable) :
+    _table(dataTable)
+{
+
+}
+
+
 }
 
 } /* namespace overview */ } /* namespace cinek */

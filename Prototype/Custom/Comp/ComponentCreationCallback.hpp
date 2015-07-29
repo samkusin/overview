@@ -17,13 +17,18 @@ namespace cinek {
 
     namespace ovproto {
     
+        namespace component {
+    
         void customComponentCreateCb
         (
-            AppContext& context,
+            AppContext context,
             Entity entity,
             const cinek::JsonValue& definitions,
+            const char* componentName,
             const cinek::JsonValue& data
         );
+        
+        }
 
     } /* namespace ovproto */
     

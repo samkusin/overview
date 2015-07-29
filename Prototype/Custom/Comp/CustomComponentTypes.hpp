@@ -18,16 +18,32 @@ namespace component
 {
     struct StellarSystem;
     struct StarBody;
+    struct Loadout;
+    struct Party;
+    struct Character;
     
     enum
     {
-        kStellarSpace       = overview::component::kCustomSpace0
+        kStellarSpace       = overview::component::kCustomSpace0,
+        kEntityGroupSpace   = overview::component::kCustomSpace0+1,
+        kActorSpace         = overview::component::kCustomSpace0+2
     };
     
     enum
     {
         kStellarSystem      = overview::component::MakeComponentId(kStellarSpace, 0x0000),
-        kStarBody           = overview::component::MakeComponentId(kStellarSpace, 0x0001)
+        kStarBody           = overview::component::MakeComponentId(kStellarSpace, 0x0001),
+        kLoadout            = overview::component::MakeComponentId(kEntityGroupSpace, 0x0000),
+        kParty              = overview::component::MakeComponentId(kEntityGroupSpace, 0x0001),
+        kCharacter          = overview::component::MakeComponentId(kActorSpace, 0x0000)
+    };
+    
+    enum
+    {
+        kLoadout_Player_GroupId         = 0x00000000,
+        kLoadout_SmallShip_GroupId      = 0x00000001,
+        kParty_Player_GroupId           = 0x00010000,
+        kParty_SmallShip_GroupId        = 0x00010001
     };
 }
 

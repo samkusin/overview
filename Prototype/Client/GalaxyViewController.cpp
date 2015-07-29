@@ -17,6 +17,7 @@
 #include "Engine/Entity/Comp/Renderable.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
+#include "Custom/Comp/ComponentCreationCallback.hpp"
 
 #include "UI/UIBuilder.hpp"
 
@@ -229,7 +230,22 @@ GalaxyViewController::~GalaxyViewController()
 void GalaxyViewController::onViewLoad()
 {
     _API.createJsonDocumentFromFile(kDocumentId_EntityTemplates, "entity.json");
-    
+    _Entity.setCreateComponentCallback(
+        [this]
+        (
+            Entity entity,
+            const JsonValue& definitions,
+            const char* componentName,
+            const JsonValue& data
+        )
+        {
+            component::customComponentCreateCb(this->_API.appContext(),
+                entity,
+                definitions,
+                componentName,
+                data
+            );
+        });
     //  position our new star entity - note, this is a brute force method that
     //  bypasses any notification, etc.  use a proper physics system or add
     //  a utility to manipulate entities that sends out the appropriate
@@ -332,6 +348,9 @@ void GalaxyViewController::onViewLoad()
         camera->init(0, M_PI * 90/180.0 , 0.5, 500.0);
     }
     
+    _ship = _Entity.create("ship_gilgerard");
+    
+    
     //  Create player related entities
     //  Player Entity
     
@@ -377,6 +396,7 @@ void GalaxyViewController::onViewLoad()
 
 void GalaxyViewController::onViewUnload()
 {
+    _Entity.destroy(_ship);
     _Entity.destroy(_camera);
     
     _starmap = nullptr;

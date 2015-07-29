@@ -17,7 +17,7 @@ namespace component
 {
     struct Camera
     {
-        COMPONENT_DEFINITION(Camera);
+        COMPONENT_DEFINITION(Camera, void);
         
         enum Type
         {

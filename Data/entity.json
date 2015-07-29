@@ -1,5 +1,10 @@
 {
     "entity" : {
+        "player_party": {
+            "party" : {
+                "type" : "player"
+            }
+        },
         "player_user": {
             "container" : {
                 "type" : "player"
@@ -8,10 +13,12 @@
                 "type" : "body",
                 "limit" : "1"
             },
-            "character" : {
-                "loadout" : "player"
+            "loadout" : {
+                "type" : "player"
             },
-            "transform" : {}
+            "character": {
+
+            }
         },
         "ship_gilgerard" : {
             "container" : {
@@ -21,10 +28,14 @@
                 "type" : "structural",
                 "limit" : "1"
             },
-            "character" : {
-                "loadout" : "small_starship"
+            "loadout" : {
+                "type" : "small_starship"
             },
-            "transform" : {}
+            "character": {
+            },
+            "party" : {
+                "type" : "small_starship"
+            }
         },
         "star" : {
             "renderable" : {

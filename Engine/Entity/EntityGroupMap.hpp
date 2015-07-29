@@ -10,6 +10,7 @@
 #define Overview_Entity_GroupMap_hpp
 
 #include "EntityGroup.hpp"
+#include "EntityDataTable.hpp"
 #include "Engine/VectorDataRowset.hpp"
 
 #include <cinek/map.hpp>
@@ -29,8 +30,14 @@ public:
     using index_type = typename container_type::index_type;
     static constexpr index_type npos = container_type::npos;
     
-    EntityGroupMap(const EntityGroup::RoleLimits& roleLimits,
-                   uint32_t groupLimit,
+    struct MakeDescriptor
+    {
+        EntityGroupMapId id;
+        EntityGroup::RoleLimits roleLimits;
+        uint32_t cnt;
+    };
+    
+    EntityGroupMap(const MakeDescriptor& makeDesc,
                    const Allocator& allocator=Allocator());
     
         
@@ -45,6 +52,16 @@ private:
     VectorDataRowset<EntityGroup> _rowset;
     unordered_map<Entity, uint32_t> _entityToGroupIndex;
 };
+
+namespace component
+{
+
+using EntityGroupTable = Table<EntityGroup, EntityGroupMap>;
+
+template<>
+Table<EntityGroup, EntityGroupMap>::Table(EntityGroupMap*);
+
+}
 
 
 } /* namespace overview */ } /* namespace cinek */

@@ -11,6 +11,7 @@
 
 #include "GameTypes.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/BVH/AABBTree.hpp"
 

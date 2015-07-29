@@ -13,6 +13,7 @@
 #include "DataRowset.hpp"
 
 #include <cinek/map.hpp>
+#include <cinek/debug.hpp>
 
 namespace cinek { namespace overview {
 
@@ -26,9 +27,9 @@ public:
     using index_type = typename container_type::index_type;
     static constexpr index_type npos = container_type::npos;
     
-    EntityDataTable(const Descriptor& desc,
-            uint32_t rowCount,
-            const Allocator& allocator);
+    EntityDataTable(const MakeDescriptor& desc, const Allocator& allocator);
+    
+    ComponentId componentId() const { return _descriptor.id; }
     
     const container_type& rowset() const { return _rowset; }
     container_type& rowset() { return _rowset; }
@@ -39,6 +40,7 @@ public:
     
 private:
     Descriptor _descriptor;
+    void* _context;
     unordered_map<Entity, index_type> _entityToRow;
     container_type _rowset;
 };
@@ -62,7 +64,7 @@ public:
     using index_type = typename Container::index_type;
     
     Table() : _table(nullptr) {}
-    Table(container_type* dataTable) : _table(dataTable) {}
+    Table(container_type* dataTable);
     Table(const Table& other) : _table(other._table) {}
     Table& operator=(const Table& other) { _table = other._table; return *this; }
     
@@ -93,6 +95,13 @@ private:
 };
 
 template<typename Component, typename Container>
+Table<Component, Container>::Table(container_type* dataTable) :
+    _table(dataTable)
+{
+    CK_ASSERT(_table && _table->componentId() == Component::kComponentId);
+}
+
+template<typename Component, typename Container>
 auto Table<Component, Container>::addDataToEntity(Entity eid) -> value_type*
 {
     if (eid==0)
@@ -100,6 +109,12 @@ auto Table<Component, Container>::addDataToEntity(Entity eid) -> value_type*
     
     auto index = _table->allocateIndexForEntity(eid);
     return reinterpret_cast<value_type*>(_table->rowset()[index]);
+}
+
+template<typename Component, typename Container>
+void Table<Component, Container>::removeDataFromEntity(Entity eid)
+{
+    _table->removeDataFromEntity(eid);
 }
 
 template<typename Component, typename Container>

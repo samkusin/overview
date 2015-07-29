@@ -36,6 +36,9 @@ public:
         
     uint32_t size() const;
     uint32_t capacity() const;
+        
+    data_type* operator[](index_type index);
+    const data_type* operator[](index_type index) const;
     
     template<typename Component=_Data> data_type* at(index_type index);
     template<typename Component=_Data> const data_type* at(index_type index) const;
@@ -104,7 +107,7 @@ VectorDataRowset<_Data>::VectorDataRowset
 
 template<typename _Data>
 VectorDataRowset<_Data>::VectorDataRowset(VectorDataRowset&& other) :
-    _data(std::move(other._groups)),
+    _data(std::move(other._data)),
     _freelist(std::move(other._freelist)),
     _highestGroupIndexAllocated(other._highestGroupIndexAllocated)
 {
@@ -114,7 +117,7 @@ VectorDataRowset<_Data>::VectorDataRowset(VectorDataRowset&& other) :
 template<typename _Data>
 VectorDataRowset<_Data>& VectorDataRowset<_Data>::operator=(VectorDataRowset&& other)
 {
-    _data = std::move(other._groups);
+    _data = std::move(other._data);
     _freelist = std::move(other._freelist);
     _highestGroupIndexAllocated = other._highestGroupIndexAllocator;
     other._highestGroupIndexAllocated = 0;
@@ -174,6 +177,18 @@ template<typename _Data>
 uint32_t VectorDataRowset<_Data>::capacity() const
 {
     return (uint32_t)_data.size();
+}
+
+template<typename _Data>
+auto VectorDataRowset<_Data>::operator[](index_type index) -> data_type*
+{
+    return at(index);
+}
+
+template<typename _Data>
+auto VectorDataRowset<_Data>::operator[](index_type index) const -> const data_type*
+{
+    return at(index);
 }
 
 template<typename _Data>

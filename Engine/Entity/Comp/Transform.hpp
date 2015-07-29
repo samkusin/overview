@@ -20,7 +20,7 @@ namespace component
 {
     struct Transform
     {
-        COMPONENT_DEFINITION(Transform);
+        COMPONENT_DEFINITION(Transform, void);
         
         void setLocalPosition(const glm::dvec3& pos) {
             _localPosition = pos;

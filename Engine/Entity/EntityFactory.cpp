@@ -9,6 +9,7 @@
 #include "EntityFactory.hpp"
 #include "EntityStore.hpp"
 
+#include "Comp/Transform.hpp"
 #include "Comp/Renderable.hpp"
 #include "Comp/MeshRenderable.hpp"
 
@@ -95,6 +96,11 @@ Entity createEntity
             return Entity::null();
     
         const cinek::JsonValue& templ = templates[name];
+        if (!templ.HasMember("transform") ||
+            (templ["transform"].IsBool() && templ["transform"].GetBool()))
+        {
+            store.table<component::Transform>().addDataToEntity(entity);
+        }
         for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
              it != templ.MemberEnd();
              ++it)
@@ -111,12 +117,17 @@ Entity createEntity
                     definitions,
                     componentData);
             }
+            else if (!strcmp(componentName, "transform"))
+            {
+                //  handled earlier
+                continue;
+            }
             
             //  allow customizations, extensions to the factory for custom
             //  components
             if (customCompFn)
             {
-                customCompFn(entity, definitions, componentData);
+                customCompFn(entity, definitions, componentName, componentData);
             }
         }
     }

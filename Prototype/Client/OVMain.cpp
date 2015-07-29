@@ -36,10 +36,14 @@
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/ComponentCreationCallback.hpp"
+#include "Custom/Comp/Loadout.hpp"
+#include "Custom/Comp/Party.hpp"
+#include "Custom/Comp/Character.hpp"
 
 #include "Render/RenderShaders.hpp"
 
 #include "Sim/SpectralClassUtility.hpp"
+#include "Sim/EntityRoles.hpp"
 
 #include "GalaxyViewController.hpp"
 
@@ -176,13 +180,47 @@ void run(SDL_Window* window)
     
     //  Simulation Parameters
     //
+    
+    overview::EntityGroup::RoleLimits playerPartyRoles;
+    playerPartyRoles[kPartyRole_Players] = 4;
+    playerPartyRoles.fill(0);
+    
+    overview::EntityGroup::RoleLimits smallShipPartyRoles;
+    smallShipPartyRoles[kPartyRole_Ship_Captain] = 1;
+    smallShipPartyRoles[kPartyRole_Ship_Pilot] = 1;
+    smallShipPartyRoles[kPartyRole_Ship_Navigation] = 1;
+    smallShipPartyRoles[kPartyRole_Ship_Engineer] = 1;
+    smallShipPartyRoles[kPartyRole_Ship_Science] = 1;
+    smallShipPartyRoles[kPartyRole_Ship_Medicine] = 1;
+    smallShipPartyRoles.fill(0);
+    
+    overview::EntityGroup::RoleLimits playerLoadoutCategories;
+    playerLoadoutCategories[kLoadoutRole_Players_Hands] = kLoadout_Players_Slot_Hand_Count;
+    playerLoadoutCategories[kLoadoutRole_Players_Body] = kLoadout_Players_Slot_Body_Count;
+    playerLoadoutCategories.fill(0);
+    
+    overview::EntityGroup::RoleLimits smallShipLoadoutCategories;
+    smallShipLoadoutCategories[kLoadoutRole_Ships_Weapons] = 1;
+    smallShipLoadoutCategories[kLoadoutRole_Ships_Missiles] = 1;
+    smallShipLoadoutCategories.fill(0);
+    
+    
     overview::EntityStore entityStore(kMaxEntities, {
-        { overview::component::Transform::kComponentType, kMaxTransforms },
-        { overview::component::Renderable::kComponentType, kMaxRenderables },
-        { overview::component::MeshRenderable::kComponentType, 16*1024 },
-        { component::StellarSystem::kComponentType, kMaxStarSystems },
-        { component::StarBody::kComponentType, kMaxStars },
-        { overview::component::Camera::kComponentType, 4 }
+        overview::component::Transform::makeDescriptor(kMaxTransforms),
+        overview::component::Renderable::makeDescriptor(kMaxRenderables),
+        overview::component::MeshRenderable::makeDescriptor(16*1024, &renderResources),
+        overview::component::Camera::makeDescriptor(4),
+        component::StellarSystem::makeDescriptor(kMaxStarSystems),
+        component::StarBody::makeDescriptor(kMaxStars),
+        component::Character::makeDescriptor(16),
+        component::Loadout::makeDescriptor(4, &entityStore),
+        component::Party::makeDescriptor(4, &entityStore)
+    },
+    {
+        { component::Loadout::kGroupId_Player, playerLoadoutCategories, 4 },
+        { component::Loadout::kGroupId_SmallShip, smallShipLoadoutCategories, 4 },
+        { component::Party::kGroupId_Player, playerPartyRoles, 4 },
+        { component::Party::kGroupId_SmallShip, smallShipPartyRoles, 4 }
     });
 
     //  should be moved into a task for "initialization"

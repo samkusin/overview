@@ -17,7 +17,7 @@ namespace component
 {
     struct StellarSystem
     {
-        COMPONENT_DEFINITION(StellarSystem);
+        COMPONENT_DEFINITION(StellarSystem, void);
 
         //  seed used to generate planets for this system
         uint32_t seed;

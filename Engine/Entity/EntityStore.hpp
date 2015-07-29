@@ -11,6 +11,7 @@
 
 #include "EntityTypes.hpp"
 #include "EntityDataTable.hpp"
+#include "EntityGroupMap.hpp"
 
 #include <cinek/vector.hpp>
 #include <cinek/map.hpp>
@@ -29,7 +30,8 @@ public:
     EntityStore();
     
     EntityStore(uint32_t numEntities,
-        const vector<std::pair<component::Descriptor, uint32_t>>& components,
+        const vector<component::MakeDescriptor>& components,
+        const vector<EntityGroupMap::MakeDescriptor>& entityGroups,
         const Allocator& allocator=Allocator());
     
     EntityStore(EntityStore&& other);
@@ -46,6 +48,7 @@ public:
     void gc();
 
     template<typename Component> component::Table<Component> table() const;
+    component::EntityGroupTable entityGroupTable(EntityGroupMapId id) const;
     
 private:
     //  objects indexed by the offset value of the EntityId
@@ -53,6 +56,7 @@ private:
     vector<uint32_t> _freed;
     uint16_t _entityIdIteration;
     unordered_map<ComponentId, component::EntityDataTable> _components;
+    unordered_map<EntityGroupMapId, EntityGroupMap> _entityGroups;
 };
 
 template<typename Component>
