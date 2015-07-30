@@ -51,6 +51,8 @@
 #include "UI/UIEngine.hpp"
 #include "UI/oui.h"
 
+#include "Diagnostics.hpp"
+
 
 namespace cinek { namespace ovproto {
 
@@ -204,17 +206,16 @@ void run(SDL_Window* window)
     smallShipLoadoutCategories[kLoadoutRole_Ships_Missiles] = 1;
     smallShipLoadoutCategories.fill(0);
     
-    
     overview::EntityStore entityStore(kMaxEntities, {
         overview::component::Transform::makeDescriptor(kMaxTransforms),
         overview::component::Renderable::makeDescriptor(kMaxRenderables),
-        overview::component::MeshRenderable::makeDescriptor(16*1024, &renderResources),
+        overview::component::MeshRenderable::makeDescriptor(16*1024),
         overview::component::Camera::makeDescriptor(4),
         component::StellarSystem::makeDescriptor(kMaxStarSystems),
         component::StarBody::makeDescriptor(kMaxStars),
         component::Character::makeDescriptor(16),
-        component::Loadout::makeDescriptor(4, &entityStore),
-        component::Party::makeDescriptor(4, &entityStore)
+        component::Loadout::makeDescriptor(4),
+        component::Party::makeDescriptor(4)
     },
     {
         { component::Loadout::kGroupId_Player, playerLoadoutCategories, 4 },
@@ -231,10 +232,12 @@ void run(SDL_Window* window)
     AppDocumentMap appDocumentMap(allocator);
     
     overview::ViewStack viewStack(allocator);
+    overview::ViewStack overlayStack(allocator);
     AppObjects appObjects;
     
     appObjects.entityStore = &entityStore;
     appObjects.viewStack = &viewStack;
+    appObjects.overlayStack = &overlayStack;
     appObjects.messagePublisher = &messagePublisher;
     appObjects.renderResources = &renderResources;
     appObjects.viewRect = { 0, 0, viewWidth, viewHeight };
@@ -274,48 +277,84 @@ void run(SDL_Window* window)
     
     ////////////////////////////////////////////////////////////////////////////
     //  the main loop
+    //
+    Diagnostics diagnostics;
+    overview::EntityDiagnostics entityDiagnostics;
     
-    uint32_t lastSystemTime = SDL_GetTicks();
+    const double kSimFPS = 25.0;
+    const double kSecsPerSimFrame = 1.0/kSimFPS;
+    
+    uint32_t systemTimeMs = SDL_GetTicks();
+    double lagSecs = 0.0;
+    
     bool running = true;
     
     while (running)
     {
-        uint32_t thisSystemTime = SDL_GetTicks();
-        uint32_t frameTimeMs = thisSystemTime - lastSystemTime;
+        uint32_t nextSystemTimeMs = SDL_GetTicks();
+        int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
+        systemTimeMs = nextSystemTimeMs;
+        lagSecs += frameTimeMs/1000.0;
+    
+        diagnostics.updateTime(systemTimeMs);
+        entityStore.diagnostics(entityDiagnostics);
+    
+        //  SYSTEM POLL AND INPUT
+        {
+            uint32_t sdlEvents = PollSDLEvents();
+            if (sdlEvents & kPollSDLEvent_Quit)
+                running = false;
+        }
+        
+        //  SIMULATION START (using a fixed timestep)
+        while (lagSecs >= kSecsPerSimFrame)
+        {
+            //  dispatch messages, and set our new message target for the next
+            //  frame.  setting a new stream allows message handlers to publish
+            //  messages to our only message publisher.
+            auto messagesForDispatch = overview::setMessageStreamForPublisher(std::move(messages),
+                messagePublisher);
 
-        //  queue inputs
-        uint32_t sdlEvents = PollSDLEvents();
-        if (sdlEvents & kPollSDLEvent_Quit)
-            running = false;
-        
-        //  dispatch messages, and set our new message target for the next
-        //  frame.  setting a new stream allows message handlers to publish
-        //  messages to our only message publisher.
-        auto messagesForDispatch = overview::setMessageStreamForPublisher(std::move(messages),
-            messagePublisher);
+            overview::dispatchMessageStreamToPublisher(messagesForDispatch, messagePublisher);
 
-        overview::dispatchMessageStreamToPublisher(messagesForDispatch, messagePublisher);
-
-        messages = std::move(messagesForDispatch);
+            messages = std::move(messagesForDispatch);
+            
+            viewStack.process();
+            overlayStack.process();
+            
+            lagSecs -= kSecsPerSimFrame;
+            
+            diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
+        }
+        //  SIMULATION END
         
-        viewStack.process();
-
-        uiBeginLayout();
-        viewStack.layout();
-        uiEndLayout();
+        //  RENDER START (TODO: Take Lag into Account for Interp)
+        {
+            uiBeginLayout();
+            viewStack.layout();
+            overlayStack.layout();
+            uiEndLayout();
+            
+            viewStack.render();
+            overlayStack.render();
+            
+            renderUI(appObjects.nvg, appObjects.viewRect);
+            renderDiagnostics(diagnostics, entityDiagnostics,
+                appObjects.nvg, appObjects.viewRect);
+        }
+        //  RENDER END
         
-        viewStack.render();
-        
-        renderUI(appObjects.nvg, appObjects.viewRect);
-        
-        uiProcess(thisSystemTime);
+        uiProcess(systemTimeMs);
         
         bgfx::frame();
 
         entityStore.gc();
-
-        lastSystemTime = thisSystemTime;
+    
+        diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Main);
     }
+    
+    viewStack.pop();
+    overlayStack.pop();
     
     SpectralUtility::unloadTables();
     

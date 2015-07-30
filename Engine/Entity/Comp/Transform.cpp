@@ -18,8 +18,6 @@ namespace component
     COMPONENT_TYPE_IMPL(Transform, kTransform, {
         _isDirty = false;
         _worldSRT = glm::dmat4(1.0);
-    },
-    {
     });
     
     void Transform::calculateWorldSRTFromParent(const glm::dmat4& parent)

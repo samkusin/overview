@@ -9,6 +9,9 @@
 #include "UIRenderer.hpp"
 #include "UIEngine.hpp"
 
+#include "Client/Diagnostics.hpp"
+#include "Engine/Entity/EntityStore.hpp"
+
 #include "oui.h"
 
 #include <bgfx/bgfx.h>
@@ -17,6 +20,8 @@
 
 #define BLENDISH_IMPLEMENTATION
 #include "blendish.h"
+
+#include <ctime>
 
 namespace cinek { namespace ovproto {
 
@@ -190,13 +195,189 @@ void renderUI(NVGcontext* context, const gfx::Rect& viewRect)
     //  sizes from our window (i.e. fullscreen?)
     nvgBeginFrame(context, viewRect.w, viewRect.h, 1.0f);
     
-    
     //drawLines(context, 50, viewRect.h-100, 600, 40, 0);
     
     //bndBackground(context, 0,0 , viewRect.w, viewRect.h);
     
-    renderUIItem(context, 0, UITHEME_CORNER_NONE);
+    if (uiGetItemCount() > 0)
+    {
+        bndSetFont(nvgFindFont(context, "system"));
+        renderUIItem(context, 0, UITHEME_CORNER_NONE);
+    }
     
+    nvgEndFrame(context);
+}
+
+void renderDiagnostics
+(
+    Diagnostics& diagnostics,
+    overview::EntityDiagnostics& entityDiagnostics,
+    NVGcontext* context,
+    const gfx::Rect& viewRect
+)
+{
+
+    nvgBeginFrame(context, viewRect.w, viewRect.h, 1.0f);
+    {
+        //  draw diagnostics frame
+        int left = 0;   //viewRect.w * 0.025f;
+        int top = 0;    //viewRect.h * 0.05f;
+        int width = viewRect.w * 0.40f;
+        int height = viewRect.h * 0.75f;
+        int right = left + width;
+        int paddingLR = width * 0.025f;
+        int paddingTB = height * 0.025f;
+        
+        nvgBeginPath(context);
+        nvgRect(context, left, top, width, height);
+        nvgFillColor(context, nvgRGBA(128,0,0,64));
+        nvgFill(context);
+        
+        nvgFontFace(context, "system");
+        nvgFontSize(context, 12);
+        
+        float lineHeight;
+        nvgTextMetrics(context, NULL, NULL, &lineHeight);
+        
+        nvgFillColor(context, nvgRGBA(255,255,255,255));
+        
+        int leftColX = left + paddingLR;
+        int rightColX = left + width * 0.33f;
+        int rightColW = right - paddingLR - rightColX;
+        int rowY = top + paddingTB + lineHeight;
+        int rowHeight = lineHeight + 4;
+        
+        int columnX_1 = rightColX;
+        int columnX_2 = rightColX + rightColW * 0.33f;
+        int columnX_3 = rightColX + rightColW * 0.66f;
+        
+        //  HEADER
+        char buf[64];
+        auto systime = diagnostics.currentTimeInMs()/1000;
+        struct ::tm ftime;
+        ftime.tm_hour = systime / 3600;
+        ftime.tm_min = (systime % 3600) / 60;
+        ftime.tm_sec = (systime % 3600) % 60;
+        strftime(buf, sizeof(buf)-1, "Time: %H:%M:%S", &ftime);
+        nvgText(context, leftColX, rowY, buf, nullptr);
+        
+        nvgText(context, columnX_1, rowY, "1s", nullptr);
+        nvgText(context, columnX_2, rowY, "15s", nullptr);
+        nvgText(context, columnX_3, rowY, "60s", nullptr);
+        
+        rowY += rowHeight;
+
+        nvgBeginPath(context);
+        nvgStrokeColor(context, nvgRGBA(192, 192, 192, 255));
+        nvgMoveTo(context, leftColX, rowY);
+        nvgLineTo(context, rightColX + rightColW, rowY);
+        nvgStroke(context);
+        
+        rowY += rowHeight;
+        
+        //  STATS
+        nvgText(context, leftColX, rowY, "Render FPS:", nullptr);
+
+        snprintf(buf, sizeof(buf), "%.1f",
+            diagnostics.rateGaugeAmount(Diagnostics::kFrameRate_Main, Diagnostics::kInterval_Second));
+        nvgText(context, columnX_1, rowY, buf, nullptr);
+        
+        snprintf(buf, sizeof(buf), "%.1f",
+            diagnostics.rateGaugeAmount(Diagnostics::kFrameRate_Main, Diagnostics::kInterval_QuarterMinute));
+        nvgText(context, columnX_2, rowY, buf, nullptr);
+        
+        snprintf(buf, sizeof(buf), "%.1f",
+            diagnostics.rateGaugeAmount(Diagnostics::kFrameRate_Main, Diagnostics::kInterval_Minute));
+        nvgText(context, columnX_3, rowY, buf, nullptr);
+        
+        rowY += rowHeight;
+        
+        //  STATS
+        nvgText(context, leftColX, rowY, "Update FPS:", nullptr);
+
+        snprintf(buf, sizeof(buf), "%.1f",
+            diagnostics.rateGaugeAmount(Diagnostics::kFrameRate_Update, Diagnostics::kInterval_Second));
+        nvgText(context, columnX_1, rowY, buf, nullptr);
+        
+        snprintf(buf, sizeof(buf), "%.1f",
+            diagnostics.rateGaugeAmount(Diagnostics::kFrameRate_Update, Diagnostics::kInterval_QuarterMinute));
+        nvgText(context, columnX_2, rowY, buf, nullptr);
+        
+        snprintf(buf, sizeof(buf), "%.1f",
+            diagnostics.rateGaugeAmount(Diagnostics::kFrameRate_Update, Diagnostics::kInterval_Minute));
+        nvgText(context, columnX_3, rowY, buf, nullptr);
+        
+        rowY += rowHeight*2;
+        
+        //  ENTITY STATS
+        
+        nvgText(context, leftColX, rowY, "Entities", nullptr);
+        snprintf(buf, sizeof(buf), "Cnt: %u", entityDiagnostics.entityCount);
+        nvgText(context, columnX_1, rowY, buf, nullptr);
+        snprintf(buf, sizeof(buf), "Max: %u", entityDiagnostics.entityLimit);
+        nvgText(context, columnX_2, rowY, buf, nullptr);
+        
+        rowY += rowHeight;
+        
+        nvgText(context, leftColX, rowY, "Component", nullptr);
+        nvgText(context, columnX_1, rowY, "Allocated", nullptr);
+        nvgText(context, columnX_2, rowY, "Limit", nullptr);
+        
+        rowY += rowHeight;
+
+        nvgBeginPath(context);
+        nvgStrokeColor(context, nvgRGBA(192, 192, 192, 255));
+        nvgMoveTo(context, leftColX, rowY);
+        nvgLineTo(context, rightColX + rightColW, rowY);
+        nvgStroke(context);
+        
+        rowY += rowHeight;
+        
+        for (auto& component : entityDiagnostics.components)
+        {
+            nvgText(context, leftColX, rowY, component.name, nullptr);
+            
+            snprintf(buf, sizeof(buf), "%u", component.allocated);
+            nvgText(context, columnX_1, rowY, buf, nullptr);
+            snprintf(buf, sizeof(buf), "%u", component.limit);
+            nvgText(context, columnX_2, rowY, buf, nullptr);
+            
+            rowY += rowHeight;
+        }
+        
+        rowY += rowHeight;
+        
+        nvgText(context, leftColX, rowY, "Entity Group", nullptr);
+        nvgText(context, columnX_1, rowY, "Allocated", nullptr);
+        nvgText(context, columnX_2, rowY, "Limit", nullptr);
+        
+        rowY += rowHeight;
+
+        nvgBeginPath(context);
+        nvgStrokeColor(context, nvgRGBA(192, 192, 192, 255));
+        nvgMoveTo(context, leftColX, rowY);
+        nvgLineTo(context, rightColX + rightColW, rowY);
+        nvgStroke(context);
+        
+        rowY += rowHeight;
+        
+        for (auto& group : entityDiagnostics.groups)
+        {
+            snprintf(buf, sizeof(buf), "%u", group.id);
+            nvgText(context, leftColX, rowY, buf, nullptr);
+            
+            snprintf(buf, sizeof(buf), "%u", group.allocated);
+            nvgText(context, columnX_1, rowY, buf, nullptr);
+            
+            snprintf(buf, sizeof(buf), "%u", group.limit);
+            nvgText(context, columnX_2, rowY, buf, nullptr);
+            
+            rowY += rowHeight;
+        }
+        
+        rowY += rowHeight;
+    
+    }
     nvgEndFrame(context);
 }
 

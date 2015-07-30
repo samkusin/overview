@@ -18,7 +18,7 @@ namespace component
 {
     struct Party
     {
-        COMPONENT_DEFINITION(Party, overview::EntityStore);
+        COMPONENT_DEFINITION(Party);
 
         enum class Type
         {

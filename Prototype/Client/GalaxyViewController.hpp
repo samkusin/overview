@@ -60,7 +60,9 @@ private:
     enum
     {
         kID_VIEW,
-        kID_BUTTON
+        kID_BUTTON,
+        kID_BUTTON2,
+        kID_BUTTON3
     };
     
     //  starmap rendering

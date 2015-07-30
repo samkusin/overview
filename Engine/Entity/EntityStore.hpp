@@ -19,6 +19,28 @@
 
 namespace cinek { namespace overview {
 
+struct EntityDiagnostics
+{
+    struct component
+    {
+        const char* name;
+        uint32_t allocated;
+        uint32_t limit;
+    };
+    struct group
+    {
+        EntityGroupMapId id;
+        uint32_t allocated;
+        uint32_t limit;
+    };
+    
+    vector<component> components;
+    vector<group> groups;
+    
+    uint32_t entityCount;
+    uint32_t entityLimit;
+};
+
 // using techniques from:
 // http://bitsquid.blogspot.com/2014/08/building-data-oriented-entity-system.html
 //
@@ -50,11 +72,14 @@ public:
     template<typename Component> component::Table<Component> table() const;
     component::EntityGroupTable entityGroupTable(EntityGroupMapId id) const;
     
+    void diagnostics(EntityDiagnostics& diagnostics);
+    
 private:
     //  objects indexed by the offset value of the EntityId
     vector<uint16_t> _iterations;
     vector<uint32_t> _freed;
     uint16_t _entityIdIteration;
+    uint32_t _entityCount;
     unordered_map<ComponentId, component::EntityDataTable> _components;
     unordered_map<EntityGroupMapId, EntityGroupMap> _entityGroups;
 };

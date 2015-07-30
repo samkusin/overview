@@ -13,7 +13,7 @@ namespace cinek { namespace overview {
 namespace component
 {
 
-COMPONENT_TYPE_IMPL(Camera, kCamera, {}, {});
+COMPONENT_TYPE_IMPL(Camera, kCamera, {});
 
 void Camera::init
 (

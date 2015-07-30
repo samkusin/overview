@@ -14,8 +14,8 @@ namespace cinek { namespace overview {
 
 namespace component
 {
-    COMPONENT_TYPE_IMPL(Renderable, kRenderable, {}, {});
-    COMPONENT_TYPE_IMPL(MeshRenderable, kMeshRenderable, {}, {});
+    COMPONENT_TYPE_IMPL(Renderable, kRenderable, {});
+    COMPONENT_TYPE_IMPL(MeshRenderable, kMeshRenderable, {});
 }
 
 } /* namespace overview */ } /* namespace cinek */

@@ -18,7 +18,7 @@ namespace component
 {
     struct MeshRenderable
     {
-        COMPONENT_DEFINITION(MeshRenderable, RenderResources);
+        COMPONENT_DEFINITION(MeshRenderable);
 
         cinek::gfx::MeshHandle::pod_type meshHandle;
         cinek::gfx::TextureHandle::pod_type texHandle;

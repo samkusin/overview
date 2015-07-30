@@ -17,7 +17,7 @@ namespace component
 {
     struct Character
     {
-        COMPONENT_DEFINITION(Character, void);
+        COMPONENT_DEFINITION(Character);
 
         //  the party this character belongs to (i.e. a player's party, or a fleet)
         overview::Entity partyEntity;

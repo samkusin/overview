@@ -72,6 +72,17 @@ namespace component
                                entity.id);
         }
     }
+    
+    static void destroyMeshRenderable
+    (
+        RenderResources& renderResources,
+        Entity entity,
+        component::MeshRenderable& component
+    )
+    {
+        renderResources.meshLibrary->unload(component.meshHandle);
+        renderResources.textureAtlas->unloadTexture(component.texHandle);
+    }
 }
 
 
@@ -143,6 +154,37 @@ Entity createEntity
     */
     
     return entity;
+}
+
+void destroyEntityComponent
+(
+    Entity entity,
+    component::EntityDataTable& dataTable,
+    EntityStore& store,
+    RenderResources& renderResources,
+    const CustomComponentDestroyFn& customCompFn
+)
+{
+    auto& rowset = dataTable.rowset();
+    
+    switch (dataTable.id())
+    {
+    case component::kMeshRenderable:
+        {
+            component::destroyMeshRenderable(renderResources, entity,
+                *rowset.at<component::MeshRenderable>(dataTable.rowIndexFromEntity(entity))
+            );
+        }
+        break;
+    default:
+        break;
+    }
+    if (customCompFn)
+    {
+        customCompFn(entity, dataTable.id());
+    }
+    
+    dataTable.removeDataFromEntity(entity);
 }
 
 

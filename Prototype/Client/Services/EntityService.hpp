@@ -49,6 +49,9 @@ public:
     //
     void setCreateComponentCallback(const overview::CustomComponentCreateFn& cb);
 
+    //  Sets the Custom Component destruction handler
+    void setDestroyComponentCallback(const overview::CustomComponentDestroyFn& cb);
+    
 private:
     AppObjects* _context = nullptr;
 };

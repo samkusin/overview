@@ -29,6 +29,7 @@ namespace cinek { namespace ovproto {
         overview::MessagePublisher* messagePublisher;
         overview::EntityStore* entityStore;
         overview::ViewStack* viewStack;
+        overview::ViewStack* overlayStack;
         
         Allocator* allocator;
         cinek::JsonDocument* entityTemplates;
@@ -41,6 +42,7 @@ namespace cinek { namespace ovproto {
         
         //  callbacks
         overview::CustomComponentCreateFn createComponentCb;
+        overview::CustomComponentDestroyFn destroyComponentCb;
     };
     
     class AppContext

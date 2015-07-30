@@ -51,6 +51,14 @@ void EntityService::setCreateComponentCallback
 {
     _context->createComponentCb = cb;
 }
+
+void EntityService::setDestroyComponentCallback
+(
+    const overview::CustomComponentDestroyFn& cb
+)
+{
+    _context->destroyComponentCb = cb;
+}
     
     } /* namespace ovproto */
 } /* namespace cinek */

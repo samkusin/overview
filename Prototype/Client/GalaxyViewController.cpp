@@ -246,6 +246,18 @@ void GalaxyViewController::onViewLoad()
                 data
             );
         });
+    _Entity.setDestroyComponentCallback(
+        [this]
+        (
+            Entity entity,
+            overview::ComponentId componentId
+        )
+        {
+            component::customComponentDestroyCb(this->_API.appContext(),
+                entity,
+                componentId);
+        }
+    );
     //  position our new star entity - note, this is a brute force method that
     //  bypasses any notification, etc.  use a proper physics system or add
     //  a utility to manipulate entities that sends out the appropriate
@@ -471,7 +483,9 @@ void GalaxyViewController::layoutView()
         events(UI_BUTTON0_DOWN, this, kID_VIEW).
         size(viewRect.w, viewRect.h).
         column(UI_FILL).
-            button(UITHEME_ICON_GHOST, "Button", this, kID_BUTTON).
+            button(UITHEME_ICON_GHOST, "Button A", this, kID_BUTTON).
+            button(UITHEME_ICON_NEWFOLDER, "Button B", this, kID_BUTTON2).
+            button(UITHEME_ICON_MONKEY, "Button C", this, kID_BUTTON3).
         end().
     end();
 }
@@ -484,7 +498,19 @@ void GalaxyViewController::onUIEvent(int evtId, int evtType)
     }
     else if (evtId == kID_BUTTON)
     {
-        printf("Button Hit\n");
+        printf("Button A Hit\n");
+    }
+    else if (evtId == kID_BUTTON2)
+    {
+        printf("Button B Hit\n");
+    }
+    else if (evtId == kID_BUTTON3)
+    {
+        printf("Button C Hit\n");
+    }
+    else
+    {
+        printf("UI Unknown Event\n");
     }
 }
 

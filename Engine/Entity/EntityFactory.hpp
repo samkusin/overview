@@ -29,6 +29,14 @@ Entity createEntity(
     const CustomComponentCreateFn& customCompFn = CustomComponentCreateFn()
 );
 
+void destroyEntityComponent(
+    Entity entity,
+    component::EntityDataTable& dataTable,
+    EntityStore& store,
+    RenderResources& resources,
+    const CustomComponentDestroyFn& customCompFn = CustomComponentDestroyFn()
+);
+
     
 } /* namespace ovproto */ } /* namespace cinek */
 

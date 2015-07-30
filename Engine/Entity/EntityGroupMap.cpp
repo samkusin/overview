@@ -20,7 +20,8 @@ EntityGroupMap::EntityGroupMap
     const Allocator& allocator
 ) :
     _rowset(makeDesc.cnt, makeDesc.roleLimits, allocator),
-    _entityToGroupIndex(allocator)
+    _entityToGroupIndex(allocator),
+    _id(makeDesc.id)
 {
 }
 

@@ -18,7 +18,7 @@ namespace component
 {
     struct Renderable
     {
-        COMPONENT_DEFINITION(Renderable, void);
+        COMPONENT_DEFINITION(Renderable);
 
         uint32_t viewFilterMask;
 

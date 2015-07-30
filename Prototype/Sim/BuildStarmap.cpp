@@ -152,9 +152,9 @@ auto BuildStarmapFunction::operator()
     
     ////////////////////////////////////////////////////////////////////////
     overview::EntityStore entityStore(kMaxEntities, {
-        { overview::component::Transform::kComponentType, kMaxTransforms, nullptr },
-        { ovproto::component::StellarSystem::kComponentType, kMaxStarSystems, nullptr },
-        { ovproto::component::StarBody::kComponentType, kMaxStars, nullptr }
+        { overview::component::Transform::kComponentType, kMaxTransforms },
+        { ovproto::component::StellarSystem::kComponentType, kMaxStarSystems },
+        { ovproto::component::StarBody::kComponentType, kMaxStars }
     }, {
     
     });

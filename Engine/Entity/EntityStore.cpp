@@ -13,7 +13,8 @@
 namespace cinek { namespace overview {
 
 EntityStore::EntityStore() :
-    _entityIdIteration(0)
+    _entityIdIteration(0),
+    _entityCount(0)
 {
 }
 
@@ -27,6 +28,7 @@ EntityStore::EntityStore
     _iterations(allocator),
     _freed(allocator),
     _entityIdIteration(0),
+    _entityCount(0),
     _components(allocator)
 {
     _iterations.reserve(numEntities);
@@ -58,9 +60,11 @@ EntityStore& EntityStore::operator=(EntityStore&& other)
     _iterations = std::move(other._iterations);
     _freed = std::move(other._freed);
     _entityIdIteration = other._entityIdIteration;
+    _entityCount = other._entityCount;
     _components = std::move(other._components);
     
     other._entityIdIteration = 0;
+    other._entityCount = 0;
     
     return *this;
 }
@@ -82,6 +86,7 @@ Entity EntityStore::create(Entity::context_type context)
     
     Entity eid;
     eid.makeEntityId(_iterations[index], context, index);
+    ++_entityCount;
     return eid;
 }
 
@@ -94,6 +99,8 @@ void EntityStore::destroy(Entity eid)
     ++_iterations[index];
     if (!_iterations[index])
         _iterations[index] = 1;
+
+    --_entityCount;
 
     _freed.push_back(index);
 }
@@ -118,6 +125,38 @@ component::EntityGroupTable EntityStore::entityGroupTable(EntityGroupMapId id) c
     return component::EntityGroupTable(const_cast<EntityGroupMap*>(&entityGroupMap));
 }
 
-
+void EntityStore::diagnostics(EntityDiagnostics& diagnostics)
+{
+    diagnostics.components.reserve(_components.size());
+    diagnostics.components.clear();
+    
+    for (auto& component : _components)
+    {
+        diagnostics.components.emplace_back();
+        
+        auto& diag = diagnostics.components.back();
+        diag.name = component.second.name();
+        diag.allocated = component.second.usedCount();
+        diag.limit = component.second.rowset().capacity();
+    }
+    
+    diagnostics.groups.reserve(_entityGroups.size());
+    diagnostics.groups.clear();
+    
+    for (auto& group : _entityGroups)
+    {
+        diagnostics.groups.emplace_back();
+    
+        auto& diag = diagnostics.groups.back();
+        diag.id = group.first;
+        diag.allocated = group.second.usedCount();
+        diag.limit = group.second.rowset().capacity();
+    }
+    
+    diagnostics.groups.reserve(_entityGroups.size());
+    
+    diagnostics.entityCount = _entityCount;
+    diagnostics.entityLimit = (uint32_t)_iterations.capacity();
+}
 
 } /* namespace overview */ } /* namespace cinek */

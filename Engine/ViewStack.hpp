@@ -52,6 +52,10 @@ public:
     //  pops the current view from the stack and unloads it (decrements ref
     //  count).
     void pop();
+    //  resets the view stack, and unloads views
+    //  views are removed (onViewRemoved) from back to front
+    //  views are unloaded (onViewUnload) in no particular order
+    void reset();
     
 private:
     FactoryCallback _factoryCb;

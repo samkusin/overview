@@ -50,6 +50,7 @@
 		37B661401B66A548005930B8 /* EntityGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6613C1B66A548005930B8 /* EntityGroup.cpp */; };
 		37B661411B66A548005930B8 /* EntityGroupMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6613E1B66A548005930B8 /* EntityGroupMap.cpp */; };
 		37B6614E1B684804005930B8 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B6614C1B684804005930B8 /* Character.cpp */; };
+		37B661541B6980E0005930B8 /* Diagnostics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B661521B6980E0005930B8 /* Diagnostics.cpp */; };
 		37BB62E21B3DF43C0096CDA1 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37BB62E11B3DF43C0096CDA1 /* Transform.cpp */; };
 		37C94EDE1B1D2DB000F35CD5 /* MessageHandlers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */; };
 		37CC94D41B61C11D0057D745 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37CC94D01B61C11D0057D745 /* AppInterface.cpp */; };
@@ -250,6 +251,8 @@
 		37B6614B1B6830B7005930B8 /* EntityRoles.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EntityRoles.hpp; path = ../Sim/EntityRoles.hpp; sourceTree = "<group>"; };
 		37B6614C1B684804005930B8 /* Character.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Character.cpp; path = ../Custom/Comp/Character.cpp; sourceTree = "<group>"; };
 		37B6614D1B684804005930B8 /* Character.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Character.hpp; path = ../Custom/Comp/Character.hpp; sourceTree = "<group>"; };
+		37B661521B6980E0005930B8 /* Diagnostics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Diagnostics.cpp; path = ../Client/Diagnostics.cpp; sourceTree = "<group>"; };
+		37B661531B6980E0005930B8 /* Diagnostics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Diagnostics.hpp; path = ../Client/Diagnostics.hpp; sourceTree = "<group>"; };
 		37BB62E11B3DF43C0096CDA1 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Transform.cpp; path = Comp/Transform.cpp; sourceTree = "<group>"; };
 		37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageHandlers.cpp; path = ../MessageHandlers.cpp; sourceTree = "<group>"; };
 		37C94EDD1B1D2DB000F35CD5 /* MessageHandlers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageHandlers.hpp; path = ../MessageHandlers.hpp; sourceTree = "<group>"; };
@@ -429,6 +432,8 @@
 				37B30CB91AED80830029887F /* Shaders */,
 				3754EC7B1B62C0A000118965 /* Services */,
 				378DC2201ACF757D004C8004 /* OVMain.cpp */,
+				37B661531B6980E0005930B8 /* Diagnostics.hpp */,
+				37B661521B6980E0005930B8 /* Diagnostics.cpp */,
 				37CC94CF1B61C11D0057D745 /* AppContext.hpp */,
 				37CC94D11B61C11D0057D745 /* AppInterface.hpp */,
 				37CC94D01B61C11D0057D745 /* AppInterface.cpp */,
@@ -846,6 +851,7 @@
 				3754EC7F1B62C59900118965 /* RenderService.cpp in Sources */,
 				37121D421B517D7500E35C54 /* SpectralClassUtility.cpp in Sources */,
 				37121D3A1B4F01C700E35C54 /* EngineMathGfx.cpp in Sources */,
+				37B661541B6980E0005930B8 /* Diagnostics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

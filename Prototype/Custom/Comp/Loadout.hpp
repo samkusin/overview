@@ -17,7 +17,7 @@ namespace component
 {
     struct Loadout
     {
-        COMPONENT_DEFINITION(Loadout, overview::EntityStore);
+        COMPONENT_DEFINITION(Loadout);
 
         enum class Type
         {

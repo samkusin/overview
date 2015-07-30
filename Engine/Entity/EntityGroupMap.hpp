@@ -28,11 +28,12 @@ class EntityGroupMap
 public:
     using container_type = VectorDataRowset<EntityGroup>;
     using index_type = typename container_type::index_type;
+    using id_type = EntityGroupMapId;
     static constexpr index_type npos = container_type::npos;
     
     struct MakeDescriptor
     {
-        EntityGroupMapId id;
+        id_type id;
         EntityGroup::RoleLimits roleLimits;
         uint32_t cnt;
     };
@@ -40,7 +41,9 @@ public:
     EntityGroupMap(const MakeDescriptor& makeDesc,
                    const Allocator& allocator=Allocator());
     
-        
+    
+    id_type id() const { return _id; }
+    
     const container_type& rowset() const { return _rowset; }
     container_type& rowset() { return _rowset; }
     
@@ -48,9 +51,12 @@ public:
     index_type allocateIndexForEntity(Entity eid);
     void removeDataFromEntity(Entity eid);
     
+    index_type usedCount() const { return (index_type)_entityToGroupIndex.size(); }
+    
 private:
     VectorDataRowset<EntityGroup> _rowset;
     unordered_map<Entity, uint32_t> _entityToGroupIndex;
+    id_type _id;
 };
 
 namespace component

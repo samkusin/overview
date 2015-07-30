@@ -19,15 +19,31 @@ ViewStack::ViewStack(const Allocator& allocator) :
     _commands(allocator)
 {
     _views.reserve(32);
-    _stack.reserve(8);
-    _commands.reserve(64);
+    _stack.reserve(4);
+    _commands.reserve(32);
 }
 
-ViewStack::~ViewStack() = default;
+ViewStack::~ViewStack()
+{
+    reset();
+}
 
 void ViewStack::setFactory(const FactoryCallback& callback)
 {
     _factoryCb = callback;
+}
+
+void ViewStack::reset()
+{
+    while (!_stack.empty())
+    {
+        cmdPop(false);
+    }
+    
+    while (!_views.empty())
+    {
+        cmdUnload(_views.back().first->viewId());
+    }
 }
     
 void ViewStack::layout()
@@ -189,6 +205,7 @@ void ViewStack::cmdPop(bool foregroundTop)
     
     auto vc = _stack.back();
     vc->onViewRemoved();
+    
     _stack.pop_back();
 
     cmdUnload(vc->viewId());
@@ -206,6 +223,7 @@ void ViewStack::cmdPush(ViewController* vc, bool backgroundTop)
         _stack.back()->onViewBackground();
     }
     _stack.push_back(vc);
+
     vc->onViewAdded();
 }
 

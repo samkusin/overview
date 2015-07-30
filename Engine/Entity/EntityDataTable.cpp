@@ -19,7 +19,6 @@ EntityDataTable::EntityDataTable
     const Allocator& allocator
 ) :
     _descriptor(desc.desc),
-    _context(desc.context),
     _entityToRow(allocator),
     _rowset(desc.desc, desc.cnt, allocator)
 {
@@ -31,7 +30,7 @@ auto EntityDataTable::allocateIndexForEntity(Entity eid) -> index_type
     if (indexIt == _entityToRow.end())
     {
         auto idx = _rowset.allocate(eid);
-        _descriptor.initCb(eid, _rowset.at(idx), _context);
+        _descriptor.initCb(eid, _rowset.at(idx));
         indexIt = _entityToRow.insert(std::make_pair(eid, idx)).first;
     }
     return indexIt->second;
@@ -47,7 +46,6 @@ void EntityDataTable::removeDataFromEntity
         return;
     
     auto index = indexIt->second;
-    _descriptor.termCb(eid, _rowset.at(index), _context);
     _entityToRow.erase(indexIt);
     _rowset.free(index);
 }

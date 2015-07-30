@@ -25,11 +25,13 @@ class EntityDataTable
 public:
     using container_type = DataRowset;
     using index_type = typename container_type::index_type;
+    using id_type = ComponentId;
     static constexpr index_type npos = container_type::npos;
     
     EntityDataTable(const MakeDescriptor& desc, const Allocator& allocator);
     
-    ComponentId componentId() const { return _descriptor.id; }
+    id_type id() const { return _descriptor.id; }
+    const char* name() const { return _descriptor.name; }
     
     const container_type& rowset() const { return _rowset; }
     container_type& rowset() { return _rowset; }
@@ -37,6 +39,8 @@ public:
     index_type rowIndexFromEntity(Entity eid) const;
     index_type allocateIndexForEntity(Entity eid);
     void removeDataFromEntity(Entity eid);
+    
+    index_type usedCount() const { return (index_type)_entityToRow.size(); }
     
 private:
     Descriptor _descriptor;
@@ -98,7 +102,7 @@ template<typename Component, typename Container>
 Table<Component, Container>::Table(container_type* dataTable) :
     _table(dataTable)
 {
-    CK_ASSERT(_table && _table->componentId() == Component::kComponentId);
+    CK_ASSERT(_table && _table->id() == Component::kComponentId);
 }
 
 template<typename Component, typename Container>

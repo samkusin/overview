@@ -11,13 +11,27 @@
 
 #include "UITypes.hpp"
 
-namespace cinek { namespace ovproto {
+namespace cinek {
+
+namespace overview {
+
+struct EntityDiagnostics;
+
+}
+
+namespace ovproto {
+
+class Diagnostics;
 
 NVGcontext* createUIRenderingContext(int viewId);
 
 void destroyUIRenderingContext(NVGcontext* nvg);
 
 void renderUI(NVGcontext* context, const gfx::Rect& viewRect);
+
+void renderDiagnostics(Diagnostics& diagnostics,
+                       overview::EntityDiagnostics& entityDiagnostics,
+                       NVGcontext* context, const gfx::Rect& viewRect);
 
 } /* namespace ovproto */ } /* namespace cinek */
 
