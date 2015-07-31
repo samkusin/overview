@@ -687,26 +687,6 @@ void GalaxyViewController::renderView()
                     *vert = *base;
                 }
                 
-                /*
-                
-                vert[0].x = -2.0f;
-                vert[0].y = 2.0f;
-                vert[0].z = 5.0f;
-                vert[0].abgr = star->abgrColor;
-                vert[1].x = 2.0f;
-                vert[1].y = 2.0f;
-                vert[1].z = 5.0f;
-                vert[1].abgr = star->abgrColor;
-                vert[2].x = 2.0f;
-                vert[2].y = -2.0f;
-                vert[2].z = 5.0f;
-                vert[2].abgr = star->abgrColor;
-                vert[3].x = -2.0f;
-                vert[3].y = -2.0f;
-                vert[3].z = 5.0f;
-                vert[3].abgr = star->abgrColor;
-                */
-                
                 //  6 vertices per star quad - coords calculated in shader.
                 auto ind = indices + starIndex*6;
                 ind[0] = vertIndex;
