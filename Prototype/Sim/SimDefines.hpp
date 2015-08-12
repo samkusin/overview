@@ -20,8 +20,9 @@ constexpr ckm::scalar kSystemInnerRadiusFraction = 0.33;
 constexpr int kMaxStarsPerSystem = 4;
 constexpr int kMaxStarSystems = 512*1024;
 constexpr int kMaxStars = kMaxStarSystems * kMaxStarsPerSystem;
-constexpr int kMaxTransforms = kMaxStarSystems + kMaxStars;
-constexpr int kMaxRenderables = kMaxStarSystems + kMaxStars;
+constexpr int kMaxRigidBodies = 128;
+constexpr int kMaxTransforms = kMaxStarSystems + kMaxStars + kMaxRigidBodies;
+constexpr int kMaxRenderables = kMaxStarSystems + kMaxStars + kMaxRigidBodies;
 constexpr int kMaxEntities = kMaxTransforms * 2;
 
 //  References:

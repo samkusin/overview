@@ -92,7 +92,7 @@ struct MergeStarmapWithEntityStore
                     *comp = component;
         
                     //  set remapped entity for our tree node
-                    data.result->stellarSystemTree.setNodeObjectId(comp->indexToTreeNode, entity);
+                    data.result->stellarSystemTree.setNodeObjectId(comp->indexToTreeNode(), entity);
                     
                     data.utility->renderTable.addDataToEntity(entity);
                 }
@@ -675,10 +675,10 @@ void GalaxyViewController::renderView()
                 vert->z = renderable->worldSRT.comp[14];
                 
                 //  color
-                vert->abgr = star->abgrColor;
+                vert->abgr = star->abgrColor();
                 
                 //  set attributes
-                vert->u = star->visualMag;
+                vert->u = star->visualMagnitude();
                 
                 auto base = vert;
                 

@@ -20,8 +20,6 @@ namespace component
     {
         COMPONENT_DEFINITION(Renderable);
 
-        uint32_t viewFilterMask;
-
         gfx::Matrix4 worldSRT;
     };
 }

@@ -13,18 +13,29 @@
 
 namespace cinek { namespace ovproto {
 
+class StellarSystemUtility;
+
 namespace component
 {
     struct StellarSystem
     {
         COMPONENT_DEFINITION(StellarSystem);
-
+        
+        void init(uint32_t seed, ckm::scalar radius);
+        
+        uint32_t seed() const { return _seed; }
+        ckm::scalar radiusInLYR() const { return _radius; }
+        int indexToTreeNode() const { return _indexToTreeNode; }
+        
+    private:
+        friend class ::cinek::ovproto::StellarSystemUtility;
+        
         //  seed used to generate planets for this system
-        uint32_t seed;
+        uint32_t _seed;
         //  filled in by the StellarSystemUtility
-        int indexToTreeNode;
+        int _indexToTreeNode;
         //  radius of the system
-        ckm::scalar radius;
+        ckm::scalar _radius;
     };
 }
 

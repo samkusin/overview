@@ -18,7 +18,8 @@ using MessageDelegateHandle = uint32_t;
 using MessageBuffer = Buffer<Allocator>;
 
 class MessageStream;
-class MessagePublisher;
+
+template<typename Delegate> class MessagePublisher;
 
 struct MessageHeader
 {

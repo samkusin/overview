@@ -10,23 +10,34 @@
 #define Overview_Message_Dispatcher_hpp
 
 #include "EngineTypes.hpp"
+#include "MessageStream.hpp"
+#include "MessagePublisher.hpp"
 
 namespace cinek { namespace overview {
 
-class MessageStream;
-class MessagePublisher;
 
+template<typename Publisher>
 MessageStream setMessageStreamForPublisher
 (
     MessageStream&& publishTargetStream,
-    MessagePublisher& publisher
-);
+    Publisher& publisher
+)
+{
+    auto acquiredStream = publisher.acquireStream(std::move(publishTargetStream));
+    return acquiredStream;
+}
 
+template<typename Publisher>
 void dispatchMessageStreamToPublisher
 (
     MessageStream& stream,
-    MessagePublisher& publisher
-);
+    Publisher& publisher
+)
+{
+    publisher.dispatch(stream);
+}
+
+
 
 } /* namespace overview */ } /* namespace cinek */
 

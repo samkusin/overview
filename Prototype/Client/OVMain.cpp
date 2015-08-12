@@ -18,20 +18,21 @@
 #include "Engine/MessagePublisher.hpp"
 #include "Engine/MessageStream.hpp"
 
-#include "Engine/Entity/Comp/Camera.hpp"
-#include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/Comp/Renderable.hpp"
-#include "Engine/Entity/Comp/MeshRenderable.hpp"
-
 #include "Engine/ViewStack.hpp"
 
 #include <cinek/file.hpp>
 #include <cinek/json/json.hpp>
+#include <cinek/taskscheduler.hpp>
 
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
 #include <SDL2/SDL_syswm.h>
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
+
+#include "Engine/Entity/Comp/Camera.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/Comp/Renderable.hpp"
+#include "Engine/Entity/Comp/MeshRenderable.hpp"
 
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
@@ -39,11 +40,16 @@
 #include "Custom/Comp/Loadout.hpp"
 #include "Custom/Comp/Party.hpp"
 #include "Custom/Comp/Character.hpp"
+#include "Custom/Comp/RigidBody.hpp"
+
+#include "Physics/RigidBodySystem.hpp"
 
 #include "Render/RenderShaders.hpp"
 
 #include "Sim/SpectralClassUtility.hpp"
 #include "Sim/EntityRoles.hpp"
+#include "Sim/AIControlSystem.hpp"
+#include "Sim/AIGameClient.hpp"
 
 #include "GalaxyViewController.hpp"
 
@@ -174,12 +180,6 @@ void run(SDL_Window* window)
         return;
     }
     
-    //  messaging - use two streams, one that is active, and one for the next
-    //  frame
-    overview::MessageStream messages(256, allocator);
-    overview::MessagePublisher messagePublisher(std::move(messages), 64, 32, 32, allocator);
-    messages = std::move(overview::MessageStream(256, allocator));
-    
     //  Simulation Parameters
     //
     
@@ -211,6 +211,7 @@ void run(SDL_Window* window)
         overview::component::Renderable::makeDescriptor(kMaxRenderables),
         overview::component::MeshRenderable::makeDescriptor(16*1024),
         overview::component::Camera::makeDescriptor(4),
+        component::RigidBody::makeDescriptor(kMaxRigidBodies),
         component::StellarSystem::makeDescriptor(kMaxStarSystems),
         component::StarBody::makeDescriptor(kMaxStars),
         component::Character::makeDescriptor(16),
@@ -228,6 +229,15 @@ void run(SDL_Window* window)
     if (!SpectralUtility::loadTables())
         return;
     
+    //  AI System
+    AIControlSystem::InitParams aiInitParams;
+    aiInitParams.msgStreamSizeInBytes = 32*1024;
+    aiInitParams.objectCount = 1024;
+    aiInitParams.objectsPerSecond = 1024;
+    
+    AIControlSystem aiControl(aiInitParams, allocator);
+    AIGameClient aiGameClient;
+    
     //  setup application master template
     AppDocumentMap appDocumentMap(allocator);
     
@@ -238,7 +248,6 @@ void run(SDL_Window* window)
     appObjects.entityStore = &entityStore;
     appObjects.viewStack = &viewStack;
     appObjects.overlayStack = &overlayStack;
-    appObjects.messagePublisher = &messagePublisher;
     appObjects.renderResources = &renderResources;
     appObjects.viewRect = { 0, 0, viewWidth, viewHeight };
     appObjects.nvg = nvgContext;
@@ -281,10 +290,11 @@ void run(SDL_Window* window)
     Diagnostics diagnostics;
     overview::EntityDiagnostics entityDiagnostics;
     
-    const double kSimFPS = 25.0;
+    const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1.0/kSimFPS;
     
     uint32_t systemTimeMs = SDL_GetTicks();
+    double simTime = 0.0;
     double lagSecs = 0.0;
     
     bool running = true;
@@ -294,9 +304,10 @@ void run(SDL_Window* window)
         uint32_t nextSystemTimeMs = SDL_GetTicks();
         int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
         systemTimeMs = nextSystemTimeMs;
+        
+        //  TODO: Lag should not be incremented while Sim is Paused
         lagSecs += frameTimeMs/1000.0;
     
-        diagnostics.updateTime(systemTimeMs);
         entityStore.diagnostics(entityDiagnostics);
     
         //  SYSTEM POLL AND INPUT
@@ -312,21 +323,23 @@ void run(SDL_Window* window)
             //  dispatch messages, and set our new message target for the next
             //  frame.  setting a new stream allows message handlers to publish
             //  messages to our only message publisher.
-            auto messagesForDispatch = overview::setMessageStreamForPublisher(std::move(messages),
-                messagePublisher);
-
-            overview::dispatchMessageStreamToPublisher(messagesForDispatch, messagePublisher);
-
-            messages = std::move(messagesForDispatch);
+            aiControl.simulate(aiGameClient, simTime);
             
+            //  simulation of current view
             viewStack.process();
             overlayStack.process();
             
+            //  simulate physics
+            //physics.simulate(simTime, kSecsPerSimFrame);
+            
             lagSecs -= kSecsPerSimFrame;
+            simTime += kSecsPerSimFrame;
             
             diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
         }
         //  SIMULATION END
+        
+        diagnostics.updateTime(systemTimeMs, simTime*1000);
         
         //  RENDER START (TODO: Take Lag into Account for Interp)
         {

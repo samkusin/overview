@@ -342,6 +342,21 @@ uint32_t colorABGRFromTemp(int tempK)
     return abgr;
 }
 
+ckm::scalar radiusAndLuminosityToEffTemp
+(
+    ckm::scalar radius,
+    ckm::scalar luminosity
+)
+{
+    //  ((R^2)/L) ^ (1/4) = 1/Teff
+    //  http://skyserver.sdss.org/dr1/en/proj/advanced/hr/radius1.asp
+    auto tempRatio = std::sqrt((radius*radius)/luminosity); // ratio is squared
+    tempRatio = std::sqrt(tempRatio);
+    tempRatio = 1/tempRatio;
+    
+    return tempRatio * kSolEffTemp;
+}
+
 }
 
 } /* namespace ovproto */ } /* namespace cinek */

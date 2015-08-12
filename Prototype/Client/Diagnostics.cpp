@@ -14,7 +14,8 @@ namespace cinek { namespace ovproto {
 
 
 Diagnostics::Diagnostics() :
-    _currentTimeMs(0)
+    _currentTimeMs(0),
+    _currentSimTimeMs(0)
 {
     _intervalTimeMs[kInterval_Second] = 1000;
     _intervalTimeMs[kInterval_QuarterMinute] = 15*1000;
@@ -54,9 +55,10 @@ void Diagnostics::setValueGauge(ValueGauge gauge, uint32_t value)
     ++_totals[gauge];
 }
 
-void Diagnostics::updateTime(uint32_t timeMs)
+void Diagnostics::updateTime(uint32_t renderTimeMs, uint32_t simTimeMs)
 {
-    _currentTimeMs = timeMs;
+    _currentTimeMs = renderTimeMs;
+    _currentSimTimeMs = simTimeMs;
     for (auto i = 0; i < kIntervalCount; ++i)
     {
         if (_currentTimeMs - _intervalStartTimeMs[i] > _intervalTimeMs[i])

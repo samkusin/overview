@@ -258,9 +258,19 @@ void renderDiagnostics
         ftime.tm_hour = systime / 3600;
         ftime.tm_min = (systime % 3600) / 60;
         ftime.tm_sec = (systime % 3600) % 60;
-        strftime(buf, sizeof(buf)-1, "Time: %H:%M:%S", &ftime);
+        strftime(buf, sizeof(buf)-1, "System: %H:%M:%S", &ftime);
         nvgText(context, leftColX, rowY, buf, nullptr);
         
+        systime = diagnostics.simTimeInMs()/1000;
+        ftime.tm_hour = systime / 3600;
+        ftime.tm_min = (systime % 3600) / 60;
+        ftime.tm_sec = (systime % 3600) % 60;
+        strftime(buf, sizeof(buf)-1, "Sim: %H:%M:%S", &ftime);
+        nvgText(context, rightColX, rowY, buf, nullptr);
+        
+        rowY += rowHeight;
+        
+        nvgText(context, leftColX, rowY, "Rate", nullptr);
         nvgText(context, columnX_1, rowY, "1s", nullptr);
         nvgText(context, columnX_2, rowY, "15s", nullptr);
         nvgText(context, columnX_3, rowY, "60s", nullptr);

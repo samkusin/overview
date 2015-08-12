@@ -60,6 +60,9 @@ ckm::scalar bolmetricCorrection(int tempK, SpectralClass mkClass);
 //  using the table constructed by Mitchell Charity (see references)
 uint32_t colorABGRFromTemp(int tempK);
 
+//  calculates effective temperature from solar radius and luminosity
+ckm::scalar radiusAndLuminosityToEffTemp(ckm::scalar solarR, ckm::scalar solarL);
+
 }
 
 } /* namespace ovproto */ } /* namespace cinek */

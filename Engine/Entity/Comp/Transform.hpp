@@ -10,9 +10,7 @@
 #define Overview_Entity_Component_Transform_hpp
 
 #include "Engine/Entity/EntityTypes.hpp"
-
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
+#include "Engine/EngineMath.hpp"
 
 namespace cinek { namespace overview {
 
@@ -22,18 +20,25 @@ namespace component
     {
         COMPONENT_DEFINITION(Transform);
         
-        void setLocalPosition(const glm::dvec3& pos) {
+        void setLocalPosition(const ckm::vec3& pos) {
             _localPosition = pos;
             _isDirty = true;
         }
-        const glm::dvec3& localPosition() const {
+        const ckm::vec3& localPosition() const {
             return _localPosition;
+        }
+        void setLocalOrient(const ckm::quat& q) {
+            _localOrient = q;
+            _isDirty = true;
+        }
+        const ckm::quat& localOrient() const {
+            return _localOrient;
         }
         bool dirty() const {
             return _isDirty;
         }
 
-        const glm::dmat4& worldSRT() const {
+        const ckm::mat4& worldSRT() const {
             return _worldSRT;
         }
         
@@ -57,6 +62,8 @@ namespace component
     private:
         //  local components for the entity owning this Transform
         ckm::vec3 _localPosition;
+        ckm::quat _localOrient;
+        
         //  the SRT matrix used as the world space representation
         ckm::mat4 _worldSRT;
         

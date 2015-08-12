@@ -21,12 +21,14 @@ namespace component
     struct Loadout;
     struct Party;
     struct Character;
+    struct RigidBody;
     
     enum
     {
         kStellarSpace       = overview::component::kCustomSpace0,
         kEntityGroupSpace   = overview::component::kCustomSpace0+1,
-        kActorSpace         = overview::component::kCustomSpace0+2
+        kActorSpace         = overview::component::kCustomSpace0+2,
+        kPhysicsSpace       = overview::component::kCustomSpace0+3
     };
     
     enum
@@ -35,7 +37,8 @@ namespace component
         kStarBody           = overview::component::MakeComponentId(kStellarSpace, 0x0001),
         kLoadout            = overview::component::MakeComponentId(kEntityGroupSpace, 0x0000),
         kParty              = overview::component::MakeComponentId(kEntityGroupSpace, 0x0001),
-        kCharacter          = overview::component::MakeComponentId(kActorSpace, 0x0000)
+        kCharacter          = overview::component::MakeComponentId(kActorSpace, 0x0000),
+        kRigidBody          = overview::component::MakeComponentId(kPhysicsSpace, 0x0000)
     };
     
     enum

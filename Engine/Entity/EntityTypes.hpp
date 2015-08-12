@@ -109,12 +109,12 @@ namespace component
 
     enum
     {
-        kRenderable         = MakeComponentId(kRenderSpace, 0x0000),
-        kMeshRenderable     = MakeComponentId(kRenderSpace, 0x0001),
-        kCamera             = MakeComponentId(kRenderSpace, 0x0002),
-        kTransform          = MakeComponentId(kEntitySpace, 0x0000),
-        kEntityHierarchy    = MakeComponentId(kEntitySpace, 0x0001),
-        kEmpty              = MakeComponentId(0xffff, 0xffff)
+        kRenderable         = MakeComponentId(kRenderSpace,  0x0000),
+        kMeshRenderable     = MakeComponentId(kRenderSpace,  0x0001),
+        kCamera             = MakeComponentId(kRenderSpace,  0x0002),
+        kTransform          = MakeComponentId(kEntitySpace,  0x0000),
+        kEntityHierarchy    = MakeComponentId(kEntitySpace,  0x0001),
+        kEmpty              = MakeComponentId(0xffff,        0xffff)
     };
 
 }

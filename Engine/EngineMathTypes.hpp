@@ -11,6 +11,8 @@
 #define Overview_Engine_Math_Types_hpp
 
 #include <cinek/types.hpp>
+
+#define GLM_FORCE_NO_CTOR_INIT
 #include <glm/fwd.hpp>
 
 namespace ckm
@@ -22,6 +24,7 @@ namespace ckm
     using vec4 = glm::tvec4<scalar, glm::highp>;
     using mat3 = glm::tmat3x3<scalar, glm::highp>;
     using mat4 = glm::tmat4x4<scalar, glm::highp>;
+    using quat = glm::tquat<scalar, glm::highp>;
     
     constexpr ckm::scalar kHalfScalar = 0.5;
     

@@ -44,11 +44,6 @@ namespace component
         auto comp = table.addDataToEntity(entity);
         if (comp)
         {
-            comp->viewFilterMask = parseFlagsToUint(
-                definitions["renderable_filter_flags"],
-                data["filter"].GetString()
-            );
-
             if (meshTable)
             {
                 if (!strcmp(typeName, "mesh"))

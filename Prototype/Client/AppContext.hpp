@@ -26,7 +26,6 @@ namespace cinek { namespace ovproto {
     struct AppObjects
     {
         //  game state
-        overview::MessagePublisher* messagePublisher;
         overview::EntityStore* entityStore;
         overview::ViewStack* viewStack;
         overview::ViewStack* overlayStack;

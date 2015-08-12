@@ -382,8 +382,7 @@ auto BuildStarmapFunction::createSystem
         if (!stellarSystem)
             return Result::kOutOfMemory;
         
-        stellarSystem->radius = systemRadius;
-        stellarSystem->seed = randomizer.uniformInt();
+        stellarSystem->init(randomizer.uniformInt(), systemRadius);
         
         //  Create Bodies (with no position)
         /*
@@ -436,17 +435,11 @@ Entity BuildStarmapFunction::createBodies
             return Entity::null();
         
         //  star props
-        star->solarMass = starTemplate.mass;
-        star->solarLuminosity = massToLuminosity(star->solarMass);
-        star->solarRadius = massToRadius(star->solarMass);
-        star->effectiveTemp = radiusAndLuminosityToEffTemp(star->solarRadius, star->solarLuminosity);
-    
-        star->abgrColor = SpectralUtility::colorABGRFromTemp(star->effectiveTemp);
-        
-        SpectralClass mkClass;
-        star->visualMag = SpectralUtility::bolometricMagFromLuminosity(star->solarLuminosity);
-        star->visualMag = star->visualMag - SpectralUtility::bolmetricCorrection(star->effectiveTemp, mkClass);
-       /*
+        star->init(starTemplate.mass,
+            massToRadius(starTemplate.mass),
+            massToLuminosity(starTemplate.mass)
+        );
+        /*
          printf("Creating Star: temp=%u, mass=%lf, radius=%lf, luminosity=%lf, Mv=%lf\n",
             star->effectiveTemp,
             star->solarMass,
@@ -493,15 +486,15 @@ Entity BuildStarmapFunction::createBodies
         
         auto star = state.standardTables.starTable.dataForEntity(entity);
         
-        totalMass += star->solarMass;
-        totalMassMulOffset += offsetRange.first*star->solarMass;
+        totalMass += star->solarMass();
+        totalMassMulOffset += offsetRange.first*star->solarMass();
         
         offsets[starIndex] = offsetRange.first;
         
         auto& randomizer = state.spectralRandomizers[starTemplates[starIndex].classIndex];
         
         offsetRange.first = offsetRange.first +
-            (star->solarRadius + kMaxStarPairDistInSolRadius * randomizer.uniformPct()*0.01)/kSolRadiusPerAU;
+            (star->solarRadius() + kMaxStarPairDistInSolRadius * randomizer.uniformPct()*0.01)/kSolRadiusPerAU;
         
         //  if numStars == 1, this block is never executed, and numStars > 2
         //      then offsetFraction will be 10^(numStars)
@@ -576,22 +569,6 @@ ckm::scalar BuildStarmapFunction::massToRadius(ckm::scalar solarMass) const
     return std::pow(solarMass, 0.8);
 }
 
-//  converts radius & lumniosity to effective temp
-ckm::scalar BuildStarmapFunction::radiusAndLuminosityToEffTemp
-(
-    ckm::scalar radius,
-    ckm::scalar luminosity
-)
-const
-{
-    //  ((R^2)/L) ^ (1/4) = 1/Teff
-    //  http://skyserver.sdss.org/dr1/en/proj/advanced/hr/radius1.asp
-    auto tempRatio = std::sqrt((radius*radius)/luminosity); // ratio is squared
-    tempRatio = std::sqrt(tempRatio);
-    tempRatio = 1/tempRatio;
-    
-    return tempRatio * kSolEffTemp;
-}
 
 std::pair<ckm::vec3, bool> BuildStarmapFunction::randomPositionInWorld
 (

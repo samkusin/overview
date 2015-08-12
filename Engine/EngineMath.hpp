@@ -9,8 +9,10 @@
 #ifndef Overview_Engine_Math_hpp
 #define Overview_Engine_Math_hpp
 
+#include "EngineMathTypes.hpp"
 #include "EngineGeometry.hpp"
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace ckm {
 
