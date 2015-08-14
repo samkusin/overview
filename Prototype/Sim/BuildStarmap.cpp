@@ -397,8 +397,6 @@ auto BuildStarmapFunction::createSystem
         if (!transform->child().valid())
             return Result::kOutOfMemory;
 
-        //  transform object prior to inserting.
-
         CS.stellarSystemTree.insertObject(systemEntity);
     }
     else

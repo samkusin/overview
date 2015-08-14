@@ -11,6 +11,7 @@
 
 #include "Comp/Transform.hpp"
 #include "Comp/Renderable.hpp"
+#include "Comp/Camera.hpp"
 #include "Comp/MeshRenderable.hpp"
 
 #include "Engine/MessagePublisher.hpp"
@@ -22,6 +23,7 @@
 #include "entityevents.capnp.h"
 
 #include <cinek/json/json.hpp>
+#include <cstdio>
 
 namespace cinek { namespace overview {
 
@@ -78,6 +80,25 @@ namespace component
         renderResources.meshLibrary->unload(component.meshHandle);
         renderResources.textureAtlas->unloadTexture(component.texHandle);
     }
+    
+    static void createCamera
+    (
+        EntityStore& store,
+        Entity entity,
+        const cinek::JsonValue& 
+    )
+    {
+        auto table = store.table<overview::component::Camera>();
+        auto comp = table.addDataToEntity(entity);
+        if (!comp)
+        {
+            OVENGINE_LOG_ERROR("createRenderable - "
+                               "unable to allocate a Renderable for entity %" PRIu64 ".",
+                               entity.id);
+        }
+
+    }
+    
 }
 
 
@@ -127,6 +148,10 @@ Entity createEntity
             {
                 //  handled earlier
                 continue;
+            }
+            else if (!strcmp(componentName, "camera"))
+            {
+                component::createCamera(store, entity, componentData);
             }
             
             //  allow customizations, extensions to the factory for custom

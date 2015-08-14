@@ -12,11 +12,11 @@
 #include <cinek/types.hpp>
 #include <cinek/json/json.hpp>
 
-#include <glm/glm.hpp>
+#include "Engine/EngineMathTypes.hpp"
 
 namespace cinek { namespace overview {
 
-glm::vec3 parseVec3(const JsonValue& value, const glm::vec3& defaultVal=glm::vec3());
+ckm::vec3 parseVec3(const JsonValue& value, const glm::vec3& defaultVal=ckm::vec3());
 
 } /* namespace overview */ } /* namespace cinek */
 

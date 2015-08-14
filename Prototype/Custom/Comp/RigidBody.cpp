@@ -60,20 +60,22 @@ namespace component
         //  integrate.
         //
         _axialSpin =  0.5 *
-            ckm::quat(_angularVelocity.x, _angularVelocity.y, _angularVelocity.z, 0) *
+            ckm::quat(0, _angularVelocity.x, _angularVelocity.y, _angularVelocity.z) *
             transform.orient;
     
         transform.position += _velocity * dt;
         _momentum += _force * dt;
-        transform.orient += _axialSpin * dt;
+        transform.orient = ckm::normalize(transform.orient + _axialSpin * dt);
+        
         _angularMomentum += _torque * dt;
     
         //  calculate new values that may be accessed by an external system
         _velocity = _momentum * _invMass;
         _angularVelocity = _angularMomentum * _invInertiaTensors;
         _axialSpin = 0.5 *
-            ckm::quat(_angularVelocity.x, _angularVelocity.y, _angularVelocity.z, 0) *
+            ckm::quat(0, _angularVelocity.x, _angularVelocity.y, _angularVelocity.z) *
             transform.orient;
+        
         
         return transform;
     }

@@ -7,62 +7,111 @@
 //
 
 #include "TransformEntity.hpp"
+#include "Engine/Debug.hpp"
 
 namespace cinek { namespace overview {
 
 namespace component
 {
-    Transform* TransformEntity::operator()
-    (
-        Entity entity,
-        Table<Transform> transforms
-    )
+
+    ckm::mat4& UpdateTransform::operator()(Entity entity)
     {
-        _transforms = transforms;
+        //  navigate up to root parent entity so that we can calculate the
+        //  whole transform from root to this entity.
         
-        Transform* transform = _transforms.dataForEntity(entity);
-        if (transform && transform->dirty())
+        auto xform = _transforms.dataForEntity(entity);
+        if (!xform)
         {
-            const Transform* parentTransform = transform->parent().valid() ?
-                _transforms.dataForEntity(transform->parent()) :
-                nullptr;
-            auto& parentSRT = parentTransform ? parentTransform->worldSRT() : ckm::mat4(1);
-            
-            runTransform(*transform, parentSRT);
+            _srt = ckm::mat4(1);
         }
-        return transform;
+        else
+        {
+            runTransform(entity, *xform);
+        }
+        
+        return _srt;
     }
-        
-    void TransformEntity::all
-    (
-        Table<Transform> transforms
-    )
+    
+    void UpdateTransform::all()
     {
-        _transforms = transforms;
-        
-        //  only run our recursive transform on root entities (no parents).
-        //  for each root entity, descend down the tree and any dirty children
-        //  will be transformed.   this prevents children from being transformed
-        //  twice, if the child transform is processed before a dirty parent
-        
-        _transforms.forEach([this](Entity e, Transform& t)
-            {
-                ckm::mat4 iden(1);
-                if (t.parent() == nullptr)
+        _transforms.forEach(
+            [this](Entity e, overview::component::Transform& t) {
+                if (t.isDirty())
                 {
-                    runTransform(t, iden);
+                    runTransform(e, t);
                 }
             });
     }
     
-    
-    void TransformEntity::runTransform
-    (
-        Transform& transform,
-        const ckm::mat4& parentSRT
-    )
+    void UpdateTransform::runTransform(Entity entity, Transform& t)
     {
-        transform.calculateWorldSRTFromParent(parentSRT);
+        Entity rootEntity = entity;
+        auto rootTransform = &t;
+        auto firstDirtyEntity = entity;
+        auto firstDirtyTransform = &t;
+        ckm::mat4 parentSRT(1);
+        
+        while (rootTransform && rootTransform->parent().valid())
+        {
+            bool firstDirtyChange = false;
+            if (rootTransform->isDirty())
+            {
+                firstDirtyEntity = rootEntity;
+                firstDirtyTransform = rootTransform;
+                firstDirtyChange = true;
+            }
+            rootEntity = rootTransform->parent();
+            rootTransform = _transforms.dataForEntity(rootEntity);
+            if (firstDirtyChange)
+            {
+                if (rootTransform)
+                    rootTransform->calcMatrix(parentSRT);
+                else
+                    parentSRT = ckm::mat4(1);
+            }
+        }
+        
+        //  error condition (unlikely, but handle)
+        if (!rootTransform)
+        {
+            firstDirtyEntity = entity;
+            firstDirtyTransform = &t;
+            OVENGINE_LOG_ERROR("TransformCreateMatrix() - entity transform tree "
+                               "broken for entity %" PRIu64, rootEntity);
+        }
+        
+        _targetEntity = entity;
+        
+        //  get parent SRT if firstDirtyEntity has one.
+        
+        runTransform(firstDirtyEntity, *firstDirtyTransform, parentSRT);
+    }
+    
+    bool UpdateTransform::runTransform
+    (
+        Entity e,
+        Transform& transform,
+        const ckm::mat4& srtParent)
+    {
+        ckm::mat4 srt;
+        
+        if (transform.isDirty())
+        {
+            _srt = transform.calcLocalMatrix(srt) * srtParent;
+            
+            transform.setOrient(ckm::fromMatrix(_srt));
+            transform.setPosition(ckm::vec3(_srt[3]));
+            transform.clearDirty();
+        }
+        else
+        {
+            _srt = transform.calcMatrix(_srt);
+        }
+
+        if (e == _targetEntity)
+            return false;
+        
+        srt = _srt;
         
         //  iterate through children
         Entity child = transform.child();
@@ -74,50 +123,15 @@ namespace component
             //  and their parent-child-sibling relationships are cleaned up
             //  upon entity destruction.
             auto childTransform = _transforms.dataForEntity(child);
-            runTransform(*childTransform, transform.worldSRT());
-            child = _transforms.dataForEntity(child)->sibling();
-        }
-    }
-    
-
-    bool TransformVisitor::operator()
-    (
-        Entity entity,
-        Table<Transform> transforms
-    )
-    {
-        _transforms = transforms;
-        
-        Transform* transform = _transforms.dataForEntity(entity);
-        if (!transform)
-            return true;
             
-        return visitLocal(entity, *transform);
-    }
-    
-    bool TransformVisitor::visitLocal(Entity e, Transform& t)
-    {
-        if (!visit(e, t))
-            return false;
-        
-        //  iterate through children
-        Entity child = t.child();
-        while (child.valid())
-        {
-            //  we assume that if there are valid entities set for child and
-            //  sibling, that they have transform components.  if this
-            //  assumption fails, then there's a problem with how entities
-            //  and their parent-child-sibling relationships are cleaned up
-            //  upon entity destruction.
-            auto childTransform = _transforms.dataForEntity(child);
-            if (!visitLocal(child, *childTransform))
+            if (!runTransform(child, *childTransform, srt))
                 return false;
             
             child = _transforms.dataForEntity(child)->sibling();
         }
+        
         return true;
     }
-    
 }
 
 } /* namespace overview */ } /* namespace cinek */

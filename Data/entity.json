@@ -1,5 +1,14 @@
 {
     "entity" : {
+        "navi_camera" : {
+            "camera" : {
+
+            },
+            "rigid_body" : {
+                "mass" : 1.0,
+                "inertia" : { "x": 0.00004, "y": 0.00004, "z": 0.00004 }
+            }
+        },
         "player_party": {
             "party" : {
                 "type" : "player"

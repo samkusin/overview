@@ -24,7 +24,7 @@ uniform vec4 u_scale;
     Constants
 */
 // log scale - so the larger = fainter stars more visible
-const float MAG_LIMIT =  32.0;
+const float MAG_LIMIT =  24.0;
 const float POINT_SCALE = 0.5;
 const float POINT_FALLOFF = 1.25;   //  the higher, the steeper
 const float ONE_DIV_LOG10 = 1.0 / log2(10.0);

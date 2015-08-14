@@ -10,7 +10,7 @@
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/TransformEntity.hpp"
+//#include "Engine/Entity/TransformEntity.hpp"
 
 namespace cinek { namespace ovproto {
 
@@ -55,17 +55,12 @@ ckm::scalar StellarSystemUtility::objectRadius(Entity objIdx) const
 
 ckm::vec3 StellarSystemUtility::position(Entity objIdx) const
 {
-    ckm::vec3 pos;
-   
-    auto transform = overview::component::TransformEntity()(objIdx, _transformTable);
+    auto transform = _transformTable.dataForEntity(objIdx);
     if (!transform)
-        return ckm::vec3 { 0.0 };
-    
-    auto& translate = transform->worldSRT()[3];
-    pos.x = translate.x;
-    pos.y = translate.y;
-    pos.z = translate.z;
-    return pos;
+        return ckm::vec3(0);
+
+    //  systems don't have parents - so the local should work
+    return transform->localPosition();
 }
 
 

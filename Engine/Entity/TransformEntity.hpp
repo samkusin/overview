@@ -17,30 +17,89 @@ namespace cinek { namespace overview {
 
 namespace component
 {
-    struct TransformEntity
+    struct UpdateTransform
     {
-        Transform* operator()(Entity entity, Table<Transform> transforms);
+        UpdateTransform(Table<Transform> transforms) :
+            _transforms(transforms)
+        {
+        }
         
-        void all(Table<Transform> transforms);
+        ckm::mat4& operator()(Entity entity);
+        
+        void all();
         
     private:
         Table<Transform> _transforms;
+        Entity _targetEntity;
+        ckm::mat4 _srt;
         
-        void runTransform(Transform& transform, const ckm::mat4& parentSRT);
+        void runTransform(Entity entity, Transform& t);
+        bool runTransform(Entity entity, Transform& t, const ckm::mat4& srtParent);
     };
     
+
+    ////////////////////////////////////////////////////////////////////////////
     
+
+    template<typename Impl>
     struct TransformVisitor
     {
-        bool operator()(Entity entity, Table<Transform> transforms);
+        TransformVisitor(Table<Transform> transforms);
         
-        virtual bool visit(Entity entity, Transform& transform) = 0;
-    
+    protected:
+        Table<Transform> transforms() { return _transforms; }
+        
+        bool visitTree(Entity e);
+        
     private:
         Table<Transform> _transforms;
-        
-        bool visitLocal(Entity entity, Transform& transform);
+        bool visitTree(Entity entity, Transform& transform);
     };
+    
+    ////////////////////////////////////////////////////////////////////////////
+
+    template<typename Impl>
+    TransformVisitor<Impl>::TransformVisitor(Table<Transform> transforms) :
+        _transforms(transforms)
+    {
+    }
+    
+    template<typename Impl>
+    bool TransformVisitor<Impl>::visitTree(Entity entity)
+    {
+        Transform* transform = _transforms.dataForEntity(entity);
+        if (!transform)
+            return false;
+            
+        visitTree(entity, *transform);
+        return true;
+    }
+    
+    template<typename Impl>
+    bool TransformVisitor<Impl>::visitTree(Entity e, Transform& t)
+    {
+        bool res = static_cast<Impl*>(this)->visit(e, t);
+        if (!res)
+            return false;
+        
+        //  iterate through children
+        Entity child = t.child();
+        while (child.valid())
+        {
+            //  we assume that if there are valid entities set for child and
+            //  sibling, that they have transform components.  if this
+            //  assumption fails, then there's a problem with how entities
+            //  and their parent-child-sibling relationships are cleaned up
+            //  upon entity destruction.
+            auto childTransform = _transforms.dataForEntity(child);
+            if (!visitTree(child, *childTransform))
+                return false;
+            
+            child = _transforms.dataForEntity(child)->sibling();
+        }
+        return true;
+    }
+
 }
 
 } /* namespace overview */ } /* namespace cinek */

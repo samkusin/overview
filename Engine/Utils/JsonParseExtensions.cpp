@@ -7,10 +7,11 @@
 //
 
 #include "JsonParseExtensions.hpp"
+#include "Engine/EngineMath.hpp"
 
 namespace cinek { namespace overview {
 
-    glm::vec3 parseVec3(const JsonValue& value, const glm::vec3& defaultVal)
+    ckm::vec3 parseVec3(const JsonValue& value, const glm::vec3& defaultVal)
     {
         if (!value.IsObject()) 
             return defaultVal;

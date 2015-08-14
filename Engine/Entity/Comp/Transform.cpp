@@ -7,30 +7,30 @@
 //
 
 #include "Transform.hpp"
-
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "Engine/EngineMath.hpp"
 
 namespace cinek { namespace overview {
 
 namespace component
 {
     COMPONENT_TYPE_IMPL(Transform, kTransform, {
-        _isDirty = false;
-        _worldSRT = glm::dmat4(1.0);
+        _localOrient = ckm::quat(1,0,0,0);
+        _orient = ckm::quat(1,0,0,0);
     });
     
-    void Transform::calculateWorldSRTFromParent(const glm::dmat4& parent)
+    
+    ckm::mat4& Transform::calcLocalMatrix(ckm::mat4& srt) const
     {
-        if (!_isDirty)
-            return;
-            
-        glm::dmat4 local = glm::dmat4(1.0);
-        local[3] = glm::dvec4(_localPosition, 1.0);
- 
-        _worldSRT = local * parent;
-        
-        _isDirty = false;
+        srt = ckm::fromQuat(_localOrient);
+        srt[3] = ckm::vec4(_localPosition, 1.0);
+        return srt;
+    }
+    
+    ckm::mat4& Transform::calcMatrix(ckm::mat4& srt) const
+    {
+        srt = ckm::fromQuat(_orient);
+        srt[3] = ckm::vec4(_position, 1.0);
+        return srt;
     }
 }
 

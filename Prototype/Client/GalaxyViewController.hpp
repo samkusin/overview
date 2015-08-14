@@ -55,6 +55,7 @@ private:
     
     Entity _camera;
     Entity _ship;
+    int _frameCnt;
     
     //  UI defines
     enum

@@ -35,6 +35,13 @@ namespace ckm {
         return glm::normalize(v);
     }
     
+    inline ckm::mat4 fromQuat(ckm::quat const& q) {
+        return glm::mat4_cast(q);
+    }
+    
+    inline ckm::quat fromMatrix(ckm::mat4 const& m) {
+        return glm::quat_cast(m);
+    }
 }
 
 #endif

@@ -14,6 +14,9 @@
 #include "Loadout.hpp"
 #include "Party.hpp"
 #include "Character.hpp"
+#include "RigidBody.hpp"
+
+#include "Engine/Utils/JsonParseExtensions.hpp"
 
 #include <cinek/json/json.hpp>
 #include <cinek/debug.hpp>
@@ -33,7 +36,14 @@ void customComponentCreateCb
 {
     EntityService entityService(context);
     
-    if (!strcmp(componentName, "loadout"))
+    if (!strcmp(componentName, "rigid_body"))
+    {
+        auto comp = entityService.table<component::RigidBody>().addDataToEntity(entity);
+        auto mass = data.HasMember("mass") ? data["mass"].GetDouble() : 1.0;
+        auto inertia = data.HasMember("inertia") ? overview::parseVec3(data["inertia"]) : ckm::vec3(1,1,1);
+        comp->init(mass, inertia.x, inertia.y, inertia.z);
+    }
+    else if (!strcmp(componentName, "loadout"))
     {
         const char* type = data.HasMember("type") ? data["type"].GetString() : "";
         if (type[0])

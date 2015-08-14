@@ -27,8 +27,11 @@
 
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
+
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
+#include "Custom/Comp/RigidBody.hpp"
+
 #include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Entity/Comp/MeshRenderable.hpp"
 #include "Engine/Entity/Comp/Camera.hpp"
@@ -352,14 +355,18 @@ void GalaxyViewController::onViewLoad()
     bx::mtxIdentity(_mapTransform);
 
     //  create camera
-    _camera = _Entity.create();
-    auto camera = _Entity.table<overview::component::Camera>()
-        .addDataToEntity(_camera);
+    _camera = _Entity.create("navi_camera");
+    auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
     if (camera)
     {
         camera->init(0, M_PI * 90/180.0 , 0.5, 500.0);
     }
+    auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
+    //rb->setForce(ckm::vec3(10,0,0));
+    rb->setTorque(ckm::vec3(0.0005,-0.0005,0.0005));
     
+    _frameCnt = 0;
+
     _ship = _Entity.create("ship_gilgerard");
     
     
@@ -456,21 +463,13 @@ void GalaxyViewController::onViewBackground()
 
 void GalaxyViewController::updateView()
 {
-    //Matrix4 rotMat;
-    //bx::mtxIdentity(rotMat);
-    //bx::mtxRotateXYZ(rotMat, 0.f, bx::piHalf*0.10f*deltaTimeMs/1000.f, 0.f);
-    
-    /*
-    auto object = _API.entityById(_bodyEntityId);
-    if (object)
+    if (_frameCnt > 0)
     {
-        auto& entityMatrix = object->matrix();
-        Matrix4 transform;
-        
-        bx::mtxMul(transform, entityMatrix, rotMat);
-        object->matrix() = transform;
+        auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
+        rb->setForce(ckm::vec3(0,0,0));
+        rb->setTorque(ckm::vec3(0,0,0));
     }
-    */
+    ++_frameCnt;
 }
 
 void GalaxyViewController::layoutView()
@@ -525,7 +524,8 @@ struct RendererCameraTranslate
         auto transform = transforms.dataForEntity(e);
         if (transform)
         {
-            auto srt = transform->worldSRT();
+            ckm::mat4 srt;
+            transform->calcMatrix(srt);
             srt[3] -= offset;
             ckm::convert(srt, r.worldSRT);
             
@@ -566,8 +566,16 @@ void GalaxyViewController::renderView()
     auto transformTable = _Entity.table<overview::component::Transform>();
     auto cameraTransform = transformTable.dataForEntity(_camera);
     auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
-            
-    ckm::mat4 cameraSRT = cameraTransform ? cameraTransform->worldSRT() : ckm::mat4(1);
+    
+    ckm::mat4 cameraSRT;
+    if (cameraTransform)
+    {
+        cameraTransform->calcMatrix(cameraSRT);
+    }
+    else
+    {
+        cameraSRT = ckm::mat4(1);
+    }
     ckm::mat3 cameraBasis(cameraSRT);
         
     auto aspect = (ckm::scalar)viewRect.w / viewRect.h;
@@ -651,13 +659,24 @@ void GalaxyViewController::renderView()
         float u,v;          //  0 = abs mag
     };
     
-    struct SystemVisitor : public overview::component::TransformVisitor
+    struct SystemVisitor : public overview::component::TransformVisitor<SystemVisitor>
     {
         overview::component::Table<overview::component::Renderable> renderables;
         overview::component::Table<component::StarBody> stars;
         Vertex* vertices;
         int starIndex;
         uint16_t* indices;
+        
+        SystemVisitor(overview::component::Table<overview::component::Transform> table) :
+            TransformVisitor(table)
+        {
+        }
+        
+        bool operator()(Entity e)
+        {
+            visitTree(e);
+            return true;
+        }
         
         bool visit(overview::Entity e, overview::component::Transform& t)
         {
@@ -714,7 +733,7 @@ void GalaxyViewController::renderView()
     auto systems = _Entity.table<component::StellarSystem>();
     auto transforms = _Entity.table<overview::component::Transform>();
     
-    SystemVisitor systemVisitor;
+    SystemVisitor systemVisitor(transforms);
     systemVisitor.renderables = renderables;
     systemVisitor.stars = _Entity.table<component::StarBody>();
     
@@ -750,7 +769,7 @@ void GalaxyViewController::renderView()
             auto system = systems.dataForEntity(entity);
             if (system)
             {
-                systemVisitor(entity, transforms);
+                systemVisitor(entity);
             }
         }
         

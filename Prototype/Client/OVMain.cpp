@@ -33,6 +33,7 @@
 #include "Engine/Entity/Comp/Transform.hpp"
 #include "Engine/Entity/Comp/Renderable.hpp"
 #include "Engine/Entity/Comp/MeshRenderable.hpp"
+#include "Engine/Entity/TransformEntity.hpp"
 
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
@@ -299,6 +300,11 @@ void run(SDL_Window* window)
     
     bool running = true;
     
+    auto transforms = entityStore.table<overview::component::Transform>();
+    overview::component::UpdateTransform updateTransform(transforms);
+    
+    auto rigidBodies = entityStore.table<component::RigidBody>();
+    
     while (running)
     {
         uint32_t nextSystemTimeMs = SDL_GetTicks();
@@ -330,10 +336,13 @@ void run(SDL_Window* window)
             overlayStack.process();
             
             //  simulate physics
+            simulateRigidBodies(rigidBodies, transforms, kSecsPerSimFrame);
             //physics.simulate(simTime, kSecsPerSimFrame);
             
             lagSecs -= kSecsPerSimFrame;
             simTime += kSecsPerSimFrame;
+            
+            updateTransform.all();
             
             diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
         }
