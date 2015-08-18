@@ -11,7 +11,7 @@
 
 #include "Engine/Entity/EntityTypes.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
-#include "Engine/Entity/Transform.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
 
 namespace cinek { namespace overview {
 

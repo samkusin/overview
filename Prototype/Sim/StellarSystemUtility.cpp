@@ -9,7 +9,7 @@
 #include "StellarSystemUtility.hpp"
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
-#include "Engine/Entity/Transform.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
 //#include "Engine/Entity/TransformEntity.hpp"
 
 namespace cinek { namespace ovproto {

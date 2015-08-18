@@ -70,10 +70,10 @@
 		37E817101B4C84E000482CE4 /* RenderShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8170E1B4C84E000482CE4 /* RenderShaders.cpp */; };
 		37E8A8F91B83A96B00537541 /* ActionService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A8F71B83A96B00537541 /* ActionService.cpp */; };
 		37E8A8FD1B83B0FD00537541 /* RenderComponentFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A8FB1B83B0FD00537541 /* RenderComponentFactory.cpp */; };
-		37E8A8FF1B83E7DC00537541 /* RenderComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A8FE1B83E7DC00537541 /* RenderComponents.cpp */; };
-		37E8A9041B83E82600537541 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A9001B83E82600537541 /* Camera.cpp */; };
-		37E8A9071B83E8B300537541 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A9051B83E8B300537541 /* Transform.cpp */; };
-		37E8A9091B83E8BA00537541 /* Components.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A9081B83E8BA00537541 /* Components.cpp */; };
+		37E8A9111B83EBFE00537541 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A90C1B83EBFE00537541 /* Camera.cpp */; };
+		37E8A9121B83EBFE00537541 /* RenderComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A9101B83EBFE00537541 /* RenderComponents.cpp */; };
+		37E8A9161B83EC1A00537541 /* Components.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A9131B83EC1A00537541 /* Components.cpp */; };
+		37E8A9171B83EC1A00537541 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8A9141B83EC1A00537541 /* Transform.cpp */; };
 		37F368FD1ACDFEE600314DB2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FC1ACDFEE600314DB2 /* Carbon.framework */; };
 		37F368FF1ACDFEF300314DB2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F368FE1ACDFEF300314DB2 /* Cocoa.framework */; };
 		37F369011ACDFEFA00314DB2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F369001ACDFEFA00314DB2 /* IOKit.framework */; };
@@ -299,14 +299,14 @@
 		37E8A8FA1B83AB4C00537541 /* RenderContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderContext.hpp; path = ../Client/RenderContext.hpp; sourceTree = "<group>"; };
 		37E8A8FB1B83B0FD00537541 /* RenderComponentFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderComponentFactory.cpp; path = ../../Engine/Render/RenderComponentFactory.cpp; sourceTree = "<group>"; };
 		37E8A8FC1B83B0FD00537541 /* RenderComponentFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderComponentFactory.hpp; path = ../../Engine/Render/RenderComponentFactory.hpp; sourceTree = "<group>"; };
-		37E8A8FE1B83E7DC00537541 /* RenderComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderComponents.cpp; path = ../../Engine/Render/RenderComponents.cpp; sourceTree = "<group>"; };
-		37E8A9001B83E82600537541 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../Engine/Render/Camera.cpp; sourceTree = "<group>"; };
-		37E8A9011B83E82600537541 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Camera.hpp; path = ../../Engine/Render/Camera.hpp; sourceTree = "<group>"; };
-		37E8A9021B83E82600537541 /* MeshRenderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MeshRenderable.hpp; path = ../../Engine/Render/MeshRenderable.hpp; sourceTree = "<group>"; };
-		37E8A9031B83E82600537541 /* Renderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Renderable.hpp; path = ../../Engine/Render/Renderable.hpp; sourceTree = "<group>"; };
-		37E8A9051B83E8B300537541 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
-		37E8A9061B83E8B300537541 /* Transform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Transform.hpp; sourceTree = "<group>"; };
-		37E8A9081B83E8BA00537541 /* Components.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Components.cpp; sourceTree = "<group>"; };
+		37E8A90C1B83EBFE00537541 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../Engine/Render/Comp/Camera.cpp; sourceTree = "<group>"; };
+		37E8A90D1B83EBFE00537541 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Camera.hpp; path = ../../Engine/Render/Comp/Camera.hpp; sourceTree = "<group>"; };
+		37E8A90E1B83EBFE00537541 /* MeshRenderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MeshRenderable.hpp; path = ../../Engine/Render/Comp/MeshRenderable.hpp; sourceTree = "<group>"; };
+		37E8A90F1B83EBFE00537541 /* Renderable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Renderable.hpp; path = ../../Engine/Render/Comp/Renderable.hpp; sourceTree = "<group>"; };
+		37E8A9101B83EBFE00537541 /* RenderComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderComponents.cpp; path = ../../Engine/Render/Comp/RenderComponents.cpp; sourceTree = "<group>"; };
+		37E8A9131B83EC1A00537541 /* Components.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Components.cpp; path = Comp/Components.cpp; sourceTree = "<group>"; };
+		37E8A9141B83EC1A00537541 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Transform.cpp; path = Comp/Transform.cpp; sourceTree = "<group>"; };
+		37E8A9151B83EC1A00537541 /* Transform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Transform.hpp; path = Comp/Transform.hpp; sourceTree = "<group>"; };
 		37F368FC1ACDFEE600314DB2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		37F368FE1ACDFEF300314DB2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		37F369001ACDFEFA00314DB2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -436,9 +436,7 @@
 		378DC1E71ACF6AB2004C8004 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
-				37E8A9081B83E8BA00537541 /* Components.cpp */,
-				37E8A9061B83E8B300537541 /* Transform.hpp */,
-				37E8A9051B83E8B300537541 /* Transform.cpp */,
+				37E8A90A1B83EBE700537541 /* Comp */,
 				37B50EE91AF41F9C00EE8213 /* EntityTypes.hpp */,
 				37F43E631B34D7870065D8E9 /* EntityTypes.cpp */,
 				37F43E621B34CBE20065D8E9 /* EntityDataTable.hpp */,
@@ -577,14 +575,10 @@
 		37E6048F1B0FAECD009C916D /* Render */ = {
 			isa = PBXGroup;
 			children = (
-				37E8A9011B83E82600537541 /* Camera.hpp */,
-				37E8A9001B83E82600537541 /* Camera.cpp */,
-				37E8A9021B83E82600537541 /* MeshRenderable.hpp */,
-				37E8A9031B83E82600537541 /* Renderable.hpp */,
+				37E8A90B1B83EBED00537541 /* Comp */,
 				37599B041B4A006C00CA3E9B /* RenderTypes.hpp */,
 				37E8A8FC1B83B0FD00537541 /* RenderComponentFactory.hpp */,
 				37E8A8FB1B83B0FD00537541 /* RenderComponentFactory.cpp */,
-				37E8A8FE1B83E7DC00537541 /* RenderComponents.cpp */,
 			);
 			name = Render;
 			sourceTree = "<group>";
@@ -596,6 +590,28 @@
 				37E604AA1B0FE6AB009C916D /* ovtypes.capnp */,
 			);
 			name = Objects;
+			sourceTree = "<group>";
+		};
+		37E8A90A1B83EBE700537541 /* Comp */ = {
+			isa = PBXGroup;
+			children = (
+				37E8A9131B83EC1A00537541 /* Components.cpp */,
+				37E8A9141B83EC1A00537541 /* Transform.cpp */,
+				37E8A9151B83EC1A00537541 /* Transform.hpp */,
+			);
+			name = Comp;
+			sourceTree = "<group>";
+		};
+		37E8A90B1B83EBED00537541 /* Comp */ = {
+			isa = PBXGroup;
+			children = (
+				37E8A90C1B83EBFE00537541 /* Camera.cpp */,
+				37E8A90D1B83EBFE00537541 /* Camera.hpp */,
+				37E8A90E1B83EBFE00537541 /* MeshRenderable.hpp */,
+				37E8A90F1B83EBFE00537541 /* Renderable.hpp */,
+				37E8A9101B83EBFE00537541 /* RenderComponents.cpp */,
+			);
+			name = Comp;
 			sourceTree = "<group>";
 		};
 		37F368FB1ACDFE8500314DB2 /* Engine */ = {
@@ -835,16 +851,16 @@
 				372471CD1B7AC61F0091CC4D /* RigidBody.cpp in Sources */,
 				3749D1071B573C3D009F280E /* vs_nanovg_fill.hvs in Sources */,
 				3749D1131B574025009F280E /* vs_std_uv.vs in Sources */,
+				37E8A9111B83EBFE00537541 /* Camera.cpp in Sources */,
 				372471D31B7EB9FA0091CC4D /* AIActionClient.cpp in Sources */,
 				37B6614E1B684804005930B8 /* Character.cpp in Sources */,
 				3749D10E1B574025009F280E /* fs_starmap.fs in Sources */,
-				37E8A9041B83E82600537541 /* Camera.cpp in Sources */,
 				3749D1121B574025009F280E /* vs_std_rgba.vs in Sources */,
 				3754EC851B63226300118965 /* ComponentCreationCallback.cpp in Sources */,
-				37E8A9091B83E8BA00537541 /* Components.cpp in Sources */,
 				3749D1111B574025009F280E /* vs_starmap.vs in Sources */,
 				3749D1101B574025009F280E /* fs_std_tex.fs in Sources */,
 				3749D10F1B574025009F280E /* fs_std_rgba.fs in Sources */,
+				37E8A9161B83EC1A00537541 /* Components.cpp in Sources */,
 				37B661581B6C32CF005930B8 /* StellarSystem.cpp in Sources */,
 				37E604AD1B0FE6E6009C916D /* entityevents.capnp in Sources */,
 				37121D371B4EDC3700E35C54 /* TransformEntity.cpp in Sources */,
@@ -862,7 +878,6 @@
 				379FE5411B5EDCED004D1F42 /* UIBuilder.cpp in Sources */,
 				37240E1D1AEED89A005D6048 /* Mesh.cpp in Sources */,
 				37E604B41B0FF406009C916D /* MeshLibrary.cpp in Sources */,
-				37E8A9071B83E8B300537541 /* Transform.cpp in Sources */,
 				378DC2221ACF757D004C8004 /* OVMain.cpp in Sources */,
 				3749D1541B5993F8009F280E /* ViewStack.cpp in Sources */,
 				373ACBED1AD0A2400082DB63 /* BitmapAtlas.cpp in Sources */,
@@ -875,7 +890,6 @@
 				37E604A41B0FCBE6009C916D /* MessageStream.cpp in Sources */,
 				3764973B1B5DC85E00D617AA /* UIRenderer.cpp in Sources */,
 				373ACBEF1AD0A2400082DB63 /* BitmapLibrary.cpp in Sources */,
-				37E8A8FF1B83E7DC00537541 /* RenderComponents.cpp in Sources */,
 				37B661401B66A548005930B8 /* EntityGroup.cpp in Sources */,
 				3749D0EE1B56F469009F280E /* nanovg.cpp in Sources */,
 				37A546FA1AE2E50900341500 /* JsonParseExtensions.cpp in Sources */,
@@ -890,11 +904,13 @@
 				378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */,
 				378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */,
 				37A0FD621B41BA6000188B7A /* BuildStarmap.cpp in Sources */,
+				37E8A9121B83EBFE00537541 /* RenderComponents.cpp in Sources */,
 				37CC94D41B61C11D0057D745 /* AppInterface.cpp in Sources */,
 				378A996F1AEB107F008BD771 /* VertexTypes.cpp in Sources */,
 				373ACBEE1AD0A2400082DB63 /* BitmapAtlasLoader.cpp in Sources */,
 				37E6049A1B0FCBCF009C916D /* EntityFactory.cpp in Sources */,
 				3749D1171B581EE5009F280E /* oui.cpp in Sources */,
+				37E8A9171B83EC1A00537541 /* Transform.cpp in Sources */,
 				3754EC7F1B62C59900118965 /* RenderService.cpp in Sources */,
 				37121D421B517D7500E35C54 /* SpectralClassUtility.cpp in Sources */,
 				37E8A8FD1B83B0FD00537541 /* RenderComponentFactory.cpp in Sources */,

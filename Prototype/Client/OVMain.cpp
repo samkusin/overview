@@ -29,10 +29,10 @@
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
 
-#include "Engine/Entity/Transform.hpp"
-#include "Engine/Render/Camera.hpp"
-#include "Engine/Render/Renderable.hpp"
-#include "Engine/Render/MeshRenderable.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Render/Comp/Camera.hpp"
+#include "Engine/Render/Comp/Renderable.hpp"
+#include "Engine/Render/Comp/MeshRenderable.hpp"
 #include "Engine/Render/RenderComponentFactory.hpp"
 
 #include "Engine/Entity/TransformEntity.hpp"

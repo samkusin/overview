@@ -14,7 +14,7 @@
 
 #include "Engine/Entity/TransformEntity.hpp"
 #include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Render/Renderable.hpp"
+#include "Engine/Render/Comp/Renderable.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/ComponentCreationCallback.hpp"
@@ -26,15 +26,15 @@
 #include "Engine/BVH/AABBTree.hpp"
 
 #include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Entity/Transform.hpp"
+#include "Engine/Entity/Comp/Transform.hpp"
 
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/RigidBody.hpp"
 
-#include "Engine/Render/Renderable.hpp"
-#include "Engine/Render/MeshRenderable.hpp"
-#include "Engine/Render/Camera.hpp"
+#include "Engine/Render/Comp/Renderable.hpp"
+#include "Engine/Render/Comp/MeshRenderable.hpp"
+#include "Engine/Render/Comp/Camera.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/vector.hpp>

@@ -9,9 +9,9 @@
 #include "RenderComponentFactory.hpp"
 
 #include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Render/Renderable.hpp"
-#include "Engine/Render/Camera.hpp"
-#include "Engine/Render/MeshRenderable.hpp"
+#include "Engine/Render/Comp/Renderable.hpp"
+#include "Engine/Render/Comp/Camera.hpp"
+#include "Engine/Render/Comp/MeshRenderable.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/Debug.hpp"
 
