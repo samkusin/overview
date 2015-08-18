@@ -16,7 +16,7 @@
 namespace cinek {
     namespace ovproto {
 
-RenderService::RenderService(AppContext& context) :
+RenderService::RenderService(RenderContext& context) :
     _context(context._o)
 {
 }

@@ -9,9 +9,9 @@
 #ifndef Overview_Entity_Transform_Function_hpp
 #define Overview_Entity_Transform_Function_hpp
 
-#include "EntityTypes.hpp"
-#include "EntityDataTable.hpp"
-#include "Comp/Transform.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/Entity/EntityDataTable.hpp"
+#include "Engine/Entity/Transform.hpp"
 
 namespace cinek { namespace overview {
 

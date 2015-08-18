@@ -9,8 +9,8 @@
 #ifndef Overview_Game_MessagePublisher_hpp
 #define Overview_Game_MessagePublisher_hpp
 
-#include "MessageStream.hpp"
-#include "ObjectTypes.hpp"
+#include "Engine/MessageStream.hpp"
+#include "Engine/ObjectTypes.hpp"
 
 #include <cinek/objectpool.hpp>
 #include <cinek/vector.hpp>

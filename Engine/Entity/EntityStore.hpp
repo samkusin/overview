@@ -9,9 +9,9 @@
 #ifndef Overview_Entity_Store_hpp
 #define Overview_Entity_Store_hpp
 
-#include "EntityTypes.hpp"
-#include "EntityDataTable.hpp"
-#include "EntityGroupMap.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/Entity/EntityDataTable.hpp"
+#include "Engine/Entity/EntityGroupMap.hpp"
 
 #include <cinek/vector.hpp>
 #include <cinek/map.hpp>

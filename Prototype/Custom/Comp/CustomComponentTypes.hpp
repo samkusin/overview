@@ -28,7 +28,7 @@ namespace component
         kStellarSpace       = overview::component::kCustomSpace0,
         kEntityGroupSpace   = overview::component::kCustomSpace0+1,
         kActorSpace         = overview::component::kCustomSpace0+2,
-        kPhysicsSpace       = overview::component::kCustomSpace0+3
+        kAIPhysicsSpace     = overview::component::kCustomSpace0+3
     };
     
     enum
@@ -38,7 +38,8 @@ namespace component
         kLoadout            = overview::component::MakeComponentId(kEntityGroupSpace, 0x0000),
         kParty              = overview::component::MakeComponentId(kEntityGroupSpace, 0x0001),
         kCharacter          = overview::component::MakeComponentId(kActorSpace, 0x0000),
-        kRigidBody          = overview::component::MakeComponentId(kPhysicsSpace, 0x0000)
+        kRigidBody          = overview::component::MakeComponentId(kAIPhysicsSpace, 0x0000),
+        kSteering           = overview::component::MakeComponentId(kAIPhysicsSpace, 0x0001)
     };
     
     enum

@@ -52,6 +52,13 @@ using CustomComponentCreateFn =
     
 using CustomComponentDestroyFn =
     std::function<void(Entity entity, ComponentId componentId)>;
+    
+enum class ComponentFactoryResult
+{
+    kSuccess,       ///< Component creation success
+    kFailed,        ///< Component creation error
+    kPassthrough    ///< Factory method did not apply to the supplied component
+};
 
 #define COMPONENT_DEFINITION(_type_) \
     using this_type = _type_; \

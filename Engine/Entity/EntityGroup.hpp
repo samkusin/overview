@@ -9,7 +9,7 @@
 #ifndef Overview_Entity_Group_hpp
 #define Overview_Entity_Group_hpp
 
-#include "EntityTypes.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
 
 #include <cinek/vector.hpp>
 #include <array>

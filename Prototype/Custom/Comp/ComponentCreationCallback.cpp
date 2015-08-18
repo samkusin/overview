@@ -10,6 +10,7 @@
 #include "AppContext.hpp"
 
 #include "Client/Services/EntityService.hpp"
+#include "Client/Services/RenderService.hpp"
 
 #include "Loadout.hpp"
 #include "Party.hpp"
@@ -28,6 +29,7 @@ namespace cinek {
 void customComponentCreateCb
 (
     AppContext context,
+    RenderContext render,
     Entity entity,
     const cinek::JsonValue& definitions,
     const char* componentName,
@@ -35,6 +37,7 @@ void customComponentCreateCb
 )
 {
     EntityService entityService(context);
+    RenderService renderService(render);
     
     if (!strcmp(componentName, "rigid_body"))
     {
@@ -102,11 +105,13 @@ void customComponentCreateCb
 void customComponentDestroyCb
 (
     AppContext context,
+    RenderContext render,
     Entity entity,
     overview::ComponentId componentId
 )
 {
     EntityService entityService(context);
+    RenderService renderService(render);
     
     switch (componentId)
     {

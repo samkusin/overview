@@ -10,7 +10,7 @@
 #define Overview_Entity_Component_MeshRenderable_hpp
 
 #include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/Render/RenderTypes.hpp"\
+#include "Engine/Render/RenderTypes.hpp"
 
 namespace cinek { namespace overview {
 

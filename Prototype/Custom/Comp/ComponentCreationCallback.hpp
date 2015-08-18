@@ -10,6 +10,7 @@
 #define Overview_App_Comp_Custom_ComponentCreator_hpp
 
 #include "GameTypes.hpp"
+#include "Client/RenderContext.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
 
 #include <cinek/json/jsontypes.hpp>
@@ -23,6 +24,7 @@ namespace cinek {
         void customComponentCreateCb
         (
             AppContext context,
+            RenderContext render,
             Entity entity,
             const cinek::JsonValue& definitions,
             const char* componentName,
@@ -32,6 +34,7 @@ namespace cinek {
         void customComponentDestroyCb
         (
             AppContext context,
+            RenderContext render,
             Entity entity,
             overview::ComponentId componentId
         );

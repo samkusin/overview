@@ -9,9 +9,9 @@
 #ifndef Overview_BVH_AABBTree_hpp
 #define Overview_BVH_AABBTree_hpp
 
-#include "AABBTypes.hpp"
-#include "BVHRayTest.hpp"
-#include "BVHFrustrumTest.hpp"
+#include "Engine/BVH/AABBTypes.hpp"
+#include "Engine/BVH/BVHRayTest.hpp"
+#include "Engine/BVH/BVHFrustrumTest.hpp"
 
 #include <cinek/vector.hpp>
 

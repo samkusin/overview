@@ -33,7 +33,6 @@ Entity EntityService::create(const char* templateName, Entity::context_type cont
         return Entity::null();
     
     return overview::createEntity(context, *_context->entityStore,
-        *_context->renderResources,
         *it->second.get(),
         templateName,
         _context->createComponentCb);

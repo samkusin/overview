@@ -9,7 +9,7 @@
 #ifndef Overview_App_Service_Render_hpp
 #define Overview_App_Service_Render_hpp
 
-#include "Client/AppContext.hpp"
+#include "Client/RenderContext.hpp"
 #include "Client/Render/RenderDefines.hpp"
 
 namespace cinek {
@@ -19,7 +19,7 @@ class RenderService
 {
 public:
     RenderService() = default;
-    RenderService(AppContext& context);
+    RenderService(RenderContext& context);
     
     //  Texture API
     gfx::TextureHandle loadTexture(const char* pathname);
@@ -34,7 +34,7 @@ public:
     NVGcontext* obtain2DAPI();
 
 private:
-    AppObjects* _context = nullptr;
+    RenderObjects* _context = nullptr;
 };
     
     } /* namespace ovproto */

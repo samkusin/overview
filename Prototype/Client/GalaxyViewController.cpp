@@ -14,7 +14,7 @@
 
 #include "Engine/Entity/TransformEntity.hpp"
 #include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Entity/Comp/Renderable.hpp"
+#include "Engine/Render/Renderable.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/ComponentCreationCallback.hpp"
@@ -26,15 +26,15 @@
 #include "Engine/BVH/AABBTree.hpp"
 
 #include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/Transform.hpp"
 
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/RigidBody.hpp"
 
-#include "Engine/Entity/Comp/Renderable.hpp"
-#include "Engine/Entity/Comp/MeshRenderable.hpp"
-#include "Engine/Entity/Comp/Camera.hpp"
+#include "Engine/Render/Renderable.hpp"
+#include "Engine/Render/MeshRenderable.hpp"
+#include "Engine/Render/Camera.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/vector.hpp>
@@ -216,10 +216,11 @@ struct GalaxyViewController::Starmap
 
 GalaxyViewController::GalaxyViewController
 (
-    AppContext context
+    AppContext context,
+    RenderContext renderContext
 ) :
     _API(context),
-    _Render(context),
+    _Render(renderContext),
     _Entity(context)
 {
     _uniforms.fill(BGFX_INVALID_HANDLE);
@@ -233,34 +234,7 @@ GalaxyViewController::~GalaxyViewController()
 void GalaxyViewController::onViewLoad()
 {
     _API.createJsonDocumentFromFile(kDocumentId_EntityTemplates, "entity.json");
-    _Entity.setCreateComponentCallback(
-        [this]
-        (
-            Entity entity,
-            const JsonValue& definitions,
-            const char* componentName,
-            const JsonValue& data
-        )
-        {
-            component::customComponentCreateCb(this->_API.appContext(),
-                entity,
-                definitions,
-                componentName,
-                data
-            );
-        });
-    _Entity.setDestroyComponentCallback(
-        [this]
-        (
-            Entity entity,
-            overview::ComponentId componentId
-        )
-        {
-            component::customComponentDestroyCb(this->_API.appContext(),
-                entity,
-                componentId);
-        }
-    );
+    
     //  position our new star entity - note, this is a brute force method that
     //  bypasses any notification, etc.  use a proper physics system or add
     //  a utility to manipulate entities that sends out the appropriate
@@ -363,7 +337,7 @@ void GalaxyViewController::onViewLoad()
     }
     auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
     //rb->setForce(ckm::vec3(10,0,0));
-    rb->setTorque(ckm::vec3(0.0005,-0.0005,0.0005));
+    rb->setTorque(ckm::vec3(0,0.00025,0));
     
     _frameCnt = 0;
 

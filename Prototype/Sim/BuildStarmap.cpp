@@ -10,7 +10,7 @@
 #include "SpectralClassUtility.hpp"
 
 #include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/Transform.hpp"
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 

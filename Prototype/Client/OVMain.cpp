@@ -29,10 +29,12 @@
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
 
-#include "Engine/Entity/Comp/Camera.hpp"
-#include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/Comp/Renderable.hpp"
-#include "Engine/Entity/Comp/MeshRenderable.hpp"
+#include "Engine/Entity/Transform.hpp"
+#include "Engine/Render/Camera.hpp"
+#include "Engine/Render/Renderable.hpp"
+#include "Engine/Render/MeshRenderable.hpp"
+#include "Engine/Render/RenderComponentFactory.hpp"
+
 #include "Engine/Entity/TransformEntity.hpp"
 
 #include "Custom/Comp/StellarSystem.hpp"
@@ -49,8 +51,8 @@
 
 #include "Sim/SpectralClassUtility.hpp"
 #include "Sim/EntityRoles.hpp"
-#include "Sim/AIControlSystem.hpp"
-#include "Sim/AIGameClient.hpp"
+#include "Sim/AIActionClient.hpp"
+#include "Sim/Simulation.hpp"
 
 #include "GalaxyViewController.hpp"
 
@@ -231,31 +233,66 @@ void run(SDL_Window* window)
         return;
     
     //  AI System
-    AIControlSystem::InitParams aiInitParams;
-    aiInitParams.msgStreamSizeInBytes = 32*1024;
-    aiInitParams.objectCount = 1024;
-    aiInitParams.objectsPerSecond = 1024;
-    
-    AIControlSystem aiControl(aiInitParams, allocator);
-    AIGameClient aiGameClient;
+    Simulation<AIAction> aiActionSim(64, allocator);
+    AIActionClient aiActionClient;
     
     //  setup application master template
     AppDocumentMap appDocumentMap(allocator);
     
     overview::ViewStack viewStack(allocator);
     overview::ViewStack overlayStack(allocator);
-    AppObjects appObjects;
     
+    RenderObjects renderObjects;
+    renderObjects.renderResources = &renderResources;
+    renderObjects.viewRect = { 0, 0, viewWidth, viewHeight };
+    renderObjects.nvg = nvgContext;
+    
+    AppObjects appObjects;
     appObjects.entityStore = &entityStore;
-    appObjects.viewStack = &viewStack;
-    appObjects.overlayStack = &overlayStack;
-    appObjects.renderResources = &renderResources;
-    appObjects.viewRect = { 0, 0, viewWidth, viewHeight };
-    appObjects.nvg = nvgContext;
     appObjects.documentMap = &appDocumentMap;
     appObjects.allocator = &allocator;
-        
+    
+    appObjects.createComponentCb = [&appObjects, &renderObjects]
+        (
+            Entity entity,
+            const JsonValue& definitions,
+            const char* componentName,
+            const JsonValue& data
+        )
+        {
+            overview::component::createRenderable(entity, definitions, componentName, data,
+                *appObjects.entityStore, *renderObjects.renderResources);
+            overview::component::createCamera(entity, definitions, componentName, data,
+                *appObjects.entityStore);
+            
+            component::customComponentCreateCb(AppContext(appObjects),
+                RenderContext(renderObjects),
+                entity,
+                definitions,
+                componentName,
+                data
+            );
+        };
+    appObjects.destroyComponentCb = [&appObjects, &renderObjects]
+        (
+            Entity entity,
+            overview::ComponentId componentId
+        )
+        {
+            overview::component::destroyRenderable(entity, componentId,
+                *appObjects.entityStore, *renderObjects.renderResources);
+            overview::component::destroyCamera(entity, componentId,
+                *appObjects.entityStore);
+                
+            component::customComponentDestroyCb(AppContext(appObjects),
+                RenderContext(renderObjects),
+                entity,
+                componentId);
+        };
+    
+
     AppContext appContext(appObjects);
+    RenderContext renderContext(renderObjects);
     
     /*
     auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);
@@ -266,7 +303,7 @@ void run(SDL_Window* window)
     //  schedule an application task
     //
     viewStack.setFactory(
-        [&appContext](int viewId) -> unique_ptr<overview::ViewController>
+        [&appContext, &renderContext](int viewId) -> unique_ptr<overview::ViewController>
         {
             unique_ptr<overview::ViewController> vc;
             Allocator allocator;
@@ -275,7 +312,8 @@ void run(SDL_Window* window)
             case kViewControllerId_Galaxy:
                 vc = allocate_unique<GalaxyViewController, overview::ViewController>(
                     allocator,
-                    appContext
+                    appContext,
+                    renderContext
                 );
                 break;
             }
@@ -292,11 +330,17 @@ void run(SDL_Window* window)
     overview::EntityDiagnostics entityDiagnostics;
     
     const double kSimFPS = 60.0;
-    const double kSecsPerSimFrame = 1.0/kSimFPS;
-    
+    const double kSecsPerSimFrame = 1/kSimFPS;
+    const double kAIFPS = 2.0;
+    const double kSecsPerAIFrame = 1/kAIFPS;
+    const double kActionFPS = 30.0;
+    const double kSecsPerActionFrame = 1/kActionFPS;
+
     uint32_t systemTimeMs = SDL_GetTicks();
     double simTime = 0.0;
-    double lagSecs = 0.0;
+    double lagSecsSim = 0.0;
+    double timeUntilAIFrame = 0.0;
+    double timeUntilActionFrame = 0.0;
     
     bool running = true;
     
@@ -312,44 +356,81 @@ void run(SDL_Window* window)
         systemTimeMs = nextSystemTimeMs;
         
         //  TODO: Lag should not be incremented while Sim is Paused
-        lagSecs += frameTimeMs/1000.0;
+        lagSecsSim += frameTimeMs/1000.0;
     
         entityStore.diagnostics(entityDiagnostics);
     
+        ////////////////////////////////////////////////////////////////////////
         //  SYSTEM POLL AND INPUT
+        //
         {
             uint32_t sdlEvents = PollSDLEvents();
             if (sdlEvents & kPollSDLEvent_Quit)
                 running = false;
         }
         
+        ////////////////////////////////////////////////////////////////////////
         //  SIMULATION START (using a fixed timestep)
-        while (lagSecs >= kSecsPerSimFrame)
+        //  All subsystems driven by the physics framerate.
+        //
+        while (lagSecsSim >= kSecsPerSimFrame)
         {
-            //  dispatch messages, and set our new message target for the next
-            //  frame.  setting a new stream allows message handlers to publish
-            //  messages to our only message publisher.
-            aiControl.simulate(aiGameClient, simTime);
+            ////////////////////////////////////////////////////////////////////
+            // AI Behavior Simulation
+            //
+            timeUntilAIFrame -= kSecsPerSimFrame;
+            while (timeUntilAIFrame < 0)
+            {
+                //  dispatch messages, and set our new message target for the
+                //  next frame.  setting a new stream allows message handlers to
+                //  publish messages to our only message publisher.
+                //aiControl.simulate(aiGameClient, simTime);
+                
+                timeUntilAIFrame += kSecsPerAIFrame;
+            }
             
-            //  simulation of current view
-            viewStack.process();
-            overlayStack.process();
+            ////////////////////////////////////////////////////////////////////
+            // Action (Game State) Simulation
+            //
+            timeUntilActionFrame -= kSecsPerActionFrame;
+            while (timeUntilActionFrame < 0)
+            {
+                //  AI action tasks
+                aiActionSim.simulate(aiActionClient, simTime, kSecsPerActionFrame);
+                
+                //  simulation of current view
+                viewStack.process();
+                overlayStack.process();
+                
+                timeUntilActionFrame += kSecsPerActionFrame;
+            }
             
-            //  simulate physics
+            ////////////////////////////////////////////////////////////////////
+            // Physics and Collision Simulations
+            //
             simulateRigidBodies(rigidBodies, transforms, kSecsPerSimFrame);
-            //physics.simulate(simTime, kSecsPerSimFrame);
             
-            lagSecs -= kSecsPerSimFrame;
-            simTime += kSecsPerSimFrame;
-            
+            //  TODO : We should only update entities that have changed
+            //  transforms.  While checking for the 'dirty' flag per transform
+            //  saves some time, we should exclude static entities and such
+            //  from this sweep.  Perhaps we need a separate list of 'changed'
+            //  entities compiled from the simulateRigidBodies sweep.
             updateTransform.all();
+
+            ////////////////////////////////////////////////////////////////////
+            //  Update our simulation times
+            //
+            lagSecsSim -= kSecsPerSimFrame;
+            simTime += kSecsPerSimFrame;
             
             diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
         }
         //  SIMULATION END
+        ////////////////////////////////////////////////////////////////////////
         
         diagnostics.updateTime(systemTimeMs, simTime*1000);
         
+        ////////////////////////////////////////////////////////////////////////
         //  RENDER START (TODO: Take Lag into Account for Interp)
         {
             uiBeginLayout();
@@ -360,11 +441,12 @@ void run(SDL_Window* window)
             viewStack.render();
             overlayStack.render();
             
-            renderUI(appObjects.nvg, appObjects.viewRect);
+            renderUI(renderObjects.nvg, renderObjects.viewRect);
             renderDiagnostics(diagnostics, entityDiagnostics,
-                appObjects.nvg, appObjects.viewRect);
+                renderObjects.nvg, renderObjects.viewRect);
         }
         //  RENDER END
+        ////////////////////////////////////////////////////////////////////////
         
         uiProcess(systemTimeMs);
         

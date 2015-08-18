@@ -10,9 +10,7 @@
 #define Overview_App_Context_hpp
 
 #include "GameTypes.hpp"
-#include "UI/UITypes.hpp"
-
-#include "Engine/Render/RenderTypes.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
 
 #include <cinek/json/jsontypes.hpp>
 #include <cinek/map.hpp>
@@ -27,17 +25,10 @@ namespace cinek { namespace ovproto {
     {
         //  game state
         overview::EntityStore* entityStore;
-        overview::ViewStack* viewStack;
-        overview::ViewStack* overlayStack;
         
         Allocator* allocator;
         cinek::JsonDocument* entityTemplates;
         AppDocumentMap* documentMap;
-        
-        //  graphics
-        overview::RenderResources* renderResources;
-        gfx::Rect viewRect;
-        NVGcontext* nvg;
         
         //  callbacks
         overview::CustomComponentCreateFn createComponentCb;

@@ -9,8 +9,8 @@
 #ifndef Overview_Entity_GroupMap_hpp
 #define Overview_Entity_GroupMap_hpp
 
-#include "EntityGroup.hpp"
-#include "EntityDataTable.hpp"
+#include "Engine/Entity/EntityGroup.hpp"
+#include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/VectorDataRowset.hpp"
 
 #include <cinek/map.hpp>

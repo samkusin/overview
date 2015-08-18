@@ -10,7 +10,7 @@
 #define Overview_Physics_RigidBodySystem_hpp
 
 #include "Custom/Comp/RigidBody.hpp"
-#include "Engine/Entity/Comp/Transform.hpp"
+#include "Engine/Entity/Transform.hpp"
 #include "Engine/Entity/EntityDataTable.hpp"
 
 namespace cinek { namespace ovproto {

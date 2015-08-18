@@ -9,7 +9,7 @@
 #ifndef Overivew_Game_MessageStream_hpp
 #define Overivew_Game_MessageStream_hpp
 
-#include "MessageTypes.hpp"
+#include "Engine/MessageTypes.hpp"
 
 #include <kj/io.h>
 #include <capnp/message.h>

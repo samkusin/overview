@@ -66,4 +66,4 @@ namespace component
 
 } /* namespace ovproto */ } /* namespace cinek */
 
-#endif /* defined(__Overview__RigidBodyPhysics__) */
+#endif /* defined(Overview_App_Custom_Comp_RigidBodyPhysics) */

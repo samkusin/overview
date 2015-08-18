@@ -11,6 +11,7 @@
 
 #include "GameTypes.hpp"
 #include "AppContext.hpp"
+#include "RenderContext.hpp"
 
 #include "UI/UITypes.hpp"
 #include "Engine/ViewController.hpp"
@@ -27,7 +28,7 @@ namespace cinek { namespace ovproto {
 class GalaxyViewController : public overview::ViewController, public UISubscriber
 {
 public:
-    GalaxyViewController(AppContext context);
+    GalaxyViewController(AppContext context, RenderContext renderContext);
     virtual ~GalaxyViewController();
     
     virtual void onViewLoad() override;

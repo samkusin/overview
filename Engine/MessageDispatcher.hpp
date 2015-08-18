@@ -9,9 +9,9 @@
 #ifndef Overview_Message_Dispatcher_hpp
 #define Overview_Message_Dispatcher_hpp
 
-#include "EngineTypes.hpp"
-#include "MessageStream.hpp"
-#include "MessagePublisher.hpp"
+#include "Engine/EngineTypes.hpp"
+#include "Engine/MessageStream.hpp"
+#include "Engine/MessagePublisher.hpp"
 
 namespace cinek { namespace overview {
 

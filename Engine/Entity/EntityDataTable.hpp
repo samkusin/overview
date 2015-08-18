@@ -9,8 +9,8 @@
 #ifndef Overview_Entity_ComponentTable_hpp
 #define Overview_Entity_ComponentTable_hpp
 
-#include "EntityTypes.hpp"
-#include "DataRowset.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/Entity/DataRowset.hpp"
 
 #include <cinek/map.hpp>
 #include <cinek/debug.hpp>

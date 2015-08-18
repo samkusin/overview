@@ -9,7 +9,6 @@
 #ifndef Overview_RenderTypes_hpp
 #define Overview_RenderTypes_hpp
 
-#include "Engine/Entity/EntityTypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
 #include "CKGfx/VertexTypes.hpp"
 

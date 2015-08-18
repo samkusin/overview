@@ -9,7 +9,7 @@
 #ifndef Overview_Entity_DataRowset_hpp
 #define Overview_Entity_DataRowset_hpp
 
-#include "EntityTypes.hpp"
+#include "Engine/Entity/EntityTypes.hpp"
 
 #include <cinek/allocator.hpp>
 #include <cinek/types.hpp>
