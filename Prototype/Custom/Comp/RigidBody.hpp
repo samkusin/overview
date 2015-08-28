@@ -42,7 +42,7 @@ namespace component
         
         void setForce(const ckm::vec3& force) { _force = force; }
         void setTorque(const ckm::vec3& torque) { _torque = torque; }
-                
+        
         //  updates the body using the supplied forces.
         struct LocalTransform
         {

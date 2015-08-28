@@ -468,7 +468,7 @@ void GalaxyViewController::onViewLoad()
     }
     
     _driveTarget = 0;
-    _driveTimer = 30;       // 5 second initial delay
+    _driveTimer = 20;
     
     //  create camera
     _camera = _Entity.create("navi_camera");
@@ -581,7 +581,6 @@ void GalaxyViewController::onViewBackground()
 
 void GalaxyViewController::simulateView(double time, double dt)
 {
-    /*
     if (time >= _driveTimer)
     {
         if (!_driveTarget.valid())
@@ -603,14 +602,14 @@ void GalaxyViewController::simulateView(double time, double dt)
         }
         else
         {
+            auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
+            
             if (_currentSystem != _driveTarget && _driveTarget.valid())
             {
                 auto transforms = _Entity.table<overview::component::Transform>();
                 auto camera = transforms.dataForEntity(_camera);
                 auto target = transforms.dataForEntity(_driveTarget);
                 
-                auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
-
                 //  Calculate the direction the camera should face.
                 //  From there we 'drive' the camera from the camera's viewpoint to
                 //  avoid having to use three PID controllers (for Z) and also for
@@ -690,7 +689,7 @@ void GalaxyViewController::simulateView(double time, double dt)
                 
                 rb->setTorque(torque);
                 
-                if (std::abs(yawAngle) < ckm::epsilon() && std::abs(pitchAngle) < ckm::epsilon() &&
+                if (std::abs(yawAngle) < 0.1 && std::abs(pitchAngle) < 0.1 &&
                     std::abs(torqueMag) < ckm::epsilon())
                 {
                     _currentSystem = _driveTarget;
@@ -710,7 +709,7 @@ void GalaxyViewController::simulateView(double time, double dt)
 
                 auto& velocity = rb->velocity();
                 
-                if (distToTarget < 2.0)
+                if (distToTarget < 5.5)
                 {
                     rb->setForce(-velocity);
                 }
@@ -728,12 +727,14 @@ void GalaxyViewController::simulateView(double time, double dt)
             }
             else
             {
+                setCurrentSystem(_currentSystem);
+                rb->setForce(ckm::vec3(0,0,0));
+                rb->setTorque(ckm::vec3(0,0,0));
                 _driveTarget = nullptr;
-                _driveTimer = time + 10;
+                _driveTimer = time + 20;
             }
         }
     }
-    */
 }
 
 struct RenderSpaceCameraTranslate
@@ -1329,7 +1330,7 @@ void GalaxyViewController::frameUpdateView(double dt)
     
     
     //  handle input
-    if (_API.uiActiveItem() < 0)
+    if (_API.uiActiveItem() < 0 && !_driveTarget.valid())
     {
         //  Camera Control
         auto mouseState = _API.mouseState();
@@ -1386,6 +1387,7 @@ void GalaxyViewController::setCurrentSystem(Entity system)
     //  TODO: up?
     _systemCameraRot = ckm::quatFromUnitVectors(cameraBasis[2], cameraToSystemDir);
     _systemCameraCenter = systemTransform->position();
+    _systemCameraDist = 5.0;
     
     buildCameraTransform(*cameraTransform);
     updateTransform(_camera);
