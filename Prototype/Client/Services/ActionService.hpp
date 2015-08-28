@@ -10,6 +10,7 @@
 #define Overview_App_Service_Action_hpp
 
 #include "Client/AppContext.hpp"
+#include "Sim/ActionTypes.hpp"
 
 namespace cinek {
     namespace ovproto {
@@ -20,6 +21,8 @@ public:
     ActionService() = default;
     ActionService(AppContext& context);
     
+    ActionHandle addAction(Entity origin, const ActionPhrase& actionPhrase);
+    void removeAction(ActionHandle h);
     
 private:
     AppObjects* _context = nullptr;

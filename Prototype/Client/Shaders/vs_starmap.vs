@@ -67,8 +67,8 @@ void main()
     }
     else if (vidx == 1)
     {
-        cvert.x += scalexy.x;
-        cvert.y += scalexy.y;
+        cvert.x -= scalexy.x;
+        cvert.y -= scalexy.y;
         v_texcoord0.x = 1.0;
         v_texcoord0.y = 0.0;
     }
@@ -81,8 +81,8 @@ void main()
     }
     else
     {
-        cvert.x -= scalexy.x;
-        cvert.y -= scalexy.y;
+        cvert.x += scalexy.x;
+        cvert.y += scalexy.y;
         v_texcoord0.x = 0.0;
         v_texcoord0.y = 1.0;
     }

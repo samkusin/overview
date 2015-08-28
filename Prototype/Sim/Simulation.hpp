@@ -25,6 +25,7 @@ enum class SimObjectState
     kInactive,
     kBegin,
     kUpdate,
+    kAborted,
     kEnd
 };
 
@@ -42,12 +43,18 @@ public:
 
     // Adds the initialized object into the simulation
     //
-    void addObject(value_type&& object, const delegate_type& endDel=delegate_type());
+    key_type addObject(value_type&& object, const delegate_type& endDel=delegate_type());
+    
+    // Aborts the object (does not execute its end logic and returns no status
+    // to listeners
+    //
+    void abortObject(key_type key);
     
     //  Client must have the following implementation
-    //      bool begin(Client&, Object& object);
-    //      bool update(Client& state, Object& object);
-    //      return_type end(Client& state, Object& object);
+    //      bool begin(Object& object, double time);
+    //      bool update(Object& object, double time, double dt);
+    //      void abort(Object& object, double time);
+    //      Action::return_type end(Object& object, double time);
     //
     template<typename Client>
     void simulate(Client& client, double timeInSecs, double dt);
@@ -61,13 +68,14 @@ private:
     
     struct SimObject
     {
+        key_type id;
         SimObjectState state;
         value_type obj;
         delegate_type delegateEnd;
         
-        SimObject(): state(SimObjectState::kInactive) {}
-        SimObject(SimObjectState s, value_type&& o, const delegate_type& d) :
-            state(s), obj(std::move(o)), delegateEnd(d)
+        SimObject(): id(0), state(SimObjectState::kInactive) {}
+        SimObject(key_type k, SimObjectState s, value_type&& o, const delegate_type& d) :
+            id(k), state(s), obj(std::move(o)), delegateEnd(d)
         {
         }
     };
@@ -88,11 +96,12 @@ Simulation<Object>::Simulation
 }
 
 template<typename Object>
-void Simulation<Object>::addObject
+auto Simulation<Object>::addObject
 (
     value_type&& object,
     const delegate_type& endDel
 )
+-> key_type
 {
     key_type key;
     typename decltype(_objects)::pointer* entry = nullptr;
@@ -103,8 +112,8 @@ void Simulation<Object>::addObject
         //  The last object is the highest object id.
         //  Thus adding an object is trivial (+1 the ID of the last object and
         //  add the new object to the tail.
-        key = !_objects.empty() ? _objects.back().obj.id()+1 : 1;
-        _objects.emplace_back(SimObjectState::kInactive, object, endDel);
+        key = !_objects.empty() ? _objects.back().id+1 : 1;
+        _objects.emplace_back(key, SimObjectState::kInactive, object, endDel);
         entry = &_objects.back();
     }
     else
@@ -120,7 +129,7 @@ void Simulation<Object>::addObject
         {
             if (obj.state == SimObjectState::kInactive)
             {
-                key = entry->obj.id();
+                key = entry->id;
                 entry->obj = std::move(object);
                 entry = &obj;
                 break;
@@ -128,10 +137,23 @@ void Simulation<Object>::addObject
         }
     }
     
-    CK_ASSERT_RETURN(key > 0 && entry);    // very unlikely
+    CK_ASSERT_RETURN_VALUE(key > 0 && entry, 0);    // very unlikely
     
-    entry->obj.setId(key);
     entry->state = SimObjectState::kBegin;
+    return key;
+}
+
+template<typename Object>
+void Simulation<Object>::abortObject(key_type key)
+{
+    auto it = std::lower_bound(_objects.begin(), _objects.end(), key,
+        [](const SimObject& simobj, key_type key) -> bool {
+            return simobj.id < key;
+        });
+    if (it == _objects.end() || it->id != key)
+        return;
+    
+    it->state = SimObjectState::kAborted;
 }
 
 template<typename Object>
@@ -166,12 +188,17 @@ void Simulation<Object>::simulate
             if (!client.update(simobj.obj, time, dt))
                 simobj.state = SimObjectState::kEnd;
         }
+        if (simobj.state == SimObjectState::kAborted)
+        {
+            client.abort(simobj.obj, time);
+            simobj.state = SimObjectState::kInactive;
+        }
         if (simobj.state == SimObjectState::kEnd)
         {
             return_type ret = client.end(simobj.obj, time);
             if (simobj.delegateEnd)
             {
-                simobj.delegateEnd(simobj.obj.id(), ret);
+                simobj.delegateEnd(simobj.id, ret);
             }
             simobj.state = SimObjectState::kInactive;
         }

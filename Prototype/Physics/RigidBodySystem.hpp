@@ -20,7 +20,8 @@ void simulateRigidBodies
 (
     overview::component::Table<component::RigidBody> rigidBodies,
     overview::component::Table<overview::component::Transform> transforms,
-    double dt
+    double dt,
+    const component::RigidBodyConstraints& constraints
 );
 
 } /* namespace ovproto */ } /* namespace cinek */

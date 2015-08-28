@@ -70,7 +70,14 @@ static void renderUIItem
         switch (header->itemType)
         {
         case OUIItemType::frame:
-            renderUIItems(context, item);
+            {
+                auto data = reinterpret_cast<const OUIFrame*>(header);
+                if (data->renderCb)
+                {
+                    data->renderCb(data->callbackContext, context);
+                }
+                renderUIItems(context, item);
+            }
             break;
         case OUIItemType::column:
             renderUIItemsVertical(context, item);
@@ -216,7 +223,6 @@ void renderDiagnostics
     const gfx::Rect& viewRect
 )
 {
-
     nvgBeginFrame(context, viewRect.w, viewRect.h, 1.0f);
     {
         //  draw diagnostics frame

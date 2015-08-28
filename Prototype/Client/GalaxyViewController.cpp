@@ -12,6 +12,8 @@
 
 #include "Engine/EngineMathGfx.hpp"
 
+#include <glm/gtx/transform.hpp>
+
 #include "Engine/Entity/TransformEntity.hpp"
 #include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Render/Comp/Renderable.hpp"
@@ -20,6 +22,7 @@
 #include "Custom/Comp/ComponentCreationCallback.hpp"
 
 #include "UI/UIBuilder.hpp"
+#include "CKGfx/External/nanovg/nanovg.h"
 
 //  used for building a galactic "cell"
 #include "Sim/BuildStarmap.hpp"
@@ -61,6 +64,9 @@ struct MergeStarmapWithEntityStore
         auto srcTransformTable = starmap.entityStore.table<overview::component::Transform>();
         if (srcTransformTable)
         {
+            //  update all transforms global positions
+            overview::component::UpdateTransform(srcTransformTable).all();
+        
             FnData<overview::component::Transform> data;
             data.utility = this;
             data.result = &starmap;
@@ -179,40 +185,168 @@ private:
 struct GalaxyViewController::Starmap
 {
     StellarSystemTree tree;
+    RenderObjectList renderables;
+    RenderObjectList nearRenderables;
+    
+    Starmap(const Allocator& allocator) : renderables(allocator)
+    {
+        renderables.reserve(32768);
+        nearRenderables.reserve(4096);
+    }
     
     void buildObjectList
     (
         EntityService service,
         const ckm::Frustrum& frustrum,
-        RenderObjectList& writer
+        const ckm::Frustrum& nearFrustrum
     )
     {
         struct Callback
         {
             const overview::component::EntityDataTable* renderables;
-            RenderObjectList* writer;
+            Starmap* outputList;
+            const ckm::Frustrum* frustrum;
+            const ckm::Frustrum* nearFrustrum;
             
-            Callback(EntityService store,
-                     RenderObjectList& writer) :
+            Callback(const ckm::Frustrum& f, const ckm::Frustrum& nf,
+                     EntityService store,
+                     Starmap& output) :
                 renderables(store.table<overview::component::Renderable>().dataTable()),
-                writer(&writer)
+                outputList(&output),
+                frustrum(&f),
+                nearFrustrum(&nf)
             {
             }
             
-            bool operator()(Entity entity) const
+            bool operator()(Entity entity, const ckm::AABB<ckm::vec3>& aabb) const
             {
                 RenderObject obj;
                 obj.renderableIdx = renderables->rowIndexFromEntity(entity);
-                writer->push_back(obj);
+                
+                if (nearFrustrum->testAABB(aabb))
+                {
+                    outputList->nearRenderables.push_back(obj);
+                }
+                else
+                {
+                    outputList->renderables.push_back(obj);
+                }
                 return true;
             }
         };
         
-        Callback cb(service, writer);
+        Callback cb(frustrum, nearFrustrum, service, *this);
         tree.test<StellarSystemTree::Test::FrustrumSweep>()(frustrum, cb);
+    }
+    
+    void buildObjectListFromBox
+    (
+        const ckm::AABB<ckm::vec3>& box,
+        vector<Entity>& entities
+    )
+    {
+        struct Callback
+        {
+            vector<Entity>* entities;
+            
+            bool operator()(Entity entity, const ckm::AABB<ckm::vec3>& aabb) const
+            {
+                entities->push_back(entity);
+                return true;
+            }
+        };
+        
+        Callback cb;
+        cb.entities = &entities;
+        
+        tree.test<StellarSystemTree::Test::BoxSweep>()(box, cb);
     }
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+PIDController::PIDController() :
+    _inputTail(0),
+    _output(0),
+    _proportionalK(0),
+    _integralK(0),
+    _derivativeK(0),
+    _dt(0)
+{
+}
+
+PIDController::PIDController
+(
+    ckm::scalar proportionalK,
+    ckm::scalar integralK,
+    ckm::scalar derivativeK,
+    ckm::scalar dt
+) :
+    _inputTail(0),
+    _output(0),
+    _proportionalK(proportionalK),
+    _integralK(integralK),
+    _derivativeK(derivativeK),
+    _dt(dt)
+{
+}
+
+void PIDController::resetSamples()
+{
+    _inputTail = 0;
+    _output = 0;
+}
+
+void PIDController::addInput(ckm::scalar input)
+{
+    if (_inputTail == _inputs.size())
+    {
+        for (auto i = 1; i < _inputTail; ++i)
+            _inputs[i-1] = _inputs[i];
+    }
+    else
+    {
+        ++_inputTail;
+    }
+    auto inputCur = _inputTail-1;
+    _inputs[inputCur] = input;
+    
+    //  integration step requires a certain number of inputs
+    //  so the turn will be delayed by this number of frames, which should be
+    //  a tiny fraction of a second with reasonable time steps
+    if (_inputTail < kReqInputs)
+    {
+        _output = 0;
+        return;
+    }
+    
+    //  Kp * in
+    ckm::scalar proportional = _proportionalK * _inputs[inputCur];
+    
+    //  integral(t=0,inputCur) { Ki * in(t) }
+    //  approximation using extended simpson's rule
+    
+    ckm::scalar integral = 0;
+    for (auto i = 1; i < inputCur; i+=2)
+    {
+        integral += 4*_inputs[i];
+    }
+    for (auto i = 2; i < inputCur; i+=2)
+    {
+        integral += 2*_inputs[i];
+    }
+    integral += _inputs[0];
+    integral += _inputs[inputCur];
+    integral /= (3*_dt);
+    integral *= _integralK;
+    
+    ckm::scalar derivative = _derivativeK * (_inputs[inputCur]-_inputs[inputCur-1]) / _dt;
+    
+    _output = 1 * (proportional + integral + derivative);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 GalaxyViewController::GalaxyViewController
 (
@@ -224,7 +358,7 @@ GalaxyViewController::GalaxyViewController
     _Entity(context)
 {
     _uniforms.fill(BGFX_INVALID_HANDLE);
-    _renderables.reserve(16384);
+    _starSystemBoxes.reserve(512);
 }
 
 GalaxyViewController::~GalaxyViewController()
@@ -245,7 +379,6 @@ void GalaxyViewController::onViewLoad()
     bx::mtxSRT(entityMatrix, 2.0f, 2.0f, 2.0f, 0.f, 0.f, 0.f,
         0.f, 0.f, 0.f);
     */
-    
     BuildStarmapFunction cellGenFn;
     
     vector<SpectralClassDesc> spectralClasses =
@@ -259,22 +392,15 @@ void GalaxyViewController::onViewLoad()
         {   3700,   0.45,   45.0,  2,  SpectralClassDesc::kUniform  },
         {   2400,   0.08,   50.0,  1,  SpectralClassDesc::kUniform  }
     };
+
+    constexpr ckm::scalar kCellBoundZ = 64;
+    constexpr ckm::scalar kCellBoundXY = 64;
+    constexpr ckm::scalar kSolarMassTotal = 0.0016 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
     /*
-    vector<BuildCellFunction::SpectralInput> spectralInputs =
-    {
-        { 0.0 },
-        { 0.00003 },
-        { 0.13 },
-        { 0.6 },
-        { 3.0 },
-        { 7.6 },
-        { 12.1 },
-        { 76.45 }
-    };
-    */
-    constexpr ckm::scalar kCellBoundZ = 32;
-    constexpr ckm::scalar kCellBoundXY = 32;
+    constexpr ckm::scalar kCellBoundZ = 4;
+    constexpr ckm::scalar kCellBoundXY = 4;
     constexpr ckm::scalar kSolarMassTotal = 0.0008 * (kCellBoundXY*kCellBoundXY*kCellBoundZ*8);
+    */
     vector<BuildStarmapFunction::SpectralInput> spectralInputs =
     {
         { 0.0 },
@@ -305,7 +431,7 @@ void GalaxyViewController::onViewLoad()
         MergeStarmapWithEntityStore mergeFn;
         mergeFn(cell, _Entity);
 
-        _starmap = allocate_unique<Starmap>(_allocator);
+        _starmap = allocate_unique<Starmap>(_allocator, _allocator);
         _starmap->tree = std::move(cell.stellarSystemTree);
     }
     else
@@ -327,22 +453,40 @@ void GalaxyViewController::onViewLoad()
     _starCorona = _Render.loadTexture("textures/starcorona.png");
     
     bx::mtxIdentity(_mapTransform);
-
+    
+    ckm::AABB<ckm::vec3> localBox(12);
+    
+    _starmapLocalEntities.reserve(512);
+    _starmap->buildObjectListFromBox(localBox, _starmapLocalEntities);
+    
+    Entity currentSystem;
+    currentSystem = nullptr;
+    
+    if (!_starmapLocalEntities.empty())
+    {
+        currentSystem = _starmapLocalEntities[std::rand() % _starmapLocalEntities.size()];
+    }
+    
+    _driveTarget = 0;
+    _driveTimer = 30;       // 5 second initial delay
+    
     //  create camera
     _camera = _Entity.create("navi_camera");
     auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
     if (camera)
     {
-        camera->init(0, M_PI * 90/180.0 , 0.5, 500.0);
+        camera->init(0, M_PI * 90/180.0 , 1, 1000.0);
     }
-    auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
-    //rb->setForce(ckm::vec3(10,0,0));
-    rb->setTorque(ckm::vec3(0,0.00025,0));
     
-    _frameCnt = 0;
-
+    _systemCameraDist = 5.0;
+    
+    setCurrentSystem(currentSystem);
+    
     _ship = _Entity.create("ship_gilgerard");
     
+    //  starmap viewer
+    _uiStarmapItem = -1;
+    resetMouseTrack();
     
     //  Create player related entities
     //  Player Entity
@@ -435,59 +579,164 @@ void GalaxyViewController::onViewBackground()
 {
 }
 
-void GalaxyViewController::updateView()
+void GalaxyViewController::simulateView(double time, double dt)
 {
-    if (_frameCnt > 0)
+    /*
+    if (time >= _driveTimer)
     {
-        auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
-        rb->setForce(ckm::vec3(0,0,0));
-        rb->setTorque(ckm::vec3(0,0,0));
+        if (!_driveTarget.valid())
+        {
+            auto transforms = _Entity.table<overview::component::Transform>();
+            //  select new system
+            auto systemTransform = transforms.dataForEntity(_currentSystem);
+            ckm::AABB<ckm::vec3> localBox(16);
+            localBox += systemTransform->localPosition();
+            _starmapLocalEntities.clear();;
+            _starmap->buildObjectListFromBox(localBox, _starmapLocalEntities);
+        
+            if (!_starmapLocalEntities.empty())
+            {
+                _driveTarget = _starmapLocalEntities[std::rand() % _starmapLocalEntities.size()];
+            }
+            _driveYaw = std::move(PIDController(1,0.05, 13, dt));
+            _drivePitch = std::move(PIDController(1,0.05,13,dt));
+        }
+        else
+        {
+            if (_currentSystem != _driveTarget && _driveTarget.valid())
+            {
+                auto transforms = _Entity.table<overview::component::Transform>();
+                auto camera = transforms.dataForEntity(_camera);
+                auto target = transforms.dataForEntity(_driveTarget);
+                
+                auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
+
+                //  Calculate the direction the camera should face.
+                //  From there we 'drive' the camera from the camera's viewpoint to
+                //  avoid having to use three PID controllers (for Z) and also for
+                //  avoiding gimbal lock.
+                //
+                //  Based on this local orientation, we turn the camera in two
+                //  directions (Left/Right - Y axis, or Up/Down - X axis)
+                //
+                auto mtxCameraOrient = ckm::mtx3x3FromQuat(camera->orient());
+                auto mtxInvCameraOrient = ckm::inverse(mtxCameraOrient);
+                //auto currentDir = mtxCameraOrient[2];
+                auto targetDisplacement = target->position() - camera->position();
+                auto targetDir = ckm::normalize(targetDisplacement);
+                
+                auto viewTargetDir = mtxInvCameraOrient * targetDir;
+                
+                
+                //printf("CD: %.2lf,%.2lf,%.2lf, TD: %.2lf,%.2lf,%.2lf, VTD: %.2lf,%.2lf,%.2lf    ",
+                //    currentDir.x, currentDir.y, currentDir.z,
+                //    targetDirNorm.x,targetDirNorm.y,targetDirNorm.z,
+                //    viewTargetDir.x, viewTargetDir.y, viewTargetDir.z);
+                
+                
+                //  separate Y axis and X axis turn forces to simpify evaluation
+                ckm::vec3 fwdAxis(0,0,1);
+                //ckm::vec3 upAxis(0,1,0);
+                
+                auto yawDir = ckm::normalize(ckm::vec3(viewTargetDir.x, 0, viewTargetDir.z));
+                ckm::scalar yawAngle = ckm::acos(ckm::dot(fwdAxis, yawDir));
+                if (viewTargetDir.x < 0)
+                    yawAngle = -yawAngle;
+
+                auto pitchDir = ckm::normalize(ckm::vec3(0, viewTargetDir.y, viewTargetDir.z));
+                ckm::scalar pitchAngle = ckm::acos(ckm::dot(fwdAxis, pitchDir));
+                if (viewTargetDir.y < 0)
+                    pitchAngle = -pitchAngle;
+                
+                // printf("Yaw: %.2lf, Pitch: %.2lf    ", yawAngle, pitchAngle);
+                
+                _drivePitch.addInput(pitchAngle);
+                _driveYaw.addInput(yawAngle);
+                
+                auto pitchAngAcc =  -_drivePitch.output();
+                auto yawAngAcc =  _driveYaw.output();
+                
+                // printf("Yaw Acc: %.2lf, Pitch Acc: %.2lf    ", yawAngAcc, pitchAngAcc);
+            
+                const ckm::scalar kMaxAngularAccel = 1 * ckm::pi();
+                
+                if (pitchAngAcc > kMaxAngularAccel)
+                    pitchAngAcc = kMaxAngularAccel;
+                else if (pitchAngAcc < -kMaxAngularAccel)
+                    pitchAngAcc = -kMaxAngularAccel;
+                
+                if (yawAngAcc > kMaxAngularAccel)
+                    yawAngAcc = kMaxAngularAccel;
+                else if (yawAngAcc < -kMaxAngularAccel)
+                    yawAngAcc = -kMaxAngularAccel;
+                
+                auto& inertia = rb->inertiaTensors();
+                
+                ckm::vec3 torque = pitchAngAcc * inertia[0];
+                torque += yawAngAcc * inertia[1];
+                
+                auto torqueMag = ckm::vectorLength(torque);
+                if (torqueMag > ckm::epsilon())
+                {
+                //    torque /= torqueMag;
+                    torque = mtxCameraOrient * torque;
+                }
+                else
+                {
+                    torque = ckm::vec3(0);
+                }
+                
+                //printf("T: %.2lf,%.2lf,%.2lf\n", torque.x,torque.y,torque.z);
+                
+                rb->setTorque(torque);
+                
+                if (std::abs(yawAngle) < ckm::epsilon() && std::abs(pitchAngle) < ckm::epsilon() &&
+                    std::abs(torqueMag) < ckm::epsilon())
+                {
+                    _currentSystem = _driveTarget;
+                }
+                
+                
+                //  arrival steering behavior
+                //
+                //  target_offset = target - position
+                //  distance = length (target_offset)
+                //  ramped_speed = max_speed * (distance / slowing_distance)
+                //  clipped_speed = minimum (ramped_speed, max_speed)
+                //  desired_velocity = (clipped_speed / distance) * target_offset
+                //  steering = desired_velocity - velocity
+
+                ckm::scalar distToTarget = ckm::vectorLength(targetDisplacement);
+
+                auto& velocity = rb->velocity();
+                
+                if (distToTarget < 2.0)
+                {
+                    rb->setForce(-velocity);
+                }
+                else
+                {
+                    ckm::scalar kMaxSpeed = 2.0;
+                    auto rampedSpeed = kMaxSpeed * (distToTarget/4.0);
+                    auto clippedSpeed = std::min(rampedSpeed, kMaxSpeed);
+
+                    auto desiredVelocity = (clippedSpeed/distToTarget) * targetDisplacement;
+                    auto steering = desiredVelocity - velocity;
+                    
+                    rb->setForce(steering); // point mass, accel = dv/dt
+                }
+            }
+            else
+            {
+                _driveTarget = nullptr;
+                _driveTimer = time + 10;
+            }
+        }
     }
-    ++_frameCnt;
+    */
 }
 
-void GalaxyViewController::layoutView()
-{
-    UILayout layout;
-    
-    auto viewRect = _Render.viewRect();
-    
-    layout.frame().
-        events(UI_BUTTON0_DOWN, this, kID_VIEW).
-        size(viewRect.w, viewRect.h).
-        column(UI_FILL).
-            button(UITHEME_ICON_GHOST, "Button A", this, kID_BUTTON).
-            button(UITHEME_ICON_NEWFOLDER, "Button B", this, kID_BUTTON2).
-            button(UITHEME_ICON_MONKEY, "Button C", this, kID_BUTTON3).
-        end().
-    end();
-}
-
-void GalaxyViewController::onUIEvent(int evtId, int evtType)
-{
-    if (evtId == kID_VIEW)
-    {
-        printf("View Hit\n");
-    }
-    else if (evtId == kID_BUTTON)
-    {
-        printf("Button A Hit\n");
-    }
-    else if (evtId == kID_BUTTON2)
-    {
-        printf("Button B Hit\n");
-    }
-    else if (evtId == kID_BUTTON3)
-    {
-        printf("Button C Hit\n");
-    }
-    else
-    {
-        printf("UI Unknown Event\n");
-    }
-}
-
-struct RendererCameraTranslate
+struct RenderSpaceCameraTranslate
 {
     overview::component::Table<overview::component::Renderable> renderables;
     overview::component::Table<overview::component::Transform> transforms;
@@ -520,19 +769,96 @@ struct RendererCameraTranslate
     }
 };
 
-void GalaxyViewController::renderView()
+void GalaxyViewController::layoutView()
 {
-    if (!_shaderProgram)
-        return;
-    
-    _renderables.clear();
-    
     auto viewRect = _Render.viewRect();
+
+    //  Starmap data generation used to detect which system was selected by
+    //  the user.  Due to the expense of frustrum culling, we'll generate our
+    //  render list as well.  Since layoutView() is always tied to the render
+    //  frame layout() could be considered a "prepare for rendering" step :
+    //  linked to the rendering pipeline and detached from the simulation.
+    //
+    starmapLayout();
+
+    //  Widget layout
+    UILayout layout;
     
-    bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-    
-    bgfx::submit(0);
+    layout.frame(viewUIRenderHook, this);
+    _uiStarmapItem = layout.currentGroupItem();
+    {
+        layout.setEvents(UI_BUTTON0_DOWN, this, kID_VIEW).
+            setSize(viewRect.w, viewRect.h);
+            /*
+            column(UI_FILL).
+                buttonItem(UITHEME_ICON_GHOST, "Button A", this, kID_BUTTON).
+                buttonItem(UITHEME_ICON_NEWFOLDER, "Button B", this, kID_BUTTON2).
+                buttonItem(UITHEME_ICON_MONKEY, "Button C", this, kID_BUTTON3).
+            end();
+            */
+    }
+    layout.end();
+}
+
+void GalaxyViewController::onUIEvent
+(
+    int evtId,
+    UIevent evtType,
+    const UIeventdata& data
+)
+{
+    if (evtId == kID_VIEW)
+    {
+        if (evtType == UI_BUTTON0_DOWN)
+        {
+            Entity hitEntity;
+            hitEntity = 0;
             
+            for (auto& box : _starSystemBoxes)
+            {
+                float r2x = data.cursor.x - box.x;
+                float r2y = data.cursor.y - box.y;
+                r2x *= r2x;
+                r2y *= r2y;
+                
+                if (r2x + r2y < box.radius2)
+                {
+                    printf("Star Hit %d,%d = %" PRIu64 " at %d,%d\n",
+                            data.cursor.x, data.cursor.y,
+                            box.entity.id, box.x, box.y);
+                    hitEntity = box.entity;
+                    break;
+                }
+            }
+            
+            if (!hitEntity.valid())
+            {
+                printf("View Hit!\n");
+            }
+        }
+    }
+    else if (evtId == kID_BUTTON)
+    {
+        printf("Button A Hit\n");
+    }
+    else if (evtId == kID_BUTTON2)
+    {
+        printf("Button B Hit\n");
+    }
+    else if (evtId == kID_BUTTON3)
+    {
+        printf("Button C Hit\n");
+    }
+    else
+    {
+        printf("UI Unknown Event\n");
+    }
+}
+
+void GalaxyViewController::starmapLayout()
+{
+    auto viewRect = _Render.viewRect();
+ 
     //  calculate camera frustrum (view-space) and the view-to-world
     //  transformation used by object list providers to cull entities
     //  from world space
@@ -553,10 +879,9 @@ void GalaxyViewController::renderView()
     ckm::mat3 cameraBasis(cameraSRT);
         
     auto aspect = (ckm::scalar)viewRect.w / viewRect.h;
-            
-    ckm::Frustrum worldFrustrum;
-            
-    worldFrustrum = ckm::Frustrum(camera->nearZ(),
+    
+    //  used to cull all systems within the current region
+    ckm::Frustrum worldFrustrum = ckm::Frustrum(camera->nearZ(),
                     camera->farZ(),
                     camera->fov(),
                     aspect
@@ -565,8 +890,24 @@ void GalaxyViewController::renderView()
                     ckm::vec3(cameraSRT[3])
                 );
     
-    _starmap->buildObjectList(_Entity, worldFrustrum, _renderables);
+    //  used to cull systems within our viewable frustrum between 'near'
+    //  and 'far', which use different rendering pipelines
+    //  we run a test against the worldFrustrum, and use worldNearFrustrum
+    //  to filter near objects.  this is more efficient than running two
+    //  frustrum sweeps since we only need to traverse the starmap's entities
+    //  once.
+    ckm::Frustrum worldNearFrustrum = ckm::Frustrum(camera->nearZ(),
+                    camera->nearZ() + 15.0,
+                    camera->fov(),
+                    aspect
+                ).transform(
+                    cameraBasis,
+                    ckm::vec3(cameraSRT[3])
+                );
     
+    _starmap->renderables.clear();
+    _starmap->nearRenderables.clear();
+    _starmap->buildObjectList(_Entity, worldFrustrum, worldNearFrustrum);
     
     //  We translate renderable objects so that our render camera is at
     //  the origin.  Since its possible world objects use high precision
@@ -578,13 +919,104 @@ void GalaxyViewController::renderView()
     //
     //  Rotations and scale remain as they are in world space
     auto renderables = _Entity.table<overview::component::Renderable>();
-
-    RendererCameraTranslate cameraTranslate;
+    auto systems = _Entity.table<component::StellarSystem>();
+    
+    RenderSpaceCameraTranslate cameraTranslate;
     cameraTranslate.offset = cameraSRT[3];
     cameraTranslate.renderables = renderables;
     cameraTranslate.transforms = transformTable;
+
+    _starSystemBoxes.clear();
+
+    /*
+    auto centerSystemRenderable = renderables.dataForEntity(_currentSystem);
     
-    for (auto& renderObject : _renderables)
+    gfx::Vector3 posCenterSystem;
+    
+    if (centerSystemRenderable)
+    {
+        posCenterSystem.from(centerSystemRenderable->worldSRT[12],
+            centerSystemRenderable->worldSRT[13],
+            centerSystemRenderable->worldSRT[14]);
+    }
+    
+    */
+    gfx::Matrix4 mtxView;
+    gfx::Matrix4 mtxProj;
+    
+    //  generate our bgfx view and projection matrices
+    //  2d notes: if the camera is 2d, we create an orthogonal matrix
+    //  general notes: near and far are assumed to be 'reasonable'
+    //  values (meaning within float range)
+    //
+    bx::mtxInverse(mtxView, ckm::convert(cameraSRT, mtxView));
+    bx::mtxProj(mtxProj,
+        180.0f * (camera->fov()/M_PI), (float)aspect,
+        (float)camera->nearZ(),
+        (float)camera->farZ());
+    
+    gfx::Vector4 systemPos1;
+    gfx::Vector4 systemPos2;
+    gfx::Vector4 systemPosR1;
+    gfx::Vector4 systemPosR2;
+    
+    for (auto& renderObject : _starmap->nearRenderables)
+    {
+        auto renderable = renderables.dataAtIndex(renderObject.renderableIdx);
+        if (renderable.second)
+        {
+            cameraTranslate.onEntity(renderable.first, *renderable.second);
+            
+            //  create our UI spheres for each star system within clickable range
+            auto system = systems.dataForEntity(renderable.first);
+            auto adjSystemRadius = system->radiusInLYR() * 0.4;
+            
+            _starSystemBoxes.emplace_back();
+            auto& systemBox = _starSystemBoxes.back();
+            
+            auto& worldSRT = renderable.second->worldSRT;
+            systemPos1.from(worldSRT[12], worldSRT[13], worldSRT[14], worldSRT[15]);
+            
+            bx::vec4MulMtx(systemPos2, systemPos1, mtxView);
+            systemPosR2.from(systemPos2.x() + adjSystemRadius, systemPos2.y(), systemPos2.z(), systemPos2.w());
+            
+            // use the view Z to accurately reflect Z depth for rendering UI
+            systemBox.z = systemPos2.z();
+            
+            bx::vec4MulMtx(systemPos1, systemPos2, mtxProj);
+            bx::vec3Mul(systemPos2, systemPos1, 1/systemPos1.w());
+            
+            systemBox.x = viewRect.x + viewRect.w * (systemPos2[0]+1)*0.5f;
+            systemBox.y = viewRect.y - viewRect.h * (systemPos2[1]-1)*0.5f;
+            
+            bx::vec4MulMtx(systemPosR1, systemPosR2, mtxProj);
+            bx::vec3Mul(systemPosR2, systemPosR1, 1/systemPosR1.w());
+            
+            systemBox.radius = viewRect.w * (systemPosR2[0] - systemPos2[0]);
+            systemBox.radius2 = systemBox.radius * systemBox.radius;
+            systemBox.entity = renderable.first;
+        
+            /*
+            if (centerSystemRenderable)
+            {
+                vecFromCenter[0] = renderable.second->worldSRT[12] - posCenterSystem[0];
+                vecFromCenter[1] = renderable.second->worldSRT[13] - posCenterSystem[1];
+                vecFromCenter[2] = renderable.second->worldSRT[14] - posCenterSystem[2];
+                
+                if (bx::vec3Length(vecFromCenter) < 10.0f)
+                {
+                
+                }
+            }*/
+        }
+    }
+    
+    std::sort(_starSystemBoxes.begin(), _starSystemBoxes.end(),
+        [](const StarSystemUIBox& l, const StarSystemUIBox& r) -> bool {
+            return l.z < r.z;
+        });
+    
+    for (auto& renderObject : _starmap->renderables)
     {
         auto renderable = renderables.dataAtIndex(renderObject.renderableIdx);
         if (renderable.second)
@@ -592,6 +1024,72 @@ void GalaxyViewController::renderView()
             cameraTranslate.onEntity(renderable.first, *renderable.second);
         }
     }
+}
+
+void GalaxyViewController::viewUIRenderHook(void* context, NVGcontext* nvg)
+{
+    reinterpret_cast<GalaxyViewController*>(context)->viewUIRender(nvg);
+}
+
+void GalaxyViewController::viewUIRender(NVGcontext* nvg)
+{
+    if (!_starSystemBoxes.empty())
+    {
+        NVGcolor selectableColor = { 0.25f, 0.25f, 0.25f, 0.50f };
+   
+        auto zMin = _starSystemBoxes[0].z;
+        auto zRange = _starSystemBoxes[_starSystemBoxes.size()-1].z - zMin;
+        
+        for (auto& box : _starSystemBoxes)
+        {
+            float alphaBasis = 0.0f;
+            if (box.entity == _currentSystem)
+                alphaBasis = 0.65f;
+            
+            {
+                nvgBeginPath(nvg);
+                nvgCircle(nvg, box.x, box.y, box.radius);
+                
+                selectableColor.a = 0.05f + alphaBasis * (1 - (box.z - zMin) / zRange);
+                
+                nvgStrokeColor(nvg, selectableColor);
+                nvgStroke(nvg);
+                nvgFillColor(nvg, selectableColor);
+                nvgFill(nvg);
+            }
+        }
+    }
+}
+
+void GalaxyViewController::frameUpdateView(double dt)
+{
+    auto viewRect = _Render.viewRect();
+    auto aspect = (ckm::scalar)viewRect.w / viewRect.h;
+    
+    if (!_shaderProgram)
+        return;
+    
+    bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
+    bgfx::submit(0);
+            
+    //  acquire camera transform, and use its rotation and scale to generate
+    //  our render view matrix.
+    auto transformTable = _Entity.table<overview::component::Transform>();
+    auto cameraTransform = transformTable.dataForEntity(_camera);
+    auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
+    
+    ckm::mat4 cameraSRT;
+    if (cameraTransform)
+    {
+        cameraTransform->calcMatrix(cameraSRT);
+    }
+    else
+    {
+        cameraSRT = ckm::mat4(1);
+    }
+    
+    //  use our renderables generated from the starmapLayout()
+    auto renderables = _Entity.table<overview::component::Renderable>();
     
     //  center our camera at 0,0,0 (since our render objects are now
     //  positioned relative to the origin.)
@@ -711,8 +1209,9 @@ void GalaxyViewController::renderView()
     systemVisitor.renderables = renderables;
     systemVisitor.stars = _Entity.table<component::StarBody>();
     
-    //  generate star vertices, color table indices and absolute magnitudes
-    while (!_renderables.empty())
+    //  generate far star vertices, color table indices and absolute magnitudes
+    auto systemsToRender = &_starmap->renderables;
+    while (!systemsToRender->empty())
     {
         bgfx::TransientVertexBuffer starTVB;
         bgfx::TransientIndexBuffer starTIB;
@@ -731,11 +1230,11 @@ void GalaxyViewController::renderView()
         systemVisitor.vertices = reinterpret_cast<Vertex*>(starTVB.data);
         systemVisitor.indices = reinterpret_cast<uint16_t*>(starTIB.data);
 
-        for (; !_renderables.empty() &&
+        for (; !systemsToRender->empty() &&
                (systemVisitor.starIndex + kMaxStarsPerSystem) < kStarLimit; )
         {
-            auto object = _renderables.back();
-            _renderables.pop_back();
+            auto object = systemsToRender->back();
+            systemsToRender->pop_back();
             
             auto renderable = renderables.dataAtIndex(object.renderableIdx);
             auto entity = renderable.first;
@@ -761,7 +1260,6 @@ void GalaxyViewController::renderView()
             bgfx::setState(
                   BGFX_STATE_RGB_WRITE
                 | BGFX_STATE_ALPHA_WRITE
-                | BGFX_STATE_CULL_CCW
                 | BGFX_STATE_MSAA
                 | BGFX_STATE_BLEND_ALPHA
             );
@@ -769,6 +1267,197 @@ void GalaxyViewController::renderView()
             bgfx::submit(0);
         }
     }
+    
+    //  generate near star vertices, color table indices and absolute magnitudes
+    systemsToRender = &_starmap->nearRenderables;
+    while (!systemsToRender->empty())
+    {
+        bgfx::TransientVertexBuffer starTVB;
+        bgfx::TransientIndexBuffer starTIB;
+        
+        const int kStarLimit = 8192;
+    
+        const bgfx::VertexDecl& vertexDecl =
+            gfx::VertexTypes::declaration(gfx::VertexTypes::kVec3_RGBA_Tex0);
+        if (!bgfx::allocTransientBuffers(&starTVB, vertexDecl, kStarLimit*4,
+                                    &starTIB, kStarLimit*6))
+        {
+            break;
+        }
+    
+        systemVisitor.starIndex = 0;
+        systemVisitor.vertices = reinterpret_cast<Vertex*>(starTVB.data);
+        systemVisitor.indices = reinterpret_cast<uint16_t*>(starTIB.data);
+
+        for (; !systemsToRender->empty() &&
+               (systemVisitor.starIndex + kMaxStarsPerSystem) < kStarLimit; )
+        {
+            auto object = systemsToRender->back();
+            systemsToRender->pop_back();
+            
+            auto renderable = renderables.dataAtIndex(object.renderableIdx);
+            auto entity = renderable.first;
+            
+            auto system = systems.dataForEntity(entity);
+            if (system)
+            {
+                systemVisitor(entity);
+            }
+        }
+        
+        
+        int starCount = systemVisitor.starIndex;
+        if (starCount)
+        {
+            bgfx::setTransform(_mapTransform);
+         
+            bgfx::setVertexBuffer(&starTVB, 0, starCount*4);
+            bgfx::setIndexBuffer(&starTIB, 0, starCount*6);
+            
+            //  enable alpha blending and disable the depth test since we've
+            //  sorted our stars by Z.
+            bgfx::setState(
+                  BGFX_STATE_RGB_WRITE
+                | BGFX_STATE_ALPHA_WRITE
+                | BGFX_STATE_MSAA
+                | BGFX_STATE_BLEND_ALPHA
+            );
+                    
+            bgfx::submit(0);
+        }
+    }
+    
+    
+    //  handle input
+    if (_API.uiActiveItem() < 0)
+    {
+        //  Camera Control
+        auto mouseState = _API.mouseState();
+        auto keyState = _API.keyState();
+        
+        if (mouseState.wheelX || mouseState.wheelY)
+        {
+            printf("%d,%d\n", mouseState.wheelX, mouseState.wheelY);
+        }
+        
+        auto mouseDelta = mouseTrackDelta(mouseState.x, mouseState.y);
+        
+        if (keyState.scankeys[SDL_SCANCODE_LCTRL])
+        {
+            auto mouseDeltaScalarX = (float)mouseDelta.x / viewRect.w;
+            auto mouseDeltaScalarY = (float)mouseDelta.y / viewRect.h;
+            
+            rotateSystemCamera(ckm::vec3(0,1,0), ckm::pi() * mouseDeltaScalarX);
+            rotateSystemCamera(ckm::vec3(1,0,0), ckm::pi() * mouseDeltaScalarY);
+            
+            updateMouseTrack(mouseState.x, mouseState.y);
+        }
+        else
+        {
+            resetMouseTrack();
+            rotateSystemCamera(ckm::vec3(0,1,0), ckm::pi() * 0.0015);
+            rotateSystemCamera(ckm::vec3(-1,0,0), ckm::pi() * 0.0000);
+        }
+        
+        zoomSystemCamera(mouseState.wheelY);
+    }
+}
+
+
+
+void GalaxyViewController::setCurrentSystem(Entity system)
+{
+    _currentSystem = system;
+    
+    auto transforms = _Entity.table<overview::component::Transform>();
+    auto cameraTransform = transforms.dataForEntity(_camera);
+    auto systemTransform = transforms.dataForEntity(_currentSystem);
+    
+    overview::component::UpdateTransform updateTransform(transforms);
+    updateTransform(_camera);
+
+    //  camera should face the current system
+    ckm::vec3 cameraToSystemDir =
+        ckm::normalize(systemTransform->position() - cameraTransform->position());
+    
+    ckm::mat3 cameraBasis;
+    cameraBasis = cameraTransform->calcBasis(cameraBasis);
+    
+    //  TODO: up?
+    _systemCameraRot = ckm::quatFromUnitVectors(cameraBasis[2], cameraToSystemDir);
+    _systemCameraCenter = systemTransform->position();
+    
+    buildCameraTransform(*cameraTransform);
+    updateTransform(_camera);
+}
+
+void GalaxyViewController::rotateSystemCamera
+(
+    ckm::vec3 axis,
+    ckm::scalar radians
+)
+{
+    //  TODO: up?
+    auto qRot = ckm::quatFromAngleAndAxis(radians, axis);
+    _systemCameraRot = ckm::normalize(_systemCameraRot * qRot); // local to world
+ 
+    auto transforms = _Entity.table<overview::component::Transform>();
+    auto cameraTransform = transforms.dataForEntity(_camera);
+    overview::component::UpdateTransform updateTransform(transforms);
+    buildCameraTransform(*cameraTransform);
+    updateTransform(_camera);
+}
+
+void GalaxyViewController::zoomSystemCamera(ckm::scalar offset)
+{
+    if (offset > ckm::epsilon() || offset < -ckm::epsilon())
+    {
+        _systemCameraDist += offset/10;
+        if (_systemCameraDist < 2)
+            _systemCameraDist = 2;
+        else if(_systemCameraDist > 10)
+            _systemCameraDist = 10;
+    }
+    
+    auto transforms = _Entity.table<overview::component::Transform>();
+    auto cameraTransform = transforms.dataForEntity(_camera);
+    overview::component::UpdateTransform updateTransform(transforms);
+    buildCameraTransform(*cameraTransform);
+    updateTransform(_camera);
+}
+
+void GalaxyViewController::buildCameraTransform(overview::component::Transform& t)
+{
+    auto systemCameraMtx = ckm::mtx4x4FromQuat(_systemCameraRot);
+    systemCameraMtx[3] = ckm::vec4(_systemCameraCenter, 1);
+
+    ckm::vec4 cameraPos(0,0,-_systemCameraDist,1);
+    cameraPos = systemCameraMtx * cameraPos;
+
+    t.setLocalOrient(_systemCameraRot);
+    t.setLocalPosition(ckm::vec3(cameraPos));
+}
+
+
+void GalaxyViewController::resetMouseTrack()
+{
+    _lastTrackMouseX = -1;
+    _lastTrackMouseY = -1;
+}
+
+void GalaxyViewController::updateMouseTrack(int x, int y)
+{
+    _lastTrackMouseX = x;
+    _lastTrackMouseY = y;
+}
+
+ckm::ivec2 GalaxyViewController::mouseTrackDelta(int x, int y) const
+{
+    if (_lastTrackMouseY < 0 || _lastTrackMouseX < 0)
+    {
+        return ckm::ivec2(0,0);
+    }
+    return ckm::ivec2(x - _lastTrackMouseX, y - _lastTrackMouseY);
 }
 
 } /* namespace ovproto */

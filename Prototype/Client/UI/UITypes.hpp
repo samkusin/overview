@@ -45,13 +45,26 @@ enum
 
 ////////////////////////////////////////////////////////////////////////////////
 //  UI Subscriber class
+struct UIeventdata
+{
+    int item;
+    unsigned int keymod;
+    union
+    {
+        UIvec2 cursor;
+        UIvec2 scroll;
+    };
+    unsigned int keycode;
+};
 class UISubscriber
 {
 public:
     virtual ~UISubscriber() {}
     
-    virtual void onUIEvent(int evtId, int evtType) {}
+    virtual void onUIEvent(int evtId, UIevent evtType, const UIeventdata& data) {}
 };
+
+typedef void (*UIRenderCallback)(void* context, NVGcontext* nvg);
 
 } /* namespace ovproto */ } /* namespace cinek */
 

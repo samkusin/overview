@@ -54,6 +54,8 @@ namespace component
 
         ckm::mat4& calcLocalMatrix(ckm::mat4& srt) const;
         ckm::mat4& calcMatrix(ckm::mat4& srt) const;
+        ckm::mat3& calcLocalBasis(ckm::mat3& basis) const;
+        ckm::mat3& calcBasis(ckm::mat3& basis) const;
         
     private:
         void setPosition(const ckm::vec3& pos) {

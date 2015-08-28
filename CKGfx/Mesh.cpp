@@ -131,10 +131,10 @@ struct IcoSphereUtility
         for (size_t i = 0; i < faces.size(); ++i)
         {
             Face& face = faces[i];
-            // left-handed
+            // v0 * v1 = normal
             Vector3 v0, v1;
             auto i0 = face.idx[0], i1 = face.idx[1], i2 = face.idx[2];
-            bx::vec3Sub(v0, vertices[i0], vertices[i1]);
+            bx::vec3Sub(v0, vertices[i1], vertices[i0]);
             bx::vec3Sub(v1, vertices[i2], vertices[i0]);
             bx::vec3Norm(v0, v0);
             bx::vec3Norm(v1, v1);
@@ -253,31 +253,30 @@ unique_ptr<Mesh> createIcoSphere
     utility.addVertex({{   -t,  0.f, -1.f}});
     utility.addVertex({{   -t,  0.f,  1.f}});
     
-    //  use clockwise faces for bgfx conformance
     //  faces of icosahedron
-    utility.addFace(5, 11, 0);
-    utility.addFace(1, 5, 0);
-    utility.addFace(7, 1, 0);
-    utility.addFace(10, 7, 0);
-    utility.addFace(11, 10, 0);
+    utility.addFace(5, 0, 11);
+    utility.addFace(1, 0, 5);
+    utility.addFace(7, 0, 1);
+    utility.addFace(10, 0, 7);
+    utility.addFace(11, 0, 10);
 
-    utility.addFace(9, 5, 1);
-    utility.addFace(4, 11, 5);
-    utility.addFace(2, 10, 11);
-    utility.addFace(6, 7, 10);
-    utility.addFace(8, 1, 7);
+    utility.addFace(9, 1, 5);
+    utility.addFace(4, 5, 11);
+    utility.addFace(2, 11, 10);
+    utility.addFace(6, 10, 7);
+    utility.addFace(8, 7, 1);
 
-    utility.addFace(4, 9, 3);
-    utility.addFace(2, 4, 3);
-    utility.addFace(6, 2, 3);
-    utility.addFace(8, 6, 3);
-    utility.addFace(9, 8, 3);
+    utility.addFace(4, 3, 9);
+    utility.addFace(2, 3, 4);
+    utility.addFace(6, 3, 2);
+    utility.addFace(8, 3, 6);
+    utility.addFace(9, 3, 8);
     
-    utility.addFace(5, 9, 4);
-    utility.addFace(11, 4, 2);
-    utility.addFace(10, 2, 6);
-    utility.addFace(7, 6, 8);
-    utility.addFace(1, 8, 9);
+    utility.addFace(5, 4, 9);
+    utility.addFace(11, 2, 4);
+    utility.addFace(10, 6, 2);
+    utility.addFace(7, 8, 6);
+    utility.addFace(1, 9, 8);
     
     //  recursion/subdivision pass
     for (int i = 0; i < subdividePasses; ++i)

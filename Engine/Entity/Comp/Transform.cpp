@@ -21,17 +21,31 @@ namespace component
     
     ckm::mat4& Transform::calcLocalMatrix(ckm::mat4& srt) const
     {
-        srt = ckm::fromQuat(_localOrient);
+        srt = ckm::mtx4x4FromQuat(_localOrient);
         srt[3] = ckm::vec4(_localPosition, 1.0);
         return srt;
     }
     
     ckm::mat4& Transform::calcMatrix(ckm::mat4& srt) const
     {
-        srt = ckm::fromQuat(_orient);
+        srt = ckm::mtx4x4FromQuat(_orient);
         srt[3] = ckm::vec4(_position, 1.0);
         return srt;
     }
+    
+
+    ckm::mat3& Transform::calcLocalBasis(ckm::mat3& basis) const
+    {
+        basis = ckm::mtx3x3FromQuat(_localOrient);
+        return basis;
+    }
+    
+    ckm::mat3& Transform::calcBasis(ckm::mat3& basis) const
+    {
+        basis = ckm::mtx3x3FromQuat(_orient);
+        return basis;
+    }
+    
 }
 
 } /* namespace overview */ } /* namespace cinek */

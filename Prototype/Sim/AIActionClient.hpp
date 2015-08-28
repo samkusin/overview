@@ -10,32 +10,17 @@
 #define Overview_Sim_AIActionSystem_hpp
 
 #include "Simulation.hpp"
+#include "ActionTypes.hpp"
 
 namespace cinek { namespace ovproto {
-
-struct AIAction
-{
-    using key_type = Entity;
-    using return_type = uint32_t;
-    
-    key_type id() const {
-        return _id;
-    }
-    
-    void setId(key_type id) {
-        _id = id;
-    }
-    
-private:
-    key_type _id;
-};
 
 class AIActionClient
 {
 public:
-    bool begin(AIAction& action, double time);
-    bool update(AIAction& action, double time, double dt);
-    AIAction::return_type end(AIAction& action, double time);
+    bool begin(Action& action, double time);
+    bool update(Action& action, double time, double dt);
+    void abort(Action& action, double time);
+    Action::return_type end(Action& action, double time);
 };
 
 

@@ -47,7 +47,7 @@ public:
     /// Starts a frame - which is an encompassing region designed to act as an
     /// Event subscriber for views, or as a container for other ui items.
     ///
-    UILayout& frame(uint32_t layoutFlags=0);
+    UILayout& frame(UIRenderCallback renderCb, void* cbContext, uint32_t layoutFlags=0);
     ///
     /// Starts a vertical group of ui widgets - used for positioning.
     ///
@@ -55,18 +55,27 @@ public:
     ///
     /// Subscribe the current UI group to one or more events.
     ///
-    UILayout& events(uint32_t flags, UISubscriber* subscriber, int32_t evtId);
+    UILayout& setEvents(uint32_t flags, UISubscriber* subscriber, int32_t evtId);
     ///
     /// Sets the size of the current UI region.
     ///
-    UILayout& size(int32_t w, int32_t h);
+    UILayout& setSize(int32_t w, int32_t h);
     ///
     /// An individual button widget within the encompassing UI group.
     ///
-    UILayout& button(int32_t iconId, const char* label,
-                     UISubscriber* subscriber, int32_t evtId);
-    
+    UILayout& buttonItem(int32_t iconId, const char* label,
+                         UISubscriber* subscriber, int32_t evtId);
+    ///
+    /// Completes a layout group (frame, column)
+    ///
     UILayout& end();
+    
+    /// Returns the current layout group item.  Note that this returns the item
+    /// index for frame, column, row, and other groupings.  This method does not
+    /// return items defined in a single line (line items like buttons, and
+    /// other atomic widgets.)
+    ///
+    int currentGroupItem() const { return _topItem; }
     
 private:
     static constexpr size_t kDataSize = sizeof(vector<int32_t>);

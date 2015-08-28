@@ -24,13 +24,13 @@ namespace ckm {
         value_type normal;
         value_type pt;
         
-        ckm::scalar testPoint(const value_type& testPt) const;
+        scalar testPoint(const value_type& testPt) const;
     };
     
     class Frustrum
     {
     public:
-        enum
+        enum Plane
         {
             kNearZ,
             kFarZ,
@@ -44,24 +44,25 @@ namespace ckm {
         using Shell = std::array<Plane3, kPlaneCount>;
         
         Frustrum();
-        Frustrum(ckm::scalar nearZ, ckm::scalar farZ, ckm::scalar fov, ckm::scalar aspect);
+        Frustrum(scalar nearZ, scalar farZ, scalar fov, scalar aspect);
     
-        ckm::scalar nearZ() const { return _nearZ; }
-        ckm::scalar farZ() const { return _farZ; }
-        ckm::scalar fovRadians() const { return _fovRadians; }
-        ckm::scalar aspect() const { return _aspect; }
+        scalar nearZ() const { return _nearZ; }
+        scalar farZ() const { return _farZ; }
+        scalar fovRadians() const { return _fovRadians; }
+        scalar aspect() const { return _aspect; }
         
         const Shell& shell() const { return _shell; }
         
-        Frustrum transform(const ckm::mat3& basis, const ckm::vec3& translate) const;
+        Frustrum transform(const mat3& basis, const vec3& translate) const;
         
         bool testAABB(const AABB<Plane3::value_type>& aabb) const;
+        bool testAABBWithPlane(const AABB<Plane3::value_type>& aabb, Plane plane) const;
         
     private:
         Shell _shell;
-        ckm::scalar _nearZ, _farZ;
-        ckm::scalar _aspect;
-        ckm::scalar _fovRadians;
+        scalar _nearZ, _farZ;
+        scalar _aspect;
+        scalar _fovRadians;
     };
     
 }

@@ -98,8 +98,7 @@ namespace component
         if (transform.isDirty())
         {
             _srt = transform.calcLocalMatrix(srt) * srtParent;
-            
-            transform.setOrient(ckm::fromMatrix(_srt));
+            transform.setOrient(ckm::quatFromMtx4x4(_srt));
             transform.setPosition(ckm::vec3(_srt[3]));
             transform.clearDirty();
         }

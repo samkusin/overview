@@ -125,17 +125,25 @@ void UILayout::insertItem(int32_t item, int32_t parent)
     uiSetLayout(item, flags);
 }
 
-UILayout& UILayout::frame(uint32_t layoutFlags)
+UILayout& UILayout::frame
+(
+    UIRenderCallback renderCb,
+    void* context,
+    uint32_t layoutFlags
+)
 {
     pushTop();
     
     _topItem = uiItem();
     _mode = kFreeLayout;
     
-    OUIHeader* header = reinterpret_cast<OUIHeader*>(
-        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    OUIFrame* data = reinterpret_cast<OUIFrame*>(
+        uiAllocHandle(_topItem, sizeof(OUIFrame))
     );
-    header->init(OUIItemType::frame);
+    data->header.init(OUIItemType::frame);
+    data->renderCb = renderCb;
+    data->callbackContext = context;
+    
     if (layoutFlags)
     {
         uiSetLayout(_topItem, layoutFlags);
@@ -166,7 +174,7 @@ UILayout& UILayout::column(uint32_t layoutFlags)
     return *this;
 }
 
-UILayout& UILayout::events
+UILayout& UILayout::setEvents
 (
     uint32_t flags,
     UISubscriber* subscriber,
@@ -182,13 +190,13 @@ UILayout& UILayout::events
     return *this;
 }
 
-UILayout& UILayout::size(int32_t w, int32_t h)
+UILayout& UILayout::setSize(int32_t w, int32_t h)
 {
     uiSetSize(_topItem, w, h);
     return *this;
 }
 
-UILayout& UILayout::button
+UILayout& UILayout::buttonItem
 (
     int32_t iconId,
     const char* label,

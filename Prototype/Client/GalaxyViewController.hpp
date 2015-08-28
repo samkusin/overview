@@ -15,6 +15,7 @@
 
 #include "UI/UITypes.hpp"
 #include "Engine/ViewController.hpp"
+#include "Engine/EngineMath.hpp"
 
 #include "AppInterface.hpp"
 #include "Services/RenderService.hpp"
@@ -24,6 +25,53 @@
 #include <array>
 
 namespace cinek { namespace ovproto {
+
+//  Responsible for generating torque on a single axis
+//  Callers should assign a PIDTorqueController per each axis of control.
+//  For example, a plane in 3D space would need two such controllers : pitch and
+//  yaw.  The implementation itself doesn't reference any specific axis.
+//
+//  References:
+//      PID Control of Physics Bodies
+//      by James Wucher
+//      from  http://www.gamedev.net/
+//
+//  Using the Proportional-Integral-Derivative technique detailed by the
+//  referenced article.  The controller tracks a short term history for purposes
+//  of integrating feedback
+//
+class PIDController
+{
+public:
+    PIDController();
+    PIDController(ckm::scalar proportionalK,
+                  ckm::scalar integralK,
+                  ckm::scalar derivativeK,
+                  ckm::scalar dt);
+    
+    //  issue when starting a new turn action
+    void resetSamples();
+    
+    //  TODO: likely the below methods can be consolidated into a single
+    //  (calcAngularAcceleration) method
+    //
+    //  call once per steering cycle while turning to a target
+    void addInput(ckm::scalar input);
+    //  returns the desired angular acceleration for applying torque
+    ckm::scalar output() const { return _output; }
+    
+private:
+    static constexpr int32_t kReqInputs = 3;
+    std::array<ckm::scalar, 8> _inputs;
+    int32_t _inputTail;
+    ckm::scalar _output;
+    ckm::scalar _proportionalK;
+    ckm::scalar _integralK;
+    ckm::scalar _derivativeK;
+    ckm::scalar _dt;
+};
+
+
 
 class GalaxyViewController : public overview::ViewController, public UISubscriber
 {
@@ -38,11 +86,24 @@ public:
     virtual void onViewForeground() override;
     virtual void onViewBackground() override;
     virtual void layoutView() override;
-    virtual void updateView() override;
-    virtual void renderView() override;
+    virtual void simulateView(double time, double dt) override;
+    virtual void frameUpdateView(double dt) override;
     virtual int viewId() const override { return kViewControllerId_Galaxy; }
     
-    virtual void onUIEvent(int evtId, int evtType) override;
+    virtual void onUIEvent(int evtId, UIevent evtType, const UIeventdata& data) override;
+    
+private:
+    void starmapLayout();
+    
+    static void viewUIRenderHook(void* context, NVGcontext* nvg);
+    
+    void viewUIRender(NVGcontext* nvg);
+    
+    void setCurrentSystem(Entity system);
+    
+    void rotateSystemCamera(ckm::vec3 axis, ckm::scalar radians);
+    void zoomSystemCamera(ckm::scalar offset);
+    void buildCameraTransform(overview::component::Transform& t);
     
 private:
     Allocator _allocator;
@@ -54,9 +115,13 @@ private:
     struct Starmap;
     unique_ptr<Starmap> _starmap;
     
+    vector<Entity> _starmapLocalEntities;
+    
     Entity _camera;
     Entity _ship;
-    int _frameCnt;
+    Entity _currentSystem;
+    
+    double _driveTimer;
     
     //  UI defines
     enum
@@ -66,6 +131,31 @@ private:
         kID_BUTTON2,
         kID_BUTTON3
     };
+    int _uiStarmapItem;
+    
+    //  used for selecting a star on the screen
+    struct StarSystemUIBox
+    {
+        Entity entity;
+        int32_t x,y;
+        float z;
+        int32_t radius2;
+        int32_t radius;
+    };
+    
+    vector<StarSystemUIBox> _starSystemBoxes;
+    
+    //  mouse rotation of starmap
+    int _lastTrackMouseX, _lastTrackMouseY;
+    int _trackMouseX, _trackMouseY;
+    
+    void resetMouseTrack();
+    void updateMouseTrack(int x, int y);
+    ckm::ivec2 mouseTrackDelta(int x, int y) const;
+    
+    ckm::vec3 _systemCameraCenter;
+    ckm::quat _systemCameraRot;
+    ckm::scalar _systemCameraDist;
     
     //  starmap rendering
     gfx::ShaderProgramId _shaderProgram;
@@ -83,7 +173,11 @@ private:
     std::array<bgfx::UniformHandle, kUniform_HandleCount> _uniforms;
     
     using RenderObjectList = vector<overview::RenderObject>;
-    RenderObjectList _renderables;
+
+    //  Camera Driver
+    Entity _driveTarget;
+    PIDController _driveYaw;
+    PIDController _drivePitch;
 };
 
 } /* namespace ovproto */ } /* namespace cinek */

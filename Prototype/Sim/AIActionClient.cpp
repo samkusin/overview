@@ -13,7 +13,7 @@ namespace cinek { namespace ovproto {
 
 bool AIActionClient::begin
 (
-    AIAction& action,
+    Action& action,
     double time
 )
 {
@@ -22,7 +22,7 @@ bool AIActionClient::begin
 
 bool AIActionClient::update
 (
-    AIAction& action,
+    Action& action,
     double time,
     double dt
 )
@@ -30,9 +30,17 @@ bool AIActionClient::update
     return true;
 }
 
-AIAction::return_type AIActionClient::end
+void AIActionClient::abort
 (
-    AIAction& action,
+    Action& action,
+    double time
+)
+{
+}
+
+Action::return_type AIActionClient::end
+(
+    Action& action,
     double time
 )
 {

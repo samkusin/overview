@@ -26,7 +26,22 @@ void OUIHandler(int item, UIevent event)
     
     if (header->subscriber)
     {
-        header->subscriber->onUIEvent(header->itemId, event);
+        UIeventdata data;
+        data.item = item;
+        data.keymod = uiGetModifier();
+        if (event == UI_KEY_DOWN || event == UI_KEY_UP || event == UI_CHAR)
+        {
+            data.keycode = uiGetKey();
+        }
+        if (event == UI_SCROLL)
+        {
+            data.scroll = uiGetScroll();
+        }
+        else
+        {
+            data.cursor = uiGetCursor();
+        }
+        header->subscriber->onUIEvent(header->itemId, event, data);
     }
 }
 

@@ -33,6 +33,13 @@ struct OUIHeader
     void init(OUIItemType type);
 };
 
+struct OUIFrame
+{
+    OUIHeader header;
+    UIRenderCallback renderCb;
+    void* callbackContext;
+};
+
 struct OUIButtonData
 {
     OUIHeader header;

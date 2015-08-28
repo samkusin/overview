@@ -89,6 +89,9 @@ public:
     std::pair<Entity, value_type*> dataAtIndex(index_type index);
     std::pair<Entity, const value_type*> dataAtIndex(index_type index) const;
     
+    index_type count() const { return _table->usedCount(); }
+    index_type limit() const { return _table->rowset.capacity(); }
+    
     //  iterate through all objects in the DB with the specified component
     //  Function signature should be:
     //      void fn(Entity eid, Component& component);

@@ -19,6 +19,7 @@ namespace component
 {
     struct UpdateTransform
     {
+        UpdateTransform() {}
         UpdateTransform(Table<Transform> transforms) :
             _transforms(transforms)
         {

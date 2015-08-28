@@ -32,11 +32,11 @@ namespace component
             _invMass = 1/mass;
         }
         
-        ckm::mat3 inertiaTensors(1);
-        inertiaTensors[0].x = xI;
-        inertiaTensors[1].y = yI;
-        inertiaTensors[2].z = zI;
-        _invInertiaTensors = ckm::inverse(inertiaTensors);
+        _inertiaTensors = ckm::mat3(0);
+        _inertiaTensors[0].x = xI;
+        _inertiaTensors[1].y = yI;
+        _inertiaTensors[2].z = zI;
+        _invInertiaTensors = ckm::inverse(_inertiaTensors);
         
         //  handle cases where we call init with an active rigid body.
         //  since we're changing mass, immediately change fields affected by
@@ -50,7 +50,8 @@ namespace component
     auto RigidBody::integrate
     (
         LocalTransform transform,
-        ckm::scalar dt
+        ckm::scalar dt,
+        const RigidBodyConstraints& constraints
     )
     -> LocalTransform
     {
@@ -71,7 +72,14 @@ namespace component
     
         //  calculate new values that may be accessed by an external system
         _velocity = _momentum * _invMass;
+        if (ckm::vectorLength(_velocity) > constraints.maxLinearSpeed)
+        {
+            _velocity = ckm::normalize(_velocity);
+            _velocity *= constraints.maxLinearSpeed;
+        }
+        
         _angularVelocity = _angularMomentum * _invInertiaTensors;
+        
         _axialSpin = 0.5 *
             ckm::quat(0, _angularVelocity.x, _angularVelocity.y, _angularVelocity.z) *
             transform.orient;

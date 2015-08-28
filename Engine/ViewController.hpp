@@ -35,17 +35,15 @@ public:
     //  Executed when a view is put into the background, usually called when a
     //  view is added to the stack, over the current view
     virtual void onViewBackground() = 0;
+    //  Updates simulation of the current view controller.  Execution occurs
+    //  within an interval, but not necessary every frame (or more than once a
+    //  frame depending on the owning loop.)
+    virtual void simulateView(double time, double dt) = 0;
     //  Executed when a view requires layout (changes in dimension, or upon user
     //  input.  Typically this method is used to layout UI
     virtual void layoutView() = 0;
-    //  Updates execution of the current view controller.  Execution occurs
-    //  within an interval, but not necessary every frame.  For example, don't
-    //  use update to trigger time sensitive operations (if that's needed, use
-    //  timers and tasks.)
-    virtual void updateView() = 0;
-    //  Renders the view and is executed every frame.
-    virtual void renderView() = 0;
-    
+    //  Called once per render frame, returning the frame time difference
+    virtual void frameUpdateView(double dt) = 0;
     //  the name of the view
     virtual int viewId() const = 0;
 };

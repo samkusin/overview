@@ -9,6 +9,7 @@
 #include "AppInterface.hpp"
 
 #include "UI/UIRenderer.hpp"
+#include "UI/oui.h"
 
 #include "Engine/Entity/EntityFactory.hpp"
 #include "Engine/Entity/EntityStore.hpp"
@@ -16,6 +17,9 @@
 #include <cinek/debug.hpp>
 #include <cinek/json/jsonstreambuf.hpp>
 #include <cinek/filestreambuf.hpp>
+
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
 
 namespace cinek {
     namespace ovproto {
@@ -84,6 +88,28 @@ const JsonDocument& AppInterface::jsonDocument(uint32_t id) const
     
     return *it->second;
 }
-     
+
+MouseState AppInterface::mouseState() const
+{
+    return _context->mouseState;
+}
+
+KeyState AppInterface::keyState() const
+{
+    KeyState ks;
+    ks.scankeys = SDL_GetKeyboardState(&ks.size);
+    return ks;
+}
+
+int AppInterface::uiActiveItem() const
+{
+    return ::uiGetActiveItem();
+}
+
+int AppInterface::uiKeyFocusItem() const
+{
+    return ::uiGetFocusedItem();
+}
+
     } /* namespace ovproto */
 } /* namespace cinek */

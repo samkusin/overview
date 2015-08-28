@@ -27,14 +27,17 @@ public:
     
     void setFactory(const FactoryCallback& callback);
     
-    //  a re-layout of all views on the stack is required
-    void layout();
-    
-    //  process any pending updates
+    //  processes view state changes (load, unload, etc.)
     void process();
     
+    //  executes layout of view controllers
+    void layout();
+    
+    //  updates the view controllers on the stack
+    void simulate(double time, double dt);
+    
     //  render the stack
-    void render();
+    void frameUpdate(double dt);
     
     //  loads a view (or ups the reference count if already loaded)
     void load(int id);

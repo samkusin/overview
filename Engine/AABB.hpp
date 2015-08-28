@@ -356,7 +356,7 @@ namespace ckm {
     template<class _Point>
     void AABB<_Point>::generateVertices(std::array<point_type, 8>& verts)
     {
-        //  -y vertices, clockwise from -x,-z
+        //  -y vertices
         verts[0].x = min.x;     // v0 (-x,-y,-z)
         verts[0].y = min.y;
         verts[0].z = min.z;
@@ -579,7 +579,6 @@ namespace ckm {
     template<class _Point>
     void AABB2<_Point>::generateVertices(std::array<point_type, 4>& verts)
     {
-        //  clockwise
         verts[0].x = min.x;     // v0 (-x,-y)
         verts[0].y = min.y;
         verts[1].x = max.x;     // v1 (+x,-y)

@@ -12,6 +12,7 @@
 #include "Engine/BVH/AABBTypes.hpp"
 #include "Engine/BVH/BVHRayTest.hpp"
 #include "Engine/BVH/BVHFrustrumTest.hpp"
+#include "Engine/BVH/BVHBoxTest.hpp"
 
 #include <cinek/vector.hpp>
 
@@ -67,6 +68,7 @@ public:
     {
         using IntersectWithSphere = BVHTestIntersectWithSphere<AABBTree>;
         using FrustrumSweep = BVHTestFrustrumSweep<AABBTree>;
+        using BoxSweep = BVHBoxTest<AABBTree>;
     };
     
     template<typename _Test> _Test test() const {

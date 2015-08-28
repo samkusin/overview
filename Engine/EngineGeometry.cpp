@@ -118,39 +118,53 @@ bool Frustrum::testAABB(const AABB<Plane3::value_type>& aabb) const
         return false;
     
     // http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
-    bool intersect = true;
+    bool intersect = testAABBWithPlane(aabb, kNearZ) &&
+                testAABBWithPlane(aabb,kFarZ) &&
+                testAABBWithPlane(aabb,kLeftX) &&
+                testAABBWithPlane(aabb,kRightX) &&
+                testAABBWithPlane(aabb,kTopY) &&
+                testAABBWithPlane(aabb,kBottomY);
    
-    for (auto& plane : _shell)
-    {
-        auto& normal = plane.normal;
+    return intersect;
+}
+
+bool Frustrum::testAABBWithPlane
+(
+    const AABB<Plane3::value_type>& aabb,
+    Plane planeType
+)
+const
+{
+    bool intersect = true;
+    auto& plane = _shell[planeType];
+    auto& normal = plane.normal;
         
-        Plane3::value_type posV = aabb.min;
-        if (normal.x >= 0)
-            posV.x = aabb.max.x;
-        if (normal.y >= 0)
-            posV.y = aabb.max.y;
-        if (normal.z >= 0)
-            posV.z = aabb.max.z;
-        
-        if (plane.testPoint(posV) < 0)
-            return false;   // outside
-        /*
-        //  tests if the box intersects - if we need to differentiate between
-        //  intersect and insde, then uncomment this code and return the
-        //  appropriate result.
-        //
-        Plane3::value_type negV = aabb.max;
-        if (normal.x >= 0)
-            negV.x = aabb.min.x;
-        if (normal.y >= 0)
-            negV.y = aabb.min.y;
-        if (normal.z >= 0)
-            negV.z = aabb.min.z;
-        
-        if (plane.testPoint(negV) < 0)
-            intersect = true;
-        */
-    }
+    Plane3::value_type posV = aabb.min;
+    if (normal.x >= 0)
+        posV.x = aabb.max.x;
+    if (normal.y >= 0)
+        posV.y = aabb.max.y;
+    if (normal.z >= 0)
+        posV.z = aabb.max.z;
+    
+    if (plane.testPoint(posV) < 0)
+        return false;   // outside
+    /*
+    //  tests if the box intersects - if we need to differentiate between
+    //  intersect and insde, then uncomment this code and return the
+    //  appropriate result.
+    //
+    Plane3::value_type negV = aabb.max;
+    if (normal.x >= 0)
+        negV.x = aabb.min.x;
+    if (normal.y >= 0)
+        negV.y = aabb.min.y;
+    if (normal.z >= 0)
+        negV.z = aabb.min.z;
+    
+    if (plane.testPoint(negV) < 0)
+        intersect = true;
+    */
     
     return intersect;
 }

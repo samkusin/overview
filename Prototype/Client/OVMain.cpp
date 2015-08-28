@@ -26,6 +26,7 @@
 
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
 #include <SDL2/SDL_syswm.h>
+#include <SDL2/SDL_mouse.h>
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
 
@@ -85,8 +86,13 @@ enum
     kPollSDLEvent_Quit = 0x0001
 };
 
+struct PollStateSDL
+{
+    MouseState mouse;
+};
 
-static uint32_t PollSDLEvents()
+
+static uint32_t PollSDLEvents(PollStateSDL& state)
 {
     int mx, my;
     
@@ -97,6 +103,12 @@ static uint32_t PollSDLEvents()
     
     uiSetButton(0, 0, (mbtn & SDL_BUTTON_LMASK) != 0);
     uiSetButton(2, 0, (mbtn & SDL_BUTTON_RMASK) != 0);
+    
+    state.mouse.x = mx;
+    state.mouse.y = my;
+    state.mouse.buttons = mbtn;
+    state.mouse.wheelX = 0;
+    state.mouse.wheelY = 0;
     
     //  poll system and key events
     uint32_t flags = 0;
@@ -112,6 +124,8 @@ static uint32_t PollSDLEvents()
         {
             if (event.wheel.which != SDL_TOUCH_MOUSEID)
             {
+                state.mouse.wheelX += event.wheel.x;
+                state.mouse.wheelY += event.wheel.y;
                 uiSetScroll(event.wheel.x, event.wheel.y);
             }
         }
@@ -232,8 +246,12 @@ void run(SDL_Window* window)
     if (!SpectralUtility::loadTables())
         return;
     
+    //  Physics
+    component::RigidBodyConstraints rbConstraints;
+    rbConstraints.maxLinearSpeed = 2.5;
+    
     //  AI System
-    Simulation<AIAction> aiActionSim(64, allocator);
+    Simulation<Action> aiActionSim(64, allocator);
     AIActionClient aiActionClient;
     
     //  setup application master template
@@ -273,6 +291,7 @@ void run(SDL_Window* window)
                 data
             );
         };
+    
     appObjects.destroyComponentCb = [&appObjects, &renderObjects]
         (
             Entity entity,
@@ -333,7 +352,7 @@ void run(SDL_Window* window)
     const double kSecsPerSimFrame = 1/kSimFPS;
     const double kAIFPS = 2.0;
     const double kSecsPerAIFrame = 1/kAIFPS;
-    const double kActionFPS = 30.0;
+    const double kActionFPS = 60.0;
     const double kSecsPerActionFrame = 1/kActionFPS;
 
     uint32_t systemTimeMs = SDL_GetTicks();
@@ -355,18 +374,25 @@ void run(SDL_Window* window)
         int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
         systemTimeMs = nextSystemTimeMs;
         
+        diagnostics.updateTime(systemTimeMs, simTime*1000);
+        
         //  TODO: Lag should not be incremented while Sim is Paused
-        lagSecsSim += frameTimeMs/1000.0;
+        double frameTime = frameTimeMs*0.001;
+        lagSecsSim += frameTime;
     
         entityStore.diagnostics(entityDiagnostics);
     
         ////////////////////////////////////////////////////////////////////////
         //  SYSTEM POLL AND INPUT
         //
+
         {
-            uint32_t sdlEvents = PollSDLEvents();
+            PollStateSDL pollStateSDL;
+            uint32_t sdlEvents = PollSDLEvents(pollStateSDL);
             if (sdlEvents & kPollSDLEvent_Quit)
                 running = false;
+            
+            appObjects.mouseState = pollStateSDL.mouse;
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -399,8 +425,8 @@ void run(SDL_Window* window)
                 aiActionSim.simulate(aiActionClient, simTime, kSecsPerActionFrame);
                 
                 //  simulation of current view
-                viewStack.process();
-                overlayStack.process();
+                viewStack.simulate(simTime, kSecsPerActionFrame);
+                overlayStack.simulate(simTime, kSecsPerActionFrame);
                 
                 timeUntilActionFrame += kSecsPerActionFrame;
             }
@@ -408,7 +434,7 @@ void run(SDL_Window* window)
             ////////////////////////////////////////////////////////////////////
             // Physics and Collision Simulations
             //
-            simulateRigidBodies(rigidBodies, transforms, kSecsPerSimFrame);
+            simulateRigidBodies(rigidBodies, transforms, kSecsPerSimFrame, rbConstraints);
             
             //  TODO : We should only update entities that have changed
             //  transforms.  While checking for the 'dirty' flag per transform
@@ -428,18 +454,36 @@ void run(SDL_Window* window)
         //  SIMULATION END
         ////////////////////////////////////////////////////////////////////////
         
-        diagnostics.updateTime(systemTimeMs, simTime*1000);
-        
+
         ////////////////////////////////////////////////////////////////////////
         //  RENDER START (TODO: Take Lag into Account for Interp)
         {
+            viewStack.process();
+            overlayStack.process();
+            
             uiBeginLayout();
             viewStack.layout();
             overlayStack.layout();
             uiEndLayout();
             
-            viewStack.render();
-            overlayStack.render();
+            /*
+            //  force key events to the view frame if no widget has focus or
+            //  no widget is currently hot/active
+    
+            if (uiGetFocusedItem() < 0)
+            {
+                //int uiHotItem = uiGetHotItem();
+    
+                if (uiGetActiveItem() <= 0)
+                {
+                    printf("Main View Focus\n");
+                    uiFocus(0);
+                }
+            }
+            */
+            
+            viewStack.frameUpdate(frameTime);
+            overlayStack.frameUpdate(frameTime);
             
             renderUI(renderObjects.nvg, renderObjects.viewRect);
             renderDiagnostics(diagnostics, entityDiagnostics,

@@ -46,14 +46,6 @@ void ViewStack::reset()
     }
 }
     
-void ViewStack::layout()
-{
-    for (auto& vc : _stack)
-    {
-        vc->layoutView();
-    }
-}
-
 void ViewStack::process()
 {
     //  process commands on stack
@@ -143,11 +135,21 @@ void ViewStack::process()
     }
     
     _commands.clear();
-    
-    
+}
+
+void ViewStack::layout()
+{
     for (auto& vc : _stack)
     {
-        vc->updateView();
+        vc->layoutView();
+    }
+}
+
+void ViewStack::simulate(double time, double dt)
+{
+    for (auto& vc : _stack)
+    {
+        vc->simulateView(time, dt);
     }
 }
 
@@ -227,12 +229,12 @@ void ViewStack::cmdPush(ViewController* vc, bool backgroundTop)
     vc->onViewAdded();
 }
 
-void ViewStack::render()
+void ViewStack::frameUpdate(double dt)
 {
     // render everything
     for (auto& vc : _stack)
     {
-        vc->renderView();
+        vc->frameUpdateView(dt);
     }
 }
 

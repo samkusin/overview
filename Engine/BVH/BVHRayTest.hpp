@@ -89,7 +89,7 @@ bool BVHTestIntersectWithSphere<_TreeType>::testIntersect
     {
         if (node.isLeaf())
         {
-            return cb(node.objectId);
+            return cb(node.objectId, node.aabb);
         }
         else
         {

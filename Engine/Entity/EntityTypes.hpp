@@ -35,6 +35,7 @@ namespace component
     struct Renderable;
     struct MeshRenderable;
     struct Transform;
+    struct UpdateTransform;
     
     template<typename _Component, typename _Container> class Table;
 }

@@ -26,6 +26,12 @@ THE SOFTWARE.
 #define _OUI_H_
 
 /*
+Revision 6 (2015-8-26) [Samir Sinha]
+
+Added uiGetActiveItem().  Applications may want to know the active item if they
+do not keep track of item indices for every widget and rely on uiGetState() for
+that functionality.
+
 Revision 5 (2015-7-21) [Samir Sinha]
 
 Moved Types into its own header so that other headers/source that only reference
@@ -277,6 +283,9 @@ OUI_EXPORT int uiGetHotItem();
 
 // return the item that is currently focused or -1 for none
 OUI_EXPORT int uiGetFocusedItem();
+
+//  return the item that's currently active or -1 for none [Samir]
+OUI_EXPORT int uiGetActiveItem();
 
 // returns the topmost item containing absolute location (x,y), starting with
 // item as parent, using a set of flags and masks as filter:
@@ -723,6 +732,13 @@ UIitem *uiLastItemPtr(int item) {
 int uiGetHotItem() {
     assert(ui_context);
     return ui_context->hot_item;
+}
+
+int uiGetActiveItem() {
+    assert(ui_context);
+    if (ui_context->focus_item >= 0)
+        return ui_context->focus_item;
+    return ui_context->active_item;
 }
 
 void uiFocus(int item) {

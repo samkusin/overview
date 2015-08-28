@@ -21,11 +21,27 @@ namespace cinek { namespace ovproto {
     //  JsonDocument doesn't allow copy or move - so we must persist by pointer
     using AppDocumentMap = unordered_map<uint32_t, unique_ptr<cinek::JsonDocument>>;
     
+    struct MouseState
+    {
+        int x, y;
+        int wheelX, wheelY;
+        uint32_t buttons;
+    };
+    
+    struct KeyState
+    {
+        const uint8_t* scankeys;
+        int size;
+    };
+
     struct AppObjects
     {
+        //  general state
+        MouseState mouseState;
+        
         //  game state
         overview::EntityStore* entityStore;
-        
+    
         Allocator* allocator;
         cinek::JsonDocument* entityTemplates;
         AppDocumentMap* documentMap;

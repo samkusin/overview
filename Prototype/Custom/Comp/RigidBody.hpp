@@ -18,23 +18,31 @@ namespace cinek { namespace ovproto {
 
 namespace component
 {
+
+    struct RigidBodyConstraints
+    {
+        ckm::scalar maxLinearSpeed;
+    };
+
     struct RigidBody
     {
         COMPONENT_DEFINITION(RigidBody);
 
-        // setup attributes.
+        //  setup attributes.
         void init(ckm::scalar mass, ckm::scalar xI, ckm::scalar yI, ckm::scalar zI);
         
         //  attribute access
         ckm::scalar mass() const { return _mass; }
         const ckm::vec3& velocity() const { return _velocity; }
+        const ckm::vec3& angularVelocity() const { return _angularVelocity; }
         
         const ckm::vec3& force() const { return _force; }
         const ckm::vec3& torque() const { return _torque; }
+        const ckm::mat3& inertiaTensors() const { return _inertiaTensors; }
         
         void setForce(const ckm::vec3& force) { _force = force; }
         void setTorque(const ckm::vec3& torque) { _torque = torque; }
-        
+                
         //  updates the body using the supplied forces.
         struct LocalTransform
         {
@@ -42,7 +50,8 @@ namespace component
             ckm::quat orient;
         };
         
-        LocalTransform integrate(LocalTransform transform, ckm::scalar dt);
+        LocalTransform integrate(LocalTransform transform, ckm::scalar dt,
+                                 const RigidBodyConstraints& constraints);
         
     private:
         ckm::vec3 _momentum;
@@ -56,7 +65,7 @@ namespace component
         // attributes
         ckm::scalar _mass;
         ckm::scalar _invMass;
-        //ckm::mat3 _inertiaTensors;
+        ckm::mat3 _inertiaTensors;
         ckm::mat3 _invInertiaTensors;
         
         ckm::vec3 _force;
