@@ -87,6 +87,12 @@ namespace component
         
         return transform;
     }
+    
+    void RigidBody::stop()
+    {
+        _angularMomentum = ckm::zero<ckm::vec3>();
+        _momentum = ckm::zero<ckm::vec3>();
+    }
 }
 
 

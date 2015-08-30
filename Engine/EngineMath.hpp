@@ -116,6 +116,11 @@ namespace ckm {
         return glm::pi<scalar>();
     }
     
+    template<typename _T>
+    inline _T zero() {
+        return glm::zero<_T>();
+    }
+    
     //  Referemce
     //  lolengine.net/blog/2013/09/18/beautiful-maths-quaternion-from-vectors
     //  Inputs must be normalized (unit vectors)
