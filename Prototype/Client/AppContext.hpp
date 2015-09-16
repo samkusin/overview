@@ -40,7 +40,7 @@ namespace cinek { namespace ovproto {
         MouseState mouseState;
         
         //  game state
-        overview::EntityStore* entityStore;
+        EntityStore* entityStore;
     
         Allocator* allocator;
         cinek::JsonDocument* entityTemplates;

@@ -10,9 +10,6 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
-{
-    COMPONENT_TYPE_IMPL(Character, kCharacter, {});
-}
+COMPONENT_TYPE_IMPL(CharacterComponent, kCharacterComponent, {});
 
 } /* namespace ovproto */ } /* namespace cinek */

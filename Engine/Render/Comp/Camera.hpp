@@ -13,43 +13,40 @@
 
 namespace cinek { namespace overview {
 
-namespace component
+struct CameraComponent
 {
-    struct Camera
+    COMPONENT_DEFINITION(CameraComponent);
+    
+    enum Type
     {
-        COMPONENT_DEFINITION(Camera);
-        
-        enum Type
-        {
-            kNull,
-            kPerspective,
-            kOrthogonal
-        };
-        
-        void init(int viewIndex, ckm::scalar fovRads,
-                  ckm::scalar nearZ,
-                  ckm::scalar farZ);
-        
-        void initOrtho(int viewIndex, ckm::scalar nearZ, ckm::scalar farZ);
-        void initNull(int viewIndex);
-        
-        void setDirty(bool dirty) { _dirty = dirty; }
-        bool dirty() const { return _dirty; }
-        Type type() const { return _type; }
-        ckm::scalar fov() const { return _fov; }
-        ckm::scalar nearZ() const { return _nearZClip; }
-        ckm::scalar farZ() const { return _farZClip; }
-        int viewIndex() const { return _viewIndex; }
-        
-    private:
-        Type _type;
-        ckm::scalar _fov;          // in degrees
-        ckm::scalar _nearZClip;
-        ckm::scalar _farZClip;
-        int _viewIndex;
-        bool _dirty;
+        kNull,
+        kPerspective,
+        kOrthogonal
     };
-}
+    
+    void init(int viewIndex, ckm::scalar fovRads,
+              ckm::scalar nearZ,
+              ckm::scalar farZ);
+    
+    void initOrtho(int viewIndex, ckm::scalar nearZ, ckm::scalar farZ);
+    void initNull(int viewIndex);
+    
+    void setDirty(bool dirty) { _dirty = dirty; }
+    bool dirty() const { return _dirty; }
+    Type type() const { return _type; }
+    ckm::scalar fov() const { return _fov; }
+    ckm::scalar nearZ() const { return _nearZClip; }
+    ckm::scalar farZ() const { return _farZClip; }
+    int viewIndex() const { return _viewIndex; }
+    
+private:
+    Type _type;
+    ckm::scalar _fov;          // in degrees
+    ckm::scalar _nearZClip;
+    ckm::scalar _farZClip;
+    int _viewIndex;
+    bool _dirty;
+};
 
 } /* namespace overview */ } /* namespace cinek */
 

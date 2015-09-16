@@ -9,14 +9,13 @@
 #include "BuildStarmap.hpp"
 #include "SpectralClassUtility.hpp"
 
-#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 #include "Custom/Comp/StarBody.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/vector.hpp>
-
+#include <cinek/entity/entitystore.hpp>
 #include <random>
 
 namespace cinek { namespace ovproto {
@@ -78,7 +77,7 @@ struct BuildStarmapFunction::CommonState
     simtime ageInYears = 0;
     int starCount;
     
-    overview::EntityStore& entityStore;
+    EntityStore& entityStore;
     StellarSystemTree& stellarSystemTree;
     StandardTables& standardTables;
     
@@ -86,7 +85,7 @@ struct BuildStarmapFunction::CommonState
         vector<SpectralInput>& specInputs,
         int specIndexMax,
         vector<Randomizer>& specRandomizers,
-        overview::EntityStore& store,
+        EntityStore& store,
         StellarSystemTree& world,
         StandardTables& tables
     ) :
@@ -151,18 +150,18 @@ auto BuildStarmapFunction::operator()
     }
     
     ////////////////////////////////////////////////////////////////////////
-    overview::EntityStore entityStore(kMaxEntities, {
-        { overview::component::Transform::kComponentType, kMaxTransforms },
-        { ovproto::component::StellarSystem::kComponentType, kMaxStarSystems },
-        { ovproto::component::StarBody::kComponentType, kMaxStars }
+    EntityStore entityStore(kMaxEntities, {
+        { overview::TransformComponent::kComponentType, kMaxTransforms },
+        { ovproto::StellarSystemComponent::kComponentType, kMaxStarSystems },
+        { ovproto::StarBodyComponent::kComponentType, kMaxStars }
     }, {
     
     });
     
     StandardTables standardTables;
-    standardTables.transform = entityStore.table<overview::component::Transform>();
-    standardTables.systemTable = entityStore.table<ovproto::component::StellarSystem>();
-    standardTables.starTable = entityStore.table<ovproto::component::StarBody>();
+    standardTables.transform = entityStore.table<overview::TransformComponent>();
+    standardTables.systemTable = entityStore.table<ovproto::StellarSystemComponent>();
+    standardTables.starTable = entityStore.table<ovproto::StarBodyComponent>();
     
     StellarSystemUtility systemUtility(entityStore);
     
@@ -394,7 +393,7 @@ auto BuildStarmapFunction::createSystem
         transform->setChild(
             createBodies(CS, starTemplates, systemEntity, systemRadius)
         );
-        if (!transform->child().valid())
+        if (!transform->child())
             return Result::kOutOfMemory;
 
         CS.stellarSystemTree.insertObject(systemEntity);
@@ -424,13 +423,13 @@ Entity BuildStarmapFunction::createBodies
         auto& starTemplate  = starTemplates[numStars];
         if (starTemplate.classIndex < 0)
         {
-            bodies[numStars] = Entity::null();
+            bodies[numStars] = 0;
             break;
         }
         auto entity = state.entityStore.create();
         auto star = state.standardTables.starTable.addDataToEntity(entity);
         if (!star)
-            return Entity::null();
+            return 0;
         
         //  star props
         star->init(starTemplate.mass,
@@ -450,7 +449,7 @@ Entity BuildStarmapFunction::createBodies
     }
     
     if (!numStars)
-        return Entity::null();      // bad input
+        return 0;      // bad input
     
     //  fixup each entity's sibling links and determine starting offsets from the
     //  center of mass.
@@ -474,7 +473,7 @@ Entity BuildStarmapFunction::createBodies
         
         auto transform = state.standardTables.transform.addDataToEntity(entity);
         if (!transform)
-            return Entity::null();
+            return 0;
         
         transform->setParent(parentSystemEntity);
         if (starIndex < bodies.size()-1)

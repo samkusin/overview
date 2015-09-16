@@ -20,7 +20,7 @@ namespace cinek { namespace overview {
 
 Entity createEntity
 (
-    Entity::context_type context,
+    EntityContextType context,
     EntityStore& store,
     const cinek::JsonValue& definitions,
     const char* name,
@@ -35,13 +35,13 @@ Entity createEntity
         const cinek::JsonValue& templates = definitions["entity"];
    
         if (!templates.HasMember(name))
-            return Entity::null();
+            return 0;
     
         const cinek::JsonValue& templ = templates[name];
         if (!templ.HasMember("transform") ||
             (templ["transform"].IsBool() && templ["transform"].GetBool()))
         {
-            store.table<component::Transform>().addDataToEntity(entity);
+            store.table<overview::TransformComponent>().addDataToEntity(entity);
         }
         for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
              it != templ.MemberEnd();
@@ -73,7 +73,7 @@ Entity createEntity
 void destroyEntityComponent
 (
     Entity entity,
-    component::EntityDataTable& dataTable,
+    EntityDataTable& dataTable,
     EntityStore& store,
     const CustomComponentDestroyFn& customCompFn
 )

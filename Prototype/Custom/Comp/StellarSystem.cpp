@@ -10,20 +10,16 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
-{
-    COMPONENT_TYPE_IMPL(StellarSystem, kStellarSystem,
-        {
-            _indexToTreeNode = -1;
-        }
-    );
-
-    void StellarSystem::init(uint32_t seed, ckm::scalar radius)
+COMPONENT_TYPE_IMPL(StellarSystemComponent, kStellarSystemComponent,
     {
-        _seed = seed;
-        _radius = radius;
+        _indexToTreeNode = -1;
     }
-    
+);
+
+void StellarSystemComponent::init(uint32_t seed, ckm::scalar radius)
+{
+    _seed = seed;
+    _radius = radius;
 }
 
 } /* namespace overview */ } /* namespace cinek */

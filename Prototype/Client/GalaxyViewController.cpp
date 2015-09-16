@@ -15,7 +15,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include "Engine/Entity/TransformEntity.hpp"
-#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Render/Comp/Renderable.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Custom/Comp/StarBody.hpp"
@@ -24,11 +23,12 @@
 #include "UI/UIBuilder.hpp"
 #include "CKGfx/External/nanovg/nanovg.h"
 
+#include <cinek/entity/entitystore.hpp>
+
 //  used for building a galactic "cell"
 #include "Sim/BuildStarmap.hpp"
 #include "Engine/BVH/AABBTree.hpp"
 
-#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 
 #include "Custom/Comp/StarBody.hpp"
@@ -44,8 +44,6 @@
 
 namespace cinek {
 
-using namespace overview;
-
 namespace ovproto {
 
 struct MergeStarmapWithEntityStore
@@ -58,23 +56,23 @@ struct MergeStarmapWithEntityStore
     {
         srcToDestEntityMap.clear();
         
-        renderTable = entityService.table<overview::component::Renderable>();
+        renderTable = entityService.table<overview::RenderableComponent>();
         
         //  copy transforms over to target store
-        auto srcTransformTable = starmap.entityStore.table<overview::component::Transform>();
+        auto srcTransformTable = starmap.entityStore.table<overview::TransformComponent>();
         if (srcTransformTable)
         {
             //  update all transforms global positions
-            overview::component::UpdateTransform(srcTransformTable).all();
+            overview::UpdateTransformComponent(srcTransformTable).all();
         
-            FnData<overview::component::Transform> data;
+            FnData<overview::TransformComponent> data;
             data.utility = this;
             data.result = &starmap;
             data.entityService = entityService;
-            data.target = entityService.table<overview::component::Transform>();
+            data.target = entityService.table<overview::TransformComponent>();
             srcTransformTable.forEach
             (
-                [&data](Entity eid, overview::component::Transform& component)
+                [&data](Entity eid, overview::TransformComponent& component)
                 {
                     auto entity = data.getEntity(eid);
                     auto comp = data.target.addDataToEntity(entity);
@@ -84,17 +82,17 @@ struct MergeStarmapWithEntityStore
             );
         }
         
-        auto srcSystemTable = starmap.entityStore.table<component::StellarSystem>();
+        auto srcSystemTable = starmap.entityStore.table<StellarSystemComponent>();
         if (srcSystemTable)
         {
-            FnData<component::StellarSystem> data;
+            FnData<StellarSystemComponent> data;
             data.utility = this;
             data.result = &starmap;
             data.entityService = entityService;
-            data.target = entityService.table<component::StellarSystem>();
+            data.target = entityService.table<StellarSystemComponent>();
             srcSystemTable.forEach
             (
-                [&data](Entity eid, component::StellarSystem& component)
+                [&data](Entity eid, StellarSystemComponent& component)
                 {
                     auto entity = data.getEntity(eid);
                     auto comp = data.target.addDataToEntity(entity);
@@ -108,17 +106,17 @@ struct MergeStarmapWithEntityStore
             );
         }
         
-        auto srcStarBodyTable = starmap.entityStore.table<component::StarBody>();
+        auto srcStarBodyTable = starmap.entityStore.table<StarBodyComponent>();
         if (srcStarBodyTable)
         {
-            FnData<component::StarBody> data;
+            FnData<StarBodyComponent> data;
             data.utility = this;
             data.result = &starmap;
             data.entityService = entityService;
-            data.target = entityService.table<component::StarBody>();
+            data.target = entityService.table<StarBodyComponent>();
             srcStarBodyTable.forEach
             (
-                [&data](Entity eid, component::StarBody& component)
+                [&data](Entity eid, StarBodyComponent& component)
                 {
                     auto entity = data.getEntity(eid);
                     auto comp = data.target.addDataToEntity(entity);
@@ -129,20 +127,20 @@ struct MergeStarmapWithEntityStore
             );
         }
         
-        auto srcHierarchyTable = starmap.entityStore.table<overview::component::Transform>();
+        auto srcHierarchyTable = starmap.entityStore.table<overview::TransformComponent>();
         if (srcHierarchyTable)
         {
             //  rerun our iteration over the Transform.  child and sibling
             //  entities have already been created from above conversions.
             //  but we still need to fix the old child/sibling entities up.
-            FnData<overview::component::Transform> data;
+            FnData<overview::TransformComponent> data;
             data.utility = this;
             data.result = &starmap;
             data.entityService = entityService;
-            data.target = entityService.table<overview::component::Transform>();
+            data.target = entityService.table<overview::TransformComponent>();
             srcHierarchyTable.forEach
             (
-                [&data](Entity, overview::component::Transform& component)
+                [&data](Entity, overview::TransformComponent& component)
                 {
                     component.setParent(data.getEntity(component.parent()));
                     component.setChild(data.getEntity(component.child()));
@@ -160,7 +158,7 @@ private:
         MergeStarmapWithEntityStore* utility;
         BuildStarmapFunction::Result* result;
         EntityService entityService;
-        overview::component::Table<_Component> target;
+        component::Table<_Component> target;
         
         Entity getEntity(Entity srcEntity)
         {
@@ -178,21 +176,67 @@ private:
     
     unordered_map<Entity, Entity> srcToDestEntityMap;
     
-    overview::component::Table<overview::component::Renderable> renderTable;
+    component::Table<overview::RenderableComponent> renderTable;
 };
 
 
-struct GalaxyViewController::Starmap
+struct Callback
 {
+    const EntityDataTable* table;
+};
+  
+
+struct GalaxyStarmapRenderTree
+{
+    using RenderObjectList = vector<overview::RenderObject>;
+    
     StellarSystemTree tree;
     RenderObjectList renderables;
     RenderObjectList nearRenderables;
     
-    Starmap(const Allocator& allocator) : renderables(allocator)
+    GalaxyStarmapRenderTree(const Allocator& allocator) : renderables(allocator)
     {
         renderables.reserve(32768);
         nearRenderables.reserve(4096);
     }
+    
+    const EntityDataTable* table;
+    
+    struct Callback
+    {
+        const EntityDataTable* renderables;
+
+        GalaxyStarmapRenderTree* outputList;
+        const ckm::Frustrum* frustrum;
+        const ckm::Frustrum* nearFrustrum;
+        
+        Callback(const ckm::Frustrum& f, const ckm::Frustrum& nf,
+                 EntityService store,
+                 GalaxyStarmapRenderTree& output) :
+            renderables(store.table<overview::RenderableComponent>().dataTable()),
+            outputList(&output),
+            frustrum(&f),
+            nearFrustrum(&nf)
+        {
+        }
+        
+        bool operator()(Entity entity, const ckm::AABB<ckm::vec3>& aabb) const
+        {
+            overview::RenderObject obj;
+            obj.renderableIdx = renderables->rowIndexFromEntity(entity);
+            
+            if (nearFrustrum->testAABB(aabb))
+            {
+                outputList->nearRenderables.push_back(obj);
+            }
+            else
+            {
+                outputList->renderables.push_back(obj);
+            }
+            return true;
+        }
+    };
+
     
     void buildObjectList
     (
@@ -201,39 +245,6 @@ struct GalaxyViewController::Starmap
         const ckm::Frustrum& nearFrustrum
     )
     {
-        struct Callback
-        {
-            const overview::component::EntityDataTable* renderables;
-            Starmap* outputList;
-            const ckm::Frustrum* frustrum;
-            const ckm::Frustrum* nearFrustrum;
-            
-            Callback(const ckm::Frustrum& f, const ckm::Frustrum& nf,
-                     EntityService store,
-                     Starmap& output) :
-                renderables(store.table<overview::component::Renderable>().dataTable()),
-                outputList(&output),
-                frustrum(&f),
-                nearFrustrum(&nf)
-            {
-            }
-            
-            bool operator()(Entity entity, const ckm::AABB<ckm::vec3>& aabb) const
-            {
-                RenderObject obj;
-                obj.renderableIdx = renderables->rowIndexFromEntity(entity);
-                
-                if (nearFrustrum->testAABB(aabb))
-                {
-                    outputList->nearRenderables.push_back(obj);
-                }
-                else
-                {
-                    outputList->renderables.push_back(obj);
-                }
-                return true;
-            }
-        };
         
         Callback cb(frustrum, nearFrustrum, service, *this);
         tree.test<StellarSystemTree::Test::FrustrumSweep>()(frustrum, cb);
@@ -431,7 +442,7 @@ void GalaxyViewController::onViewLoad()
         MergeStarmapWithEntityStore mergeFn;
         mergeFn(cell, _Entity);
 
-        _starmap = allocate_unique<Starmap>(_allocator, _allocator);
+        _starmap = allocate_unique<GalaxyStarmapRenderTree>(_allocator, _allocator);
         _starmap->tree = std::move(cell.stellarSystemTree);
     }
     else
@@ -460,7 +471,7 @@ void GalaxyViewController::onViewLoad()
     _starmap->buildObjectListFromBox(localBox, _starmapLocalEntities);
     
     Entity currentSystem;
-    currentSystem = nullptr;
+    currentSystem = 0;
     
     if (!_starmapLocalEntities.empty())
     {
@@ -472,7 +483,7 @@ void GalaxyViewController::onViewLoad()
     
     //  create camera
     _camera = _Entity.create("navi_camera");
-    auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
+    auto camera = _Entity.table<overview::CameraComponent>().dataForEntity(_camera);
     if (camera)
     {
         camera->init(0, M_PI * 90/180.0 , 1, 1000.0);
@@ -583,9 +594,9 @@ void GalaxyViewController::simulateView(double time, double dt)
 {
     if (time >= _driveTimer)
     {
-        if (!_driveTarget.valid())
+        if (!_driveTarget)
         {
-            auto transforms = _Entity.table<overview::component::Transform>();
+            auto transforms = _Entity.table<overview::TransformComponent>();
             //  select new system
             auto systemTransform = transforms.dataForEntity(_currentSystem);
             ckm::AABB<ckm::vec3> localBox(16);
@@ -603,12 +614,12 @@ void GalaxyViewController::simulateView(double time, double dt)
         else
         {
             
-            if (_currentSystem != _driveTarget && _driveTarget.valid())
+            if (_currentSystem != _driveTarget && _driveTarget)
             {
-                auto transforms = _Entity.table<overview::component::Transform>();
+                auto transforms = _Entity.table<overview::TransformComponent>();
                 auto camera = transforms.dataForEntity(_camera);
                 auto target = transforms.dataForEntity(_driveTarget);
-                auto rb = _Entity.table<component::RigidBody>().dataForEntity(_camera);
+                auto rb = _Entity.table<RigidBodyComponent>().dataForEntity(_camera);
                 
                 //  Calculate the direction the camera should face.
                 //  From there we 'drive' the camera from the camera's viewpoint to
@@ -735,7 +746,7 @@ void GalaxyViewController::simulateView(double time, double dt)
             {
                 setCurrentSystem(_currentSystem);
 
-                _driveTarget = nullptr;
+                _driveTarget = 0;
                 _driveTimer = time + 15;
             }
         }
@@ -744,11 +755,11 @@ void GalaxyViewController::simulateView(double time, double dt)
 
 struct RenderSpaceCameraTranslate
 {
-    overview::component::Table<overview::component::Renderable> renderables;
-    overview::component::Table<overview::component::Transform> transforms;
+    component::Table<overview::RenderableComponent> renderables;
+    component::Table<overview::TransformComponent> transforms;
     ckm::vec4 offset;
     
-    void onEntity(Entity e, overview::component::Renderable& r)
+    void onEntity(Entity e, overview::RenderableComponent& r)
     {
         auto transform = transforms.dataForEntity(e);
         if (transform)
@@ -760,7 +771,7 @@ struct RenderSpaceCameraTranslate
             
             //  iterate through children
             Entity child = transform->child();
-            while (child.valid())
+            while (child)
             {
                 auto childRenderable = renderables.dataForEntity(child);
                 
@@ -831,13 +842,13 @@ void GalaxyViewController::onUIEvent
                 {
                     printf("Star Hit %d,%d = %" PRIu64 " at %d,%d\n",
                             data.cursor.x, data.cursor.y,
-                            box.entity.id, box.x, box.y);
+                            box.entity, box.x, box.y);
                     hitEntity = box.entity;
                     break;
                 }
             }
             
-            if (!hitEntity.valid())
+            if (!hitEntity)
             {
                 printf("View Hit!\n");
             }
@@ -869,9 +880,9 @@ void GalaxyViewController::starmapLayout()
     //  transformation used by object list providers to cull entities
     //  from world space
 
-    auto transformTable = _Entity.table<overview::component::Transform>();
+    auto transformTable = _Entity.table<overview::TransformComponent>();
     auto cameraTransform = transformTable.dataForEntity(_camera);
-    auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
+    auto camera = _Entity.table<overview::CameraComponent>().dataForEntity(_camera);
     
     ckm::mat4 cameraSRT;
     if (cameraTransform)
@@ -924,8 +935,8 @@ void GalaxyViewController::starmapLayout()
     //  do that?!)
     //
     //  Rotations and scale remain as they are in world space
-    auto renderables = _Entity.table<overview::component::Renderable>();
-    auto systems = _Entity.table<component::StellarSystem>();
+    auto renderables = _Entity.table<overview::RenderableComponent>();
+    auto systems = _Entity.table<StellarSystemComponent>();
     
     RenderSpaceCameraTranslate cameraTranslate;
     cameraTranslate.offset = cameraSRT[3];
@@ -1080,9 +1091,9 @@ void GalaxyViewController::frameUpdateView(double dt)
             
     //  acquire camera transform, and use its rotation and scale to generate
     //  our render view matrix.
-    auto transformTable = _Entity.table<overview::component::Transform>();
+    auto transformTable = _Entity.table<overview::TransformComponent>();
     auto cameraTransform = transformTable.dataForEntity(_camera);
-    auto camera = _Entity.table<overview::component::Camera>().dataForEntity(_camera);
+    auto camera = _Entity.table<overview::CameraComponent>().dataForEntity(_camera);
     
     ckm::mat4 cameraSRT;
     if (cameraTransform)
@@ -1095,7 +1106,7 @@ void GalaxyViewController::frameUpdateView(double dt)
     }
     
     //  use our renderables generated from the starmapLayout()
-    auto renderables = _Entity.table<overview::component::Renderable>();
+    auto renderables = _Entity.table<overview::RenderableComponent>();
     
     //  center our camera at 0,0,0 (since our render objects are now
     //  positioned relative to the origin.)
@@ -1137,16 +1148,16 @@ void GalaxyViewController::frameUpdateView(double dt)
         float u,v;          //  0 = abs mag
     };
     
-    struct SystemVisitor : public overview::component::TransformVisitor<SystemVisitor>
+    struct SystemVisitor : public overview::TransformComponentVisitor<SystemVisitor>
     {
-        overview::component::Table<overview::component::Renderable> renderables;
-        overview::component::Table<component::StarBody> stars;
+        component::Table<overview::RenderableComponent> renderables;
+        component::Table<StarBodyComponent> stars;
         Vertex* vertices;
         int starIndex;
         uint16_t* indices;
         
-        SystemVisitor(overview::component::Table<overview::component::Transform> table) :
-            TransformVisitor(table)
+        SystemVisitor(component::Table<overview::TransformComponent> table) :
+            TransformComponentVisitor(table)
         {
         }
         
@@ -1156,7 +1167,7 @@ void GalaxyViewController::frameUpdateView(double dt)
             return true;
         }
         
-        bool visit(overview::Entity e, overview::component::Transform& t)
+        bool visit(Entity e, overview::TransformComponent& t)
         {
             auto star = stars.dataForEntity(e);
             if (star)
@@ -1208,12 +1219,12 @@ void GalaxyViewController::frameUpdateView(double dt)
     bgfx::ProgramHandle bgfxProgram = shaderLibrary->program(_shaderProgram);
     bgfx::setProgram(bgfxProgram);
     
-    auto systems = _Entity.table<component::StellarSystem>();
-    auto transforms = _Entity.table<overview::component::Transform>();
+    auto systems = _Entity.table<StellarSystemComponent>();
+    auto transforms = _Entity.table<overview::TransformComponent>();
     
     SystemVisitor systemVisitor(transforms);
     systemVisitor.renderables = renderables;
-    systemVisitor.stars = _Entity.table<component::StarBody>();
+    systemVisitor.stars = _Entity.table<StarBodyComponent>();
     
     //  generate far star vertices, color table indices and absolute magnitudes
     auto systemsToRender = &_starmap->renderables;
@@ -1335,7 +1346,7 @@ void GalaxyViewController::frameUpdateView(double dt)
     
     
     //  handle input
-    if (_API.uiActiveItem() < 0 && !_driveTarget.valid())
+    if (_API.uiActiveItem() < 0 && !_driveTarget)
     {
         //  Camera Control
         auto mouseState = _API.mouseState();
@@ -1375,11 +1386,11 @@ void GalaxyViewController::setCurrentSystem(Entity system)
 {
     _currentSystem = system;
     
-    auto transforms = _Entity.table<overview::component::Transform>();
+    auto transforms = _Entity.table<overview::TransformComponent>();
     auto cameraTransform = transforms.dataForEntity(_camera);
     auto systemTransform = transforms.dataForEntity(_currentSystem);
     
-    overview::component::UpdateTransform updateTransform(transforms);
+    overview::UpdateTransformComponent updateTransform(transforms);
     updateTransform(_camera);
 
     //  camera should face the current system
@@ -1408,9 +1419,9 @@ void GalaxyViewController::rotateSystemCamera
     auto qRot = ckm::quatFromAngleAndAxis(radians, axis);
     _systemCameraRot = ckm::normalize(_systemCameraRot * qRot); // local to world
  
-    auto transforms = _Entity.table<overview::component::Transform>();
+    auto transforms = _Entity.table<overview::TransformComponent>();
     auto cameraTransform = transforms.dataForEntity(_camera);
-    overview::component::UpdateTransform updateTransform(transforms);
+    overview::UpdateTransformComponent updateTransform(transforms);
     buildCameraTransform(*cameraTransform);
     updateTransform(_camera);
 }
@@ -1426,14 +1437,14 @@ void GalaxyViewController::zoomSystemCamera(ckm::scalar offset)
             _systemCameraDist = 10;
     }
     
-    auto transforms = _Entity.table<overview::component::Transform>();
+    auto transforms = _Entity.table<overview::TransformComponent>();
     auto cameraTransform = transforms.dataForEntity(_camera);
-    overview::component::UpdateTransform updateTransform(transforms);
+    overview::UpdateTransformComponent updateTransform(transforms);
     buildCameraTransform(*cameraTransform);
     updateTransform(_camera);
 }
 
-void GalaxyViewController::buildCameraTransform(overview::component::Transform& t)
+void GalaxyViewController::buildCameraTransform(overview::TransformComponent& t)
 {
     auto systemCameraMtx = ckm::mtx4x4FromQuat(_systemCameraRot);
     systemCameraMtx[3] = ckm::vec4(_systemCameraCenter, 1);

@@ -11,9 +11,10 @@
 
 #include "Client/AppContext.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/Entity/EntityDataTable.hpp"
-#include "Engine/Entity/EntityGroupMap.hpp"
-#include "Engine/Entity/EntityStore.hpp"
+
+#include <cinek/entity/entitydatatable.hpp>
+#include <cinek/entity/entitygroupmap.hpp>
+#include <cinek/entity/entitystore.hpp>
 
 namespace cinek {
     namespace ovproto {
@@ -26,12 +27,12 @@ public:
     
     //  Allocates an entity with no components
     //
-    Entity create(Entity::context_type context=0);
+    Entity create(Entity context=0);
     
     //  Creates an entity using a template, with the specified context.
     //  The context is stored within the Entity ID and can be used for filtering
     //
-    Entity create(const char* templateName, Entity::context_type context=0);
+    Entity create(const char* templateName, Entity context=0);
     
     //  Destroys the entity
     //
@@ -40,10 +41,10 @@ public:
     //  Returns a Component Table
     //
     template<typename _Component>
-    overview::component::Table<_Component> table() const;
+    component::Table<_Component> table() const;
     
     //  Returns an EntityGroup Table
-    overview::component::EntityGroupTable entityGroupTable(overview::EntityGroupMapId id) const;
+    EntityGroupTable entityGroupTable(EntityGroupMapId id) const;
     
     //  Sets the Custom Component generation handler
     //
@@ -57,13 +58,13 @@ private:
 };
 
 template<typename _Component>
-overview::component::Table<_Component> EntityService::table() const
+component::Table<_Component> EntityService::table() const
 {
     return _context->entityStore->table<_Component>();
 }
 
-inline auto EntityService::entityGroupTable(overview::EntityGroupMapId id) const
-    -> overview::component::EntityGroupTable
+inline auto EntityService::entityGroupTable(EntityGroupMapId id) const
+    -> EntityGroupTable
 {
     return _context->entityStore->entityGroupTable(id);
 }

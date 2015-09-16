@@ -12,8 +12,9 @@
 #include "GameTypes.hpp"
 #include "Custom/Comp/StellarSystem.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/BVH/AABBTree.hpp"
+
+#include <cinek/entity/entitydatatable.hpp>
 
 namespace cinek { namespace ovproto {
 
@@ -21,7 +22,7 @@ class StellarSystemUtility
 {
 public:
     StellarSystemUtility() = default;
-    StellarSystemUtility(overview::EntityStore& store);
+    StellarSystemUtility(EntityStore& store);
     StellarSystemUtility(const StellarSystemUtility& other);
     
     void setObjectData(Entity objIdx, intptr_t data);
@@ -30,9 +31,9 @@ public:
     ckm::vec3 position(Entity objIdx) const;
 
 private:
-    overview::EntityStore* _entityStore = nullptr;
-    overview::component::Table<overview::component::Transform> _transformTable;
-    overview::component::Table<component::StellarSystem> _stellarSystemTable;
+    EntityStore* _entityStore = nullptr;
+    component::Table<overview::TransformComponent> _transformTable;
+    component::Table<StellarSystemComponent> _stellarSystemTable;
 };
 
 using StellarSystemTree = overview::AABBTree<Entity, StellarSystemUtility>;

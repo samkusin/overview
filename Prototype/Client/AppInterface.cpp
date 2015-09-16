@@ -12,11 +12,11 @@
 #include "UI/oui.h"
 
 #include "Engine/Entity/EntityFactory.hpp"
-#include "Engine/Entity/EntityStore.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/json/jsonstreambuf.hpp>
 #include <cinek/filestreambuf.hpp>
+#include <cinek/entity/entitystore.hpp>
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>

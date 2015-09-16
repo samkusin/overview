@@ -10,9 +10,6 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
-{
-    COMPONENT_TYPE_IMPL(Steering, kSteering, {});
-}
+COMPONENT_TYPE_IMPL(SteeringComponent, kSteeringComponent, {});
 
 } /* namespace ovproto */ } /* namespace cinek */

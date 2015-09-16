@@ -14,16 +14,13 @@
 
 namespace cinek { namespace overview {
 
-namespace component
+struct MeshRenderableComponent
 {
-    struct MeshRenderable
-    {
-        COMPONENT_DEFINITION(MeshRenderable);
+    COMPONENT_DEFINITION(MeshRenderableComponent);
 
-        cinek::gfx::MeshHandle::pod_type meshHandle;
-        cinek::gfx::TextureHandle::pod_type texHandle;
-    };
-}
+    cinek::gfx::MeshHandle::pod_type meshHandle;
+    cinek::gfx::TextureHandle::pod_type texHandle;
+};
 
 } /* namespace overview */ } /* namespace cinek */
 

@@ -14,15 +14,12 @@
 
 namespace cinek { namespace overview {
 
-namespace component
+struct RenderableComponent
 {
-    struct Renderable
-    {
-        COMPONENT_DEFINITION(Renderable);
+    COMPONENT_DEFINITION(RenderableComponent);
 
-        gfx::Matrix4 worldSRT;
-    };
-}
+    gfx::Matrix4 worldSRT;
+};
 
 } /* namespace overview */ } /* namespace cinek */
 

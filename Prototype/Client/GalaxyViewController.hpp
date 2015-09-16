@@ -72,6 +72,8 @@ private:
 };
 
 
+struct GalaxyStarmapRenderTree;
+
 
 class GalaxyViewController : public overview::ViewController, public UISubscriber
 {
@@ -103,7 +105,7 @@ private:
     
     void rotateSystemCamera(ckm::vec3 axis, ckm::scalar radians);
     void zoomSystemCamera(ckm::scalar offset);
-    void buildCameraTransform(overview::component::Transform& t);
+    void buildCameraTransform(overview::TransformComponent& t);
     
 private:
     Allocator _allocator;
@@ -112,8 +114,7 @@ private:
     RenderService _Render;
     EntityService _Entity;
     
-    struct Starmap;
-    unique_ptr<Starmap> _starmap;
+    unique_ptr<GalaxyStarmapRenderTree> _starmap;
     
     vector<Entity> _starmapLocalEntities;
     
@@ -172,7 +173,7 @@ private:
     };
     std::array<bgfx::UniformHandle, kUniform_HandleCount> _uniforms;
     
-    using RenderObjectList = vector<overview::RenderObject>;
+
 
     //  Camera Driver
     Entity _driveTarget;

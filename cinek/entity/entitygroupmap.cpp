@@ -1,18 +1,32 @@
-//
-//  EntityGroupMap.cpp
-//  Overview
-//
-//  Created by Samir Sinha on 7/25/15.
-//  Copyright (c) 2015 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-#include "EntityGroupMap.hpp"
-#include "EntityDataTable.hpp"
+#include "entitygroupmap.hpp"
 
-#include "Engine/Debug.hpp"
+#include "cinek/debug.hpp"
 
-namespace cinek { namespace overview {
-
+namespace cinek {
 
 EntityGroupMap::EntityGroupMap
 (
@@ -27,7 +41,7 @@ EntityGroupMap::EntityGroupMap
 
 auto EntityGroupMap::allocateIndexForEntity(Entity entity) -> index_type
 {
-    CK_ASSERT_RETURN_VALUE(entity.valid(), npos);
+    CK_ASSERT_RETURN_VALUE(entity != 0, npos);
 
     auto idx = _rowset.allocate(entity);
     CK_ASSERT_RETURN_VALUE(idx != npos, npos);
@@ -45,7 +59,7 @@ auto EntityGroupMap::allocateIndexForEntity(Entity entity) -> index_type
 
 void EntityGroupMap::removeDataFromEntity(Entity entity)
 {
-    if (!entity.valid())
+    if (!entity)
         return;
     
     auto it = _entityToGroupIndex.find(entity);
@@ -59,7 +73,7 @@ void EntityGroupMap::removeDataFromEntity(Entity entity)
     
 auto EntityGroupMap::rowIndexFromEntity(Entity entity) const -> index_type
 {
-    if (!entity.valid())
+    if (!entity)
         return npos;
     
     auto it = _entityToGroupIndex.find(entity);
@@ -86,6 +100,6 @@ Table<EntityGroup, EntityGroupMap>::Table(EntityGroupMap* dataTable) :
 }
 
 
-}
+} /* namespace component */
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace cinek */

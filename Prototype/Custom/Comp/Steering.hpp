@@ -14,15 +14,12 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
+struct SteeringComponent
 {
-    struct Steering
-    {
-        COMPONENT_DEFINITION(Steering);
+    COMPONENT_DEFINITION(SteeringComponent);
 
 
-    };
-}
+};
 
 } /* namespace ovproto */ } /* namespace cinek */
 

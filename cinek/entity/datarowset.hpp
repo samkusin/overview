@@ -1,22 +1,44 @@
-//
-//  DataRowset.hpp
-//  Overview
-//
-//  Created by Samir Sinha on 5/18/15.
-//  Copyright (c) 2015 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @file    cinek/entity/datarowset.hpp
+ * @author  Samir Sinha
+ * @date    5/18/15
+ * @brief   ECS Framework Component Data lookup container
+ * @copyright Cinekine
+ */
 
-#ifndef Overview_Entity_DataRowset_hpp
-#define Overview_Entity_DataRowset_hpp
+#ifndef CINEK_ENTITY_DATAROWSET_HPP
+#define CINEK_ENTITY_DATAROWSET_HPP
 
-#include "Engine/Entity/EntityTypes.hpp"
+#include "entity.h"
 
-#include <cinek/allocator.hpp>
-#include <cinek/types.hpp>
+#include "cinek/allocator.hpp"
+#include "cinek/types.hpp"
 
 #include <iterator>
 
-namespace cinek { namespace overview {
+namespace cinek {
 
 namespace component
 {
@@ -73,8 +95,8 @@ namespace component
         uint32_t* _freeend;
         uint32_t* _freelimit;
         
-        Entity::value_type* rowAt(index_type index);
-        const Entity::value_type* rowAt(index_type index) const;
+        Entity* rowAt(index_type index);
+        const Entity* rowAt(index_type index) const;
     };
 
     template<typename Component>
@@ -94,10 +116,9 @@ namespace component
         
         return reinterpret_cast<const Component*>(at(index));
     }
-}
+    
+} /* namespace component */
 
-
-
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace cinek */
 
 #endif /* defined(Overview_Entity_DataRowset_hpp) */

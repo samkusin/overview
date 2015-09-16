@@ -10,8 +10,5 @@
 
 namespace cinek { namespace overview {
 
-namespace component
-{
-}
 
 } /* namespace overview */ } /* namespace cinek */

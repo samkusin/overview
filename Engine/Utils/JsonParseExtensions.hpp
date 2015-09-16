@@ -13,6 +13,7 @@
 #include <cinek/json/json.hpp>
 
 #include "Engine/EngineMathTypes.hpp"
+#include "Engine/EngineMath.hpp"
 
 namespace cinek { namespace overview {
 

@@ -13,18 +13,15 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
+struct CharacterComponent
 {
-    struct Character
-    {
-        COMPONENT_DEFINITION(Character);
+    COMPONENT_DEFINITION(CharacterComponent);
 
-        //  the party this character belongs to (i.e. a player's party, or a fleet)
-        overview::Entity partyEntity;
-        //  the party that's a 'slave' to this Character (i.e. a ship's crew)
-        overview::Entity slavePartyEntity;
-    };
-}
+    //  the party this character belongs to (i.e. a player's party, or a fleet)
+    Entity partyEntity;
+    //  the party that's a 'slave' to this Character (i.e. a ship's crew)
+    Entity slavePartyEntity;
+};
 
 } /* namespace ovproto */ } /* namespace cinek */
 

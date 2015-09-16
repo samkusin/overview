@@ -10,12 +10,9 @@
 
 namespace cinek { namespace overview {
 
-namespace component
-{
+COMPONENT_TYPE_IMPL(CameraComponent, kCameraComponent, {});
 
-COMPONENT_TYPE_IMPL(Camera, kCamera, {});
-
-void Camera::init
+void CameraComponent::init
 (
     int viewIndex,
     ckm::scalar fovRads,
@@ -31,7 +28,7 @@ void Camera::init
     _dirty = true;
 }
 
-void Camera::initOrtho(int viewIndex, ckm::scalar nearZ, ckm::scalar farZ)
+void CameraComponent::initOrtho(int viewIndex, ckm::scalar nearZ, ckm::scalar farZ)
 {
     _viewIndex = viewIndex;
     _nearZClip = nearZ;
@@ -41,7 +38,7 @@ void Camera::initOrtho(int viewIndex, ckm::scalar nearZ, ckm::scalar farZ)
     _dirty = true;
 }
 
-void Camera::initNull(int viewIndex)
+void CameraComponent::initNull(int viewIndex)
 {
     _viewIndex = viewIndex;
     _nearZClip = 0;
@@ -51,6 +48,5 @@ void Camera::initNull(int viewIndex)
     _dirty = true;
 }
 
-}
 
 } /* namespace overview */ } /* namespace cinek */

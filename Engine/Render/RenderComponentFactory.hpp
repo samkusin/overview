@@ -14,9 +14,8 @@
 
 namespace cinek {
     namespace overview {
-        namespace component {
     
-ComponentFactoryResult createRenderable
+ComponentFactoryResult createRenderableComponent
 (
     Entity entity,
     const cinek::JsonValue& definitions,
@@ -26,7 +25,7 @@ ComponentFactoryResult createRenderable
     RenderResources& resources
 );
 
-ComponentFactoryResult destroyRenderable
+ComponentFactoryResult destroyRenderableComponent
 (
     Entity entity,
     ComponentId compId,
@@ -34,7 +33,7 @@ ComponentFactoryResult destroyRenderable
     RenderResources& renderResources
 );
 
-ComponentFactoryResult createCamera
+ComponentFactoryResult createCameraComponent
 (
     Entity entity,
     const cinek::JsonValue& definitions,
@@ -43,14 +42,13 @@ ComponentFactoryResult createCamera
     EntityStore& store
 );
 
-ComponentFactoryResult destroyCamera
+ComponentFactoryResult destroyCameraComponent
 (
     Entity entity,
     ComponentId compId,
     EntityStore& store
 );
         
-        } /* namespace component */
     } /* namespace overview */
 } /* namespace cinek */
 

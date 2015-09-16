@@ -11,17 +11,18 @@
 
 #include "Custom/Comp/RigidBody.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
-#include "Engine/Entity/EntityDataTable.hpp"
+
+#include <cinek/entity/entitydatatable.hpp>
 
 namespace cinek { namespace ovproto {
 
 //  Simulates 
 void simulateRigidBodies
 (
-    overview::component::Table<component::RigidBody> rigidBodies,
-    overview::component::Table<overview::component::Transform> transforms,
+    component::Table<RigidBodyComponent> rigidBodies,
+    component::Table<overview::TransformComponent> transforms,
     double dt,
-    const component::RigidBodyConstraints& constraints
+    const RigidBodyConstraints& constraints
 );
 
 } /* namespace ovproto */ } /* namespace cinek */

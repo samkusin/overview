@@ -234,11 +234,11 @@ int32_t AABBTree<_ObjectId, _Utility>::insertObjectIntoBVH
             if (leftAABB.volume() < rightAABB.volume())
             {
                 children[0] = objectId;
-                children[1] = nullptr;
+                children[1] = 0;
             }
             else
             {
-                children[0] = nullptr;
+                children[0] = 0;
                 children[1] = objectId;
             }
         }

@@ -20,17 +20,17 @@ EntityService::EntityService(AppContext& context) :
 {
 }
 
-Entity EntityService::create(Entity::context_type context)
+Entity EntityService::create(Entity context)
 {
     return _context->entityStore->create(context);
 }
     
-Entity EntityService::create(const char* templateName, Entity::context_type context)
+Entity EntityService::create(const char* templateName, Entity context)
 {
     //  TODO - optimize?
     auto it = _context->documentMap->find(kDocumentId_EntityTemplates);
     if (it == _context->documentMap->end())
-        return Entity::null();
+        return 0;
     
     return overview::createEntity(context, *_context->entityStore,
         *it->second.get(),

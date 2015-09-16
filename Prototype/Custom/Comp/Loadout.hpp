@@ -13,25 +13,22 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
+struct LoadoutComponent
 {
-    struct Loadout
-    {
-        COMPONENT_DEFINITION(Loadout);
+    COMPONENT_DEFINITION(LoadoutComponent);
 
-        enum class Type
-        {
-            kNone,
-            kPlayer,
-            kSmallShip
-        };
-        
-        static constexpr overview::EntityGroupMapId kGroupId_Player = kLoadout_Player_GroupId;
-        static constexpr overview::EntityGroupMapId kGroupId_SmallShip = kLoadout_SmallShip_GroupId;
-        
-        Type type;
+    enum class Type
+    {
+        kNone,
+        kPlayer,
+        kSmallShip
     };
-}
+    
+    static constexpr EntityGroupMapId kGroupId_Player = kLoadout_Player_GroupId;
+    static constexpr EntityGroupMapId kGroupId_SmallShip = kLoadout_SmallShip_GroupId;
+    
+    Type type;
+};
 
 } /* namespace ovproto */ } /* namespace cinek */
 

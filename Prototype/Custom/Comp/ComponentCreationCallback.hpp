@@ -19,8 +19,6 @@ namespace cinek {
 
     namespace ovproto {
     
-        namespace component {
-    
         void customComponentCreateCb
         (
             AppContext context,
@@ -36,11 +34,9 @@ namespace cinek {
             AppContext context,
             RenderContext render,
             Entity entity,
-            overview::ComponentId componentId
+            ComponentId componentId
         );
-        
-        }
-
+    
     } /* namespace ovproto */
     
 } /* namespace cinek */

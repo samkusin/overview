@@ -1,20 +1,43 @@
-//
-//  EntityGroup.hpp
-//  Overview
-//
-//  Created by Samir Sinha on 7/23/15.
-//  Copyright (c) 2015 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @file    cinek/entity/entitydatatable
+ * @author  Samir Sinha
+ * @date    7/23/15
+ * @brief   ECS Framework Entity Group Container
+ * @copyright Cinekine
+ */
+ 
+#ifndef CINEK_ENTITY_GROUP_HPP
+#define CINEK_ENTITY_GROUP_HPP
 
-#ifndef Overview_Entity_Group_hpp
-#define Overview_Entity_Group_hpp
+#include "entity.h"
 
-#include "Engine/Entity/EntityTypes.hpp"
+#include "cinek/vector.hpp"
 
-#include <cinek/vector.hpp>
 #include <array>
 
-namespace cinek { namespace overview {
+namespace cinek {
 
 //  The EntityGroup is a convenience container organizing entities into roles
 //  and slots.   This is an alternative organization model to the Transform's
@@ -119,7 +142,7 @@ void EntityGroup::forEach(Fn fn, uint32_t mask) const
             for (auto it = itStart; it != itEnd; ++it)
             {
                 auto entity = *it;
-                if (entity.valid())
+                if (entity)
                 {
                     fn(entity, (Role)roleIdx, (Slot)(it - itStart));
                 }
@@ -128,8 +151,7 @@ void EntityGroup::forEach(Fn fn, uint32_t mask) const
     }
 }
 
+} /* namespace cinek */
 
-} /* namespace overview */ } /* namespace cinek */
 
-
-#endif /* defined(Overview_Entity_Group_hpp) */
+#endif /* defined(CINEK_ENTITY_GROUP_HPP) */

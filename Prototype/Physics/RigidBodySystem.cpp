@@ -12,17 +12,17 @@ namespace cinek { namespace ovproto {
 
 struct SimulateRigidBody
 {
-    overview::component::Table<overview::component::Transform> transforms;
-    component::RigidBodyConstraints constraints;
+    component::Table<overview::TransformComponent> transforms;
+    RigidBodyConstraints constraints;
     
     double dt;
     
-    void operator()(overview::Entity e, component::RigidBody& body)
+    void operator()(Entity e, RigidBodyComponent& body)
     {
         auto transform = transforms.dataForEntity(e);
         if (transform)
         {
-            component::RigidBody::LocalTransform lt = {
+            RigidBodyComponent::LocalTransform lt = {
                 transform->localPosition(), transform->localOrient()
             };
             lt = body.integrate(lt, dt, constraints);
@@ -35,10 +35,10 @@ struct SimulateRigidBody
 //  Simulates 
 void simulateRigidBodies
 (
-    overview::component::Table<component::RigidBody> rigidBodies,
-    overview::component::Table<overview::component::Transform> transforms,
+    component::Table<RigidBodyComponent> rigidBodies,
+    component::Table<overview::TransformComponent> transforms,
     double dt,
-    const component::RigidBodyConstraints& constraints
+    const RigidBodyConstraints& constraints
 )
 {
     SimulateRigidBody simBody;

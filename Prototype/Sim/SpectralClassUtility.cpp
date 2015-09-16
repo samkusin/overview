@@ -16,6 +16,7 @@
 
 #include <istream>
 #include <cstring>
+#include <cmath>
 
 namespace cinek { namespace ovproto {
 

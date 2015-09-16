@@ -1,15 +1,32 @@
-//
-//  DataRowset.cpp
-//  Overview
-//
-//  Created by Samir Sinha on 5/18/15.
-//  Copyright (c) 2015 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-#include "DataRowset.hpp"
-#include "Engine/Debug.hpp"
+#include "datarowset.hpp"
 
-namespace cinek { namespace overview {
+#include "cinek/debug.hpp"
+
+namespace cinek {
 
 namespace component
 {
@@ -31,7 +48,7 @@ namespace component
     {
         CK_ASSERT(rowCount != npos);
         
-        _header.recordSize += sizeof(Entity::value_type); // flags included in record
+        _header.recordSize += sizeof(Entity); // flags included in record
         _rowstart = (uint8_t*)_allocator.alloc(_header.recordSize * rowCount);
         _rowend = _rowstart;
         _rowlimit = _rowstart + _header.recordSize*rowCount;
@@ -92,14 +109,14 @@ namespace component
         return *this;
     }
     
-    Entity::value_type* DataRowset::rowAt(index_type index)
+    Entity* DataRowset::rowAt(index_type index)
     {
-        return const_cast<Entity::value_type*>(static_cast<const DataRowset*>(this)->rowAt(index));
+        return const_cast<Entity*>(static_cast<const DataRowset*>(this)->rowAt(index));
     }
     
-    const Entity::value_type* DataRowset::rowAt(index_type index) const
+    const Entity* DataRowset::rowAt(index_type index) const
     {
-        return reinterpret_cast<const Entity::value_type*>(_rowstart + index*_header.recordSize);
+        return reinterpret_cast<const Entity*>(_rowstart + index*_header.recordSize);
     }
         
     auto DataRowset::allocate(Entity eid) -> index_type
@@ -118,8 +135,8 @@ namespace component
         }
         if (idx != npos)
         {
-            Entity::value_type* p = rowAt(idx);
-            *p = eid.value();
+            Entity* p = rowAt(idx);
+            *p = eid;
             memset(p+1, 0, _header.recordSize-sizeof(uint32_t));
         }
         return idx;
@@ -129,10 +146,10 @@ namespace component
     {
         if (index >= size())
             return;
-        Entity::value_type* p = rowAt(index);
+        Entity* p = rowAt(index);
         if (p[0])
         {
-            p[0] = Entity::null_value;
+            p[0] = 0;
             CK_ASSERT(_freeend != _freelimit);
             if (_freeend != _freelimit)
             {
@@ -171,7 +188,7 @@ namespace component
     {
         CK_ASSERT(index < size() && index != npos);
         
-        const Entity::value_type* p = rowAt(index);
+        const Entity* p = rowAt(index);
         return p[0] ? reinterpret_cast<const uint8_t*>(p+1) : nullptr;
     }
     
@@ -188,7 +205,7 @@ namespace component
         {
             if (_rowstart != _rowend)
             {
-                const Entity::value_type* row = rowAt(0);
+                const Entity* row = rowAt(0);
                 if (row[0])
                     return 0;
                 
@@ -211,7 +228,7 @@ namespace component
             while (idx < sz-1)
             {
                 ++idx;
-                const Entity::value_type* row = rowAt(idx);
+                const Entity* row = rowAt(idx);
                 if (row[0])
                     return idx;
             }
@@ -231,7 +248,7 @@ namespace component
             while (idx > 0)
             {
                 --idx;
-                const Entity::value_type* row = rowAt(idx);
+                const Entity* row = rowAt(idx);
                 if (row[0])
                     return idx;
             }
@@ -239,6 +256,6 @@ namespace component
         return npos;
     }
     
-}
+} /* namespace component */
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace cinek */

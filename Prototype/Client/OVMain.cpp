@@ -13,7 +13,6 @@
 #include "CKGfx/ShaderLibrary.hpp"
 #include "CKGfx/VertexTypes.hpp"
 
-#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/MessageDispatcher.hpp"
 #include "Engine/MessagePublisher.hpp"
 #include "Engine/MessageStream.hpp"
@@ -22,7 +21,6 @@
 
 #include <cinek/file.hpp>
 #include <cinek/json/json.hpp>
-#include <cinek/taskscheduler.hpp>
 
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
 #include <SDL2/SDL_syswm.h>
@@ -62,6 +60,8 @@
 #include "UI/oui.h"
 
 #include "Diagnostics.hpp"
+
+#include <cinek/entity/entitystore.hpp>
 
 
 namespace cinek { namespace ovproto {
@@ -200,11 +200,11 @@ void run(SDL_Window* window)
     //  Simulation Parameters
     //
     
-    overview::EntityGroup::RoleLimits playerPartyRoles;
+    EntityGroup::RoleLimits playerPartyRoles;
     playerPartyRoles[kPartyRole_Players] = 4;
     playerPartyRoles.fill(0);
     
-    overview::EntityGroup::RoleLimits smallShipPartyRoles;
+    EntityGroup::RoleLimits smallShipPartyRoles;
     smallShipPartyRoles[kPartyRole_Ship_Captain] = 1;
     smallShipPartyRoles[kPartyRole_Ship_Pilot] = 1;
     smallShipPartyRoles[kPartyRole_Ship_Navigation] = 1;
@@ -213,33 +213,33 @@ void run(SDL_Window* window)
     smallShipPartyRoles[kPartyRole_Ship_Medicine] = 1;
     smallShipPartyRoles.fill(0);
     
-    overview::EntityGroup::RoleLimits playerLoadoutCategories;
+    EntityGroup::RoleLimits playerLoadoutCategories;
     playerLoadoutCategories[kLoadoutRole_Players_Hands] = kLoadout_Players_Slot_Hand_Count;
     playerLoadoutCategories[kLoadoutRole_Players_Body] = kLoadout_Players_Slot_Body_Count;
     playerLoadoutCategories.fill(0);
     
-    overview::EntityGroup::RoleLimits smallShipLoadoutCategories;
+    EntityGroup::RoleLimits smallShipLoadoutCategories;
     smallShipLoadoutCategories[kLoadoutRole_Ships_Weapons] = 1;
     smallShipLoadoutCategories[kLoadoutRole_Ships_Missiles] = 1;
     smallShipLoadoutCategories.fill(0);
     
-    overview::EntityStore entityStore(kMaxEntities, {
-        overview::component::Transform::makeDescriptor(kMaxTransforms),
-        overview::component::Renderable::makeDescriptor(kMaxRenderables),
-        overview::component::MeshRenderable::makeDescriptor(16*1024),
-        overview::component::Camera::makeDescriptor(4),
-        component::RigidBody::makeDescriptor(kMaxRigidBodies),
-        component::StellarSystem::makeDescriptor(kMaxStarSystems),
-        component::StarBody::makeDescriptor(kMaxStars),
-        component::Character::makeDescriptor(16),
-        component::Loadout::makeDescriptor(4),
-        component::Party::makeDescriptor(4)
+    EntityStore entityStore(kMaxEntities, {
+        overview::TransformComponent::makeDescriptor(kMaxTransforms),
+        overview::RenderableComponent::makeDescriptor(kMaxRenderables),
+        overview::MeshRenderableComponent::makeDescriptor(16*1024),
+        overview::CameraComponent::makeDescriptor(4),
+        RigidBodyComponent::makeDescriptor(kMaxRigidBodies),
+        StellarSystemComponent::makeDescriptor(kMaxStarSystems),
+        StarBodyComponent::makeDescriptor(kMaxStars),
+        CharacterComponent::makeDescriptor(16),
+        LoadoutComponent::makeDescriptor(4),
+        PartyComponent::makeDescriptor(4)
     },
     {
-        { component::Loadout::kGroupId_Player, playerLoadoutCategories, 4 },
-        { component::Loadout::kGroupId_SmallShip, smallShipLoadoutCategories, 4 },
-        { component::Party::kGroupId_Player, playerPartyRoles, 4 },
-        { component::Party::kGroupId_SmallShip, smallShipPartyRoles, 4 }
+        { LoadoutComponent::kGroupId_Player, playerLoadoutCategories, 4 },
+        { LoadoutComponent::kGroupId_SmallShip, smallShipLoadoutCategories, 4 },
+        { PartyComponent::kGroupId_Player, playerPartyRoles, 4 },
+        { PartyComponent::kGroupId_SmallShip, smallShipPartyRoles, 4 }
     });
 
     //  should be moved into a task for "initialization"
@@ -247,7 +247,7 @@ void run(SDL_Window* window)
         return;
     
     //  Physics
-    component::RigidBodyConstraints rbConstraints;
+    RigidBodyConstraints rbConstraints;
     rbConstraints.maxLinearSpeed = 2.5;
     
     //  AI System
@@ -278,12 +278,12 @@ void run(SDL_Window* window)
             const JsonValue& data
         )
         {
-            overview::component::createRenderable(entity, definitions, componentName, data,
+            overview::createRenderableComponent(entity, definitions, componentName, data,
                 *appObjects.entityStore, *renderObjects.renderResources);
-            overview::component::createCamera(entity, definitions, componentName, data,
+            overview::createCameraComponent(entity, definitions, componentName, data,
                 *appObjects.entityStore);
             
-            component::customComponentCreateCb(AppContext(appObjects),
+            customComponentCreateCb(AppContext(appObjects),
                 RenderContext(renderObjects),
                 entity,
                 definitions,
@@ -295,18 +295,16 @@ void run(SDL_Window* window)
     appObjects.destroyComponentCb = [&appObjects, &renderObjects]
         (
             Entity entity,
-            overview::ComponentId componentId
+            ComponentId componentId
         )
         {
-            overview::component::destroyRenderable(entity, componentId,
+            overview::destroyRenderableComponent(entity, componentId,
                 *appObjects.entityStore, *renderObjects.renderResources);
-            overview::component::destroyCamera(entity, componentId,
+            overview::destroyCameraComponent(entity, componentId,
                 *appObjects.entityStore);
-                
-            component::customComponentDestroyCb(AppContext(appObjects),
-                RenderContext(renderObjects),
-                entity,
-                componentId);
+            
+            customComponentDestroyCb(AppContext(appObjects),
+                RenderContext(renderObjects), entity, componentId);
         };
     
 
@@ -346,7 +344,7 @@ void run(SDL_Window* window)
     //  the main loop
     //
     Diagnostics diagnostics;
-    overview::EntityDiagnostics entityDiagnostics;
+    EntityDiagnostics entityDiagnostics;
     
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
@@ -363,10 +361,10 @@ void run(SDL_Window* window)
     
     bool running = true;
     
-    auto transforms = entityStore.table<overview::component::Transform>();
-    overview::component::UpdateTransform updateTransform(transforms);
+    auto transforms = entityStore.table<overview::TransformComponent>();
+    overview::UpdateTransformComponent updateTransform(transforms);
     
-    auto rigidBodies = entityStore.table<component::RigidBody>();
+    auto rigidBodies = entityStore.table<RigidBodyComponent>();
     
     while (running)
     {

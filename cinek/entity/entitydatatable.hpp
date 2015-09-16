@@ -1,34 +1,53 @@
-//
-//  EntityDataTable.hpp
-//  Overview
-//
-//  Created by Samir Sinha on 6/19/15.
-//  Copyright (c) 2015 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @file    cinek/entity/entitydatatable
+ * @author  Samir Sinha
+ * @date    6/19/15
+ * @brief   ECS Framework Component Templates
+ * @copyright Cinekine
+ */
 
-#ifndef Overview_Entity_ComponentTable_hpp
-#define Overview_Entity_ComponentTable_hpp
+#ifndef CINEK_ENTITY_COMPONENTTABLE_HPP
+#define CINEK_ENTITY_COMPONENTTABLE_HPP
 
-#include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/Entity/DataRowset.hpp"
+#include "entity.h"
+#include "datarowset.hpp"
 
-#include <cinek/map.hpp>
-#include <cinek/debug.hpp>
+#include "cinek/map.hpp"
+#include "cinek/debug.hpp"
 
-namespace cinek { namespace overview {
-
-namespace component
-{
+namespace cinek {
 
 class EntityDataTable
 {
 public:
-    using container_type = DataRowset;
+    using container_type = component::DataRowset;
     using index_type = typename container_type::index_type;
     using id_type = ComponentId;
     static constexpr index_type npos = container_type::npos;
     
-    EntityDataTable(const MakeDescriptor& desc, const Allocator& allocator);
+    EntityDataTable(const component::MakeDescriptor& desc, const Allocator& allocator);
     
     id_type id() const { return _descriptor.id; }
     const char* name() const { return _descriptor.name; }
@@ -43,7 +62,7 @@ public:
     index_type usedCount() const { return (index_type)_entityToRow.size(); }
     
 private:
-    Descriptor _descriptor;
+    component::Descriptor _descriptor;
     void* _context;
     unordered_map<Entity, index_type> _entityToRow;
     container_type _rowset;
@@ -58,6 +77,8 @@ inline auto EntityDataTable::rowIndexFromEntity(Entity eid) const -> index_type
     return indexIt->second;
 }
 
+namespace component
+{
 
 template<typename Component, typename Container=EntityDataTable>
 class Table
@@ -175,8 +196,8 @@ Fn Table<Component, Container>::forEach(Fn fn)
     return fn;
 }
 
-}
+} /* namespace component */
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace cinek */
 
 #endif

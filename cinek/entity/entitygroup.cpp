@@ -1,16 +1,31 @@
-//
-//  EntityGroup.cpp
-//  Overview
-//
-//  Created by Samir Sinha on 7/23/15.
-//  Copyright (c) 2015 Cinekine. All rights reserved.
-//
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cinekine Media
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-#include "EntityGroup.hpp"
+#include "entitygroup.hpp"
+#include "cinek/debug.hpp"
 
-#include "Engine/Debug.hpp"
-
-namespace cinek { namespace overview {
+namespace cinek {
 
 EntityGroup::EntityGroup
 (
@@ -52,12 +67,12 @@ std::pair<uint32_t, uint32_t> EntityGroup::entityIndexAndCountByRole(Role role) 
 Entity EntityGroup::firstEntityByRole(Role role) const
 {
     auto range = entityIndexAndCountByRole(role);
-    return range.second > 0 ? entityByIndex(range.first) : Entity::null();
+    return range.second > 0 ? entityByIndex(range.first) : 0;
 }
 
 Entity EntityGroup::entityByIndex(int32_t index) const
 {
-    CK_ASSERT_RETURN_VALUE(index < _entityByRoleTable.size(), Entity::null());
+    CK_ASSERT_RETURN_VALUE(index < _entityByRoleTable.size(), 0);
     return _entityByRoleTable[index];
 }
 
@@ -99,10 +114,10 @@ uint32_t EntityGroup::roleEntityLimit(Role role) const
 
 Entity EntityGroup::entityWithRoleAndSlot(Role role, Slot slot) const
 {
-    CK_ASSERT_RETURN_VALUE(role < _roleRanges.size(), Entity::null());
+    CK_ASSERT_RETURN_VALUE(role < _roleRanges.size(), 0);
     auto slotCount = countFromIndexCount(_roleRanges[role]);
     if (slot >= slotCount)
-        return Entity::null();
+        return 0;
     auto baseIndex = indexFromIndexCount(_roleRanges[role]);
     return _entityByRoleTable[baseIndex + slot];
 }
@@ -111,7 +126,7 @@ auto EntityGroup::findEntityRoleAndSlot(Entity entity) const -> std::pair<Role, 
 {
     std::pair<Role, Slot> roleAndSlot(0,0);
     
-    if (entity.valid())
+    if (entity)
     {
         auto it = _roleRanges.begin();
         auto head = indexFromIndexCount(*it);
@@ -192,7 +207,7 @@ void EntityGroup::clearEntityAtRoleAndSlot(Role role, Slot slot)
     auto idxcnt = entityIndexAndCountByRole(role);
     if (slot >= idxcnt.second)
         return;
-    _entityByRoleTable[idxcnt.first+slot] = nullptr;
+    _entityByRoleTable[idxcnt.first+slot] = 0;
 }
 
 void EntityGroup::setEntityAtRoleAndSlot(Entity entity, Role role, Slot slot)
@@ -206,11 +221,10 @@ void EntityGroup::setEntityAtRoleAndSlot(Entity entity, Role role, Slot slot)
         //   expand entity array with null values.
         CK_ASSERT_RETURN(slot < nextidx - idxcnt.first);
         for (unsigned i = idxcnt.second; i < slot; ++i)
-            _entityByRoleTable[idxcnt.first + i] = nullptr;
+            _entityByRoleTable[idxcnt.first + i] = 0;
         idxcnt.second = slot+1;
     }
     _entityByRoleTable[idxcnt.first + slot] = entity;
 }
     
-
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace cinek */

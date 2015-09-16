@@ -17,9 +17,6 @@ namespace cinek {
     
     using simtime = double;
     
-    //  bring certain Engine types over into our namespace
-    using Entity = overview::Entity;
-    
     //  prototypes
     class AppInterface;
     class AppContext;

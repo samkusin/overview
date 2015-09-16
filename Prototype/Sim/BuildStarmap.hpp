@@ -12,8 +12,9 @@
 #include "GameTypes.hpp"
 #include "SimDefines.hpp"
 #include "StellarSystemUtility.hpp"
-#include "Engine/Entity/EntityDataTable.hpp"
-#include "Engine/Entity/EntityStore.hpp"
+
+#include <cinek/entity/entitydatatable.hpp>
+#include <cinek/entity/entitystore.hpp>
 
 #include <cinek/vector.hpp>
 #include <array>
@@ -69,9 +70,9 @@ struct BuildStarmapFunction
 private:
     struct StandardTables
     {
-        overview::component::Table<overview::component::Transform> transform;
-        overview::component::Table<component::StellarSystem> systemTable;
-        overview::component::Table<component::StarBody> starTable;
+        component::Table<overview::TransformComponent> transform;
+        component::Table<StellarSystemComponent> systemTable;
+        component::Table<StarBodyComponent> starTable;
     };
     
     struct Randomizer;
@@ -97,7 +98,7 @@ public:
         };
         Enum result;
         
-        overview::EntityStore entityStore;
+        EntityStore entityStore;
         StellarSystemTree stellarSystemTree;
         int starCount;
     };

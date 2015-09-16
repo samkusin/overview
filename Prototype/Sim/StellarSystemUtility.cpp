@@ -7,17 +7,18 @@
 //
 
 #include "StellarSystemUtility.hpp"
-#include "Engine/Entity/EntityStore.hpp"
-#include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 //#include "Engine/Entity/TransformEntity.hpp"
 
+#include <cinek/entity/entitystore.hpp>
+#include <cinek/entity/entitydatatable.hpp>
+
 namespace cinek { namespace ovproto {
 
-StellarSystemUtility::StellarSystemUtility(overview::EntityStore& store) :
+StellarSystemUtility::StellarSystemUtility(EntityStore& store) :
     _entityStore(&store),
-    _transformTable(_entityStore->table<overview::component::Transform>()),
-    _stellarSystemTable(_entityStore->table<component::StellarSystem>())
+    _transformTable(_entityStore->table<overview::TransformComponent>()),
+    _stellarSystemTable(_entityStore->table<StellarSystemComponent>())
 {
 }
 

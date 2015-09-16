@@ -10,14 +10,9 @@
 #include "Loadout.hpp"
 #include "Party.hpp"
 
-#include "Engine/Entity/EntityStore.hpp"
-
 namespace cinek { namespace ovproto {
 
-namespace component
-{
-    COMPONENT_TYPE_IMPL(Loadout, kLoadout, {});
-    COMPONENT_TYPE_IMPL(Party, kParty, {});
-}
+COMPONENT_TYPE_IMPL(LoadoutComponent, kLoadoutComponent, {});
+COMPONENT_TYPE_IMPL(PartyComponent, kPartyComponent, {});
 
 } /* namespace overview */ } /* namespace cinek */

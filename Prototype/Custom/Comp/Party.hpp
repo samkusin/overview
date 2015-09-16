@@ -10,29 +10,27 @@
 #define Overview_App_Custom_Comp_Party_hpp
 
 #include "CustomComponentTypes.hpp"
-#include "Engine/Entity/EntityGroup.hpp"
+
+#include <cinek/entity/entitygroup.hpp>
 
 namespace cinek { namespace ovproto {
 
-namespace component
+struct PartyComponent
 {
-    struct Party
-    {
-        COMPONENT_DEFINITION(Party);
+    COMPONENT_DEFINITION(PartyComponent);
 
-        enum class Type
-        {
-            kNone,
-            kPlayer,
-            kSmallShip
-        };
-        
-        static constexpr overview::EntityGroupMapId kGroupId_Player = kParty_Player_GroupId;
-        static constexpr overview::EntityGroupMapId kGroupId_SmallShip = kParty_SmallShip_GroupId;
-        
-        Type type;
+    enum class Type
+    {
+        kNone,
+        kPlayer,
+        kSmallShip
     };
-}
+    
+    static constexpr EntityGroupMapId kGroupId_Player = kParty_Player_GroupId;
+    static constexpr EntityGroupMapId kGroupId_SmallShip = kParty_SmallShip_GroupId;
+    
+    Type type;
+};
 
 } /* namespace ovproto */ } /* namespace cinek */
 

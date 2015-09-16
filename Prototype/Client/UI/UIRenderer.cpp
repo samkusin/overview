@@ -10,7 +10,8 @@
 #include "UIEngine.hpp"
 
 #include "Client/Diagnostics.hpp"
-#include "Engine/Entity/EntityStore.hpp"
+
+#include <cinek/entity/entitystore.hpp>
 
 #include "oui.h"
 
@@ -218,7 +219,7 @@ void renderUI(NVGcontext* context, const gfx::Rect& viewRect)
 void renderDiagnostics
 (
     Diagnostics& diagnostics,
-    overview::EntityDiagnostics& entityDiagnostics,
+    EntityDiagnostics& entityDiagnostics,
     NVGcontext* context,
     const gfx::Rect& viewRect
 )

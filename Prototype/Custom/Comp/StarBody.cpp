@@ -11,33 +11,29 @@
 
 namespace cinek { namespace ovproto {
 
-namespace component
+COMPONENT_TYPE_IMPL(StarBodyComponent, kStarBodyComponent, {});
+
+void StarBodyComponent::init
+(
+    ckm::scalar mass,
+    ckm::scalar radius,
+    ckm::scalar luminosity
+)
 {
-    COMPONENT_TYPE_IMPL(StarBody, kStarBody, {});
-
-    void StarBody::init
-    (
-        ckm::scalar mass,
-        ckm::scalar radius,
-        ckm::scalar luminosity
-    )
-    {
-        _solarMass = mass;
-        _solarRadius = radius;
-        _solarLuminosity = luminosity;
-        
-        _effectiveTemp = SpectralUtility::radiusAndLuminosityToEffTemp(
-            _solarRadius,
-            _solarLuminosity
-        );
+    _solarMass = mass;
+    _solarRadius = radius;
+    _solarLuminosity = luminosity;
     
-        _abgrColor = SpectralUtility::colorABGRFromTemp(_effectiveTemp);
-        
-        SpectralClass mkClass;
-        _visualMag = SpectralUtility::bolometricMagFromLuminosity(_solarLuminosity);
-        _visualMag -= SpectralUtility::bolmetricCorrection(_effectiveTemp, mkClass);
-    }
+    _effectiveTemp = SpectralUtility::radiusAndLuminosityToEffTemp(
+        _solarRadius,
+        _solarLuminosity
+    );
 
+    _abgrColor = SpectralUtility::colorABGRFromTemp(_effectiveTemp);
+    
+    SpectralClass mkClass;
+    _visualMag = SpectralUtility::bolometricMagFromLuminosity(_solarLuminosity);
+    _visualMag -= SpectralUtility::bolmetricCorrection(_effectiveTemp, mkClass);
 }
 
 } /* namespace overview */ } /* namespace cinek */

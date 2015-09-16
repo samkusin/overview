@@ -8,25 +8,22 @@
 
 #include "RenderComponentFactory.hpp"
 
-#include "Engine/Entity/EntityStore.hpp"
 #include "Engine/Render/Comp/Renderable.hpp"
 #include "Engine/Render/Comp/Camera.hpp"
 #include "Engine/Render/Comp/MeshRenderable.hpp"
-#include "Engine/Entity/EntityDataTable.hpp"
 #include "Engine/Debug.hpp"
 
 #include "CKGfx/MeshLibrary.hpp"
 #include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 
+#include <cinek/entity/entitydatatable.hpp>
+#include <cinek/entity/entitystore.hpp>
 #include <cinek/json/json.hpp>
 
 namespace cinek {
     namespace overview {
     
-namespace component
-{
-
 static bool createRenderable
 (
     EntityStore& store,
@@ -38,8 +35,8 @@ static bool createRenderable
     const char* typeName = data["type"].GetString();
     const char* dataName = data["name"].GetString();
     
-    auto table = store.table<overview::component::Renderable>();
-    auto meshTable = store.table<overview::component::MeshRenderable>();
+    auto table = store.table<RenderableComponent>();
+    auto meshTable = store.table<MeshRenderableComponent>();
     
     auto comp = table.addDataToEntity(entity);
     if (comp)
@@ -64,7 +61,7 @@ static bool createRenderable
     {
         OVENGINE_LOG_ERROR("createRenderable - "
                            "unable to allocate a Renderable for entity %" PRIu64 ".",
-                           entity.id);
+                           entity);
         return false;
     }
     
@@ -75,7 +72,7 @@ static void destroyMeshRenderable
 (
     RenderResources& renderResources,
     Entity entity,
-    component::MeshRenderable& component
+    MeshRenderableComponent& component
 )
 {
     renderResources.meshLibrary->unload(component.meshHandle);
@@ -89,20 +86,20 @@ static bool createCamera
     const cinek::JsonValue& 
 )
 {
-    auto table = store.table<overview::component::Camera>();
+    auto table = store.table<CameraComponent>();
     auto comp = table.addDataToEntity(entity);
     if (!comp)
     {
-        OVENGINE_LOG_ERROR("createRenderable - "
+        OVENGINE_LOG_ERROR("createCamera - "
                            "unable to allocate a Renderable for entity %" PRIu64 ".",
-                           entity.id);
+                           entity);
         return false;
     }
     return true;
 }
 
 
-ComponentFactoryResult createRenderable
+ComponentFactoryResult createRenderableComponent
 (
     Entity entity,
     const cinek::JsonValue& definitions,
@@ -121,7 +118,7 @@ ComponentFactoryResult createRenderable
     return ComponentFactoryResult::kSuccess;
 }
 
-ComponentFactoryResult destroyRenderable
+ComponentFactoryResult destroyRenderableComponent
 (
     Entity entity,
     ComponentId compId,
@@ -129,9 +126,9 @@ ComponentFactoryResult destroyRenderable
     RenderResources& renderResources
 )
 {
-    if (compId == component::kMeshRenderable)
+    if (compId == kMeshRenderableComponent)
     {
-        auto comp = store.table<component::MeshRenderable>().dataForEntity(entity);
+        auto comp = store.table<MeshRenderableComponent>().dataForEntity(entity);
         if (comp)
         {
             destroyMeshRenderable(renderResources, entity, *comp);
@@ -143,7 +140,7 @@ ComponentFactoryResult destroyRenderable
 }
 
 
-ComponentFactoryResult createCamera
+ComponentFactoryResult createCameraComponent
 (
     Entity entity,
     const cinek::JsonValue& definitions,
@@ -155,26 +152,24 @@ ComponentFactoryResult createCamera
     if (strncmp(componentName, "camera", sizeof("camera")) != 0)
         return ComponentFactoryResult::kPassthrough;
     
-    if (!component::createCamera(store, entity, data))
+    if (!createCamera(store, entity, data))
         return ComponentFactoryResult::kFailed;
     
     return ComponentFactoryResult::kSuccess;
 }
 
-ComponentFactoryResult destroyCamera
+ComponentFactoryResult destroyCameraComponent
 (
     Entity entity,
     ComponentId compId,
     EntityStore& store
 )
 {
-    if (compId != component::kCamera)
+    if (compId != kCameraComponent)
         return ComponentFactoryResult::kPassthrough;
     
     return ComponentFactoryResult::kSuccess;
 }
-
-} /* namespace component */
     
     } /* namespace overview */
 } /* namespace cinek */
