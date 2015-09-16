@@ -1,0 +1,3 @@
+[submodule "cinek"]
+	path = cinek
+	url = git@hitchcock.cinekine.com:cinekine/cinek.git
