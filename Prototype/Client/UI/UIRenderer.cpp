@@ -9,9 +9,9 @@
 #include "UIRenderer.hpp"
 #include "UIEngine.hpp"
 
-#include "Client/Diagnostics.hpp"
+#include "Prototype/Client/Diagnostics.hpp"
 
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitystore.hpp>
 
 #include "oui.h"
 

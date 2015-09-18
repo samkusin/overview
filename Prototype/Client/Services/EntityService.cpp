@@ -9,7 +9,7 @@
 #include "EntityService.hpp"
 #include "Engine/Entity/EntityFactory.hpp"
 
-#include <cinek/json/json.hpp>
+#include <ckjson/json.hpp>
 
 namespace cinek {
     namespace ovproto {
@@ -42,21 +42,11 @@ void EntityService::destroy(Entity entity)
 {
     _context->entityStore->destroy(entity);
 }
+    
 
-void EntityService::setCreateComponentCallback
-(
-    const overview::CustomComponentCreateFn& cb
-)
+EntityComponentDestroyFn EntityService::entityComponentDestroyFn() const
 {
-    _context->createComponentCb = cb;
-}
-
-void EntityService::setDestroyComponentCallback
-(
-    const overview::CustomComponentDestroyFn& cb
-)
-{
-    _context->destroyComponentCb = cb;
+    return _context->destroyComponentCb;
 }
     
     } /* namespace ovproto */

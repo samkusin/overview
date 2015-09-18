@@ -12,7 +12,7 @@
 #include "Engine/Entity/EntityTypes.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 
-#include <cinek/entity/entitydatatable.hpp>
+#include <ckentity/entitydatatable.hpp>
 
 namespace cinek { namespace overview {
 

@@ -10,10 +10,10 @@
 #define Overview_App_Comp_Custom_ComponentCreator_hpp
 
 #include "GameTypes.hpp"
-#include "Client/RenderContext.hpp"
+#include "Prototype/Client/RenderContext.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
 
-#include <cinek/json/jsontypes.hpp>
+#include <ckjson/jsontypes.hpp>
 
 namespace cinek {
 
@@ -33,8 +33,8 @@ namespace cinek {
         (
             AppContext context,
             RenderContext render,
-            Entity entity,
-            ComponentId componentId
+            EntityDataTable& table,
+            ComponentRowIndex rowIndex
         );
     
     } /* namespace ovproto */

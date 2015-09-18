@@ -11,7 +11,7 @@
 
 #include "CKGfx/BitmapAtlas.hpp"
 
-#include <cinek/json/jsoncollectionloader.hpp>
+#include <ckjson/jsoncollectionloader.hpp>
 #include <functional>
 #include <streambuf>
 

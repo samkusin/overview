@@ -27,9 +27,8 @@ ComponentFactoryResult createRenderableComponent
 
 ComponentFactoryResult destroyRenderableComponent
 (
-    Entity entity,
-    ComponentId compId,
-    EntityStore& store,
+    EntityDataTable& entityTable,
+    ComponentRowIndex compRowIndex,
     RenderResources& renderResources
 );
 
@@ -44,9 +43,8 @@ ComponentFactoryResult createCameraComponent
 
 ComponentFactoryResult destroyCameraComponent
 (
-    Entity entity,
-    ComponentId compId,
-    EntityStore& store
+    EntityDataTable& entityTable,
+    ComponentRowIndex compRowIndex
 );
         
     } /* namespace overview */

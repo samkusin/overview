@@ -11,7 +11,7 @@
 
 #include "SimDefines.hpp"
 
-#include <cinek/json/json.hpp>
+#include <ckjson/json.hpp>
 
 namespace cinek { namespace ovproto {
 

@@ -9,8 +9,8 @@
 #include "ComponentCreationCallback.hpp"
 #include "AppContext.hpp"
 
-#include "Client/Services/EntityService.hpp"
-#include "Client/Services/RenderService.hpp"
+#include "Prototype/Client/Services/EntityService.hpp"
+#include "Prototype/Client/Services/RenderService.hpp"
 
 #include "Loadout.hpp"
 #include "Party.hpp"
@@ -19,7 +19,7 @@
 
 #include "Engine/Utils/JsonParseExtensions.hpp"
 
-#include <cinek/json/json.hpp>
+#include <ckjson/json.hpp>
 #include <cinek/debug.hpp>
 
 namespace cinek {
@@ -36,7 +36,7 @@ void customComponentCreateCb
 )
 {
     EntityService entityService(context);
-    RenderService renderService(render);
+    //RenderService renderService(render);
     
     if (!strcmp(componentName, "rigid_body"))
     {
@@ -105,51 +105,57 @@ void customComponentDestroyCb
 (
     AppContext context,
     RenderContext render,
-    Entity entity,
-    ComponentId componentId
+    EntityDataTable& table,
+    ComponentRowIndex rowIndex
 )
 {
     EntityService entityService(context);
-    RenderService renderService(render);
+    //RenderService renderService(render);
     
-    switch (componentId)
+    switch (table.id())
     {
     case kLoadoutComponent:
         {
-            auto table = entityService.table<LoadoutComponent>();
-            auto data = table.dataForEntity(entity);
-            switch(data->type)
+            auto data = table.rowset().at<LoadoutComponent>(rowIndex);
+            auto entity = table.rowset().entityAt(rowIndex);
+            if (data)
             {
-            case LoadoutComponent::Type::kPlayer:
-                entityService.entityGroupTable(LoadoutComponent::kGroupId_Player).
-                    removeDataFromEntity(entity);
-                break;
-            case LoadoutComponent::Type::kSmallShip:
-                entityService.entityGroupTable(LoadoutComponent::kGroupId_SmallShip).
-                    removeDataFromEntity(entity);
-                break;
-            default:
-                break;
-            };
+                switch(data->type)
+                {
+                case LoadoutComponent::Type::kPlayer:
+                    entityService.entityGroupTable(LoadoutComponent::kGroupId_Player).
+                        removeDataFromEntity(entity);
+                    break;
+                case LoadoutComponent::Type::kSmallShip:
+                    entityService.entityGroupTable(LoadoutComponent::kGroupId_SmallShip).
+                        removeDataFromEntity(entity);
+                    break;
+                default:
+                    break;
+                };
+            }
         }
         break;
     case kPartyComponent:
         {
-            auto table = entityService.table<PartyComponent>();
-            auto data = table.dataForEntity(entity);
-            switch(data->type)
+            auto data = table.rowset().at<PartyComponent>(rowIndex);
+            auto entity = table.rowset().entityAt(rowIndex);
+            if (data)
             {
-            case PartyComponent::Type::kPlayer:
-                entityService.entityGroupTable(PartyComponent::kGroupId_Player).
-                    removeDataFromEntity(entity);
-                break;
-            case PartyComponent::Type::kSmallShip:
-                entityService.entityGroupTable(PartyComponent::kGroupId_SmallShip).
-                    removeDataFromEntity(entity);
-                break;
-            default:
-                break;
-            };
+                switch(data->type)
+                {
+                case PartyComponent::Type::kPlayer:
+                    entityService.entityGroupTable(PartyComponent::kGroupId_Player).
+                        removeDataFromEntity(entity);
+                    break;
+                case PartyComponent::Type::kSmallShip:
+                    entityService.entityGroupTable(PartyComponent::kGroupId_SmallShip).
+                        removeDataFromEntity(entity);
+                    break;
+                default:
+                    break;
+                };
+            }
         }
         break;
     default:

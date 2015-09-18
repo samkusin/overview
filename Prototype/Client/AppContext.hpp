@@ -12,7 +12,7 @@
 #include "GameTypes.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
 
-#include <cinek/json/jsontypes.hpp>
+#include <ckjson/jsontypes.hpp>
 #include <cinek/map.hpp>
 #include <cinek/string.hpp>
 
@@ -48,7 +48,7 @@ namespace cinek { namespace ovproto {
         
         //  callbacks
         overview::CustomComponentCreateFn createComponentCb;
-        overview::CustomComponentDestroyFn destroyComponentCb;
+        EntityComponentDestroyFn destroyComponentCb;
     };
     
     class AppContext

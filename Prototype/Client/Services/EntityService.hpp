@@ -9,12 +9,12 @@
 #ifndef Overview_App_Service_Entity_hpp
 #define Overview_App_Service_Entity_hpp
 
-#include "Client/AppContext.hpp"
+#include "Prototype/Client/AppContext.hpp"
 #include "Engine/Entity/EntityTypes.hpp"
 
-#include <cinek/entity/entitydatatable.hpp>
-#include <cinek/entity/entitygroupmap.hpp>
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitydatatable.hpp>
+#include <ckentity/entitygroupmap.hpp>
+#include <ckentity/entitystore.hpp>
 
 namespace cinek {
     namespace ovproto {
@@ -46,12 +46,7 @@ public:
     //  Returns an EntityGroup Table
     EntityGroupTable entityGroupTable(EntityGroupMapId id) const;
     
-    //  Sets the Custom Component generation handler
-    //
-    void setCreateComponentCallback(const overview::CustomComponentCreateFn& cb);
-
-    //  Sets the Custom Component destruction handler
-    void setDestroyComponentCallback(const overview::CustomComponentDestroyFn& cb);
+    EntityComponentDestroyFn entityComponentDestroyFn() const;
     
 private:
     AppObjects* _context = nullptr;

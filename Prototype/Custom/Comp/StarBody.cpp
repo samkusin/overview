@@ -7,7 +7,7 @@
 //
 
 #include "StarBody.hpp"
-#include "Sim/SpectralClassUtility.hpp"
+#include "Prototype/Sim/SpectralClassUtility.hpp"
 
 namespace cinek { namespace ovproto {
 

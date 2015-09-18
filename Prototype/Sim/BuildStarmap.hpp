@@ -13,8 +13,8 @@
 #include "SimDefines.hpp"
 #include "StellarSystemUtility.hpp"
 
-#include <cinek/entity/entitydatatable.hpp>
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitydatatable.hpp>
+#include <ckentity/entitystore.hpp>
 
 #include <cinek/vector.hpp>
 #include <array>
@@ -113,7 +113,8 @@ public:
         int spectralIndexMax,
         ckm::AABB<ckm::vec3> bounds,
         ckm::scalar minSystemRadius,
-        ckm::scalar maxSystemRadius
+        ckm::scalar maxSystemRadius,
+        EntityStore inputStore
     );
     
 private:

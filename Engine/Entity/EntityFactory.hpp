@@ -13,7 +13,7 @@
 #include "Engine/MessageTypes.hpp"
 
 #include <cinek/allocator.hpp>
-#include <cinek/json/jsontypes.hpp>
+#include <ckjson/jsontypes.hpp>
 
 namespace cinek { namespace overview {
 
@@ -25,7 +25,7 @@ using CustomComponentCreateFn =
                        const cinek::JsonValue& data)>;
     
 using CustomComponentDestroyFn =
-    std::function<void(Entity entity, ComponentId componentId)>;
+    std::function<void(EntityDataTable& table, ComponentRowIndex rowIndex)>;
 
 
 Entity createEntity(
@@ -34,13 +34,6 @@ Entity createEntity(
     const cinek::JsonValue& definitions,
     const char* name,
     const CustomComponentCreateFn& customCompFn = CustomComponentCreateFn()
-);
-
-void destroyEntityComponent(
-    Entity entity,
-    EntityDataTable& dataTable,
-    EntityStore& store,
-    const CustomComponentDestroyFn& customCompFn = CustomComponentDestroyFn()
 );
     
 } /* namespace ovproto */ } /* namespace cinek */

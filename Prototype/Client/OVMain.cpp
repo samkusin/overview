@@ -20,7 +20,7 @@
 #include "Engine/ViewStack.hpp"
 
 #include <cinek/file.hpp>
-#include <cinek/json/json.hpp>
+#include <ckjson/json.hpp>
 
 #include <SDL2/SDL.h>                   // must include prior to bgfx includes
 #include <SDL2/SDL_syswm.h>
@@ -36,22 +36,22 @@
 
 #include "Engine/Entity/TransformEntity.hpp"
 
-#include "Custom/Comp/StellarSystem.hpp"
-#include "Custom/Comp/StarBody.hpp"
-#include "Custom/Comp/ComponentCreationCallback.hpp"
-#include "Custom/Comp/Loadout.hpp"
-#include "Custom/Comp/Party.hpp"
-#include "Custom/Comp/Character.hpp"
-#include "Custom/Comp/RigidBody.hpp"
+#include "Prototype/Custom/Comp/StellarSystem.hpp"
+#include "Prototype/Custom/Comp/StarBody.hpp"
+#include "Prototype/Custom/Comp/ComponentCreationCallback.hpp"
+#include "Prototype/Custom/Comp/Loadout.hpp"
+#include "Prototype/Custom/Comp/Party.hpp"
+#include "Prototype/Custom/Comp/Character.hpp"
+#include "Prototype/Custom/Comp/RigidBody.hpp"
 
-#include "Physics/RigidBodySystem.hpp"
+#include "Prototype/Physics/RigidBodySystem.hpp"
 
 #include "Render/RenderShaders.hpp"
 
-#include "Sim/SpectralClassUtility.hpp"
-#include "Sim/EntityRoles.hpp"
-#include "Sim/AIActionClient.hpp"
-#include "Sim/Simulation.hpp"
+#include "Prototype/Sim/SpectralClassUtility.hpp"
+#include "Prototype/Sim/EntityRoles.hpp"
+#include "Prototype/Sim/AIActionClient.hpp"
+#include "Prototype/Sim/Simulation.hpp"
 
 #include "GalaxyViewController.hpp"
 
@@ -61,7 +61,7 @@
 
 #include "Diagnostics.hpp"
 
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitystore.hpp>
 
 
 namespace cinek { namespace ovproto {
@@ -197,8 +197,59 @@ void run(SDL_Window* window)
         return;
     }
     
-    //  Simulation Parameters
+    // Client and Sim Parameters
     //
+    //  should be moved into a task for "initialization"
+    if (!SpectralUtility::loadTables())
+        return;
+
+    AppObjects appObjects;
+    
+    //  setup application master template
+    AppDocumentMap appDocumentMap(allocator);
+   
+    appObjects.documentMap = &appDocumentMap;
+    appObjects.allocator = &allocator;
+    
+    RenderObjects renderObjects;
+    renderObjects.renderResources = &renderResources;
+    renderObjects.viewRect = { 0, 0, viewWidth, viewHeight };
+    renderObjects.nvg = nvgContext;
+    
+    appObjects.createComponentCb = [&appObjects, &renderObjects]
+        (
+            Entity entity,
+            const JsonValue& definitions,
+            const char* componentName,
+            const JsonValue& data
+        )
+        {
+            overview::createRenderableComponent(entity, definitions, componentName, data,
+                *appObjects.entityStore, *renderObjects.renderResources);
+            overview::createCameraComponent(entity, definitions, componentName, data,
+                *appObjects.entityStore);
+            
+            customComponentCreateCb(AppContext(appObjects),
+                RenderContext(renderObjects),
+                entity,
+                definitions,
+                componentName,
+                data
+            );
+        };
+    appObjects.destroyComponentCb = [&appObjects, &renderObjects]
+        (
+            EntityDataTable& table,
+            ComponentRowIndex componentRowIndex
+        )
+        {
+            overview::destroyRenderableComponent(table, componentRowIndex,
+                *renderObjects.renderResources);
+            overview::destroyCameraComponent(table, componentRowIndex);
+            
+            customComponentDestroyCb(AppContext(appObjects),
+                RenderContext(renderObjects), table, componentRowIndex);
+        };
     
     EntityGroup::RoleLimits playerPartyRoles;
     playerPartyRoles[kPartyRole_Players] = 4;
@@ -240,11 +291,13 @@ void run(SDL_Window* window)
         { LoadoutComponent::kGroupId_SmallShip, smallShipLoadoutCategories, 4 },
         { PartyComponent::kGroupId_Player, playerPartyRoles, 4 },
         { PartyComponent::kGroupId_SmallShip, smallShipPartyRoles, 4 }
-    });
-
-    //  should be moved into a task for "initialization"
-    if (!SpectralUtility::loadTables())
-        return;
+    },
+    appObjects.destroyComponentCb);
+  
+    appObjects.entityStore = &entityStore;
+    
+    AppContext appContext(appObjects);
+    RenderContext renderContext(renderObjects);
     
     //  Physics
     RigidBodyConstraints rbConstraints;
@@ -254,62 +307,9 @@ void run(SDL_Window* window)
     Simulation<Action> aiActionSim(64, allocator);
     AIActionClient aiActionClient;
     
-    //  setup application master template
-    AppDocumentMap appDocumentMap(allocator);
-    
     overview::ViewStack viewStack(allocator);
     overview::ViewStack overlayStack(allocator);
     
-    RenderObjects renderObjects;
-    renderObjects.renderResources = &renderResources;
-    renderObjects.viewRect = { 0, 0, viewWidth, viewHeight };
-    renderObjects.nvg = nvgContext;
-    
-    AppObjects appObjects;
-    appObjects.entityStore = &entityStore;
-    appObjects.documentMap = &appDocumentMap;
-    appObjects.allocator = &allocator;
-    
-    appObjects.createComponentCb = [&appObjects, &renderObjects]
-        (
-            Entity entity,
-            const JsonValue& definitions,
-            const char* componentName,
-            const JsonValue& data
-        )
-        {
-            overview::createRenderableComponent(entity, definitions, componentName, data,
-                *appObjects.entityStore, *renderObjects.renderResources);
-            overview::createCameraComponent(entity, definitions, componentName, data,
-                *appObjects.entityStore);
-            
-            customComponentCreateCb(AppContext(appObjects),
-                RenderContext(renderObjects),
-                entity,
-                definitions,
-                componentName,
-                data
-            );
-        };
-    
-    appObjects.destroyComponentCb = [&appObjects, &renderObjects]
-        (
-            Entity entity,
-            ComponentId componentId
-        )
-        {
-            overview::destroyRenderableComponent(entity, componentId,
-                *appObjects.entityStore, *renderObjects.renderResources);
-            overview::destroyCameraComponent(entity, componentId,
-                *appObjects.entityStore);
-            
-            customComponentDestroyCb(AppContext(appObjects),
-                RenderContext(renderObjects), entity, componentId);
-        };
-    
-
-    AppContext appContext(appObjects);
-    RenderContext renderContext(renderObjects);
     
     /*
     auto starMesh = gfx::createIcoSphere(1.0f, 4, gfx::VertexTypes::kVec3_Normal_Tex0);

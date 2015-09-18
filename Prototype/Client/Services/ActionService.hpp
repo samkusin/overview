@@ -9,8 +9,8 @@
 #ifndef Overview_App_Service_Action_hpp
 #define Overview_App_Service_Action_hpp
 
-#include "Client/AppContext.hpp"
-#include "Sim/ActionTypes.hpp"
+#include "Prototype/Client/AppContext.hpp"
+#include "Prototype/Sim/ActionTypes.hpp"
 
 namespace cinek {
     namespace ovproto {

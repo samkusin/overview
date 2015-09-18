@@ -11,7 +11,7 @@
 
 #include "UITypes.hpp"
 
-#include <cinek/entity/entity.h>
+#include <ckentity/entity.h>
 
 namespace cinek {
 

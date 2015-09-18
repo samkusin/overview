@@ -12,8 +12,7 @@
 
 #include "Engine/EngineMathTypes.hpp"
 
-#include <cinek/entity/entity.h>
-
+#include <ckentity/entity.h>
 #include <cinek/types.hpp>
 
 namespace cinek { namespace overview {

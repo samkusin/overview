@@ -12,7 +12,7 @@
 #include "AppContext.hpp"
 #include "UI/ouitypes.h"
 
-#include <cinek/json/json.hpp>
+#include <ckjson/json.hpp>
 #include <SDL2/SDL_keycode.h>
 
 namespace cinek {

@@ -14,9 +14,9 @@
 #include "Engine/Entity/EntityFactory.hpp"
 
 #include <cinek/debug.hpp>
-#include <cinek/json/jsonstreambuf.hpp>
+#include <ckjson/jsonstreambuf.hpp>
 #include <cinek/filestreambuf.hpp>
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitystore.hpp>
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>

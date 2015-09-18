@@ -10,8 +10,8 @@
 #include "Engine/Entity/Comp/Transform.hpp"
 //#include "Engine/Entity/TransformEntity.hpp"
 
-#include <cinek/entity/entitystore.hpp>
-#include <cinek/entity/entitydatatable.hpp>
+#include <ckentity/entitystore.hpp>
+#include <ckentity/entitydatatable.hpp>
 
 namespace cinek { namespace ovproto {
 

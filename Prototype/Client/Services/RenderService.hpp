@@ -9,8 +9,8 @@
 #ifndef Overview_App_Service_Render_hpp
 #define Overview_App_Service_Render_hpp
 
-#include "Client/RenderContext.hpp"
-#include "Client/Render/RenderDefines.hpp"
+#include "Prototype/Client/RenderContext.hpp"
+#include "Prototype/Client/Render/RenderDefines.hpp"
 
 namespace cinek {
     namespace ovproto {

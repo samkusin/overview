@@ -10,11 +10,11 @@
 #define Overview_Sim_StellarSystemTree_hpp
 
 #include "GameTypes.hpp"
-#include "Custom/Comp/StellarSystem.hpp"
+#include "Prototype/Custom/Comp/StellarSystem.hpp"
 #include "Engine/Entity/Comp/Transform.hpp"
 #include "Engine/BVH/AABBTree.hpp"
 
-#include <cinek/entity/entitydatatable.hpp>
+#include <ckentity/entitydatatable.hpp>
 
 namespace cinek { namespace ovproto {
 

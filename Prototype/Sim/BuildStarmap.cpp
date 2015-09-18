@@ -10,12 +10,12 @@
 #include "SpectralClassUtility.hpp"
 
 #include "Engine/Entity/Comp/Transform.hpp"
-#include "Custom/Comp/StarBody.hpp"
-#include "Custom/Comp/StellarSystem.hpp"
+#include "Prototype/Custom/Comp/StarBody.hpp"
+#include "Prototype/Custom/Comp/StellarSystem.hpp"
 
 #include <cinek/debug.hpp>
 #include <cinek/vector.hpp>
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitystore.hpp>
 #include <random>
 
 namespace cinek { namespace ovproto {
@@ -110,7 +110,8 @@ auto BuildStarmapFunction::operator()
     int spectralIndexMax,
     ckm::AABB<ckm::vec3> bounds,
     ckm::scalar minSystemRadius,
-    ckm::scalar maxSystemRadius
+    ckm::scalar maxSystemRadius,
+    EntityStore inputStore
 )
 -> Result
 {
@@ -150,26 +151,18 @@ auto BuildStarmapFunction::operator()
     }
     
     ////////////////////////////////////////////////////////////////////////
-    EntityStore entityStore(kMaxEntities, {
-        { overview::TransformComponent::kComponentType, kMaxTransforms },
-        { ovproto::StellarSystemComponent::kComponentType, kMaxStarSystems },
-        { ovproto::StarBodyComponent::kComponentType, kMaxStars }
-    }, {
-    
-    });
-    
     StandardTables standardTables;
-    standardTables.transform = entityStore.table<overview::TransformComponent>();
-    standardTables.systemTable = entityStore.table<ovproto::StellarSystemComponent>();
-    standardTables.starTable = entityStore.table<ovproto::StarBodyComponent>();
+    standardTables.transform = inputStore.table<overview::TransformComponent>();
+    standardTables.systemTable = inputStore.table<ovproto::StellarSystemComponent>();
+    standardTables.starTable = inputStore.table<ovproto::StarBodyComponent>();
     
-    StellarSystemUtility systemUtility(entityStore);
+    StellarSystemUtility systemUtility(inputStore);
     
-    StellarSystemTree stellarSystemTree(entityStore.capacity()*8, systemUtility);
+    StellarSystemTree stellarSystemTree(inputStore.capacity()*8, systemUtility);
     
     CommonState common(spectralClasses, spectralInputs, spectralIndexMax,
         spectralRandomizers,
-        entityStore,
+        inputStore,
         stellarSystemTree,
         standardTables
     );
@@ -267,7 +260,7 @@ auto BuildStarmapFunction::operator()
     if (result.result == Result::kPending || result.result == Result::kRegionFull)
     {
         result.result = Result::kSuccess;
-        result.entityStore = std::move(entityStore);
+        result.entityStore = std::move(inputStore);
         result.stellarSystemTree = std::move(stellarSystemTree);
     }
     

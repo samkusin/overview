@@ -17,9 +17,9 @@
 #include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 
-#include <cinek/entity/entitydatatable.hpp>
-#include <cinek/entity/entitystore.hpp>
-#include <cinek/json/json.hpp>
+#include <ckentity/entitydatatable.hpp>
+#include <ckentity/entitystore.hpp>
+#include <ckjson/json.hpp>
 
 namespace cinek {
     namespace overview {
@@ -68,16 +68,6 @@ static bool createRenderable
     return true;
 }
 
-static void destroyMeshRenderable
-(
-    RenderResources& renderResources,
-    Entity entity,
-    MeshRenderableComponent& component
-)
-{
-    renderResources.meshLibrary->unload(component.meshHandle);
-    renderResources.textureAtlas->unloadTexture(component.texHandle);
-}
 
 static bool createCamera
 (
@@ -118,25 +108,42 @@ ComponentFactoryResult createRenderableComponent
     return ComponentFactoryResult::kSuccess;
 }
 
-ComponentFactoryResult destroyRenderableComponent
+
+static ComponentFactoryResult destroyMeshRenderable
 (
-    Entity entity,
-    ComponentId compId,
-    EntityStore& store,
+    EntityDataTable& entityTable,
+    ComponentRowIndex compRowIndex,
     RenderResources& renderResources
 )
 {
-    if (compId == kMeshRenderableComponent)
+    if (entityTable.id() != kMeshRenderableComponent)
+        return ComponentFactoryResult::kPassthrough;
+    
+    auto component = entityTable.rowset().at<MeshRenderableComponent>(compRowIndex);
+    if (component)
     {
-        auto comp = store.table<MeshRenderableComponent>().dataForEntity(entity);
-        if (comp)
-        {
-            destroyMeshRenderable(renderResources, entity, *comp);
-        }
-        return ComponentFactoryResult::kSuccess;
+        renderResources.meshLibrary->unload(component->meshHandle);
+        renderResources.textureAtlas->unloadTexture(component->texHandle);
     }
     
-    return ComponentFactoryResult::kPassthrough;
+    return ComponentFactoryResult::kSuccess;
+}
+
+
+ComponentFactoryResult destroyRenderableComponent
+(
+    EntityDataTable& entityTable,
+    ComponentRowIndex compRowIndex,
+    RenderResources& renderResources
+)
+{
+    if (entityTable.id() == kMeshRenderableComponent)
+        return destroyMeshRenderable(entityTable, compRowIndex, renderResources);
+    
+    if (entityTable.id() != kRenderableComponent)
+        return ComponentFactoryResult::kPassthrough;
+
+    return ComponentFactoryResult::kSuccess;
 }
 
 
@@ -160,12 +167,11 @@ ComponentFactoryResult createCameraComponent
 
 ComponentFactoryResult destroyCameraComponent
 (
-    Entity entity,
-    ComponentId compId,
-    EntityStore& store
+    EntityDataTable& entityTable,
+    ComponentRowIndex compRowIndex
 )
 {
-    if (compId != kCameraComponent)
+    if (entityTable.id() != kCameraComponent)
         return ComponentFactoryResult::kPassthrough;
     
     return ComponentFactoryResult::kSuccess;

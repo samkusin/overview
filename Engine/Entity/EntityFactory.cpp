@@ -14,7 +14,7 @@
 #include "Engine/MessagePublisher.hpp"
 #include "Engine/Debug.hpp"
 
-#include <cinek/json/json.hpp>
+#include <ckjson/json.hpp>
 
 namespace cinek { namespace overview {
 
@@ -68,22 +68,6 @@ Entity createEntity
     }
     
     return entity;
-}
-
-void destroyEntityComponent
-(
-    Entity entity,
-    EntityDataTable& dataTable,
-    EntityStore& store,
-    const CustomComponentDestroyFn& customCompFn
-)
-{
-    if (customCompFn)
-    {
-        customCompFn(entity, dataTable.id());
-    }
-    
-    dataTable.removeDataFromEntity(entity);
 }
 
 

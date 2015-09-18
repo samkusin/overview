@@ -13,7 +13,7 @@
 
 #include "Engine/EngineTypes.hpp"
 
-#include <cinek/json/jsontypes.hpp>
+#include <ckjson/jsontypes.hpp>
 #include <functional>
 
 namespace cinek { namespace overview {
@@ -39,10 +39,6 @@ using CustomComponentCreateFn =
                        const cinek::JsonValue& definitions,
                        const char* componentName,
                        const cinek::JsonValue& data)>;
-    
-using CustomComponentDestroyFn =
-    std::function<void(Entity entity, ComponentId componentId)>;
-    
 
 enum
 {

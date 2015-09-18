@@ -16,24 +16,24 @@
 
 #include "Engine/Entity/TransformEntity.hpp"
 #include "Engine/Render/Comp/Renderable.hpp"
-#include "Custom/Comp/StellarSystem.hpp"
-#include "Custom/Comp/StarBody.hpp"
-#include "Custom/Comp/ComponentCreationCallback.hpp"
+#include "Prototype/Custom/Comp/StellarSystem.hpp"
+#include "Prototype/Custom/Comp/StarBody.hpp"
+#include "Prototype/Custom/Comp/ComponentCreationCallback.hpp"
 
 #include "UI/UIBuilder.hpp"
 #include "CKGfx/External/nanovg/nanovg.h"
 
-#include <cinek/entity/entitystore.hpp>
+#include <ckentity/entitystore.hpp>
 
 //  used for building a galactic "cell"
-#include "Sim/BuildStarmap.hpp"
+#include "Prototype/Sim/BuildStarmap.hpp"
 #include "Engine/BVH/AABBTree.hpp"
 
 #include "Engine/Entity/Comp/Transform.hpp"
 
-#include "Custom/Comp/StarBody.hpp"
-#include "Custom/Comp/StellarSystem.hpp"
-#include "Custom/Comp/RigidBody.hpp"
+#include "Prototype/Custom/Comp/StarBody.hpp"
+#include "Prototype/Custom/Comp/StellarSystem.hpp"
+#include "Prototype/Custom/Comp/RigidBody.hpp"
 
 #include "Engine/Render/Comp/Renderable.hpp"
 #include "Engine/Render/Comp/MeshRenderable.hpp"
@@ -200,44 +200,6 @@ struct GalaxyStarmapRenderTree
         nearRenderables.reserve(4096);
     }
     
-    const EntityDataTable* table;
-    
-    struct Callback
-    {
-        const EntityDataTable* renderables;
-
-        GalaxyStarmapRenderTree* outputList;
-        const ckm::Frustrum* frustrum;
-        const ckm::Frustrum* nearFrustrum;
-        
-        Callback(const ckm::Frustrum& f, const ckm::Frustrum& nf,
-                 EntityService store,
-                 GalaxyStarmapRenderTree& output) :
-            renderables(store.table<overview::RenderableComponent>().dataTable()),
-            outputList(&output),
-            frustrum(&f),
-            nearFrustrum(&nf)
-        {
-        }
-        
-        bool operator()(Entity entity, const ckm::AABB<ckm::vec3>& aabb) const
-        {
-            overview::RenderObject obj;
-            obj.renderableIdx = renderables->rowIndexFromEntity(entity);
-            
-            if (nearFrustrum->testAABB(aabb))
-            {
-                outputList->nearRenderables.push_back(obj);
-            }
-            else
-            {
-                outputList->renderables.push_back(obj);
-            }
-            return true;
-        }
-    };
-
-    
     void buildObjectList
     (
         EntityService service,
@@ -245,6 +207,42 @@ struct GalaxyStarmapRenderTree
         const ckm::Frustrum& nearFrustrum
     )
     {
+    
+        struct Callback
+        {
+            const EntityDataTable* renderables;
+
+            GalaxyStarmapRenderTree* outputList;
+            const ckm::Frustrum* frustrum;
+            const ckm::Frustrum* nearFrustrum;
+            
+            Callback(const ckm::Frustrum& f, const ckm::Frustrum& nf,
+                     EntityService store,
+                     GalaxyStarmapRenderTree& output) :
+                renderables(store.table<overview::RenderableComponent>().dataTable()),
+                outputList(&output),
+                frustrum(&f),
+                nearFrustrum(&nf)
+            {
+            }
+            
+            bool operator()(Entity entity, const ckm::AABB<ckm::vec3>& aabb) const
+            {
+                overview::RenderObject obj;
+                obj.renderableIdx = renderables->rowIndexFromEntity(entity);
+                
+                if (nearFrustrum->testAABB(aabb))
+                {
+                    outputList->nearRenderables.push_back(obj);
+                }
+                else
+                {
+                    outputList->renderables.push_back(obj);
+                }
+                return true;
+            }
+        };
+
         
         Callback cb(frustrum, nearFrustrum, service, *this);
         tree.test<StellarSystemTree::Test::FrustrumSweep>()(frustrum, cb);
@@ -428,12 +426,24 @@ void GalaxyViewController::onViewLoad()
     ckm::vec3 cellMax( kCellBoundXY, kCellBoundXY, kCellBoundZ );
     ckm::AABB<ckm::vec3> cellBounds(cellMin, cellMax);
     
+    EntityStore entityStoreInput(kMaxEntities, {
+            { overview::TransformComponent::kComponentType, kMaxTransforms },
+            { ovproto::StellarSystemComponent::kComponentType, kMaxStarSystems },
+            { ovproto::StarBodyComponent::kComponentType, kMaxStars }
+        }, {
+    
+        },
+        _Entity.entityComponentDestroyFn()
+    );
+    
     auto cell = cellGenFn(32768,
         spectralClasses,
         spectralInputs,
         7,
         cellBounds,
-        0.1, 1.5);
+        0.1, 1.5,
+        std::move(entityStoreInput)
+    );
     
     if (cell.result == BuildStarmapFunction::Result::kSuccess ||
         cell.result == BuildStarmapFunction::Result::kRegionFull)

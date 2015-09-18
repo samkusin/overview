@@ -11,7 +11,7 @@
 
 #include "CustomComponentTypes.hpp"
 
-#include <cinek/entity/entitygroup.hpp>
+#include <ckentity/entitygroup.hpp>
 
 namespace cinek { namespace ovproto {
 
