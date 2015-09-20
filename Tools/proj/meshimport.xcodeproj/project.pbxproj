@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		37752FB31BADE48F002D4BF9 /* libcommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37752FB21BADE48F002D4BF9 /* libcommon.dylib */; };
+		3790EA461BADEA7C00683EC6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3790EA2A1BADE82000683EC6 /* main.cpp */; };
+		3790EA551BADEAE200683EC6 /* libtoolscommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3790EA541BADEAE200683EC6 /* libtoolscommon.dylib */; };
+		379428BE1BAE386E00C5FAF6 /* parse_collada.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379428BC1BAE386E00C5FAF6 /* parse_collada.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		379480EE1BADD2EA00D07B9E /* CopyFiles */ = {
+		3790EA2E1BADE8E300683EC6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -23,109 +25,143 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		37752FB21BADE48F002D4BF9 /* libcommon.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcommon.dylib; path = build/Debug/libcommon.dylib; sourceTree = "<group>"; };
-		379480F01BADD2EA00D07B9E /* ckmeshimport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ckmeshimport; sourceTree = BUILT_PRODUCTS_DIR; };
+		3790EA2A1BADE82000683EC6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/meshimport/main.cpp; sourceTree = "<group>"; };
+		3790EA301BADE8E300683EC6 /* meshimport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = meshimport; sourceTree = BUILT_PRODUCTS_DIR; };
+		3790EA541BADEAE200683EC6 /* libtoolscommon.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtoolscommon.dylib; path = "../../../../../Library/Developer/Xcode/DerivedData/tools-flsqiczrozmormeguwlcjbxddfkh/Build/Products/Debug/libtoolscommon.dylib"; sourceTree = "<group>"; };
+		379428BC1BAE386E00C5FAF6 /* parse_collada.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parse_collada.cpp; path = ../src/meshimport/parse_collada.cpp; sourceTree = "<group>"; };
+		379428BD1BAE386E00C5FAF6 /* parse_common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = parse_common.hpp; path = ../src/meshimport/parse_common.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		379480ED1BADD2EA00D07B9E /* Frameworks */ = {
+		3790EA2D1BADE8E300683EC6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37752FB31BADE48F002D4BF9 /* libcommon.dylib in Frameworks */,
+				3790EA551BADEAE200683EC6 /* libtoolscommon.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		379480E71BADD2EA00D07B9E = {
+		3790EA561BADEAE800683EC6 /* libraries */ = {
 			isa = PBXGroup;
 			children = (
-				37752FB21BADE48F002D4BF9 /* libcommon.dylib */,
-				379480F21BADD2EA00D07B9E /* ckmeshimport */,
-				379480F11BADD2EA00D07B9E /* Products */,
+				3790EA541BADEAE200683EC6 /* libtoolscommon.dylib */,
+			);
+			name = libraries;
+			sourceTree = "<group>";
+		};
+		37F388E71BADE61B00748161 = {
+			isa = PBXGroup;
+			children = (
+				379428BC1BAE386E00C5FAF6 /* parse_collada.cpp */,
+				379428BD1BAE386E00C5FAF6 /* parse_common.hpp */,
+				3790EA2A1BADE82000683EC6 /* main.cpp */,
+				3790EA561BADEAE800683EC6 /* libraries */,
+				37F388F11BADE61B00748161 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		379480F11BADD2EA00D07B9E /* Products */ = {
+		37F388F11BADE61B00748161 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				379480F01BADD2EA00D07B9E /* ckmeshimport */,
+				3790EA301BADE8E300683EC6 /* meshimport */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		379480F21BADD2EA00D07B9E /* ckmeshimport */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ckmeshimport;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		379480EF1BADD2EA00D07B9E /* ckmeshimport */ = {
+		3790EA2F1BADE8E300683EC6 /* meshimport */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 379480F71BADD2EA00D07B9E /* Build configuration list for PBXNativeTarget "ckmeshimport" */;
+			buildConfigurationList = 3790EA341BADE8E300683EC6 /* Build configuration list for PBXNativeTarget "meshimport" */;
 			buildPhases = (
-				379480EC1BADD2EA00D07B9E /* Sources */,
-				379480ED1BADD2EA00D07B9E /* Frameworks */,
-				379480EE1BADD2EA00D07B9E /* CopyFiles */,
+				3790EA2C1BADE8E300683EC6 /* Sources */,
+				3790EA2D1BADE8E300683EC6 /* Frameworks */,
+				3790EA2E1BADE8E300683EC6 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = ckmeshimport;
-			productName = ckmeshimport;
-			productReference = 379480F01BADD2EA00D07B9E /* ckmeshimport */;
+			name = meshimport;
+			productName = meshimport;
+			productReference = 3790EA301BADE8E300683EC6 /* meshimport */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		379480E81BADD2EA00D07B9E /* Project object */ = {
+		37F388E81BADE61B00748161 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = Cinekine;
 				TargetAttributes = {
-					379480EF1BADD2EA00D07B9E = {
+					3790EA2F1BADE8E300683EC6 = {
 						CreatedOnToolsVersion = 6.4;
 					};
 				};
 			};
-			buildConfigurationList = 379480EB1BADD2EA00D07B9E /* Build configuration list for PBXProject "ckmeshimport" */;
+			buildConfigurationList = 37F388EB1BADE61B00748161 /* Build configuration list for PBXProject "meshimport" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 379480E71BADD2EA00D07B9E;
-			productRefGroup = 379480F11BADD2EA00D07B9E /* Products */;
+			mainGroup = 37F388E71BADE61B00748161;
+			productRefGroup = 37F388F11BADE61B00748161 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				379480EF1BADD2EA00D07B9E /* ckmeshimport */,
+				3790EA2F1BADE8E300683EC6 /* meshimport */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		379480EC1BADD2EA00D07B9E /* Sources */ = {
+		3790EA2C1BADE8E300683EC6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				379428BE1BAE386E00C5FAF6 /* parse_collada.cpp in Sources */,
+				3790EA461BADEA7C00683EC6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		379480F51BADD2EA00D07B9E /* Debug */ = {
+		3790EA351BADE8E300683EC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/tools-flsqiczrozmormeguwlcjbxddfkh/Build/Products/Debug",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3790EA361BADE8E300683EC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/tools-flsqiczrozmormeguwlcjbxddfkh/Build/Products/Debug",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		37F388F51BADE61B00748161 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -164,10 +200,11 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "../src ../src/thirdparty";
 			};
 			name = Debug;
 		};
-		379480F61BADD2EA00D07B9E /* Release */ = {
+		37F388F61BADE61B00748161 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -199,53 +236,32 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		379480F81BADD2EA00D07B9E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		379480F91BADD2EA00D07B9E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "../src ../src/thirdparty";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		379480EB1BADD2EA00D07B9E /* Build configuration list for PBXProject "ckmeshimport" */ = {
+		3790EA341BADE8E300683EC6 /* Build configuration list for PBXNativeTarget "meshimport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				379480F51BADD2EA00D07B9E /* Debug */,
-				379480F61BADD2EA00D07B9E /* Release */,
+				3790EA351BADE8E300683EC6 /* Debug */,
+				3790EA361BADE8E300683EC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		379480F71BADD2EA00D07B9E /* Build configuration list for PBXNativeTarget "ckmeshimport" */ = {
+		37F388EB1BADE61B00748161 /* Build configuration list for PBXProject "meshimport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				379480F81BADD2EA00D07B9E /* Debug */,
-				379480F91BADD2EA00D07B9E /* Release */,
+				37F388F51BADE61B00748161 /* Debug */,
+				37F388F61BADE61B00748161 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 379480E81BADD2EA00D07B9E /* Project object */;
+	rootObject = 37F388E81BADE61B00748161 /* Project object */;
 }

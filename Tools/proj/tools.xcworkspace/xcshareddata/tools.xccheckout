@@ -5,20 +5,20 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>5E9C95BC-034E-48C0-903F-27845173A537</string>
+	<string>82D02709-03D9-4268-8C2B-D15D396F6A12</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>tools</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>D0A63CBB2608E59B323EDE59F971B56D43E4A618</key>
 		<string>hitchcock.cinekine.com:cinekine/overview.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Prototype/Apple/common/common.xcodeproj/project.xcworkspace</string>
+	<string>Tools/proj/tools.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>D0A63CBB2608E59B323EDE59F971B56D43E4A618</key>
-		<string>../../../../..</string>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>hitchcock.cinekine.com:cinekine/overview.git</string>
@@ -34,7 +34,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>D0A63CBB2608E59B323EDE59F971B56D43E4A618</string>
 			<key>IDESourceControlWCCName</key>
-			<string>overview</string>
+			<string>Overview</string>
 		</dict>
 	</array>
 </dict>

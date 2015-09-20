@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:ckmeshimport.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:common.xcodeproj">
+      location = "group:../../Tools/proj/ckmeshimport/ckmeshimport.xcodeproj">
    </FileRef>
 </Workspace>
