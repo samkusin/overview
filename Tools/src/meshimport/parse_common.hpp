@@ -19,39 +19,58 @@ namespace pugi {
 
 namespace cinek { namespace ovtools {
 
-struct MeshPoint
+struct Point
 {
-    float x;
-    float y;
-    float z;
+    typedef float value_type;
+    value_type x;
+    value_type y;
+    value_type z;
 };
 
-typedef MeshPoint MeshVector;
-typedef int MeshIndex;
+typedef Point Vector3;
 
-struct MeshTri
+struct Matrix4
 {
-    MeshIndex indices[3];
-    MeshVector normal;
+    typedef float value_type;
+    value_type m[16];
 };
 
+struct MeshTriFace
+{
+    int indices[3];
+    Vector3 normal;
+};
 
 struct MeshNode
 {
 public:
-    std::string id;
     std::string name;
-    std::vector<MeshPoint> points;
-    std::vector<MeshTri> triangles;
+    std::vector<Point> points;
+    std::vector<MeshTriFace> triangles;
 };
 
-struct MeshTree
+struct SceneNode
 {
-    std::unique_ptr<MeshNode> root;
+    std::string name;
+    Matrix4 mtx;
+    std::unique_ptr<MeshNode> mesh;
+};
+
+struct Scene
+{
+    std::string name;
+    std::unique_ptr<SceneNode> root;
+};
+
+enum SceneParseType
+{
+    kSceneParseInvalid,
+    kSceneParseNode
 };
 
 
-MeshTree parseColladaToData(const pugi::xml_document& collada);
+Scene parseColladaToData(const pugi::xml_document& collada, SceneParseType type,
+                         const std::string& typeName);
 
 } /* namespace ovtools */ } /* namespace cinek */
 
