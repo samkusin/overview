@@ -70,11 +70,8 @@
 		37B661541B6980E0005930B8 /* Diagnostics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B661521B6980E0005930B8 /* Diagnostics.cpp */; };
 		37B661561B6C2F42005930B8 /* StarBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B661551B6C2F42005930B8 /* StarBody.cpp */; };
 		37B661581B6C32CF005930B8 /* StellarSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B661571B6C32CF005930B8 /* StellarSystem.cpp */; };
-		37C94EDE1B1D2DB000F35CD5 /* MessageHandlers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */; };
 		37CC94D41B61C11D0057D745 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37CC94D01B61C11D0057D745 /* AppInterface.cpp */; };
 		37E6049A1B0FCBCF009C916D /* EntityFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604981B0FCBCF009C916D /* EntityFactory.cpp */; };
-		37E604A31B0FCBE6009C916D /* MessagePublisher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6049D1B0FCBE6009C916D /* MessagePublisher.cpp */; };
-		37E604A41B0FCBE6009C916D /* MessageStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6049F1B0FCBE6009C916D /* MessageStream.cpp */; };
 		37E604B11B0FEE32009C916D /* ObjectTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604AF1B0FEE32009C916D /* ObjectTypes.cpp */; };
 		37E604B41B0FF406009C916D /* MeshLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E604B21B0FF406009C916D /* MeshLibrary.cpp */; };
 		37E817101B4C84E000482CE4 /* RenderShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E8170E1B4C84E000482CE4 /* RenderShaders.cpp */; };
@@ -322,8 +319,6 @@
 		37B661551B6C2F42005930B8 /* StarBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StarBody.cpp; path = ../Custom/Comp/StarBody.cpp; sourceTree = "<group>"; };
 		37B661571B6C32CF005930B8 /* StellarSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StellarSystem.cpp; path = ../Custom/Comp/StellarSystem.cpp; sourceTree = "<group>"; };
 		37BC1A681BA8E2640040F58A /* EntityDefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = EntityDefs.hpp; path = ../../Engine/EntityDefs.hpp; sourceTree = "<group>"; };
-		37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageHandlers.cpp; path = ../MessageHandlers.cpp; sourceTree = "<group>"; };
-		37C94EDD1B1D2DB000F35CD5 /* MessageHandlers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageHandlers.hpp; path = ../MessageHandlers.hpp; sourceTree = "<group>"; };
 		37CC94CF1B61C11D0057D745 /* AppContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AppContext.hpp; path = ../Client/AppContext.hpp; sourceTree = "<group>"; };
 		37CC94D01B61C11D0057D745 /* AppInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppInterface.cpp; path = ../Client/AppInterface.cpp; sourceTree = "<group>"; };
 		37CC94D11B61C11D0057D745 /* AppInterface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AppInterface.hpp; path = ../Client/AppInterface.hpp; sourceTree = "<group>"; };
@@ -331,12 +326,6 @@
 		37E46ADF1B60239B0099DE1F /* blendish_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = blendish_defines.h; path = ../Client/UI/blendish_defines.h; sourceTree = "<group>"; };
 		37E604981B0FCBCF009C916D /* EntityFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityFactory.cpp; sourceTree = "<group>"; };
 		37E604991B0FCBCF009C916D /* EntityFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityFactory.hpp; sourceTree = "<group>"; };
-		37E6049C1B0FCBE6009C916D /* MessageDispatcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageDispatcher.hpp; path = ../../Engine/MessageDispatcher.hpp; sourceTree = "<group>"; };
-		37E6049D1B0FCBE6009C916D /* MessagePublisher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePublisher.cpp; path = ../../Engine/MessagePublisher.cpp; sourceTree = "<group>"; };
-		37E6049E1B0FCBE6009C916D /* MessagePublisher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessagePublisher.hpp; path = ../../Engine/MessagePublisher.hpp; sourceTree = "<group>"; };
-		37E6049F1B0FCBE6009C916D /* MessageStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStream.cpp; path = ../../Engine/MessageStream.cpp; sourceTree = "<group>"; };
-		37E604A01B0FCBE6009C916D /* MessageStream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageStream.hpp; path = ../../Engine/MessageStream.hpp; sourceTree = "<group>"; };
-		37E604A11B0FCBE6009C916D /* MessageTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MessageTypes.hpp; path = ../../Engine/MessageTypes.hpp; sourceTree = "<group>"; };
 		37E604AF1B0FEE32009C916D /* ObjectTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectTypes.cpp; path = ../../Engine/ObjectTypes.cpp; sourceTree = "<group>"; };
 		37E604B01B0FEE32009C916D /* ObjectTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ObjectTypes.hpp; path = ../../Engine/ObjectTypes.hpp; sourceTree = "<group>"; };
 		37E604B21B0FF406009C916D /* MeshLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshLibrary.cpp; path = ../../CKGfx/MeshLibrary.cpp; sourceTree = "<group>"; };
@@ -689,8 +678,6 @@
 				378DC21B1ACF7148004C8004 /* Client */,
 				378DC2191ACF7112004C8004 /* GameTypes.hpp */,
 				378DC2181ACF7112004C8004 /* GameTypes.cpp */,
-				37C94EDD1B1D2DB000F35CD5 /* MessageHandlers.hpp */,
-				37C94EDC1B1D2DB000F35CD5 /* MessageHandlers.cpp */,
 			);
 			name = Prototype;
 			path = ..;
@@ -785,12 +772,6 @@
 				37121D381B4F01C700E35C54 /* EngineMathGfx.cpp */,
 				3723830E1B4B118E005B1BA4 /* EngineGeometry.hpp */,
 				3723830F1B4B150B005B1BA4 /* EngineGeometry.cpp */,
-				37E6049C1B0FCBE6009C916D /* MessageDispatcher.hpp */,
-				37E6049D1B0FCBE6009C916D /* MessagePublisher.cpp */,
-				37E6049E1B0FCBE6009C916D /* MessagePublisher.hpp */,
-				37E6049F1B0FCBE6009C916D /* MessageStream.cpp */,
-				37E604A01B0FCBE6009C916D /* MessageStream.hpp */,
-				37E604A11B0FCBE6009C916D /* MessageTypes.hpp */,
 				3749D1521B5993F8009F280E /* ViewStack.cpp */,
 				3749D1531B5993F8009F280E /* ViewStack.hpp */,
 				3749D1551B5ABD5C009F280E /* ViewController.hpp */,
@@ -1021,7 +1002,6 @@
 				379480D31BACAA4900D07B9E /* debug.cpp in Sources */,
 				375B87731B8D21640077D0CA /* EngineMath.cpp in Sources */,
 				37F43E641B34D7870065D8E9 /* EntityTypes.cpp in Sources */,
-				37C94EDE1B1D2DB000F35CD5 /* MessageHandlers.cpp in Sources */,
 				3749D0F61B572B40009F280E /* nanovg_bgfx.cpp in Sources */,
 				373ACBF31AD1E6960082DB63 /* TextureAtlas.cpp in Sources */,
 				379FE5441B5F0C11004D1F42 /* UIEngine.cpp in Sources */,
@@ -1041,7 +1021,6 @@
 				378A996C1AEAE2BD008BD771 /* ShaderLibrary.cpp in Sources */,
 				3754EC821B62E95300118965 /* EntityService.cpp in Sources */,
 				379480D11BACAA4900D07B9E /* allocator.cpp in Sources */,
-				37E604A41B0FCBE6009C916D /* MessageStream.cpp in Sources */,
 				379480E51BACAA4900D07B9E /* jsoncollectionloader.cpp in Sources */,
 				379480DC1BACAA4900D07B9E /* datarowset.cpp in Sources */,
 				3764973B1B5DC85E00D617AA /* UIRenderer.cpp in Sources */,
@@ -1053,7 +1032,6 @@
 				379480D61BACAA4900D07B9E /* memorystack.cpp in Sources */,
 				37E8A8F91B83A96B00537541 /* ActionService.cpp in Sources */,
 				373ACBF71AD31B4E0082DB63 /* stb.cpp in Sources */,
-				37E604A31B0FCBE6009C916D /* MessagePublisher.cpp in Sources */,
 				37E817101B4C84E000482CE4 /* RenderShaders.cpp in Sources */,
 				378DC21A1ACF7112004C8004 /* GameTypes.cpp in Sources */,
 				378DC2091ACF6AB2004C8004 /* AABB.cpp in Sources */,
@@ -1202,8 +1180,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
-					"$(PACKAGES_ROOT)/lib/libkj.a",
-					"$(PACKAGES_ROOT)/lib/libcapnp.a",
 					"$(PACKAGES_ROOT)/lib/libfreetype.a",
 					"$(PACKAGES_ROOT)/lib/libbgfxDebug.a",
 				);
@@ -1241,8 +1217,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"$(PACKAGES_ROOT)/lib/libSDL2.a",
-					"$(PACKAGES_ROOT)/lib/libkj.a",
-					"$(PACKAGES_ROOT)/lib/libcapnp.a",
 					"$(PACKAGES_ROOT)/lib/libfreetype.a",
 					"$(PACKAGES_ROOT)/lib/libbgfxRelease.a",
 				);

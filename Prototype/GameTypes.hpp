@@ -10,7 +10,6 @@
 #define Overview_Game_Types_hpp
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/MessageTypes.hpp"
 
 namespace cinek {
     namespace ovproto {

@@ -10,7 +10,6 @@
 #define Overview_Entity_Factory_hpp
 
 #include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/MessageTypes.hpp"
 
 #include <cinek/allocator.hpp>
 #include <ckjson/jsontypes.hpp>

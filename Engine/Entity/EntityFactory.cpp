@@ -11,7 +11,6 @@
 
 #include "Transform.hpp"
 
-#include "Engine/MessagePublisher.hpp"
 #include "Engine/Debug.hpp"
 
 #include <ckjson/json.hpp>

@@ -13,10 +13,6 @@
 #include "CKGfx/ShaderLibrary.hpp"
 #include "CKGfx/VertexTypes.hpp"
 
-#include "Engine/MessageDispatcher.hpp"
-#include "Engine/MessagePublisher.hpp"
-#include "Engine/MessageStream.hpp"
-
 #include "Engine/ViewStack.hpp"
 
 #include <cinek/file.hpp>
