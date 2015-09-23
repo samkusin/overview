@@ -8,28 +8,30 @@
 
 /* Begin PBXBuildFile section */
 		3790EA461BADEA7C00683EC6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3790EA2A1BADE82000683EC6 /* main.cpp */; };
-		3790EA551BADEAE200683EC6 /* libtoolscommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3790EA541BADEAE200683EC6 /* libtoolscommon.dylib */; };
-		379428BE1BAE386E00C5FAF6 /* parse_collada.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379428BC1BAE386E00C5FAF6 /* parse_collada.cpp */; };
+		379428C71BB1EED400C5FAF6 /* libassimp.3.1.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		379428C81BB1EEF000C5FAF6 /* libassimp.3.1.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */; };
+		379428CA1BB1F38E00C5FAF6 /* libassimp.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 379428C91BB1F38E00C5FAF6 /* libassimp.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		3790EA2E1BADE8E300683EC6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
+				379428C71BB1EED400C5FAF6 /* libassimp.3.1.1.dylib in CopyFiles */,
+				379428CA1BB1F38E00C5FAF6 /* libassimp.3.dylib in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3790EA2A1BADE82000683EC6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/meshimport/main.cpp; sourceTree = "<group>"; };
 		3790EA301BADE8E300683EC6 /* meshimport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = meshimport; sourceTree = BUILT_PRODUCTS_DIR; };
-		3790EA541BADEAE200683EC6 /* libtoolscommon.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtoolscommon.dylib; path = "../../../../../Library/Developer/Xcode/DerivedData/tools-flsqiczrozmormeguwlcjbxddfkh/Build/Products/Debug/libtoolscommon.dylib"; sourceTree = "<group>"; };
-		379428BC1BAE386E00C5FAF6 /* parse_collada.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parse_collada.cpp; path = ../src/meshimport/parse_collada.cpp; sourceTree = "<group>"; };
-		379428BD1BAE386E00C5FAF6 /* parse_common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = parse_common.hpp; path = ../src/meshimport/parse_common.hpp; sourceTree = "<group>"; };
+		379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.1.1.dylib; path = ../../Ext/lib/libassimp.3.1.1.dylib; sourceTree = "<group>"; };
+		379428C91BB1F38E00C5FAF6 /* libassimp.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.dylib; path = ../../Ext/lib/libassimp.3.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3790EA551BADEAE200683EC6 /* libtoolscommon.dylib in Frameworks */,
+				379428C81BB1EEF000C5FAF6 /* libassimp.3.1.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,7 +49,8 @@
 		3790EA561BADEAE800683EC6 /* libraries */ = {
 			isa = PBXGroup;
 			children = (
-				3790EA541BADEAE200683EC6 /* libtoolscommon.dylib */,
+				379428C91BB1F38E00C5FAF6 /* libassimp.3.dylib */,
+				379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */,
 			);
 			name = libraries;
 			sourceTree = "<group>";
@@ -55,8 +58,6 @@
 		37F388E71BADE61B00748161 = {
 			isa = PBXGroup;
 			children = (
-				379428BC1BAE386E00C5FAF6 /* parse_collada.cpp */,
-				379428BD1BAE386E00C5FAF6 /* parse_common.hpp */,
 				3790EA2A1BADE82000683EC6 /* main.cpp */,
 				3790EA561BADEAE800683EC6 /* libraries */,
 				37F388F11BADE61B00748161 /* Products */,
@@ -127,7 +128,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				379428BE1BAE386E00C5FAF6 /* parse_collada.cpp in Sources */,
 				3790EA461BADEA7C00683EC6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,8 +145,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/tools-flsqiczrozmormeguwlcjbxddfkh/Build/Products/Debug",
+					/Users/samir/Development/cinekine/Overview/Ext/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "../src ../src/thirdparty ../../Ext/include";
 			};
 			name = Debug;
 		};
@@ -156,8 +158,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/tools-flsqiczrozmormeguwlcjbxddfkh/Build/Products/Debug",
+					/Users/samir/Development/cinekine/Overview/Ext/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "../src ../src/thirdparty ../../Ext/include";
 			};
 			name = Release;
 		};
@@ -196,6 +200,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -233,6 +238,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
