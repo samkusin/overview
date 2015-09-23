@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "CKGfx/TextureAtlas.hpp"
+#include "TextureAtlas.hpp"
 #include "External/stb/stb_image.h"
 
 #include <cinek/string.hpp>

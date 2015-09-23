@@ -9,7 +9,7 @@
 #ifndef CK_Graphics_BitmapAtlasLoader_hpp
 #define CK_Graphics_BitmapAtlasLoader_hpp
 
-#include "CKGfx/BitmapAtlas.hpp"
+#include "BitmapAtlas.hpp"
 
 #include <ckjson/jsoncollectionloader.hpp>
 #include <functional>

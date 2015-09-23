@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Cinekine. All rights reserved.
 //
 
-#include "CKGfx/BitmapLibrary.hpp"
-#include "CKGfx/BitmapAtlasLoader.hpp"
-#include "CKGfx/TextureAtlas.hpp"
+#include "BitmapLibrary.hpp"
+#include "BitmapAtlasLoader.hpp"
+#include "TextureAtlas.hpp"
 
 #include <cinek/filestreambuf.hpp>
 #include <algorithm>

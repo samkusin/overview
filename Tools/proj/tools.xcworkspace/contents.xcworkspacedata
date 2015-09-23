@@ -4,4 +4,7 @@
    <FileRef
       location = "group:meshimport.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:../../Samples/GfxPrototype/Apple/GfxPrototype.xcodeproj">
+   </FileRef>
 </Workspace>

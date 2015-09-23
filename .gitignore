@@ -10,11 +10,12 @@
 # to include any modules in the repository.
 #
 .svn/
-Prototype-Data/
-ext/
+Art/
+Ext/
 Data/shaders/
 Data/textures/
-Art/
+Samples/Data/shaders/
+Samples/Data/textures/
 
 *.sublime-project
 *.sublime-workspace

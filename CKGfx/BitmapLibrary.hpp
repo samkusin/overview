@@ -9,7 +9,7 @@
 #ifndef CK_Graphics_BitmapLibrary_hpp
 #define CK_Graphics_BitmapLibrary_hpp
 
-#include "CKGfx/BitmapAtlas.hpp"
+#include "BitmapAtlas.hpp"
 
 #include <cinek/allocator.hpp>
 #include <cinek/string.hpp>
