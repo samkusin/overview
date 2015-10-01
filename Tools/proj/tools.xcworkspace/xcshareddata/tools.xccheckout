@@ -20,7 +20,7 @@
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>C4F97136603E28F4AEB8CE322CA641CD81C17279</key>
-		<string>../../../CKLibs/</string>
+		<string>../../../CKLibs</string>
 		<key>D0A63CBB2608E59B323EDE59F971B56D43E4A618</key>
 		<string>../../..</string>
 	</dict>

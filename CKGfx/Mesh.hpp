@@ -12,22 +12,12 @@
 #include "GfxTypes.hpp"
 #include "VertexTypes.hpp"
 
-#include <cinek/vector.hpp>
+#include <cinek/allocator.hpp>
+
 #include <bgfx/bgfx.h>
 
 namespace cinek {
     namespace gfx {
-
-struct MeshElement
-{
-    bgfx::VertexBufferHandle vertBufH;
-    bgfx::IndexBufferHandle idxBufH;
-    Matrix4 transform;
-    
-    int32_t parentIdx;
-    int32_t firstChildIdx;
-    int32_t nextSiblingIdx;
-};
 
 class Mesh
 {
@@ -36,11 +26,8 @@ class Mesh
 public:
     Mesh();
     Mesh(VertexTypes::Format format,
-         const Matrix4& transform,
          const bgfx::Memory* vertexData,
-         const bgfx::Memory* indexData,
-         uint32_t elementCount = 1,
-         const Allocator& allocator=Allocator());
+         const bgfx::Memory* indexData);
     ~Mesh();
     
     Mesh(Mesh&& other);
@@ -48,25 +35,11 @@ public:
 
     VertexTypes::Format format() const;
 
-    int32_t addElement(int32_t parentIndex,
-                       const Matrix4& transform,
-                       const bgfx::Memory* vertexData,
-                       const bgfx::Memory* indexData);
-
-    const MeshElement* element(int32_t index) const;
-
 private:
     VertexTypes::Format _format;
     
-    struct Node
-    {
-        MeshElement element;
-    };
-    vector<Node> _nodes;
-    
-    int32_t createNode(int parentIndex, const Matrix4& transform,
-         const bgfx::Memory* vertexData,
-         const bgfx::Memory* indexData);
+    bgfx::VertexBufferHandle _vertBufH;
+    bgfx::IndexBufferHandle _idxBufH;
 };
 
 /// Generates an IcoSphere mesh using the given format and number of passes.)
@@ -75,16 +48,8 @@ private:
 /// Future: support multiple types of texture mapping
 ///
 unique_ptr<Mesh> createIcoSphere(float radius, int subdividePasses,
-                                 VertexTypes::Format vertexType,
-                                 const Vector4& color = {{ 1.f,1.f,1.f,1.f }},
-                                 const Allocator& allocator=Allocator());
+                                 VertexTypes::Format vertexType);
 
-/// Generates a cube
-/// No UV coordinate generation supported at this time.
-///
-unique_ptr<Mesh> createCube(float radius, VertexTypes::Format vertexType,
-                            const Vector4& color = {{ 1.f,1.f,1.f,1.f }},
-                            const Allocator& allocator=Allocator());
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -92,15 +57,6 @@ inline VertexTypes::Format Mesh::format() const
 {
     return _format;
 }
-
-inline const MeshElement* Mesh::element(int32_t index) const
-{
-    if (index < 0 || index >= _nodes.size())
-        return nullptr;
-    
-    return &_nodes[index].element;
-}
-
     
     }   // namespace gfx
 }   // namespace cinek

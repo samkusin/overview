@@ -11,31 +11,38 @@
 
 #include "GfxTypes.hpp"
 
-#include <cinek/cstringstack.hpp>
-#include <cinek/vector.hpp>
+#include <vector>
 
-namespace cinek {
-    namespace gfx {
+namespace ckgfx {
 
     //  Contains bitmaps mapped by name to index
     //  Indices remain valid for the duration of the atlas object.  This is because
     //  the renderer will frequently reference a bitmap by index.  Lookups must be quick O(1).
     //  Name lookups can be slow since they should only occur during bitmap registration, which
     //  should not be an often occurrance.
-    class BitmapAtlas
+    class TextureAtlas
     {
-        CK_CLASS_NON_COPYABLE(BitmapAtlas);
+        CK_CLASS_NON_COPYABLE(TextureAtlas);
 
     public:
-        BitmapAtlas
+        struct Sprite
+        {
+            uint16_t x, y, w, h;
+            uint16_t offX, offY, offW, offH;
+            uint16_t srcW, srcH;
+            const char* name;
+        };
+
+    
+        TextureAtlas
         (
             const char* name,
             TextureHandle texHandle,
             size_t bitmapCount,
             const Allocator& allocator
         );
-        BitmapAtlas(BitmapAtlas&& other);
-        BitmapAtlas& operator=(BitmapAtlas&& other);
+        TextureAtlas(BitmapAtlas&& other);
+        TextureAtlas& operator=(TextureAtlas&& other);
         
         const char* name() const {
             return _name;

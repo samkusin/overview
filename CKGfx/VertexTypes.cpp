@@ -8,11 +8,8 @@
 
 #include "VertexTypes.hpp"
 
-#include <cinek/debug.hpp>
-
 namespace cinek {
     namespace gfx {
-    
     
 namespace VertexTypes
 {
@@ -87,7 +84,7 @@ namespace VertexTypes
         return &s_decls[formatId];
     }
 }
-    
+
     }   // namespace gfx
 }   // namespace cinek
 

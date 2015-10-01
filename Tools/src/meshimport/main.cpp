@@ -176,7 +176,9 @@ rapidjson::Value createMaterialJSON
     //  Shading constants and textures
     //  DIFFUSE -
     if (material.Get(AI_MATKEY_COLOR_DIFFUSE, propColor) == AI_SUCCESS) {
-        auto& diffuseObj = output.AddMember("diffuse", createJSONColor(propColor, allocator), allocator);
+        output.AddMember("diffuse", createJSONColor(propColor, allocator), allocator);
+    
+        auto& component = output["diffuse"];
     
         rapidjson::Value textures(rapidjson::kArrayType);
         unsigned int numTextures = material.GetTextureCount(aiTextureType_DIFFUSE);
@@ -196,7 +198,32 @@ rapidjson::Value createMaterialJSON
             }
         }
         
-        diffuseObj.AddMember("textures", textures, allocator);
+        component.AddMember("textures", textures, allocator);
+    }
+    if (material.Get(AI_MATKEY_COLOR_SPECULAR, propColor) == AI_SUCCESS) {
+        output.AddMember("specular", createJSONColor(propColor, allocator), allocator);
+    
+        auto& component = output["specular"];
+    
+        rapidjson::Value textures(rapidjson::kArrayType);
+        unsigned int numTextures = material.GetTextureCount(aiTextureType_SPECULAR);
+        textures.Reserve(numTextures, allocator);
+        for (unsigned int texIdx = 0; texIdx < numTextures; ++texIdx) {
+            aiString texPath;
+            auto result = material.GetTexture(aiTextureType_SPECULAR, texIdx, &texPath);
+            if (result == AI_SUCCESS) {
+                const char* texPathCStr = texPath.C_Str();
+                
+                //  skip leading slashes
+                while (*texPathCStr == '/')
+                    ++texPathCStr;
+                rapidjson::Value str(rapidjson::kStringType);
+                str.SetString(texPathCStr, allocator);
+                textures.PushBack(std::move(str), allocator);
+            }
+        }
+        
+        component.AddMember("textures", textures, allocator);
     }
     
     return output;
@@ -215,7 +242,7 @@ rapidjson::Value createMeshNodeJSON
  
     output.AddMember("name", std::move(str), allocator);
     output.AddMember("material", mesh.mMaterialIndex, allocator);
-    
+
     rapidjson::Value vertices(rapidjson::kArrayType);
     vertices.Reserve(mesh.mNumVertices, allocator);
     
@@ -383,13 +410,13 @@ enum OptionArg
 {
     kOptionUnknown,
     kOptionHelp,
-    kOptionScene
+    kOptionModel
 };
 
-enum SceneParseType
+enum SceneOutputOptions
 {
-    kSceneParseDefault,
-    kSceneParseScene
+    kSceneOutputDefault,
+    kSceneOutputModel
 };
 
 static const option::Descriptor sArgHelp[] = {
@@ -397,8 +424,8 @@ static const option::Descriptor sArgHelp[] = {
       "usage: meshimport <source filename> [<dest>]\n" },
     { kOptionHelp,      0, ""       , "help"    , option::Arg::None,
       "  --help  \t\t command line usage." },
-    { kOptionScene,      0, ""       , "node"    , option::Arg::Optional,
-      "  --scene \t exports a complete scene (vs a single model)" },
+    { kOptionModel,      0, ""       , "node"    , option::Arg::Optional,
+      "  --model \t exports a model (vs a complete scene)" },
     { 0,                0, NULL     , NULL      , 0, NULL }
 };
 
@@ -462,15 +489,16 @@ int main(int argc, const char * argv[])
     //
     try
     {
-        SceneParseType parseType = kSceneParseDefault;
+        SceneOutputOptions outputType = kSceneOutputDefault;
         
         unsigned int importFlags = aiProcessPreset_TargetRealtime_Quality;
         
-        if (argOpts[kOptionScene]) {
-            parseType = kSceneParseScene;
+        if (argOpts[kOptionModel]) {
+            importFlags |= aiProcess_OptimizeGraph;
+            outputType = kSceneOutputModel;
         }
         else {
-            importFlags |= aiProcess_OptimizeGraph;
+
         }
         
         Assimp::Importer importer;

@@ -9,14 +9,12 @@
 #include "ShaderLibrary.hpp"
 
 #include <cinek/file.hpp>
-#include <cinek/debug.hpp>
+#include <cinek/debug.h>
 
 namespace cinek {
     namespace gfx {
 
-ShaderLibrary::ShaderLibrary(const Allocator& allocator) :
-    _shaders(allocator),
-    _programs(allocator)
+ShaderLibrary::ShaderLibrary()
 {
 }
 
@@ -109,7 +107,7 @@ int ShaderLibrary::loadShader(const char* path)
     }
     if (!bgfx::isValid(handle))
     {
-        auto file = file::open(path);
+        auto file = file::open(path, file::kReadAccess);
         if (file)
         {
             uint32_t sz = (uint32_t)file::size(file);

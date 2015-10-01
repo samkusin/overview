@@ -8,11 +8,12 @@
 
 #include "Mesh.hpp"
 
-#include <cinek/debug.hpp>
+#include <cinek/debug.h>
 #include <cinek/map.hpp>
-#include <cinek/vector.hpp>
+
 #include <bx/fpumath.h>
 
+#include <vector>
 #include <array>
 
 namespace cinek {
@@ -25,21 +26,18 @@ struct IcoSphereUtility
     using key_type = KeyType;
     
     unordered_map<KeyType, IndexType> midpointIndices;
-    vector<std::array<IndexType, 7>> vertexAdjFaces;// [0]=faceCnt,[1-6]=faceIdx
+    std::vector<std::array<IndexType, 7>> vertexAdjFaces;// [0]=faceCnt,[1-6]=faceIdx
     
     struct Face
     {
         IndexType idx[3];
     };
     
-    vector<Vector3> vertices;
-    vector<Face> faces;
-    vector<Vector3> faceNormals;
+    std::vector<Vector3> vertices;
+    std::vector<Face> faces;
+    std::vector<Vector3> faceNormals;
     
-    IcoSphereUtility(int passes, const Allocator& allocator) :
-        midpointIndices(allocator),
-        vertices(allocator),
-        faces(allocator)
+    IcoSphereUtility(int passes)
     {
         const uint32_t kNumVerts = 12 + 30 * passes*passes;
         vertices.reserve(kNumVerts);
@@ -174,7 +172,7 @@ struct IcoSphereUtility
     }
     
     
-    void fixupEdgeUVs(vector<Vector2>& vertexUVs, vector<Vector3>& normals,
+    void fixupEdgeUVs(std::vector<Vector2>& vertexUVs, std::vector<Vector3>& normals,
                       Face& face,
                       int index0, int index1)
     {
@@ -222,9 +220,7 @@ unique_ptr<Mesh> createIcoSphere
 (
     float radius,
     int subdividePasses,
-    VertexTypes::Format vertexType,
-    const Vector4& color,
-    const Allocator& allocator
+    VertexTypes::Format vertexType
 )
 {
     const bgfx::VertexDecl& vertexDecl = VertexTypes::declaration(vertexType);
@@ -233,7 +229,7 @@ unique_ptr<Mesh> createIcoSphere
         return nullptr;
     
     //  Re: blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
-    IcoSphereUtility<uint32_t, uint16_t, 16> utility(subdividePasses, allocator);
+    IcoSphereUtility<uint32_t, uint16_t, 16> utility(subdividePasses);
     
     const float kSqrt5 = 2.23606797749979f;
     float t = (1.f + kSqrt5) * 0.5f;
@@ -288,8 +284,8 @@ unique_ptr<Mesh> createIcoSphere
     
     //  calculate normals and UVs, reserving extra space for duplicate face
     //  generation (re: UV wrapping)
-    vector<Vector2> vertexUVs;
-    vector<Vector3> normals;
+    std::vector<Vector2> vertexUVs;
+    std::vector<Vector3> normals;
     
     bool hasUVs = vertexDecl.has(bgfx::Attrib::TexCoord0);
     
@@ -418,14 +414,6 @@ unique_ptr<Mesh> createIcoSphere
                 vertexMemory->data,
                 iv);
         }
-        if (vertexDecl.has(bgfx::Attrib::Color0))
-        {
-            bgfx::vertexPack(color.comp, true,
-                bgfx::Attrib::Color0,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
         if (vertexDecl.has(bgfx::Attrib::TexCoord0))
         {
             bgfx::vertexPack(vertexUVs[iv], false,
@@ -446,199 +434,10 @@ unique_ptr<Mesh> createIcoSphere
         indexMemoryPtr += 3;
     }
     
-    Allocator meshalloc(allocator);
-    
-    Matrix4 transform;
-    bx::mtxScale(transform.comp, radius, radius, radius);
-    auto mesh = allocate_unique<Mesh>(meshalloc,
-        vertexType,
-        transform,
-        vertexMemory, indexMemory,
-        1, meshalloc);
-    
-    return mesh;
-}
-
-Vector3 cubicMapReflectVector(const Vector3& normal, const Vector3& v)
-{
-    Vector3 r;
-    float dotNV2 = 2 * bx::vec3Dot(normal, v);
-    bx::vec3Mul(r, r, dotNV2);
-    bx::vec3Sub(r, r, v);
-    return r;
-}
-
-unique_ptr<Mesh> createCube
-(
-    float radius,
-    VertexTypes::Format vertexType,
-    const Vector4& color,
-    const Allocator& allocator
-)
-{
-    const bgfx::VertexDecl& vertexDecl = VertexTypes::declaration(vertexType);
-    
-    if (vertexDecl.getStride()==0)
-        return nullptr;
- 
-    struct Face
-    {
-        int idx[3];
-    };
- 
-    std::array<Vector3, 24> vertices;   // cubic uvs requires dup vertices
-    std::array<Vector3, 24> normals;
-    int numVertices = 0;
-    
-    //  create base set of vertices, faces and normals.
-    vertices[0] = {{  0.5f,  0.5f, -0.5f }};    // +X
-    vertices[1] = {{  0.5f,  0.5f,  0.5f }};
-    vertices[2] = {{  0.5f, -0.5f,  0.5f }};
-    vertices[3] = {{  0.5f, -0.5f, -0.5f }};
-    vertices[4] = {{  0.5f,  0.5f, -0.5f }};    // -X
-    vertices[5] = {{  0.5f,  0.5f,  0.5f }};
-    vertices[6] = {{  0.5f, -0.5f,  0.5f }};
-    vertices[7] = {{  0.5f, -0.5f, -0.5f }};
-    numVertices = 8;
-    
-    if (vertexDecl.has(bgfx::Attrib::Normal))
-    {
-        // since vertices are equally distant from the origin...
-        for (int i = 0; i < 8; ++i)
-        {
-            bx::vec3Norm(normals[i], vertices[i]);
-        }
-    }
-    
-    //  faces are ordered, +X,-X,+Y,-Y,+Z,-Z
-    std::array<Face, 12> faces;         // 6 sides, 2 tris per side
- 
-    faces[0].idx[0] = 0;                // +X face
-    faces[0].idx[1] = 2;
-    faces[0].idx[2] = 3;
-    faces[1].idx[0] = 0;
-    faces[1].idx[1] = 1;
-    faces[1].idx[2] = 2;
-    
-    faces[2].idx[0] = 4;                // -X face
-    faces[2].idx[1] = 5;
-    faces[2].idx[2] = 6;
-    faces[3].idx[0] = 4;
-    faces[3].idx[1] = 6;
-    faces[3].idx[2] = 7;
-    
-    faces[4].idx[0] = 0;                // +Y face
-    faces[4].idx[1] = 4;
-    faces[4].idx[2] = 7;
-    faces[5].idx[0] = 0;
-    faces[5].idx[1] = 7;
-    faces[5].idx[2] = 1;
-    
-    faces[6].idx[0] = 5;                // -Y face
-    faces[6].idx[1] = 3;
-    faces[6].idx[2] = 2;
-    faces[7].idx[0] = 5;
-    faces[7].idx[1] = 2;
-    faces[7].idx[2] = 6;
-    
-    faces[8].idx[0] = 1;                // +Z face
-    faces[8].idx[1] = 7;
-    faces[8].idx[2] = 6;
-    faces[9].idx[0] = 1;
-    faces[9].idx[1] = 6;
-    faces[9].idx[2] = 2;
-    
-    faces[10].idx[0] = 4;                // -Z face
-    faces[10].idx[1] = 3;
-    faces[10].idx[2] = 5;
-    faces[11].idx[0] = 4;
-    faces[11].idx[1] = 0;
-    faces[11].idx[2] = 3;
-    
-    //  add uvs and duplicate vertices as needed
-    /*
-    std::array<Vector2, 24> texUVs;
-    
-    if (vertexDecl.has(bgfx::Attrib::TexCoord0))
-    {
-        Vector3 faceNorm;
-        faceNorm.from(1,0,0);
-        int vidx = faces[0].idx[0];
-        Vector3 r = cubicMapReflectVector(faceNorm, vertices[vidx]);
-        //  x-major
-        if (r.x() >= r.y() && r.x() >= r.z())
-        {
-            float sc
-        }
-        
-    }
-    */
-    
-    uint32_t vertBufSize = vertexDecl.getSize(numVertices);
-    const bgfx::Memory* vertexMemory = bgfx::alloc(vertBufSize);
-    uint32_t idxBufSize =  (uint32_t)(12*sizeof(uint16_t)*3);
-    const bgfx::Memory* indexMemory = bgfx::alloc(idxBufSize);
-    
-    for (int iv = 0; iv < numVertices; ++iv)
-    {
-        if (vertexDecl.has(bgfx::Attrib::Position))
-        {
-            bgfx::vertexPack(vertices[iv].comp, false,
-                bgfx::Attrib::Position,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
-        if (vertexDecl.has(bgfx::Attrib::Normal))
-        {
-            bgfx::vertexPack(normals[iv], false,
-                bgfx::Attrib::Normal,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
-        if (vertexDecl.has(bgfx::Attrib::Color0))
-        {
-            bgfx::vertexPack(color.comp, true,
-                bgfx::Attrib::Color0,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
-        /*
-        if (vertexDecl.has(bgfx::Attrib::TexCoord0))
-        {
-            bgfx::vertexPack(vertexUVs[iv], false,
-                bgfx::Attrib::TexCoord0,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
-        */
-    }
-    
-    CK_ASSERT(idxBufSize == indexMemory->size);
-    auto indexMemoryPtr = reinterpret_cast<uint16_t*>(indexMemory->data);
-    for (auto& face : faces)
-    {
-        indexMemoryPtr[0] = face.idx[0];
-        indexMemoryPtr[1] = face.idx[1];
-        indexMemoryPtr[2] = face.idx[2];
-        indexMemoryPtr += 3;
-    }
-    
-    Matrix4 transform;
-    bx::mtxScale(transform.comp, radius, radius, radius);
-    
-    Allocator meshalloc(allocator);
-    
-    auto mesh = allocate_unique<Mesh>(meshalloc,
-        vertexType,
-        transform,
-        vertexMemory, indexMemory,
-        1, meshalloc);
-
-    return mesh;
+    Allocator meshalloc;
+    return allocate_unique<Mesh>(meshalloc, vertexType,
+                        vertexMemory,
+                        indexMemory);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -651,107 +450,60 @@ Mesh::Mesh() :
 Mesh::Mesh
 (
     VertexTypes::Format format,
-    const Matrix4& transform,
-    const bgfx::Memory* vertexData,
-    const bgfx::Memory* indexData,
-    uint32_t elementCount,
-    const Allocator& allocator
-) :
-    _format(format),
-    _nodes(allocator)
-{
-    _nodes.reserve(elementCount);
-    createNode(-1, transform, vertexData, indexData);
-}
-
-Mesh::~Mesh()
-{
-    for (auto& node : _nodes)
-    {
-        bgfx::destroyIndexBuffer(node.element.idxBufH);
-        bgfx::destroyVertexBuffer(node.element.vertBufH);
-    }
-}
-
-Mesh::Mesh(Mesh&& other) :
-    _format(other._format),
-    _nodes(std::move(other._nodes))
-{
-    other._format = VertexTypes::kInvalid;
-}
-
-Mesh& Mesh::operator=(Mesh&& other)
-{
-    _format = other._format;
-    _nodes = std::move(other._nodes);
-    
-    other._format = VertexTypes::kInvalid;
-    
-    return *this;
-}
-
-int32_t Mesh::addElement
-(
-    int32_t parentIndex,
-    const Matrix4& transform,
     const bgfx::Memory* vertexData,
     const bgfx::Memory* indexData
-)
-{
-    if (parentIndex < 0 || parentIndex >= _nodes.size())
-        return -1;
-
-    int32_t thisIndex = createNode(parentIndex, transform, vertexData, indexData);
-    if (thisIndex < 0)
-        return -1;
-    
-    //  inject our node's index into our parent or sibling to fixup its location
-    //  within the element tree
-    
-    auto& parent = _nodes[parentIndex];
-    int32_t siblingIndex = parent.element.firstChildIdx;
-    if (siblingIndex < 0)
-    {
-        parent.element.firstChildIdx = thisIndex;
-    }
-    else
-    {
-        while (_nodes[siblingIndex].element.nextSiblingIdx >= 0)
-            siblingIndex = _nodes[siblingIndex].element.nextSiblingIdx;
-        _nodes[siblingIndex].element.nextSiblingIdx = thisIndex;
-    }
-    
-    return thisIndex;
-}
-
-int32_t Mesh::createNode(int32_t parentIndex, const Matrix4& transform,
-     const bgfx::Memory* vertexData,
-     const bgfx::Memory* indexData)
+) :
+    _format(format),
+    _vertBufH(BGFX_INVALID_HANDLE),
+    _idxBufH(BGFX_INVALID_HANDLE)
 {
     bgfx::VertexBufferHandle vbh = bgfx::createVertexBuffer(
         vertexData,
         VertexTypes::declaration(_format)
     );
     if (!bgfx::isValid(vbh))
-        return -1;
+        return;
     bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(indexData);
     if (!bgfx::isValid(ibh))
     {
         bgfx::destroyVertexBuffer(vbh);
-        return -1;
+        return;
     }
-    
-    _nodes.emplace_back();
-    auto& node = _nodes.back();
-    node.element.parentIdx = parentIndex;
-    node.element.transform = transform;
-    node.element.vertBufH = vbh;
-    node.element.idxBufH = ibh;
-    node.element.firstChildIdx = -1;
-    node.element.nextSiblingIdx = -1;
-    
-    return (int32_t)_nodes.size() - 1;
+    _vertBufH = vbh;
+    _idxBufH = ibh;
 }
+
+Mesh::~Mesh()
+{
+    if (bgfx::isValid(_idxBufH)) {
+        bgfx::destroyIndexBuffer(_idxBufH);
+    }
+    if (bgfx::isValid(_vertBufH)) {
+        bgfx::destroyVertexBuffer(_vertBufH);
+    }
+}
+
+Mesh::Mesh(Mesh&& other) :
+    _format(other._format),
+    _vertBufH(other._vertBufH),
+    _idxBufH(other._idxBufH)
+{
+    other._format = VertexTypes::kInvalid;
+    other._vertBufH = BGFX_INVALID_HANDLE;
+    other._idxBufH = BGFX_INVALID_HANDLE;
+}
+
+Mesh& Mesh::operator=(Mesh&& other)
+{
+    _format = other._format;
+    _vertBufH = other._vertBufH;
+    _idxBufH = other._idxBufH;
     
+    other._format = VertexTypes::kInvalid;
+    other._vertBufH = BGFX_INVALID_HANDLE;
+    other._idxBufH = BGFX_INVALID_HANDLE;
+    
+    return *this;
+}    
     }   // namespace gfx
 }   // namespace cinek

@@ -10,9 +10,11 @@
 #define CK_Graphics_ShaderLibrary_hpp
 
 #include "GfxTypes.hpp"
-#include <cinek/map.hpp>
-#include <cinek/vector.hpp>
-#include <cinek/string.hpp>
+
+#include <unordered_map>
+#include <vector>
+#include <string>
+
 #include <bgfx/bgfx.h>
 
 namespace cinek {
@@ -23,7 +25,7 @@ namespace cinek {
         CK_CLASS_NON_COPYABLE(ShaderLibrary);
 
     public:
-        ShaderLibrary(const Allocator& allocator = Allocator());
+        ShaderLibrary();
         ShaderLibrary(ShaderLibrary&& other);
         ShaderLibrary& operator=(ShaderLibrary&& other);
         ~ShaderLibrary();
@@ -53,7 +55,7 @@ namespace cinek {
             bgfx::ShaderHandle shader = BGFX_INVALID_HANDLE;
             int refcnt = 0;
         };
-        vector<ShaderReference> _shaders;
+        std::vector<ShaderReference> _shaders;
         
         //  Programs though may require somewhat frequent lookup of Shaders for
         //  informational purposes.
@@ -63,7 +65,8 @@ namespace cinek {
             int32_t vsIndex = -1;
             int32_t fsIndex = -1;
         };
-        unordered_map<ShaderProgramId, ProgramReference> _programs;
+        
+        std::unordered_map<ShaderProgramId, ProgramReference> _programs;
         
         int loadShader(const char* path);
         void unloadShader(int32_t index);

@@ -843,7 +843,6 @@
 			children = (
 				37F64ACD1780F295009116E7 /* Settings.xcconfig */,
 				37F64A9A1780EA2C009116E7 /* Overview */,
-				37F64ACC1780F041009116E7 /* Libraries */,
 				37F64A931780EA2C009116E7 /* Frameworks */,
 				37F64A921780EA2C009116E7 /* Products */,
 			);
@@ -860,6 +859,7 @@
 		37F64A931780EA2C009116E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				37F369021ACDFF0A00314DB2 /* libiconv.dylib */,
 				3749D0F31B572A4A009F280E /* libz.dylib */,
 				3749D0F11B572A32009F280E /* libbz2.dylib */,
 				37F369001ACDFEFA00314DB2 /* IOKit.framework */,
@@ -897,14 +897,6 @@
 				37F64AA31780EA2D009116E7 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		37F64ACC1780F041009116E7 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				37F369021ACDFF0A00314DB2 /* libiconv.dylib */,
-			);
-			name = Libraries;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

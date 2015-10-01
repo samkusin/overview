@@ -7,11 +7,12 @@
 //
 
 #include "CKGfx/VertexTypes.hpp"
-#include "CKGfx/TextureAtlas.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
+#include "CKGfx/Context.hpp"
 
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
+#include <cinek/objectpool.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
@@ -121,8 +122,14 @@ static int run(SDL_Window* window)
         cinek::Allocator allocator;
         cinek::gfx::Rect viewRect = { 0, 0, viewWidth, viewHeight };
         cinek::gfx::VertexTypes::initialize();
-        cinek::gfx::ShaderLibrary shaderLibrary(allocator);
-        cinek::gfx::TextureAtlas textureAtlas(256, allocator);
+        cinek::gfx::ShaderLibrary shaderLibrary;
+        
+        cinek::gfx::Context::ResourceInitParams gfxInitParams;
+        gfxInitParams.numMeshes = 1024;
+        gfxInitParams.numMaterials = 1024;
+        gfxInitParams.numTextures = 256;
+        
+        cinek::gfx::Context gfxContext(gfxInitParams);
         
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
@@ -137,6 +144,9 @@ static int run(SDL_Window* window)
             if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
                 running = false;
             
+            
+            gfxContext.update();
+    
             bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
             bgfx::submit(0);
             
