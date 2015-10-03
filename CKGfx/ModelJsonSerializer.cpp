@@ -26,7 +26,10 @@ NodeElementCounts& enumerateNodeResourcesFromJSON
         ++counts.transformCount;
     }
     if (node.HasMember("meshes") && node["meshes"].IsArray()) {
-        counts.meshElementCount += node["meshes"].Size();
+        if (!node["meshes"].Empty()) {
+            counts.meshElementCount += node["meshes"].Size();
+            ++counts.nodeCount;
+        }
     }
     if (node.HasMember("children") && node["children"].IsArray()) {
         const JsonValue& children = node["children"];
@@ -48,7 +51,7 @@ struct ModelBuilderFromJSONFn
     ModelBuilderFromJSONFn
     (
         Context& context,
-        std::vector<MeshHandle>& meshes,
+        std::vector<std::pair<MeshHandle, int>>& meshes,
         std::vector<MaterialHandle>& materials
     ) :
         _context(&context),
@@ -66,7 +69,7 @@ struct ModelBuilderFromJSONFn
 
 private:
     Context* _context;
-    std::vector<MeshHandle>* _meshes;
+    std::vector<std::pair<MeshHandle, int>>* _meshes;
     std::vector<MaterialHandle>* _materials;
 
     NodeHandle build(Model& model, const JsonValue& node)
@@ -86,8 +89,11 @@ private:
                 for (auto it = elements.Begin(); it != elements.End(); ++it) {
                     CK_ASSERT(meshElement);
                     if (meshElement) {
-                        meshElement->mesh = _meshes->at(it->GetInt());
-                        meshElement->material = _materials->at(it->GetInt());
+                        auto& meshPair = _meshes->at(it->GetInt());
+                        meshElement->mesh = meshPair.first;
+                        if (meshPair.second >= 0) {
+                            meshElement->material = _materials->at(meshPair.second);
+                        }
                         meshElement = meshElement->next;
                     }
                 }
@@ -134,16 +140,56 @@ Model loadModelFromJSON(Context& context, const JsonValue& root)
     
     //  Build model's graph by visiting our json nodes.
     //
-    std::vector<MeshHandle> meshesByIndex;
+    std::vector<std::pair<MeshHandle, int>> meshesByIndex;
     std::vector<MaterialHandle> materialsByIndex;
     
     //  create meshes
-    //  create materials only if there's no existing material with its name
-    if (root.HasMember("meshes") && root.HasMember("materials")) {
-        const JsonValue& meshes = root["meshes"];
-        const JsonValue& materials = root["materials"];
+    if (root.HasMember("meshes")) {
+        //  create new materials or lookup existing ones and add them to our
+        //  local indexed array of materials
+        if (root.HasMember("materials")) {
+            const JsonValue& materialsJson = root["materials"];
+            
+            for (auto materialIt = materialsJson.Begin();
+                 materialIt != materialsJson.End();
+                 ++materialIt) {
+                
+                auto& materialJson = *materialIt;
+                const char* name = materialJson["name"].GetString();
+                auto material = context.findMaterial(name);
+                if (!material) {
+                    material =
+                        context.registerMaterial(
+                            std::move(loadMaterialFromJSON(context, materialJson)),
+                            name
+                        );
+                }
+                if (material) {
+                    materialsByIndex.emplace_back(material);
+                }
+            }
+        }
         
+        const JsonValue& meshesJson = root["meshes"];
         
+        for (auto meshIt = meshesJson.Begin();
+             meshIt != meshesJson.End();
+             ++meshIt) {
+            const JsonValue& meshJson = *meshIt;
+            int materialIndex = -1;
+            if (meshJson.HasMember("material")) {
+                materialIndex = meshJson["material"].GetInt();
+            }
+            
+            auto meshHandle = context.registerMesh(
+                std::move(loadMeshFromJSON(context, meshJson))
+            );
+        
+            meshesByIndex.emplace_back(
+                meshHandle,
+                materialIndex
+            );
+        }
     }
     
     ModelBuilderFromJSONFn buildFn(context, meshesByIndex, materialsByIndex);
@@ -153,16 +199,79 @@ Model loadModelFromJSON(Context& context, const JsonValue& root)
     return model;
 }
 
-Mesh loadMeshFromJSON(Context& context, const JsonValue& root)
+Mesh loadMeshFromJSON
+(
+    Context& context,
+    const JsonValue& root
+)
 {
     Mesh mesh;
     
-    return mesh;
+    const JsonValue& vertices = root["vertices"];
+    const JsonValue& normals = root["normals"];
+    
+    JsonValue::ConstMemberIterator texArrayIt = root.FindMember("tex0");
+   
+    CK_ASSERT(vertices.Size() == normals.Size());
+    CK_ASSERT(texArrayIt == root.MemberEnd() || texArrayIt->value.Size() == vertices.Size());
+    
+    const JsonValue& triangles = root["tris"];
+    
+    MeshBuilder::BuilderState meshBuilder;
+    
+    //  TODO - configurable based on mesh JSON format
+    VertexTypes::Format vertexType = VertexTypes::kVec3_Normal_Tex0;
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.indexLimit = triangles.Size() * 3;
+    meshBuilder.indexType = VertexTypes::kIndex16;
+    meshBuilder.vertexLimit = vertices.Size();
+    
+    MeshBuilder::create(meshBuilder);
+    
+    JsonValue::ConstValueIterator vertexIt = vertices.Begin();
+    JsonValue::ConstValueIterator normalIt = normals.Begin();
+    JsonValue::ConstValueIterator texIt = nullptr;
+    bool hasTexCoords = texArrayIt != root.MemberEnd();
+    if (hasTexCoords) {
+        texIt = texArrayIt->value.Begin();
+    }
+    for (; vertexIt != vertices.End(); ++vertexIt, ++normalIt) {
+        Vector3 vec3;
+        meshBuilder.position(loadVectorFromJSON(vec3, *vertexIt))
+                   .normal(loadVectorFromJSON(vec3, *normalIt));
+        
+        if (hasTexCoords) {
+            Vector2 uv;
+            meshBuilder.uv2(loadUVFromJSON(uv, *texIt));
+            ++texIt;
+        }
+        
+        meshBuilder.next();
+    }
+    
+    return Mesh(vertexType, meshBuilder.indexType,
+                    meshBuilder.vertexMemory,
+                    meshBuilder.indexMemory);
 }
 
 Material loadMaterialFromJSON(Context& context, const JsonValue& root)
 {
     Material material;
+ 
+    if (root.HasMember("diffuse")) {
+        auto& diffuse = root["diffuse"];
+        loadColorFromJSON(material.diffuseColor, diffuse);
+        
+        auto& textures = diffuse["textures"];
+        if (textures.IsArray() && textures.Size() > 0) {
+            const char* texname = textures.Begin()->GetString();
+            auto texhandle = context.findTexture(texname);
+            if (!texhandle) {
+                texhandle = context.loadTexture(texname, texname);
+            }
+            material.diffuseTex = texhandle;
+        }
+    }
     
     return material;
 }
@@ -198,7 +307,7 @@ Vector3& loadVectorFromJSON(Vector3& vec, const JsonValue& vecObj)
     CK_ASSERT_RETURN_VALUE(vecObj.IsObject(), vec);
     vec.x = (Vector3::value_type)vecObj["x"].GetDouble();
     vec.y = (Vector3::value_type)vecObj["y"].GetDouble();
-    vec.z = (Vector3::value_type)vecObj["y"].GetDouble();
+    vec.z = (Vector3::value_type)vecObj["z"].GetDouble();
     return vec;
 }
 
@@ -207,7 +316,7 @@ Vector4& loadVectorFromJSON(Vector4& vec, const JsonValue& vecObj)
     CK_ASSERT_RETURN_VALUE(vecObj.IsObject(), vec);
     vec.x = (Vector3::value_type)vecObj["x"].GetDouble();
     vec.y = (Vector3::value_type)vecObj["y"].GetDouble();
-    vec.z = (Vector3::value_type)vecObj["y"].GetDouble();
+    vec.z = (Vector3::value_type)vecObj["z"].GetDouble();
     vec.w = (Vector3::value_type)vecObj["w"].GetDouble();
 
     return vec;
@@ -228,10 +337,22 @@ Color4& loadColorFromJSON(Color4& vec, const JsonValue& colObj)
     vec.r = (Color3::value_type)colObj["r"].GetDouble();
     vec.g = (Color3::value_type)colObj["g"].GetDouble();
     vec.b = (Color3::value_type)colObj["b"].GetDouble();
-    vec.a = (Color3::value_type)colObj["a"].GetDouble();
+    if (colObj.HasMember("a")) {
+        vec.a = (Color3::value_type)colObj["a"].GetDouble();
+    }
+    else {
+        vec.a = 1.0f;
+    }
     return vec;
 }
 
+Vector2& loadUVFromJSON(Vector2& vec, const JsonValue& uvObj)
+{
+    CK_ASSERT_RETURN_VALUE(uvObj.IsObject(), vec);
+    vec.u = (Color3::value_type)uvObj["u"].GetDouble();
+    vec.v = (Color3::value_type)uvObj["v"].GetDouble();
+    return vec;
+}
 
     }   //  namespace gfx
 }   //  namespace cinek

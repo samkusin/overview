@@ -9,10 +9,14 @@
 #include "CKGfx/VertexTypes.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 #include "CKGfx/Context.hpp"
+#include "CKGfx/ModelJsonSerializer.hpp"
+#include "CKGfx/Model.hpp"
 
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
 #include <cinek/objectpool.hpp>
+#include <cinek/filestreambuf.hpp>
+#include <ckjson/jsonstreambuf.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
@@ -25,6 +29,7 @@
 #include "UICore/UIRenderer.hpp"
 
 #include "UICore/oui.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -131,6 +136,16 @@ static int run(SDL_Window* window)
         
         cinek::gfx::Context gfxContext(gfxInitParams);
         
+        cinek::gfx::Model model;
+        cinek::FileStreamBuf inFile("cube.json");
+        if (inFile) {
+            cinek::RapidJsonStdStreamBuf jsonStreamBuf(inFile);
+            cinek::JsonDocument jsonModelDoc;
+            jsonModelDoc.ParseStream<0, rapidjson::UTF8<>>(jsonStreamBuf);
+        
+            model = cinek::gfx::loadModelFromJSON(gfxContext, jsonModelDoc);
+        }
+        
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
         
@@ -143,7 +158,6 @@ static int run(SDL_Window* window)
             
             if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
                 running = false;
-            
             
             gfxContext.update();
     

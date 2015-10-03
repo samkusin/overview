@@ -270,6 +270,36 @@ rapidjson::Value createMeshNodeJSON
     output.AddMember("vertices", std::move(vertices), allocator);
     output.AddMember("normals", std::move(normals), allocator);
     
+    for (unsigned int iUVSet = 0; iUVSet < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++iUVSet) {
+        unsigned int numUVComp = mesh.mNumUVComponents[iUVSet];
+        if (mesh.HasTextureCoords(iUVSet)) {
+            rapidjson::Value uvs(rapidjson::kArrayType);
+            uvs.Reserve(mesh.mNumVertices, allocator);
+            
+            const aiVector3D* uvwSet = mesh.mTextureCoords[iUVSet];
+            
+            for (unsigned int vi = 0; vi < mesh.mNumVertices; ++vi) {
+                const aiVector3D& point = uvwSet[vi];
+                rapidjson::Value uvw(rapidjson::kObjectType);
+                
+                uvw.AddMember("u", point.x, allocator);
+                if (numUVComp > 1) {
+                    uvw.AddMember("v", point.y, allocator);
+                }
+                if (numUVComp > 2) {
+                    uvw.AddMember("w", point.z, allocator);
+                }
+                uvs.PushBack(uvw, allocator);
+            }
+            
+            char uvwsetname[8] = { 't','e','x', (char)('0'+iUVSet), 0 };
+            
+            rapidjson::Value texSetLabel(rapidjson::kStringType);
+            texSetLabel.SetString(uvwsetname, allocator);
+            output.AddMember(std::move(texSetLabel), std::move(uvs), allocator);
+        }
+    }
+    
     rapidjson::Value tris(rapidjson::kArrayType);
     
     for (unsigned int vf = 0; vf < mesh.mNumFaces; ++vf) {

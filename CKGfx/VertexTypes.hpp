@@ -44,6 +44,13 @@ namespace cinek {
             kInvalid = -1
         };
         
+        enum Index
+        {
+            kIndex0,            ///< Invalid
+            kIndex16,           ///< 16-bit Index
+            kIndex32            ///< 32-bit Index
+        };
+        
         /// Creates the base set of vertex definitions.  Applications may add
         /// their own custom declarations, but this function will initialize
         /// the base set of declarations.  Calling this function will also reset

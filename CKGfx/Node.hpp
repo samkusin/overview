@@ -64,21 +64,12 @@ struct Node
         return (ElementType)((_flags & kElementTypeMask) >> 24);
     }
     
-    const TransformElement* transform() const {
-        return _element.transform;
-    }
-    TransformElement* transform() {
-        return _element.transform;
-    }
+    const TransformElement* transform() const;
+    TransformElement* transform();
     
-    const MeshElement* mesh() const {
-        return _element.mesh;
-    }
-    MeshElement* mesh() {
-        return _element.mesh;
-    }
-
-
+    const MeshElement* mesh() const;
+    MeshElement* mesh();
+    
     Node* parent() { return _parent.resource(); }
     const Node* parent() const { return _parent.resource(); }
     
@@ -121,6 +112,26 @@ struct NodeElementCounts
     uint32_t transformCount;
     uint32_t meshElementCount;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+
+inline const TransformElement* Node::transform() const {
+    return elementType() == kElementTypeTransform? _element.transform : nullptr;
+}
+inline TransformElement* Node::transform() {
+    return const_cast<TransformElement*>(
+        static_cast<const Node*>(this)->transform()
+    );
+}
+inline const MeshElement* Node::mesh() const {
+    return elementType() == kElementTypeMesh ? _element.mesh : nullptr;
+}
+inline MeshElement* Node::mesh() {
+    return const_cast<MeshElement*>(
+        static_cast<const Node*>(this)->mesh()
+    );
+}
+
 
     }   //  namespace gfx
 }   //  namespace cinek

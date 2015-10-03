@@ -19,6 +19,108 @@
 namespace cinek {
     namespace gfx {
 
+
+namespace MeshBuilder
+{
+    BuilderState& BuilderState::position(const Vector3& pos)
+    {
+        return vertex(pos.comp, bgfx::Attrib::Position);
+    }
+    
+    BuilderState& BuilderState::normal(const Vector3& normal)
+    {
+        return vertex(normal.comp, bgfx::Attrib::Normal);
+    }
+    
+    BuilderState& BuilderState::uv2(const Vector2& uv)
+    {
+        return vertex(uv.comp, bgfx::Attrib::TexCoord0);
+    }
+    
+    
+    BuilderState& BuilderState::vertex
+    (
+        const float* comp,
+        bgfx::Attrib::Enum attrib
+    )
+    {
+        CK_ASSERT(vertexCount < vertexLimit);
+        bool valid = vertexDecl->has(attrib);
+        if (valid) {
+            bgfx::vertexPack(comp, false, attrib,
+                             *vertexDecl,
+                             vertexMemory->data,
+                             vertexCount);
+        }
+        return *this;
+    }
+    
+    BuilderState& BuilderState::next()
+    {
+        ++vertexCount;
+        return *this;
+    }
+    
+    template<>
+    BuilderState& BuilderState::triangle<uint16_t>
+    (
+        uint16_t i0, uint16_t i1, uint16_t i2
+    )
+    {
+        CK_ASSERT(indexCount + 3 <= indexLimit);
+        CK_ASSERT(indexType == VertexTypes::kIndex16);
+        uint16_t* ptr = reinterpret_cast<uint16_t*>(indexMemory->data) + indexCount;
+        ptr[0] = i0;
+        ptr[1] = i1;
+        ptr[2] = i2;
+        indexCount += 3;
+        return *this;
+    }
+    
+    template<>
+    BuilderState& BuilderState::triangle<uint32_t>
+    (
+        uint32_t i0, uint32_t i1, uint32_t i2
+    )
+    {
+        CK_ASSERT(indexCount + 3 <= indexLimit);
+        CK_ASSERT(indexType == VertexTypes::kIndex32);
+        uint32_t* ptr = reinterpret_cast<uint32_t*>(indexMemory->data) + indexCount;
+        ptr[0] = i0;
+        ptr[1] = i1;
+        ptr[2] = i2;
+        indexCount += 3;
+        return *this;
+    }
+
+    BuilderState& create(BuilderState& state)
+    {
+        CK_ASSERT_RETURN_VALUE(state.indexType != VertexTypes::kIndex0, state);
+        
+        uint32_t sz = state.vertexDecl->getSize(state.vertexLimit);
+        state.vertexMemory = bgfx::alloc(sz);
+        state.vertexCount = 0;
+        
+        if (state.indexType == VertexTypes::kIndex16) {
+            sz = sizeof(uint16_t)*state.indexLimit;
+        }
+        else if (state.indexType == VertexTypes::kIndex32) {
+            sz = sizeof(uint32_t)*state.indexLimit;
+        }
+        else {
+            CK_ASSERT(false);
+            sz = sizeof(uint16_t)*state.indexLimit;
+        }
+        
+        state.indexMemory = bgfx::alloc(sz);
+        state.indexCount = 0;
+        
+        return state;
+    }
+
+}
+
+
 template<typename KeyType, typename IndexType, int BitShift>
 struct IcoSphereUtility
 {
@@ -216,7 +318,7 @@ struct IcoSphereUtility
     }
 };
         
-unique_ptr<Mesh> createIcoSphere
+Mesh createIcoSphere
 (
     float radius,
     int subdividePasses,
@@ -226,7 +328,7 @@ unique_ptr<Mesh> createIcoSphere
     const bgfx::VertexDecl& vertexDecl = VertexTypes::declaration(vertexType);
     
     if (vertexDecl.getStride()==0)
-        return nullptr;
+        return Mesh();
     
     //  Re: blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
     IcoSphereUtility<uint32_t, uint16_t, 16> utility(subdividePasses);
@@ -391,69 +493,50 @@ unique_ptr<Mesh> createIcoSphere
     
     //  allocate packed buffers based on vertex declaration and generate our
     //  hardware buffers
-    uint32_t vertBufSize = vertexDecl.getSize((uint32_t)utility.vertices.size());
-    const bgfx::Memory* vertexMemory = bgfx::alloc(vertBufSize);
-    uint32_t idxBufSize =  (uint32_t)(utility.faces.size()*sizeof(decltype(utility)::index_type)*3);
-    const bgfx::Memory* indexMemory = bgfx::alloc(idxBufSize);
+    MeshBuilder::BuilderState meshBuilder;
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.vertexLimit = (uint32_t)utility.vertices.size();
+    meshBuilder.indexLimit = (uint32_t)utility.faces.size() * 3;
+    meshBuilder.indexType = VertexTypes::kIndex16;
     
-    for (int iv = 0; iv < utility.vertices.size(); ++iv)
-    {
-        if (vertexDecl.has(bgfx::Attrib::Position))
-        {
-            bgfx::vertexPack(utility.vertices[iv].comp, false,
-                bgfx::Attrib::Position,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
-        if (vertexDecl.has(bgfx::Attrib::Normal))
-        {
-            bgfx::vertexPack(normals[iv], false,
-                bgfx::Attrib::Normal,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
-        if (vertexDecl.has(bgfx::Attrib::TexCoord0))
-        {
-            bgfx::vertexPack(vertexUVs[iv], false,
-                bgfx::Attrib::TexCoord0,
-                vertexDecl,
-                vertexMemory->data,
-                iv);
-        }
+    MeshBuilder::create(meshBuilder);
+    
+    for (int iv = 0; iv < utility.vertices.size(); ++iv) {
+        meshBuilder.position(utility.vertices[iv])
+                   .normal(normals[iv])
+                   .uv2(vertexUVs[iv])
+                   .next();
     }
     
-    CK_ASSERT(idxBufSize == indexMemory->size);
-    auto indexMemoryPtr = reinterpret_cast<decltype(utility)::index_type*>(indexMemory->data);
     for (auto& face : utility.faces)
     {
-        indexMemoryPtr[0] = face.idx[0];
-        indexMemoryPtr[1] = face.idx[1];
-        indexMemoryPtr[2] = face.idx[2];
-        indexMemoryPtr += 3;
+        meshBuilder.triangle(face.idx[0], face.idx[1], face.idx[2]);
     }
     
-    Allocator meshalloc;
-    return allocate_unique<Mesh>(meshalloc, vertexType,
-                        vertexMemory,
-                        indexMemory);
+    return Mesh(vertexType, meshBuilder.indexType,
+         meshBuilder.vertexMemory,
+         meshBuilder.indexMemory);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Mesh::Mesh() :
-    _format(VertexTypes::kInvalid)
+    _format(VertexTypes::kInvalid),
+    _indexType(VertexTypes::Index::kIndex0),
+    _vertBufH(BGFX_INVALID_HANDLE),
+    _idxBufH(BGFX_INVALID_HANDLE)
 {
 }
 
 Mesh::Mesh
 (
     VertexTypes::Format format,
+    VertexTypes::Index indexType,
     const bgfx::Memory* vertexData,
     const bgfx::Memory* indexData
 ) :
     _format(format),
+    _indexType(indexType),
     _vertBufH(BGFX_INVALID_HANDLE),
     _idxBufH(BGFX_INVALID_HANDLE)
 {
@@ -463,7 +546,12 @@ Mesh::Mesh
     );
     if (!bgfx::isValid(vbh))
         return;
-    bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(indexData);
+    
+    uint16_t indexFlags = BGFX_BUFFER_NONE;
+    if (indexType == VertexTypes::kIndex32)
+        indexFlags |= BGFX_BUFFER_INDEX32;
+    
+    bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(indexData, indexFlags);
     if (!bgfx::isValid(ibh))
     {
         bgfx::destroyVertexBuffer(vbh);
@@ -485,10 +573,12 @@ Mesh::~Mesh()
 
 Mesh::Mesh(Mesh&& other) :
     _format(other._format),
+    _indexType(other._indexType),
     _vertBufH(other._vertBufH),
     _idxBufH(other._idxBufH)
 {
     other._format = VertexTypes::kInvalid;
+    other._indexType = VertexTypes::Index::kIndex0;
     other._vertBufH = BGFX_INVALID_HANDLE;
     other._idxBufH = BGFX_INVALID_HANDLE;
 }
@@ -496,10 +586,12 @@ Mesh::Mesh(Mesh&& other) :
 Mesh& Mesh::operator=(Mesh&& other)
 {
     _format = other._format;
+    _indexType = other._indexType;
     _vertBufH = other._vertBufH;
     _idxBufH = other._idxBufH;
     
     other._format = VertexTypes::kInvalid;
+    other._indexType = VertexTypes::kIndex0;
     other._vertBufH = BGFX_INVALID_HANDLE;
     other._idxBufH = BGFX_INVALID_HANDLE;
     

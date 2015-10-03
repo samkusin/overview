@@ -15,6 +15,7 @@
 #include "Material.hpp"
 
 #include <ckjson/json.hpp>
+#include <vector>
 
 namespace cinek {
     namespace gfx {
@@ -30,6 +31,7 @@ Vector3& loadVectorFromJSON(Vector3& vec, const JsonValue& vecObj);
 Vector4& loadVectorFromJSON(Vector4& vec, const JsonValue& vecObj);
 Color3& loadColorFromJSON(Color3& vec, const JsonValue& colObj);
 Color4& loadColorFromJSON(Color4& vec, const JsonValue& colObj);
+Vector2& loadUVFromJSON(Vector2& vec, const JsonValue& vecObj);
 
     }   //  namespace gfx
 }   //  namespace cinek

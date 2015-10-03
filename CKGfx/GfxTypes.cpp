@@ -25,21 +25,26 @@ namespace cinek {
     //  the definition of the object its pooling, and the managed handle needs
     //  the ManagedObjectPool implementation to compile and link.
     
+
     template class ManagedObjectPool<gfx::Texture, void>;
     template void ManagedHandle<gfx::Texture, ManagedObjectPool<gfx::Texture, void>>::acquire();
     template void ManagedHandle<gfx::Texture, ManagedObjectPool<gfx::Texture, void>>::release();
+    template class ManagedObjectPoolBase<gfx::Texture, ManagedObjectPool<gfx::Texture, void>>;
     
     template class ManagedObjectPool<gfx::Material, void>;
     template void ManagedHandle<gfx::Material, ManagedObjectPool<gfx::Material, void>>::acquire();
     template void ManagedHandle<gfx::Material, ManagedObjectPool<gfx::Material, void>>::release();
+    template class ManagedObjectPoolBase<gfx::Material, ManagedObjectPool<gfx::Material, void>>;
     
     template class ManagedObjectPool<gfx::Mesh, void>;
     template void ManagedHandle<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>::acquire();
     template void ManagedHandle<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>::release();
+    template class ManagedObjectPoolBase<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>;
     
     template class ManagedObjectPool<gfx::Node, gfx::Model*>;
     template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::Model*>>::acquire();
     template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::Model*>>::release();
+    template class ManagedObjectPoolBase<gfx::Node, ManagedObjectPool<gfx::Node, gfx::Model*>>;
 
     namespace gfx {
     

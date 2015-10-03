@@ -14,28 +14,37 @@ namespace cinek {
     namespace gfx {
  
 Model::Model(const NodeElementCounts& params) :
-    _nodes(params.nodeCount, this),
     _transformElementsPool(params.transformCount),
-    _meshElementPool(params.meshElementCount)
+    _meshElementPool(params.meshElementCount),
+    _nodes(params.nodeCount)
 {
+    _nodes.setDelegate(this);
 }
 
 Model::Model(Model&& other) noexcept :
-    _nodes(std::move(other._nodes)),
     _transformElementsPool(std::move(other._transformElementsPool)),
-    _meshElementPool(std::move(other._meshElementPool))
+    _meshElementPool(std::move(other._meshElementPool)),
+    _nodes(std::move(other._nodes)),
+    _root(std::move(other._root))
 {
+    _nodes.setDelegate(this);
 }
 
 Model& Model::operator=(Model&& other) noexcept
 {
-    _nodes = std::move(other._nodes);
     _transformElementsPool = std::move(other._transformElementsPool);
     _meshElementPool = std::move(other._meshElementPool);
+    _nodes = std::move(other._nodes);
+    _root = std::move(other._root);
+    
+    _nodes.setDelegate(this);
     
     return *this;
 }
 
+Model::~Model()
+{
+}
 
 NodeHandle Model::createMeshNode(uint32_t elementCnt)
 {
@@ -100,11 +109,12 @@ void Model::onReleaseManagedObject(cinek::gfx::Node &node)
 NodeHandle Model::addChildNodeToNode(NodeHandle child, NodeHandle node)
 {
     child->_parent = node;
-    
+ 
     NodeHandle childHead = child->_parent->_firstChild;
     
     if (childHead) {
         NodeHandle childTail = childHead->_prevSibling;
+        childHead->_prevSibling = child;
         childTail->_nextSibling = child;
         child->_prevSibling = childTail;
     }
@@ -113,23 +123,35 @@ NodeHandle Model::addChildNodeToNode(NodeHandle child, NodeHandle node)
         child->_prevSibling = child;
     }
     child->_nextSibling = nullptr;
+    
+    if (!_root) {
+        _root = node;
+    }
+
     return child;
 }
 
-NodeHandle Model::removeChildNode(NodeHandle child)
+NodeHandle Model::removeNode(NodeHandle child)
 {
     //  detach from next sibling or fixup firstChild links child was the tail
+    //  remember: head prev points to tail, but not vice-versa
     if (child->_nextSibling) {
         child->_nextSibling->_prevSibling = child->_prevSibling;
     }
     else if (child->_parent) {
         child->_parent->_firstChild->_prevSibling = child->_prevSibling;
     }
+    //  head prev = tail, so we only need to fixup prev sibling if its not
+    //  a tail node
     if (child->_prevSibling->_nextSibling) {
         child->_prevSibling->_nextSibling = child->_nextSibling;
     }
     else if (child->_parent) {
         child->_parent->_firstChild = child->_nextSibling;
+    }
+    
+    if (child == _root) {
+        _root = child->_nextSibling;
     }
     
     child->_parent = nullptr;

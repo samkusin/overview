@@ -45,7 +45,7 @@ TextureHandle Context::registerTexture(Texture&& texture, const char* name)
     }
     if (h) {
         //  existing handle, emplacing a new texture into it
-        *h = std::move(texture);
+        h.setValue(std::move(texture));
     }
     else {
         //  new handle - add it to the dictionary if applicable
@@ -103,7 +103,7 @@ MaterialHandle Context::registerMaterial(Material&& material, const char* name)
     }
     if (h) {
         //  existing handle, emplacing a new material into it
-        *h = std::move(material);
+        h.setValue(std::move(material));
     }
     else {
         //  new handle - add it to the dictionary if applicable

@@ -26,22 +26,26 @@ public:
     Model() = default;
     Model(Model&& model) noexcept;
     Model& operator=(Model&& other) noexcept;
+    ~Model();
 
+    NodeHandle root() const { return _root; }
     NodeHandle createTransformNode();
     NodeHandle createMeshNode(uint32_t elementCnt);
     
     NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
-    NodeHandle removeChildNode(NodeHandle child);
+    NodeHandle removeNode(NodeHandle node);
   
 private:
+    //  Invoked when Nodes are beling released.
     void onReleaseManagedObject(Node& node);
     
 private:
     friend NodePool;
     
-    NodePool _nodes;
     ObjectPool<TransformElement> _transformElementsPool;
     ObjectPool<MeshElement> _meshElementPool;
+    NodePool _nodes;
+    NodeHandle _root;
 };
 
     }   // namespace gfx

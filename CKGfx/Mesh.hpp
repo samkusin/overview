@@ -26,36 +26,78 @@ class Mesh
 public:
     Mesh();
     Mesh(VertexTypes::Format format,
+         VertexTypes::Index indexType,
          const bgfx::Memory* vertexData,
          const bgfx::Memory* indexData);
     ~Mesh();
     
     Mesh(Mesh&& other);
     Mesh& operator=(Mesh&& other);
+    
+    operator bool() const { return _format != VertexTypes::kInvalid; };
 
     VertexTypes::Format format() const;
+    VertexTypes::Index indexType() const;
 
 private:
     VertexTypes::Format _format;
+    VertexTypes::Index _indexType;
     
     bgfx::VertexBufferHandle _vertBufH;
     bgfx::IndexBufferHandle _idxBufH;
 };
+
+namespace MeshBuilder {
+
+    struct BuilderState
+    {
+        //  defines the buffer memory
+        const bgfx::VertexDecl* vertexDecl;
+        VertexTypes::Index indexType;
+        uint32_t vertexLimit;
+        uint32_t indexLimit;
+        
+        //  used by mesh builder
+        uint32_t vertexCount = 0;
+        uint32_t indexCount = 0;
+        const bgfx::Memory* vertexMemory = nullptr;
+        const bgfx::Memory* indexMemory = nullptr;
+        
+        BuilderState& position(const Vector3& pos);
+        BuilderState& normal(const Vector3& normal);
+        BuilderState& uv2(const Vector2& uv);
+        BuilderState& next();
+        template<typename IndexType>
+        BuilderState& triangle(IndexType i0, IndexType i1, IndexType i2);
+        
+        BuilderState& vertex(const float* comp, bgfx::Attrib::Enum attrib);
+    };
+
+    BuilderState& create(BuilderState& state);
+    
+}
 
 /// Generates an IcoSphere mesh using the given format and number of passes.)
 ///
 /// Note for UVs, currently uses sphere mapping to generate U and V coords
 /// Future: support multiple types of texture mapping
 ///
-unique_ptr<Mesh> createIcoSphere(float radius, int subdividePasses,
-                                 VertexTypes::Format vertexType);
+Mesh createIcoSphere
+(
+    float radius,
+    int subdividePasses,
+    VertexTypes::Format vertexType
+);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-inline VertexTypes::Format Mesh::format() const
-{
+inline VertexTypes::Format Mesh::format() const {
     return _format;
+}
+
+inline VertexTypes::Index Mesh::indexType() const {
+    return _indexType;
 }
     
     }   // namespace gfx

@@ -144,6 +144,7 @@ struct Vector2
     union
     {
         struct { value_type x, y; };
+        struct { value_type u, v; };
         value_type comp[2];
     };
     operator float*() { return comp; }
