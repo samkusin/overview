@@ -11,6 +11,9 @@
 #include <vector>
 #include <string>
 
+// yes, we need ordering and don't care about overhead for a tool
+#include <set>
+
 #include "optionparser.h"
 
 #define RAPIDJSON_HAS_STDSTRING 1
@@ -62,6 +65,22 @@
     }
 */
 
+struct SceneOutputOptions
+{
+    enum
+    {
+        kSceneOutputDefault,
+        kSceneOutputModel
+    }
+    method;
+    std::string filterNodeName;
+    const aiNode* rootNode;
+    
+    std::set<unsigned int> materialsUsed;
+    std::set<unsigned int> meshesUsed;
+
+};
+
 
 template<typename JsonAllocator>
 rapidjson::Value createJSONArrayFromMat4x4(const aiMatrix4x4& m, JsonAllocator& allocator)
@@ -102,54 +121,6 @@ rapidjson::Value createJSONColor(const aiColor4D& color, JsonAllocator& allocato
     matColor.AddMember("a", color.a, allocator);
     
     return matColor;
-}
-
-
-rapidjson::Value createSceneNodeJSON
-(
-    const aiScene& scene,
-    const aiNode& node,
-    rapidjson::Document::AllocatorType& allocator
-)
-{
-    rapidjson::Value output(rapidjson::kObjectType);
-    rapidjson::Value str(rapidjson::kStringType);
-    str.SetString(node.mName.C_Str(), allocator);
-    
-    output.AddMember("name", std::move(str), allocator);
-    
-    output.AddMember("matrix",
-        createJSONArrayFromMat4x4(node.mTransformation, allocator),
-        allocator);
-    
-    unsigned int numMeshes = node.mNumMeshes;
-    rapidjson::Value meshes(rapidjson::kArrayType);
-    
-    if (numMeshes > 0) {
-        meshes.Reserve(numMeshes, allocator);
-        
-        for (unsigned meshIdx = 0; meshIdx < numMeshes; ++meshIdx) {
-            meshes.PushBack(node.mMeshes[meshIdx], allocator);
-        }
-    }
-    output.AddMember("meshes", meshes, allocator);
-    
-    unsigned int numChildren = node.mNumChildren;
-    rapidjson::Value children(rapidjson::kArrayType);
-    
-    if (numChildren) {
-        children.Reserve(numChildren, allocator);
-        
-        for (unsigned childIdx = 0; childIdx < numChildren; ++childIdx) {
-            const aiNode* child = node.mChildren[childIdx];
-            children.PushBack(std::move(createSceneNodeJSON(scene, *child, allocator)),
-                              allocator);
-        }
-    }
-    
-    output.AddMember("children", children, allocator);
-
-    return output;
 }
 
 rapidjson::Value createMaterialJSON
@@ -324,7 +295,63 @@ rapidjson::Value createMeshNodeJSON
     return output;
 }
 
-rapidjson::Document writeToJSON(const aiScene& scene)
+
+
+rapidjson::Value createSceneNodeJSON
+(
+    const aiScene& scene,
+    const aiNode& node,
+    const SceneOutputOptions& opts,
+    rapidjson::Document::AllocatorType& allocator
+)
+{
+    rapidjson::Value output(rapidjson::kObjectType);
+    rapidjson::Value str(rapidjson::kStringType);
+    str.SetString(node.mName.C_Str(), allocator);
+    
+    output.AddMember("name", std::move(str), allocator);
+    
+    output.AddMember("matrix",
+        createJSONArrayFromMat4x4(node.mTransformation, allocator),
+        allocator);
+    
+    unsigned int numMeshes = node.mNumMeshes;
+    rapidjson::Value meshes(rapidjson::kArrayType);
+    
+    if (numMeshes > 0) {
+        meshes.Reserve(numMeshes, allocator);
+        
+        for (unsigned meshIdx = 0; meshIdx < numMeshes; ++meshIdx) {
+            meshes.PushBack(node.mMeshes[meshIdx], allocator);
+        }
+    }
+    output.AddMember("meshes", meshes, allocator);
+    
+    unsigned int numChildren = node.mNumChildren;
+    rapidjson::Value children(rapidjson::kArrayType);
+    
+    if (numChildren) {
+        children.Reserve(numChildren, allocator);
+        
+        for (unsigned childIdx = 0; childIdx < numChildren; ++childIdx) {
+            const aiNode* child = node.mChildren[childIdx];
+            children.PushBack(std::move(
+                createSceneNodeJSON(scene, *child, opts, allocator)),
+                allocator);
+        }
+    }
+    
+    output.AddMember("children", children, allocator);
+
+    return output;
+}
+
+
+rapidjson::Document writeToJSON
+(
+    const aiScene& scene,
+    const SceneOutputOptions& opts
+)
 {
     rapidjson::Document output(rapidjson::kObjectType);
     rapidjson::Document::AllocatorType& allocator = output.GetAllocator();
@@ -333,11 +360,11 @@ rapidjson::Document writeToJSON(const aiScene& scene)
     //  blank, *but* maintain order of the materials array so that our meshes
     //  can still point to the correct material without remapping.
     rapidjson::Value materials(rapidjson::kArrayType);
-    unsigned int numMaterials = scene.mNumMaterials;
-    
-    materials.Reserve(scene.mNumMaterials, allocator);
-    for (unsigned matIdx = 0; matIdx < numMaterials; ++matIdx) {
-        const aiMaterial* material = scene.mMaterials[matIdx];
+    materials.Reserve((unsigned)opts.materialsUsed.size(), allocator);
+    for (auto matIt = opts.materialsUsed.begin();
+         matIt != opts.materialsUsed.end();
+         ++matIt) {
+        const aiMaterial* material = scene.mMaterials[*matIt];
         materials.PushBack(std::move(createMaterialJSON(*material, allocator)),
                            allocator);
     }
@@ -347,11 +374,11 @@ rapidjson::Document writeToJSON(const aiScene& scene)
     //  Full list of Meshes
     //
     rapidjson::Value meshes(rapidjson::kArrayType);
-    unsigned int numMeshes = scene.mNumMeshes;
-    
-    meshes.Reserve(numMeshes, allocator);
-    for (unsigned meshIdx = 0; meshIdx < numMeshes; ++meshIdx) {
-        const aiMesh* mesh = scene.mMeshes[meshIdx];
+    meshes.Reserve((unsigned)opts.meshesUsed.size(), allocator);
+    for (auto meshIt = opts.materialsUsed.begin();
+         meshIt != opts.materialsUsed.end();
+         ++meshIt) {
+        const aiMesh* mesh = scene.mMeshes[*meshIt];
         meshes.PushBack(std::move(createMeshNodeJSON(*mesh, allocator)),
                         allocator);
     }
@@ -359,12 +386,14 @@ rapidjson::Document writeToJSON(const aiScene& scene)
     
     //  Scene Graph
     //
-    const aiNode* node = scene.mRootNode;
+    const aiNode* node = opts.rootNode;
     if (node)
     {
-        output.AddMember("node", std::move(createSceneNodeJSON(scene, *node, allocator)),
-                         allocator);
+        output.AddMember("node", std::move(
+            createSceneNodeJSON(scene, *node, opts, allocator)),
+            allocator);
     }
+    
     return output;
 }
 
@@ -384,53 +413,85 @@ struct SceneStats
     unsigned int currentNodeDepth;
 };
 
-SceneStats& accumulateSceneNodeStats(SceneStats& stats, const aiScene& scene,
-                                     const aiNode& node)
+SceneStats& accumulateSceneNodeStats
+(
+    SceneStats& stats,
+    SceneOutputOptions& opts,
+    const aiScene& scene,
+    const aiNode& node,
+    bool accumulate
+)
 {
-    stats.numMeshInstances += node.mNumMeshes;
-    for (unsigned int idx = 0; idx < node.mNumMeshes; ++idx) {
-        stats.numInstancedVertices += scene.mMeshes[node.mMeshes[idx]]->mNumVertices;
-        stats.numInstancedFaces += scene.mMeshes[node.mMeshes[idx]]->mNumFaces;
+    if (!accumulate && opts.method != SceneOutputOptions::kSceneOutputDefault) {
+        if (!strcmp(node.mName.C_Str(), opts.filterNodeName.c_str())) {
+            accumulate = true;
+            opts.rootNode = &node;
+        }
     }
     
-    ++stats.numNodes;
-    ++stats.currentNodeDepth;
+    if (accumulate) {
+        stats.numMeshInstances += node.mNumMeshes;
+        for (unsigned int idx = 0; idx < node.mNumMeshes; ++idx) {
+            unsigned int meshIndex = node.mMeshes[idx];
+            aiMesh* mesh = scene.mMeshes[meshIndex];
+            
+            stats.numInstancedVertices += mesh->mNumVertices;
+            stats.numInstancedFaces += mesh->mNumFaces;
+            opts.meshesUsed.emplace(meshIndex);
+            
+            //  materials
+            opts.materialsUsed.emplace(mesh->mMaterialIndex);
+        }
+        
+        ++stats.numNodes;
+        ++stats.currentNodeDepth;
+    }
     
     for (unsigned int childIdx = 0; childIdx < node.mNumChildren; ++childIdx) {
         const aiNode* child = node.mChildren[childIdx];
-        accumulateSceneNodeStats(stats, scene, *child);
+        accumulateSceneNodeStats(stats, opts, scene, *child, accumulate);
     }
     
-    if (stats.currentNodeDepth > stats.nodeDepth)
-        stats.nodeDepth = stats.currentNodeDepth;
-    
-    --stats.currentNodeDepth;
+    if (accumulate) {
+        if (stats.currentNodeDepth > stats.nodeDepth)
+            stats.nodeDepth = stats.currentNodeDepth;
+        --stats.currentNodeDepth;
+    }
     
     return stats;
 }
 
-SceneStats getSceneStats(const aiScene& scene)
+SceneStats getSceneStats(const aiScene& scene, SceneOutputOptions& opts)
 {
     SceneStats stats;
     
-    stats.numMaterials = scene.mNumMaterials;
-    stats.numMeshes = scene.mNumMeshes;
     stats.numFaces = 0;
     stats.numVertices = 0;
-    
-    for (unsigned int idx = 0; idx < scene.mNumMeshes; ++idx) {
-        stats.numFaces += scene.mMeshes[idx]->mNumFaces;
-        stats.numVertices += scene.mMeshes[idx]->mNumVertices;
-    }
-    
     stats.numMeshInstances = 0;
     stats.numInstancedFaces = 0;
     stats.numInstancedVertices = 0;
     stats.numNodes = 0;
     stats.currentNodeDepth = 0;
     stats.nodeDepth = 0;
+
+    //   by default, accumulate all stats.  optionally filter by node tree name
+    bool accumulate = true;
+    if (opts.method == SceneOutputOptions::kSceneOutputModel) {
+        //  accumulate results only for the specified node tree
+        accumulate = false;
+    }
     
-    return accumulateSceneNodeStats(stats, scene, *scene.mRootNode);
+    stats = accumulateSceneNodeStats(stats, opts, scene, *scene.mRootNode, accumulate);
+
+    stats.numMaterials = (uint32_t)opts.materialsUsed.size();
+    stats.numMeshes = (uint32_t)opts.meshesUsed.size();
+
+    for (auto it = opts.meshesUsed.begin(); it != opts.meshesUsed.end(); ++it) {
+        stats.numFaces += scene.mMeshes[*it]->mNumFaces;
+        stats.numVertices += scene.mMeshes[*it]->mNumVertices;
+    }
+
+    return stats;
 }
 
 
@@ -443,19 +504,13 @@ enum OptionArg
     kOptionModel
 };
 
-enum SceneOutputOptions
-{
-    kSceneOutputDefault,
-    kSceneOutputModel
-};
-
 static const option::Descriptor sArgHelp[] = {
     { kOptionUnknown,   0, ""       , ""        , option::Arg::None,
       "usage: meshimport <source filename> [<dest>]\n" },
     { kOptionHelp,      0, ""       , "help"    , option::Arg::None,
       "  --help  \t\t command line usage." },
-    { kOptionModel,      0, ""       , "node"    , option::Arg::Optional,
-      "  --model \t exports a model (vs a complete scene)" },
+    { kOptionModel,      0, ""       , "model"  , option::Arg::Optional,
+      "  --model=<node name>\t exports a model (vs a complete scene)" },
     { 0,                0, NULL     , NULL      , 0, NULL }
 };
 
@@ -519,16 +574,21 @@ int main(int argc, const char * argv[])
     //
     try
     {
-        SceneOutputOptions outputType = kSceneOutputDefault;
+        SceneOutputOptions outputType = { SceneOutputOptions::kSceneOutputDefault, };
         
         unsigned int importFlags = aiProcessPreset_TargetRealtime_Quality;
         
         if (argOpts[kOptionModel]) {
             importFlags |= aiProcess_OptimizeGraph;
-            outputType = kSceneOutputModel;
+            outputType = { SceneOutputOptions::kSceneOutputModel, argOpts[kOptionModel].arg, };
+            std::cout << "Model Import Method for Node["
+                      << outputType.filterNodeName
+                      << "] ... "
+                      << std::endl;
         }
         else {
-
+            std::cout << "Scene Import Method ... "
+                      << std::endl;
         }
         
         Assimp::Importer importer;
@@ -543,7 +603,15 @@ int main(int argc, const char * argv[])
             );
         }
         
-        SceneStats sceneStats = getSceneStats(*scene);
+        if (outputType.method == SceneOutputOptions::kSceneOutputModel) {
+            outputType.rootNode = nullptr;  // to be found
+        }
+        else {
+            outputType.rootNode = scene->mRootNode;
+        }
+        
+        
+        SceneStats sceneStats = getSceneStats(*scene, outputType);
        
         //std::cout << "STATISTICS:"                                      << std::endl;
         std::cout << "Materials:\t\t"       << sceneStats.numMaterials  << std::endl;
@@ -553,7 +621,7 @@ int main(int argc, const char * argv[])
         std::cout << "Scene Nodes:\t\t"     << sceneStats.numNodes      << std::endl;
         std::cout << "Scene Depth:\t\t"     << sceneStats.nodeDepth     << std::endl;
         
-        rapidjson::Document ckmJson = writeToJSON(*scene);
+        rapidjson::Document ckmJson = writeToJSON(*scene, outputType);
      
         //  output file
         std::filebuf outbuf;

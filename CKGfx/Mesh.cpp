@@ -259,7 +259,7 @@ struct IcoSphereUtility
     
     Vector3 vertexNormal(int vertIdx)
     {
-        Vector3 normal = {{ 0.f,0.f,0.f }};
+        Vector3 normal = { 0.f,0.f,0.f };
         //  add all face normals attached to this vertex and normalize for
         //  the vertex normal
         auto& adjFaces = vertexAdjFaces[vertIdx];
@@ -336,20 +336,20 @@ Mesh createIcoSphere
     const float kSqrt5 = 2.23606797749979f;
     float t = (1.f + kSqrt5) * 0.5f;
     
-    utility.addVertex({{ -1.f,    t,  0.f}});
-    utility.addVertex({{  1.f,    t,  0.f}});
-    utility.addVertex({{ -1.f,   -t,  0.f}});
-    utility.addVertex({{  1.f,   -t,  0.f}});
+    utility.addVertex({ -1.f,    t,  0.f});
+    utility.addVertex({  1.f,    t,  0.f});
+    utility.addVertex({ -1.f,   -t,  0.f});
+    utility.addVertex({  1.f,   -t,  0.f});
     
-    utility.addVertex({{  0.f, -1.f,    t}});
-    utility.addVertex({{  0.f,  1.f,    t}});
-    utility.addVertex({{  0.f, -1.f,   -t}});
-    utility.addVertex({{  0.f,  1.f,   -t}});
+    utility.addVertex({  0.f, -1.f,    t});
+    utility.addVertex({  0.f,  1.f,    t});
+    utility.addVertex({  0.f, -1.f,   -t});
+    utility.addVertex({  0.f,  1.f,   -t});
     
-    utility.addVertex({{    t,  0.f, -1.f}});
-    utility.addVertex({{    t,  0.f,  1.f}});
-    utility.addVertex({{   -t,  0.f, -1.f}});
-    utility.addVertex({{   -t,  0.f,  1.f}});
+    utility.addVertex({    t,  0.f, -1.f});
+    utility.addVertex({    t,  0.f,  1.f});
+    utility.addVertex({   -t,  0.f, -1.f});
+    utility.addVertex({   -t,  0.f,  1.f});
     
     //  faces of icosahedron
     utility.addFace(5, 0, 11);
@@ -513,9 +513,13 @@ Mesh createIcoSphere
         meshBuilder.triangle(face.idx[0], face.idx[1], face.idx[2]);
     }
     
-    return Mesh(vertexType, meshBuilder.indexType,
-         meshBuilder.vertexMemory,
-         meshBuilder.indexMemory);
+    Mesh mesh(vertexType, meshBuilder.indexType,
+              meshBuilder.vertexMemory,
+              meshBuilder.indexMemory);
+    
+    
+    
+    return mesh;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -6,14 +6,14 @@
 //
 //
 
-#include "Model.hpp"
+#include "NodeGraph.hpp"
 
 #include <cinek/debug.h>
 
 namespace cinek {
     namespace gfx {
  
-Model::Model(const NodeElementCounts& params) :
+NodeGraph::NodeGraph(const NodeElementCounts& params) :
     _transformElementsPool(params.transformCount),
     _meshElementPool(params.meshElementCount),
     _nodes(params.nodeCount)
@@ -21,7 +21,7 @@ Model::Model(const NodeElementCounts& params) :
     _nodes.setDelegate(this);
 }
 
-Model::Model(Model&& other) noexcept :
+NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
     _transformElementsPool(std::move(other._transformElementsPool)),
     _meshElementPool(std::move(other._meshElementPool)),
     _nodes(std::move(other._nodes)),
@@ -30,7 +30,7 @@ Model::Model(Model&& other) noexcept :
     _nodes.setDelegate(this);
 }
 
-Model& Model::operator=(Model&& other) noexcept
+NodeGraph& NodeGraph::operator=(NodeGraph&& other) noexcept
 {
     _transformElementsPool = std::move(other._transformElementsPool);
     _meshElementPool = std::move(other._meshElementPool);
@@ -42,11 +42,11 @@ Model& Model::operator=(Model&& other) noexcept
     return *this;
 }
 
-Model::~Model()
+NodeGraph::~NodeGraph()
 {
 }
 
-NodeHandle Model::createMeshNode(uint32_t elementCnt)
+NodeHandle NodeGraph::createMeshNode(uint32_t elementCnt)
 {
     NodeHandle handle;
     CK_ASSERT_RETURN_VALUE(elementCnt>0, nullptr);
@@ -69,7 +69,7 @@ NodeHandle Model::createMeshNode(uint32_t elementCnt)
     return handle;
 }
 
-NodeHandle Model::createTransformNode()
+NodeHandle NodeGraph::createTransformNode()
 {
     NodeHandle handle;
     Node node(Node::kElementTypeTransform);
@@ -81,7 +81,7 @@ NodeHandle Model::createTransformNode()
     return handle;
 }
 
-void Model::onReleaseManagedObject(cinek::gfx::Node &node)
+void NodeGraph::onReleaseManagedObject(cinek::gfx::Node &node)
 {
     switch (node.elementType())
     {
@@ -106,7 +106,7 @@ void Model::onReleaseManagedObject(cinek::gfx::Node &node)
 }
 
 
-NodeHandle Model::addChildNodeToNode(NodeHandle child, NodeHandle node)
+NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
 {
     child->_parent = node;
  
@@ -131,7 +131,7 @@ NodeHandle Model::addChildNodeToNode(NodeHandle child, NodeHandle node)
     return child;
 }
 
-NodeHandle Model::removeNode(NodeHandle child)
+NodeHandle NodeGraph::removeNode(NodeHandle child)
 {
     //  detach from next sibling or fixup firstChild links child was the tail
     //  remember: head prev points to tail, but not vice-versa
@@ -160,10 +160,5 @@ NodeHandle Model::removeNode(NodeHandle child)
     
     return child;
 }
-
-
-
-
- 
     }   // namespace gfx
 }   // namespace cinek

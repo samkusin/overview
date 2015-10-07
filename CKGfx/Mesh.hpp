@@ -38,6 +38,13 @@ public:
 
     VertexTypes::Format format() const;
     VertexTypes::Index indexType() const;
+    
+    bgfx::VertexBufferHandle vertexBuffer() const {
+        return _vertBufH;
+    }
+    bgfx::IndexBufferHandle indexBuffer() const {
+        return _idxBufH;
+    }
 
 private:
     VertexTypes::Format _format;

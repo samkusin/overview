@@ -13,6 +13,7 @@
 #include <cinek/objectpool.hpp>
 #include <cinek/types.hpp>
 #include <cinek/debug.h>
+#include <ckm/mathtypes.hpp>
 
 
 namespace cinek {
@@ -23,12 +24,12 @@ class Texture;
 class Mesh;
 struct Material;
 struct Node;
-struct Model;
+struct NodeGraph;
 
 using MeshPool = ManagedObjectPool<Mesh, void>;
 using TexturePool = ManagedObjectPool<Texture, void>;
 using MaterialPool = ManagedObjectPool<Material, void>;
-using NodePool = ManagedObjectPool<Node, Model*>;
+using NodePool = ManagedObjectPool<Node, NodeGraph*>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
 using TextureHandle = ManagedHandle<Texture, TexturePool>;
@@ -75,6 +76,12 @@ struct Vector4
         value_type comp[4];
     };
     
+    Vector4() {}
+    Vector4(value_type x, value_type y, value_type z, value_type w) :
+        comp { x, y, z, w }
+    {
+    }
+    
     operator float*() { return comp; }
     operator const float*() const { return comp; }
     Vector4& from(value_type x, value_type y, value_type z, value_type w) {
@@ -115,6 +122,13 @@ struct Vector3
     };
     operator float*() { return comp; }
     operator const float*() const { return comp; }
+    
+    Vector3() {}
+    Vector3(value_type x, value_type y, value_type z) :
+        comp { x, y, z }
+    {
+    }
+    
     Vector3& from(value_type x, value_type y, value_type z) {
         comp[0] = x;
         comp[1] = y;
@@ -149,6 +163,13 @@ struct Vector2
     };
     operator float*() { return comp; }
     operator const float*() const { return comp; }
+    
+    Vector2() {}
+    Vector2(value_type x, value_type y) :
+        comp { x, y }
+    {
+    }
+    
     Vector2& from(value_type x, value_type y) {
         comp[0] = x;
         comp[1] = y;
@@ -162,6 +183,17 @@ static_assert(offsetof(Vector2, comp[1]) == offsetof(Vector2, y),
 
 using Color4 = Vector4;
 using Color3 = Vector3;
+
+
+Vector3 operator-(const Vector3& v0, const Vector3& v1);
+Vector3& operator-=(const Vector3& v0, Vector3& v1);
+Vector3 operator+(const Vector3& v0, const Vector3& v1);
+Vector3& operator+=(const Vector3& v0, Vector3& v1);
+Vector3 operator*(const Vector3& v0, float scalar);
+
+using Frustrum = ckm::Frustrum<Vector3>;
+using AABB = ckm::AABB<Vector3>;
+
 
     }   // namepace gfx
 }   // namespace cinek

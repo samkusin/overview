@@ -10,7 +10,7 @@
 #define CK_Graphics_ModelJsonSerializer_hpp
 
 #include "GfxTypes.hpp"
-#include "Model.hpp"
+#include "NodeGraph.hpp"
 #include "Mesh.hpp"
 #include "Material.hpp"
 
@@ -21,12 +21,12 @@ namespace cinek {
     namespace gfx {
 
 
-Model loadModelFromJSON(Context& context, const JsonValue& root);
+NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root);
 Mesh loadMeshFromJSON(Context& context, const JsonValue& root);
 Material loadMaterialFromJSON(Context& context, const JsonValue& root);
 
 Matrix4& loadMatrixFromJSON(Matrix4& mtx, const JsonValue& mtxArray);
-AABB<Vector3>& loadAABBFromJSON(AABB<Vector3>& aabb, const JsonValue& aabbObj);
+ckm::AABB<Vector3>& loadAABBFromJSON(ckm::AABB<Vector3>& aabb, const JsonValue& aabbObj);
 Vector3& loadVectorFromJSON(Vector3& vec, const JsonValue& vecObj);
 Vector4& loadVectorFromJSON(Vector4& vec, const JsonValue& vecObj);
 Color3& loadColorFromJSON(Color3& vec, const JsonValue& colObj);

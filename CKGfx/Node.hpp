@@ -25,7 +25,7 @@ struct MeshElement
 struct TransformElement
 {
     Matrix4 mtx;
-    AABB<Vector3> obb;
+    ckm::AABB<Vector3> obb;
 };
 
 
@@ -72,18 +72,22 @@ struct Node
     
     Node* parent() { return _parent.resource(); }
     const Node* parent() const { return _parent.resource(); }
+    NodeHandle parentHandle() const { return _parent; }
     
     Node* firstChild() { return _firstChild.resource(); }
     const Node* firstChild() const { return _firstChild.resource(); }
+    NodeHandle firstChildHandle() const { return _firstChild; }
     
     Node* nextSibling() { return _nextSibling.resource(); }
     const Node* nextSibling() const { return _nextSibling.resource(); }
+    NodeHandle nextSiblingHandle() const { return _nextSibling; }
     
     Node* prevSibling();
     const Node* prevSibling() const;
+    NodeHandle prevSiblingHandle() const { return _prevSibling; }
 
 private:
-    friend class Model;
+    friend class NodeGraph;
  
     //  parent node
     NodeHandle _parent;

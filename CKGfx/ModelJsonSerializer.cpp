@@ -60,7 +60,7 @@ struct ModelBuilderFromJSONFn
     {
     }
 
-    Model& operator()(Model& model, const JsonValue& node)
+    NodeGraph& operator()(NodeGraph& model, const JsonValue& node)
     {
         build(model, node);
         
@@ -72,7 +72,7 @@ private:
     std::vector<std::pair<MeshHandle, int>>* _meshes;
     std::vector<MaterialHandle>* _materials;
 
-    NodeHandle build(Model& model, const JsonValue& node)
+    NodeHandle build(NodeGraph& model, const JsonValue& node)
     {
         NodeHandle thisNode = model.createTransformNode();
         loadMatrixFromJSON(thisNode->transform()->mtx, node["matrix"]);
@@ -117,9 +117,9 @@ private:
 };
 
 
-Model loadModelFromJSON(Context& context, const JsonValue& root)
+NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
 {
-    Model model;
+    NodeGraph model;
     
     if (!root.IsObject() || !root.HasMember("node"))
         return model;
@@ -136,7 +136,7 @@ Model loadModelFromJSON(Context& context, const JsonValue& root)
     NodeElementCounts modelInitParams = {};
     modelInitParams = enumerateNodeResourcesFromJSON(modelInitParams, modelNode);
     
-    model = std::move(Model(modelInitParams));
+    model = std::move(NodeGraph(modelInitParams));
     
     //  Build model's graph by visiting our json nodes.
     //
@@ -249,6 +249,16 @@ Mesh loadMeshFromJSON
         meshBuilder.next();
     }
     
+    JsonValue::ConstValueIterator triIt = triangles.Begin();
+    for (; triIt != triangles.End(); ++triIt) {
+        const JsonValue& triangleArray = *triIt;
+        CK_ASSERT(triangleArray.IsArray() && triangleArray.Size() == 3);
+        uint16_t i0 = (uint16_t)triangleArray[0U].GetInt();
+        uint16_t i1 = (uint16_t)triangleArray[1U].GetInt();
+        uint16_t i2 = (uint16_t)triangleArray[2U].GetInt();
+        meshBuilder.triangle<uint16_t>(i0,i1,i2);
+    }
+    
     return Mesh(vertexType, meshBuilder.indexType,
                     meshBuilder.vertexMemory,
                     meshBuilder.indexMemory);
@@ -289,7 +299,7 @@ Matrix4& loadMatrixFromJSON(Matrix4& mtx, const JsonValue& mtxArray)
     return mtx;
 }
 
-AABB<Vector3>& loadAABBFromJSON(AABB<Vector3>& aabb, const JsonValue& aabbObj)
+ckm::AABB<Vector3>& loadAABBFromJSON(ckm::AABB<Vector3>& aabb, const JsonValue& aabbObj)
 {
     CK_ASSERT_RETURN_VALUE(aabbObj.IsObject(), aabb);
     

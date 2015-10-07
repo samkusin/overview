@@ -10,7 +10,8 @@
 #include "CKGfx/ShaderLibrary.hpp"
 #include "CKGfx/Context.hpp"
 #include "CKGfx/ModelJsonSerializer.hpp"
-#include "CKGfx/Model.hpp"
+#include "CKGfx/NodeGraph.hpp"
+#include "CKGfx/RenderNodeGraph.hpp"
 
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
@@ -29,6 +30,31 @@
 #include "UICore/UIRenderer.hpp"
 
 #include "UICore/oui.h"
+
+////////////////////////////////////////////////////////////////////////////////
+
+enum
+{
+    kShaderProgramStdMesh   = 0x00000001
+};
+
+static void registerShaders
+(
+    cinek::gfx::ShaderLibrary& shaderLibrary,
+    cinek::gfx::NodeRenderer::ProgramMap& programs,
+    cinek::gfx::NodeRenderer::UniformMap& uniforms
+)
+{
+    shaderLibrary.loadProgram(kShaderProgramStdMesh,
+            "bin/vs_std_uv.bin",
+            "bin/fs_std_tex.bin");
+    
+    programs.fill(BGFX_INVALID_HANDLE);
+    programs[cinek::gfx::kNodeProgramMesh] = shaderLibrary.program(kShaderProgramStdMesh);
+    uniforms.fill(BGFX_INVALID_HANDLE);
+    uniforms[cinek::gfx::kNodeUniformTexDiffuse] =
+            bgfx::createUniform("u_texColor", bgfx::UniformType::Int1);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +133,7 @@ static int run(SDL_Window* window)
     SDL_GetWindowSize(window, &viewWidth, &viewHeight);
 
     bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
-    bgfx::setDebug(BGFX_DEBUG_TEXT);
+    bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS */);
     
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
         0x002244ff,
@@ -136,15 +162,27 @@ static int run(SDL_Window* window)
         
         cinek::gfx::Context gfxContext(gfxInitParams);
         
-        cinek::gfx::Model model;
+        cinek::gfx::NodeGraph model;
         cinek::FileStreamBuf inFile("cube.json");
         if (inFile) {
             cinek::RapidJsonStdStreamBuf jsonStreamBuf(inFile);
             cinek::JsonDocument jsonModelDoc;
             jsonModelDoc.ParseStream<0, rapidjson::UTF8<>>(jsonStreamBuf);
         
-            model = cinek::gfx::loadModelFromJSON(gfxContext, jsonModelDoc);
+            model = cinek::gfx::loadNodeGraphFromJSON(gfxContext, jsonModelDoc);
         }
+        
+        cinek::gfx::NodeRenderer::ProgramMap shaderPrograms;
+        cinek::gfx::NodeRenderer::UniformMap shaderUniforms;
+        
+        registerShaders(shaderLibrary, shaderPrograms, shaderUniforms);
+        
+        cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
+        cinek::gfx::Camera mainCamera;
+        bx::mtxTranslate(mainCamera.worldMtx, 0, 0, -6);
+        mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 90/180.0f,
+            (float)viewWidth/viewHeight);
+        nodeRenderer.setCamera(mainCamera);
         
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
@@ -164,6 +202,8 @@ static int run(SDL_Window* window)
             bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
             bgfx::submit(0);
             
+            nodeRenderer(model.root());
+    
             cinek::uicore::render(nvg, viewRect);
             
             uiProcess(systemTimeMs);

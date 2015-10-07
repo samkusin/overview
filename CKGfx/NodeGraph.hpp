@@ -1,13 +1,13 @@
 //
-//  Model.hpp
+//  NodeGraph.hpp
 //  GfxPrototype
 //
 //  Created by Samir Sinha on 9/28/15.
 //
 //
 
-#ifndef CK_Graphics_Model_hpp
-#define CK_Graphics_Model_hpp
+#ifndef CK_Graphics_NodeGraph_hpp
+#define CK_Graphics_NodeGraph_hpp
 
 #include "GfxTypes.hpp"
 #include "Node.hpp"
@@ -17,16 +17,16 @@
 namespace cinek {
     namespace gfx {
  
-class Model
+class NodeGraph
 {
-    CK_CLASS_NON_COPYABLE(Model);
+    CK_CLASS_NON_COPYABLE(NodeGraph);
     
 public:    
-    explicit Model(const NodeElementCounts& params);
-    Model() = default;
-    Model(Model&& model) noexcept;
-    Model& operator=(Model&& other) noexcept;
-    ~Model();
+    explicit NodeGraph(const NodeElementCounts& params);
+    NodeGraph() = default;
+    NodeGraph(NodeGraph&& model) noexcept;
+    NodeGraph& operator=(NodeGraph&& other) noexcept;
+    ~NodeGraph();
 
     NodeHandle root() const { return _root; }
     NodeHandle createTransformNode();
