@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		372035CA1BC309EC001B99E2 /* RenderNodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035C81BC309EC001B99E2 /* RenderNodeGraph.cpp */; settings = {ASSET_TAGS = (); }; };
+		372035CA1BC309EC001B99E2 /* NodeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035C81BC309EC001B99E2 /* NodeRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
 		372035DC1BC46504001B99E2 /* fs_std_tex.fs in Sources */ = {isa = PBXBuildFile; fileRef = 372035D81BC46479001B99E2 /* fs_std_tex.fs */; };
 		372035DD1BC46504001B99E2 /* vs_std_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 372035DB1BC46479001B99E2 /* vs_std_uv.vs */; };
+		372035E01BC583CF001B99E2 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035DE1BC583CF001B99E2 /* Controller.cpp */; settings = {ASSET_TAGS = (); }; };
 		37663A071BB9EAC5007C3669 /* NodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37663A051BB9EAC5007C3669 /* NodeGraph.cpp */; settings = {ASSET_TAGS = (); }; };
 		37663A0C1BBB226E007C3669 /* ModelJsonSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37663A0A1BBB226E007C3669 /* ModelJsonSerializer.cpp */; settings = {ASSET_TAGS = (); }; };
 		379429821BB31BBF00C5FAF6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429811BB31BBF00C5FAF6 /* IOKit.framework */; };
@@ -114,8 +115,8 @@
 
 /* Begin PBXFileReference section */
 		371779E11BB63C78000EFFC0 /* Material.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Material.hpp; sourceTree = "<group>"; };
-		372035C81BC309EC001B99E2 /* RenderNodeGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderNodeGraph.cpp; sourceTree = "<group>"; };
-		372035C91BC309EC001B99E2 /* RenderNodeGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RenderNodeGraph.hpp; sourceTree = "<group>"; };
+		372035C81BC309EC001B99E2 /* NodeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderer.cpp; sourceTree = "<group>"; };
+		372035C91BC309EC001B99E2 /* NodeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NodeRenderer.hpp; sourceTree = "<group>"; };
 		372035CC1BC30BF7001B99E2 /* geometry.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = geometry.inl; path = ckm/geometry.inl; sourceTree = "<group>"; };
 		372035CD1BC30BF7001B99E2 /* geometry.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = geometry.hpp; path = ckm/geometry.hpp; sourceTree = "<group>"; };
 		372035CE1BC30BF7001B99E2 /* math.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = math.inl; path = ckm/math.inl; sourceTree = "<group>"; };
@@ -127,6 +128,10 @@
 		372035D91BC46479001B99E2 /* shaderlib.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = shaderlib.sh; path = Shaders/shaderlib.sh; sourceTree = "<group>"; };
 		372035DA1BC46479001B99E2 /* varying.def.sc */ = {isa = PBXFileReference; lastKnownFileType = text; name = varying.def.sc; path = Shaders/varying.def.sc; sourceTree = "<group>"; };
 		372035DB1BC46479001B99E2 /* vs_std_uv.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = vs_std_uv.vs; path = Shaders/vs_std_uv.vs; sourceTree = "<group>"; };
+		372035DE1BC583CF001B99E2 /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Controller.cpp; path = ../Controller.cpp; sourceTree = "<group>"; };
+		372035DF1BC583CF001B99E2 /* Controller.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Controller.hpp; path = ../Controller.hpp; sourceTree = "<group>"; };
+		372035E21BC5844A001B99E2 /* Common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Common.hpp; path = ../Common.hpp; sourceTree = "<group>"; };
+		372035E31BC58579001B99E2 /* Camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
 		37663A051BB9EAC5007C3669 /* NodeGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeGraph.cpp; sourceTree = "<group>"; };
 		37663A061BB9EAC5007C3669 /* NodeGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NodeGraph.hpp; sourceTree = "<group>"; };
 		37663A091BB9FF6E007C3669 /* managed_handle.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = managed_handle.inl; sourceTree = "<group>"; };
@@ -347,8 +352,9 @@
 				37663A051BB9EAC5007C3669 /* NodeGraph.cpp */,
 				37663A0B1BBB226E007C3669 /* ModelJsonSerializer.hpp */,
 				37663A0A1BBB226E007C3669 /* ModelJsonSerializer.cpp */,
-				372035C91BC309EC001B99E2 /* RenderNodeGraph.hpp */,
-				372035C81BC309EC001B99E2 /* RenderNodeGraph.cpp */,
+				372035C91BC309EC001B99E2 /* NodeRenderer.hpp */,
+				372035C81BC309EC001B99E2 /* NodeRenderer.cpp */,
+				372035E31BC58579001B99E2 /* Camera.hpp */,
 			);
 			name = CKGfx;
 			path = ../../../CKGfx;
@@ -522,6 +528,9 @@
 			children = (
 				37942A371BB324FD00C5FAF6 /* Apple */,
 				37942A3A1BB325A700C5FAF6 /* Main.cpp */,
+				372035E21BC5844A001B99E2 /* Common.hpp */,
+				372035DF1BC583CF001B99E2 /* Controller.hpp */,
+				372035DE1BC583CF001B99E2 /* Controller.cpp */,
 			);
 			name = GfxPrototype;
 			sourceTree = "<group>";
@@ -615,7 +624,7 @@
 			files = (
 				372035DC1BC46504001B99E2 /* fs_std_tex.fs in Sources */,
 				372035DD1BC46504001B99E2 /* vs_std_uv.vs in Sources */,
-				372035CA1BC309EC001B99E2 /* RenderNodeGraph.cpp in Sources */,
+				372035CA1BC309EC001B99E2 /* NodeRenderer.cpp in Sources */,
 				37942A311BB3240100C5FAF6 /* fs_nanovg_fill.hfs in Sources */,
 				37ED616E1BB74A9100BC908F /* Context.cpp in Sources */,
 				37ED61701BB7519A00BC908F /* GfxTypes.cpp in Sources */,
@@ -650,6 +659,7 @@
 				37942A191BB3238A00C5FAF6 /* Mesh.cpp in Sources */,
 				37942A1E1BB3238A00C5FAF6 /* allocator.cpp in Sources */,
 				37942A231BB3238A00C5FAF6 /* memorystack.cpp in Sources */,
+				372035E01BC583CF001B99E2 /* Controller.cpp in Sources */,
 				37942A1F1BB3238A00C5FAF6 /* cstringstack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -62,7 +62,7 @@ struct ModelBuilderFromJSONFn
 
     NodeGraph& operator()(NodeGraph& model, const JsonValue& node)
     {
-        build(model, node);
+        model.setRoot(build(model, node));
         
         return model;
     }

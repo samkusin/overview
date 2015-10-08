@@ -58,10 +58,10 @@ namespace cinek {
         return ret;
     }
     
-    Vector3& operator-=(Vector3& v0, const Vector3& v1)
+    Vector3& Vector3::operator-=(const Vector3& v0)
     {
-        bx::vec3Sub(v0, v0, v1);
-        return v0;
+        bx::vec3Sub(comp, comp, v0);
+        return *this;
     }
     
     Vector3 operator+(const Vector3& v0, const Vector3& v1)
@@ -71,10 +71,10 @@ namespace cinek {
         return ret;
     }
     
-    Vector3& operator+=(Vector3& v0, const Vector3& v1)
+    Vector3& Vector3::operator+=(const Vector3& v0)
     {
-        bx::vec3Add(v0, v0, v1);
-        return v0;
+        bx::vec3Add(comp, comp, v0);
+        return *this;
     }
     
     Vector3 operator*(const Vector3& v0, float scalar)

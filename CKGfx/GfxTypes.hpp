@@ -25,6 +25,8 @@ class Mesh;
 struct Material;
 struct Node;
 struct NodeGraph;
+struct Camera;
+class NodeRenderer;
 
 using MeshPool = ManagedObjectPool<Mesh, void>;
 using TexturePool = ManagedObjectPool<Texture, void>;
@@ -146,6 +148,9 @@ struct Vector3
                ((uint32_t)(comp[1]*255.0f) << 8) |
                ((uint32_t)(comp[0]*255.0f));
     }
+    
+    Vector3& operator+=(const Vector3& v);
+    Vector3& operator-=(const Vector3& v);
 };
 
 static_assert(offsetof(Vector3, comp[1]) == offsetof(Vector3, y) &&
@@ -186,9 +191,7 @@ using Color3 = Vector3;
 
 
 Vector3 operator-(const Vector3& v0, const Vector3& v1);
-Vector3& operator-=(const Vector3& v0, Vector3& v1);
 Vector3 operator+(const Vector3& v0, const Vector3& v1);
-Vector3& operator+=(const Vector3& v0, Vector3& v1);
 Vector3 operator*(const Vector3& v0, float scalar);
 
 using Frustrum = ckm::Frustrum<Vector3>;

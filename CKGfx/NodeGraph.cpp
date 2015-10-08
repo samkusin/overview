@@ -105,9 +105,15 @@ void NodeGraph::onReleaseManagedObject(cinek::gfx::Node &node)
     };
 }
 
+void NodeGraph::setRoot(NodeHandle node)
+{
+    _root = node;
+}
 
 NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
 {
+    CK_ASSERT(node);
+    
     child->_parent = node;
  
     NodeHandle childHead = child->_parent->_firstChild;
@@ -123,10 +129,6 @@ NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
         child->_prevSibling = child;
     }
     child->_nextSibling = nullptr;
-    
-    if (!_root) {
-        _root = node;
-    }
 
     return child;
 }
@@ -160,5 +162,54 @@ NodeHandle NodeGraph::removeNode(NodeHandle child)
     
     return child;
 }
+
+
+NodeHandle NodeGraph::clone(NodeHandle source)
+{
+    NodeHandle cloned;
+    
+    //  select node type to clone
+    switch (source->elementType()) {
+    case Node::kElementTypeTransform:
+        cloned = createTransformNode();
+        cloned->transform()->copy(*source->transform());
+        break;
+    case Node::kElementTypeMesh: {
+            int cnt = 0;
+            const MeshElement* src = source->mesh();
+            while (src) {
+                src = src->next;
+                ++cnt;
+            }
+            cloned = createMeshNode(cnt);
+            src = source->mesh();
+            MeshElement* dest = cloned->mesh();
+            while (src && dest) {
+                dest->copy(*src);
+                dest = dest->next;
+                src = src->next;
+            }
+            CK_ASSERT(!src && !dest);
+        }
+        break;
+    default:
+        //  this node type is not supported?
+        CK_ASSERT(false);
+        return nullptr;
+    }
+    
+    for (NodeHandle child = source->firstChildHandle();
+         child;
+         child = child->nextSiblingHandle()) {
+        NodeHandle clonedChild = clone(child);
+        addChildNodeToNode(clonedChild, cloned);
+    }
+    
+    return cloned;
+}
+
+
+
+
     }   // namespace gfx
 }   // namespace cinek

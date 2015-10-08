@@ -279,9 +279,16 @@ rapidjson::Value createMeshNodeJSON
         rapidjson::Value idxlist(rapidjson::kArrayType);
         idxlist.Reserve(face.mNumIndices, allocator);
         if (face.mNumIndices != 3) {
+            std::cout << "mesh['" << mesh.mName.C_Str()
+                      << "'] skipping face - not a triangle (cnt="
+                      << face.mNumIndices
+                      << ")" << std::endl;
+            /*
             throw std::runtime_error(
                 std::string("mesh['") + mesh.mName.C_Str() + "'] face is not a triangle."
             );
+            */
+            continue;
         }
         
         for (unsigned int vi = 0; vi < face.mNumIndices; ++vi) {

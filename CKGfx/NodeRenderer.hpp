@@ -1,5 +1,5 @@
 //
-//  RenderNodeGraph.hpp
+//  NodeRenderer.hpp
 //  GfxPrototype
 //
 //  Created by Samir Sinha on 10/5/15.
@@ -10,6 +10,7 @@
 #define CK_Graphics_RenderNodeGraph_hpp
 
 #include "GfxTypes.hpp"
+#include "Camera.hpp"
 #include "NodeGraph.hpp"
 
 #include <ckm/geometry.hpp>
@@ -20,15 +21,6 @@
 
 namespace cinek {
     namespace gfx {
-
-struct Camera
-{
-    //  world transform matrix (with 'world' as defined for the rendered graph.)
-    Matrix4 worldMtx;
-    //  view frustrum relative to the current view matrix
-    Frustrum viewFrustrum;
-};
-
 
 enum NodeProgramSlot
 {

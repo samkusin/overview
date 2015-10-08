@@ -1,12 +1,12 @@
 //
-//  RenderNodeGraph.cpp
+//  NodeRenderer.cpp
 //  GfxPrototype
 //
 //  Created by Samir Sinha on 10/5/15.
 //
 //
 
-#include "RenderNodeGraph.hpp"
+#include "NodeRenderer.hpp"
 #include "ShaderLibrary.hpp"
 #include "VertexTypes.hpp"
 
@@ -150,8 +150,6 @@ void NodeRenderer::pushTransform(const Matrix4& mtx)
             mtx,
             _transformStack[_transformStack.size()-2].comp);
     }
-    
-    bgfx::setTransform(_transformStack.back().comp);
 }
 
 void NodeRenderer::popTransform()
@@ -172,12 +170,14 @@ void NodeRenderer::renderMeshElement(const MeshElement& element)
         _currentProgram = kNodeProgramMesh;
         bgfx::setProgram(_programs[_currentProgram]);
     }
+
+    bgfx::setTransform(_transformStack.back().comp);
     
     const Mesh* mesh = element.mesh.resource();
     
     bgfx::setVertexBuffer(mesh->vertexBuffer());
     bgfx::setIndexBuffer(mesh->indexBuffer());
-    
+
 //    bgfx::setState(BGFX_STATE_DEFAULT);
     
     bgfx::setState(0

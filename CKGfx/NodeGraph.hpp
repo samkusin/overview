@@ -32,8 +32,13 @@ public:
     NodeHandle createTransformNode();
     NodeHandle createMeshNode(uint32_t elementCnt);
     
+    void setRoot(NodeHandle node);
     NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
     NodeHandle removeNode(NodeHandle node);
+    
+    //  a way to clone the contents of a Node and its children that belong to
+    //  another node graph, into this graph
+    NodeHandle clone(NodeHandle handle);
   
 private:
     //  Invoked when Nodes are beling released.

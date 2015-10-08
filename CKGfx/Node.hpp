@@ -20,12 +20,23 @@ struct MeshElement
     MeshHandle mesh;
     MaterialHandle material;
     MeshElement* next;
+    
+    MeshElement& copy(const MeshElement& src) {
+        mesh = src.mesh;
+        material = src.material;
+        return *this;
+    }
 };
 
 struct TransformElement
 {
     Matrix4 mtx;
     ckm::AABB<Vector3> obb;
+    TransformElement& copy(const TransformElement& src) {
+        mtx = src.mtx;
+        obb = src.obb;
+        return *this;
+    }
 };
 
 

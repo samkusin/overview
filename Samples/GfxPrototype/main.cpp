@@ -6,12 +6,16 @@
 //
 //
 
+#include "Common.hpp"
+#include "Controller.hpp"
+
 #include "CKGfx/VertexTypes.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
 #include "CKGfx/Context.hpp"
 #include "CKGfx/ModelJsonSerializer.hpp"
 #include "CKGfx/NodeGraph.hpp"
-#include "CKGfx/RenderNodeGraph.hpp"
+#include "CKGfx/NodeRenderer.hpp"
+#include "CKGfx/Node.hpp"
 
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
@@ -59,17 +63,6 @@ static void registerShaders
 
 ////////////////////////////////////////////////////////////////////////////////
 
-enum
-{
-    kPollSDLEvent_Quit = 0x0001
-};
-
-struct PollStateSDL
-{
-    int mx, my;
-    int mxWheel, myWheel;
-    uint32_t mbtn;
-};
 
 static uint32_t pollSDLEvents(PollStateSDL& state)
 {
@@ -77,7 +70,7 @@ static uint32_t pollSDLEvents(PollStateSDL& state)
     
     //  handle Mouse UI, which is polled per frame instead of set per event.
     uint32_t mbtn = SDL_GetMouseState(&mx, &my);
-    
+    SDL_GetRelativeMouseState(&state.mdx, &state.mdy);
     
     uiSetCursor(mx, my);
     
@@ -123,6 +116,10 @@ static uint32_t pollSDLEvents(PollStateSDL& state)
         }
     }
     
+    state.keystate = SDL_GetKeyboardState(&state.keystateArraySize);
+    
+    
+    
     return flags;
 }
 
@@ -162,8 +159,11 @@ static int run(SDL_Window* window)
         
         cinek::gfx::Context gfxContext(gfxInitParams);
         
+        
+        cinek::AppController appController;
+        
         cinek::gfx::NodeGraph model;
-        cinek::FileStreamBuf inFile("cube.json");
+        cinek::FileStreamBuf inFile("device.json");
         if (inFile) {
             cinek::RapidJsonStdStreamBuf jsonStreamBuf(inFile);
             cinek::JsonDocument jsonModelDoc;
@@ -177,12 +177,35 @@ static int run(SDL_Window* window)
         
         registerShaders(shaderLibrary, shaderPrograms, shaderUniforms);
         
+        //  create master scene
+        cinek::gfx::NodeElementCounts sceneElementCounts;
+        sceneElementCounts.nodeCount = 256;
+        sceneElementCounts.meshElementCount = 128;
+        sceneElementCounts.transformCount = 128;
+        
+        cinek::gfx::NodeGraph scene(sceneElementCounts);
+        auto sceneRoot = scene.createTransformNode();
+        bx::mtxIdentity(sceneRoot->transform()->mtx);
+        scene.setRoot(sceneRoot);
+        
+        //  add instances of our model to the master scene
+        auto newObjectNode = scene.clone(model.root());
+        auto newObjectRoot = scene.createTransformNode();
+        bx::mtxTranslate(newObjectRoot->transform()->mtx, 4.0f, 0.0f, 0.0f);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        newObjectNode = scene.clone(model.root());
+        newObjectRoot = scene.createTransformNode();
+        bx::mtxTranslate(newObjectRoot->transform()->mtx, -4.0f, 0.0f, 0.0f);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        //  Renderer initialization
         cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
         cinek::gfx::Camera mainCamera;
-        bx::mtxTranslate(mainCamera.worldMtx, 0, 0, -6);
-        mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 90/180.0f,
+        mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
             (float)viewWidth/viewHeight);
-        nodeRenderer.setCamera(mainCamera);
         
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
@@ -196,17 +219,23 @@ static int run(SDL_Window* window)
             
             if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
                 running = false;
+
+            {
+                gfxContext.update();
+                
+                bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
+                bgfx::submit(0);
             
-            gfxContext.update();
-    
-            bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-            bgfx::submit(0);
+                nodeRenderer.setCamera(mainCamera);
+                nodeRenderer(scene.root());
+
+                cinek::uicore::render(nvg, viewRect);
+            }
+            {
+                appController.handleCameraInput(mainCamera, polledInputState, frameTimeMs*.001f);
+                uiProcess(systemTimeMs);
+            }
             
-            nodeRenderer(model.root());
-    
-            cinek::uicore::render(nvg, viewRect);
-            
-            uiProcess(systemTimeMs);
             bgfx::frame();
         }
     }
