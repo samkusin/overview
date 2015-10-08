@@ -70,8 +70,6 @@ private:
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
     
-    NodeProgramSlot _currentProgram;
-    
     //  various stacks used to store current rendering state during execution
     std::vector<NodeHandle> _nodeStack;
     std::vector<Matrix4> _transformStack;

@@ -13,8 +13,9 @@
 Art/
 Ext/
 Data/shaders/
+Data/bin/
 Data/textures/
-Samples/Data/shaders/
+Samples/Data/bin/
 Samples/Data/textures/
 
 *.sublime-project

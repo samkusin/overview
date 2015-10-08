@@ -1,6 +1,3 @@
-// [overview] Use freetype instead of STB
-// [overview] Changed header paths for compilation within overview
-
 //
 // Copyright (c) 2013 Mikko Mononen memon@inside.org
 //
@@ -34,7 +31,7 @@ BX_PRAGMA_DIAGNOSTIC_PUSH();
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wunused-parameter");
 BX_PRAGMA_DIAGNOSTIC_IGNORED_GCC("-Wunused-result");
 #define FONTSTASH_IMPLEMENTATION
-//  [overview] use freetype
+//  [ckgfx] Use FreeType
 #define FONS_USE_FREETYPE
 #include "fontstash.h"
 BX_PRAGMA_DIAGNOSTIC_POP();
@@ -42,8 +39,9 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 BX_PRAGMA_DIAGNOSTIC_PUSH();
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wmissing-field-initializers");
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wshadow");
-//  [overview] use internal stb
+//  [ckgfx] Use our internal STB IMPL
 //#define STB_IMAGE_IMPLEMENTATION
+//#include <stb/stb_image.c>
 #include "../stb/stb_image.h"
 BX_PRAGMA_DIAGNOSTIC_POP();
 
@@ -739,7 +737,7 @@ int nvgCreateImage(NVGcontext* ctx, const char* filename, int imageFlags)
 	stbi_convert_iphone_png_to_rgb(1);
 	img = stbi_load(filename, &w, &h, &n, 4);
 	if (img == NULL) {
-		printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
+//		printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
 		return 0;
 	}
 	image = nvgCreateImageRGBA(ctx, w, h, imageFlags, img);

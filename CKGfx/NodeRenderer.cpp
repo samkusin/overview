@@ -47,8 +47,7 @@ namespace cinek {
  *
  */
  
-NodeRenderer::NodeRenderer() :
-    _currentProgram(kNodeProgramNone)
+NodeRenderer::NodeRenderer()
 {
 }
 
@@ -56,8 +55,7 @@ NodeRenderer::NodeRenderer
 (
     const ProgramMap& programs,
     const UniformMap& uniforms
-) :
-    _currentProgram(kNodeProgramNone)
+)
 {
     std::copy(programs.begin(), programs.end(), _programs.begin());
     std::copy(uniforms.begin(), uniforms.end(), _uniforms.begin());
@@ -82,8 +80,6 @@ void NodeRenderer::setCamera(const Camera& camera)
 void NodeRenderer::operator()(NodeHandle root)
 {
     CK_ASSERT(_nodeStack.empty());
-    
-    _currentProgram = kNodeProgramNone;
     
     NodeHandle node = root;
     
@@ -166,11 +162,6 @@ void NodeRenderer::renderMeshElement(const MeshElement& element)
         bgfx::setTexture(0, _uniforms[kNodeUniformTexDiffuse], texDiffuse);
     }
 
-    if (_currentProgram != kNodeProgramMesh) {
-        _currentProgram = kNodeProgramMesh;
-        bgfx::setProgram(_programs[_currentProgram]);
-    }
-
     bgfx::setTransform(_transformStack.back().comp);
     
     const Mesh* mesh = element.mesh.resource();
@@ -188,7 +179,7 @@ void NodeRenderer::renderMeshElement(const MeshElement& element)
 						| BGFX_STATE_MSAA
                         | BGFX_STATE_CULL_CCW
 						);
-    bgfx::submit(0);
+    bgfx::submit(0, _programs[kNodeProgramMesh]);
 }
 
 

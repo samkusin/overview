@@ -1,5 +1,3 @@
-// [overview] compilation (warnings fixed)
-
 //
 // Copyright (c) 2009-2013 Mikko Mononen memon@inside.org
 //
@@ -247,8 +245,8 @@ int fons__tt_getGlyphKernAdvance(FONSttFontImpl *font, int glyph1, int glyph2)
 static void* fons__tmpalloc(size_t size, void* up);
 static void fons__tmpfree(void* ptr, void* up);
 #else
-#	include <malloc.h>
-#	include <string.h>
+#	include <cstdlib>
+#	include <cstring>
 #endif // 0
 
 #define STBTT_DEF extern

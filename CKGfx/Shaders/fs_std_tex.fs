@@ -10,6 +10,8 @@ $input v_color0, v_texcoord0
 
 SAMPLER2D(u_texColor, 0);
 
+
+
 void main()
 {
     vec4 color = texture2D(u_texColor, v_texcoord0);

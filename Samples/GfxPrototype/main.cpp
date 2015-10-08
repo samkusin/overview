@@ -224,8 +224,7 @@ static int run(SDL_Window* window)
                 gfxContext.update();
                 
                 bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-                bgfx::submit(0);
-            
+                
                 nodeRenderer.setCamera(mainCamera);
                 nodeRenderer(scene.root());
 
