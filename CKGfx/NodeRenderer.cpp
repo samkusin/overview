@@ -14,6 +14,8 @@
 #include "Texture.hpp"
 #include "Mesh.hpp"
 
+#include "Shaders/ckgfx.sh"
+
 #include <ckm/math.hpp>
 #include <ckm/geometry.hpp>
 
@@ -62,6 +64,14 @@ NodeRenderer::NodeRenderer
 
     _nodeStack.reserve(32);
     _transformStack.reserve(32);
+    
+    
+    Vector4 zero = ckm::zero<Vector4>();
+    _lightColors.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
+    _lightParams.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
+    _lightDirs.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
+    _lightCoeffs.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
+    _lightOrigins.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
 }
 
 void NodeRenderer::setCamera(const Camera& camera)
@@ -84,6 +94,43 @@ void NodeRenderer::operator()(NodeHandle root)
     NodeHandle node = root;
     
     bgfx::setViewTransform(0, _viewMtx.comp, _projMtx.comp);
+    
+    //  reset uniforms generated during the stack traversal
+    _lightColors.clear();
+    _lightDirs.clear();
+    _lightParams.clear();
+    _lightCoeffs.clear();
+    _lightOrigins.clear();
+    
+    //  todo - light uniforms will be generated during the render pass
+    //  for now, hardcode them here and modify as we move to a data-driven
+    //  approach.
+    
+    //  directional lights
+    Vector3 light0Dir = { -0.75f, -0.75f, -0.25f };
+    bx::vec3Norm(light0Dir, light0Dir);
+    
+    
+    //  directional
+    _lightParams.emplace_back(0.10f, 0.90f, 0.0f, 0.0f);
+    _lightDirs.emplace_back(light0Dir.x, light0Dir.y, light0Dir.z, 1.0f);
+    _lightColors.emplace_back(0.25f, 0.25f, 0.25f, 1.0f);
+    _lightOrigins.emplace_back();
+    _lightCoeffs.emplace_back();
+    
+    //  point
+    _lightParams.emplace_back(0.0f, 1.0f, 100.0f, 0.0f);
+    _lightDirs.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+    _lightColors.emplace_back(1.0f, 0.0f, 1.0f, 1.0f);
+    _lightOrigins.emplace_back(20.0f, 20.0f, -5.0f, 0.0f);
+    _lightCoeffs.emplace_back(1.0f, 0.05, 0.001, 0.0f);
+    
+    //  point
+    _lightParams.emplace_back(0.10f, 1.0f, 100.0f, 0.0f);
+    _lightDirs.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+    _lightColors.emplace_back(1.0f, 1.0f, 1.0f, 1.0f);
+    _lightOrigins.emplace_back(-15.0f, 20.0f, 10.0f, 0.0f);
+    _lightCoeffs.emplace_back(1.0f, 0.001, 0.001, 0.0f);
     
     while (!_nodeStack.empty() || node) {
         if (node) {
@@ -159,9 +206,36 @@ void NodeRenderer::renderMeshElement(const MeshElement& element)
     //  setup rendering state
     if (element.material->diffuseTex) {
         bgfx::TextureHandle texDiffuse = element.material->diffuseTex->bgfxHandle();
-        bgfx::setTexture(0, _uniforms[kNodeUniformTexDiffuse], texDiffuse);
+        bgfx::setTexture(0, _uniforms[kNodeUniformTexDiffuse], texDiffuse,
+            BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_ANISOTROPIC);
+    }
+    Vector4 specular;
+    specular.x = element.material->specularIntensity;
+    specular.y = element.material->specularPower;
+    specular.z = 0;
+    specular.w = 0;
+    bgfx::setUniform(_uniforms[kNodeUniformMatSpecular], specular);
+    bgfx::setUniform(_uniforms[kNodeUniformMatSpecularColor], element.material->specularColor);
+    
+    //  setup lighting
+    if (!_lightColors.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightColor], _lightColors.data(), _lightColors.size());
+    }
+    if (!_lightParams.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightParam], _lightParams.data(), _lightParams.size());
+    }
+    if (!_lightDirs.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightDir], _lightDirs.data(), _lightDirs.size());
+    }
+    
+    if (!_lightOrigins.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), _lightOrigins.size());
+    }
+    if (!_lightCoeffs.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), _lightCoeffs.size());
     }
 
+    //  setup mesh rendering
     bgfx::setTransform(_transformStack.back().comp);
     
     const Mesh* mesh = element.mesh.resource();

@@ -15,8 +15,13 @@ namespace cinek {
     
 struct Material
 {
-    Color4 diffuseColor;
     TextureHandle diffuseTex;
+    
+    Color4 diffuseColor;
+    
+    Color4 specularColor;
+    float specularIntensity;
+    float specularPower;
 };
     
     }   // namespace gfx

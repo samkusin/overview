@@ -175,6 +175,16 @@ rapidjson::Value createMaterialJSON
         output.AddMember("specular", createJSONColor(propColor, allocator), allocator);
     
         auto& component = output["specular"];
+        
+        float scalar = 0.0f;
+        
+        material.Get(AI_MATKEY_SHININESS, scalar);
+        component.AddMember("power", scalar, allocator);
+        
+        //  requires custom assimp additions
+        scalar = 0.0f;
+        material.Get(AI_MATKEY_SHININESS_STRENGTH, scalar);
+        component.AddMember("intensity", scalar, allocator);
     
         rapidjson::Value textures(rapidjson::kArrayType);
         unsigned int numTextures = material.GetTextureCount(aiTextureType_SPECULAR);

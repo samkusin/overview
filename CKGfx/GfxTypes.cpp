@@ -14,12 +14,15 @@
 #include "Node.hpp"
 #include "NodeGraph.hpp"
 
+#include <ckm/math.hpp>
+
 #include <cinek/debug.h>
+#include <bx/fpumath.h>
 
 #include <cinek/objectpool.inl>
 #include <cinek/managed_handle.inl>
 
-#include <bx/fpumath.h>
+
 
 namespace cinek {
 
@@ -83,7 +86,7 @@ namespace cinek {
         bx::vec3Mul(ret, v0, scalar);
         return ret;
     }
-    
+
     }   //  namespace gfx
     
 }   //  namespace cinek
@@ -111,6 +114,7 @@ template<> Vector3::value_type dot(Vector3 const& v0, Vector3 const& v1) {
     return bx::vec3Dot(v0, v1);
 }
 
+
 template<> Matrix4 inverse(Matrix4 const& m) {
     Matrix4 ret;
     
@@ -126,6 +130,18 @@ template<> Vector3 normalize(Vector3 const& v) {
 
 template<> Vector3::value_type vectorLength(Vector3 const& v) {
     return bx::vec3Length(v);
+}
+
+template<> Vector4 zero<Vector4>() {
+    return Vector4(0,0,0,0);
+}
+
+template<> Vector3 zero<Vector3>() {
+    return Vector3(0,0,0);
+}
+
+template<> Vector2 zero<Vector2>() {
+    return Vector2(0,0);
 }
 
 template struct Plane3<Vector3>;

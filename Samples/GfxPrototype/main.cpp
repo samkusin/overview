@@ -16,6 +16,7 @@
 #include "CKGfx/NodeGraph.hpp"
 #include "CKGfx/NodeRenderer.hpp"
 #include "CKGfx/Node.hpp"
+#include "CKGfx/Shaders/ckgfx.sh"
 
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
@@ -56,8 +57,29 @@ static void registerShaders
     programs.fill(BGFX_INVALID_HANDLE);
     programs[cinek::gfx::kNodeProgramMesh] = shaderLibrary.program(kShaderProgramStdMesh);
     uniforms.fill(BGFX_INVALID_HANDLE);
+    
     uniforms[cinek::gfx::kNodeUniformTexDiffuse] =
             bgfx::createUniform("u_texColor", bgfx::UniformType::Int1);
+    uniforms[cinek::gfx::kNodeUniformMatSpecularColor] =
+            bgfx::createUniform("u_specularColor", bgfx::UniformType::Vec4);
+    uniforms[cinek::gfx::kNodeUniformMatSpecular] =
+            bgfx::createUniform("u_specularity", bgfx::UniformType::Vec4);
+    
+    uniforms[cinek::gfx::kNodeUniformLightColor] =
+            bgfx::createUniform("u_lightColor", bgfx::UniformType::Vec4,
+                                CKGFX_SHADERS_LIGHT_COUNT);
+    uniforms[cinek::gfx::kNodeUniformLightParam] =
+            bgfx::createUniform("u_lightParam", bgfx::UniformType::Vec4,
+                                CKGFX_SHADERS_LIGHT_COUNT);
+    uniforms[cinek::gfx::kNodeUniformLightDir] =
+            bgfx::createUniform("u_lightDir", bgfx::UniformType::Vec4,
+                                CKGFX_SHADERS_LIGHT_COUNT);
+    uniforms[cinek::gfx::kNodeUniformLightCoeffs] =
+            bgfx::createUniform("u_lightCoeff", bgfx::UniformType::Vec4,
+                                CKGFX_SHADERS_LIGHT_COUNT);
+    uniforms[cinek::gfx::kNodeUniformLightOrigin] =
+            bgfx::createUniform("u_lightOrigin", bgfx::UniformType::Vec4,
+                                CKGFX_SHADERS_LIGHT_COUNT);
 }
 
 
@@ -133,7 +155,7 @@ static int run(SDL_Window* window)
     bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS */);
     
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-        0x002244ff,
+        0x001122ff,
         1.0f,
         0);
     
@@ -198,6 +220,24 @@ static int run(SDL_Window* window)
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
         bx::mtxTranslate(newObjectRoot->transform()->mtx, -4.0f, 0.0f, 0.0f);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        newObjectNode = scene.clone(model.root());
+        newObjectRoot = scene.createTransformNode();
+        bx::mtxTranslate(newObjectRoot->transform()->mtx, 0.0f, 0.0f, 4.0f);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        newObjectNode = scene.clone(model.root());
+        newObjectRoot = scene.createTransformNode();
+        bx::mtxTranslate(newObjectRoot->transform()->mtx, 6.0f, 0.0f, 8.5f);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        newObjectNode = scene.clone(model.root());
+        newObjectRoot = scene.createTransformNode();
+        bx::mtxTranslate(newObjectRoot->transform()->mtx, -3.0f, 0.0f, 11.0f);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         

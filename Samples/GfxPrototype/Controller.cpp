@@ -22,7 +22,7 @@ AppController::AppController() :
     _moveYaw(0),
     _movePitch(0)
 {
-    _cameraTransform.pos = { 0,0,-4 };
+    _cameraTransform.pos = { 0,1,-8 };
     bx::mtxIdentity(_cameraTransform.rotMtx);
     
 }

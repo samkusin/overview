@@ -136,6 +136,7 @@
 		372035E31BC58579001B99E2 /* Camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
 		372036181BC6F495001B99E2 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		3720364E1BC6FC89001B99E2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		372036501BC7033D001B99E2 /* ckgfx.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ckgfx.sh; path = Shaders/ckgfx.sh; sourceTree = "<group>"; };
 		37663A051BB9EAC5007C3669 /* NodeGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeGraph.cpp; sourceTree = "<group>"; };
 		37663A061BB9EAC5007C3669 /* NodeGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NodeGraph.hpp; sourceTree = "<group>"; };
 		37663A091BB9FF6E007C3669 /* managed_handle.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = managed_handle.inl; sourceTree = "<group>"; };
@@ -290,10 +291,11 @@
 		372035D71BC4643E001B99E2 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				372035D81BC46479001B99E2 /* fs_std_tex.fs */,
+				372036501BC7033D001B99E2 /* ckgfx.sh */,
 				372035D91BC46479001B99E2 /* shaderlib.sh */,
 				372035DA1BC46479001B99E2 /* varying.def.sc */,
 				372035DB1BC46479001B99E2 /* vs_std_uv.vs */,
+				372035D81BC46479001B99E2 /* fs_std_tex.fs */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";

@@ -283,6 +283,13 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
         }
     }
     
+    if (root.HasMember("specular")) {
+        auto& specular = root["specular"];
+        loadColorFromJSON(material.specularColor, specular);
+        material.specularIntensity = (float)specular["intensity"].GetDouble();
+        material.specularPower = (float)specular["power"].GetDouble();
+    }
+    
     return material;
 }
 

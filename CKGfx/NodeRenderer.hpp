@@ -32,10 +32,41 @@ enum NodeProgramSlot
 
 enum NodeUniformSlot
 {
+    //  Color Texture 
     kNodeUniformTexDiffuse,
-    kNodeUniformLimit       = 16,
     
-    kNodeUniformNone        = -1
+    //  Specularity uniforms where:
+    //      rgba color
+    //
+    kNodeUniformMatSpecularColor,
+    //      x = intensity, y = power
+    //
+    kNodeUniformMatSpecular,
+
+    //  For the basic lighting model, light param is an amalgam of:
+    //      x = ambient, y = diffuse, z = distance, w = cutoff
+    //      if z == 0, then directional
+    //      else
+    //          if w == 0, then point (omnidirectional)
+    //          else angle between light and extent of light on surface (spot)
+    //
+    kNodeUniformLightParam,
+    //  For the basic lighting model, light coefficients for spot and point
+    //
+    kNodeUniformLightCoeffs,
+    //  For the basic lighting model, light color is the base lamp color
+    //
+    kNodeUniformLightColor,
+    //  For the basic lighting model, the light direction
+    //
+    kNodeUniformLightDir,
+    //  For the basic lighting model, the origin used in spot or point lights
+    //
+    kNodeUniformLightOrigin,
+    
+    kNodeUniformLimit,
+    
+    kNodeUniformNone = -1
 };
 
 class NodeRenderer
@@ -73,6 +104,11 @@ private:
     //  various stacks used to store current rendering state during execution
     std::vector<NodeHandle> _nodeStack;
     std::vector<Matrix4> _transformStack;
+    std::vector<Vector4> _lightColors;
+    std::vector<Vector4> _lightParams;
+    std::vector<Vector4> _lightDirs;
+    std::vector<Vector4> _lightOrigins;
+    std::vector<Vector4> _lightCoeffs;
 };
 
 
