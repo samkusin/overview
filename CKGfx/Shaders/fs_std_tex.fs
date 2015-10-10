@@ -92,7 +92,6 @@ vec4 colorOfLightFromDirection(int index, vec3 direction, vec3 normal)
     return ambientColor + diffuseColor + specularColor;
 }
 
-
 void main()
 {
     vec4 tex0Color = texture2D(u_texColor, v_texcoord0);
@@ -102,27 +101,47 @@ void main()
     for (int i = 0; i < CKGFX_SHADERS_LIGHT_COUNT; ++i) {
       if (u_ambientIntensity(i) > 0.0 || u_diffuseIntensity(i) > 0.0) {
         vec3 lightDir;
+        float lightCutoff = u_lightCutoff(i);
         float lightOriginDist = u_lightDistance(i);
         float distance = 0.0;
+        float spotScalar = 0.0;
+
         if (lightOriginDist > 0.0) {
+            //  point or spot
             lightDir = v_position - u_lightOrigin[i].xyz;
             distance = length(lightDir);
             lightDir = normalize(lightDir);
+
+            if (lightCutoff > 0.0) {
+                //  spot light
+                spotScalar = dot(lightDir, u_lightDir[i].xyz);
+            }
         }
         else {
+            // directional
             lightDir = u_lightDir[i].xyz;
         }
 
-        vec4 color = colorOfLightFromDirection(i, lightDir, surfaceNorm);
-        
-        if (lightOriginDist > 0.0) {
-          float attenuation = u_lightCoeff[i].x + u_lightCoeff[i].y * distance +
-                              u_lightCoeff[i].z * distance * distance;
-          totalColor += color/attenuation;
+        vec4 color;
+
+        if (lightCutoff == 0.0 || lightCutoff > 0.0 && spotScalar > lightCutoff) {
+          // directional || point || spot light within cutoff
+          color = colorOfLightFromDirection(i, lightDir, surfaceNorm);
         }
         else {
-          totalColor += color;
+          color = vec4(0,0,0,0);
         }
+
+        if (lightOriginDist > 0.0 && color.a > 0.0) {
+          float attenuation = u_lightCoeff[i].x + u_lightCoeff[i].y * distance +
+                              u_lightCoeff[i].z * distance * distance;
+          color = color/attenuation;
+          if (lightCutoff > 0.0) {
+            // lightCutoff != 1 since 1 >= spotScalar > lightCutoff
+            color = color * (1.0 - (1.0 - spotScalar)/(1.0 - lightCutoff));
+          }
+        }
+        totalColor += color;
       }
     }
 

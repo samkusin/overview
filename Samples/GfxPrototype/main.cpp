@@ -152,7 +152,7 @@ static int run(SDL_Window* window)
     SDL_GetWindowSize(window, &viewWidth, &viewHeight);
 
     bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
-    bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS */);
+    bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS*/ );
     
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
         0x001122ff,
@@ -240,7 +240,7 @@ static int run(SDL_Window* window)
         bx::mtxTranslate(newObjectRoot->transform()->mtx, -3.0f, 0.0f, 11.0f);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
-        
+
         //  Renderer initialization
         cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
         cinek::gfx::Camera mainCamera;
