@@ -51,12 +51,9 @@ struct ModelBuilderFromJSONFn
     ModelBuilderFromJSONFn
     (
         Context& context,
-        std::vector<std::pair<MeshHandle, int>>& meshes,
-        std::vector<MaterialHandle>& materials
-    ) :
+        std::vector<std::pair<MeshHandle, MaterialHandle>>& meshes    ) :
         _context(&context),
-        _meshes(&meshes),
-        _materials(&materials)
+        _meshes(&meshes)
     {
     }
 
@@ -69,8 +66,7 @@ struct ModelBuilderFromJSONFn
 
 private:
     Context* _context;
-    std::vector<std::pair<MeshHandle, int>>* _meshes;
-    std::vector<MaterialHandle>* _materials;
+    std::vector<std::pair<MeshHandle, MaterialHandle>>* _meshes;
 
     NodeHandle build(NodeGraph& model, const JsonValue& node)
     {
@@ -91,9 +87,7 @@ private:
                     if (meshElement) {
                         auto& meshPair = _meshes->at(it->GetInt());
                         meshElement->mesh = meshPair.first;
-                        if (meshPair.second >= 0) {
-                            meshElement->material = _materials->at(meshPair.second);
-                        }
+                        meshElement->material = meshPair.second;
                         meshElement = meshElement->next;
                     }
                 }
@@ -121,10 +115,10 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
 {
     NodeGraph model;
     
-    if (!root.IsObject() || !root.HasMember("node"))
+    if (!root.IsObject() || !root.HasMember("nodes"))
         return model;
     
-    const JsonValue& modelNode = root["node"];
+    const JsonValue& modelNode = root["nodes"];
     
     if (!modelNode.IsObject())
         return model;
@@ -140,8 +134,7 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
     
     //  Build model's graph by visiting our json nodes.
     //
-    std::vector<std::pair<MeshHandle, int>> meshesByIndex;
-    std::vector<MaterialHandle> materialsByIndex;
+    std::vector<std::pair<MeshHandle, MaterialHandle>> meshesByIndex;
     
     //  create meshes
     if (root.HasMember("meshes")) {
@@ -150,12 +143,12 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
         if (root.HasMember("materials")) {
             const JsonValue& materialsJson = root["materials"];
             
-            for (auto materialIt = materialsJson.Begin();
-                 materialIt != materialsJson.End();
+            for (auto materialIt = materialsJson.MemberBegin();
+                 materialIt != materialsJson.MemberEnd();
                  ++materialIt) {
                 
-                auto& materialJson = *materialIt;
-                const char* name = materialJson["name"].GetString();
+                auto& materialJson = materialIt->value;
+                const char* name = materialIt->name.GetString();
                 auto material = context.findMaterial(name);
                 if (!material) {
                     material =
@@ -163,9 +156,6 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
                             std::move(loadMaterialFromJSON(context, materialJson)),
                             name
                         );
-                }
-                if (material) {
-                    materialsByIndex.emplace_back(material);
                 }
             }
         }
@@ -176,9 +166,9 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
              meshIt != meshesJson.End();
              ++meshIt) {
             const JsonValue& meshJson = *meshIt;
-            int materialIndex = -1;
+            MaterialHandle material;
             if (meshJson.HasMember("material")) {
-                materialIndex = meshJson["material"].GetInt();
+                material = context.findMaterial(meshJson["material"].GetString());
             }
             
             auto meshHandle = context.registerMesh(
@@ -187,12 +177,12 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
         
             meshesByIndex.emplace_back(
                 meshHandle,
-                materialIndex
+                material
             );
         }
     }
     
-    ModelBuilderFromJSONFn buildFn(context, meshesByIndex, materialsByIndex);
+    ModelBuilderFromJSONFn buildFn(context, meshesByIndex);
     
     buildFn(model, modelNode);
     
@@ -286,7 +276,6 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
     if (root.HasMember("specular")) {
         auto& specular = root["specular"];
         loadColorFromJSON(material.specularColor, specular);
-        material.specularIntensity = (float)specular["intensity"].GetDouble();
         material.specularPower = (float)specular["power"].GetDouble();
     }
     

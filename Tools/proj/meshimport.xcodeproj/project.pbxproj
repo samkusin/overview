@@ -8,9 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		3790EA461BADEA7C00683EC6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3790EA2A1BADE82000683EC6 /* main.cpp */; };
-		379428C71BB1EED400C5FAF6 /* libassimp.3.1.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		379428C81BB1EEF000C5FAF6 /* libassimp.3.1.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */; };
-		379428CA1BB1F38E00C5FAF6 /* libassimp.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 379428C91BB1F38E00C5FAF6 /* libassimp.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		37BDCAF01BCD8E8F008AE749 /* libassimpd.3.1.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37BDCAEE1BCD8E83008AE749 /* libassimpd.3.1.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		37BDCAF61BCD9018008AE749 /* libassimpd.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37BDCAF51BCD9010008AE749 /* libassimpd.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		37BDCAF91BCDB485008AE749 /* libassimp.3.1.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37BDCAF71BCDB479008AE749 /* libassimp.3.1.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		37BDCAFA1BCDB485008AE749 /* libassimp.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37BDCAF81BCDB479008AE749 /* libassimp.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		37BDCAFC1BCDB766008AE749 /* libassimpd.3.1.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BDCAEE1BCD8E83008AE749 /* libassimpd.3.1.1.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -20,8 +22,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				379428C71BB1EED400C5FAF6 /* libassimp.3.1.1.dylib in CopyFiles */,
-				379428CA1BB1F38E00C5FAF6 /* libassimp.3.dylib in CopyFiles */,
+				37BDCAF91BCDB485008AE749 /* libassimp.3.1.1.dylib in CopyFiles */,
+				37BDCAFA1BCDB485008AE749 /* libassimp.3.dylib in CopyFiles */,
+				37BDCAF61BCD9018008AE749 /* libassimpd.3.dylib in CopyFiles */,
+				37BDCAF01BCD8E8F008AE749 /* libassimpd.3.1.1.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -30,8 +34,10 @@
 /* Begin PBXFileReference section */
 		3790EA2A1BADE82000683EC6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/meshimport/main.cpp; sourceTree = "<group>"; };
 		3790EA301BADE8E300683EC6 /* meshimport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = meshimport; sourceTree = BUILT_PRODUCTS_DIR; };
-		379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.1.1.dylib; path = ../../Ext/lib/libassimp.3.1.1.dylib; sourceTree = "<group>"; };
-		379428C91BB1F38E00C5FAF6 /* libassimp.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.dylib; path = ../../Ext/lib/libassimp.3.dylib; sourceTree = "<group>"; };
+		37BDCAEE1BCD8E83008AE749 /* libassimpd.3.1.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimpd.3.1.1.dylib; path = ../../Ext/lib/libassimpd.3.1.1.dylib; sourceTree = "<group>"; };
+		37BDCAF51BCD9010008AE749 /* libassimpd.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimpd.3.dylib; path = ../../Ext/lib/libassimpd.3.dylib; sourceTree = "<group>"; };
+		37BDCAF71BCDB479008AE749 /* libassimp.3.1.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.1.1.dylib; path = ../../Ext/lib/libassimp.3.1.1.dylib; sourceTree = "<group>"; };
+		37BDCAF81BCDB479008AE749 /* libassimp.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.dylib; path = ../../Ext/lib/libassimp.3.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				379428C81BB1EEF000C5FAF6 /* libassimp.3.1.1.dylib in Frameworks */,
+				37BDCAFC1BCDB766008AE749 /* libassimpd.3.1.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,8 +55,10 @@
 		3790EA561BADEAE800683EC6 /* libraries */ = {
 			isa = PBXGroup;
 			children = (
-				379428C91BB1F38E00C5FAF6 /* libassimp.3.dylib */,
-				379428C51BB1EEA500C5FAF6 /* libassimp.3.1.1.dylib */,
+				37BDCAF71BCDB479008AE749 /* libassimp.3.1.1.dylib */,
+				37BDCAF81BCDB479008AE749 /* libassimp.3.dylib */,
+				37BDCAF51BCD9010008AE749 /* libassimpd.3.dylib */,
+				37BDCAEE1BCD8E83008AE749 /* libassimpd.3.1.1.dylib */,
 			);
 			name = libraries;
 			sourceTree = "<group>";

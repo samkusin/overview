@@ -20,7 +20,6 @@ struct Material
     Color4 diffuseColor;
     
     Color4 specularColor;
-    float specularIntensity;
     float specularPower;
 };
     

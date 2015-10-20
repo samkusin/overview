@@ -23,6 +23,7 @@
 #include "jsonstreambuf.hpp"
 
 #include "assimp/Importer.hpp"
+#include "assimp/DefaultLogger.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
@@ -89,10 +90,10 @@ rapidjson::Value createJSONArrayFromMat4x4(const aiMatrix4x4& m, JsonAllocator& 
     matrix.Reserve(16, allocator);
     
     for (int i = 0; i < 4; ++i) {
-        matrix.PushBack(m[i][0], allocator);
-        matrix.PushBack(m[i][1], allocator);
-        matrix.PushBack(m[i][2], allocator);
-        matrix.PushBack(m[i][3], allocator);
+        matrix.PushBack(m[0][i], allocator);
+        matrix.PushBack(m[1][i], allocator);
+        matrix.PushBack(m[2][i], allocator);
+        matrix.PushBack(m[3][i], allocator);
     }
     
     return matrix;
@@ -309,6 +310,22 @@ rapidjson::Value createMeshNodeJSON
     
     output.AddMember("tris", tris, allocator);
     
+    rapidjson::Value bones(rapidjson::kArrayType);
+    bones.Reserve(mesh.mNumBones, allocator);
+    
+    for (unsigned int bi = 0; bi < mesh.mNumBones; ++bi) {
+        const aiBone* bone = mesh.mBones[bi];
+        std::string boneName = bone->mName.C_Str();
+        rapidjson::Value value(rapidjson::kObjectType);
+        value.AddMember("name", boneName, allocator);
+        value.AddMember("offset",
+            createJSONArrayFromMat4x4(bone->mOffsetMatrix, allocator),
+            allocator);
+        bones.PushBack(value, allocator);
+    }
+    
+    output.AddMember("bones", bones, allocator);
+    
     return output;
 }
 
@@ -324,6 +341,7 @@ rapidjson::Value createSceneNodeJSON
 {
     rapidjson::Value output(rapidjson::kObjectType);
     rapidjson::Value str(rapidjson::kStringType);
+    
     str.SetString(node.mName.C_Str(), allocator);
     
     output.AddMember("name", std::move(str), allocator);
@@ -352,9 +370,33 @@ rapidjson::Value createSceneNodeJSON
         
         for (unsigned childIdx = 0; childIdx < numChildren; ++childIdx) {
             const aiNode* child = node.mChildren[childIdx];
-            children.PushBack(std::move(
-                createSceneNodeJSON(scene, *child, opts, allocator)),
-                allocator);
+            bool processChild = true;
+            if (scene.HasLights()) {
+                // not ideal, since lights can have a different name than their node
+                // name.  when creating a scene for importing, make sure we enforce the
+                // node-name = light name (and camera name) rule.
+                for (unsigned int i = 0; i < scene.mNumLights; ++i) {
+                    if (!strcmp(child->mName.C_Str(), scene.mLights[i]->mName.C_Str())) {
+                        processChild = false;
+                        break;
+                    }
+                }
+            }
+            if (scene.HasCameras()) {
+                for (unsigned int i = 0; i < scene.mNumCameras; ++i) {
+                    if (!strcmp(child->mName.C_Str(), scene.mCameras[i]->mName.C_Str())) {
+                        processChild = false;
+                        break;
+                    }
+                }
+            }
+        
+            if (processChild) {
+                
+                children.PushBack(std::move(
+                    createSceneNodeJSON(scene, *child, opts, allocator)),
+                    allocator);
+            }
         }
     }
     
@@ -596,7 +638,7 @@ int main(int argc, const char * argv[])
         unsigned int importFlags = aiProcessPreset_TargetRealtime_Quality;
         
         if (argOpts[kOptionModel]) {
-            importFlags |= aiProcess_OptimizeGraph;
+            //importFlags |= aiProcess_OptimizeGraph;
             outputType = { SceneOutputOptions::kSceneOutputModel, argOpts[kOptionModel].arg, };
             std::cout << "Model Import Method for Node["
                       << outputType.filterNodeName
@@ -610,8 +652,10 @@ int main(int argc, const char * argv[])
         
         Assimp::Importer importer;
         
+        Assimp::DefaultLogger::create(nullptr, Assimp::Logger::VERBOSE, aiDefaultLogStream_DEBUGGER | aiDefaultLogStream_STDOUT);
+        
         const aiScene* scene = importer.ReadFile(srcPathStr,
-            aiProcessPreset_TargetRealtime_Quality
+            importFlags
         );
         
         if (!scene) {

@@ -38,6 +38,24 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+cinek::gfx::NodeGraph loadModelFromFile
+(
+    cinek::gfx::Context& gfxContext,
+    const char* filename
+)
+{
+    cinek::gfx::NodeGraph model;
+    cinek::FileStreamBuf inFile(filename);
+    if (inFile) {
+        cinek::RapidJsonStdStreamBuf jsonStreamBuf(inFile);
+        cinek::JsonDocument jsonModelDoc;
+        jsonModelDoc.ParseStream<0, rapidjson::UTF8<>>(jsonStreamBuf);
+    
+        model = std::move(cinek::gfx::loadNodeGraphFromJSON(gfxContext, jsonModelDoc));
+    }
+    return model;
+}
+
 enum
 {
     kShaderProgramStdMesh   = 0x00000001
@@ -58,10 +76,8 @@ static void registerShaders
     programs[cinek::gfx::kNodeProgramMesh] = shaderLibrary.program(kShaderProgramStdMesh);
     uniforms.fill(BGFX_INVALID_HANDLE);
     
-    uniforms[cinek::gfx::kNodeUniformTexDiffuse] =
+    uniforms[cinek::gfx::kNodeUniformTexDiffuse] = 
             bgfx::createUniform("u_texColor", bgfx::UniformType::Int1);
-    uniforms[cinek::gfx::kNodeUniformMatSpecularColor] =
-            bgfx::createUniform("u_specularColor", bgfx::UniformType::Vec4);
     uniforms[cinek::gfx::kNodeUniformMatSpecular] =
             bgfx::createUniform("u_specularity", bgfx::UniformType::Vec4);
     
@@ -184,15 +200,9 @@ static int run(SDL_Window* window)
         
         cinek::AppController appController;
         
-        cinek::gfx::NodeGraph model;
-        cinek::FileStreamBuf inFile("device.json");
-        if (inFile) {
-            cinek::RapidJsonStdStreamBuf jsonStreamBuf(inFile);
-            cinek::JsonDocument jsonModelDoc;
-            jsonModelDoc.ParseStream<0, rapidjson::UTF8<>>(jsonStreamBuf);
-        
-            model = cinek::gfx::loadNodeGraphFromJSON(gfxContext, jsonModelDoc);
-        }
+        cinek::gfx::NodeGraph model = loadModelFromFile(gfxContext, "device.json");
+        cinek::gfx::NodeGraph robot = loadModelFromFile(gfxContext, "verybadrobot.json");
+        cinek::gfx::NodeGraph factorybot = loadModelFromFile(gfxContext, "simple.json");
         
         cinek::gfx::NodeRenderer::ProgramMap shaderPrograms;
         cinek::gfx::NodeRenderer::UniformMap shaderUniforms;
@@ -211,36 +221,72 @@ static int run(SDL_Window* window)
         scene.setRoot(sceneRoot);
         
         //  add instances of our model to the master scene
+        //  generic building, sculpture
         auto newObjectNode = scene.clone(model.root());
         auto newObjectRoot = scene.createTransformNode();
-        bx::mtxTranslate(newObjectRoot->transform()->mtx, 4.0f, 0.0f, 0.0f);
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1,1,1,
+            M_PI_2, 0, M_PI,
+            0, 0, 0);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxTranslate(newObjectRoot->transform()->mtx, -4.0f, 0.0f, 0.0f);
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1,1,1,
+            M_PI_2, 0, M_PI,
+            -4, 0, -1);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxTranslate(newObjectRoot->transform()->mtx, 0.0f, 0.0f, 4.0f);
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1,1,1,
+            M_PI_2, 0, M_PI,
+            4, 0, -1);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxTranslate(newObjectRoot->transform()->mtx, 6.0f, 0.0f, 8.5f);
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1,1,1,
+            M_PI_2, 0, M_PI,
+            2, 0, 4);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxTranslate(newObjectRoot->transform()->mtx, -3.0f, 0.0f, 11.0f);
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1,1,1,
+            M_PI_2, 0, M_PI,
+            -3, 0, 7);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
-
+        
+        //  robot-cyborg
+        newObjectNode = scene.clone(robot.root());
+        newObjectRoot = scene.createTransformNode();
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1.25f, 1.25f, 1.25f,
+            M_PI_2, 0, M_PI,
+            -1, 0, -3);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        //  factorybot
+        newObjectNode = scene.clone(factorybot.root());
+        newObjectRoot = scene.createTransformNode();
+        bx::mtxSRT(newObjectRoot->transform()->mtx,
+            1.0f, 1.0f, 1.0f,
+            M_PI_2, 0, M_PI,
+            0, 0, -5);
+        scene.addChildNodeToNode(newObjectNode, newObjectRoot);
+        scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
         //  Renderer initialization
         cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
         cinek::gfx::Camera mainCamera;

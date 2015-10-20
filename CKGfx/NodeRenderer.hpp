@@ -34,11 +34,7 @@ enum NodeUniformSlot
 {
     //  Color Texture 
     kNodeUniformTexDiffuse,
-    
-    //  Specularity uniforms where:
-    //      rgba color
-    //
-    kNodeUniformMatSpecularColor,
+
     //      x = intensity, y = power
     //
     kNodeUniformMatSpecular,

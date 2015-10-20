@@ -22,9 +22,8 @@ AppController::AppController() :
     _moveYaw(0),
     _movePitch(0)
 {
-    _cameraTransform.pos = { 0,1,-8 };
+    _cameraTransform.pos = { 0,1.5f,-8.0f };
     bx::mtxIdentity(_cameraTransform.rotMtx);
-    
 }
 
 void AppController::handleCameraInput

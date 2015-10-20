@@ -107,14 +107,14 @@ void NodeRenderer::operator()(NodeHandle root)
     //  approach.
     
     //  directional lights
-    Vector3 light0Dir = { -0.50f, -0.95f, 0.25f };
+    Vector3 light0Dir = { -0.20f, -0.75f, 0.55f };
     bx::vec3Norm(light0Dir, light0Dir);
     
     
     //  directional
     _lightParams.emplace_back(0.10f, 0.90f, 0.0f, 0.0f);
     _lightDirs.emplace_back(light0Dir.x, light0Dir.y, light0Dir.z, 1.0f);
-    _lightColors.emplace_back(0.25f, 0.25f, 0.25f, 1.0f);
+    _lightColors.emplace_back(0.75f, 0.75f, 0.75f, 1.0f);
     _lightOrigins.emplace_back();
     _lightCoeffs.emplace_back();
     
@@ -128,11 +128,11 @@ void NodeRenderer::operator()(NodeHandle root)
     //  spot with cutoff
     light0Dir = { 1.0, 0.0, -1.0 };
     bx::vec3Norm(light0Dir, light0Dir);
-    _lightParams.emplace_back(0.10f, 1.0f, 100.0f, 0.1f);
+    _lightParams.emplace_back(0.10f, 1.0f, 100.0f, 0.2f);
     _lightDirs.emplace_back(light0Dir.x, light0Dir.y, light0Dir.z, 1.0f);
     _lightColors.emplace_back(0.0f, 1.0f, 1.0f, 1.0f);
-    _lightOrigins.emplace_back(-10.0f, 1.0f, 10.0f, 0.0f);
-    _lightCoeffs.emplace_back(1.0f, 0.01, 0.01, 0.0f);
+    _lightOrigins.emplace_back(-12.0f, 1.0f, 10.0f, 0.0f);
+    _lightCoeffs.emplace_back(1.0f, 0.025, 0.025, 0.0f);
     
     
     
@@ -214,12 +214,13 @@ void NodeRenderer::renderMeshElement(const MeshElement& element)
             BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_ANISOTROPIC);
     }
     Vector4 specular;
-    specular.x = element.material->specularIntensity;
+    specular.x = (element.material->specularColor.r +
+                  element.material->specularColor.g +
+                  element.material->specularColor.b) * 0.33f;
     specular.y = element.material->specularPower;
     specular.z = 0;
     specular.w = 0;
     bgfx::setUniform(_uniforms[kNodeUniformMatSpecular], specular);
-    bgfx::setUniform(_uniforms[kNodeUniformMatSpecularColor], element.material->specularColor);
     
     //  setup lighting
     if (!_lightColors.empty()) {
