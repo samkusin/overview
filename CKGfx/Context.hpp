@@ -25,6 +25,7 @@ public:
         uint32_t numMeshes;
         uint32_t numMaterials;
         uint32_t numTextures;
+        uint32_t numAnimations;
     };
     
     Context() = default;
@@ -71,13 +72,15 @@ private:
     MeshPool _meshes;
     MaterialPool _materials;
     TexturePool _textures;
+    AnimationPool _animations;
     
     using TextureDictionary = std::unordered_map<std::string, TextureHandle>;
     using MaterialDictionary = std::unordered_map<std::string, MaterialHandle>;
+    using AnimationDictionary = std::unordered_map<std::string, AnimationHandle>;
 
     TextureDictionary _textureDictionary;
     MaterialDictionary _materialDictionary;
-
+    AnimationDictionary _animationDictionary;
 };
 
     

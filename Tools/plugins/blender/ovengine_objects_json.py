@@ -45,6 +45,7 @@ def generate_mesh_elements(obj, mesh, resources):
     mesh_uv_textures = mesh.tessface_uv_textures
 
     face_has_uvs = len(mesh_uv_textures) > 0    # UV map
+    has_weights = '_armature' in resources and obj.vertex_groups
 
     Vertex = namedtuple('Vertex', 'id pos normal weights uv subvertices')
 
@@ -129,7 +130,7 @@ def generate_mesh_elements(obj, mesh, resources):
                     our_vertices[vindex] = v
                     our_vertex_id += 1
 
-                    if '_armature' in resources:
+                    if has_weights:
                         # Handle bone weights if any. we find the bones by name, which
                         # is always the vertex group name and convert that to an index
                         for vgroup in mesh_vertices[vindex].groups:
@@ -185,8 +186,10 @@ def generate_mesh_elements(obj, mesh, resources):
         our_mesh['material'] = material_name
         our_mesh['vertices'] = []
         our_mesh['normals'] = []
-        our_mesh['tex0'] = []
-        our_mesh['weights'] = []
+        if face_has_uvs:
+            our_mesh['tex0'] = []
+        if has_weights:
+            our_mesh['weights'] = []
         our_mesh['tris'] = []
 
         # remap our face vertex list to vertex "IDs", which are really indices
@@ -451,8 +454,11 @@ class ExportOVObjectJSON(bpy.types.Operator):
             # underlying meshes.  we free this context after processing the armature's
             # hierarchy
             resources['_armature'] = self.exportObjectAsArmature(scene, obj, resources)
-            resources['animations'][obj.name] = resources['_armature']['animations']
-            node['skeleton'] = resources['_armature']['skeleton']
+            resources['animations'][obj.name] = {
+                'states': resources['_armature']['animations'],
+                'skeleton' : resources['_armature']['skeleton']
+            }
+            node['animation'] = obj.name
         elif obj.type == 'MESH':
             node['meshes'] = self.exportObjectAsMesh(scene, obj, resources)
         else:
@@ -519,8 +525,4 @@ def register():
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.utils.unregister_module(__name__);
-
-#if __name__ == "__main__":
-#    register()
-    #bpy.ops.export.ovengine_objson()
 

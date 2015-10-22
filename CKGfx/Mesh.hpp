@@ -69,10 +69,15 @@ namespace MeshBuilder {
         uint32_t indexCount = 0;
         const bgfx::Memory* vertexMemory = nullptr;
         const bgfx::Memory* indexMemory = nullptr;
+        Vector4 indices;
+        Vector4 weights;
+        uint16_t weightStackIdx;
         
         BuilderState& position(const Vector3& pos);
         BuilderState& normal(const Vector3& normal);
         BuilderState& uv2(const Vector2& uv);
+        BuilderState& addweight(uint16_t boneIndex, float weight);
+        BuilderState& endweights();
         BuilderState& next();
         template<typename IndexType>
         BuilderState& triangle(IndexType i0, IndexType i1, IndexType i2);

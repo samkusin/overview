@@ -28,16 +28,6 @@ struct MeshElement
     }
 };
 
-struct TransformElement
-{
-    Matrix4 mtx;
-    ckm::AABB<Vector3> obb;
-    TransformElement& copy(const TransformElement& src) {
-        mtx = src.mtx;
-        obb = src.obb;
-        return *this;
-    }
-};
 
 
 //  Nodes contain lists of their Elements and child Nodes
@@ -57,7 +47,6 @@ struct Node
     enum ElementType
     {
         kElementTypeNone,
-        kElementTypeTransform,
         kElementTypeMesh,
         kElementTypeCustom
     };
@@ -75,8 +64,13 @@ struct Node
         return (ElementType)((_flags & kElementTypeMask) >> 24);
     }
     
-    const TransformElement* transform() const;
-    TransformElement* transform();
+    const Matrix4& transform() const { return _mtx; }
+    Matrix4& transform() { return _mtx; }
+    void setTransform(const Matrix4& mtx) { _mtx = mtx; }
+    
+    const ckm::AABB<Vector3>& obb() const { return _obb; }
+    ckm::AABB<Vector3>& obb() { return _obb; }
+    void setOBB(const ckm::AABB<Vector3>& obb) { _obb = obb; }
     
     const MeshElement* mesh() const;
     MeshElement* mesh();
@@ -100,6 +94,9 @@ struct Node
 private:
     friend class NodeGraph;
  
+    Matrix4 _mtx;
+    ckm::AABB<Vector3> _obb;
+ 
     //  parent node
     NodeHandle _parent;
     //  Use flags to determine how to handle the node data.
@@ -114,7 +111,6 @@ private:
     //  Context depends on the element type.  TODO - Make this a variant?
     union
     {
-        TransformElement* transform;
         MeshElement* mesh;
         void* custom;
     }
@@ -124,20 +120,11 @@ private:
 struct NodeElementCounts
 {
     uint32_t nodeCount;
-    uint32_t transformCount;
     uint32_t meshElementCount;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-inline const TransformElement* Node::transform() const {
-    return elementType() == kElementTypeTransform? _element.transform : nullptr;
-}
-inline TransformElement* Node::transform() {
-    return const_cast<TransformElement*>(
-        static_cast<const Node*>(this)->transform()
-    );
-}
 inline const MeshElement* Node::mesh() const {
     return elementType() == kElementTypeMesh ? _element.mesh : nullptr;
 }
@@ -146,7 +133,6 @@ inline MeshElement* Node::mesh() {
         static_cast<const Node*>(this)->mesh()
     );
 }
-
 
     }   //  namespace gfx
 }   //  namespace cinek

@@ -22,13 +22,9 @@ NodeElementCounts& enumerateNodeResourcesFromJSON
 )
 {
     ++counts.nodeCount;
-    if (node.HasMember("matrix")) {
-        ++counts.transformCount;
-    }
     if (node.HasMember("meshes") && node["meshes"].IsArray()) {
         if (!node["meshes"].Empty()) {
             counts.meshElementCount += node["meshes"].Size();
-            ++counts.nodeCount;
         }
     }
     if (node.HasMember("children") && node["children"].IsArray()) {
@@ -70,18 +66,14 @@ private:
 
     NodeHandle build(NodeGraph& model, const JsonValue& node)
     {
-        NodeHandle thisNode = model.createTransformNode();
-        loadMatrixFromJSON(thisNode->transform()->mtx, node["matrix"]);
-        if (node.HasMember("obb")) {
-            loadAABBFromJSON(thisNode->transform()->obb, node["obb"]);
-        }
+        NodeHandle thisNode;
         
         //  create our leaf child element nodes (meshes for example)
         if (node.HasMember("meshes")) {
             const JsonValue& elements = node["meshes"];
             if (elements.IsArray() && !elements.Empty()) {
-                NodeHandle meshNode = model.createMeshNode(elements.Size());
-                MeshElement* meshElement = meshNode->mesh();
+                thisNode = model.createMeshNode(elements.Size());
+                MeshElement* meshElement = thisNode->mesh();
                 for (auto it = elements.Begin(); it != elements.End(); ++it) {
                     CK_ASSERT(meshElement);
                     if (meshElement) {
@@ -91,10 +83,32 @@ private:
                         meshElement = meshElement->next;
                     }
                 }
-                
-                model.addChildNodeToNode(meshNode, thisNode);
             }
         }
+        else if (node.HasMember("animation")) {
+            thisNode = model.createTransformNode();    
+        
+        }
+        else {
+            thisNode = model.createTransformNode();
+        }
+        loadMatrixFromJSON(thisNode->transform(), node["matrix"]);
+        if (node.HasMember("obb")) {
+            loadAABBFromJSON(thisNode->obb(), node["obb"]);
+        }
+
+        
+        /*
+        if (node.HasMember("skeleton")) {
+            const JsonValue& roots = node["skeleton"];
+            if (roots.IsArray() && !roots.Empty()) {
+                for (auto it = roots.Begin(); it != roots.End(); ++it) {
+                    NodeHandle boneNode = buildBoneHierarchy(model, *it);
+                    model.addChildNodeToNode(boneNode, thisNode);
+                }
+            }
+        }
+        */
         
         if (node.HasMember("children")) {
             const JsonValue& children = node["children"];
@@ -198,19 +212,44 @@ Mesh loadMeshFromJSON
     Mesh mesh;
     
     const JsonValue& vertices = root["vertices"];
-    const JsonValue& normals = root["normals"];
     
+    JsonValue::ConstMemberIterator normalArrayIt = root.FindMember("normals");
     JsonValue::ConstMemberIterator texArrayIt = root.FindMember("tex0");
-   
-    CK_ASSERT(vertices.Size() == normals.Size());
+    JsonValue::ConstMemberIterator weightsArrayIt = root.FindMember("weights");
+    
+    bool hasTexCoords = texArrayIt != root.MemberEnd();
+    bool hasWeights = weightsArrayIt != root.MemberEnd();
+    bool hasNormals = normalArrayIt != root.MemberEnd();
+    
+    CK_ASSERT(normalArrayIt == root.MemberEnd() || normalArrayIt->value.Size() == vertices.Size());
     CK_ASSERT(texArrayIt == root.MemberEnd() || texArrayIt->value.Size() == vertices.Size());
+    CK_ASSERT(weightsArrayIt == root.MemberEnd() || weightsArrayIt->value.Size() == vertices.Size());
     
     const JsonValue& triangles = root["tris"];
     
+    VertexTypes::Format vertexType = VertexTypes::kInvalid;
+    if (hasNormals) {
+        if (hasTexCoords) {
+            if (hasWeights) {
+                vertexType = VertexTypes::kVNormal_Tex0_Weights;
+            }
+            else {
+                vertexType = VertexTypes::kVNormal_Tex0;
+            }
+        }
+    }
+    else {
+        if (hasTexCoords) {
+            vertexType = VertexTypes::kVTex0;
+        }
+    }
+    
+    if (vertexType == VertexTypes::kInvalid) {
+        return mesh;
+    }
+    
     MeshBuilder::BuilderState meshBuilder;
     
-    //  TODO - configurable based on mesh JSON format
-    VertexTypes::Format vertexType = VertexTypes::kVec3_Normal_Tex0;
     meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
     meshBuilder.indexLimit = triangles.Size() * 3;
     meshBuilder.indexType = VertexTypes::kIndex16;
@@ -219,11 +258,18 @@ Mesh loadMeshFromJSON
     MeshBuilder::create(meshBuilder);
     
     JsonValue::ConstValueIterator vertexIt = vertices.Begin();
-    JsonValue::ConstValueIterator normalIt = normals.Begin();
+    JsonValue::ConstValueIterator normalIt = nullptr;
     JsonValue::ConstValueIterator texIt = nullptr;
-    bool hasTexCoords = texArrayIt != root.MemberEnd();
+    JsonValue::ConstValueIterator weightsIt = nullptr;
+
+    if (hasNormals) {
+        normalIt = normalArrayIt->value.Begin();
+    }
     if (hasTexCoords) {
         texIt = texArrayIt->value.Begin();
+    }
+    if (hasWeights) {
+        weightsIt = weightsArrayIt->value.Begin();
     }
     for (; vertexIt != vertices.End(); ++vertexIt, ++normalIt) {
         Vector3 vec3;
@@ -234,6 +280,19 @@ Mesh loadMeshFromJSON
             Vector2 uv;
             meshBuilder.uv2(loadUVFromJSON(uv, *texIt));
             ++texIt;
+        }
+     
+        if (hasWeights) {
+            const JsonValue& weights = *weightsIt;
+            for(JsonValue::ConstValueIterator weightIt = weights.Begin();
+                weightIt != weights.End();
+                ++weightIt)
+            {
+                const JsonValue& weight = *weightIt;
+                meshBuilder.addweight((uint16_t)weight["bidx"].GetUint(),
+                                      (float)weight["weight"].GetDouble());
+            }
+            meshBuilder.endweights();
         }
         
         meshBuilder.next();

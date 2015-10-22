@@ -58,7 +58,8 @@ cinek::gfx::NodeGraph loadModelFromFile
 
 enum
 {
-    kShaderProgramStdMesh   = 0x00000001
+    kShaderProgramStdMesh   = 0x00000001,
+    kShaderProgramBoneMesh  = 0x00000002
 };
 
 static void registerShaders
@@ -70,6 +71,10 @@ static void registerShaders
 {
     shaderLibrary.loadProgram(kShaderProgramStdMesh,
             "bin/vs_std_uv.bin",
+            "bin/fs_std_tex.bin");
+    
+    shaderLibrary.loadProgram(kShaderProgramBoneMesh,
+            "bin/vs_bone_uv.bin",
             "bin/fs_std_tex.bin");
     
     programs.fill(BGFX_INVALID_HANDLE);
@@ -194,6 +199,7 @@ static int run(SDL_Window* window)
         gfxInitParams.numMeshes = 1024;
         gfxInitParams.numMaterials = 1024;
         gfxInitParams.numTextures = 256;
+        gfxInitParams.numAnimations = 256;
         
         cinek::gfx::Context gfxContext(gfxInitParams);
         
@@ -213,18 +219,17 @@ static int run(SDL_Window* window)
         cinek::gfx::NodeElementCounts sceneElementCounts;
         sceneElementCounts.nodeCount = 256;
         sceneElementCounts.meshElementCount = 128;
-        sceneElementCounts.transformCount = 128;
         
         cinek::gfx::NodeGraph scene(sceneElementCounts);
         auto sceneRoot = scene.createTransformNode();
-        bx::mtxIdentity(sceneRoot->transform()->mtx);
+        bx::mtxIdentity(sceneRoot->transform());
         scene.setRoot(sceneRoot);
         
         //  add instances of our model to the master scene
         //  generic building, sculpture
         auto newObjectNode = scene.clone(model.root());
         auto newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
             0, 0, 0);
@@ -233,7 +238,7 @@ static int run(SDL_Window* window)
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
             -4, 0, -1);
@@ -242,7 +247,7 @@ static int run(SDL_Window* window)
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
             4, 0, -1);
@@ -251,7 +256,7 @@ static int run(SDL_Window* window)
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
             2, 0, 4);
@@ -260,7 +265,7 @@ static int run(SDL_Window* window)
         
         newObjectNode = scene.clone(model.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
             -3, 0, 7);
@@ -270,7 +275,7 @@ static int run(SDL_Window* window)
         //  robot-cyborg
         newObjectNode = scene.clone(robot.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1.25f, 1.25f, 1.25f,
             M_PI_2, 0, M_PI,
             -1, 0, -3);
@@ -280,7 +285,7 @@ static int run(SDL_Window* window)
         //  factorybot
         newObjectNode = scene.clone(factorybot.root());
         newObjectRoot = scene.createTransformNode();
-        bx::mtxSRT(newObjectRoot->transform()->mtx,
+        bx::mtxSRT(newObjectRoot->transform(),
             1.0f, 1.0f, 1.0f,
             M_PI_2, 0, M_PI,
             0, 0, -5);

@@ -29,8 +29,9 @@ public:
     ~NodeGraph();
 
     NodeHandle root() const { return _root; }
-    NodeHandle createTransformNode();
+    NodeHandle createTransformNode(uint32_t flags=0);
     NodeHandle createMeshNode(uint32_t elementCnt);
+    NodeHandle createBoneNode();
     
     void setRoot(NodeHandle node);
     NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
@@ -47,7 +48,6 @@ private:
 private:
     friend NodePool;
     
-    ObjectPool<TransformElement> _transformElementsPool;
     ObjectPool<MeshElement> _meshElementPool;
     NodePool _nodes;
     NodeHandle _root;

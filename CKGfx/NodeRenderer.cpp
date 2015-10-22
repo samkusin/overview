@@ -138,13 +138,10 @@ void NodeRenderer::operator()(NodeHandle root)
     
     while (!_nodeStack.empty() || node) {
         if (node) {
+            pushTransform(node->transform());
             //  parse current node
             switch (node->elementType()) {
-            case Node::kElementTypeTransform:
-                pushTransform(node->transform()->mtx);
-                break;
-                
-            case Node::kElementTypeMesh: {
+                case Node::kElementTypeMesh: {
                     const MeshElement* mesh = node->mesh();
                     while (mesh) {
                         renderMeshElement(*mesh);
@@ -170,12 +167,11 @@ void NodeRenderer::operator()(NodeHandle root)
             
             //  execute cleanup of the parent node
             switch (node->elementType()) {
-                case Node::kElementTypeTransform:
-                popTransform();
-                break;
             default:
                 break;
             }
+            
+            popTransform();
             
             node = node->nextSiblingHandle();
         }

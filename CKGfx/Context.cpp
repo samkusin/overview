@@ -18,7 +18,8 @@ namespace cinek {
 Context::Context(const ResourceInitParams& params) :
     _meshes(params.numMeshes),
     _materials(params.numMaterials),
-    _textures(params.numTextures)
+    _textures(params.numTextures),
+    _animations(params.numAnimations)
 {
 }
 

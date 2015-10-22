@@ -22,14 +22,10 @@ namespace cinek {
     {
         enum Format
         {
-            kVec3,              ///< XYZ floats only
-            kVec3_RGBA,         ///< XYZ floats + ABGR byte comps
-            kVec3_Normal,       ///< XYZ floats + Normals
-            kVec3_Normal_RGBA,  ///< XYZ floats + Normals + ABGR byte components
-            kVec3_Normal_Tex0,  ///< XYZ floats + Normals + vec2 UVs
-            kVec3_RGBA_Tex0,    ///< XYZ floats + ABGR byte comps + vec2 UV
-            
-            kPresetCount,       ///< Preset Limit
+            kVTex0,                 ///< XYZ floats + vec2 UVs
+            kVNormal_Tex0,          ///< XYZ, Normals, UVs
+            kVNormal_Tex0_Weights,  ///< XYZ, Normals, UVs + Indicies/Weights
+            kPresetCount,           ///< Preset Limit
             
             kCustomPreset0 = kPresetCount,  ///< First Custom Preset index
             kCustomPreset1,

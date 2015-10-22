@@ -14,7 +14,6 @@ namespace cinek {
     namespace gfx {
  
 NodeGraph::NodeGraph(const NodeElementCounts& params) :
-    _transformElementsPool(params.transformCount),
     _meshElementPool(params.meshElementCount),
     _nodes(params.nodeCount)
 {
@@ -22,7 +21,6 @@ NodeGraph::NodeGraph(const NodeElementCounts& params) :
 }
 
 NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
-    _transformElementsPool(std::move(other._transformElementsPool)),
     _meshElementPool(std::move(other._meshElementPool)),
     _nodes(std::move(other._nodes)),
     _root(std::move(other._root))
@@ -32,7 +30,6 @@ NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
 
 NodeGraph& NodeGraph::operator=(NodeGraph&& other) noexcept
 {
-    _transformElementsPool = std::move(other._transformElementsPool);
     _meshElementPool = std::move(other._meshElementPool);
     _nodes = std::move(other._nodes);
     _root = std::move(other._root);
@@ -69,15 +66,12 @@ NodeHandle NodeGraph::createMeshNode(uint32_t elementCnt)
     return handle;
 }
 
-NodeHandle NodeGraph::createTransformNode()
+NodeHandle NodeGraph::createTransformNode(uint32_t flags)
 {
     NodeHandle handle;
-    Node node(Node::kElementTypeTransform);
+    Node node(Node::kElementTypeNone, flags);
     
     handle = _nodes.add(std::move(node));
-    if (handle) {
-        handle->_element.transform = _transformElementsPool.construct();
-    }
     return handle;
 }
 
@@ -93,13 +87,6 @@ void NodeGraph::onReleaseManagedObject(cinek::gfx::Node &node)
             }
         }
         break;
-    case Node::kElementTypeTransform:
-        {
-            _transformElementsPool.destruct(node._element.transform);
-            node._element.transform = nullptr;
-        }
-        break;
-        
     default:
         break;
     };
@@ -170,9 +157,8 @@ NodeHandle NodeGraph::clone(NodeHandle source)
     
     //  select node type to clone
     switch (source->elementType()) {
-    case Node::kElementTypeTransform:
+    case Node::kElementTypeNone:
         cloned = createTransformNode();
-        cloned->transform()->copy(*source->transform());
         break;
     case Node::kElementTypeMesh: {
             int cnt = 0;
@@ -197,6 +183,9 @@ NodeHandle NodeGraph::clone(NodeHandle source)
         CK_ASSERT(false);
         return nullptr;
     }
+    
+    cloned->setTransform(source->transform());
+    cloned->setOBB(source->obb());
     
     for (NodeHandle child = source->firstChildHandle();
          child;

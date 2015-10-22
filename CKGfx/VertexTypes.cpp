@@ -19,42 +19,27 @@ namespace VertexTypes
     void initialize()
     {
         s_nullDecl.begin().end();
-    
-        // kVec3
-        s_decls[kVec3].begin()
+
+        // kVTex0
+        s_decls[kVTex0].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .end();
-        
-        // kVec3_RGBA
-        s_decls[kVec3_RGBA].begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-            .end();
-        
-        // kVec3_Normal
-        s_decls[kVec3_Normal].begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
-            .end();
-        
-        // kVec3_Normal_RGBA
-        s_decls[kVec3_Normal_RGBA].begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-            .end();
-        
-        // kVec3_Normal_Tex0
-        s_decls[kVec3_Normal_Tex0].begin()
+
+        // kVNormal_Tex0
+        s_decls[kVNormal_Tex0].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .end();
         
-        s_decls[kVec3_RGBA_Tex0].begin()
+        // kVNormal_Tex0_Weights
+        s_decls[kVNormal_Tex0_Weights].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Indices, 4, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
             .end();
         
         //  allow custom presets starting at the preset limit index

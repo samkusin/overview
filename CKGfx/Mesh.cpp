@@ -37,6 +37,31 @@ namespace MeshBuilder
         return vertex(uv.comp, bgfx::Attrib::TexCoord0);
     }
     
+    BuilderState& BuilderState::addweight(uint16_t boneIndex, float weight)
+    {
+        CK_ASSERT_RETURN_VALUE(weightStackIdx < 4, *this);
+        
+        indices.comp[weightStackIdx] = (float)(boneIndex);
+        weights.comp[weightStackIdx] = weight;
+        ++weightStackIdx;
+        
+        return *this;
+    }
+    
+    BuilderState& BuilderState::endweights()
+    {
+        while (weightStackIdx < 4) {
+            indices.comp[weightStackIdx] = 0.0f;
+            weights.comp[weightStackIdx] = 0.0f;
+            ++weightStackIdx;
+        }
+        vertex(indices.comp, bgfx::Attrib::Indices);
+        vertex(weights.comp, bgfx::Attrib::Weight);
+        
+        weightStackIdx = 0;
+        return *this;
+    }
+    
     
     BuilderState& BuilderState::vertex
     (
@@ -100,6 +125,7 @@ namespace MeshBuilder
         uint32_t sz = state.vertexDecl->getSize(state.vertexLimit);
         state.vertexMemory = bgfx::alloc(sz);
         state.vertexCount = 0;
+        state.weightStackIdx = 0;
         
         if (state.indexType == VertexTypes::kIndex16) {
             sz = sizeof(uint16_t)*state.indexLimit;
