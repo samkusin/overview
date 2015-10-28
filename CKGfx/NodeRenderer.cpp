@@ -135,16 +135,19 @@ void NodeRenderer::operator()(NodeHandle root)
     _lightCoeffs.emplace_back(1.0f, 0.025, 0.025, 0.0f);
     
     
+    Matrix4 topTransform;
+    bx::mtxIdentity(topTransform);
+    
+    pushTransform(topTransform);
     
     while (!_nodeStack.empty() || node) {
         if (node) {
-            pushTransform(node->transform());
             //  parse current node
             switch (node->elementType()) {
                 case Node::kElementTypeMesh: {
                     const MeshElement* mesh = node->mesh();
                     while (mesh) {
-                        renderMeshElement(*mesh);
+                        renderMeshElement(node->transform(), *mesh);
                         mesh = mesh->next;
                     }
                 }
@@ -157,6 +160,7 @@ void NodeRenderer::operator()(NodeHandle root)
                 break;
             }
             
+            pushTransform(node->transform());
             _nodeStack.emplace_back(node);
             
             node = node->firstChildHandle();
@@ -165,13 +169,13 @@ void NodeRenderer::operator()(NodeHandle root)
             node = _nodeStack.back();
             _nodeStack.pop_back();
             
+            popTransform();
+            
             //  execute cleanup of the parent node
             switch (node->elementType()) {
             default:
                 break;
             }
-            
-            popTransform();
             
             node = node->nextSiblingHandle();
         }
@@ -201,7 +205,11 @@ void NodeRenderer::popTransform()
     _transformStack.pop_back();
 }
 
-void NodeRenderer::renderMeshElement(const MeshElement& element)
+void NodeRenderer::renderMeshElement
+(
+    const Matrix4& localTransform,
+    const MeshElement& element
+)
 {
     //  setup rendering state
     if (element.material->diffuseTex) {
@@ -237,7 +245,9 @@ void NodeRenderer::renderMeshElement(const MeshElement& element)
     }
 
     //  setup mesh rendering
-    bgfx::setTransform(_transformStack.back().comp);
+    Matrix4 modelToWorldTransform;
+    bx::mtxMul(modelToWorldTransform, localTransform, _transformStack.back());
+    bgfx::setTransform(modelToWorldTransform);
     
     const Mesh* mesh = element.mesh.resource();
     

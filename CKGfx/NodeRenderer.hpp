@@ -85,7 +85,8 @@ private:
     void pushTransform(const Matrix4& mtx);
     void popTransform();
     
-    void renderMeshElement(const MeshElement& element);
+    void renderMeshElement(const Matrix4& localTransform,
+                           const MeshElement& element);
     
 private:
     //  Global State

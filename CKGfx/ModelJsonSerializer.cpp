@@ -118,19 +118,6 @@ private:
             loadAABBFromJSON(thisNode->obb(), node["obb"]);
         }
 
-        
-        /*
-        if (node.HasMember("skeleton")) {
-            const JsonValue& roots = node["skeleton"];
-            if (roots.IsArray() && !roots.Empty()) {
-                for (auto it = roots.Begin(); it != roots.End(); ++it) {
-                    NodeHandle boneNode = buildBoneHierarchy(model, *it);
-                    model.addChildNodeToNode(boneNode, thisNode);
-                }
-            }
-        }
-        */
-        
         if (node.HasMember("children")) {
             const JsonValue& children = node["children"];
             if (children.IsArray() && !children.Empty()) {

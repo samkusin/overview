@@ -31,6 +31,9 @@ struct MeshElement
 struct ArmatureElement
 {
     AnimationSetHandle animSet;
+    //  TODO - add Animation Controller Handle used for containing
+    //         state
+    
     ArmatureElement& copy(const ArmatureElement& src) {
         animSet = src.animSet;
         return *this;
