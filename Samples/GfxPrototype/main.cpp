@@ -219,6 +219,7 @@ static int run(SDL_Window* window)
         cinek::gfx::NodeElementCounts sceneElementCounts;
         sceneElementCounts.nodeCount = 256;
         sceneElementCounts.meshElementCount = 128;
+        sceneElementCounts.armatureCount = 32;
         
         cinek::gfx::NodeGraph scene(sceneElementCounts);
         auto sceneRoot = scene.createTransformNode();

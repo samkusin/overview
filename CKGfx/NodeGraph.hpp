@@ -31,7 +31,7 @@ public:
     NodeHandle root() const { return _root; }
     NodeHandle createTransformNode(uint32_t flags=0);
     NodeHandle createMeshNode(uint32_t elementCnt);
-    NodeHandle createBoneNode();
+    NodeHandle createArmatureNode();
     
     void setRoot(NodeHandle node);
     NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
@@ -49,6 +49,7 @@ private:
     friend NodePool;
     
     ObjectPool<MeshElement> _meshElementPool;
+    ObjectPool<ArmatureElement> _armatureElementPool;
     NodePool _nodes;
     NodeHandle _root;
 };

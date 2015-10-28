@@ -28,6 +28,15 @@ struct MeshElement
     }
 };
 
+struct ArmatureElement
+{
+    AnimationSetHandle animSet;
+    ArmatureElement& copy(const ArmatureElement& src) {
+        animSet = src.animSet;
+        return *this;
+    }
+};
+
 
 
 //  Nodes contain lists of their Elements and child Nodes
@@ -48,6 +57,7 @@ struct Node
     {
         kElementTypeNone,
         kElementTypeMesh,
+        kElementTypeArmature,
         kElementTypeCustom
     };
     
@@ -74,6 +84,9 @@ struct Node
     
     const MeshElement* mesh() const;
     MeshElement* mesh();
+    
+    const ArmatureElement* armature() const;
+    ArmatureElement* armature();
     
     Node* parent() { return _parent.resource(); }
     const Node* parent() const { return _parent.resource(); }
@@ -112,6 +125,7 @@ private:
     union
     {
         MeshElement* mesh;
+        ArmatureElement* armature;
         void* custom;
     }
     _element;
@@ -121,6 +135,7 @@ struct NodeElementCounts
 {
     uint32_t nodeCount;
     uint32_t meshElementCount;
+    uint32_t armatureCount;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,6 +146,14 @@ inline const MeshElement* Node::mesh() const {
 inline MeshElement* Node::mesh() {
     return const_cast<MeshElement*>(
         static_cast<const Node*>(this)->mesh()
+    );
+}
+inline const ArmatureElement* Node::armature() const {
+    return elementType() == kElementTypeArmature ? _element.armature : nullptr;
+}
+inline ArmatureElement* Node::armature() {
+    return const_cast<ArmatureElement*>(
+        static_cast<const Node*>(this)->armature()
     );
 }
 

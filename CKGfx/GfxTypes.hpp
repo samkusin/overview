@@ -26,19 +26,19 @@ struct Material;
 struct Node;
 struct NodeGraph;
 struct Camera;
-struct Animation;
+struct AnimationSet;
 class NodeRenderer;
 
 using MeshPool = ManagedObjectPool<Mesh, void>;
 using TexturePool = ManagedObjectPool<Texture, void>;
 using MaterialPool = ManagedObjectPool<Material, void>;
-using AnimationPool = ManagedObjectPool<Animation, void>;
+using AnimationSetPool = ManagedObjectPool<AnimationSet, void>;
 using NodePool = ManagedObjectPool<Node, NodeGraph*>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
 using TextureHandle = ManagedHandle<Texture, TexturePool>;
 using MaterialHandle = ManagedHandle<Material, MaterialPool>;
-using AnimationHandle = ManagedHandle<Animation, AnimationPool>;
+using AnimationSetHandle = ManagedHandle<AnimationSet, AnimationSetPool>;
 using NodeHandle = ManagedHandle<Node, NodePool>;
 
 class ShaderLibrary;

@@ -15,6 +15,7 @@ namespace cinek {
  
 NodeGraph::NodeGraph(const NodeElementCounts& params) :
     _meshElementPool(params.meshElementCount),
+    _armatureElementPool(params.armatureCount),
     _nodes(params.nodeCount)
 {
     _nodes.setDelegate(this);
@@ -22,6 +23,7 @@ NodeGraph::NodeGraph(const NodeElementCounts& params) :
 
 NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
     _meshElementPool(std::move(other._meshElementPool)),
+    _armatureElementPool(std::move(other._armatureElementPool)),
     _nodes(std::move(other._nodes)),
     _root(std::move(other._root))
 {
@@ -31,6 +33,7 @@ NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
 NodeGraph& NodeGraph::operator=(NodeGraph&& other) noexcept
 {
     _meshElementPool = std::move(other._meshElementPool);
+    _armatureElementPool = std::move(other._armatureElementPool);
     _nodes = std::move(other._nodes);
     _root = std::move(other._root);
     
@@ -66,6 +69,17 @@ NodeHandle NodeGraph::createMeshNode(uint32_t elementCnt)
     return handle;
 }
 
+NodeHandle NodeGraph::createArmatureNode()
+{
+    NodeHandle handle;
+    Node node(Node::kElementTypeArmature);
+    handle = _nodes.add(std::move(node));
+    if (handle) {
+        handle->_element.armature = _armatureElementPool.construct();
+    }
+    return handle;
+}
+
 NodeHandle NodeGraph::createTransformNode(uint32_t flags)
 {
     NodeHandle handle;
@@ -85,6 +99,12 @@ void NodeGraph::onReleaseManagedObject(cinek::gfx::Node &node)
                 _meshElementPool.destruct(node._element.mesh);
                 node._element.mesh = node._element.mesh->next;
             }
+        }
+        break;
+    case Node::kElementTypeArmature:
+        {
+            _armatureElementPool.destruct(node._element.armature);
+            node._element.armature = nullptr;
         }
         break;
     default:
@@ -176,6 +196,11 @@ NodeHandle NodeGraph::clone(NodeHandle source)
                 src = src->next;
             }
             CK_ASSERT(!src && !dest);
+        }
+        break;
+    case Node::kElementTypeArmature: {
+            cloned = createArmatureNode();
+            cloned->armature()->copy(*source->armature());
         }
         break;
     default:

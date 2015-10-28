@@ -9,10 +9,26 @@
 #include "ModelJsonSerializer.hpp"
 #include "Context.hpp"
 
+#include <cinek/debug.h>
 #include <vector>
 
 namespace cinek {
     namespace gfx {
+    
+static const char* sKeyframeTypes[Keyframe::kTypeCount] = {
+    "tx", "ty", "tz",
+    "qw", "qx", "qy", "qz",
+    "sx", "sy", "sz"
+};
+
+static Keyframe::Type keyframeTypeFromString(const char* str)
+{
+    for (int i = 0; i < Keyframe::kTypeCount; ++i) {
+        if (!strcmp(sKeyframeTypes[i], str))
+            return static_cast<Keyframe::Type>(i);
+    }
+    return Keyframe::kInvalid;
+}
 
 
 NodeElementCounts& enumerateNodeResourcesFromJSON
@@ -26,6 +42,9 @@ NodeElementCounts& enumerateNodeResourcesFromJSON
         if (!node["meshes"].Empty()) {
             counts.meshElementCount += node["meshes"].Size();
         }
+    }
+    if (node.HasMember("animation")) {
+        ++counts.armatureCount;
     }
     if (node.HasMember("children") && node["children"].IsArray()) {
         const JsonValue& children = node["children"];
@@ -86,7 +105,9 @@ private:
             }
         }
         else if (node.HasMember("animation")) {
-            thisNode = model.createTransformNode();    
+            thisNode = model.createArmatureNode();
+            thisNode->armature()->animSet =
+                _context->findAnimationSet(node["animation"].GetString());
         
         }
         else {
@@ -150,43 +171,61 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
     //
     std::vector<std::pair<MeshHandle, MaterialHandle>> meshesByIndex;
     
-    //  create meshes
-    if (root.HasMember("meshes")) {
-        //  create new materials or lookup existing ones and add them to our
-        //  local indexed array of materials
-        if (root.HasMember("materials")) {
-            const JsonValue& materialsJson = root["materials"];
+    //  load animations
+    if (root.HasMember("animations")) {
+        const JsonValue& jsonObjects = root["animations"];
+        
+        for (auto objIt = jsonObjects.MemberBegin();
+             objIt != jsonObjects.MemberEnd();
+             ++objIt) {
             
-            for (auto materialIt = materialsJson.MemberBegin();
-                 materialIt != materialsJson.MemberEnd();
-                 ++materialIt) {
-                
-                auto& materialJson = materialIt->value;
-                const char* name = materialIt->name.GetString();
-                auto material = context.findMaterial(name);
-                if (!material) {
-                    material =
-                        context.registerMaterial(
-                            std::move(loadMaterialFromJSON(context, materialJson)),
-                            name
-                        );
-                }
+            auto& jsonObject = objIt->value;
+            const char* name = objIt->name.GetString();
+            auto obj = context.findAnimationSet(name);
+            if (!obj) {
+                context.registerAnimationSet(
+                    std::move(loadAnimationSetFromJSON(context, jsonObject)),
+                    name
+                );
             }
         }
+    }
+
+    //  create materials
+    if (root.HasMember("materials")) {
+        const JsonValue& jsonObjects = root["materials"];
         
-        const JsonValue& meshesJson = root["meshes"];
+        for (auto objIt = jsonObjects.MemberBegin();
+             objIt != jsonObjects.MemberEnd();
+             ++objIt) {
+            
+            auto& jsonObject = objIt->value;
+            const char* name = objIt->name.GetString();
+            auto obj = context.findMaterial(name);
+            if (!obj) {
+                context.registerMaterial(
+                    std::move(loadMaterialFromJSON(context, jsonObject)),
+                    name
+                );
+            }
+        }
+    }
+    
+    //  create meshes
+    if (root.HasMember("meshes")) {
+        const JsonValue& jsonObjects = root["meshes"];
         
-        for (auto meshIt = meshesJson.Begin();
-             meshIt != meshesJson.End();
-             ++meshIt) {
-            const JsonValue& meshJson = *meshIt;
+        for (auto objIt = jsonObjects.Begin();
+             objIt != jsonObjects.End();
+             ++objIt) {
+            auto& jsonObject = *objIt;
             MaterialHandle material;
-            if (meshJson.HasMember("material")) {
-                material = context.findMaterial(meshJson["material"].GetString());
+            if (jsonObject.HasMember("material")) {
+                material = context.findMaterial(jsonObject["material"].GetString());
             }
             
             auto meshHandle = context.registerMesh(
-                std::move(loadMeshFromJSON(context, meshJson))
+                std::move(loadMeshFromJSON(context, jsonObject))
             );
         
             meshesByIndex.emplace_back(
@@ -339,6 +378,136 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
     }
     
     return material;
+}
+
+int loadAnimationSkeletonFromJSON
+(
+    const JsonValue& node,
+    std::vector<Bone>& bones
+)
+{
+    int index = node["bone_index"].GetInt();
+    if (index >=bones.size())
+        bones.resize(index);
+
+    bones[index].name = node["name"].GetString();
+    loadMatrixFromJSON(bones[index].mtx, node["matrix"]);
+    
+    auto& children = node["children"];
+    int lastChildIndex = -1;
+    for (auto it = children.Begin(); it != children.End(); ++it) {
+        auto& child = *it;
+        int childIndex = loadAnimationSkeletonFromJSON(child, bones);
+        if (lastChildIndex < 0) {
+            bones[index].firstChild = childIndex;
+            lastChildIndex = bones[index].firstChild;
+        }
+        else {
+            bones[lastChildIndex].nextSibling = childIndex;
+            lastChildIndex = bones[lastChildIndex].nextSibling;
+        }
+        bones[lastChildIndex].parent = index;
+    }
+    
+    return index;
+}
+
+SequenceChannel loadSequenceChannelFromJSON
+(
+    const JsonValue& boneAnim,
+    float* duration
+)
+{
+    SequenceChannel sequenceChannel;
+    
+    for (auto jsonSeqIt = boneAnim.MemberBegin();
+         jsonSeqIt != boneAnim.MemberEnd();
+         ++jsonSeqIt) {
+        auto& value = jsonSeqIt->value;
+        if (!value.IsArray()) {
+            continue;
+        }
+        Keyframe::Type kfType = keyframeTypeFromString(jsonSeqIt->name.GetString());
+        if (kfType != Keyframe::kInvalid) {
+            Sequence& seq = sequenceChannel[kfType];
+            if (!seq.empty()) {
+                CK_LOG_WARN("gfx", "loadSequenceChannelFromJson - "
+                    "sequence '%s' already loaded",
+                    jsonSeqIt->name.GetString());
+            }
+            seq.reserve(value.Size());
+            for (auto jsonKfIt = value.Begin(); jsonKfIt != value.End(); ++jsonKfIt) {
+                auto& kf = *jsonKfIt;
+                float t = (float)kf["t"].GetDouble();
+                seq.emplace_back(Keyframe{
+                    t, (float)kf["v"].GetDouble()
+                });
+                if (t > *duration)
+                    *duration = t;
+            }
+        }
+    }
+    
+    return sequenceChannel;
+}
+
+
+static int enumerateBonesInAnimationSet
+(
+    const JsonValue& bone,
+    int maxIndex
+)
+{
+    auto& children = bone["children"];
+    for (auto it = children.Begin(); it != children.End(); ++it) {
+        maxIndex = enumerateBonesInAnimationSet(*it, maxIndex);
+    }
+
+    int index = bone["bone_index"].GetInt();
+    return index > maxIndex ? index : maxIndex;
+}
+
+AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root)
+{
+    AnimationSet animationSet;
+    
+    if (root.HasMember("skeleton")) {
+        auto& rootBone = root["skeleton"][0U];
+        
+        int sz = enumerateBonesInAnimationSet(rootBone, -1) + 1;
+        if (sz > 0) {
+            animationSet.bones.resize(sz);
+            loadAnimationSkeletonFromJSON(rootBone, animationSet.bones);
+        }
+    }
+    
+    if (root.HasMember("states")) {
+        auto& states = root["states"];
+        for (auto it = states.MemberBegin(); it != states.MemberEnd(); ++it) {
+            auto& state = it->value;
+            const char* name = it->name.GetString();
+            
+            
+            Animation animation;
+            //  channel = animation for a bone
+            animation.channels.resize(animationSet.bones.size());
+            animation.duration = 0.f;
+            
+            for (auto boneIt = state.MemberBegin(); boneIt != state.MemberEnd(); ++boneIt) {
+                auto& boneAnim = boneIt->value;
+                const char* boneName = boneIt->name.GetString();
+                int boneIndex = animationSet.findBoneIndex(boneName);
+                if (boneIndex >= 0) {
+                    animation.channels[boneIndex] =
+                        std::move(loadSequenceChannelFromJSON(boneAnim, &animation.duration));
+                }
+            }
+            
+            animationSet.add(std::move(animation), name);
+        }
+    }
+    
+    return animationSet;
 }
 
 

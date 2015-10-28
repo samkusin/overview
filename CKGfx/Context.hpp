@@ -57,6 +57,13 @@ public:
     void unregisterMaterial(const char* name);
     //  Finds a named Material
     MaterialHandle findMaterial(const char* name) const;
+    //  Generates an AnimationSet handle for system-wide persistance and maps it
+    //  optionally to a name
+    AnimationSetHandle registerAnimationSet(AnimationSet&& animation, const char* name="");
+    //  Unregisters the named AnimationSet
+    void unregisterAnimationSet(const char* name);
+    //  Finds an AnimationSet given its name
+    AnimationSetHandle findAnimationSet(const char* name);
     
 private:
     //  restrict Context access to pointer and reference -
@@ -68,19 +75,29 @@ private:
     Context& operator=(const Context&);
     Context& operator=(Context&&);
     
+    template<typename Dictionary>
+    typename Dictionary::mapped_type registerResource(
+        typename Dictionary::mapped_type::Value&& value,
+        typename Dictionary::mapped_type::Owner& pool,
+        Dictionary& dictionary,
+        const char* name);
+    
+    template<typename Dictionary>
+    void unregisterResource(Dictionary& dictionary, const char* name);
+    
 private:
     MeshPool _meshes;
     MaterialPool _materials;
     TexturePool _textures;
-    AnimationPool _animations;
+    AnimationSetPool _animationSets;
     
     using TextureDictionary = std::unordered_map<std::string, TextureHandle>;
     using MaterialDictionary = std::unordered_map<std::string, MaterialHandle>;
-    using AnimationDictionary = std::unordered_map<std::string, AnimationHandle>;
+    using AnimationSetDictionary = std::unordered_map<std::string, AnimationSetHandle>;
 
     TextureDictionary _textureDictionary;
     MaterialDictionary _materialDictionary;
-    AnimationDictionary _animationDictionary;
+    AnimationSetDictionary _animationSetDictionary;
 };
 
     
