@@ -79,7 +79,13 @@ static void registerShaders
     
     programs.fill(BGFX_INVALID_HANDLE);
     programs[cinek::gfx::kNodeProgramMesh] = shaderLibrary.program(kShaderProgramStdMesh);
+    programs[cinek::gfx::kNodeProgramBoneMesh] = shaderLibrary.program(kShaderProgramBoneMesh);
+  
     uniforms.fill(BGFX_INVALID_HANDLE);
+    uniforms[cinek::gfx::kNodeUniformWorldMtx] =
+            bgfx::createUniform("u_world", bgfx::UniformType::Mat4);
+    uniforms[cinek::gfx::kNodeUniformWorldViewProjMtx] =
+            bgfx::createUniform("u_worldViewProj", bgfx::UniformType::Mat4);
     
     uniforms[cinek::gfx::kNodeUniformTexDiffuse] = 
             bgfx::createUniform("u_texColor", bgfx::UniformType::Int1);
@@ -226,6 +232,8 @@ static int run(SDL_Window* window)
         bx::mtxIdentity(sceneRoot->transform());
         scene.setRoot(sceneRoot);
         
+
+        
         //  add instances of our model to the master scene
         //  generic building, sculpture
         auto newObjectNode = scene.clone(model.root());
@@ -282,7 +290,7 @@ static int run(SDL_Window* window)
             -1, 0, -3);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
-        
+
         //  factorybot
         newObjectNode = scene.clone(factorybot.root());
         newObjectRoot = scene.createTransformNode();
@@ -318,7 +326,7 @@ static int run(SDL_Window* window)
                 bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
                 
                 nodeRenderer.setCamera(mainCamera);
-                nodeRenderer(scene.root());
+                nodeRenderer(scene.root(), systemTimeMs);
 
                 cinek::uicore::render(nvg, viewRect);
             }

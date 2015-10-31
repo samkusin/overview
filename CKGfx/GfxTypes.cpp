@@ -97,7 +97,6 @@ namespace cinek {
     
 }   //  namespace cinek
 
-
 #include <ckm/aabb.hpp>
 #include <ckm/math.hpp>
 #define CKM_MATH_IMPLEMENTATION

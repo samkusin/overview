@@ -37,26 +37,38 @@ namespace cinek {
         
         float t;
         float v;
+        
+        bool operator<(float ot) const {
+            return t < ot;
+        }
     };
     
     using Sequence = std::vector<Keyframe>;
-    using SequenceChannel = std::array<Sequence, Keyframe::kTypeCount>;
+    
+    struct SequenceChannel
+    {
+        std::array<Sequence, Keyframe::kTypeCount> sequences;
+        uint32_t animatedSeqMask = 0;
+        
+        auto keyframePairFromTime(Keyframe::Type kfType, float t) const ->
+            std::pair<const Keyframe*, const Keyframe*>;
+    };
     
     struct Animation
     {
         std::vector<SequenceChannel> channels;
-        float duration;
+        float duration = 0.f;
     };
     
     struct Bone
     {
-        Matrix4 mtx;
-        std::string name;
-        int parent;
-        int firstChild;
-        int nextSibling;
+        Matrix4 mtx;        // armature space matrix
+        Matrix4 invMtx;     // inverse (armature to bone space)
         
-        Bone() : parent(-1), firstChild(-1), nextSibling(-1) {}
+        std::string name;
+        int parent = -1;
+        int firstChild = -1;
+        int nextSibling = -1;
     };
     
     struct AnimationSet
@@ -74,6 +86,21 @@ namespace cinek {
         const Animation* find(const std::string& name) const;
         int findBoneIndex(const std::string& name) const;
     };
+    
+    
+    void interpRotationFromSequenceChannel
+    (
+        Vector4& boneRotQuat,
+        const SequenceChannel& channel,
+        float animTime
+    );
+    
+    void interpTranslateFromSequenceChannel
+    (
+        Vector3& translate,
+        const SequenceChannel& channel,
+        float animTime
+    );
     
 
     }   // namespace gfx

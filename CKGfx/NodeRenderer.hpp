@@ -25,6 +25,7 @@ namespace cinek {
 enum NodeProgramSlot
 {
     kNodeProgramMesh,
+    kNodeProgramBoneMesh,
     kNodeProgramLimit       = 16,
     
     kNodeProgramNone        = -1
@@ -32,6 +33,10 @@ enum NodeProgramSlot
 
 enum NodeUniformSlot
 {
+    //  Matrices
+    kNodeUniformWorldMtx,
+    kNodeUniformWorldViewProjMtx,
+    
     //  Color Texture 
     kNodeUniformTexDiffuse,
 
@@ -79,14 +84,28 @@ public:
 
     void setCamera(const Camera& camera);
     
-    void operator()(NodeHandle root);
+    void operator()(NodeHandle root, uint32_t systemTimeMs);
     
 private:
     void pushTransform(const Matrix4& mtx);
     void popTransform();
     
+    struct ArmatureState
+    {
+        const ArmatureElement* armature;
+        Matrix4 armatureToWorldMtx;
+        Matrix4 worldToArmatureMtx;
+        //  handle to controller - todo
+        const Animation* animation;
+        float animTime;
+    };
+
     void renderMeshElement(const Matrix4& localTransform,
-                           const MeshElement& element);
+            const MeshElement& element);
+    
+    void buildBoneTransforms(const ArmatureState& armatureState,
+                             int boneIndex,
+                             const Matrix4& worldTransform);
     
 private:
     //  Global State
@@ -97,10 +116,16 @@ private:
     Camera _camera;
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
+    Matrix4 _viewProjMtx;
+    
+    bgfx::Transform _bgfxTransforms;
+    uint32_t _bgfxTransformCacheIndex;
     
     //  various stacks used to store current rendering state during execution
     std::vector<NodeHandle> _nodeStack;
     std::vector<Matrix4> _transformStack;
+    std::vector<ArmatureState> _armatureStack;
+    
     std::vector<Vector4> _lightColors;
     std::vector<Vector4> _lightParams;
     std::vector<Vector4> _lightDirs;

@@ -319,6 +319,7 @@ Mesh loadMeshFromJSON
                                       (float)weight["weight"].GetDouble());
             }
             meshBuilder.endweights();
+            ++weightsIt;
         }
         
         meshBuilder.next();
@@ -380,6 +381,8 @@ int loadAnimationSkeletonFromJSON
     bones[index].name = node["name"].GetString();
     loadMatrixFromJSON(bones[index].mtx, node["matrix"]);
     
+    bx::mtxInverse(bones[index].invMtx, bones[index].mtx);
+    
     auto& children = node["children"];
     int lastChildIndex = -1;
     for (auto it = children.Begin(); it != children.End(); ++it) {
@@ -416,7 +419,7 @@ SequenceChannel loadSequenceChannelFromJSON
         }
         Keyframe::Type kfType = keyframeTypeFromString(jsonSeqIt->name.GetString());
         if (kfType != Keyframe::kInvalid) {
-            Sequence& seq = sequenceChannel[kfType];
+            Sequence& seq = sequenceChannel.sequences[kfType];
             if (!seq.empty()) {
                 CK_LOG_WARN("gfx", "loadSequenceChannelFromJson - "
                     "sequence '%s' already loaded",
@@ -431,6 +434,10 @@ SequenceChannel loadSequenceChannelFromJSON
                 });
                 if (t > *duration)
                     *duration = t;
+            }
+            if (seq.size() > 1) {
+                //  more than one keyframe indicates animation
+                sequenceChannel.animatedSeqMask |= (1 << kfType);
             }
         }
     }

@@ -26,6 +26,7 @@ struct Material;
 struct Node;
 struct NodeGraph;
 struct Camera;
+struct Animation;
 struct AnimationSet;
 class NodeRenderer;
 
@@ -196,6 +197,8 @@ using Color3 = Vector3;
 Vector3 operator-(const Vector3& v0, const Vector3& v1);
 Vector3 operator+(const Vector3& v0, const Vector3& v1);
 Vector3 operator*(const Vector3& v0, float scalar);
+
+Vector4 slerp(const Vector4& q0, const Vector4& q1, float factor);
 
 using Frustrum = ckm::Frustrum<Vector3>;
 using AABB = ckm::AABB<Vector3>;

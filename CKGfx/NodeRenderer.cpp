@@ -13,6 +13,7 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "Mesh.hpp"
+#include "Animation.hpp"
 
 #include "Shaders/ckgfx.sh"
 
@@ -20,6 +21,7 @@
 #include <ckm/geometry.hpp>
 
 #include <bgfx/bgfx.h>
+#include <bgfx/bgfx_shader.sh>
 #include <bx/fpumath.h>
 
 namespace cinek {
@@ -64,6 +66,7 @@ NodeRenderer::NodeRenderer
 
     _nodeStack.reserve(32);
     _transformStack.reserve(32);
+    _armatureStack.reserve(4);
     
     
     Vector4 zero = ckm::zero<Vector4>();
@@ -87,13 +90,14 @@ void NodeRenderer::setCamera(const Camera& camera)
         _camera.viewFrustrum.farZ());
 }
 
-void NodeRenderer::operator()(NodeHandle root)
+void NodeRenderer::operator()(NodeHandle root, uint32_t systemTimeMs)
 {
     CK_ASSERT(_nodeStack.empty());
     
     NodeHandle node = root;
     
     bgfx::setViewTransform(0, _viewMtx.comp, _projMtx.comp);
+    bx::mtxMul(_viewProjMtx, _viewMtx, _projMtx);
     
     //  reset uniforms generated during the stack traversal
     _lightColors.clear();
@@ -134,6 +138,8 @@ void NodeRenderer::operator()(NodeHandle root)
     _lightOrigins.emplace_back(-12.0f, 1.0f, 10.0f, 0.0f);
     _lightCoeffs.emplace_back(1.0f, 0.025, 0.025, 0.0f);
     
+    _bgfxTransformCacheIndex =
+        bgfx::allocTransform(&_bgfxTransforms, BGFX_CONFIG_MAX_BONES);
     
     Matrix4 topTransform;
     bx::mtxIdentity(topTransform);
@@ -144,7 +150,25 @@ void NodeRenderer::operator()(NodeHandle root)
         if (node) {
             //  parse current node
             switch (node->elementType()) {
-                case Node::kElementTypeMesh: {
+            case Node::kElementTypeArmature: {
+                    const ArmatureElement* armature = node->armature();
+                    ArmatureState state { armature };
+                    bx::mtxMul(state.armatureToWorldMtx, node->transform(),
+                               _transformStack.back());
+                    bx::mtxInverse(state.worldToArmatureMtx, state.armatureToWorldMtx);
+                
+                    state.animation = node->armature()->animSet->find("idle");
+                    if (state.animation) {
+                        state.animTime = fmodf(systemTimeMs*.001f, state.animation->duration);
+                    }
+                    else {
+                        state.animTime = 0.f;
+                    }
+                    _armatureStack.emplace_back(state);
+                }
+                break;
+            
+            case Node::kElementTypeMesh: {
                     const MeshElement* mesh = node->mesh();
                     while (mesh) {
                         renderMeshElement(node->transform(), *mesh);
@@ -173,6 +197,9 @@ void NodeRenderer::operator()(NodeHandle root)
             
             //  execute cleanup of the parent node
             switch (node->elementType()) {
+            case Node::kElementTypeArmature:
+                _armatureStack.pop_back();
+                break;
             default:
                 break;
             }
@@ -245,16 +272,38 @@ void NodeRenderer::renderMeshElement
     }
 
     //  setup mesh rendering
-    Matrix4 modelToWorldTransform;
-    bx::mtxMul(modelToWorldTransform, localTransform, _transformStack.back());
-    bgfx::setTransform(modelToWorldTransform);
-    
     const Mesh* mesh = element.mesh.resource();
-    
     bgfx::setVertexBuffer(mesh->vertexBuffer());
     bgfx::setIndexBuffer(mesh->indexBuffer());
+    
+    Matrix4 worldTransform;
+    bx::mtxMul(worldTransform, localTransform, _transformStack.back());
 
-//    bgfx::setState(BGFX_STATE_DEFAULT);
+    NodeProgramSlot programSlot;
+    if (!_armatureStack.empty()) {
+        programSlot = kNodeProgramBoneMesh;
+
+        const ArmatureState& armatureState = _armatureStack.back();
+
+        Matrix4 worldViewProjMtx;
+        bx::mtxMul(worldViewProjMtx, armatureState.armatureToWorldMtx,
+                                     _viewProjMtx);
+        
+        bgfx::setUniform(_uniforms[kNodeUniformWorldMtx],
+                         armatureState.armatureToWorldMtx.comp, 1);
+        bgfx::setUniform(_uniforms[kNodeUniformWorldViewProjMtx],
+                         worldViewProjMtx.comp, 1);
+   
+        buildBoneTransforms(armatureState, 0, worldTransform);
+        bgfx::setTransform(_bgfxTransformCacheIndex,
+                           armatureState.armature->animSet->bones.size());
+    }
+    else
+    {
+        programSlot = kNodeProgramMesh;
+        bgfx::setTransform(worldTransform);
+    }
+
     
     bgfx::setState(0
 						| BGFX_STATE_RGB_WRITE
@@ -264,7 +313,77 @@ void NodeRenderer::renderMeshElement
 						| BGFX_STATE_MSAA
                         | BGFX_STATE_CULL_CCW
 						);
-    bgfx::submit(0, _programs[kNodeProgramMesh]);
+
+    bgfx::submit(0, _programs[programSlot]);
+}
+
+void NodeRenderer::buildBoneTransforms
+(
+    const ArmatureState& armatureState,
+    int boneIndex,
+    const Matrix4& worldTransform
+)
+{
+    const AnimationSet* animSet = armatureState.armature->animSet.resource();
+    auto& bones = animSet->bones;
+    auto& bone = bones[boneIndex];
+    const Animation* animation = armatureState.animation;
+    
+    //  generate our "local (most likely a mesh)" space to bone transform
+    //  local -> world -> armature -> bone_local -> armature = final bone transform
+    
+    //  animations exist on this bone
+    if (animation && animation->channels[boneIndex].animatedSeqMask) {
+        Matrix4 interMtx;
+        bx::mtxMul(interMtx, worldTransform, armatureState.worldToArmatureMtx);
+    
+        Matrix4 meshToBoneMtx;
+        bx::mtxMul(meshToBoneMtx, interMtx, bone.invMtx);
+    
+        const SequenceChannel& seqForBone = animation->channels[boneIndex];
+    
+        Matrix4 multMtx;
+        bx::mtxIdentity(multMtx);      // TODO!
+    
+        Vector4 boneRotQuat;
+        bx::quatIdentity(boneRotQuat);
+        interpRotationFromSequenceChannel(boneRotQuat, seqForBone, armatureState.animTime);
+    
+        Matrix4 rotMtx;
+        bx::mtxQuat(rotMtx, boneRotQuat);
+        
+        Vector3 translate;
+        translate.x = 0;
+        translate.y = 0;
+        translate.z = 0;
+        interpTranslateFromSequenceChannel(translate, seqForBone, armatureState.animTime);
+
+        // Mint = Mrot * Mscale
+        // Mint = Mint + translate
+        bx::mtxMul(interMtx, multMtx, rotMtx);
+        
+        interMtx[12] = translate.x;
+        interMtx[13] = translate.y;
+        interMtx[14] = translate.z;
+    
+        // Transform our bone based on animation
+        bx::mtxMul(multMtx, meshToBoneMtx, interMtx);
+        // Transform back to armature space
+        bx::mtxMul(_bgfxTransforms.data + boneIndex*16, multMtx, bone.mtx);
+    }
+    else {
+        //  no animation - just use to mesh to armature matrix as our bone
+        //  transform
+        bx::mtxMul(_bgfxTransforms.data + boneIndex*16,
+                   worldTransform, armatureState.worldToArmatureMtx);
+    }
+    
+    for (int childBoneIndex = bone.firstChild;
+         childBoneIndex >= 0;
+         childBoneIndex = bones[childBoneIndex].nextSibling) {
+        
+        buildBoneTransforms(armatureState, childBoneIndex, worldTransform);
+    }
 }
 
 
