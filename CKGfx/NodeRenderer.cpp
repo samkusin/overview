@@ -14,6 +14,7 @@
 #include "Texture.hpp"
 #include "Mesh.hpp"
 #include "Animation.hpp"
+#include "AnimationController.hpp"
 
 #include "Shaders/ckgfx.sh"
 
@@ -156,14 +157,6 @@ void NodeRenderer::operator()(NodeHandle root, uint32_t systemTimeMs)
                     bx::mtxMul(state.armatureToWorldMtx, node->transform(),
                                _transformStack.back());
                     bx::mtxInverse(state.worldToArmatureMtx, state.armatureToWorldMtx);
-                
-                    state.animation = node->armature()->animSet->find("idle");
-                    if (state.animation) {
-                        state.animTime = fmodf(systemTimeMs*.001f, state.animation->duration);
-                    }
-                    else {
-                        state.animTime = 0.f;
-                    }
                     _armatureStack.emplace_back(state);
                 }
                 break;
@@ -296,7 +289,7 @@ void NodeRenderer::renderMeshElement
    
         buildBoneTransforms(armatureState, 0, worldTransform);
         bgfx::setTransform(_bgfxTransformCacheIndex,
-                           armatureState.armature->animSet->bones.size());
+                           armatureState.armature->animSet->boneCount());
     }
     else
     {
@@ -325,9 +318,13 @@ void NodeRenderer::buildBoneTransforms
 )
 {
     const AnimationSet* animSet = armatureState.armature->animSet.resource();
-    auto& bones = animSet->bones;
-    auto& bone = bones[boneIndex];
-    const Animation* animation = armatureState.animation;
+    auto bone = animSet->boneFromIndex(boneIndex);
+
+    const AnimationController* animController = armatureState.armature->animController.resource();
+    const Animation* animation = animController ?
+        armatureState.armature->animController->animation() :
+        nullptr;
+
     
     //  generate our "local (most likely a mesh)" space to bone transform
     //  local -> world -> armature -> bone_local -> armature = final bone transform
@@ -338,16 +335,16 @@ void NodeRenderer::buildBoneTransforms
         bx::mtxMul(interMtx, worldTransform, armatureState.worldToArmatureMtx);
     
         Matrix4 meshToBoneMtx;
-        bx::mtxMul(meshToBoneMtx, interMtx, bone.invMtx);
+        bx::mtxMul(meshToBoneMtx, interMtx, bone->invMtx);
     
         const SequenceChannel& seqForBone = animation->channels[boneIndex];
     
         Matrix4 multMtx;
-        bx::mtxIdentity(multMtx);      // TODO!
+        bx::mtxIdentity(multMtx);      // TODO! - Scale
     
         Vector4 boneRotQuat;
         bx::quatIdentity(boneRotQuat);
-        interpRotationFromSequenceChannel(boneRotQuat, seqForBone, armatureState.animTime);
+        interpRotationFromSequenceChannel(boneRotQuat, seqForBone, animController->animationTime());
     
         Matrix4 rotMtx;
         bx::mtxQuat(rotMtx, boneRotQuat);
@@ -356,7 +353,7 @@ void NodeRenderer::buildBoneTransforms
         translate.x = 0;
         translate.y = 0;
         translate.z = 0;
-        interpTranslateFromSequenceChannel(translate, seqForBone, armatureState.animTime);
+        interpTranslateFromSequenceChannel(translate, seqForBone, animController->animationTime());
 
         // Mint = Mrot * Mscale
         // Mint = Mint + translate
@@ -369,7 +366,7 @@ void NodeRenderer::buildBoneTransforms
         // Transform our bone based on animation
         bx::mtxMul(multMtx, meshToBoneMtx, interMtx);
         // Transform back to armature space
-        bx::mtxMul(_bgfxTransforms.data + boneIndex*16, multMtx, bone.mtx);
+        bx::mtxMul(_bgfxTransforms.data + boneIndex*16, multMtx, bone->mtx);
     }
     else {
         //  no animation - just use to mesh to armature matrix as our bone
@@ -378,9 +375,9 @@ void NodeRenderer::buildBoneTransforms
                    worldTransform, armatureState.worldToArmatureMtx);
     }
     
-    for (int childBoneIndex = bone.firstChild;
+    for (int childBoneIndex = bone->firstChild;
          childBoneIndex >= 0;
-         childBoneIndex = bones[childBoneIndex].nextSibling) {
+         childBoneIndex = animSet->boneFromIndex(childBoneIndex)->nextSibling) {
         
         buildBoneTransforms(armatureState, childBoneIndex, worldTransform);
     }

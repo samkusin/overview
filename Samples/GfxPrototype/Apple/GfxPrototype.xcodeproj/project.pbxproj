@@ -7,16 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		372035CA1BC309EC001B99E2 /* NodeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035C81BC309EC001B99E2 /* NodeRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
+		3716E66D1BE7F18300089218 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3716E66B1BE7F18300089218 /* AnimationController.cpp */; };
+		372035CA1BC309EC001B99E2 /* NodeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035C81BC309EC001B99E2 /* NodeRenderer.cpp */; };
 		372035DC1BC46504001B99E2 /* fs_std_tex.fs in Sources */ = {isa = PBXBuildFile; fileRef = 372035D81BC46479001B99E2 /* fs_std_tex.fs */; };
 		372035DD1BC46504001B99E2 /* vs_std_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 372035DB1BC46479001B99E2 /* vs_std_uv.vs */; };
-		372035E01BC583CF001B99E2 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035DE1BC583CF001B99E2 /* Controller.cpp */; settings = {ASSET_TAGS = (); }; };
+		372035E01BC583CF001B99E2 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035DE1BC583CF001B99E2 /* Controller.cpp */; };
 		3720364F1BC6FC89001B99E2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3720364E1BC6FC89001B99E2 /* QuartzCore.framework */; };
 		373740231BD86D9B00729919 /* vs_bone_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37373FEE1BD835E400729919 /* vs_bone_uv.vs */; };
 		373740251BD8840900729919 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 373740241BD8840900729919 /* Metal.framework */; };
-		373740281BD96F2800729919 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373740261BD96F2800729919 /* Animation.cpp */; settings = {ASSET_TAGS = (); }; };
-		37663A071BB9EAC5007C3669 /* NodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37663A051BB9EAC5007C3669 /* NodeGraph.cpp */; settings = {ASSET_TAGS = (); }; };
-		37663A0C1BBB226E007C3669 /* ModelJsonSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37663A0A1BBB226E007C3669 /* ModelJsonSerializer.cpp */; settings = {ASSET_TAGS = (); }; };
+		373740281BD96F2800729919 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373740261BD96F2800729919 /* Animation.cpp */; };
+		37663A071BB9EAC5007C3669 /* NodeGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37663A051BB9EAC5007C3669 /* NodeGraph.cpp */; };
+		37663A0C1BBB226E007C3669 /* ModelJsonSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37663A0A1BBB226E007C3669 /* ModelJsonSerializer.cpp */; };
 		379429821BB31BBF00C5FAF6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429811BB31BBF00C5FAF6 /* IOKit.framework */; };
 		379429841BB31BC500C5FAF6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429831BB31BC500C5FAF6 /* Cocoa.framework */; };
 		379429861BB31BCB00C5FAF6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429851BB31BCB00C5FAF6 /* Carbon.framework */; };
@@ -53,7 +54,7 @@
 		37942A511BB3473800C5FAF6 /* UIEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37942A4A1BB3473800C5FAF6 /* UIEngine.cpp */; };
 		37942A521BB3473800C5FAF6 /* UIRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37942A4C1BB3473800C5FAF6 /* UIRenderer.cpp */; };
 		37A07D8B1BB60917003F5AF0 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A07D8A1BB60917003F5AF0 /* Texture.cpp */; };
-		37C56DA91BBDE9DF00089AC4 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C56DA81BBDE9DF00089AC4 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
+		37C56DA91BBDE9DF00089AC4 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C56DA81BBDE9DF00089AC4 /* Node.cpp */; };
 		37ED616E1BB74A9100BC908F /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ED616C1BB74A9100BC908F /* Context.cpp */; };
 		37ED61701BB7519A00BC908F /* GfxTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ED616F1BB7519A00BC908F /* GfxTypes.cpp */; };
 /* End PBXBuildFile section */
@@ -118,6 +119,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3716E66B1BE7F18300089218 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationController.cpp; sourceTree = "<group>"; };
+		3716E66C1BE7F18300089218 /* AnimationController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AnimationController.hpp; sourceTree = "<group>"; };
 		371779E11BB63C78000EFFC0 /* Material.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Material.hpp; sourceTree = "<group>"; };
 		372035C81BC309EC001B99E2 /* NodeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderer.cpp; sourceTree = "<group>"; };
 		372035C91BC309EC001B99E2 /* NodeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NodeRenderer.hpp; sourceTree = "<group>"; };
@@ -368,6 +371,8 @@
 				379429B11BB3238A00C5FAF6 /* Mesh.cpp */,
 				373740271BD96F2800729919 /* Animation.hpp */,
 				373740261BD96F2800729919 /* Animation.cpp */,
+				3716E66C1BE7F18300089218 /* AnimationController.hpp */,
+				3716E66B1BE7F18300089218 /* AnimationController.cpp */,
 				379429B71BB3238A00C5FAF6 /* ShaderLibrary.hpp */,
 				379429B61BB3238A00C5FAF6 /* ShaderLibrary.cpp */,
 				37663A0D1BBB237E007C3669 /* Node.hpp */,
@@ -682,6 +687,7 @@
 				37942A2C1BB3238A00C5FAF6 /* entitystore.cpp in Sources */,
 				37C56DA91BBDE9DF00089AC4 /* Node.cpp in Sources */,
 				37942A301BB3238A00C5FAF6 /* jsoncollectionloader.cpp in Sources */,
+				3716E66D1BE7F18300089218 /* AnimationController.cpp in Sources */,
 				37942A3B1BB325A700C5FAF6 /* Main.cpp in Sources */,
 				37942A521BB3473800C5FAF6 /* UIRenderer.cpp in Sources */,
 				37942A191BB3238A00C5FAF6 /* Mesh.cpp in Sources */,

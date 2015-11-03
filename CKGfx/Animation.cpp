@@ -97,59 +97,63 @@ const -> std::pair<const Keyframe*, const Keyframe*>
     return std::make_pair(&(*prevIt), &(*it));
 }
         
-const Animation* AnimationSet::find(const std::string& name) const
+const Animation* AnimationSet::find(const char* name) const
 {
-    auto it = std::lower_bound(animations.begin(), animations.end(), name,
-        [](const std::pair<std::string, Animation>& anim, const std::string& name) {
-            return anim.first < name;
+    auto it = std::lower_bound(_animations.begin(), _animations.end(), name,
+        [](const std::pair<std::string, Animation>& anim, const char* name) {
+            return anim.first.compare(name) < 0;
         });
-    if (it == animations.end())
+    if (it == _animations.end())
         return nullptr;
     
     return &it->second;
 }
 
-
-void AnimationSet::add(Animation&& animation, const std::string& name)
+int AnimationSet::findBoneIndex(const char* name) const
 {
-    auto it = std::lower_bound(animations.begin(), animations.end(), name,
-        [](const std::pair<std::string, Animation>& anim, const std::string& name) {
-            return anim.first < name;
-        });
-    if (it != animations.end() && it->first == name) {
-        it->second = std::move(animation);
-    }
-    else {
-        animations.emplace(it, name, std::move(animation));
-    }
-}
-
-
-int AnimationSet::findBoneIndex(const std::string& name) const
-{
-    auto it = std::find_if(bones.begin(), bones.end(),
+    auto it = std::find_if(_bones.begin(), _bones.end(),
         [&name](const Bone& b) -> bool {
             return b.name == name;
         });
-    if (it == bones.end())
+    if (it == _bones.end())
         return -1;
     
-    return (int)(it - bones.begin());
+    return (int)(it - _bones.begin());
 }
 
+const Bone* AnimationSet::boneFromIndex(int index) const
+{
+    CK_ASSERT_RETURN_VALUE(index >= 0 && index < _bones.size(), nullptr);
+    return &_bones[index];
+}
+        
+
 AnimationSet::AnimationSet(AnimationSet&& other) :
-    bones(std::move(other.bones)),
-    animations(std::move(other.animations))
+    _bones(std::move(other._bones)),
+    _animations(std::move(other._animations))
 {
 }
 
 AnimationSet& AnimationSet::operator=(AnimationSet&& other)
 {
-    bones = std::move(other.bones);
-    animations = std::move(other.animations);
+    _bones = std::move(other._bones);
+    _animations = std::move(other._animations);
     return *this;
 }
 
+AnimationSet::AnimationSet
+(
+    std::vector<Bone>&& bones,
+    std::vector<StateDefinition>&& states
+) :
+    _bones(std::move(bones)),
+    _animations(std::move(states))
+{
+    std::sort(_animations.begin(), _animations.end(),
+        [](const StateDefinition& a0, const StateDefinition& a1) {
+            return a0.first < a1.first;
+        });
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

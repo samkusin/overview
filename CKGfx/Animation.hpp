@@ -75,16 +75,21 @@ namespace cinek {
     {
         CK_CLASS_NON_COPYABLE(AnimationSet);
         
+        using StateDefinition = std::pair<std::string, Animation>;
+        
         AnimationSet() {}
+        AnimationSet(std::vector<Bone>&& bones, std::vector<StateDefinition>&& states);
         AnimationSet(AnimationSet&& other);
         AnimationSet& operator=(AnimationSet&& other);
         
-        std::vector<Bone> bones;
-        std::vector<std::pair<std::string, Animation>> animations;
+        const Animation* find(const char* name) const;
+        int findBoneIndex(const char* name) const;
+        const Bone* boneFromIndex(int index) const;
+        int boneCount() const { return (int)_bones.size(); }
         
-        void add(Animation&& animation, const std::string& name);
-        const Animation* find(const std::string& name) const;
-        int findBoneIndex(const std::string& name) const;
+    private:
+        std::vector<StateDefinition> _animations;
+        std::vector<Bone> _bones;
     };
     
     

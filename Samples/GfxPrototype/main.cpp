@@ -16,6 +16,7 @@
 #include "CKGfx/NodeGraph.hpp"
 #include "CKGfx/NodeRenderer.hpp"
 #include "CKGfx/Node.hpp"
+#include "CKGfx/AnimationController.hpp"
 #include "CKGfx/Shaders/ckgfx.sh"
 
 #include <cinek/file.hpp>
@@ -35,6 +36,8 @@
 #include "UICore/UIRenderer.hpp"
 
 #include "UICore/oui.h"
+
+#include <unordered_map>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -221,6 +224,11 @@ static int run(SDL_Window* window)
         
         registerShaders(shaderLibrary, shaderPrograms, shaderUniforms);
         
+        cinek::gfx::AnimationControllerPool animControllerPool(256);
+        
+        std::unordered_map<cinek::gfx::NodeId,
+                           cinek::gfx::AnimationControllerHandle> animControllers;
+        
         //  create master scene
         cinek::gfx::NodeElementCounts sceneElementCounts;
         sceneElementCounts.nodeCount = 256;
@@ -228,7 +236,7 @@ static int run(SDL_Window* window)
         sceneElementCounts.armatureCount = 32;
         
         cinek::gfx::NodeGraph scene(sceneElementCounts);
-        auto sceneRoot = scene.createTransformNode();
+        auto sceneRoot = scene.createObjectNode(0);
         bx::mtxIdentity(sceneRoot->transform());
         scene.setRoot(sceneRoot);
         
@@ -237,7 +245,7 @@ static int run(SDL_Window* window)
         //  add instances of our model to the master scene
         //  generic building, sculpture
         auto newObjectNode = scene.clone(model.root());
-        auto newObjectRoot = scene.createTransformNode();
+        auto newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
@@ -246,7 +254,7 @@ static int run(SDL_Window* window)
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
-        newObjectRoot = scene.createTransformNode();
+        newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
@@ -255,7 +263,7 @@ static int run(SDL_Window* window)
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
-        newObjectRoot = scene.createTransformNode();
+        newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
@@ -264,7 +272,7 @@ static int run(SDL_Window* window)
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
-        newObjectRoot = scene.createTransformNode();
+        newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
@@ -273,7 +281,7 @@ static int run(SDL_Window* window)
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         newObjectNode = scene.clone(model.root());
-        newObjectRoot = scene.createTransformNode();
+        newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
             M_PI_2, 0, M_PI,
@@ -283,7 +291,7 @@ static int run(SDL_Window* window)
         
         //  robot-cyborg
         newObjectNode = scene.clone(robot.root());
-        newObjectRoot = scene.createTransformNode();
+        newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1.25f, 1.25f, 1.25f,
             M_PI_2, 0, M_PI,
@@ -293,13 +301,38 @@ static int run(SDL_Window* window)
 
         //  factorybot
         newObjectNode = scene.clone(factorybot.root());
-        newObjectRoot = scene.createTransformNode();
+        newObjectRoot = scene.createObjectNode(100);
         bx::mtxSRT(newObjectRoot->transform(),
             1.0f, 1.0f, 1.0f,
             M_PI_2, 0, M_PI,
             0, 0, -5);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
+        
+        
+        struct GfxNodeVisitContext
+        {
+            cinek::gfx::NodeId nodeId;
+            cinek::gfx::AnimationControllerPool* ctrlPool;
+            std::unordered_map<cinek::gfx::NodeId, cinek::gfx::AnimationControllerHandle>* ctrlMap;
+        };
+        
+        GfxNodeVisitContext nodeVisitCtx {
+            newObjectRoot->objectNodeId(),
+            &animControllerPool,
+            &animControllers
+        };
+        
+        cinek::gfx::visit(newObjectNode, [&nodeVisitCtx](cinek::gfx::NodeHandle node) -> bool {
+            if (node->elementType() == cinek::gfx::Node::kElementTypeArmature) {
+                cinek::gfx::AnimationController controller(node->armature()->animSet);
+                auto animController = nodeVisitCtx.ctrlPool->add(std::move(controller));
+                node->armature()->animController = animController;
+                nodeVisitCtx.ctrlMap->emplace(nodeVisitCtx.nodeId, animController);
+                animController->transitionToState("idle");
+            }
+            return true;
+        });
         
         //  Renderer initialization
         cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
@@ -321,6 +354,11 @@ static int run(SDL_Window* window)
                 running = false;
 
             {
+            
+                for (auto& animController : animControllers) {
+                    animController.second->update(systemTimeMs * 0.001);
+                }
+            
                 gfxContext.update();
                 
                 bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);

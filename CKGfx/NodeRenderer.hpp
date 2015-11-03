@@ -95,9 +95,6 @@ private:
         const ArmatureElement* armature;
         Matrix4 armatureToWorldMtx;
         Matrix4 worldToArmatureMtx;
-        //  handle to controller - todo
-        const Animation* animation;
-        float animTime;
     };
 
     void renderMeshElement(const Matrix4& localTransform,

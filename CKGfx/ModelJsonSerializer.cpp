@@ -111,7 +111,7 @@ private:
         
         }
         else {
-            thisNode = model.createTransformNode();
+            thisNode = model.createObjectNode(0);
         }
         loadMatrixFromJSON(thisNode->transform(), node["matrix"]);
         if (node.HasMember("obb")) {
@@ -463,20 +463,23 @@ static int enumerateBonesInAnimationSet
 
 AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root)
 {
-    AnimationSet animationSet;
+    std::vector<Bone> bones;
+    std::vector<AnimationSet::StateDefinition> stateDefs;
     
     if (root.HasMember("skeleton")) {
         auto& rootBone = root["skeleton"][0U];
         
         int sz = enumerateBonesInAnimationSet(rootBone, -1) + 1;
         if (sz > 0) {
-            animationSet.bones.resize(sz);
-            loadAnimationSkeletonFromJSON(rootBone, animationSet.bones);
+            bones.resize(sz);
+            loadAnimationSkeletonFromJSON(rootBone, bones);
         }
     }
     
     if (root.HasMember("states")) {
         auto& states = root["states"];
+        auto stateCnt = states.MemberEnd() - states.MemberBegin();
+        stateDefs.reserve(stateCnt);
         for (auto it = states.MemberBegin(); it != states.MemberEnd(); ++it) {
             auto& state = it->value;
             const char* name = it->name.GetString();
@@ -484,24 +487,28 @@ AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root)
             
             Animation animation;
             //  channel = animation for a bone
-            animation.channels.resize(animationSet.bones.size());
+            animation.channels.resize(bones.size());
             animation.duration = 0.f;
             
-            for (auto boneIt = state.MemberBegin(); boneIt != state.MemberEnd(); ++boneIt) {
-                auto& boneAnim = boneIt->value;
-                const char* boneName = boneIt->name.GetString();
-                int boneIndex = animationSet.findBoneIndex(boneName);
-                if (boneIndex >= 0) {
-                    animation.channels[boneIndex] =
+
+            for (auto nodeIt = state.MemberBegin(); nodeIt != state.MemberEnd(); ++nodeIt) {
+                auto& boneAnim = nodeIt->value;
+                const char* boneName = nodeIt->name.GetString();
+                auto boneIt = std::find_if(bones.begin(), bones.end(),
+                    [&boneName](const Bone& b) -> bool {
+                        return b.name == boneName;
+                    });
+                if (boneIt != bones.end()) {
+                    animation.channels[boneIt - bones.begin()] =
                         std::move(loadSequenceChannelFromJSON(boneAnim, &animation.duration));
                 }
             }
             
-            animationSet.add(std::move(animation), name);
+            stateDefs.emplace_back(name, std::move(animation));
         }
     }
     
-    return animationSet;
+    return AnimationSet(std::move(bones), std::move(stateDefs));
 }
 
 

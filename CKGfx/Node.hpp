@@ -12,6 +12,8 @@
 #include "GfxTypes.hpp"
 #include "AABB.hpp"
 
+#include <cinek/debug.h>
+
 namespace cinek {
     namespace gfx {
 
@@ -31,11 +33,10 @@ struct MeshElement
 struct ArmatureElement
 {
     AnimationSetHandle animSet;
-    //  TODO - add Animation Controller Handle used for containing
-    //         state
-    
+    AnimationControllerHandle animController;
     ArmatureElement& copy(const ArmatureElement& src) {
         animSet = src.animSet;
+        animController = src.animController;
         return *this;
     }
 };
@@ -59,6 +60,7 @@ struct Node
     enum ElementType
     {
         kElementTypeNone,
+        kElementTypeObject,
         kElementTypeMesh,
         kElementTypeArmature,
         kElementTypeCustom
@@ -90,6 +92,9 @@ struct Node
     
     const ArmatureElement* armature() const;
     ArmatureElement* armature();
+    
+    NodeId objectNodeId() const;
+    void setObjectNodeId(NodeId id);
     
     Node* parent() { return _parent.resource(); }
     const Node* parent() const { return _parent.resource(); }
@@ -129,6 +134,7 @@ private:
     {
         MeshElement* mesh;
         ArmatureElement* armature;
+        NodeId nodeId;
         void* custom;
     }
     _element;
@@ -143,8 +149,19 @@ struct NodeElementCounts
 
 ////////////////////////////////////////////////////////////////////////////////
 
+inline NodeId Node::objectNodeId() const {
+    CK_ASSERT_RETURN_VALUE(elementType() == kElementTypeObject, 0);
+    return _element.nodeId;
+}
+
+inline void Node::setObjectNodeId(NodeId id) {
+    CK_ASSERT_RETURN(elementType() == kElementTypeObject);
+    _element.nodeId = id;
+}
+
 inline const MeshElement* Node::mesh() const {
-    return elementType() == kElementTypeMesh ? _element.mesh : nullptr;
+    CK_ASSERT_RETURN_VALUE(elementType() == kElementTypeMesh, nullptr);
+    return _element.mesh;
 }
 inline MeshElement* Node::mesh() {
     return const_cast<MeshElement*>(
@@ -152,12 +169,32 @@ inline MeshElement* Node::mesh() {
     );
 }
 inline const ArmatureElement* Node::armature() const {
-    return elementType() == kElementTypeArmature ? _element.armature : nullptr;
+    CK_ASSERT_RETURN_VALUE(elementType() == kElementTypeArmature, nullptr);
+    return _element.armature;
 }
 inline ArmatureElement* Node::armature() {
     return const_cast<ArmatureElement*>(
         static_cast<const Node*>(this)->armature()
     );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+template<typename Fn>
+bool visit(NodeHandle node, Fn&& fn)
+{
+    if (!std::forward<Fn>(fn)(node))
+        return false;
+    
+    for (NodeHandle child = node->firstChildHandle();
+         child;
+         child = child->nextSiblingHandle()) {
+         if (!visit(child, fn))
+            return false;
+    }
+    
+    return true;
 }
 
     }   //  namespace gfx

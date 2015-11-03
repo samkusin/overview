@@ -12,6 +12,7 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 #include "Animation.hpp"
+#include "AnimationController.hpp"
 #include "Node.hpp"
 #include "NodeGraph.hpp"
 
@@ -46,6 +47,11 @@ namespace cinek {
     template void ManagedHandle<gfx::AnimationSet, ManagedObjectPool<gfx::AnimationSet, void>>::acquire();
     template void ManagedHandle<gfx::AnimationSet, ManagedObjectPool<gfx::AnimationSet, void>>::release();
     template class ManagedObjectPoolBase<gfx::AnimationSet, ManagedObjectPool<gfx::AnimationSet, void>>;
+    
+    template class ManagedObjectPool<gfx::AnimationController, void>;
+    template void ManagedHandle<gfx::AnimationController, ManagedObjectPool<gfx::AnimationController, void>>::acquire();
+    template void ManagedHandle<gfx::AnimationController, ManagedObjectPool<gfx::AnimationController, void>>::release();
+    template class ManagedObjectPoolBase<gfx::AnimationController, ManagedObjectPool<gfx::AnimationController, void>>;
     
     template class ManagedObjectPool<gfx::Mesh, void>;
     template void ManagedHandle<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>::acquire();

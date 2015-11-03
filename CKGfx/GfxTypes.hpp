@@ -29,17 +29,22 @@ struct Camera;
 struct Animation;
 struct AnimationSet;
 class NodeRenderer;
+class AnimationController;
+
+using NodeId = uint64_t;
 
 using MeshPool = ManagedObjectPool<Mesh, void>;
 using TexturePool = ManagedObjectPool<Texture, void>;
 using MaterialPool = ManagedObjectPool<Material, void>;
 using AnimationSetPool = ManagedObjectPool<AnimationSet, void>;
+using AnimationControllerPool = ManagedObjectPool<AnimationController, void>;
 using NodePool = ManagedObjectPool<Node, NodeGraph*>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
 using TextureHandle = ManagedHandle<Texture, TexturePool>;
 using MaterialHandle = ManagedHandle<Material, MaterialPool>;
 using AnimationSetHandle = ManagedHandle<AnimationSet, AnimationSetPool>;
+using AnimationControllerHandle = ManagedHandle<AnimationController, AnimationControllerPool>;
 using NodeHandle = ManagedHandle<Node, NodePool>;
 
 class ShaderLibrary;

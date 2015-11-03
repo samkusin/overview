@@ -29,7 +29,7 @@ public:
     ~NodeGraph();
 
     NodeHandle root() const { return _root; }
-    NodeHandle createTransformNode(uint32_t flags=0);
+    NodeHandle createObjectNode(NodeId nodeId);
     NodeHandle createMeshNode(uint32_t elementCnt);
     NodeHandle createArmatureNode();
     

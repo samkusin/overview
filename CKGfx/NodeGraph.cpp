@@ -80,10 +80,11 @@ NodeHandle NodeGraph::createArmatureNode()
     return handle;
 }
 
-NodeHandle NodeGraph::createTransformNode(uint32_t flags)
+NodeHandle NodeGraph::createObjectNode(NodeId id)
 {
     NodeHandle handle;
-    Node node(Node::kElementTypeNone, flags);
+    Node node(Node::kElementTypeObject);
+    node.setObjectNodeId(id);
     
     handle = _nodes.add(std::move(node));
     return handle;
@@ -178,7 +179,7 @@ NodeHandle NodeGraph::clone(NodeHandle source)
     //  select node type to clone
     switch (source->elementType()) {
     case Node::kElementTypeNone:
-        cloned = createTransformNode();
+        cloned = createObjectNode(source->objectNodeId());
         break;
     case Node::kElementTypeMesh: {
             int cnt = 0;
