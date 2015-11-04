@@ -16,6 +16,15 @@
 
 namespace cinek {
     namespace gfx {
+    
+struct NodeElementCounts
+{
+    uint32_t transformNodeCount;
+    uint32_t objectNodeCount;
+    uint32_t meshNodeCount;
+    uint32_t armatureNodeCount;
+    uint32_t lightNodeCount;
+};
  
 class NodeGraph
 {
@@ -32,6 +41,7 @@ public:
     NodeHandle createObjectNode(NodeId nodeId);
     NodeHandle createMeshNode(uint32_t elementCnt);
     NodeHandle createArmatureNode();
+    NodeHandle createLightNode();
     
     void setRoot(NodeHandle node);
     NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
@@ -50,6 +60,7 @@ private:
     
     ObjectPool<MeshElement> _meshElementPool;
     ObjectPool<ArmatureElement> _armatureElementPool;
+    ObjectPool<LightElement> _lightElementPool;
     NodePool _nodes;
     NodeHandle _root;
 };

@@ -23,7 +23,7 @@ struct MeshElement
     MaterialHandle material;
     MeshElement* next;
     
-    MeshElement& copy(const MeshElement& src) {
+    MeshElement& clone(const MeshElement& src) {
         mesh = src.mesh;
         material = src.material;
         return *this;
@@ -34,13 +34,22 @@ struct ArmatureElement
 {
     AnimationSetHandle animSet;
     AnimationControllerHandle animController;
-    ArmatureElement& copy(const ArmatureElement& src) {
+    ArmatureElement& clone(const ArmatureElement& src) {
         animSet = src.animSet;
         animController = src.animController;
         return *this;
     }
 };
 
+struct LightElement
+{
+    LightHandle light;
+    
+    LightElement& clone(const LightElement& src) {
+        light = src.light;
+        return *this;
+    }
+};
 
 
 //  Nodes contain lists of their Elements and child Nodes
@@ -63,6 +72,7 @@ struct Node
         kElementTypeObject,
         kElementTypeMesh,
         kElementTypeArmature,
+        kElementTypeLight,
         kElementTypeCustom
     };
     
@@ -92,6 +102,9 @@ struct Node
     
     const ArmatureElement* armature() const;
     ArmatureElement* armature();
+    
+    const LightElement* light() const;
+    LightElement* light();
     
     NodeId objectNodeId() const;
     void setObjectNodeId(NodeId id);
@@ -134,17 +147,11 @@ private:
     {
         MeshElement* mesh;
         ArmatureElement* armature;
+        LightElement* light;
         NodeId nodeId;
         void* custom;
     }
     _element;
-};
-
-struct NodeElementCounts
-{
-    uint32_t nodeCount;
-    uint32_t meshElementCount;
-    uint32_t armatureCount;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -168,6 +175,7 @@ inline MeshElement* Node::mesh() {
         static_cast<const Node*>(this)->mesh()
     );
 }
+
 inline const ArmatureElement* Node::armature() const {
     CK_ASSERT_RETURN_VALUE(elementType() == kElementTypeArmature, nullptr);
     return _element.armature;
@@ -175,6 +183,16 @@ inline const ArmatureElement* Node::armature() const {
 inline ArmatureElement* Node::armature() {
     return const_cast<ArmatureElement*>(
         static_cast<const Node*>(this)->armature()
+    );
+}
+
+inline const LightElement* Node::light() const {
+    CK_ASSERT_RETURN_VALUE(elementType() == kElementTypeLight, nullptr);
+    return _element.light;
+}
+inline LightElement* Node::light() {
+    return const_cast<LightElement*>(
+        static_cast<const Node*>(this)->light()
     );
 }
 

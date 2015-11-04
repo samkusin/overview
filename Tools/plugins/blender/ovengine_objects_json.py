@@ -449,6 +449,26 @@ class ExportOVObjectJSON(bpy.types.Operator):
         else:
             node['matrix'] = matrix_to_list(obj.matrix_local)
 
+        min = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
+        max = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
+
+        for vx,vy,vz in obj.bound_box:
+            if vx < min['x']:
+                min['x'] = vx
+            if vy < min['y']:
+                min['y'] = vy
+            if vz < min['z']:
+                min['z'] = vz
+            if vx > max['x']:
+                max['x'] = vx
+            if vy > max['y']:
+                max['y'] = vy
+            if vz > max['z']:
+                max['z'] = vz
+
+        node['obb'] = OrderedDict([('min', min),('max', max)])
+
+
         if obj.type == 'ARMATURE':
             # persist bone list, which may be used when generating vertex weights from the
             # underlying meshes.  we free this context after processing the armature's
@@ -525,4 +545,3 @@ def register():
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.utils.unregister_module(__name__);
-

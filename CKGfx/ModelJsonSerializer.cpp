@@ -37,14 +37,16 @@ NodeElementCounts& enumerateNodeResourcesFromJSON
     const JsonValue& node
 )
 {
-    ++counts.nodeCount;
     if (node.HasMember("meshes") && node["meshes"].IsArray()) {
         if (!node["meshes"].Empty()) {
-            counts.meshElementCount += node["meshes"].Size();
+            counts.meshNodeCount += node["meshes"].Size();
         }
     }
-    if (node.HasMember("animation")) {
-        ++counts.armatureCount;
+    else if (node.HasMember("animation")) {
+        ++counts.armatureNodeCount;
+    }
+    else if (node.HasMember("light")) {
+        ++counts.lightNodeCount;
     }
     if (node.HasMember("children") && node["children"].IsArray()) {
         const JsonValue& children = node["children"];

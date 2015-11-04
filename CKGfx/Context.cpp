@@ -11,6 +11,7 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 #include "Animation.hpp"
+#include "Light.hpp"
 
 namespace cinek {
     namespace gfx {
@@ -69,7 +70,8 @@ Context::Context(const ResourceInitParams& params) :
     _meshes(params.numMeshes),
     _materials(params.numMaterials),
     _textures(params.numTextures),
-    _animationSets(params.numAnimations)
+    _animationSets(params.numAnimations),
+    _lights(params.numLights)
 {
 }
 
@@ -97,9 +99,7 @@ void Context::unregisterTexture(const char* name)
 
 TextureHandle Context::findTexture(const char* name) const
 {
-    std::string key = name;
-    
-    auto it = _textureDictionary.find(key);
+    auto it = _textureDictionary.find(name);
     if (it == _textureDictionary.end())
         return nullptr;
     
@@ -144,10 +144,30 @@ void Context::unregisterAnimationSet(const char* name)
 
 AnimationSetHandle Context::findAnimationSet(const char* name)
 {
-    std::string key = name;
-    
-    auto it = _animationSetDictionary.find(key);
+    auto it = _animationSetDictionary.find(name);
     if (it == _animationSetDictionary.end())
+        return nullptr;
+    
+    return it->second;
+}
+
+//  Registers a light handle with an optional name
+LightHandle Context::registerLight(Light&& light, const char* name)
+{
+    return registerResource(std::move(light), _lights, _lightDictionary, name);
+}
+
+//  Unregisters a named light
+void Context::unregisterLight(const char* name)
+{
+    unregisterResource(_lightDictionary, name);
+}
+
+//  Looks up a light by name
+LightHandle Context::findLight(const char* name) const
+{
+    auto it = _lightDictionary.find(name);
+    if (it == _lightDictionary.end())
         return nullptr;
     
     return it->second;

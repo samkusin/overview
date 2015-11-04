@@ -84,27 +84,50 @@ public:
 
     void setCamera(const Camera& camera);
     
-    void operator()(NodeHandle root, uint32_t systemTimeMs);
+    
+    enum
+    {
+        /// Enumerate Lighting Elements for Rendering
+        kStageFlagLightEnum             = 1,
+        /// Process Rendering Elements
+        kStageFlagRender                = 2,
+        /// All stages
+        kStageAll                       = kStageFlagLightEnum
+                                        | kStageFlagRender
+    };
+    
+    void operator()(NodeHandle root, uint32_t stages=kStageAll);
     
 private:
+    struct ArmatureState;
+    
     void pushTransform(const Matrix4& mtx);
     void popTransform();
     
-    struct ArmatureState
-    {
-        const ArmatureElement* armature;
-        Matrix4 armatureToWorldMtx;
-        Matrix4 worldToArmatureMtx;
-    };
 
     void renderMeshElement(const Matrix4& localTransform,
             const MeshElement& element);
     
     void buildBoneTransforms(const ArmatureState& armatureState,
                              int boneIndex,
-                             const Matrix4& worldTransform);
+                             const Matrix4& worldTransform,
+                             float* outTransforms);
+    
+    void setupLightUniforms(const Matrix4& objWorldMtx);
     
 private:
+    struct ArmatureState
+    {
+        const ArmatureElement* armature;
+        Matrix4 armatureToWorldMtx;
+        Matrix4 worldToArmatureMtx;
+    };
+    struct LightState
+    {
+        Matrix4 worldMtx;
+        LightHandle light;
+    };
+    
     //  Global State
     ProgramMap _programs;
     UniformMap _uniforms;
@@ -114,9 +137,11 @@ private:
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
     Matrix4 _viewProjMtx;
-    
-    bgfx::Transform _bgfxTransforms;
-    uint32_t _bgfxTransformCacheIndex;
+        
+    //  Calculated State during Lighting Object Pass
+    using Lights = std::vector<LightState>;
+    Lights _globalLights;
+    Lights _directionalLights;
     
     //  various stacks used to store current rendering state during execution
     std::vector<NodeHandle> _nodeStack;

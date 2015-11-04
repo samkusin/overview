@@ -15,6 +15,7 @@
 #include "Mesh.hpp"
 #include "Animation.hpp"
 #include "AnimationController.hpp"
+#include "Light.hpp"
 
 #include "Shaders/ckgfx.sh"
 
@@ -69,13 +70,16 @@ NodeRenderer::NodeRenderer
     _transformStack.reserve(32);
     _armatureStack.reserve(4);
     
-    
     Vector4 zero = ckm::zero<Vector4>();
     _lightColors.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
     _lightParams.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
     _lightDirs.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
     _lightCoeffs.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
     _lightOrigins.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
+    
+    _globalLights.reserve(8);
+    _directionalLights.reserve(64);
+    
 }
 
 void NodeRenderer::setCamera(const Camera& camera)
@@ -91,114 +95,122 @@ void NodeRenderer::setCamera(const Camera& camera)
         _camera.viewFrustrum.farZ());
 }
 
-void NodeRenderer::operator()(NodeHandle root, uint32_t systemTimeMs)
+void NodeRenderer::operator()
+(
+    NodeHandle root,
+    uint32_t stages /*=kStageAll */
+)
 {
-    CK_ASSERT(_nodeStack.empty());
+    uint32_t currentStage = 1;
     
-    NodeHandle node = root;
-    
-    bgfx::setViewTransform(0, _viewMtx.comp, _projMtx.comp);
-    bx::mtxMul(_viewProjMtx, _viewMtx, _projMtx);
-    
-    //  reset uniforms generated during the stack traversal
-    _lightColors.clear();
-    _lightDirs.clear();
-    _lightParams.clear();
-    _lightCoeffs.clear();
-    _lightOrigins.clear();
-    
-    //  todo - light uniforms will be generated during the render pass
-    //  for now, hardcode them here and modify as we move to a data-driven
-    //  approach.
-    
-    //  directional lights
-    Vector3 light0Dir = { -0.20f, -0.75f, 0.55f };
-    bx::vec3Norm(light0Dir, light0Dir);
-    
-    
-    //  directional
-    _lightParams.emplace_back(0.10f, 0.90f, 0.0f, 0.0f);
-    _lightDirs.emplace_back(light0Dir.x, light0Dir.y, light0Dir.z, 1.0f);
-    _lightColors.emplace_back(0.75f, 0.75f, 0.75f, 1.0f);
-    _lightOrigins.emplace_back();
-    _lightCoeffs.emplace_back();
-    
-    //  point
-    _lightParams.emplace_back(0.0f, 1.0f, 100.0f, 0.0f);
-    _lightDirs.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
-    _lightColors.emplace_back(1.0f, 0.5f, 1.0f, 1.0f);
-    _lightOrigins.emplace_back(15.0f, 15.0f, -2.0f, 0.0f);
-    _lightCoeffs.emplace_back(1.0f, 0.05, 0.001, 0.0f);
-    
-    //  spot with cutoff
-    light0Dir = { 1.0, 0.0, -1.0 };
-    bx::vec3Norm(light0Dir, light0Dir);
-    _lightParams.emplace_back(0.10f, 1.0f, 100.0f, 0.2f);
-    _lightDirs.emplace_back(light0Dir.x, light0Dir.y, light0Dir.z, 1.0f);
-    _lightColors.emplace_back(0.0f, 1.0f, 1.0f, 1.0f);
-    _lightOrigins.emplace_back(-12.0f, 1.0f, 10.0f, 0.0f);
-    _lightCoeffs.emplace_back(1.0f, 0.025, 0.025, 0.0f);
-    
-    _bgfxTransformCacheIndex =
-        bgfx::allocTransform(&_bgfxTransforms, BGFX_CONFIG_MAX_BONES);
-    
-    Matrix4 topTransform;
-    bx::mtxIdentity(topTransform);
-    
-    pushTransform(topTransform);
-    
-    while (!_nodeStack.empty() || node) {
-        if (node) {
-            //  parse current node
-            switch (node->elementType()) {
-            case Node::kElementTypeArmature: {
-                    const ArmatureElement* armature = node->armature();
-                    ArmatureState state { armature };
-                    bx::mtxMul(state.armatureToWorldMtx, node->transform(),
-                               _transformStack.back());
-                    bx::mtxInverse(state.worldToArmatureMtx, state.armatureToWorldMtx);
-                    _armatureStack.emplace_back(state);
+    while (stages) {
+        if ((stages & 0x01)!=0) {
+        
+            NodeHandle node = root;
+
+            Matrix4 topTransform;
+            bx::mtxIdentity(topTransform);
+            pushTransform(topTransform);
+        
+            switch (currentStage) {
+            case kStageFlagRender: {
+
+                    bgfx::setViewTransform(0, _viewMtx.comp, _projMtx.comp);
+                    bx::mtxMul(_viewProjMtx, _viewMtx, _projMtx);
                 }
                 break;
-            
-            case Node::kElementTypeMesh: {
-                    const MeshElement* mesh = node->mesh();
-                    while (mesh) {
-                        renderMeshElement(node->transform(), *mesh);
-                        mesh = mesh->next;
+            case kStageFlagLightEnum: {
+                    _globalLights.clear();
+                    _directionalLights.clear();
+                }
+                break;
+            default:
+                break;
+            }
+        
+            while (!_nodeStack.empty() || node) {
+                if (node) {
+                    //  parse current node
+                    if (currentStage == kStageFlagLightEnum) {
+                        //
+                        //  Lighting Pass
+                        //
+                        if (node->elementType() == Node::kElementTypeLight) {
+                            const LightElement* e = node->light();
+                            
+                            Matrix4 lightMtx;
+                            bx::mtxMul(lightMtx, node->transform(), _transformStack.back());
+                            
+                            if (e->light->type == LightType::kAmbient
+                                || e->light->type == LightType::kDirectional) {
+                                _globalLights.emplace_back(LightState{ lightMtx, e->light } );
+                            }
+                            else {
+                                _directionalLights.emplace_back(LightState{ lightMtx, e->light });
+                            }
+                        }
                     }
+                    else if (currentStage == kStageFlagRender) {
+                        //
+                        //  Render Pass
+                        //
+                        switch (node->elementType()) {
+                        case Node::kElementTypeArmature: {
+                                const ArmatureElement* armature = node->armature();
+                                ArmatureState state { armature };
+                                bx::mtxMul(state.armatureToWorldMtx, node->transform(),
+                                           _transformStack.back());
+                                bx::mtxInverse(state.worldToArmatureMtx, state.armatureToWorldMtx);
+                                _armatureStack.emplace_back(state);
+                            }
+                            break;
+                        
+                        case Node::kElementTypeMesh: {
+                                const MeshElement* mesh = node->mesh();
+                                while (mesh) {
+                                    renderMeshElement(node->transform(), *mesh);
+                                    mesh = mesh->next;
+                                }
+                            }
+                            break;
+                        
+                        case Node::kElementTypeCustom:
+                            break;
+                            
+                        default:
+                            break;
+                        }
+                    }
+                    
+                    pushTransform(node->transform());
+                    _nodeStack.emplace_back(node);
+                    
+                    node = node->firstChildHandle();
                 }
-                break;
-            
-            case Node::kElementTypeCustom:
-                break;
-                
-            default:
-                break;
+                else {
+                    node = _nodeStack.back();
+                    _nodeStack.pop_back();
+                    
+                    popTransform();
+                    
+                    //  execute cleanup of the parent node
+                    if (currentStage == kStageFlagRender) {
+                        switch (node->elementType()) {
+                        case Node::kElementTypeArmature:
+                            _armatureStack.pop_back();
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    node = node->nextSiblingHandle();
+                }
             }
-            
-            pushTransform(node->transform());
-            _nodeStack.emplace_back(node);
-            
-            node = node->firstChildHandle();
+        
         }
-        else {
-            node = _nodeStack.back();
-            _nodeStack.pop_back();
-            
-            popTransform();
-            
-            //  execute cleanup of the parent node
-            switch (node->elementType()) {
-            case Node::kElementTypeArmature:
-                _armatureStack.pop_back();
-                break;
-            default:
-                break;
-            }
-            
-            node = node->nextSiblingHandle();
-        }
+        
+        stages >>= 1;
+        currentStage <<= 1;
     }
 }
 
@@ -246,31 +258,16 @@ void NodeRenderer::renderMeshElement
     specular.w = 0;
     bgfx::setUniform(_uniforms[kNodeUniformMatSpecular], specular);
     
-    //  setup lighting
-    if (!_lightColors.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightColor], _lightColors.data(), _lightColors.size());
-    }
-    if (!_lightParams.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightParam], _lightParams.data(), _lightParams.size());
-    }
-    if (!_lightDirs.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightDir], _lightDirs.data(), _lightDirs.size());
-    }
+    Matrix4 worldTransform;
+    bx::mtxMul(worldTransform, localTransform, _transformStack.back());
     
-    if (!_lightOrigins.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), _lightOrigins.size());
-    }
-    if (!_lightCoeffs.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), _lightCoeffs.size());
-    }
-
-    //  setup mesh rendering
+    //  setup lighting
+    setupLightUniforms(worldTransform);
+    
+        //  setup mesh rendering
     const Mesh* mesh = element.mesh.resource();
     bgfx::setVertexBuffer(mesh->vertexBuffer());
     bgfx::setIndexBuffer(mesh->indexBuffer());
-    
-    Matrix4 worldTransform;
-    bx::mtxMul(worldTransform, localTransform, _transformStack.back());
 
     NodeProgramSlot programSlot;
     if (!_armatureStack.empty()) {
@@ -287,8 +284,13 @@ void NodeRenderer::renderMeshElement
         bgfx::setUniform(_uniforms[kNodeUniformWorldViewProjMtx],
                          worldViewProjMtx.comp, 1);
    
-        buildBoneTransforms(armatureState, 0, worldTransform);
-        bgfx::setTransform(_bgfxTransformCacheIndex,
+        bgfx::Transform boneTransforms;
+   
+        int transformCacheIndex =
+                        bgfx::allocTransform(&boneTransforms, BGFX_CONFIG_MAX_BONES);
+   
+        buildBoneTransforms(armatureState, 0, worldTransform, boneTransforms.data);
+        bgfx::setTransform(transformCacheIndex,
                            armatureState.armature->animSet->boneCount());
     }
     else
@@ -310,11 +312,94 @@ void NodeRenderer::renderMeshElement
     bgfx::submit(0, _programs[programSlot]);
 }
 
+void NodeRenderer::setupLightUniforms(const Matrix4& objWorldMtx)
+{
+    //  reset uniforms generated during the stack traversal
+    _lightColors.clear();
+    _lightDirs.clear();
+    _lightParams.clear();
+    _lightCoeffs.clear();
+    _lightOrigins.clear();
+    
+    for (auto& light : _globalLights) {
+        const Light* l = light.light.resource();
+        
+        _lightCoeffs.emplace_back();
+        _lightOrigins.emplace_back();
+        
+        Vector4 color;
+        _lightColors.emplace_back(color.fromABGR(l->color));
+        _lightParams.emplace_back(l->ambientComp, l->diffuseComp, 0.0f, 0.0f);
+    
+        if (l->type == LightType::kDirectional) {
+            Vector4 dir;
+            bx::vec4MulMtx(dir, Vector4::kUnitZ, light.worldMtx);
+            bx::vec3Neg(dir, dir);
+            _lightDirs.emplace_back(dir);
+        }
+        else {
+            _lightDirs.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+    }
+    
+    for (auto& light : _directionalLights) {
+        const Light* l = light.light.resource();
+        float dist = 0.0f;
+        float span = 0.0f;
+        if (l->type == LightType::kPoint || l->type == LightType::kSpot) {
+            dist = l->distance;
+            
+            _lightOrigins.emplace_back(light.worldMtx[12],
+                light.worldMtx[13],
+                light.worldMtx[14],
+                0.0f);
+            
+            if (l->type == LightType::kSpot) {
+                span = l->cutoff;
+            }
+            
+            _lightCoeffs.emplace_back(l->coeff.x, l->coeff.y, l->coeff.z, 0.0f);
+        }
+        
+        Vector4 color;
+        _lightColors.emplace_back(color.fromABGR(l->color));
+        _lightParams.emplace_back(l->ambientComp, l->diffuseComp, dist, span);
+    
+        if (l->type == LightType::kSpot) {
+            Vector4 dir;
+            bx::vec4MulMtx(dir, Vector4::kUnitZ, light.worldMtx);
+            bx::vec3Neg(dir, dir);
+            _lightDirs.emplace_back(dir);
+        }
+        else {
+            _lightDirs.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+    }
+    
+    if (!_lightColors.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightColor], _lightColors.data(), _lightColors.size());
+    }
+    if (!_lightParams.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightParam], _lightParams.data(), _lightParams.size());
+    }
+    if (!_lightDirs.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightDir], _lightDirs.data(), _lightDirs.size());
+    }
+    
+    if (!_lightOrigins.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), _lightOrigins.size());
+    }
+    if (!_lightCoeffs.empty()) {
+        bgfx::setUniform(_uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), _lightCoeffs.size());
+    }
+}
+
 void NodeRenderer::buildBoneTransforms
 (
     const ArmatureState& armatureState,
     int boneIndex,
-    const Matrix4& worldTransform
+    const Matrix4& worldTransform,
+    float* outTransforms
 )
 {
     const AnimationSet* animSet = armatureState.armature->animSet.resource();
@@ -366,12 +451,12 @@ void NodeRenderer::buildBoneTransforms
         // Transform our bone based on animation
         bx::mtxMul(multMtx, meshToBoneMtx, interMtx);
         // Transform back to armature space
-        bx::mtxMul(_bgfxTransforms.data + boneIndex*16, multMtx, bone->mtx);
+        bx::mtxMul(outTransforms + boneIndex*16, multMtx, bone->mtx);
     }
     else {
         //  no animation - just use to mesh to armature matrix as our bone
         //  transform
-        bx::mtxMul(_bgfxTransforms.data + boneIndex*16,
+        bx::mtxMul(outTransforms + boneIndex*16,
                    worldTransform, armatureState.worldToArmatureMtx);
     }
     
@@ -379,7 +464,7 @@ void NodeRenderer::buildBoneTransforms
          childBoneIndex >= 0;
          childBoneIndex = animSet->boneFromIndex(childBoneIndex)->nextSibling) {
         
-        buildBoneTransforms(armatureState, childBoneIndex, worldTransform);
+        buildBoneTransforms(armatureState, childBoneIndex, worldTransform, outTransforms);
     }
 }
 

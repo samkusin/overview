@@ -28,6 +28,7 @@ struct NodeGraph;
 struct Camera;
 struct Animation;
 struct AnimationSet;
+struct Light;
 class NodeRenderer;
 class AnimationController;
 
@@ -38,6 +39,7 @@ using TexturePool = ManagedObjectPool<Texture, void>;
 using MaterialPool = ManagedObjectPool<Material, void>;
 using AnimationSetPool = ManagedObjectPool<AnimationSet, void>;
 using AnimationControllerPool = ManagedObjectPool<AnimationController, void>;
+using LightPool = ManagedObjectPool<Light, void>;
 using NodePool = ManagedObjectPool<Node, NodeGraph*>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
@@ -45,6 +47,7 @@ using TextureHandle = ManagedHandle<Texture, TexturePool>;
 using MaterialHandle = ManagedHandle<Material, MaterialPool>;
 using AnimationSetHandle = ManagedHandle<AnimationSet, AnimationSetPool>;
 using AnimationControllerHandle = ManagedHandle<AnimationController, AnimationControllerPool>;
+using LightHandle = ManagedHandle<Light, LightPool>;
 using NodeHandle = ManagedHandle<Node, NodePool>;
 
 class ShaderLibrary;
@@ -79,6 +82,12 @@ struct Matrix4
 struct Vector4
 {
     typedef float value_type;
+    
+    static const Vector4 kUnitX;
+    static const Vector4 kUnitY;
+    static const Vector4 kUnitZ;
+    static const Vector4 kUnitW;
+    static const Vector4 kZero;
     
     union
     {
@@ -125,6 +134,12 @@ static_assert(offsetof(Vector4, comp[1]) == offsetof(Vector4, y) &&
 struct Vector3
 {
     typedef float value_type;
+    
+    static const Vector3 kUnitX;
+    static const Vector3 kUnitY;
+    static const Vector3 kUnitZ;
+    static const Vector3 kZero;
+    
     union
     {
         struct { value_type x, y, z; };
@@ -198,12 +213,9 @@ static_assert(offsetof(Vector2, comp[1]) == offsetof(Vector2, y),
 using Color4 = Vector4;
 using Color3 = Vector3;
 
-
 Vector3 operator-(const Vector3& v0, const Vector3& v1);
 Vector3 operator+(const Vector3& v0, const Vector3& v1);
 Vector3 operator*(const Vector3& v0, float scalar);
-
-Vector4 slerp(const Vector4& q0, const Vector4& q1, float factor);
 
 using Frustrum = ckm::Frustrum<Vector3>;
 using AABB = ckm::AABB<Vector3>;

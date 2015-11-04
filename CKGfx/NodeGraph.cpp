@@ -14,9 +14,14 @@ namespace cinek {
     namespace gfx {
  
 NodeGraph::NodeGraph(const NodeElementCounts& params) :
-    _meshElementPool(params.meshElementCount),
-    _armatureElementPool(params.armatureCount),
-    _nodes(params.nodeCount)
+    _meshElementPool(params.meshNodeCount),
+    _armatureElementPool(params.armatureNodeCount),
+    _lightElementPool(params.lightNodeCount),
+    _nodes(params.meshNodeCount
+           + params.armatureNodeCount
+           + params.lightNodeCount
+           + params.objectNodeCount
+           + params.transformNodeCount)
 {
     _nodes.setDelegate(this);
 }
@@ -24,6 +29,7 @@ NodeGraph::NodeGraph(const NodeElementCounts& params) :
 NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
     _meshElementPool(std::move(other._meshElementPool)),
     _armatureElementPool(std::move(other._armatureElementPool)),
+    _lightElementPool(std::move(other._lightElementPool)),
     _nodes(std::move(other._nodes)),
     _root(std::move(other._root))
 {
@@ -34,6 +40,7 @@ NodeGraph& NodeGraph::operator=(NodeGraph&& other) noexcept
 {
     _meshElementPool = std::move(other._meshElementPool);
     _armatureElementPool = std::move(other._armatureElementPool);
+    _lightElementPool = std::move(other._lightElementPool);
     _nodes = std::move(other._nodes);
     _root = std::move(other._root);
     
@@ -80,6 +87,17 @@ NodeHandle NodeGraph::createArmatureNode()
     return handle;
 }
 
+NodeHandle NodeGraph::createLightNode()
+{
+    NodeHandle handle;
+    Node node(Node::kElementTypeLight);
+    handle = _nodes.add(std::move(node));
+    if (handle) {
+        handle->_element.light = _lightElementPool.construct();
+    }
+    return handle;
+}
+
 NodeHandle NodeGraph::createObjectNode(NodeId id)
 {
     NodeHandle handle;
@@ -106,6 +124,12 @@ void NodeGraph::onReleaseManagedObject(cinek::gfx::Node &node)
         {
             _armatureElementPool.destruct(node._element.armature);
             node._element.armature = nullptr;
+        }
+        break;
+    case Node::kElementTypeLight:
+        {
+            _lightElementPool.destruct(node._element.light);
+            node._element.light = nullptr;
         }
         break;
     default:
@@ -192,7 +216,7 @@ NodeHandle NodeGraph::clone(NodeHandle source)
             src = source->mesh();
             MeshElement* dest = cloned->mesh();
             while (src && dest) {
-                dest->copy(*src);
+                dest->clone(*src);
                 dest = dest->next;
                 src = src->next;
             }
@@ -201,7 +225,12 @@ NodeHandle NodeGraph::clone(NodeHandle source)
         break;
     case Node::kElementTypeArmature: {
             cloned = createArmatureNode();
-            cloned->armature()->copy(*source->armature());
+            cloned->armature()->clone(*source->armature());
+        }
+        break;
+    case Node::kElementTypeLight: {
+            cloned = createLightNode();
+            cloned->light()->clone(*source->light());
         }
         break;
     default:

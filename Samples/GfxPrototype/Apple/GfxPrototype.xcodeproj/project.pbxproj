@@ -121,6 +121,7 @@
 /* Begin PBXFileReference section */
 		3716E66B1BE7F18300089218 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationController.cpp; sourceTree = "<group>"; };
 		3716E66C1BE7F18300089218 /* AnimationController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AnimationController.hpp; sourceTree = "<group>"; };
+		3716E66E1BE9526200089218 /* Light.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Light.hpp; sourceTree = "<group>"; };
 		371779E11BB63C78000EFFC0 /* Material.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Material.hpp; sourceTree = "<group>"; };
 		372035C81BC309EC001B99E2 /* NodeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderer.cpp; sourceTree = "<group>"; };
 		372035C91BC309EC001B99E2 /* NodeRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NodeRenderer.hpp; sourceTree = "<group>"; };
@@ -367,6 +368,7 @@
 				37A07D891BB60760003F5AF0 /* Texture.hpp */,
 				37A07D8A1BB60917003F5AF0 /* Texture.cpp */,
 				371779E11BB63C78000EFFC0 /* Material.hpp */,
+				3716E66E1BE9526200089218 /* Light.hpp */,
 				379429B21BB3238A00C5FAF6 /* Mesh.hpp */,
 				379429B11BB3238A00C5FAF6 /* Mesh.cpp */,
 				373740271BD96F2800729919 /* Animation.hpp */,

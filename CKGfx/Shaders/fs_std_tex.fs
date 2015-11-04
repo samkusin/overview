@@ -26,7 +26,7 @@ SAMPLER2D(u_texColor, 0);
         if z == 0, then directional
         else
             if w == 0, then point (omnidirectional)
-       else angle between light and extent of light on surface (spot)
+            else angle between light and extent of light on surface (spot)
 
     u_lightCoeff
     ---------------

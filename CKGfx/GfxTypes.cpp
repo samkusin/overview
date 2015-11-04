@@ -13,6 +13,7 @@
 #include "Mesh.hpp"
 #include "Animation.hpp"
 #include "AnimationController.hpp"
+#include "Light.hpp"
 #include "Node.hpp"
 #include "NodeGraph.hpp"
 
@@ -58,6 +59,11 @@ namespace cinek {
     template void ManagedHandle<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>::release();
     template class ManagedObjectPoolBase<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>;
     
+    template class ManagedObjectPool<gfx::Light, void>;
+    template void ManagedHandle<gfx::Light, ManagedObjectPool<gfx::Light, void>>::acquire();
+    template void ManagedHandle<gfx::Light, ManagedObjectPool<gfx::Light, void>>::release();
+    template class ManagedObjectPoolBase<gfx::Light, ManagedObjectPool<gfx::Light, void>>;
+    
     template class ManagedObjectPool<gfx::Node, gfx::NodeGraph*>;
     template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>::acquire();
     template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>::release();
@@ -65,6 +71,16 @@ namespace cinek {
 
     namespace gfx {
     
+    const Vector4 Vector4::kUnitX = { 1.0f, 0.0f, 0.0f, 0.0f };
+    const Vector4 Vector4::kUnitY = { 0.0f, 1.0f, 0.0f, 0.0f };
+    const Vector4 Vector4::kUnitZ = { 0.0f, 0.0f, 1.0f, 0.0f };
+    const Vector4 Vector4::kUnitW = { 0.0f, 0.0f, 0.0f, 1.0f };
+    const Vector4 Vector4::kZero = { 0.0f, 0.0f, 0.0f, 0.0f };
+    
+    const Vector3 Vector3::kUnitX = { 1.0f, 0.0f, 0.0f };
+    const Vector3 Vector3::kUnitY = { 0.0f, 1.0f, 0.0f };
+    const Vector3 Vector3::kUnitZ = { 0.0f, 0.0f, 1.0f };
+    const Vector3 Vector3::kZero = { 0.0f, 0.0f, 0.0f };
     
     Vector3 operator-(const Vector3& v0, const Vector3& v1)
     {
