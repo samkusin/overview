@@ -108,7 +108,7 @@ void main()
         if (lightOriginDist > 0.0) {
             //  point or spot
             lightDir = v_position - u_lightOrigin[i].xyz;
-            distance = length(lightDir);
+            distance = length(lightDir) / lightOriginDist;
             lightDir = normalize(lightDir);
 
             if (lightCutoff > 0.0) {

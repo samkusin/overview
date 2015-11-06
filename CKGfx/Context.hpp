@@ -66,11 +66,7 @@ public:
     //  Finds an AnimationSet given its name
     AnimationSetHandle findAnimationSet(const char* name);
     //  Registers a light handle with an optional name
-    LightHandle registerLight(Light&& light, const char* name="");
-    //  Unregisters a named light
-    void unregisterLight(const char* name);
-    //  Looks up a light by name
-    LightHandle findLight(const char* name) const;
+    LightHandle registerLight(Light&& light);
     
 private:
     //  restrict Context access to pointer and reference -
@@ -102,12 +98,10 @@ private:
     using TextureDictionary = std::unordered_map<std::string, TextureHandle>;
     using MaterialDictionary = std::unordered_map<std::string, MaterialHandle>;
     using AnimationSetDictionary = std::unordered_map<std::string, AnimationSetHandle>;
-    using LightDictionary = std::unordered_map<std::string, LightHandle>;
     
     TextureDictionary _textureDictionary;
     MaterialDictionary _materialDictionary;
     AnimationSetDictionary _animationSetDictionary;
-    LightDictionary _lightDictionary;
 };
 
     

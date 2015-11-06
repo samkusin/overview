@@ -15,10 +15,11 @@ namespace cinek {
     
 enum class LightType
 {
+    kNone,
     kAmbient,
     kDirectional,
     kPoint,
-    kSpot
+    kSpot,
 };
 
     

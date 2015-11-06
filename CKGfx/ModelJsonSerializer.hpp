@@ -14,6 +14,7 @@
 #include "Mesh.hpp"
 #include "Material.hpp"
 #include "Animation.hpp"
+#include "Light.hpp"
 
 #include <ckjson/json.hpp>
 #include <vector>
@@ -27,6 +28,7 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root,
 Mesh loadMeshFromJSON(Context& context, const JsonValue& root);
 Material loadMaterialFromJSON(Context& context, const JsonValue& root);
 AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root);
+Light loadLightFromJSON(Context& context, const JsonValue& root);
 
 Matrix4& loadMatrixFromJSON(Matrix4& mtx, const JsonValue& mtxArray);
 ckm::AABB<Vector3>& loadAABBFromJSON(ckm::AABB<Vector3>& aabb, const JsonValue& aabbObj);

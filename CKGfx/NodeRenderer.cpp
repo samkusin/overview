@@ -370,8 +370,8 @@ void NodeRenderer::setupLightUniforms(const Matrix4& objWorldMtx)
     for (auto& light : _globalLights) {
         const Light* l = light.light.resource();
         
-        _lightCoeffs.emplace_back();
-        _lightOrigins.emplace_back();
+        _lightCoeffs.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+        _lightOrigins.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
         
         Vector4 color;
         _lightColors.emplace_back(color.fromABGR(l->color));
@@ -380,6 +380,7 @@ void NodeRenderer::setupLightUniforms(const Matrix4& objWorldMtx)
         if (l->type == LightType::kDirectional) {
             Vector4 dir;
             bx::vec4MulMtx(dir, Vector4::kUnitZ, light.worldMtx);
+            //bx::vec3Norm(dir, dir);
             bx::vec3Neg(dir, dir);
             _lightDirs.emplace_back(dir);
         }

@@ -71,9 +71,12 @@ struct ModelBuilderFromJSONFn
     ModelBuilderFromJSONFn
     (
         Context& context,
-        std::vector<std::pair<MeshHandle, MaterialHandle>>& meshes    ) :
+        std::vector<std::pair<MeshHandle, MaterialHandle>>& meshes,
+        std::vector<LightHandle>& lights
+    ) :
         _context(&context),
-        _meshes(&meshes)
+        _meshes(&meshes),
+        _lights(&lights)
     {
     }
 
@@ -87,6 +90,7 @@ struct ModelBuilderFromJSONFn
 private:
     Context* _context;
     std::vector<std::pair<MeshHandle, MaterialHandle>>* _meshes;
+    std::vector<LightHandle>* _lights;
 
     NodeHandle build(NodeGraph& model, const JsonValue& node)
     {
@@ -114,6 +118,14 @@ private:
             thisNode->armature()->animSet =
                 _context->findAnimationSet(node["animation"].GetString());
         
+        }
+        else if (node.HasMember("light")) {
+            thisNode = model.createLightNode();
+            
+            int lightIndex = node["light"].GetInt();
+            if (lightIndex >= 0) {
+                thisNode->light()->light = _lights->at(lightIndex);
+            }
         }
         else {
             thisNode = model.createObjectNode(0);
@@ -167,6 +179,7 @@ NodeGraph loadNodeGraphFromJSON
     //  Build model's graph by visiting our json nodes.
     //
     std::vector<std::pair<MeshHandle, MaterialHandle>> meshesByIndex;
+    std::vector<LightHandle> lightsByIndex;
     
     //  load animations
     if (root.HasMember("animations")) {
@@ -211,28 +224,51 @@ NodeGraph loadNodeGraphFromJSON
     //  create meshes
     if (root.HasMember("meshes")) {
         const JsonValue& jsonObjects = root["meshes"];
-        
-        for (auto objIt = jsonObjects.Begin();
-             objIt != jsonObjects.End();
-             ++objIt) {
-            auto& jsonObject = *objIt;
-            MaterialHandle material;
-            if (jsonObject.HasMember("material")) {
-                material = context.findMaterial(jsonObject["material"].GetString());
-            }
+        if (!jsonObjects.Empty()) {
+            meshesByIndex.reserve(jsonObjects.Size());
             
-            auto meshHandle = context.registerMesh(
-                std::move(loadMeshFromJSON(context, jsonObject))
-            );
-        
-            meshesByIndex.emplace_back(
-                meshHandle,
-                material
-            );
+            for (auto objIt = jsonObjects.Begin();
+                 objIt != jsonObjects.End();
+                 ++objIt) {
+                auto& jsonObject = *objIt;
+                MaterialHandle material;
+                if (jsonObject.HasMember("material")) {
+                    material = context.findMaterial(jsonObject["material"].GetString());
+                }
+                
+                auto meshHandle = context.registerMesh(
+                    std::move(loadMeshFromJSON(context, jsonObject))
+                );
+            
+                meshesByIndex.emplace_back(
+                    meshHandle,
+                    material
+                );
+            }
         }
     }
     
-    ModelBuilderFromJSONFn buildFn(context, meshesByIndex);
+    //  create lights
+    if (root.HasMember("lights")) {
+        const JsonValue& jsonObjects = root["lights"];
+        if (!jsonObjects.Empty()) {
+            lightsByIndex.reserve(jsonObjects.Size());
+            
+            for (auto objIt = jsonObjects.Begin();
+                 objIt != jsonObjects.End();
+                 ++objIt) {
+                auto& jsonObject = *objIt;
+                
+                auto lightHandle = context.registerLight(
+                    std::move(loadLightFromJSON(context, jsonObject))
+                );
+                
+                lightsByIndex.emplace_back(lightHandle);
+            }
+        }
+    }
+    
+    ModelBuilderFromJSONFn buildFn(context, meshesByIndex, lightsByIndex);
     
     buildFn(model, modelNode);
     
@@ -520,6 +556,63 @@ AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root)
     }
     
     return AnimationSet(std::move(bones), std::move(stateDefs));
+}
+
+Light loadLightFromJSON(Context& context, const JsonValue& root)
+{
+    Light light;
+    
+    const char* type = root["type"].GetString();
+    if (!strcmp(type, "spot")) {
+        light.type = LightType::kSpot;
+    }
+    else if (!strcmp(type, "directional")) {
+        light.type = LightType::kDirectional;
+    }
+    else if (!strcmp(type, "point")) {
+        light.type = LightType::kPoint;
+    }
+    else if (!strcmp(type, "ambient")) {
+        light.type = LightType::kAmbient;
+    }
+    else {
+        CK_LOG_WARN("gfx", "loadLightFromJSON - Invalid Type %s", type);
+        light.type = LightType::kNone;
+    }
+    
+    if (light.type == LightType::kNone)
+        return light;
+    
+    if (light.type == LightType::kAmbient) {
+        light.ambientComp = 1.0f;
+        light.diffuseComp = 0.0f;
+    } else {
+        light.ambientComp = 0.0f;
+        light.diffuseComp = 1.0f;
+    }
+    
+    Color4 color;
+    loadColorFromJSON(color, root["color"]);
+    float intensity = (float)root["intensity"].GetDouble();
+    
+    color.r *= intensity;
+    color.g *= intensity;
+    color.b *= intensity;
+    light.color = color.toABGR();
+    
+    if (light.type == LightType::kPoint || light.type == LightType::kSpot) {
+        light.distance = (float)root["distance"].GetDouble();
+        light.coeff.x = 1.0;
+        auto& falloff = root["falloff"];
+        light.coeff.y = (float)falloff["l"].GetDouble();
+        light.coeff.z = (float)falloff["q"].GetDouble();
+        
+        if (light.type == LightType::kSpot) {
+            light.cutoff = (float)root["cutoff"].GetDouble();
+        }
+    }
+    
+    return light;
 }
 
 

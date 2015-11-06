@@ -249,6 +249,8 @@ static int run(SDL_Window* window)
 
         scene.setRoot(testScene.root());
         auto sceneRoot = scene.root();
+        
+        /*
         auto lightRoot = scene.createObjectNode(0);
         bx::mtxIdentity(lightRoot->transform());
         
@@ -302,6 +304,7 @@ static int run(SDL_Window* window)
         scene.addChildNodeToNode(lightNode, lightRoot);
         
         scene.addChildNodeToNode(lightRoot, sceneRoot);
+        */
         
         cinek::gfx::NodeHandle newObjectNode;
         cinek::gfx::NodeHandle newObjectRoot;

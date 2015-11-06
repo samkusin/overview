@@ -77,6 +77,7 @@ namespace cinek {
     const Vector4 Vector4::kUnitW = { 0.0f, 0.0f, 0.0f, 1.0f };
     const Vector4 Vector4::kZero = { 0.0f, 0.0f, 0.0f, 0.0f };
     
+    
     const Vector3 Vector3::kUnitX = { 1.0f, 0.0f, 0.0f };
     const Vector3 Vector3::kUnitY = { 0.0f, 1.0f, 0.0f };
     const Vector3 Vector3::kUnitZ = { 0.0f, 0.0f, 1.0f };
@@ -113,6 +114,12 @@ namespace cinek {
         Vector3 ret;
         bx::vec3Mul(ret, v0, scalar);
         return ret;
+    }
+    
+    Vector3& Vector3::operator*=(float scalar)
+    {
+        bx::vec3Mul(comp, comp, scalar);
+        return *this;
     }
 
     }   //  namespace gfx

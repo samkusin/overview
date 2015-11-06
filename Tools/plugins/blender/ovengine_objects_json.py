@@ -243,11 +243,22 @@ class ExportOVObjectJSON(bpy.types.Operator):
         ('Render','Render','')
     )
 
+    export_options = (
+        ('Everything', 'Everything', ''),
+        ('Meshes', 'Meshes', ''),
+        ('Materials', 'Materials', ''),
+        ('Animations', 'Animations', '')
+    )
+
     filepath = bpy.props.StringProperty(subtype='FILE_PATH')
+
+    opt_export_scene = bpy.props.BoolProperty(name="Export Scene")
+    opt_export_y_up = bpy.props.BoolProperty(name="Export Root Objects with Y-Up", default=True)
+
     apply_modifiers = bpy.props.EnumProperty(name="Apply Modifiers", default="View",
                                              items=modifier_options)
-    opt_export_scene = bpy.props.BoolProperty(name="Export Scene")
-    opt_export_y_up = bpy.props.BoolProperty(name="Export Root Objects with Y-Up")
+    opt_export_type = bpy.props.EnumProperty(name='Export', default='Everything',
+                                             items=export_options)
 
     # Animation framerates:
     #   scene_fps - Is the animation framerate from the scene's perspective.
@@ -272,6 +283,58 @@ class ExportOVObjectJSON(bpy.types.Operator):
         'rotation_quaternion' : ['qw','qx','qy','qz'],
         'scale' : ['sx','sy','sz']
     }
+
+    def exportObjectAsLight(self, scene, obj, resources):
+
+        light_data = bpy.data.lamps[obj.name]
+
+        light = OrderedDict()
+        if light_data.type == 'SPOT':
+            light['type'] = 'spot'
+        elif light_data.type == 'SUN':
+            light['type'] = 'directional'
+        elif light_data.type == 'POINT':
+            light['type'] = 'point'
+        elif light_data.type == 'HEMI':
+            light['type'] = 'ambient'
+        else:
+            self.report({'WARN'}, obj.name + ": Unsupported light type " + light_data.type)
+            return -1
+
+        light['color'] = OrderedDict(
+                [('r',light_data.color[0]),
+                 ('g',light_data.color[1]),
+                 ('b',light_data.color[2])])
+        light['intensity'] = light_data.energy
+
+        if light_data.type == 'SPOT' or light_data.type == 'POINT':
+            light['distance'] = light_data.distance
+            # default to constant
+            l = 0.0
+            q = 0.0
+            if light_data.falloff_type == 'LINEAR_QUADRATIC_WEIGHTED':
+                l = light_data.linear_attenuation
+                q = light_data.quadratic_attenuation
+            elif light_data.falloff_type == 'INVERSE_LINEAR':
+                l = 1.0
+                q = 0.0
+            elif light_data.falloff_type == 'INVERSE_SQUARE':
+                l = 1.0
+                q = 1.0
+            else:
+                self.report({'WARN'}, obj.name + ": Unsupported light falloff " + light_data.falloff_type)
+
+            light['falloff'] = {
+                'l': light_data.linear_attenuation,
+                'q': light_data.quadratic_attenuation
+            }
+
+        if light_data.type == 'SPOT':
+            light['cutoff'] = light_data.spot_size
+
+        resources['lights'].append(light)
+
+        return len(resources['lights'])-1
 
     def exportObjectAsMesh(self, scene, obj, resources):
         # Process the selected mesh
@@ -455,7 +518,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
     def exportNode(self, scene, obj, resources, matrix):
         skip_object = False
-        if obj.type == 'CAMERA' or obj.type == 'LAMP':
+        if obj.type == 'CAMERA':
             skip_object = True
 
         if skip_object:
@@ -484,7 +547,9 @@ class ExportOVObjectJSON(bpy.types.Operator):
         node['obb']['min'] = min
         node['obb']['max'] = max
 
-        if obj.type == 'ARMATURE':
+        if obj.type == 'LAMP':
+            node['light'] = self.exportObjectAsLight(scene, obj, resources)
+        elif obj.type == 'ARMATURE':
             # persist bone list, which may be used when generating vertex weights from the
             # underlying meshes.  we free this context after processing the armature's
             # hierarchy
@@ -496,6 +561,16 @@ class ExportOVObjectJSON(bpy.types.Operator):
             node['animation'] = obj.name
         elif obj.type == 'MESH':
             node['meshes'] = self.exportObjectAsMesh(scene, obj, resources)
+
+        # Seems hacky.  But the only way I found to determine if an object has custom
+        # props is to check for the _RNA_UI key
+        obj_prop_keys = obj.keys()
+        if '_RNA_UI' in obj_prop_keys and len(obj_prop_keys) > 1:
+            custom_props = {}
+            for custom_prop_key in obj_prop_keys:
+                if custom_prop_key != '_RNA_UI':
+                    custom_props[custom_prop_key] = obj[custom_prop_key]
+            node['properties'] = custom_props
 
         if obj.children:
             node['children'] = []
@@ -516,6 +591,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
         resources = {
             'materials' : {},
             'animations': {},
+            'lights' : [],
             'meshes' : [],
             'texture_path' : 'textures'
         }
@@ -536,12 +612,16 @@ class ExportOVObjectJSON(bpy.types.Operator):
             world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
             root = self.exportNode(scene, obj, resources, matrix=world_matrix)
 
-        document = OrderedDict(
-            [('materials', resources['materials']),
-             ('animations', resources['animations']),
-             ('meshes', resources['meshes']),
-             ('nodes', root)]
-        )
+        document = OrderedDict()
+
+        if self.opt_export_type == 'Everything' or self.opt_export_type == 'Materials':
+            document['materials'] = resources['materials']
+        if self.opt_export_type == 'Everything' or self.opt_export_type == 'Animations':
+            document['animations'] = resources['animations']
+        if self.opt_export_type == 'Everything' or self.opt_export_type == 'Meshes':
+            document['meshes'] = resources['meshes']
+            document['lights'] = resources['lights']
+            document['nodes'] = root
 
         try:
             f = open(target_filepath, "w")
@@ -570,4 +650,8 @@ def register():
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.utils.unregister_module(__name__);
+
+#if __name__ == "__main__":
+#    register()
+#    bpy.ops.export.ovengine_objson()
 

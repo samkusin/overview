@@ -175,6 +175,7 @@ struct Vector3
     
     Vector3& operator+=(const Vector3& v);
     Vector3& operator-=(const Vector3& v);
+    Vector3& operator*=(float scalar);
 };
 
 static_assert(offsetof(Vector3, comp[1]) == offsetof(Vector3, y) &&

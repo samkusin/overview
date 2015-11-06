@@ -152,26 +152,11 @@ AnimationSetHandle Context::findAnimationSet(const char* name)
 }
 
 //  Registers a light handle with an optional name
-LightHandle Context::registerLight(Light&& light, const char* name)
+LightHandle Context::registerLight(Light&& light)
 {
-    return registerResource(std::move(light), _lights, _lightDictionary, name);
+    return _lights.add(std::move(light));
 }
 
-//  Unregisters a named light
-void Context::unregisterLight(const char* name)
-{
-    unregisterResource(_lightDictionary, name);
-}
-
-//  Looks up a light by name
-LightHandle Context::findLight(const char* name) const
-{
-    auto it = _lightDictionary.find(name);
-    if (it == _lightDictionary.end())
-        return nullptr;
-    
-    return it->second;
-}
 
 void Context::update()
 {
