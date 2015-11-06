@@ -14,7 +14,7 @@
 #include <cfloat>
 
 namespace bx {
-    inline void quatSlerp(float* __restrict _result, const float* __restrict _qa, const float* __restrict _qb, float _factor)
+    inline void slerp(float* __restrict _result, const float* __restrict _qa, const float* __restrict _qb, float _factor)
     {
         float cx,cy,cz,cw;
         
@@ -157,8 +157,6 @@ AnimationSet::AnimationSet
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
 void interpRotationFromSequenceChannel
 (
     Vector4& boneRotQuat,
@@ -231,7 +229,7 @@ void interpRotationFromSequenceChannel
     else if (factor > 1.0f)
         factor = 1.0f;
         
-    bx::quatSlerp(boneRotQuat, startQ, endQ, factor);
+    bx::slerp(boneRotQuat, startQ, endQ, factor);
 }
 
 
@@ -242,7 +240,117 @@ void interpTranslateFromSequenceChannel
     float animTime
 )
 {
+    Vector3 startT;
+    Vector3 endT;
+    float dt = 0.0f;
+    float start = 0.0f;
+    
+    auto kf = channel.keyframePairFromTime(Keyframe::kTranslateX, animTime);
+    if (!kf.first) return;
+    //printf("qx[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    startT.x = kf.first->v;
+    endT.x = kf.second->v;
+    float kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+
+    kf = channel.keyframePairFromTime(Keyframe::kTranslateY, animTime);
+    if (!kf.first) return;
+    //printf("qy[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    startT.y = kf.first->v;
+    endT.y = kf.second->v;
+    kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+    
+    kf = channel.keyframePairFromTime(Keyframe::kTranslateZ, animTime);
+    if (!kf.first) return;
+    //printf("qz[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    startT.z = kf.first->v;
+    endT.z = kf.second->v;
+    kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+
+    if (dt < ckm::epsilon<float>())
+        return;
+    
+    float factor = (animTime - start)/dt;
+    if (factor < 0.0f)
+        factor = 0.0f;
+    else if (factor > 1.0f)
+        factor = 1.0f;
+    
+    translate.x = bx::flerp(startT.x, endT.x, factor);
+    translate.y = bx::flerp(startT.y, endT.y, factor);
+    translate.z = bx::flerp(startT.z, endT.z, factor);
 }
+
+void interpScaleFromSequenceChannel
+(
+    Vector3& scale,
+    const SequenceChannel& channel,
+    float animTime
+)
+{
+    Vector3 startT;
+    Vector3 endT;
+    float dt = 0.0f;
+    float start = 0.0f;
+    
+    auto kf = channel.keyframePairFromTime(Keyframe::kScaleX, animTime);
+    if (!kf.first) return;
+    //printf("qx[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    startT.x = kf.first->v;
+    endT.x = kf.second->v;
+    float kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+
+    kf = channel.keyframePairFromTime(Keyframe::kScaleY, animTime);
+    if (!kf.first) return;
+    //printf("qy[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    startT.y = kf.first->v;
+    endT.y = kf.second->v;
+    kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+    
+    kf = channel.keyframePairFromTime(Keyframe::kScaleZ, animTime);
+    if (!kf.first) return;
+    //printf("qz[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    startT.z = kf.first->v;
+    endT.z = kf.second->v;
+    kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+
+    if (dt < ckm::epsilon<float>())
+        return;
+    
+    float factor = (animTime - start)/dt;
+    if (factor < 0.0f)
+        factor = 0.0f;
+    else if (factor > 1.0f)
+        factor = 1.0f;
+    
+    scale.x = bx::flerp(startT.x, endT.x, factor);
+    scale.y = bx::flerp(startT.y, endT.y, factor);
+    scale.z = bx::flerp(startT.z, endT.z, factor);
+}
+    
         
     }   // namespace gfx
 }   // namespace cinek

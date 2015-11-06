@@ -470,23 +470,22 @@ void NodeRenderer::buildBoneTransforms
         
         const SequenceChannel& seqForBone = animation->channels[boneIndex];
     
+        Vector3 scale;
+        scale.x = 1.0f;
+        scale.y = 1.0f;
+        scale.z = 1.0f;
+        interpScaleFromSequenceChannel(scale, seqForBone, animController->animationTime());
+        
         Matrix4 multMtx;
-        bx::mtxIdentity(multMtx);      // TODO! - Scale
-    
+        bx::mtxScale(multMtx, scale.x, scale.y, scale.z);
+        
         Vector4 boneRotQuat;
         bx::quatIdentity(boneRotQuat);
         interpRotationFromSequenceChannel(boneRotQuat, seqForBone, animController->animationTime());
-        /*
-        float eulers[3];
-        bx::quatToEuler(eulers, boneRotQuat);
-        printf("[%d]: Rot(%.4f,%.4f,%.4f),Q=(%.4f,%.4f,%.4f,%.4f)\n", boneIndex,
-            ckm::degrees(eulers[0]), ckm::degrees(eulers[1]), ckm::degrees(eulers[2]),
-            boneRotQuat.x, boneRotQuat.y, boneRotQuat.z, boneRotQuat.w);
-        */
+       
         Matrix4 rotMtx;
         bx::mtxQuat(rotMtx, boneRotQuat);
         //mtxQuatRCS(rotMtx, boneRotQuat);
-        
         
         Vector3 translate;
         translate.x = 0;

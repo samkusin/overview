@@ -107,6 +107,13 @@ namespace cinek {
         float animTime
     );
     
+    void interpScaleFromSequenceChannel
+    (
+        Vector3& scale,
+        const SequenceChannel& channel,
+        float animTime
+    );
+    
 
     }   // namespace gfx
 }   // namespace cinek
