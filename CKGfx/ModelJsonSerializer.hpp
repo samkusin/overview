@@ -22,7 +22,8 @@ namespace cinek {
     namespace gfx {
 
 
-NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root);
+NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root,
+    const NodeElementCounts& extra = {});
 Mesh loadMeshFromJSON(Context& context, const JsonValue& root);
 Material loadMaterialFromJSON(Context& context, const JsonValue& root);
 AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root);

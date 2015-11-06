@@ -48,6 +48,9 @@ NodeElementCounts& enumerateNodeResourcesFromJSON
     else if (node.HasMember("light")) {
         ++counts.lightNodeCount;
     }
+    else {
+        ++counts.transformNodeCount;
+    }
     if (node.HasMember("children") && node["children"].IsArray()) {
         const JsonValue& children = node["children"];
         for (auto it = children.Begin(); it != children.End(); ++it) {
@@ -135,7 +138,12 @@ private:
 };
 
 
-NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
+NodeGraph loadNodeGraphFromJSON
+(
+    Context& context,
+    const JsonValue& root,
+    const NodeElementCounts& extra
+)
 {
     NodeGraph model;
     
@@ -151,7 +159,7 @@ NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root)
     //  to run an enumeration pass on the model document before generating our
     //  model's graph
     
-    NodeElementCounts modelInitParams = {};
+    NodeElementCounts modelInitParams = extra;
     modelInitParams = enumerateNodeResourcesFromJSON(modelInitParams, modelNode);
     
     model = std::move(NodeGraph(modelInitParams));
@@ -365,6 +373,7 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
         auto& specular = root["specular"];
         loadColorFromJSON(material.specularColor, specular);
         material.specularPower = (float)specular["power"].GetDouble();
+        material.specularIntensity = (float)specular["intensity"].GetDouble();
     }
     
     return material;

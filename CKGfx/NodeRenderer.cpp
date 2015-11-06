@@ -29,6 +29,47 @@
 namespace cinek {
     namespace gfx {
 
+	inline void mtxQuatRCS(float* __restrict _result, const float* __restrict _quat)
+	{
+		const float x = _quat[0];
+		const float y = _quat[1];
+		const float z = _quat[2];
+		const float w = _quat[3];
+
+		const float x2  =  x + x;
+		const float y2  =  y + y;
+		const float z2  =  z + z;
+		const float x2x = x2 * x;
+		const float x2y = x2 * y;
+		const float x2z = x2 * z;
+		const float x2w = x2 * w;
+		const float y2y = y2 * y;
+		const float y2z = y2 * z;
+		const float y2w = y2 * w;
+		const float z2z = z2 * z;
+		const float z2w = z2 * w;
+
+		_result[ 0] = 1.0f - (y2y + z2z);
+		_result[ 1] =         x2y + z2w;
+		_result[ 2] =         x2z - y2w;
+		_result[ 3] = 0.0f;
+
+		_result[ 4] =         x2y - z2w;
+		_result[ 5] = 1.0f - (x2x + z2z);
+		_result[ 6] =         y2z + x2w;
+		_result[ 7] = 0.0f;
+
+		_result[ 8] =         x2z + y2w;
+		_result[ 9] =         y2z - x2w;
+		_result[10] = 1.0f - (x2x + y2y);
+		_result[11] = 0.0f;
+
+		_result[12] = 0.0f;
+		_result[13] = 0.0f;
+		_result[14] = 0.0f;
+		_result[15] = 1.0f;
+	}
+
 /*
  *  Rendering a Node Graph
  *  
@@ -86,13 +127,14 @@ void NodeRenderer::setCamera(const Camera& camera)
 {
     _camera = camera;
     
-    bx::mtxInverse(_viewMtx.comp, _camera.worldMtx.comp);
+    bx::mtxInverse(_viewMtx, _camera.worldMtx);
     
-    bx::mtxProj(_projMtx.comp,
+    bx::mtxProj(_projMtx,
         180.0f * _camera.viewFrustrum.fovRadians()/ckm::pi<float>(),
         _camera.viewFrustrum.aspect(),
         _camera.viewFrustrum.nearZ(),
-        _camera.viewFrustrum.farZ());
+        _camera.viewFrustrum.farZ(),
+        false);
 }
 
 void NodeRenderer::operator()
@@ -249,10 +291,9 @@ void NodeRenderer::renderMeshElement
         bgfx::setTexture(0, _uniforms[kNodeUniformTexDiffuse], texDiffuse,
             BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_ANISOTROPIC);
     }
+    //  TODO - include specular color?
     Vector4 specular;
-    specular.x = (element.material->specularColor.r +
-                  element.material->specularColor.g +
-                  element.material->specularColor.b) * 0.33f;
+    specular.x = element.material->specularIntensity;
     specular.y = element.material->specularPower;
     specular.z = 0;
     specular.w = 0;
@@ -288,8 +329,13 @@ void NodeRenderer::renderMeshElement
    
         int transformCacheIndex =
                         bgfx::allocTransform(&boneTransforms, BGFX_CONFIG_MAX_BONES);
+        
+        //printf("Kf=%d\n", (int)(armatureState.armature->animController->animationTime() * 24));
    
-        buildBoneTransforms(armatureState, 0, worldTransform, boneTransforms.data);
+        Matrix4 rootBoneTransform;
+        bx::mtxIdentity(rootBoneTransform);
+   
+        buildBoneTransforms(armatureState, 0, worldTransform, rootBoneTransform, boneTransforms.data);
         bgfx::setTransform(transformCacheIndex,
                            armatureState.armature->animSet->boneCount());
     }
@@ -306,7 +352,7 @@ void NodeRenderer::renderMeshElement
 						| BGFX_STATE_DEPTH_WRITE
 						| BGFX_STATE_DEPTH_TEST_LESS
 						| BGFX_STATE_MSAA
-                        | BGFX_STATE_CULL_CCW
+                        | BGFX_STATE_CULL_CW
 						);
 
     bgfx::submit(0, _programs[programSlot]);
@@ -399,6 +445,7 @@ void NodeRenderer::buildBoneTransforms
     const ArmatureState& armatureState,
     int boneIndex,
     const Matrix4& worldTransform,
+    const Matrix4& parentBoneTransform,
     float* outTransforms
 )
 {
@@ -413,15 +460,14 @@ void NodeRenderer::buildBoneTransforms
     
     //  generate our "local (most likely a mesh)" space to bone transform
     //  local -> world -> armature -> bone_local -> armature = final bone transform
-    
+    Matrix4 boneTransform;
     //  animations exist on this bone
-    if (animation && animation->channels[boneIndex].animatedSeqMask) {
+    if (animation && animation->channels[boneIndex].animatedSeqMask) {        
         Matrix4 interMtx;
-        bx::mtxMul(interMtx, worldTransform, armatureState.worldToArmatureMtx);
-    
         Matrix4 meshToBoneMtx;
+        bx::mtxMul(interMtx, worldTransform, armatureState.worldToArmatureMtx);
         bx::mtxMul(meshToBoneMtx, interMtx, bone->invMtx);
-    
+        
         const SequenceChannel& seqForBone = animation->channels[boneIndex];
     
         Matrix4 multMtx;
@@ -430,9 +476,17 @@ void NodeRenderer::buildBoneTransforms
         Vector4 boneRotQuat;
         bx::quatIdentity(boneRotQuat);
         interpRotationFromSequenceChannel(boneRotQuat, seqForBone, animController->animationTime());
-    
+        /*
+        float eulers[3];
+        bx::quatToEuler(eulers, boneRotQuat);
+        printf("[%d]: Rot(%.4f,%.4f,%.4f),Q=(%.4f,%.4f,%.4f,%.4f)\n", boneIndex,
+            ckm::degrees(eulers[0]), ckm::degrees(eulers[1]), ckm::degrees(eulers[2]),
+            boneRotQuat.x, boneRotQuat.y, boneRotQuat.z, boneRotQuat.w);
+        */
         Matrix4 rotMtx;
         bx::mtxQuat(rotMtx, boneRotQuat);
+        //mtxQuatRCS(rotMtx, boneRotQuat);
+        
         
         Vector3 translate;
         translate.x = 0;
@@ -447,9 +501,11 @@ void NodeRenderer::buildBoneTransforms
         interMtx[12] = translate.x;
         interMtx[13] = translate.y;
         interMtx[14] = translate.z;
+        
+        bx::mtxMul(boneTransform, interMtx, parentBoneTransform);
     
         // Transform our bone based on animation
-        bx::mtxMul(multMtx, meshToBoneMtx, interMtx);
+        bx::mtxMul(multMtx, meshToBoneMtx, boneTransform);
         // Transform back to armature space
         bx::mtxMul(outTransforms + boneIndex*16, multMtx, bone->mtx);
     }
@@ -458,13 +514,14 @@ void NodeRenderer::buildBoneTransforms
         //  transform
         bx::mtxMul(outTransforms + boneIndex*16,
                    worldTransform, armatureState.worldToArmatureMtx);
+        boneTransform = parentBoneTransform;
     }
     
     for (int childBoneIndex = bone->firstChild;
          childBoneIndex >= 0;
          childBoneIndex = animSet->boneFromIndex(childBoneIndex)->nextSibling) {
         
-        buildBoneTransforms(armatureState, childBoneIndex, worldTransform, outTransforms);
+        buildBoneTransforms(armatureState, childBoneIndex, worldTransform, boneTransform, outTransforms);
     }
 }
 

@@ -216,6 +216,7 @@ static int run(SDL_Window* window)
         
         cinek::AppController appController;
         
+        cinek::gfx::NodeGraph testScene = loadModelFromFile(gfxContext, "scene.json");
         cinek::gfx::NodeGraph model = loadModelFromFile(gfxContext, "device.json");
         cinek::gfx::NodeGraph robot = loadModelFromFile(gfxContext, "verybadrobot.json");
         cinek::gfx::NodeGraph factorybot = loadModelFromFile(gfxContext, "simple.json");
@@ -239,10 +240,15 @@ static int run(SDL_Window* window)
         sceneElementCounts.transformNodeCount = 64;
         
         cinek::gfx::NodeGraph scene(sceneElementCounts);
-        auto sceneRoot = scene.createObjectNode(0);
-        bx::mtxIdentity(sceneRoot->transform());
-        scene.setRoot(sceneRoot);
         
+        /*
+        auto root = scene.createObjectNode(0);
+        bx::mtxIdentity(root->transform());
+        scene.setRoot(root);
+        */
+
+        scene.setRoot(testScene.root());
+        auto sceneRoot = scene.root();
         auto lightRoot = scene.createObjectNode(0);
         bx::mtxIdentity(lightRoot->transform());
         
@@ -255,9 +261,9 @@ static int run(SDL_Window* window)
         
         cinek::gfx::Light light;
         light.type = cinek::gfx::LightType::kDirectional;
-        light.ambientComp = 0.1f;
-        light.diffuseComp = 0.9f;
-        light.color = cinek::gfx::Color4(0.75f, 0.75f, 0.75f, 1.0f).toABGR();
+        light.ambientComp = 0.25f;
+        light.diffuseComp = 0.25f;
+        light.color = cinek::gfx::Color4(0.9f, 0.9f, 1.0f, 1.0f).toABGR();
         light.distance = 0.0f;
         light.cutoff = 0.0f;
         lightNode->light()->light = gfxContext.registerLight(std::move(light));
@@ -265,15 +271,15 @@ static int run(SDL_Window* window)
         
         //  point light
         lightNode = scene.createLightNode();
-        bx::mtxTranslate(lightNode->transform(), 15.0f, 15.0f, -2.0f);
+        bx::mtxTranslate(lightNode->transform(), 10.0f, 10.0f, -2.0f);
         
         light.type = cinek::gfx::LightType::kPoint;
         light.ambientComp = 0.0f;
         light.diffuseComp = 1.0f;
         light.distance = 100.0f;
         light.cutoff = 0.0f;
-        light.color = cinek::gfx::Color4(1.0f, 0.5f, 1.0f, 1.0f).toABGR();
-        light.coeff = cinek::gfx::Vector3(1.0f, 0.05f, 0.001f);
+        light.color = cinek::gfx::Color4(1.0f, 1.0f, 1.0f, 1.0f).toABGR();
+        light.coeff = cinek::gfx::Vector3(1.0f, 0.033f, 0.00075f);
         lightNode->light()->light = gfxContext.registerLight(std::move(light));
         scene.addChildNodeToNode(lightNode, lightRoot);
         
@@ -297,13 +303,17 @@ static int run(SDL_Window* window)
         
         scene.addChildNodeToNode(lightRoot, sceneRoot);
         
+        cinek::gfx::NodeHandle newObjectNode;
+        cinek::gfx::NodeHandle newObjectRoot;
+ 
+ /*
         //  add instances of our model to the master scene
         //  generic building, sculpture
-        auto newObjectNode = scene.clone(model.root());
-        auto newObjectRoot = scene.createObjectNode(0);
+        newObjectNode = scene.clone(model.root());
+        newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             0, 0, 0);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
@@ -312,7 +322,7 @@ static int run(SDL_Window* window)
         newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             -4, 0, -1);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
@@ -321,7 +331,7 @@ static int run(SDL_Window* window)
         newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             4, 0, -1);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
@@ -330,7 +340,7 @@ static int run(SDL_Window* window)
         newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             2, 0, 4);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
@@ -339,22 +349,22 @@ static int run(SDL_Window* window)
         newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1,1,1,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             -3, 0, 7);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
-        
+*/
+
         //  robot-cyborg
         newObjectNode = scene.clone(robot.root());
         newObjectRoot = scene.createObjectNode(0);
         bx::mtxSRT(newObjectRoot->transform(),
             1.25f, 1.25f, 1.25f,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             -1, 0, -3);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
 
-    
         struct GfxNodeVisitContext
         {
             cinek::gfx::NodeId nodeId;
@@ -362,12 +372,14 @@ static int run(SDL_Window* window)
             std::unordered_map<cinek::gfx::NodeId, cinek::gfx::AnimationControllerHandle>* ctrlMap;
         };
     
-        //  factorybot
+
+        
+        
         newObjectNode = scene.clone(factorybot.root());
         newObjectRoot = scene.createObjectNode(100);
         bx::mtxSRT(newObjectRoot->transform(),
             1.0f, 1.0f, 1.0f,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             0, 0, -5);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
@@ -384,32 +396,33 @@ static int run(SDL_Window* window)
                 auto animController = nodeVisitCtx.ctrlPool->add(std::move(controller));
                 node->armature()->animController = animController;
                 nodeVisitCtx.ctrlMap->emplace(nodeVisitCtx.nodeId, animController);
-                animController->transitionToState("idle");
+                animController->transitionToState("aggro");
             }
             return true;
         });
-        
+
+        //  factorybot
         newObjectNode = scene.clone(factorybot.root());
         newObjectRoot = scene.createObjectNode(101);
         bx::mtxSRT(newObjectRoot->transform(),
             1.0f, 1.0f, 1.0f,
-            M_PI_2, 0, M_PI,
+            0, 0, 0,
             3.5, 0, -3.5);
         scene.addChildNodeToNode(newObjectNode, newObjectRoot);
         scene.addChildNodeToNode(newObjectRoot, scene.root());
         
         nodeVisitCtx.nodeId = newObjectRoot->objectNodeId();
-         cinek::gfx::visit(newObjectNode, [&nodeVisitCtx](cinek::gfx::NodeHandle node) -> bool {
+        cinek::gfx::visit(newObjectNode, [&nodeVisitCtx](cinek::gfx::NodeHandle node) -> bool {
             if (node->elementType() == cinek::gfx::Node::kElementTypeArmature) {
                 cinek::gfx::AnimationController controller(node->armature()->animSet);
                 auto animController = nodeVisitCtx.ctrlPool->add(std::move(controller));
                 node->armature()->animController = animController;
                 nodeVisitCtx.ctrlMap->emplace(nodeVisitCtx.nodeId, animController);
-                animController->transitionToState("aggro");
+                animController->transitionToState("idle");
             }
             return true;
         });
-        
+
         //  Renderer initialization
         cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
         cinek::gfx::Camera mainCamera;
@@ -417,12 +430,22 @@ static int run(SDL_Window* window)
             (float)viewWidth/viewHeight);
         
         uint32_t systemTimeMs = SDL_GetTicks();
+        //uint32_t testTimeMs = 0;
         bool running = true;
         
         while (running) {
             uint32_t nextSystemTimeMs = SDL_GetTicks();
             int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
             systemTimeMs = nextSystemTimeMs;
+
+            /*
+            if (frameTimeMs > 50) {
+                testTimeMs += 50;
+            }
+            else {
+                testTimeMs += 2;
+            }
+            */
 
             PollStateSDL polledInputState;
             

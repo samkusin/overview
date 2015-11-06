@@ -178,6 +178,7 @@ void interpRotationFromSequenceChannel
     //
     auto kf = channel.keyframePairFromTime(Keyframe::kQuaternionX, animTime);
     if (!kf.first) return;
+    //printf("qx[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
     startQ.x = kf.first->v;
     endQ.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
@@ -188,6 +189,7 @@ void interpRotationFromSequenceChannel
 
     kf = channel.keyframePairFromTime(Keyframe::kQuaternionY, animTime);
     if (!kf.first) return;
+    //printf("qy[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
     startQ.y = kf.first->v;
     endQ.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
@@ -198,6 +200,9 @@ void interpRotationFromSequenceChannel
     
     kf = channel.keyframePairFromTime(Keyframe::kQuaternionZ, animTime);
     if (!kf.first) return;
+    
+    //printf("qz[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+    
     startQ.z = kf.first->v;
     endQ.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
@@ -208,6 +213,7 @@ void interpRotationFromSequenceChannel
 
     kf = channel.keyframePairFromTime(Keyframe::kQuaternionW, animTime);
     if (!kf.first) return;
+    //printf("qw[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
     startQ.w = kf.first->v;
     endQ.w = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
@@ -224,6 +230,7 @@ void interpRotationFromSequenceChannel
         factor = 0.0f;
     else if (factor > 1.0f)
         factor = 1.0f;
+        
     bx::quatSlerp(boneRotQuat, startQ, endQ, factor);
 }
 

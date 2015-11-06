@@ -19,8 +19,9 @@ struct Material
     
     Color4 diffuseColor;
     
-    Color4 specularColor;
+    Color4 specularColor;           // unused at the momemtn
     float specularPower;
+    float specularIntensity;
 };
     
     }   // namespace gfx

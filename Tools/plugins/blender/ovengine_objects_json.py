@@ -6,7 +6,7 @@ bl_info = {
     "category" : "Import-Export"
 }
 
-import bpy, mathutils
+import bpy, mathutils, math
 import json, numpy, os
 from collections import namedtuple, OrderedDict
 
@@ -207,8 +207,8 @@ def generate_mesh_elements(obj, mesh, resources):
 
         our_vertex_indices = sorted(our_vertices.keys())
         for vindex in our_vertex_indices:
-            pos = our_vertices[vindex].pos
-            norm = our_vertices[vindex].normal
+            pos =  our_vertices[vindex].pos
+            norm =  our_vertices[vindex].normal
             uv = our_vertices[vindex].uv
             weights = our_vertices[vindex].weights
             our_mesh['vertices'].append(OrderedDict([('x',pos[0]),('y',pos[1]),('z',pos[2])]))
@@ -224,6 +224,12 @@ def generate_mesh_elements(obj, mesh, resources):
 
     return our_mesh_elements
 
+def convert_matrix(y_up):
+    lh_convert_mtx = mathutils.Matrix.Scale(-1,4,(0,0,1))
+    if y_up:
+        return mathutils.Matrix.Rotation(math.radians(90.0),4,'X') * lh_convert_mtx
+    else:
+        return lh_convert_mtx
 
 class ExportOVObjectJSON(bpy.types.Operator):
     """Export to OVEngine Objects (.json)"""
@@ -240,6 +246,8 @@ class ExportOVObjectJSON(bpy.types.Operator):
     filepath = bpy.props.StringProperty(subtype='FILE_PATH')
     apply_modifiers = bpy.props.EnumProperty(name="Apply Modifiers", default="View",
                                              items=modifier_options)
+    opt_export_scene = bpy.props.BoolProperty(name="Export Scene")
+    opt_export_y_up = bpy.props.BoolProperty(name="Export Root Objects with Y-Up")
 
     # Animation framerates:
     #   scene_fps - Is the animation framerate from the scene's perspective.
@@ -300,7 +308,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
 
     def exportArmatureAction(self, obj, action, resources):
-        print(" Name ", action.name)
+        # print(" Name ", action.name)
 
         """
         An armature animation consists of one or more bone animations identified by
@@ -347,6 +355,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
             bone_animation = animation[bone_name]
 
             # add keyframe sequence to bone animation if used
+            kf_props = None
             if prop_name in self.kf_fields:
                 kf_props = self.kf_fields[prop_name]
                 if kf_props[prop_field] not in bone_animation:
@@ -354,29 +363,34 @@ class ExportOVObjectJSON(bpy.types.Operator):
             else:
                 self.report({'WARN'}, "Action '"+action.name+"' fcurve has an unused property '"+prop_name+"'")
 
-            kf_sequence = bone_animation[kf_props[prop_field]]
-            last_kf = None
-            for kf in kfpoints:
-                if last_kf is not None and last_kf.co[1] != kf.co[1]:
-                    # interpolation pass for keyframes with different values only
-                    # this is to reduce the number of animation samples generated
-                    t = last_kf.co[0]
-                    while t < kf.co[0]:
-                        kf_sequence.append(OrderedDict([
-                            ('t', t/self.anim_fps),
-                            ('v', fcurve.evaluate(t))
-                        ]))
-                        t += sample_rate
+            if kf_props:
+                kf_sequence = bone_animation[kf_props[prop_field]]
+                last_kf = None
+                for kf in kfpoints:
+                    if last_kf is not None and last_kf.co[1] != kf.co[1]:
+                        # interpolation pass for keyframes with different values only
+                        # this is to reduce the number of animation samples generated
+                        v_scalar = 1.0
+                        if kf_props[prop_field] in ['qx','qy','qz']:
+                            v_scalar = -1.0
 
-                last_kf = kf
+                        t = last_kf.co[0]
+                        while t < kf.co[0]:
+                            kf_sequence.append(OrderedDict([
+                                ('t', t/self.anim_fps),
+                                ('v', v_scalar * fcurve.evaluate(t))
+                            ]))
+                            t += sample_rate
 
-            # keyframe sequence that doesn't change - store at least key frame for
-            # reference
-            if not kf_sequence:
-                kf_sequence.append(OrderedDict([
-                    ('t',kfpoints[0].co[0]/self.anim_fps),
-                    ('v',kfpoints[0].co[1])
-                ]))
+                    last_kf = kf
+
+                # keyframe sequence that doesn't change - store at least key frame for
+                # reference
+                if not kf_sequence:
+                    kf_sequence.append(OrderedDict([
+                        ('t',kfpoints[0].co[0]/self.anim_fps),
+                        ('v',kfpoints[0].co[1])
+                    ]))
 
         return animation
 
@@ -387,17 +401,11 @@ class ExportOVObjectJSON(bpy.types.Operator):
         # instead of a hierarchy)
         # generate the bone list, indices are used as bone IDs for bone ID:weight
         # pairing
-        """
-        if obj == resources['root']:
-            armature_matrix = obj.matrix_world
-        else:
-            armature_matrix = obj.matrix_local
-        """
         bones = []
         bone_names = []
 
-        def add_bone(bone):
-            offset = bone.matrix_local
+        def add_bone(bone, adj_matrix=mathutils.Matrix.Identity(4)):
+            offset = adj_matrix * bone.matrix_local
             node = OrderedDict([
                 ('name', bone.name),
                 ('matrix', matrix_to_list(offset)),
@@ -436,21 +444,28 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
         return { 'skeleton': bones, 'bone_names': bone_names, 'animations': animations }
 
-    def exportNode(self, scene, obj, resources):
+    def createNode(self, name, matrix):
         node = OrderedDict()
-        node['name'] = obj.name
+        node['name'] = name
+        node['matrix'] = matrix_to_list(matrix)
+        node['obb'] = OrderedDict()
+        node['obb']['min'] = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
+        node['obb']['max'] = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
+        return node
 
-        # the topmost object in our exported graph must reflect the world SRT
-        # while descendents can use their own local matrix.  this is necessary in case
-        # the user wants to export a descendant node of a scene object instead of the
-        # root
-        if obj == resources['root']:
-            node['matrix'] = matrix_to_list(obj.matrix_world)
-        else:
-            node['matrix'] = matrix_to_list(obj.matrix_local)
+    def exportNode(self, scene, obj, resources, matrix):
+        skip_object = False
+        if obj.type == 'CAMERA' or obj.type == 'LAMP':
+            skip_object = True
 
-        min = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
-        max = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
+        if skip_object:
+            print("Skipping camera [",obj.name,"] of type ",obj.type)
+            return None
+
+        node = self.createNode(obj.name, matrix)
+
+        min = node['obb']['min']
+        max = node['obb']['max']
 
         for vx,vy,vz in obj.bound_box:
             if vx < min['x']:
@@ -466,8 +481,8 @@ class ExportOVObjectJSON(bpy.types.Operator):
             if vz > max['z']:
                 max['z'] = vz
 
-        node['obb'] = OrderedDict([('min', min),('max', max)])
-
+        node['obb']['min'] = min
+        node['obb']['max'] = max
 
         if obj.type == 'ARMATURE':
             # persist bone list, which may be used when generating vertex weights from the
@@ -481,14 +496,13 @@ class ExportOVObjectJSON(bpy.types.Operator):
             node['animation'] = obj.name
         elif obj.type == 'MESH':
             node['meshes'] = self.exportObjectAsMesh(scene, obj, resources)
-        else:
-            print("Skipping object [",obj.name,"] of type ",obj.type)
-            #raise RuntimeError("Unsupported object type to export: " + obj.type)
 
         if obj.children:
             node['children'] = []
             for child in obj.children:
-                node['children'].append(self.exportNode(scene, child, resources))
+                child_node = self.exportNode(scene, child, resources, matrix=child.matrix_local)
+                if child_node:
+                    node['children'].append(child_node)
 
         # cleanup
         if obj.type == 'ARMATURE':
@@ -499,23 +513,34 @@ class ExportOVObjectJSON(bpy.types.Operator):
     def execute(self, context):
         target_filepath = bpy.path.ensure_ext(self.filepath, ".json")
 
-        scene = bpy.context.scene
-        obj = scene.objects.active
         resources = {
             'materials' : {},
             'animations': {},
             'meshes' : [],
-            'texture_path' : 'textures',
-            'root' : obj
+            'texture_path' : 'textures'
         }
 
-        nodes = self.exportNode(scene, obj, resources)
+        root = None
+        scene = bpy.context.scene
+        if self.opt_export_scene:
+            root = self.createNode('root', mathutils.Matrix.Identity(4))
+            root['children'] = []
+            for obj in scene.objects:
+                if not obj.parent:
+                    world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
+                    child = self.exportNode(scene, obj, resources, matrix=world_matrix)
+                    if child:
+                        root['children'].append(child)
+        else:
+            obj = scene.objects.active
+            world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
+            root = self.exportNode(scene, obj, resources, matrix=world_matrix)
 
         document = OrderedDict(
             [('materials', resources['materials']),
              ('animations', resources['animations']),
              ('meshes', resources['meshes']),
-             ('nodes', nodes)]
+             ('nodes', root)]
         )
 
         try:
@@ -545,3 +570,4 @@ def register():
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.utils.unregister_module(__name__);
+

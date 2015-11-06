@@ -111,6 +111,7 @@ private:
     void buildBoneTransforms(const ArmatureState& armatureState,
                              int boneIndex,
                              const Matrix4& worldTransform,
+                             const Matrix4& parentBoneTransform,
                              float* outTransforms);
     
     void setupLightUniforms(const Matrix4& objWorldMtx);
