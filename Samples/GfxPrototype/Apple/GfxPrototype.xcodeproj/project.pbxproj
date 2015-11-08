@@ -153,14 +153,11 @@
 		37663A0B1BBB226E007C3669 /* ModelJsonSerializer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModelJsonSerializer.hpp; sourceTree = "<group>"; };
 		37663A0D1BBB237E007C3669 /* Node.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
 		379428D91BB312EC00C5FAF6 /* gfxsample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gfxsample; sourceTree = BUILT_PRODUCTS_DIR; };
-		379429741BB3160E00C5FAF6 /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
 		379429811BB31BBF00C5FAF6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		379429831BB31BC500C5FAF6 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		379429851BB31BCB00C5FAF6 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		379429871BB31BDE00C5FAF6 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		379429891BB31BE400C5FAF6 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
-		3794298B1BB31D6F00C5FAF6 /* OverviewDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewDebug.xcconfig; sourceTree = "<group>"; };
-		3794298C1BB31D7D00C5FAF6 /* OverviewRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewRelease.xcconfig; sourceTree = "<group>"; };
 		3794299E1BB3238A00C5FAF6 /* fontstash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontstash.h; sourceTree = "<group>"; };
 		3794299F1BB3238A00C5FAF6 /* fs_nanovg_fill.hfs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fs_nanovg_fill.hfs; sourceTree = "<group>"; };
 		379429A11BB3238A00C5FAF6 /* nanovg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nanovg.cpp; sourceTree = "<group>"; };
@@ -263,6 +260,9 @@
 		37ED616D1BB74A9100BC908F /* Context.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Context.hpp; sourceTree = "<group>"; };
 		37ED616F1BB7519A00BC908F /* GfxTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GfxTypes.cpp; sourceTree = "<group>"; };
 		37ED61721BB768FA00BC908F /* objectpool.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = objectpool.inl; sourceTree = "<group>"; };
+		37EF608F1BEFFF98007284DB /* OverviewDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = OverviewDebug.xcconfig; path = ../../Common/Apple/OverviewDebug.xcconfig; sourceTree = "<group>"; };
+		37EF60901BEFFF98007284DB /* OverviewRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = OverviewRelease.xcconfig; path = ../../Common/Apple/OverviewRelease.xcconfig; sourceTree = "<group>"; };
+		37EF60911BEFFF98007284DB /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = OverviewSettings.xcconfig; path = ../../Common/Apple/OverviewSettings.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -324,9 +324,9 @@
 		379428CB1BB3124300C5FAF6 = {
 			isa = PBXGroup;
 			children = (
-				379429741BB3160E00C5FAF6 /* OverviewSettings.xcconfig */,
-				3794298B1BB31D6F00C5FAF6 /* OverviewDebug.xcconfig */,
-				3794298C1BB31D7D00C5FAF6 /* OverviewRelease.xcconfig */,
+				37EF608F1BEFFF98007284DB /* OverviewDebug.xcconfig */,
+				37EF60901BEFFF98007284DB /* OverviewRelease.xcconfig */,
+				37EF60911BEFFF98007284DB /* OverviewSettings.xcconfig */,
 				37373FED1BD8000E00729919 /* Source */,
 				3794298D1BB31F4400C5FAF6 /* Frameworks */,
 				379428DA1BB312EC00C5FAF6 /* Products */,
@@ -705,7 +705,7 @@
 /* Begin XCBuildConfiguration section */
 		379428D01BB3124300C5FAF6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 379429741BB3160E00C5FAF6 /* OverviewSettings.xcconfig */;
+			baseConfigurationReference = 37EF60911BEFFF98007284DB /* OverviewSettings.xcconfig */;
 			buildSettings = {
 				GCC_ENABLE_CPP_RTTI = NO;
 			};
@@ -713,7 +713,7 @@
 		};
 		379428D11BB3124300C5FAF6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 379429741BB3160E00C5FAF6 /* OverviewSettings.xcconfig */;
+			baseConfigurationReference = 37EF60911BEFFF98007284DB /* OverviewSettings.xcconfig */;
 			buildSettings = {
 				GCC_ENABLE_CPP_RTTI = NO;
 			};
@@ -721,10 +721,10 @@
 		};
 		379428DF1BB312EC00C5FAF6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3794298B1BB31D6F00C5FAF6 /* OverviewDebug.xcconfig */;
+			baseConfigurationReference = 37EF608F1BEFFF98007284DB /* OverviewDebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -740,7 +740,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -768,10 +768,10 @@
 		};
 		379428E01BB312EC00C5FAF6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3794298B1BB31D6F00C5FAF6 /* OverviewDebug.xcconfig */;
+			baseConfigurationReference = 37EF60901BEFFF98007284DB /* OverviewRelease.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -788,7 +788,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

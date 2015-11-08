@@ -26,7 +26,7 @@ NodeGraph::NodeGraph(const NodeElementCounts& params) :
     _nodes.setDelegate(this);
 }
 
-NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
+NodeGraph::NodeGraph(NodeGraph&& other) :
     _meshElementPool(std::move(other._meshElementPool)),
     _armatureElementPool(std::move(other._armatureElementPool)),
     _lightElementPool(std::move(other._lightElementPool)),
@@ -36,7 +36,7 @@ NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
     _nodes.setDelegate(this);
 }
 
-NodeGraph& NodeGraph::operator=(NodeGraph&& other) noexcept
+NodeGraph& NodeGraph::operator=(NodeGraph&& other)
 {
     _meshElementPool = std::move(other._meshElementPool);
     _armatureElementPool = std::move(other._armatureElementPool);

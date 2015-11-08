@@ -33,8 +33,8 @@ class NodeGraph
 public:    
     explicit NodeGraph(const NodeElementCounts& params);
     NodeGraph() = default;
-    NodeGraph(NodeGraph&& model) noexcept;
-    NodeGraph& operator=(NodeGraph&& other) noexcept;
+    NodeGraph(NodeGraph&& model);
+    NodeGraph& operator=(NodeGraph&& other);
     ~NodeGraph();
 
     NodeHandle root() const { return _root; }
