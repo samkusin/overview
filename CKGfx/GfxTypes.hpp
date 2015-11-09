@@ -8,13 +8,10 @@
 #ifndef CK_Graphics_GfxTypes_hpp
 #define CK_Graphics_GfxTypes_hpp
 
-#include <cstddef>
-
 #include <cinek/objectpool.hpp>
 #include <cinek/types.hpp>
 #include <cinek/debug.h>
 #include <ckm/mathtypes.hpp>
-
 
 namespace cinek {
     namespace gfx {

@@ -28,4 +28,8 @@ struct PollStateSDL
     int keystateArraySize;
 };
 
+extern uint32_t pollSDLEvents(PollStateSDL& state);
+
+extern int runSample(int viewWidth, int viewHeight);
+
 #endif /* Common_hpp */

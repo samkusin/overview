@@ -1,0 +1,327 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; };
+		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
+		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
+		37E635DF1BF009CC0081E59E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DE1BF009CC0081E59E /* IOKit.framework */; };
+		37E635E11BF009DC0081E59E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635E01BF009DC0081E59E /* QuartzCore.framework */; };
+		37E635E31BF00A5A0081E59E /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635E21BF00A5A0081E59E /* libbz2.tbd */; };
+		37E635E51BF00A760081E59E /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635E41BF00A760081E59E /* libiconv.tbd */; };
+		37E636121BF022B30081E59E /* libSampleCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E636111BF022B30081E59E /* libSampleCommon.a */; };
+		37E636151BF023E40081E59E /* Sample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636141BF023E40081E59E /* Sample.cpp */; };
+		37E6372E1BF02A900081E59E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6372D1BF02A900081E59E /* libz.tbd */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		37EF609B1BF0047C007284DB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		37E635DC1BF009B60081E59E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		37E635DE1BF009CC0081E59E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		37E635E01BF009DC0081E59E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		37E635E21BF00A5A0081E59E /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		37E635E41BF00A760081E59E /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		37E636111BF022B30081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSampleCommon.a; path = "../../../../../../Library/Developer/Xcode/DerivedData/Samples-cdkrktslqjgssodgplqlwnlbrcin/Build/Products/Debug/libSampleCommon.a"; sourceTree = "<group>"; };
+		37E636141BF023E40081E59E /* Sample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sample.cpp; path = ../Sample.cpp; sourceTree = SOURCE_ROOT; };
+		37E6372D1BF02A900081E59E /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		37EF609D1BF0047C007284DB /* ovsample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ovsample; sourceTree = BUILT_PRODUCTS_DIR; };
+		37EF60A51BF00523007284DB /* OverviewDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = OverviewDebug.xcconfig; path = ../../Common/Apple/OverviewDebug.xcconfig; sourceTree = "<group>"; };
+		37EF60A61BF00523007284DB /* OverviewRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = OverviewRelease.xcconfig; path = ../../Common/Apple/OverviewRelease.xcconfig; sourceTree = "<group>"; };
+		37EF60A71BF00523007284DB /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = OverviewSettings.xcconfig; path = ../../Common/Apple/OverviewSettings.xcconfig; sourceTree = "<group>"; };
+		37EF60AB1BF0071D007284DB /* EnginePrototype.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = EnginePrototype.plist; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		37EF609A1BF0047C007284DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37E636121BF022B30081E59E /* libSampleCommon.a in Frameworks */,
+				37E6372E1BF02A900081E59E /* libz.tbd in Frameworks */,
+				37E635E51BF00A760081E59E /* libiconv.tbd in Frameworks */,
+				37E635E31BF00A5A0081E59E /* libbz2.tbd in Frameworks */,
+				37E635E11BF009DC0081E59E /* QuartzCore.framework in Frameworks */,
+				37E635DF1BF009CC0081E59E /* IOKit.framework in Frameworks */,
+				37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */,
+				37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */,
+				37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		37E635E61BF00A9B0081E59E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				37E636111BF022B30081E59E /* libSampleCommon.a */,
+				37E6372D1BF02A900081E59E /* libz.tbd */,
+				37E635E41BF00A760081E59E /* libiconv.tbd */,
+				37E635E21BF00A5A0081E59E /* libbz2.tbd */,
+				37E635E01BF009DC0081E59E /* QuartzCore.framework */,
+				37E635DE1BF009CC0081E59E /* IOKit.framework */,
+				37E635DC1BF009B60081E59E /* Cocoa.framework */,
+				37E635DA1BF009B00081E59E /* Carbon.framework */,
+				37E635D81BF0099C0081E59E /* Metal.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		37E635E71BF00B720081E59E /* Apple */ = {
+			isa = PBXGroup;
+			children = (
+				37EF60AB1BF0071D007284DB /* EnginePrototype.plist */,
+			);
+			name = Apple;
+			sourceTree = "<group>";
+		};
+		37EF60921BF0031D007284DB = {
+			isa = PBXGroup;
+			children = (
+				37EF60A51BF00523007284DB /* OverviewDebug.xcconfig */,
+				37EF60A61BF00523007284DB /* OverviewRelease.xcconfig */,
+				37EF60A71BF00523007284DB /* OverviewSettings.xcconfig */,
+				37EF609F1BF0047C007284DB /* Source */,
+				37E635E61BF00A9B0081E59E /* Frameworks */,
+				37EF609E1BF0047C007284DB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		37EF609E1BF0047C007284DB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				37EF609D1BF0047C007284DB /* ovsample */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		37EF609F1BF0047C007284DB /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				37EF60A81BF00679007284DB /* EnginePrototype */,
+			);
+			name = Source;
+			path = EnginePrototype;
+			sourceTree = "<group>";
+		};
+		37EF60A81BF00679007284DB /* EnginePrototype */ = {
+			isa = PBXGroup;
+			children = (
+				37E636141BF023E40081E59E /* Sample.cpp */,
+				37E635E71BF00B720081E59E /* Apple */,
+			);
+			name = EnginePrototype;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		37EF609C1BF0047C007284DB /* ovsample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37EF60A41BF0047C007284DB /* Build configuration list for PBXNativeTarget "ovsample" */;
+			buildPhases = (
+				37EF60991BF0047C007284DB /* Sources */,
+				37EF609A1BF0047C007284DB /* Frameworks */,
+				37EF609B1BF0047C007284DB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ovsample;
+			productName = EnginePrototype;
+			productReference = 37EF609D1BF0047C007284DB /* ovsample */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		37EF60931BF0031D007284DB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				TargetAttributes = {
+					37EF609C1BF0047C007284DB = {
+						CreatedOnToolsVersion = 7.1;
+					};
+				};
+			};
+			buildConfigurationList = 37EF60961BF0031D007284DB /* Build configuration list for PBXProject "EnginePrototype" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 37EF60921BF0031D007284DB;
+			productRefGroup = 37EF609E1BF0047C007284DB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				37EF609C1BF0047C007284DB /* ovsample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		37EF60991BF0047C007284DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37E636151BF023E40081E59E /* Sample.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		37EF60971BF0031D007284DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37EF60A71BF00523007284DB /* OverviewSettings.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+			};
+			name = Debug;
+		};
+		37EF60981BF0031D007284DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37EF60A71BF00523007284DB /* OverviewSettings.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+			};
+			name = Release;
+		};
+		37EF60A21BF0047C007284DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37EF60A51BF00523007284DB /* OverviewDebug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = EnginePrototype.plist;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		37EF60A31BF0047C007284DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37EF60A61BF00523007284DB /* OverviewRelease.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = EnginePrototype.plist;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		37EF60961BF0031D007284DB /* Build configuration list for PBXProject "EnginePrototype" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37EF60971BF0031D007284DB /* Debug */,
+				37EF60981BF0031D007284DB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		37EF60A41BF0047C007284DB /* Build configuration list for PBXNativeTarget "ovsample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37EF60A21BF0047C007284DB /* Debug */,
+				37EF60A31BF0047C007284DB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 37EF60931BF0031D007284DB /* Project object */;
+}
