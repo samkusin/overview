@@ -55,7 +55,7 @@ namespace cinek {
             bgfx::ShaderHandle shader = BGFX_INVALID_HANDLE;
             int refcnt = 0;
         };
-        std::vector<ShaderReference> _shaders;
+        std::vector<ShaderReference, std_allocator<ShaderReference>> _shaders;
         
         //  Programs though may require somewhat frequent lookup of Shaders for
         //  informational purposes.
@@ -66,7 +66,10 @@ namespace cinek {
             int32_t fsIndex = -1;
         };
         
-        std::unordered_map<ShaderProgramId, ProgramReference> _programs;
+        std::unordered_map<ShaderProgramId, ProgramReference,
+                std::hash<ShaderProgramId>,
+                std::equal_to<ShaderProgramId>,
+                std_allocator<std::pair<const ShaderProgramId, ProgramReference>>> _programs;
         
         int loadShader(const char* path);
         void unloadShader(int32_t index);

@@ -95,9 +95,16 @@ private:
     AnimationSetPool _animationSets;
     LightPool _lights;
     
-    using TextureDictionary = std::unordered_map<std::string, TextureHandle>;
-    using MaterialDictionary = std::unordered_map<std::string, MaterialHandle>;
-    using AnimationSetDictionary = std::unordered_map<std::string, AnimationSetHandle>;
+    template<typename Handle>
+    using ResourceDictionary =
+        std::unordered_map<std::string, Handle,
+                           std::hash<std::string>,
+                           std::equal_to<std::string>,
+                           std_allocator<std::pair<const std::string, Handle>>>;
+    
+    using TextureDictionary = ResourceDictionary<TextureHandle>;
+    using MaterialDictionary = ResourceDictionary<MaterialHandle>;
+    using AnimationSetDictionary = ResourceDictionary<AnimationSetHandle>;
     
     TextureDictionary _textureDictionary;
     MaterialDictionary _materialDictionary;

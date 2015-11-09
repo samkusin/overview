@@ -418,7 +418,7 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
 int loadAnimationSkeletonFromJSON
 (
     const JsonValue& node,
-    std::vector<Bone>& bones
+    std::vector<Bone, std_allocator<Bone>>& bones
 )
 {
     int index = node["bone_index"].GetInt();
@@ -510,8 +510,9 @@ static int enumerateBonesInAnimationSet
 
 AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root)
 {
-    std::vector<Bone> bones;
-    std::vector<AnimationSet::StateDefinition> stateDefs;
+    std::vector<Bone, std_allocator<Bone>> bones;
+    std::vector<AnimationSet::StateDefinition,
+                std_allocator<AnimationSet::StateDefinition>> stateDefs;
     
     if (root.HasMember("skeleton")) {
         auto& rootBone = root["skeleton"][0U];

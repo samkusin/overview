@@ -43,7 +43,7 @@ namespace cinek {
         }
     };
     
-    using Sequence = std::vector<Keyframe>;
+    using Sequence = std::vector<Keyframe, std_allocator<Keyframe>>;
     
     struct SequenceChannel
     {
@@ -56,7 +56,7 @@ namespace cinek {
     
     struct Animation
     {
-        std::vector<SequenceChannel> channels;
+        std::vector<SequenceChannel, std_allocator<SequenceChannel>> channels;
         float duration = 0.f;
     };
     
@@ -78,7 +78,8 @@ namespace cinek {
         using StateDefinition = std::pair<std::string, Animation>;
         
         AnimationSet() {}
-        AnimationSet(std::vector<Bone>&& bones, std::vector<StateDefinition>&& states);
+        AnimationSet(std::vector<Bone, std_allocator<Bone>>&& bones,
+                     std::vector<StateDefinition, std_allocator<StateDefinition>>&& states);
         AnimationSet(AnimationSet&& other);
         AnimationSet& operator=(AnimationSet&& other);
         
@@ -88,8 +89,8 @@ namespace cinek {
         int boneCount() const { return (int)_bones.size(); }
         
     private:
-        std::vector<StateDefinition> _animations;
-        std::vector<Bone> _bones;
+        std::vector<StateDefinition, std_allocator<StateDefinition>> _animations;
+        std::vector<Bone, std_allocator<Bone>> _bones;
     };
     
     
