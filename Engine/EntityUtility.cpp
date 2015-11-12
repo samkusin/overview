@@ -82,6 +82,8 @@ EntityUtility::EntityUtility
     _customCreateFn(std::move(customCreateFn)),
     _entityDefinitions(nullptr, 64*1024)    // TODO, make configurable?
 {
+    _entityDefinitions.SetObject();
+    
 }
 
 Entity EntityUtility::createEntity

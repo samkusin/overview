@@ -22,8 +22,7 @@
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
 #include <cinek/objectpool.hpp>
-#include <cinek/filestreambuf.hpp>
-#include <ckjson/jsonstreambuf.hpp>
+
 
 #include <SDL2/SDL_timer.h>
 #include <bgfx/bgfx.h>
@@ -36,17 +35,19 @@
 
 #include <unordered_map>
 
-#include "Engine/ViewStack.hpp"
+////////////////////////////////////////////////////////////////////////////////
+//  OverviewSample
+
+#include "AppContext.hpp"
 #include "Views/GameView.hpp"
 
+#include "Engine/ViewStack.hpp"
+#include "Engine/EntityStoreDictionary.hpp"
+#include "Engine/EntityUtility.hpp"
+#include "Engine/Comp/Transform.hpp"
 
-////////////////////////////////////////////////////////////////////////////////
 
-enum
-{
-    kShaderProgramStdMesh   = 0x00000001,
-    kShaderProgramBoneMesh  = 0x00000002
-};
+
 
 /*  The Overview Sample illustrates core engine features and acts as a testbed
     for experimental features integrated into an application.
@@ -61,10 +62,97 @@ class OverviewSample
 public:
     OverviewSample();
     
+    void startFrame();
+    void simulate(double time, double dt);
+    void endFrame(double dt);
+    
 private:
+    cinek::ove::AppContext _appContext;
     cinek::ove::ViewStack _viewStack;
+    cinek::ove::EntityStoreDictionary _entityStoreDictionary;
+    
+    cinek::unique_ptr<cinek::ove::EntityUtility> _entityUtility;
 };
 
+OverviewSample::OverviewSample()
+{
+    auto destroyCompFn = [this]
+        (
+            cinek::EntityDataTable& table,
+            cinek::ComponentRowIndex rowIndex
+        )
+        {
+        };
+    
+    _entityStoreDictionary = std::move(
+        cinek::ove::EntityStoreDictionary({
+            cinek::EntityStore::InitParams {
+                1024,           // num entities
+                {
+                     cinek::ove::TransformComponent::makeDescriptor(1024)
+                },
+                {
+                },
+                destroyCompFn,
+                12345678        // random seed
+            }
+        })
+    );
+ 
+    _entityUtility = cinek::allocate_unique<cinek::ove::EntityUtility>(
+        _entityStoreDictionary,
+        [this]
+        (
+            cinek::Entity entity,
+            const cinek::JsonValue& definitions,
+            const char* componentName,
+            const cinek::JsonValue& data
+        )
+        {
+        }
+    );
+    
+    _appContext.viewStack = &_viewStack;
+    _appContext.entityUtility = _entityUtility.get();
+    
+    _viewStack.setFactory(
+        [this](const std::string& viewName)
+            -> cinek::unique_ptr<cinek::ove::ViewController>
+        {
+            return cinek::allocate_unique<cinek::ove::GameView>(&_appContext);
+        });
+    
+    _viewStack.load("GameView");
+    _viewStack.present("GameView");
+}
+
+void OverviewSample::startFrame()
+{
+    _viewStack.process();
+}
+
+void OverviewSample::simulate(double systemTime, double dt)
+{
+    _viewStack.simulate(systemTime, dt);
+}
+
+void OverviewSample::endFrame(double dt)
+{
+    _viewStack.layout();
+    _viewStack.frameUpdate(dt);
+    
+    _entityStoreDictionary.gc();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  Main
+
+enum
+{
+    kShaderProgramStdMesh   = 0x00000001,
+    kShaderProgramBoneMesh  = 0x00000002
+};
 
 int runSample(int viewWidth, int viewHeight)
 {
@@ -108,6 +196,8 @@ int runSample(int viewWidth, int viewHeight)
     
     cinek::gfx::Context gfxContext(gfxInitParams);
     cinek::gfx::AnimationControllerPool animControllerPool(256);
+    
+    OverviewSample application;
     
     //  Application
     cinek::gfx::NodeGraph testScene = loadModelFromFile(gfxContext, "models/scene.json");
@@ -173,10 +263,12 @@ int runSample(int viewWidth, int viewHeight)
     
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
-    const double kAIFPS = 2.0;
-    const double kSecsPerAIFrame = 1/kAIFPS;
     const double kActionFPS = 60.0;
     const double kSecsPerActionFrame = 1/kActionFPS;
+    
+    double simTime = 0.0;
+    double lagSecsSim = 0.0;
+    double timeUntilActionFrame = 0.0;
     
     uint32_t systemTimeMs = SDL_GetTicks();
     bool running = true;
@@ -186,13 +278,10 @@ int runSample(int viewWidth, int viewHeight)
         int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
         systemTimeMs = nextSystemTimeMs;
 
+        application.startFrame();
+    
         //  TODO: Lag should not be incremented while Sim is Paused
-        double simTime = 0.0;
-        double lagSecsSim = 0.0;
-        double timeUntilAIFrame = 0.0;
-        double timeUntilActionFrame = 0.0;
         double frameTime = frameTimeMs*0.001;
-        
         lagSecsSim += frameTime;
     
         ////////////////////////////////////////////////////////////////////////
@@ -201,20 +290,6 @@ int runSample(int viewWidth, int viewHeight)
         //
         while (lagSecsSim >= kSecsPerSimFrame)
         {
-            ////////////////////////////////////////////////////////////////////
-            // AI Behavior Simulation
-            //
-            timeUntilAIFrame -= kSecsPerSimFrame;
-            while (timeUntilAIFrame < 0)
-            {
-                //  dispatch messages, and set our new message target for the
-                //  next frame.  setting a new stream allows message handlers to
-                //  publish messages to our only message publisher.
-                //aiControl.simulate(aiGameClient, simTime);
-                
-                timeUntilAIFrame += kSecsPerAIFrame;
-            }
-            
             ////////////////////////////////////////////////////////////////////
             // Action (Game State) Simulation
             //
@@ -236,6 +311,8 @@ int runSample(int viewWidth, int viewHeight)
             //  entities compiled from the simulateRigidBodies sweep.
             //  updateTransform.all();
 
+            application.simulate(simTime, kSecsPerSimFrame);
+
             ////////////////////////////////////////////////////////////////////
             //  Update our simulation times
             //
@@ -251,26 +328,25 @@ int runSample(int viewWidth, int viewHeight)
         
         if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
             running = false;
-
-        {
-            for (auto& animController : animControllers) {
-                animController.second->update(systemTimeMs * 0.001);
-            }
         
-            gfxContext.update();
-            
-            bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-            
-            nodeRenderer.setCamera(mainCamera);
-            nodeRenderer(scene.root());
-
-            cinek::uicore::render(nvg, viewRect);
+        application.endFrame(frameTime);
+        
+    
+        for (auto& animController : animControllers) {
+            animController.second->update(systemTimeMs * 0.001);
         }
-        {
-            //appController.handleCameraInput(mainCamera, polledInputState, frameTime);
-            uiProcess(systemTimeMs);
-        }
+    
+        gfxContext.update();
+        
+        bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
+        
+        nodeRenderer.setCamera(mainCamera);
+        nodeRenderer(scene.root());
 
+        cinek::uicore::render(nvg, viewRect);
+    
+        uiProcess(systemTimeMs);
+        
         bgfx::frame();
     }
 

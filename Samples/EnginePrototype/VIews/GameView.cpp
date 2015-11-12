@@ -7,8 +7,9 @@
 //
 
 #include "GameView.hpp"
-
 #include "AppContext.hpp"
+
+#include "Engine/Services/EntityService.hpp"
 
 namespace cinek {
     namespace ove {
@@ -29,6 +30,9 @@ void GameView::onViewUnload()
 
 void GameView::onViewAdded()
 {
+    EntityService entityService(_appContext->entityUtility);
+    
+    entityService.addDefinitions("main", "entity.json");
 }
 
 void GameView::onViewRemoved()

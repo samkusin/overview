@@ -165,7 +165,7 @@ void ViewStack::layout()
             _activeController->layoutView();
         }
         _activeController = nullptr;
-        _activeThread = std::this_thread::get_id();
+        _activeThread = std::thread::id();
     }
 }
 
@@ -182,7 +182,7 @@ void ViewStack::simulate(double time, double dt)
             _activeController->simulateView(time, dt);
         }
         _activeController = nullptr;
-        _activeThread = std::this_thread::get_id();
+        _activeThread = std::thread::id();
     }
 }
 
@@ -200,7 +200,7 @@ void ViewStack::frameUpdate(double dt)
             _activeController->frameUpdateView(dt);
         }
         _activeController = nullptr;
-        _activeThread = std::this_thread::get_id();
+        _activeThread = std::thread::id();
     }
 }
 
