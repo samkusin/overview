@@ -9,7 +9,7 @@
 #include "Transform.hpp"
 #include "Engine/EngineMath.hpp"
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 COMPONENT_TYPE_IMPL(TransformComponent, kTransformComponent, {
     _localOrient = ckm::quat(1,0,0,0);
@@ -44,4 +44,4 @@ ckm::mat3& TransformComponent::calcBasis(ckm::mat3& basis) const
     return basis;
 }
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */

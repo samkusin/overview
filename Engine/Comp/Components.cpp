@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/EntityTypes.hpp"
 
 namespace cinek { namespace overview {
 

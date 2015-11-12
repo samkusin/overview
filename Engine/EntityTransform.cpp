@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
-#include "TransformEntity.hpp"
+#include "EntityTransform.hpp"
 #include "Engine/Debug.hpp"
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 ckm::mat4& UpdateTransformComponent::operator()(Entity entity)
 {
@@ -133,4 +133,4 @@ bool UpdateTransformComponent::runTransform
     return true;
 }
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */

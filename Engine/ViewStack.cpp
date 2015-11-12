@@ -10,13 +10,12 @@
 #include "ViewController.hpp"
 #include "Debug.hpp"
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
-ViewStack::ViewStack(const Allocator& allocator) :
+ViewStack::ViewStack() :
     _factoryCb(),
-    _views(allocator),
-    _stack(allocator),
-    _commands(allocator)
+    _activeThread(),
+    _activeController(nullptr)
 {
     _views.reserve(32);
     _stack.reserve(4);
@@ -28,13 +27,17 @@ ViewStack::~ViewStack()
     reset();
 }
 
-void ViewStack::setFactory(const FactoryCallback& callback)
+void ViewStack::setFactory(FactoryCallback callback)
 {
-    _factoryCb = callback;
+    _factoryCb = std::move(callback);
 }
 
 void ViewStack::reset()
 {
+    std::lock_guard<std::mutex> lock(_runMutex);
+    
+    _activeThread = std::this_thread::get_id();
+    
     while (!_stack.empty())
     {
         cmdPop(false);
@@ -44,116 +47,176 @@ void ViewStack::reset()
     {
         cmdUnload(_views.back().first->viewId());
     }
+    
+    _activeThread = std::thread::id();
 }
     
 void ViewStack::process()
 {
-    //  process commands on stack
-    for (auto& cmd : _commands)
+    if (_activeThread == std::thread::id())
     {
-        switch (cmd.type)
+        std::lock_guard<std::mutex> lock(_runMutex);
+        
+        _activeThread = std::this_thread::get_id();
+        
+        //  process commands on stack
+        for (auto& cmd : _commands)
         {
-        case Command::kLoad:
+            switch (cmd.type)
             {
-                cmdLoad(cmd.viewId);
-            }
-            break;
-        case Command::kPush:
-            {
-                if (viewIndex(cmd.viewId) < 0)
+            case Command::kLoad:
                 {
-                    auto view = cmdLoad(cmd.viewId);
-                    if (view)
+                    cmdLoad(cmd.viewId);
+                }
+                break;
+            case Command::kPush:
+                {
+                    if (viewIndex(cmd.viewId) < 0)
                     {
-                        cmdPush(view, true);
+                        auto view = cmdLoad(cmd.viewId);
+                        if (view)
+                        {
+                            cmdPush(view, true);
+                        }
                     }
                 }
-            }
-            break;
-        case Command::kPop:
-            {
-                cmdPop(true);
-            }
-            break;
-        case Command::kPresent:
-            {
-                //  if on the view stack, pop everything above the view
-                //  we want to re-present
-                //
-                int idx = viewIndex(cmd.viewId);
-                if (idx >= 0)
+                break;
+            case Command::kPop:
                 {
-                    //  do nothing if view is already at the top, of course.
-                    if (idx < _stack.size()-1)
+                    cmdPop(true);
+                }
+                break;
+            case Command::kPresent:
+                {
+                    //  if on the view stack, pop everything above the view
+                    //  we want to re-present
+                    //
+                    int idx = viewIndex(cmd.viewId);
+                    if (idx >= 0)
                     {
-                        //  pop without sending top views to foreground....
-                        //  except for the last view to pop, which should
-                        //  result in foregrounding the view to present.
-                        while (_stack.size()-2 > idx)
+                        //  do nothing if view is already at the top, of course.
+                        if (idx < _stack.size()-1)
+                        {
+                            //  pop without sending top views to foreground....
+                            //  except for the last view to pop, which should
+                            //  result in foregrounding the view to present.
+                            while (_stack.size()-2 > idx)
+                            {
+                                cmdPop(false);
+                            }
+                            cmdPop(true);
+                        }
+                    }
+                    else
+                    {
+                        //  remove our topmost view, and add our new view
+                        //  this should occur without foregrounding the view
+                        //  below the one we're going to present.
+                        cmdPop(false);
+                        auto view = cmdLoad(cmd.viewId);
+                        if (view)
+                        {
+                            cmdPush(view, false);
+                        }
+                    }
+                }
+                break;
+            case Command::kUnload:
+                {
+                    //  if on the view stack, pop everything up to and including
+                    //  the view to unload.  We want to treat the last pop as
+                    //  foregrounding the view below it.
+                    int idx = viewIndex(cmd.viewId);
+                    if (idx >= 0)
+                    {
+                        while (_stack.size() > (idx+1))
                         {
                             cmdPop(false);
                         }
+                        
                         cmdPop(true);
                     }
-                }
-                else
-                {
-                    //  remove our topmost view, and add our new view
-                    //  this should occur without foregrounding the view
-                    //  below the one we're going to present.
-                    cmdPop(false);
-                    auto view = cmdLoad(cmd.viewId);
-                    if (view)
+                    else
                     {
-                        cmdPush(view, false);
+                        cmdUnload(cmd.viewId);
                     }
                 }
+                break;
             }
-            break;
-        case Command::kUnload:
-            {
-                //  if on the view stack, pop everything up to and including
-                //  the view to unload.  We want to treat the last pop as
-                //  foregrounding the view below it.
-                int idx = viewIndex(cmd.viewId);
-                if (idx >= 0)
-                {
-                    while (_stack.size() > (idx+1))
-                    {
-                        cmdPop(false);
-                    }
-                    
-                    cmdPop(true);
-                }
-                else
-                {
-                    cmdUnload(cmd.viewId);
-                }
-            }
-            break;
         }
+        
+        _commands.clear();
+        
+        _activeThread = std::thread::id();
     }
-    
-    _commands.clear();
 }
 
 void ViewStack::layout()
 {
-    for (auto& vc : _stack)
+    if (_activeThread == std::thread::id())
     {
-        vc->layoutView();
+        std::lock_guard<std::mutex> lock(_runMutex);
+
+        _activeThread = std::this_thread::get_id();
+        
+        for (auto& vc : _stack)
+        {
+            _activeController = vc;
+            _activeController->layoutView();
+        }
+        _activeController = nullptr;
+        _activeThread = std::this_thread::get_id();
     }
 }
 
 void ViewStack::simulate(double time, double dt)
 {
-    for (auto& vc : _stack)
+    if (_activeThread == std::thread::id())
     {
-        vc->simulateView(time, dt);
+        std::lock_guard<std::mutex> lock(_runMutex);
+        _activeThread = std::this_thread::get_id();
+
+        for (auto& vc : _stack)
+        {
+            _activeController = vc;
+            _activeController->simulateView(time, dt);
+        }
+        _activeController = nullptr;
+        _activeThread = std::this_thread::get_id();
     }
 }
 
-int ViewStack::viewIndex(int id) const
+void ViewStack::frameUpdate(double dt)
+{
+    if (_activeThread == std::thread::id())
+    {
+        std::lock_guard<std::mutex> lock(_runMutex);
+        _activeThread = std::this_thread::get_id();
+
+        // render everything
+        for (auto& vc : _stack)
+        {
+            _activeController = vc;
+            _activeController->frameUpdateView(dt);
+        }
+        _activeController = nullptr;
+        _activeThread = std::this_thread::get_id();
+    }
+}
+
+const ViewController* ViewStack::currentController() const
+{
+    if (_activeThread != std::thread::id() &&
+        _activeThread == std::this_thread::get_id()) {
+    
+        return _activeController;
+    }
+    else {
+        return nullptr;
+    }
+}
+
+int ViewStack::viewIndex(const std::string& id) const
 {
     for (auto it = _stack.begin(); it != _stack.end(); ++it)
     {
@@ -164,10 +227,10 @@ int ViewStack::viewIndex(int id) const
     return -1;
 }
 
-ViewController* ViewStack::cmdLoad(int id)
+ViewController* ViewStack::cmdLoad(const std::string& id)
 {
     auto it = std::lower_bound(_views.begin(), _views.end(), id,
-        [](const decltype(_views)::value_type& v, int vid) -> bool {
+        [](const decltype(_views)::value_type& v, const std::string& vid) -> bool {
             return v.first->viewId() < vid;
         });
     if (it == _views.end() || it->first->viewId() != id)
@@ -176,17 +239,19 @@ ViewController* ViewStack::cmdLoad(int id)
         if (view)
         {
             it = _views.emplace(it, std::move(view), 0);
-            it->first->onViewLoad();
+            _activeController = it->first.get();
+            _activeController->onViewLoad();
+            _activeController = nullptr;
         }
     }
     ++it->second;
     return it->first.get();
 }
 
-void ViewStack::cmdUnload(int id)
+void ViewStack::cmdUnload(const std::string& id)
 {
     auto it = std::lower_bound(_views.begin(), _views.end(), id,
-        [](const decltype(_views)::value_type& v, int vid) -> bool {
+        [](const decltype(_views)::value_type& v, const std::string& vid) -> bool {
             return v.first->viewId() < vid;
         });
     if (it == _views.end() || it->first->viewId() != id)
@@ -195,7 +260,9 @@ void ViewStack::cmdUnload(int id)
     --it->second;
     if (!it->second)
     {
-        it->first->onViewUnload();
+        _activeController = it->first.get();
+        _activeController->onViewUnload();
+        _activeController = nullptr;
         _views.erase(it);
     }
 }
@@ -206,7 +273,9 @@ void ViewStack::cmdPop(bool foregroundTop)
         return;
     
     auto vc = _stack.back();
-    vc->onViewRemoved();
+    _activeController = vc;
+    _activeController->onViewRemoved();
+    _activeController = nullptr;
     
     _stack.pop_back();
 
@@ -214,7 +283,9 @@ void ViewStack::cmdPop(bool foregroundTop)
     
     if (!_stack.empty() && foregroundTop)
     {
-        _stack.back()->onViewForeground();
+        _activeController = _stack.back();
+        _activeController->onViewForeground();
+        _activeController = nullptr;
     }
 }
 
@@ -222,38 +293,33 @@ void ViewStack::cmdPush(ViewController* vc, bool backgroundTop)
 {
     if (!_stack.empty() && backgroundTop)
     {
-        _stack.back()->onViewBackground();
+        _activeController = _stack.back();
+        _activeController->onViewBackground();
+        _activeController = nullptr;
     }
     _stack.push_back(vc);
 
-    vc->onViewAdded();
+    _activeController = vc;
+    _activeController->onViewAdded();
+    _activeController = nullptr;
 }
 
-void ViewStack::frameUpdate(double dt)
-{
-    // render everything
-    for (auto& vc : _stack)
-    {
-        vc->frameUpdateView(dt);
-    }
-}
-
-void ViewStack::load(int id)
+void ViewStack::load(const std::string& id)
 {
     _commands.push_back({Command::kLoad, id});
 }
 
-void ViewStack::unload(int id)
+void ViewStack::unload(const std::string&  id)
 {
     _commands.push_back({Command::kUnload, id});
 }
 
-void ViewStack::present(int id)
+void ViewStack::present(const std::string&  id)
 {
     _commands.push_back({Command::kPresent, id});
 }
 
-void ViewStack::push(int id)
+void ViewStack::push(const std::string&  id)
 {
     _commands.push_back({Command::kPush, id});
 }
@@ -263,4 +329,5 @@ void ViewStack::pop()
     _commands.push_back({Command::kPop,});
 }
 
-} /* namespace overview */ } /* namespace cinek */
+
+} /* namespace ove */ } /* namespace cinek */

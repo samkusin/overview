@@ -9,23 +9,26 @@
 #ifndef Overview_View_Manager_hpp
 #define Overview_View_Manager_hpp
 
-#include <cinek/vector.hpp>
 #include <cinek/allocator.hpp>
+#include <vector>
+#include <string>
 #include <functional>
+#include <thread>
+#include <mutex>
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 class ViewController;
 
 class ViewStack
 {
 public:
-    using FactoryCallback = std::function<unique_ptr<ViewController>(int)>;
+    using FactoryCallback = std::function<unique_ptr<ViewController>(const std::string&)>;
     
-    ViewStack(const Allocator& allocator=Allocator());
+    ViewStack();
     ~ViewStack();
     
-    void setFactory(const FactoryCallback& callback);
+    void setFactory(FactoryCallback callback);
     
     //  processes view state changes (load, unload, etc.)
     void process();
@@ -40,18 +43,18 @@ public:
     void frameUpdate(double dt);
     
     //  loads a view (or ups the reference count if already loaded)
-    void load(int id);
+    void load(const std::string& id);
     //  unloads a view (or decrements the ref count.)  if this is the last
     //  reference, and the view is on the stack, the view and its successors on
     //  the stack are also unloaded
-    void unload(int id);
+    void unload(const std::string&  id);
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,
     //  all views are popped above the presented view.
-    void present(int id);
+    void present(const std::string& id);
     //  pushes a view onto the stack.  the current view is backgrounded.  if the
     //  view is already on the stack, does nothing.
-    void push(int id);
+    void push(const std::string& id);
     //  pops the current view from the stack and unloads it (decrements ref
     //  count).
     void pop();
@@ -60,10 +63,18 @@ public:
     //  views are unloaded (onViewUnload) in no particular order
     void reset();
     
+    //  Returns a read-only interface to the current ViewController.  This is
+    //  meant to be called from a ViewController implementation and from the
+    //  context of one of the 'action' methods of ViewStack (process, layout,
+    //  simulate, frameUpdate.)  If called outside of these contexts, then the
+    //  current controller will be null.
+    const ViewController* currentController() const;
+    
 private:
     FactoryCallback _factoryCb;
-    vector<std::pair<unique_ptr<ViewController>, int>> _views;
-    vector<ViewController*> _stack;
+    std::mutex _runMutex;
+    std::vector<std::pair<unique_ptr<ViewController>, int>> _views;
+    std::vector<ViewController*> _stack;
     
     struct Command
     {
@@ -76,19 +87,22 @@ private:
             kPop
         }
         type;
-        int viewId;
+        std::string viewId;
     };
     
-    vector<Command> _commands;
+    std::vector<Command> _commands;
     
-    int viewIndex(int id) const;
-    ViewController* cmdLoad(int id);
+    int viewIndex(const std::string& id) const;
+    ViewController* cmdLoad(const std::string& id);
     void cmdPop(bool foregroundTop);
     void cmdPush(ViewController* vc, bool backgroundTop);
-    void cmdUnload(int id);
+    void cmdUnload(const std::string& id);
+    
+    std::thread::id _activeThread;
+    ViewController* _activeController;
 };
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */
 
 
 #endif /* defined(Overview_View_Manager_hpp) */

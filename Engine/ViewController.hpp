@@ -13,7 +13,7 @@
 #include <cinek/allocator.hpp>
 #include <functional>
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 class ViewController
 {
@@ -45,10 +45,10 @@ public:
     //  Called once per render frame, returning the frame time difference
     virtual void frameUpdateView(double dt) = 0;
     //  the name of the view
-    virtual int viewId() const = 0;
+    virtual const char* viewId() const = 0;
 };
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */
 
 
 #endif /* defined(Overview_View_Controller_hpp) */

@@ -9,10 +9,10 @@
 #ifndef Overview_Entity_Component_Transform_hpp
 #define Overview_Entity_Component_Transform_hpp
 
-#include "Engine/Entity/EntityTypes.hpp"
+#include "Engine/EntityTypes.hpp"
 #include "Engine/EngineMath.hpp"
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 struct TransformComponent
 {
@@ -84,7 +84,7 @@ private:
     bool _isDirty;
 };
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */
 
 
 #endif

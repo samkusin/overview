@@ -11,12 +11,12 @@
 #ifndef Overview_Entity_Types_hpp
 #define Overview_Entity_Types_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "EngineTypes.hpp"
 
 #include <ckjson/jsontypes.hpp>
 #include <functional>
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 //  Components -----------------------------------------------------------------
 
@@ -58,6 +58,6 @@ enum
 };
 
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */
 
 #endif

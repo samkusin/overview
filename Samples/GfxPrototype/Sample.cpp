@@ -91,10 +91,10 @@ int runSample(int viewWidth, int viewHeight)
     
     cinek::AppController appController;
     
-    cinek::gfx::NodeGraph testScene = loadModelFromFile(gfxContext, "scene.json");
-    cinek::gfx::NodeGraph model = loadModelFromFile(gfxContext, "device.json");
-    cinek::gfx::NodeGraph robot = loadModelFromFile(gfxContext, "verybadrobot.json");
-    cinek::gfx::NodeGraph factorybot = loadModelFromFile(gfxContext, "simple.json");
+    cinek::gfx::NodeGraph testScene = loadModelFromFile(gfxContext, "models/scene.json");
+    cinek::gfx::NodeGraph model = loadModelFromFile(gfxContext, "models/device.json");
+    cinek::gfx::NodeGraph robot = loadModelFromFile(gfxContext, "models/verybadrobot.json");
+    cinek::gfx::NodeGraph factorybot = loadModelFromFile(gfxContext, "models/simple.json");
     
     cinek::gfx::AnimationControllerPool animControllerPool(256);
     

@@ -166,10 +166,10 @@
 		37942A331BB324D500C5FAF6 /* GfxPrototype */ = {
 			isa = PBXGroup;
 			children = (
+				37942A371BB324FD00C5FAF6 /* Apple */,
 				37942A3A1BB325A700C5FAF6 /* Sample.cpp */,
 				372035DF1BC583CF001B99E2 /* Controller.hpp */,
 				372035DE1BC583CF001B99E2 /* Controller.cpp */,
-				37942A371BB324FD00C5FAF6 /* Apple */,
 			);
 			name = GfxPrototype;
 			sourceTree = "<group>";

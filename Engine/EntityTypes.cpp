@@ -9,8 +9,8 @@
 #include "EntityTypes.hpp"
 
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 
 
-} /* namespace overview */  } /* namespace cinek */
+} /* namespace ove */  } /* namespace cinek */

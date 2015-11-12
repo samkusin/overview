@@ -10,15 +10,24 @@
 #ifndef Overview_Engine_hpp
 #define Overview_Engine_hpp
 
-#include "Engine/EngineMathTypes.hpp"
-
 #include <ckentity/entity.h>
 #include <cinek/types.hpp>
 
-namespace cinek { namespace overview {
+#include <array>
 
-class ViewStack;
+namespace cinek {
+    namespace ove {
 
-} /* namespace overview */ } /* namespace cinek */
+        class ViewStack;
+        class ViewController;
+        
+        class EntityStoreDictionary;
+        class EntityUtility;
+        
+        class ViewService;
+        class EntityService;
+
+    } /* namespace ove */
+} /* namespace cinek */
 
 #endif

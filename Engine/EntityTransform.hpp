@@ -9,12 +9,12 @@
 #ifndef Overview_Entity_Transform_Function_hpp
 #define Overview_Entity_Transform_Function_hpp
 
-#include "Engine/Entity/EntityTypes.hpp"
-#include "Engine/Entity/Comp/Transform.hpp"
+#include "EntityTypes.hpp"
+#include "Comp/Transform.hpp"
 
 #include <ckentity/entitydatatable.hpp>
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 struct UpdateTransformComponent
 {
@@ -107,6 +107,6 @@ bool TransformComponentVisitor<Impl>::visitTree
     return true;
 }
 
-} /* namespace overview */ } /* namespace cinek */
+} /* namespace ove */ } /* namespace cinek */
 
 #endif
