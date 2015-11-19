@@ -47,9 +47,12 @@
 #include "Engine/Comp/Transform.hpp"
 
 #include <ckmsg/messenger.hpp>
-#include <ckmsg/server.hpp>
-#include <ckmsg/client.hpp>
 
+#include <ckmsg/server.inl>
+#include <ckmsg/client.inl>
+
+template class ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const ckmsg::Payload*)>>;
+template class ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>>;
 
 /*  The Overview Sample illustrates core engine features and acts as a testbed
     for experimental features integrated into an application.
@@ -142,14 +145,18 @@ OverviewSample::OverviewSample() :
     
     _server.on(kAlphaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* ) {
+            /*
             printf("Server gets alpha request (%u)\n", reqId.seqId);
+            */
             _server.reply(reqId);
         });
     _server.on(kBetaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
             BetaPayload beta = *reinterpret_cast<const BetaPayload*>(payload->data());
+            /*
             printf("Server gets beta request (%u), %u, %f,%f,%f\n",
                     reqId.seqId, beta.u, beta.x, beta.y, beta.z);
+            */
             beta.y -= beta.z*2;
             ckmsg::Payload reply(reinterpret_cast<uint8_t*>(&beta), sizeof(beta));
             _server.reply(reqId, &reply);
@@ -157,9 +164,11 @@ OverviewSample::OverviewSample() :
     _server.on(kGammaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
             GammaPayload gamma = *reinterpret_cast<const GammaPayload*>(payload->data());
+            /*
             printf("Server gets gamma request (%u), %u, %f,%f,%f, %s\n",
                     reqId.seqId, gamma.beta.u, gamma.beta.x, gamma.beta.y, gamma.beta.z,
                     gamma.name);
+            */
             gamma.beta.z -= gamma.beta.z;
             strncpy(gamma.name, "good", sizeof(gamma.name));
             ckmsg::Payload reply(reinterpret_cast<uint8_t*>(&gamma), sizeof(gamma));
@@ -200,7 +209,9 @@ void OverviewSample::simulate(double systemTime, double dt)
     _client.send(_server.address(), kAlphaRequest,
         [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
             assert(cid == kAlphaRequest);
+            /*
             printf("Client gets server reply for Alpha (%u)\n", seqId);
+            */
         });
         
     BetaPayload beta;
@@ -214,8 +225,10 @@ void OverviewSample::simulate(double systemTime, double dt)
             ckmsg::Payload(reinterpret_cast<uint8_t*>(&beta), sizeof(beta)),
             [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
                 assert(cid == kBetaRequest);
+                /*
                 const BetaPayload* beta = reinterpret_cast<const BetaPayload*>(payload->data());
                 printf("Client gets server reply for Beta (%u), %f\n", seqId, beta->z);
+                */
             });
     }
     else {
@@ -227,8 +240,10 @@ void OverviewSample::simulate(double systemTime, double dt)
             ckmsg::Payload(reinterpret_cast<uint8_t*>(&gamma), sizeof(gamma)),
             [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
                 assert(cid == kGammaRequest);
+                /*
                 const GammaPayload* gamma = reinterpret_cast<const GammaPayload*>(payload->data());
                 printf("Client gets server reply for Gamma (%u), payload=%s\n", seqId, gamma->name);
+                */
             });
     }
     
@@ -360,6 +375,8 @@ int runSample(int viewWidth, int viewHeight)
     cinek::gfx::Camera mainCamera;
     mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
         (float)viewWidth/viewHeight);
+    
+    bx::mtxSRT(mainCamera.worldMtx, 1, 1, 1, 0, 0, 0, 0, 2, -12);
     
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
