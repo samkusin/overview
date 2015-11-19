@@ -19,11 +19,6 @@
 namespace cinek {
     namespace ove {
 
-EntityService::EntityService(EntityUtility* context) :
-    _context(context)
-{
-}
-
 Entity EntityService::createEntity
 (
     EntityContextType storeId,

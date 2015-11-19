@@ -87,6 +87,13 @@ private:
     EntityUtility* _context = nullptr;
 };
 
+
+inline EntityService::EntityService(EntityUtility* context) :
+    _context(context)
+{
+}
+    
+
 } /* namespace ove */ } /* namespace cinek */
 
 #endif /* Overview_Services_Entity_hpp */

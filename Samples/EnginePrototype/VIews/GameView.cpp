@@ -7,15 +7,14 @@
 //
 
 #include "GameView.hpp"
-#include "AppContext.hpp"
 
-#include "Engine/Services/EntityService.hpp"
+#include "Engine/ViewAPI.hpp"
 
 namespace cinek {
     namespace ove {
 
-GameView::GameView(AppContext* appContext) :
-    _appContext(appContext)
+GameView::GameView(ViewAPI& api) :
+    _viewAPI(&api)
 {
     
 }
@@ -30,9 +29,7 @@ void GameView::onViewUnload()
 
 void GameView::onViewAdded()
 {
-    EntityService entityService(_appContext->entityUtility);
-    
-    entityService.addDefinitions("main", "entity.json");
+    _viewAPI->entityService().addDefinitions("main", "entity.json");
 }
 
 void GameView::onViewRemoved()

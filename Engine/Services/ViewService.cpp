@@ -13,11 +13,6 @@
 
 namespace cinek { namespace ove {
 
-ViewService::ViewService(ViewStack* context, ViewController* owner) :
-    _context(context)
-{
-}
-
 void ViewService::load(const std::string& name)
 {
     if (_context && _context->currentController() == _owner) {

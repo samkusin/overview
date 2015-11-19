@@ -30,6 +30,12 @@ private:
     ViewController* _owner = nullptr;
 };
 
+inline ViewService::ViewService(ViewStack* context, ViewController* owner) :
+    _context(context)
+{
+}
+
+
 } /* namespace ove */ } /* namespace cinek */
 
 #endif /* ViewService_hpp */

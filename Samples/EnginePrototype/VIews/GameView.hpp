@@ -15,12 +15,11 @@
 namespace cinek {
     namespace ove {
 
-struct AppContext;
 
 class GameView : public ViewController
 {
 public:
-    GameView(AppContext* appContext);
+    GameView(ViewAPI& viewAPI);
     
     virtual void onViewLoad();
     virtual void onViewUnload();
@@ -34,7 +33,7 @@ public:
     virtual const char* viewId() const;
     
 private:
-    AppContext* _appContext;
+    ViewAPI* _viewAPI;
 };
 
 

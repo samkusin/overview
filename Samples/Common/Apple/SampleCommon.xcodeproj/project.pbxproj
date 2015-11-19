@@ -8,10 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		370B599B1BFA7205009062FA /* message.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B599A1BFA7205009062FA /* message.hpp */; };
-		370B599D1BFA89A1009062FA /* client.inl in Sources */ = {isa = PBXBuildFile; fileRef = 370B599C1BFA89A1009062FA /* client.inl */; };
 		370B59A01BFA8A96009062FA /* messenger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370B599E1BFA8A96009062FA /* messenger.cpp */; };
 		370B59A11BFA8A96009062FA /* messenger.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B599F1BFA8A96009062FA /* messenger.hpp */; };
-		370B59A41BFAA428009062FA /* server.inl in Sources */ = {isa = PBXBuildFile; fileRef = 370B59A21BFAA428009062FA /* server.inl */; };
 		370B59A51BFAA428009062FA /* server.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A31BFAA428009062FA /* server.hpp */; };
 		370B59A71BFBAFC5009062FA /* buffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A61BFBAFC5009062FA /* buffer.hpp */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
@@ -782,7 +780,6 @@
 				37E636801BF024330081E59E /* memorystack.cpp in Sources */,
 				37E6360B1BF018870081E59E /* Renderer.cpp in Sources */,
 				37E636CF1BF024600081E59E /* UIRenderer.cpp in Sources */,
-				370B59A41BFAA428009062FA /* server.inl in Sources */,
 				37E636C81BF024600081E59E /* oui.cpp in Sources */,
 				37E6367B1BF024330081E59E /* file.cpp in Sources */,
 				37E637251BF0246D0081E59E /* VertexTypes.cpp in Sources */,
@@ -806,7 +803,6 @@
 				37E637121BF0246D0081E59E /* GfxTypes.cpp in Sources */,
 				37E636011BF00F650081E59E /* main.mm in Sources */,
 				37E636CB1BF024600081E59E /* UIBuilder.cpp in Sources */,
-				370B599D1BFA89A1009062FA /* client.inl in Sources */,
 				37E636881BF024330081E59E /* types.cpp in Sources */,
 				37E6371E1BF0246D0081E59E /* NodeRenderer.cpp in Sources */,
 				37E6371A1BF0246D0081E59E /* Node.cpp in Sources */,

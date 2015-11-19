@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
 		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
@@ -21,7 +22,6 @@
 		37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637CC1BF119EA0081E59E /* ObjectTypes.cpp */; };
 		37E637EF1BF119EA0081E59E /* ViewStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637DF1BF119EA0081E59E /* ViewStack.cpp */; };
 		37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637F31BF2753F0081E59E /* EngineMath.cpp */; };
-		37E638121BF3F6480081E59E /* AppContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638101BF3F6480081E59E /* AppContext.cpp */; };
 		37E638151BF3F6A30081E59E /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638131BF3F6A30081E59E /* GameView.cpp */; };
 		37E6381E1BF3FA220081E59E /* EntityUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638161BF3FA220081E59E /* EntityUtility.cpp */; };
 		37E6381F1BF3FA220081E59E /* EntityStoreDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638181BF3FA220081E59E /* EntityStoreDictionary.cpp */; };
@@ -46,6 +46,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewAPI.cpp; sourceTree = "<group>"; };
+		37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewAPI.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		37E635DC1BF009B60081E59E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -74,8 +76,6 @@
 		37E637E01BF119EA0081E59E /* ViewStack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewStack.hpp; sourceTree = "<group>"; };
 		37E637F31BF2753F0081E59E /* EngineMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineMath.cpp; sourceTree = "<group>"; };
 		37E637F41BF2753F0081E59E /* EngineMath.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EngineMath.hpp; sourceTree = "<group>"; };
-		37E638101BF3F6480081E59E /* AppContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppContext.cpp; sourceTree = "<group>"; };
-		37E638111BF3F6480081E59E /* AppContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AppContext.hpp; sourceTree = "<group>"; };
 		37E638131BF3F6A30081E59E /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Views/GameView.cpp; sourceTree = "<group>"; };
 		37E638141BF3F6A30081E59E /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Views/GameView.hpp; sourceTree = "<group>"; };
 		37E638161BF3FA220081E59E /* EntityUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityUtility.cpp; sourceTree = "<group>"; };
@@ -170,6 +170,8 @@
 				37E637DE1BF119EA0081E59E /* ViewController.hpp */,
 				37E637E01BF119EA0081E59E /* ViewStack.hpp */,
 				37E637DF1BF119EA0081E59E /* ViewStack.cpp */,
+				37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */,
+				37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */,
 			);
 			name = Engine;
 			path = ../../../Engine;
@@ -255,8 +257,6 @@
 				37E635E71BF00B720081E59E /* Apple */,
 				37E638071BF2C8E60081E59E /* Views */,
 				37E636141BF023E40081E59E /* Sample.cpp */,
-				37E638111BF3F6480081E59E /* AppContext.hpp */,
-				37E638101BF3F6480081E59E /* AppContext.cpp */,
 			);
 			name = EnginePrototype;
 			path = ..;
@@ -317,7 +317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37E638121BF3F6480081E59E /* AppContext.cpp in Sources */,
+				37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */,
 				37E6382A1BF3FAB90081E59E /* Components.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
 				37E636151BF023E40081E59E /* Sample.cpp in Sources */,

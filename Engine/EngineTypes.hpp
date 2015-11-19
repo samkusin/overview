@@ -26,6 +26,8 @@ namespace cinek {
         
         class ViewService;
         class EntityService;
+        
+        class ViewAPI;
 
     } /* namespace ove */
 } /* namespace cinek */

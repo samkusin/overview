@@ -38,9 +38,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //  OverviewSample
 
-#include "AppContext.hpp"
 #include "Views/GameView.hpp"
 
+
+#include "Engine/ViewAPI.hpp"
 #include "Engine/ViewStack.hpp"
 #include "Engine/EntityStoreDictionary.hpp"
 #include "Engine/EntityUtility.hpp"
@@ -72,7 +73,7 @@ public:
     void endFrame(double dt);
     
 private:
-    cinek::ove::AppContext _appContext;
+    cinek::ove::ViewAPI _viewAPI;
     cinek::ove::ViewStack _viewStack;
     cinek::ove::EntityStoreDictionary _entityStoreDictionary;
     
@@ -177,15 +178,13 @@ OverviewSample::OverviewSample() :
     
     
     ////////////////////////////////////////////////////////////////////////////
-    
-    _appContext.viewStack = &_viewStack;
-    _appContext.entityUtility = _entityUtility.get();
+    _viewAPI = std::move(cinek::ove::ViewAPI(*_entityUtility, _viewStack));
     
     _viewStack.setFactory(
         [this](const std::string& viewName)
             -> cinek::unique_ptr<cinek::ove::ViewController>
         {
-            return cinek::allocate_unique<cinek::ove::GameView>(&_appContext);
+            return cinek::allocate_unique<cinek::ove::GameView>(_viewAPI);
         });
     
     _viewStack.load("GameView");
@@ -195,7 +194,6 @@ OverviewSample::OverviewSample() :
 void OverviewSample::startFrame()
 {
     _viewStack.process();
-
 }
 
 
