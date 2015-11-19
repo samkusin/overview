@@ -46,7 +46,9 @@
 #include "Engine/EntityUtility.hpp"
 #include "Engine/Comp/Transform.hpp"
 
-
+#include <ckmsg/messenger.hpp>
+#include <ckmsg/server.hpp>
+#include <ckmsg/client.hpp>
 
 
 /*  The Overview Sample illustrates core engine features and acts as a testbed
@@ -72,9 +74,33 @@ private:
     cinek::ove::EntityStoreDictionary _entityStoreDictionary;
     
     cinek::unique_ptr<cinek::ove::EntityUtility> _entityUtility;
+
+    ckmsg::Messenger _messenger;
+    ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>> _server;
+    ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const ckmsg::Payload*)>> _client;
+    
+    static constexpr ckmsg::ClassId kAlphaRequest   = 0x00000001;
+    static constexpr ckmsg::ClassId kBetaRequest    = 0x00000002;
+    static constexpr ckmsg::ClassId kGammaRequest   = 0x00000003;
+    
+    struct BetaPayload
+    {
+        uint32_t u;
+        float x;
+        float y;
+        float z;
+    };
+    
+    struct GammaPayload
+    {
+        BetaPayload beta;
+        char name[16];
+    };
 };
 
-OverviewSample::OverviewSample()
+OverviewSample::OverviewSample() :
+    _server(_messenger, { 64*1024, 64*1024 }),
+    _client(_messenger, { 32*1024, 32*1024 })
 {
     auto destroyCompFn = [this]
         (
@@ -112,6 +138,37 @@ OverviewSample::OverviewSample()
         }
     );
     
+    ////////////////////////////////////////////////////////////////////////////
+    
+    _server.on(kAlphaRequest,
+        [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* ) {
+            printf("Server gets alpha request (%u)\n", reqId.seqId);
+            _server.reply(reqId);
+        });
+    _server.on(kBetaRequest,
+        [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
+            BetaPayload beta = *reinterpret_cast<const BetaPayload*>(payload->data());
+            printf("Server gets beta request (%u), %u, %f,%f,%f\n",
+                    reqId.seqId, beta.u, beta.x, beta.y, beta.z);
+            beta.y -= beta.z*2;
+            ckmsg::Payload reply(reinterpret_cast<uint8_t*>(&beta), sizeof(beta));
+            _server.reply(reqId, &reply);
+        });
+    _server.on(kGammaRequest,
+        [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
+            GammaPayload gamma = *reinterpret_cast<const GammaPayload*>(payload->data());
+            printf("Server gets gamma request (%u), %u, %f,%f,%f, %s\n",
+                    reqId.seqId, gamma.beta.u, gamma.beta.x, gamma.beta.y, gamma.beta.z,
+                    gamma.name);
+            gamma.beta.z -= gamma.beta.z;
+            strncpy(gamma.name, "good", sizeof(gamma.name));
+            ckmsg::Payload reply(reinterpret_cast<uint8_t*>(&gamma), sizeof(gamma));
+            _server.reply(reqId, &reply);
+        });
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    
     _appContext.viewStack = &_viewStack;
     _appContext.entityUtility = _entityUtility.get();
     
@@ -129,11 +186,54 @@ OverviewSample::OverviewSample()
 void OverviewSample::startFrame()
 {
     _viewStack.process();
+
 }
+
 
 void OverviewSample::simulate(double systemTime, double dt)
 {
+    _server.receive();
+    _client.receive();
+    
     _viewStack.simulate(systemTime, dt);
+    
+    _client.send(_server.address(), kAlphaRequest,
+        [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
+            assert(cid == kAlphaRequest);
+            printf("Client gets server reply for Alpha (%u)\n", seqId);
+        });
+        
+    BetaPayload beta;
+    beta.u = 12;
+    beta.x = systemTime;
+    beta.y = 4.0f - dt;
+    beta.z = dt;
+    
+    if (rand() % 3) {
+        _client.send(_server.address(), kBetaRequest,
+            ckmsg::Payload(reinterpret_cast<uint8_t*>(&beta), sizeof(beta)),
+            [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
+                assert(cid == kBetaRequest);
+                const BetaPayload* beta = reinterpret_cast<const BetaPayload*>(payload->data());
+                printf("Client gets server reply for Beta (%u), %f\n", seqId, beta->z);
+            });
+    }
+    else {
+        GammaPayload gamma;
+        gamma.beta = beta;
+        gamma.beta.x += dt;
+        strncpy(gamma.name, "boolean", sizeof(gamma.name));
+        _client.send(_server.address(), kGammaRequest,
+            ckmsg::Payload(reinterpret_cast<uint8_t*>(&gamma), sizeof(gamma)),
+            [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
+                assert(cid == kGammaRequest);
+                const GammaPayload* gamma = reinterpret_cast<const GammaPayload*>(payload->data());
+                printf("Client gets server reply for Gamma (%u), payload=%s\n", seqId, gamma->name);
+            });
+    }
+    
+    _client.transmit();
+    _server.transmit();
 }
 
 void OverviewSample::endFrame(double dt)
