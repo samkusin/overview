@@ -60,7 +60,6 @@ template class ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const 
 template class ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>>;
 
 template class cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
-template class cinek::ove::RenderGraph<btVector3, btMatrix3x3, std::function<void(cinek::Entity, btVector3&, btMatrix3x3&, float&)>>;
 
 using GameScene = cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
 

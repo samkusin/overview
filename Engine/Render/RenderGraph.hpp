@@ -21,15 +21,8 @@ namespace cinek {
  *  @class  RenderGraph
  *  @brief  Manages a scene graph
  *
- *  RenderGraph requires a delegate type that conforms to the following
- *  concepts:
  *
- *  - void delegate(Entity entity,
- *                  _Vector& pos, _Basis& basis, float scalar);
- *  - operator bool()
- *  - support move
  */
-template<typename _Vector, typename _Basis, typename _NodeDelegate>
 class RenderGraph
 {
 public:
@@ -43,10 +36,11 @@ public:
      *
      *  @param  e           The entity (acts as a key) 
      *  @param  sourceNode  The graphics node to clone into the scene graph
-     *  @param  prepareDel  The delegate invoked during prepare
+     *  @param  context     A context pointer associated with the Node (used
+     *                      during prepare() when the preparation delegate is
+     *                      called.)(
      */
-    void cloneAndAddNodeWithDelegate(Entity e, gfx::Node sourceNode,
-                                    _NodeDelegate prepareDel=_NodeDelegate());
+    void cloneAndAddNode(Entity e, gfx::Node sourceNode, void* context);
     /**
      *
      */
@@ -57,7 +51,8 @@ public:
      *
      *  @param  dt      The frame timestep, used for updating animations
      */
-    void prepare(double dt);
+    template<typename _Delegate>
+    void prepare(double dt, _Delegate del=_Delegate());
     
     /**
      *  Render the node with the specified renderer
@@ -74,7 +69,7 @@ private:
     {
         Entity entity;
         gfx::NodeHandle gfxNode;
-        _NodeDelegate delegate;
+        void* context;
     };
     
     //  nodes ordered by Entity
