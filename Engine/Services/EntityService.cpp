@@ -87,6 +87,13 @@ Component* EntityService::createData(Entity entity)
     return table.addDataForEntity(entity);
 }
 
+bool EntityService::hasComponent(Entity entity, ComponentId compId) const
+{
+    auto table = _context->getStore(cinek_entity_context(entity)).entityTable(compId);
+    if (!table)
+        return false;
+    return table->hasEntity(entity);
+}
 
 template<typename Component>
 const Component* EntityService::getData(Entity entity) const

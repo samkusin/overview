@@ -4,6 +4,12 @@
             "renderable" : {
                 "type" : "model",
                 "resource" : "character.json"
+            },
+            "rigidbody" : {
+                "class" : "dynamic",
+                "hull" : "cylinder",
+                "proxy" : "character.json",
+                "mass" : 70.0
             }
         }
     }

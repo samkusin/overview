@@ -21,11 +21,12 @@ class Texture;
 class Mesh;
 struct Material;
 struct Node;
-struct NodeGraph;
 struct Camera;
 struct Animation;
 struct AnimationSet;
 struct Light;
+struct NodeElementCounts;
+class NodeGraph;
 class NodeRenderer;
 class AnimationController;
 

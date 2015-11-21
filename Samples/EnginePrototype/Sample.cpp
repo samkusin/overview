@@ -23,7 +23,6 @@
 #include <cinek/allocator.hpp>
 #include <cinek/objectpool.hpp>
 
-
 #include <SDL2/SDL_timer.h>
 #include <bgfx/bgfx.h>
 
@@ -35,12 +34,17 @@
 
 #include <unordered_map>
 
+#include "Engine/EngineTypes.hpp"
+#include "Engine/Render/RenderGraph.inl"
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //  OverviewSample
 
 #include "Views/GameView.hpp"
 
-
+#include "Engine/Scenes/Scene.inl"
+#include "Engine/Scenes/BulletPhysicsScene.hpp"
 #include "Engine/ViewAPI.hpp"
 #include "Engine/ViewStack.hpp"
 #include "Engine/EntityStoreDictionary.hpp"
@@ -54,6 +58,12 @@
 
 template class ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const ckmsg::Payload*)>>;
 template class ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>>;
+
+template class cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
+template class cinek::ove::RenderGraph<btVector3, btMatrix3x3, std::function<void(cinek::Entity, btVector3&, btMatrix3x3&, float&)>>;
+
+using GameScene = cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
+
 
 /*  The Overview Sample illustrates core engine features and acts as a testbed
     for experimental features integrated into an application.
@@ -73,15 +83,33 @@ public:
     void endFrame(double dt);
     
 private:
-    cinek::ove::ViewAPI _viewAPI;
-    cinek::ove::ViewStack _viewStack;
-    cinek::ove::EntityStoreDictionary _entityStoreDictionary;
-    
-    cinek::unique_ptr<cinek::ove::EntityUtility> _entityUtility;
-
     ckmsg::Messenger _messenger;
     ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>> _server;
     ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const ckmsg::Payload*)>> _client;
+
+    cinek::ove::ViewAPI _viewAPI;
+    cinek::ove::ViewStack _viewStack;
+    cinek::ove::EntityStoreDictionary _entityStoreDictionary;
+    cinek::unique_ptr<cinek::ove::EntityUtility> _entityUtility;
+    
+    static constexpr double kActionFPS = 60.0;
+    static constexpr double kSecsPerActionFrame = 1/kActionFPS;
+    
+    double _timeUntilActionFrame;
+    cinek::unique_ptr<GameScene> _scene;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    
+    struct RenderModel
+    {
+        std::string name;
+        uint32_t refcount;
+        cinek::gfx::NodeGraph model;
+    };
+    
+    std::vector<RenderModel> _models;
+    
+    ////////////////////////////////////////////////////////////////////////////
     
     static constexpr ckmsg::ClassId kAlphaRequest   = 0x00000001;
     static constexpr ckmsg::ClassId kBetaRequest    = 0x00000002;
@@ -104,7 +132,8 @@ private:
 
 OverviewSample::OverviewSample() :
     _server(_messenger, { 64*1024, 64*1024 }),
-    _client(_messenger, { 32*1024, 32*1024 })
+    _client(_messenger, { 32*1024, 32*1024 }),
+    _timeUntilActionFrame(0.0)
 {
     auto destroyCompFn = [this]
         (
@@ -178,6 +207,9 @@ OverviewSample::OverviewSample() :
     
     
     ////////////////////////////////////////////////////////////////////////////
+    
+    _scene = cinek::allocate_unique<GameScene>();
+    
     _viewAPI = std::move(cinek::ove::ViewAPI(*_entityUtility, _viewStack));
     
     _viewStack.setFactory(
@@ -202,7 +234,15 @@ void OverviewSample::simulate(double systemTime, double dt)
     _server.receive();
     _client.receive();
     
+    _timeUntilActionFrame -= dt;
+    while (_timeUntilActionFrame < 0)
+    {
+        _timeUntilActionFrame += kSecsPerActionFrame;
+    }
+
     _viewStack.simulate(systemTime, dt);
+
+    _scene->simulate(dt);
     
     _client.send(_server.address(), kAlphaRequest,
         [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
@@ -378,12 +418,9 @@ int runSample(int viewWidth, int viewHeight)
     
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
-    const double kActionFPS = 60.0;
-    const double kSecsPerActionFrame = 1/kActionFPS;
     
     double simTime = 0.0;
     double lagSecsSim = 0.0;
-    double timeUntilActionFrame = 0.0;
     
     uint32_t systemTimeMs = SDL_GetTicks();
     bool running = true;
@@ -401,41 +438,18 @@ int runSample(int viewWidth, int viewHeight)
     
         ////////////////////////////////////////////////////////////////////////
         //  SIMULATION START (using a fixed timestep)
-        //  All subsystems driven by the physics framerate.
+        //      All subsystems driven by the application simulation framerate.
         //
         while (lagSecsSim >= kSecsPerSimFrame)
         {
-            ////////////////////////////////////////////////////////////////////
-            // Action (Game State) Simulation
-            //
-            timeUntilActionFrame -= kSecsPerActionFrame;
-            while (timeUntilActionFrame < 0)
-            {
-                timeUntilActionFrame += kSecsPerActionFrame;
-            }
-            
-            ////////////////////////////////////////////////////////////////////
-            // Physics and Collision Simulations
-            //
-            //  simulateRigidBodies(rigidBodies, transforms, kSecsPerSimFrame, rbConstraints);
-            
-            //  TODO : We should only update entities that have changed
-            //  transforms.  While checking for the 'dirty' flag per transform
-            //  saves some time, we should exclude static entities and such
-            //  from this sweep.  Perhaps we need a separate list of 'changed'
-            //  entities compiled from the simulateRigidBodies sweep.
-            //  updateTransform.all();
-
             application.simulate(simTime, kSecsPerSimFrame);
 
-            ////////////////////////////////////////////////////////////////////
-            //  Update our simulation times
-            //
             lagSecsSim -= kSecsPerSimFrame;
             simTime += kSecsPerSimFrame;
             
             //  diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
         }
+        //
         //  SIMULATION END
         ////////////////////////////////////////////////////////////////////////
 
@@ -446,7 +460,6 @@ int runSample(int viewWidth, int viewHeight)
         
         application.endFrame(frameTime);
         
-    
         for (auto& animController : animControllers) {
             animController.second->update(systemTimeMs * 0.001);
         }

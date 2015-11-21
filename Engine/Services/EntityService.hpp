@@ -69,6 +69,13 @@ public:
      *  entity.
      */
     template<typename Component> Component* createData(Entity entity);
+    /** 
+     *  Returns whether the entity has the specified component
+     *  @param  entity      The entity
+     *  @param  compId      The component Id
+     *  @return True if the entity possesses the component
+     */
+    bool hasComponent(Entity entity, ComponentId compId) const;
     /**
      *  Returns a (const) component by explicit type attached to the specified
      *  entity.

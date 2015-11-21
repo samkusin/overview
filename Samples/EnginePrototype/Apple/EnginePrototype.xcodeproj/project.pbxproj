@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		377ECCA31BFFA76D002040D7 /* BulletPhysicsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCA11BFFA76D002040D7 /* BulletPhysicsScene.cpp */; };
+		377ECCAA1C000A65002040D7 /* RenderGraph.inl in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCA81C000A65002040D7 /* RenderGraph.inl */; };
 		37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
@@ -46,6 +48,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		377ECC9F1BFFA60D002040D7 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = Scenes/Scene.hpp; sourceTree = "<group>"; };
+		377ECCA01BFFA60D002040D7 /* Scene.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Scene.inl; path = Scenes/Scene.inl; sourceTree = "<group>"; };
+		377ECCA11BFFA76D002040D7 /* BulletPhysicsScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BulletPhysicsScene.cpp; path = Scenes/BulletPhysicsScene.cpp; sourceTree = "<group>"; };
+		377ECCA21BFFA76D002040D7 /* BulletPhysicsScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = BulletPhysicsScene.hpp; path = Scenes/BulletPhysicsScene.hpp; sourceTree = "<group>"; };
+		377ECCA81C000A65002040D7 /* RenderGraph.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RenderGraph.inl; path = Render/RenderGraph.inl; sourceTree = "<group>"; };
+		377ECCA91C000A65002040D7 /* RenderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderGraph.hpp; path = Render/RenderGraph.hpp; sourceTree = "<group>"; };
 		37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewAPI.cpp; sourceTree = "<group>"; };
 		37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewAPI.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -120,6 +128,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		377896F21BFFA5C100B23038 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				377ECC9F1BFFA60D002040D7 /* Scene.hpp */,
+				377ECCA01BFFA60D002040D7 /* Scene.inl */,
+				377ECCA21BFFA76D002040D7 /* BulletPhysicsScene.hpp */,
+				377ECCA11BFFA76D002040D7 /* BulletPhysicsScene.cpp */,
+			);
+			name = Scenes;
+			sourceTree = "<group>";
+		};
+		377ECCA71C000A21002040D7 /* Render */ = {
+			isa = PBXGroup;
+			children = (
+				377ECCA91C000A65002040D7 /* RenderGraph.hpp */,
+				377ECCA81C000A65002040D7 /* RenderGraph.inl */,
+			);
+			name = Render;
+			sourceTree = "<group>";
+		};
 		37E635E61BF00A9B0081E59E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +175,8 @@
 		37E6372F1BF118460081E59E /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				377ECCA71C000A21002040D7 /* Render */,
+				377896F21BFFA5C100B23038 /* Scenes */,
 				37E637F91BF2ACD90081E59E /* Services */,
 				37E637B01BF119EA0081E59E /* BVH */,
 				37E637C11BF119EA0081E59E /* Comp */,
@@ -320,6 +350,7 @@
 				37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */,
 				37E6382A1BF3FAB90081E59E /* Components.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
+				377ECCAA1C000A65002040D7 /* RenderGraph.inl in Sources */,
 				37E636151BF023E40081E59E /* Sample.cpp in Sources */,
 				37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */,
 				37E637E31BF119EA0081E59E /* EngineMathGfx.cpp in Sources */,
@@ -329,6 +360,7 @@
 				37E638211BF3FA220081E59E /* EntityTypes.cpp in Sources */,
 				37E6381F1BF3FA220081E59E /* EntityStoreDictionary.cpp in Sources */,
 				37E637EF1BF119EA0081E59E /* ViewStack.cpp in Sources */,
+				377ECCA31BFFA76D002040D7 /* BulletPhysicsScene.cpp in Sources */,
 				37E6381E1BF3FA220081E59E /* EntityUtility.cpp in Sources */,
 				37E638201BF3FA220081E59E /* EntityTransform.cpp in Sources */,
 				37E638311BF416A40081E59E /* EntityService.cpp in Sources */,
@@ -346,6 +378,15 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PACKAGES_ROOT)/include/bullet",
+					"$(PACKAGES_ROOT)/include/freetype2",
+					"$(PACKAGES_ROOT)/include",
+					"$(OVERVIEW_ROOT)/CKLibs",
+					"$(OVERVIEW_ROOT)",
+					../../Common,
+				);
+				WARNING_CFLAGS = "-Wno-deprecated-register";
 			};
 			name = Debug;
 		};
@@ -357,6 +398,15 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PACKAGES_ROOT)/include/bullet",
+					"$(PACKAGES_ROOT)/include/freetype2",
+					"$(PACKAGES_ROOT)/include",
+					"$(OVERVIEW_ROOT)/CKLibs",
+					"$(OVERVIEW_ROOT)",
+					../../Common,
+				);
+				WARNING_CFLAGS = "-Wno-deprecated-register";
 			};
 			name = Release;
 		};
@@ -401,6 +451,14 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lfreetype",
+					"-lSDL2",
+					"-lbgfxDebug",
+					"-lLinearMath",
+					"-lBulletCollision",
+					"-lBulletDynamics",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -440,6 +498,14 @@
 				INFOPLIST_FILE = EnginePrototype.plist;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lfreetype",
+					"-lSDL2",
+					"-lbgfxRelease",
+					"-lLinearMath",
+					"-lBulletCollision",
+					"-lBulletDynamics",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
