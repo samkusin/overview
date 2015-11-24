@@ -26,7 +26,8 @@ namespace cinek {
 class RenderGraph
 {
 public:
-    RenderGraph(const gfx::NodeElementCounts& counts);
+    RenderGraph(const gfx::NodeElementCounts& counts, uint32_t entityCount,
+                uint32_t animCount);
     
     /**
      *  Systems flag an entity for rendering with a given source graphics node.
@@ -34,36 +35,48 @@ public:
      *  the prepare stage, systems can supply a delegate.  This delegate
      *  is invoked when calling prepare()
      *
+     *  Adding is a O(1) operation.  This is possible since internally this
+     *  item is sorted into the node vector during prepare().
+     *
      *  @param  e           The entity (acts as a key) 
      *  @param  sourceNode  The graphics node to clone into the scene graph
      *  @param  context     A context pointer associated with the Node (used
      *                      during prepare() when the preparation delegate is
      *                      called.)(
      */
-    void cloneAndAddNode(Entity e, gfx::Node sourceNode, void* context);
+    void cloneAndAddNode(Entity e, gfx::NodeHandle sourceNode, void* context);
     /**
-     *
+     *  Dereferences the gfx Node associated with the supplied entity.  Removing
+     *  is a O(log n) operation in most cases.  It is a O(n) operation if 
+     *  removing nodes that have been added before calling prepare(), which
+     *  should be an edge case.
+     *  
+     *  @param  e   The Entity to remove
      */
     void removeNode(Entity e);
-    
+    /**
+     *  Clears the render graph to entity map.
+     */
+    void clear();
     /**
      *  Prepares the nodes on the render graph for rendering using gfx.
      *
-     *  @param  dt      The frame timestep, used for updating animations
+     *  @param  renderTime  The current render time in seconds
+     *  @param  dt          The frame timestep, used for updating animations
      */
     template<typename _Delegate>
     void prepare(double dt, _Delegate del=_Delegate());
-    
     /**
-     *  Render the node with the specified renderer
-     *
-     *  @param  renderer    The renderer containing shader and context used
-     *                      for drawing a NodeGraph
+     *  @return The root of the generated gfx::NodeGraph.
      */
-    void render(gfx::NodeRenderer& renderer);
+    gfx::NodeHandle root() const;
+
+private:
+    void updateRenderNodes(double dt);
 
 private:
     cinek::gfx::NodeGraph _nodeGraph;
+    double _renderTime;
     
     struct Node
     {
@@ -80,6 +93,22 @@ private:
     //  list.  this is an optimization so that we can differentiate new vs
     //  active nodes in the list - and allows us to sort the list once per frame
     uint32_t _nodeEndIndex;
+    //  used to trigger resort of node vector during prepare
+    uint32_t _removedNodeCount;
+    //  smaller values mean that it takes more removed entities to trigger
+    //  a resort
+    static constexpr uint32_t kRemoveNodeSortFactor = 10;
+    
+    //  Animations
+    //
+    gfx::AnimationControllerPool _animControllerPool;
+    
+    struct AnimNode
+    {
+        Entity entity;
+        gfx::AnimationControllerHandle animController;
+    };
+    std::vector<AnimNode> _animNodes;
 };
     
     }   /* namesapce ove */

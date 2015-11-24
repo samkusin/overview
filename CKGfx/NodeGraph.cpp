@@ -142,6 +142,11 @@ void NodeGraph::setRoot(NodeHandle node)
     _root = node;
 }
 
+void NodeGraph::clearRoot()
+{
+    _root = nullptr;
+}
+
 NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
 {
     CK_ASSERT(node);

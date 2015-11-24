@@ -75,11 +75,13 @@ using GameScene = cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
 class OverviewSample
 {
 public:
-    OverviewSample();
+    OverviewSample(cinek::gfx::Context& gfxContext);
     
     void startFrame();
     void simulate(double time, double dt);
     void endFrame(double dt);
+    
+    void render(cinek::gfx::NodeRenderer& renderer);
     
 private:
     ckmsg::Messenger _messenger;
@@ -99,6 +101,8 @@ private:
     
     ////////////////////////////////////////////////////////////////////////////
     
+    cinek::gfx::Context* _gfxContext;
+    
     struct RenderModel
     {
         std::string name;
@@ -107,6 +111,8 @@ private:
     };
     
     std::vector<RenderModel> _models;
+
+    cinek::unique_ptr<cinek::ove::RenderGraph> _renderGraph;
     
     ////////////////////////////////////////////////////////////////////////////
     
@@ -129,10 +135,18 @@ private:
     };
 };
 
-OverviewSample::OverviewSample() :
+struct PrepareEntityForRender
+{
+    void operator()(cinek::gfx::Node& node, void* context);
+    operator bool() const { return true; }
+};
+
+
+OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
     _server(_messenger, { 64*1024, 64*1024 }),
     _client(_messenger, { 32*1024, 32*1024 }),
-    _timeUntilActionFrame(0.0)
+    _timeUntilActionFrame(0.0),
+    _gfxContext(&gfxContext)
 {
     auto destroyCompFn = [this]
         (
@@ -206,6 +220,20 @@ OverviewSample::OverviewSample() :
     
     
     ////////////////////////////////////////////////////////////////////////////
+    
+    //  create master scene
+    cinek::gfx::NodeElementCounts sceneElementCounts;
+    sceneElementCounts.meshNodeCount = 128;
+    sceneElementCounts.armatureNodeCount = 32;
+    sceneElementCounts.lightNodeCount = 8;
+    sceneElementCounts.objectNodeCount = 64;
+    sceneElementCounts.transformNodeCount = 64;
+    
+    _renderGraph = cinek::allocate_unique<cinek::ove::RenderGraph>(
+        sceneElementCounts,
+        1024,
+        256
+    );
     
     _scene = cinek::allocate_unique<GameScene>();
     
@@ -288,14 +316,28 @@ void OverviewSample::simulate(double systemTime, double dt)
     _server.transmit();
 }
 
+void PrepareEntityForRender::operator()
+(
+    cinek::gfx::Node &node,
+    void* context
+)
+{
+}
+
 void OverviewSample::endFrame(double dt)
 {
     _viewStack.layout();
     _viewStack.frameUpdate(dt);
+    _renderGraph->prepare(dt, PrepareEntityForRender());
     
     _entityStoreDictionary.gc();
 }
 
+
+void OverviewSample::render(cinek::gfx::NodeRenderer& renderer)
+{
+    renderer(_renderGraph->root());
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Main
@@ -347,27 +389,11 @@ int runSample(int viewWidth, int viewHeight)
     gfxInitParams.numLights = 64;
     
     cinek::gfx::Context gfxContext(gfxInitParams);
-    cinek::gfx::AnimationControllerPool animControllerPool(256);
     
-    OverviewSample application;
+    OverviewSample application(gfxContext);
     
     //  Application
-    cinek::gfx::NodeGraph testScene = loadModelFromFile(gfxContext, "models/scene.json");
     
-    std::unordered_map<cinek::gfx::NodeId,
-                       cinek::gfx::AnimationControllerHandle> animControllers;
-    
-    //  create master scene
-    cinek::gfx::NodeElementCounts sceneElementCounts;
-    sceneElementCounts.meshNodeCount = 128;
-    sceneElementCounts.armatureNodeCount = 32;
-    sceneElementCounts.lightNodeCount = 8;
-    sceneElementCounts.objectNodeCount = 64;
-    sceneElementCounts.transformNodeCount = 64;
-    
-    cinek::gfx::NodeGraph scene(sceneElementCounts);
-    scene.setRoot(testScene.root());
-
     /*
     auto sceneRoot = scene.root();
     cinek::gfx::NodeHandle newObjectNode;
@@ -459,16 +485,12 @@ int runSample(int viewWidth, int viewHeight)
         
         application.endFrame(frameTime);
         
-        for (auto& animController : animControllers) {
-            animController.second->update(systemTimeMs * 0.001);
-        }
-    
         gfxContext.update();
         
         bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
         
         nodeRenderer.setCamera(mainCamera);
-        nodeRenderer(scene.root());
+        application.render(nodeRenderer);
 
         cinek::uicore::render(nvg, viewRect);
     

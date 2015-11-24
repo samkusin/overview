@@ -44,6 +44,8 @@ public:
     NodeHandle createLightNode();
     
     void setRoot(NodeHandle node);
+    void clearRoot();
+    
     NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
     NodeHandle removeNode(NodeHandle node);
     
