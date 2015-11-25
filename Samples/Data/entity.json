@@ -2,8 +2,7 @@
     "entity" : {
         "test_bot" : {
             "renderable" : {
-                "type" : "model",
-                "resource" : "character.json"
+                "source" : "character.json"
             },
             "rigidbody" : {
                 "class" : "dynamic",

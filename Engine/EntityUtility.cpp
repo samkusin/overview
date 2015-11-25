@@ -40,11 +40,6 @@ Entity createEntity
         entity = store.create(context);
     
         const cinek::JsonValue& templ = templates[name];
-        if (!templ.HasMember("transform") ||
-            (templ["transform"].IsBool() && templ["transform"].GetBool()))
-        {
-            store.table<ove::TransformComponent>().addDataToEntity(entity);
-        }
         for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
              it != templ.MemberEnd();
              ++it)

@@ -39,6 +39,9 @@ using CustomComponentCreateFn =
                        const cinek::JsonValue& definitions,
                        const char* componentName,
                        const cinek::JsonValue& data)>;
+using CustomComponentDestroyFn =
+    std::function<void(EntityDataTable& table, ComponentRowIndex rowIndex)>;
+
 
 enum
 {

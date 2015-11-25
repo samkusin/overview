@@ -16,17 +16,6 @@
 
 namespace cinek { namespace ove {
 
-
-using CustomComponentCreateFn =
-    std::function<void(Entity entity,
-                       const cinek::JsonValue& definitions,
-                       const char* componentName,
-                       const cinek::JsonValue& data)>;
-    
-using CustomComponentDestroyFn =
-    std::function<void(EntityDataTable& table, ComponentRowIndex rowIndex)>;
-
-
 /**
  *  @class EntityUtility
  *  @brief Utility class to create entities via template definition.
@@ -52,6 +41,7 @@ public:
 
     Entity createEntity(EntityContextType context, const char* templateNs,
                         const char* templateName);
+    
     void destroyEntity(Entity entity);
     
     void addDefinitions(const char* ns, const JsonValue& definitions);

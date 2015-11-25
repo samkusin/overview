@@ -29,6 +29,9 @@ namespace cinek {
         
         class ViewAPI;
 
+        class Asset;
+        class AssetLoader;
+
     } /* namespace ove */
 } /* namespace cinek */
 

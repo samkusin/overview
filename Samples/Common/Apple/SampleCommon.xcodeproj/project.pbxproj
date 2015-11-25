@@ -12,6 +12,8 @@
 		370B59A11BFA8A96009062FA /* messenger.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B599F1BFA8A96009062FA /* messenger.hpp */; };
 		370B59A51BFAA428009062FA /* server.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A31BFAA428009062FA /* server.hpp */; };
 		370B59A71BFBAFC5009062FA /* buffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A61BFBAFC5009062FA /* buffer.hpp */; };
+		377ECCAF1C0507D6002040D7 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCAD1C0507D6002040D7 /* file.c */; };
+		377ECCB01C0507D6002040D7 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCAE1C0507D6002040D7 /* file.h */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
 		37E636061BF010270081E59E /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636051BF010270081E59E /* Common.cpp */; };
 		37E636081BF010F70081E59E /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636071BF010F70081E59E /* Common.hpp */; };
@@ -185,6 +187,8 @@
 		370B59A21BFAA428009062FA /* server.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = server.inl; path = ../../../CKLibs/ckmsg/server.inl; sourceTree = "<group>"; };
 		370B59A31BFAA428009062FA /* server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = server.hpp; path = ../../../CKLibs/ckmsg/server.hpp; sourceTree = "<group>"; };
 		370B59A61BFBAFC5009062FA /* buffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buffer.hpp; path = ../../../CKLibs/ckmsg/buffer.hpp; sourceTree = "<group>"; };
+		377ECCAD1C0507D6002040D7 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ckio/file.c; sourceTree = "<group>"; };
+		377ECCAE1C0507D6002040D7 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = ckio/file.h; sourceTree = "<group>"; };
 		37E635F41BF00EA40081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSampleCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E636001BF00F650081E59E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		37E636021BF00F840081E59E /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
@@ -343,6 +347,15 @@
 			path = ../Samples/Common/Apple;
 			sourceTree = "<group>";
 		};
+		377ECCAC1C0505C8002040D7 /* ckio */ = {
+			isa = PBXGroup;
+			children = (
+				377ECCAE1C0507D6002040D7 /* file.h */,
+				377ECCAD1C0507D6002040D7 /* file.c */,
+			);
+			name = ckio;
+			sourceTree = "<group>";
+		};
 		37E635EB1BF00EA40081E59E = {
 			isa = PBXGroup;
 			children = (
@@ -390,6 +403,7 @@
 				37E636371BF024330081E59E /* ckentity */,
 				37E6364A1BF024330081E59E /* ckjson */,
 				37E636691BF024330081E59E /* ckm */,
+				377ECCAC1C0505C8002040D7 /* ckio */,
 				370B59981BFA6030009062FA /* ckmsg */,
 			);
 			name = CKLibs;
@@ -635,6 +649,7 @@
 				37E636B21BF024330081E59E /* reader.h in Headers */,
 				37E637071BF0246D0081E59E /* AnimationController.hpp in Headers */,
 				37E636D11BF024600081E59E /* UITypes.hpp in Headers */,
+				377ECCB01C0507D6002040D7 /* file.h in Headers */,
 				37E636721BF024330081E59E /* allocator.hpp in Headers */,
 				37E636B71BF024330081E59E /* math.hpp in Headers */,
 				37E636A01BF024330081E59E /* jsontypes.hpp in Headers */,
@@ -775,6 +790,7 @@
 				37E636771BF024330081E59E /* cstringstack.cpp in Sources */,
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
 				37E637101BF0246D0081E59E /* stb.cpp in Sources */,
+				377ECCAF1C0507D6002040D7 /* file.c in Sources */,
 				37E637091BF0246D0081E59E /* Context.cpp in Sources */,
 				37E637221BF0246D0081E59E /* Texture.cpp in Sources */,
 				37E636801BF024330081E59E /* memorystack.cpp in Sources */,

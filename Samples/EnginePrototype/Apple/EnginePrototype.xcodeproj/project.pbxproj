@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		377ECCA31BFFA76D002040D7 /* BulletPhysicsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCA11BFFA76D002040D7 /* BulletPhysicsScene.cpp */; };
 		377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCA81C000A65002040D7 /* RenderGraph.cpp */; };
+		377ECCB31C05343A002040D7 /* AssetLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCB11C05343A002040D7 /* AssetLoader.cpp */; };
+		377ECCB61C053F78002040D7 /* Asset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCB41C053F78002040D7 /* Asset.cpp */; };
 		37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
@@ -55,6 +57,10 @@
 		377ECCA81C000A65002040D7 /* RenderGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderGraph.cpp; path = Render/RenderGraph.cpp; sourceTree = "<group>"; };
 		377ECCA91C000A65002040D7 /* RenderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderGraph.hpp; path = Render/RenderGraph.hpp; sourceTree = "<group>"; };
 		377ECCAB1C000EA3002040D7 /* RenderGraph.inl */ = {isa = PBXFileReference; lastKnownFileType = text; name = RenderGraph.inl; path = Render/RenderGraph.inl; sourceTree = "<group>"; };
+		377ECCB11C05343A002040D7 /* AssetLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssetLoader.cpp; sourceTree = "<group>"; };
+		377ECCB21C05343A002040D7 /* AssetLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AssetLoader.hpp; sourceTree = "<group>"; };
+		377ECCB41C053F78002040D7 /* Asset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Asset.cpp; sourceTree = "<group>"; };
+		377ECCB51C053F78002040D7 /* Asset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Asset.hpp; sourceTree = "<group>"; };
 		37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewAPI.cpp; sourceTree = "<group>"; };
 		37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewAPI.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -204,6 +210,10 @@
 				37E637DF1BF119EA0081E59E /* ViewStack.cpp */,
 				37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */,
 				37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */,
+				377ECCB51C053F78002040D7 /* Asset.hpp */,
+				377ECCB41C053F78002040D7 /* Asset.cpp */,
+				377ECCB21C05343A002040D7 /* AssetLoader.hpp */,
+				377ECCB11C05343A002040D7 /* AssetLoader.cpp */,
 			);
 			name = Engine;
 			path = ../../../Engine;
@@ -352,7 +362,9 @@
 				37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */,
 				37E6382A1BF3FAB90081E59E /* Components.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
+				377ECCB31C05343A002040D7 /* AssetLoader.cpp in Sources */,
 				377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */,
+				377ECCB61C053F78002040D7 /* Asset.cpp in Sources */,
 				37E636151BF023E40081E59E /* Sample.cpp in Sources */,
 				37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */,
 				37E637E31BF119EA0081E59E /* EngineMathGfx.cpp in Sources */,
