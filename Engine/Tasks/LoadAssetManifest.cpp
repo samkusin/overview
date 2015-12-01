@@ -22,9 +22,11 @@ const UUID LoadAssetManifest::kUUID = {
 LoadAssetManifest::LoadAssetManifest
 (
     std::string name,
+    AssetManfiestFactory& factory,
     EndCallback cb
 ) :
-    LoadFile(name, cb)
+    LoadFile(name, cb),
+    _factory(&factory)
 {
 
 }
@@ -46,7 +48,24 @@ void LoadAssetManifest::onFileLoaded()
                     std::move(acquireBuffer())
                 );
     
-    LoadFile::onFileLoaded();
+    _loader = std::move(AssetManifestLoader(*_manifest.get(), *_factory));
+    _loader.start([this](AssetManifestLoader::LoadResult r) {
+        end();
+    });
+}
+
+void LoadAssetManifest::onUpdate(uint32_t deltaTimeMs)
+{
+    if (_manifest) {
+        _loader.update();
+    }
+}
+
+void LoadAssetManifest::onCancel()
+{
+    if (_manifest) {
+        _loader.cancel();
+    }
 }
  
     }  /* namespace ove */

@@ -76,13 +76,15 @@ public:
     //  Unregisters the named AnimationSet
     void unregisterAnimationSet(const char* name);
     //  Finds an AnimationSet given its name
-    AnimationSetHandle findAnimationSet(const char* name);
+    AnimationSetHandle findAnimationSet(const char* name) const;
     //  Registers a light handle
     LightHandle registerLight(Light&& light);
     //  Registers a NodeGraph Model with an noptinoal name
     NodeGraphHandle registerModel(NodeGraph&& graph, const char* name="");
     //  Unregisters a Model
     void unregisterModel(const char *name);
+    //  FInds a Model given its name
+    NodeGraphHandle findModel(const char* name) const;
     
 private:
     //  restrict Context access to pointer and reference -

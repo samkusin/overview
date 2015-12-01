@@ -13,7 +13,8 @@
 #include "Engine/AssetManifestFactory.hpp"
 #include "CKGfx/Context.hpp"
 
-#include <cinek/managed_dictionary.hpp>
+#include <cinek/task.hpp>
+#include <vector>
 
 namespace cinek {
     class TaskScheduler;
@@ -29,18 +30,25 @@ struct ResourceFactory : public AssetManfiestFactory
         gfx::Context& gfxContext,
         TaskScheduler& scheduler
     );
+    
+    virtual ~ResourceFactory();
 
     //  AssetManifestFactory
     virtual RequestId onAssetManifestRequest(
         AssetType assetType,
         const std::string& name,
-        std::function<void(const std::string&, LoadResult)> cb) override;
+        RequestCb cb) override;
     
     virtual void onAssetManifestRequestCancelled(RequestId reqId) override;
 
 private:
+    void requestFinished(TaskId taskId, const std::string& name,
+                         Task::State state);
+private:
     gfx::Context* _gfxContext;
     TaskScheduler *_scheduler;
+    
+    std::vector<std::pair<TaskId, RequestCb>> _requests;
 };
     
     }   /* namespace ove */

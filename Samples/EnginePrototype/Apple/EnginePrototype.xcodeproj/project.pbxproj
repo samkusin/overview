@@ -15,7 +15,6 @@
 		377ECCD11C093F78002040D7 /* StartupView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCD01C093F78002040D7 /* StartupView.cpp */; };
 		377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCDB1C0AA0A9002040D7 /* Core.cpp */; };
 		377ECCE11C0BB028002040D7 /* LoadAssetManifest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCDF1C0BB028002040D7 /* LoadAssetManifest.cpp */; };
-		377ECCE61C0BEFFE002040D7 /* LoadAssets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCE41C0BEFFE002040D7 /* LoadAssets.cpp */; };
 		377ECCE91C0CEB3A002040D7 /* LoadTextureAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCE71C0CEB3A002040D7 /* LoadTextureAsset.cpp */; };
 		377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */; };
 		37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */; };
@@ -77,8 +76,6 @@
 		377ECCDC1C0AA0A9002040D7 /* Core.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Core.hpp; path = Messages/Core.hpp; sourceTree = "<group>"; };
 		377ECCDF1C0BB028002040D7 /* LoadAssetManifest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadAssetManifest.cpp; path = Tasks/LoadAssetManifest.cpp; sourceTree = "<group>"; };
 		377ECCE01C0BB028002040D7 /* LoadAssetManifest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadAssetManifest.hpp; path = Tasks/LoadAssetManifest.hpp; sourceTree = "<group>"; };
-		377ECCE41C0BEFFE002040D7 /* LoadAssets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadAssets.cpp; path = Tasks/LoadAssets.cpp; sourceTree = "<group>"; };
-		377ECCE51C0BEFFE002040D7 /* LoadAssets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadAssets.hpp; path = Tasks/LoadAssets.hpp; sourceTree = "<group>"; };
 		377ECCE71C0CEB3A002040D7 /* LoadTextureAsset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadTextureAsset.cpp; path = Tasks/LoadTextureAsset.cpp; sourceTree = "<group>"; };
 		377ECCE81C0CEB3A002040D7 /* LoadTextureAsset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadTextureAsset.hpp; path = Tasks/LoadTextureAsset.hpp; sourceTree = "<group>"; };
 		377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadFile.cpp; path = Tasks/LoadFile.cpp; sourceTree = "<group>"; };
@@ -191,8 +188,6 @@
 			children = (
 				377ECCE01C0BB028002040D7 /* LoadAssetManifest.hpp */,
 				377ECCDF1C0BB028002040D7 /* LoadAssetManifest.cpp */,
-				377ECCE51C0BEFFE002040D7 /* LoadAssets.hpp */,
-				377ECCE41C0BEFFE002040D7 /* LoadAssets.cpp */,
 				377ECCE81C0CEB3A002040D7 /* LoadTextureAsset.hpp */,
 				377ECCE71C0CEB3A002040D7 /* LoadTextureAsset.cpp */,
 				377ECCEB1C0CFA55002040D7 /* LoadFile.hpp */,
@@ -426,7 +421,6 @@
 				37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,
 				377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */,
-				377ECCE61C0BEFFE002040D7 /* LoadAssets.cpp in Sources */,
 				377ECCCD1C0934E9002040D7 /* ResourceFactory.cpp in Sources */,
 				37E637E31BF119EA0081E59E /* EngineMathGfx.cpp in Sources */,
 				37E6382E1BF4155F0081E59E /* ViewService.cpp in Sources */,

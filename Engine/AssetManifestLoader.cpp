@@ -176,7 +176,7 @@ void AssetManifestLoader::start(LoadResultCb resultCb)
     _loadCb = std::move(resultCb);
     
     _stack.emplace_back(AssetType::kNone,
-            _manifest->root("entity").MemberBegin(), _manifest->root("entity").MemberEnd());
+            _manifest->root().MemberBegin(), _manifest->root().MemberEnd());
 }
 
 void AssetManifestLoader::end(LoadResult result)

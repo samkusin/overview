@@ -44,7 +44,6 @@ protected:
     
     std::vector<uint8_t>& buffer() { return _buffer; }
     const std::vector<uint8_t>& buffer() const { return _buffer; }
-    std::string& name() { return _name; }
     
 private:
     void close();

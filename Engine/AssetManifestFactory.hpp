@@ -32,14 +32,15 @@ public:
         kAborted
     };
     
-    using RequestId = int;
+    using RequestId = uint32_t;
+    using RequestCb = std::function<void(const std::string&, LoadResult)>;
     
     virtual ~AssetManfiestFactory() {}
     
     virtual RequestId onAssetManifestRequest(
         AssetType assetType,
         const std::string& name,
-        std::function<void(const std::string&, LoadResult)> cb) = 0;
+        RequestCb cb) = 0;
     
     virtual void onAssetManifestRequestCancelled(RequestId reqId) = 0;
 };

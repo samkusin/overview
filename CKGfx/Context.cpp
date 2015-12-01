@@ -108,7 +108,7 @@ void Context::unregisterAnimationSet(const char* name)
 }
 
 
-AnimationSetHandle Context::findAnimationSet(const char* name)
+AnimationSetHandle Context::findAnimationSet(const char* name) const
 {
     auto it = _animationSetDictionary.find(name);
     if (it == _animationSetDictionary.end())
@@ -136,6 +136,14 @@ void Context::unregisterModel(const char *name)
     unregisterResource(_modelDictionary, name);
 }
 
+NodeGraphHandle Context::findModel(const char* name) const
+{
+    auto it = _modelDictionary.find(name);
+    if (it == _modelDictionary.end())
+        return nullptr;
+    
+    return it->second;
+}
 
 void Context::update()
 {

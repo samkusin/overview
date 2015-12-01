@@ -10,6 +10,7 @@
 #define Overview_Task_LoadAssetManifest_hpp
 
 #include "Engine/AssetManifest.hpp"
+#include "Engine/AssetManifestLoader.hpp"
 #include "Engine/Tasks/LoadFile.hpp"
 
 #include <cinek/allocator.hpp>
@@ -24,8 +25,9 @@ class LoadAssetManifest : public LoadFile
 public:
     static const UUID kUUID;
     
-    LoadAssetManifest(EndCallback cb=0) : LoadFile(cb) {}
-    LoadAssetManifest(std::string name, EndCallback cb=0);
+    LoadAssetManifest(EndCallback cb=0) : LoadFile(cb), _factory(nullptr) {}
+    LoadAssetManifest(std::string name, AssetManfiestFactory& factory,
+                      EndCallback cb=0);
 
     unique_ptr<AssetManifest> acquireManifest();
     
@@ -34,8 +36,13 @@ public:
 private:
     virtual void onFileLoaded() override;
     
+    virtual void onUpdate(uint32_t deltaTimeMs) override;
+    virtual void onCancel() override;
+        
 private:
     unique_ptr<AssetManifest> _manifest;
+    AssetManfiestFactory* _factory;
+    AssetManifestLoader _loader;
 };
     
     }  /* namespace ove */

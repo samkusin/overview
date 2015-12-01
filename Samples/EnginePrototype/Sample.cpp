@@ -58,7 +58,6 @@
 #include "Engine/AssetManifestLoader.hpp"
 #include "Engine/Comp/Transform.hpp"
 #include "Engine/Tasks/LoadAssetManifest.hpp"
-#include "Engine/Tasks/LoadAssets.hpp"
 
 #include <cinek/taskscheduler.hpp>
 #include <ckmsg/messenger.hpp>
@@ -271,35 +270,23 @@ void OverviewSample::loadEntityDefinitionsCmd
     //  sequences without resorting to brute force like what we're doing below.
     //
     auto taskCb = [this, reqId](cinek::Task::State state, cinek::Task& t) {
+        cinek::ove::EntityLoadDefinitionsResponse resp;
+        auto& task = reinterpret_cast<cinek::ove::LoadAssetManifest&>(t);
+        ckmsg::Payload payload;
         if (state == cinek::Task::State::kEnded) {
-            if (t.classId() == cinek::ove::LoadAssetManifest::kUUID) {
-                auto& task = reinterpret_cast<cinek::ove::LoadAssetManifest&>(t);
-                auto& nextTask = *reinterpret_cast<cinek::ove::LoadAssets *>(task.getNextTask());
-                nextTask.setManifest(task.acquireManifest(), *_resourceFactory.get());
-            }
-            else if (t.classId() == cinek::ove::LoadAssets::kUUID) {
-                cinek::ove::EntityLoadDefinitionsResponse resp;
-                auto& task = reinterpret_cast<cinek::ove::LoadAssets&>(t);
-        
-                auto manifest = task.acquireManifest();
-                manifest->name().copy(resp.name, sizeof(resp.name));
-                _entityDatabase.setManifest(std::move(manifest));
-                
-                auto payload = cinek::ove::makePayloadFromData(resp);
-                _server.reply(reqId, &payload);
-            }
+            auto manifest = task.acquireManifest();
+            manifest->name().copy(resp.name, sizeof(resp.name));
+            _entityDatabase.setManifest(std::move(manifest));
         }
         else {
-            cinek::ove::EntityLoadDefinitionsResponse resp;
             resp.name[0] = 0;
-            auto payload = cinek::ove::makePayloadFromData(resp);
-            _server.reply(reqId, &payload);
         }
+        payload = cinek::ove::makePayloadFromData(resp);
+        _server.reply(reqId, &payload);
     };
     
     auto task = cinek::allocate_unique<cinek::ove::LoadAssetManifest>(
-        std::string(req.name, sizeof(req.name)), taskCb);
-    task->setNextTask(cinek::allocate_unique<cinek::ove::LoadAssets>(taskCb));
+        std::string(req.name, sizeof(req.name)), *_resourceFactory.get(), taskCb);
     
     _scheduler.schedule(std::move(task));
 }
