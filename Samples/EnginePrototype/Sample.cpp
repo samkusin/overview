@@ -42,22 +42,29 @@
 //  OverviewSample
 
 #include "Views/GameView.hpp"
+#include "Views/StartupView.hpp"
+
+#include "ResourceFactory.hpp"
+
+#include "Engine/Messages/Core.hpp"
+#include "Engine/Messages/Entity.hpp"
 
 #include "Engine/Scenes/Scene.inl"
 #include "Engine/Scenes/BulletPhysicsScene.hpp"
 #include "Engine/ViewAPI.hpp"
 #include "Engine/ViewStack.hpp"
-#include "Engine/EntityStoreDictionary.hpp"
-#include "Engine/EntityUtility.hpp"
+#include "Engine/EntityDatabase.hpp"
+
+#include "Engine/AssetManifestLoader.hpp"
 #include "Engine/Comp/Transform.hpp"
+#include "Engine/Tasks/LoadAssetManifest.hpp"
+#include "Engine/Tasks/LoadAssets.hpp"
 
+#include <cinek/taskscheduler.hpp>
 #include <ckmsg/messenger.hpp>
+#include <ckmsg/server.hpp>
+#include <ckmsg/client.hpp>
 
-#include <ckmsg/server.inl>
-#include <ckmsg/client.inl>
-
-template class ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const ckmsg::Payload*)>>;
-template class ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>>;
 
 template class cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
 
@@ -72,7 +79,7 @@ using GameScene = cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
     * ViewController Management
     * EntityStores
 */
-class OverviewSample
+class OverviewSample : public cinek::ove::EntityComponentFactory
 {
 public:
     OverviewSample(cinek::gfx::Context& gfxContext);
@@ -83,15 +90,37 @@ public:
     
     void render(cinek::gfx::NodeRenderer& renderer);
     
+    
+public:
+    virtual void onCustomComponentCreateFn(cinek::Entity entity,
+                        cinek::EntityStore& store,
+                        const std::string& componentName,
+                        const cinek::JsonValue& definitions,
+                        const cinek::JsonValue& data) override;
+    virtual void onCustomComponentDestroyFn(cinek::EntityDataTable& table,
+                        cinek::ComponentRowIndex compRowIndex) override;
+    
+    
 private:
+    void loadEntityDefinitionsCmd(ckmsg::ServerRequestId reqId,
+                                  const cinek::ove::EntityLoadDefinitionsRequest& req);
+    
+private:
+    cinek::gfx::Context* _gfxContext;
+    
     ckmsg::Messenger _messenger;
-    ckmsg::Server<std::function<void(ckmsg::ServerRequestId, const ckmsg::Payload*)>> _server;
-    ckmsg::Client<std::function<void(uint32_t, ckmsg::ClassId, const ckmsg::Payload*)>> _client;
+    cinek::ove::MessageServer _server;
+    cinek::ove::MessageClient _client;
+    cinek::ove::MessageClientSender _clientSender;
 
+    cinek::TaskScheduler _scheduler;
     cinek::ove::ViewAPI _viewAPI;
     cinek::ove::ViewStack _viewStack;
-    cinek::ove::EntityStoreDictionary _entityStoreDictionary;
-    cinek::unique_ptr<cinek::ove::EntityUtility> _entityUtility;
+    cinek::ove::EntityDatabase _entityDatabase;
+    
+    cinek::unique_ptr<cinek::ove::ResourceFactory> _resourceFactory;
+    
+    cinek::ove::AssetManifestLoader _loader;
     
     static constexpr double kActionFPS = 60.0;
     static constexpr double kSecsPerActionFrame = 1/kActionFPS;
@@ -100,39 +129,9 @@ private:
     cinek::unique_ptr<GameScene> _scene;
     
     ////////////////////////////////////////////////////////////////////////////
-    
-    cinek::gfx::Context* _gfxContext;
-    
-    struct RenderModel
-    {
-        std::string name;
-        uint32_t refcount;
-        cinek::gfx::NodeGraph model;
-    };
-    
-    std::vector<RenderModel> _models;
 
     cinek::unique_ptr<cinek::ove::RenderGraph> _renderGraph;
-    
-    ////////////////////////////////////////////////////////////////////////////
-    
-    static constexpr ckmsg::ClassId kAlphaRequest   = 0x00000001;
-    static constexpr ckmsg::ClassId kBetaRequest    = 0x00000002;
-    static constexpr ckmsg::ClassId kGammaRequest   = 0x00000003;
-    
-    struct BetaPayload
-    {
-        uint32_t u;
-        float x;
-        float y;
-        float z;
-    };
-    
-    struct GammaPayload
-    {
-        BetaPayload beta;
-        char name[16];
-    };
+
 };
 
 struct PrepareEntityForRender
@@ -145,19 +144,12 @@ struct PrepareEntityForRender
 OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
     _server(_messenger, { 64*1024, 64*1024 }),
     _client(_messenger, { 32*1024, 32*1024 }),
+    _scheduler(64),
     _timeUntilActionFrame(0.0),
     _gfxContext(&gfxContext)
 {
-    auto destroyCompFn = [this]
-        (
-            cinek::EntityDataTable& table,
-            cinek::ComponentRowIndex rowIndex
-        )
-        {
-        };
-    
-    _entityStoreDictionary = std::move(
-        cinek::ove::EntityStoreDictionary({
+    _entityDatabase = std::move(
+        cinek::ove::EntityDatabase({
             cinek::EntityStore::InitParams {
                 1024,           // num entities
                 {
@@ -165,41 +157,38 @@ OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
                 },
                 {
                 },
-                destroyCompFn,
                 12345678        // random seed
             }
-        })
+        },
+        *this)
     );
+    
+    _resourceFactory = cinek::allocate_unique<cinek::ove::ResourceFactory>(
+        *_gfxContext,
+        _scheduler
+    );
+    
+    _clientSender.client = &_client;
+    _clientSender.server = _server.address();
  
-    _entityUtility = cinek::allocate_unique<cinek::ove::EntityUtility>(
-        _entityStoreDictionary,
-        [this]
-        (
-            cinek::Entity entity,
-            const cinek::JsonValue& definitions,
-            const char* componentName,
-            const cinek::JsonValue& data
-        )
-        {
-        }
-    );
-    
     ////////////////////////////////////////////////////////////////////////////
+    _server.on(cinek::ove::kMsgEntityLoadDefinitions,
+        [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
+            loadEntityDefinitionsCmd(reqId,
+                *reinterpret_cast<const cinek::ove::EntityLoadDefinitionsRequest*>(payload->data())
+            );
+        });
     
+    /*
     _server.on(kAlphaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* ) {
-            /*
-            printf("Server gets alpha request (%u)\n", reqId.seqId);
-            */
+
             _server.reply(reqId);
         });
     _server.on(kBetaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
             BetaPayload beta = *reinterpret_cast<const BetaPayload*>(payload->data());
-            /*
-            printf("Server gets beta request (%u), %u, %f,%f,%f\n",
-                    reqId.seqId, beta.u, beta.x, beta.y, beta.z);
-            */
+
             beta.y -= beta.z*2;
             ckmsg::Payload reply(reinterpret_cast<uint8_t*>(&beta), sizeof(beta));
             _server.reply(reqId, &reply);
@@ -207,17 +196,13 @@ OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
     _server.on(kGammaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
             GammaPayload gamma = *reinterpret_cast<const GammaPayload*>(payload->data());
-            /*
-            printf("Server gets gamma request (%u), %u, %f,%f,%f, %s\n",
-                    reqId.seqId, gamma.beta.u, gamma.beta.x, gamma.beta.y, gamma.beta.z,
-                    gamma.name);
-            */
+
             gamma.beta.z -= gamma.beta.z;
             strncpy(gamma.name, "good", sizeof(gamma.name));
             ckmsg::Payload reply(reinterpret_cast<uint8_t*>(&gamma), sizeof(gamma));
             _server.reply(reqId, &reply);
         });
-    
+    */
     
     ////////////////////////////////////////////////////////////////////////////
     
@@ -237,30 +222,99 @@ OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
     
     _scene = cinek::allocate_unique<GameScene>();
     
-    _viewAPI = std::move(cinek::ove::ViewAPI(*_entityUtility, _viewStack));
+    _viewAPI = std::move(cinek::ove::ViewAPI(_viewStack, _clientSender, _entityDatabase));
     
     _viewStack.setFactory(
         [this](const std::string& viewName)
             -> cinek::unique_ptr<cinek::ove::ViewController>
         {
-            return cinek::allocate_unique<cinek::ove::GameView>(_viewAPI);
+            if (viewName == "StartupView") {
+                return cinek::allocate_unique<cinek::ove::StartupView>(_viewAPI);
+            }
+            else if (viewName == "GameView") {
+                return cinek::allocate_unique<cinek::ove::GameView>(_viewAPI);
+            }
+            
+            return nullptr;
         });
     
-    _viewStack.load("GameView");
-    _viewStack.present("GameView");
+    _viewStack.load("StartupView");
+    _viewStack.present("StartupView");
 }
+
+void OverviewSample::onCustomComponentCreateFn
+(
+    cinek::Entity entity,
+    cinek::EntityStore& store,
+    const std::string& componentName,
+    const cinek::JsonValue& definitions,
+    const cinek::JsonValue& data
+)
+{
+}
+
+void OverviewSample::onCustomComponentDestroyFn
+(
+    cinek::EntityDataTable& table,
+    cinek::ComponentRowIndex compRowIndex
+)
+{
+}
+
+void OverviewSample::loadEntityDefinitionsCmd
+(
+    ckmsg::ServerRequestId reqId,
+    const cinek::ove::EntityLoadDefinitionsRequest& req
+)
+{
+    //  TODO - let's consider a sequencer utility for generating
+    //  sequences without resorting to brute force like what we're doing below.
+    //
+    auto taskCb = [this, reqId](cinek::Task::State state, cinek::Task& t) {
+        if (state == cinek::Task::State::kEnded) {
+            if (t.classId() == cinek::ove::LoadAssetManifest::kUUID) {
+                auto& task = reinterpret_cast<cinek::ove::LoadAssetManifest&>(t);
+                auto& nextTask = *reinterpret_cast<cinek::ove::LoadAssets *>(task.getNextTask());
+                nextTask.setManifest(task.acquireManifest(), *_resourceFactory.get());
+            }
+            else if (t.classId() == cinek::ove::LoadAssets::kUUID) {
+                cinek::ove::EntityLoadDefinitionsResponse resp;
+                auto& task = reinterpret_cast<cinek::ove::LoadAssets&>(t);
+        
+                auto manifest = task.acquireManifest();
+                manifest->name().copy(resp.name, sizeof(resp.name));
+                _entityDatabase.setManifest(std::move(manifest));
+                
+                auto payload = cinek::ove::makePayloadFromData(resp);
+                _server.reply(reqId, &payload);
+            }
+        }
+        else {
+            cinek::ove::EntityLoadDefinitionsResponse resp;
+            resp.name[0] = 0;
+            auto payload = cinek::ove::makePayloadFromData(resp);
+            _server.reply(reqId, &payload);
+        }
+    };
+    
+    auto task = cinek::allocate_unique<cinek::ove::LoadAssetManifest>(
+        std::string(req.name, sizeof(req.name)), taskCb);
+    task->setNextTask(cinek::allocate_unique<cinek::ove::LoadAssets>(taskCb));
+    
+    _scheduler.schedule(std::move(task));
+}
+
 
 void OverviewSample::startFrame()
 {
+    _server.receive();
+    _client.receive();
     _viewStack.process();
 }
 
 
 void OverviewSample::simulate(double systemTime, double dt)
 {
-    _server.receive();
-    _client.receive();
-    
     _timeUntilActionFrame -= dt;
     while (_timeUntilActionFrame < 0)
     {
@@ -270,50 +324,6 @@ void OverviewSample::simulate(double systemTime, double dt)
     _viewStack.simulate(systemTime, dt);
 
     _scene->simulate(dt);
-    
-    _client.send(_server.address(), kAlphaRequest,
-        [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
-            assert(cid == kAlphaRequest);
-            /*
-            printf("Client gets server reply for Alpha (%u)\n", seqId);
-            */
-        });
-        
-    BetaPayload beta;
-    beta.u = 12;
-    beta.x = systemTime;
-    beta.y = 4.0f - dt;
-    beta.z = dt;
-    
-    if (rand() % 3) {
-        _client.send(_server.address(), kBetaRequest,
-            ckmsg::Payload(reinterpret_cast<uint8_t*>(&beta), sizeof(beta)),
-            [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
-                assert(cid == kBetaRequest);
-                /*
-                const BetaPayload* beta = reinterpret_cast<const BetaPayload*>(payload->data());
-                printf("Client gets server reply for Beta (%u), %f\n", seqId, beta->z);
-                */
-            });
-    }
-    else {
-        GammaPayload gamma;
-        gamma.beta = beta;
-        gamma.beta.x += dt;
-        strncpy(gamma.name, "boolean", sizeof(gamma.name));
-        _client.send(_server.address(), kGammaRequest,
-            ckmsg::Payload(reinterpret_cast<uint8_t*>(&gamma), sizeof(gamma)),
-            [this](uint32_t seqId, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
-                assert(cid == kGammaRequest);
-                /*
-                const GammaPayload* gamma = reinterpret_cast<const GammaPayload*>(payload->data());
-                printf("Client gets server reply for Gamma (%u), payload=%s\n", seqId, gamma->name);
-                */
-            });
-    }
-    
-    _client.transmit();
-    _server.transmit();
 }
 
 void PrepareEntityForRender::operator()
@@ -328,9 +338,15 @@ void OverviewSample::endFrame(double dt)
 {
     _viewStack.layout();
     _viewStack.frameUpdate(dt);
+ 
     _renderGraph->prepare(dt, PrepareEntityForRender());
     
-    _entityStoreDictionary.gc();
+    _scheduler.update(dt * 1000);
+    
+    _entityDatabase.gc();
+    
+    _client.transmit();
+    _server.transmit();
 }
 
 
@@ -339,8 +355,12 @@ void OverviewSample::render(cinek::gfx::NodeRenderer& renderer)
     renderer(_renderGraph->root());
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
+//
 //  Main
+//
+////////////////////////////////////////////////////////////////////////////////
 
 enum
 {

@@ -21,14 +21,17 @@ class ViewAPI
 {
 public:
     ViewAPI();
-    ViewAPI(EntityUtility& entityUtil, ViewStack& viewStack);
+    ViewAPI(ViewStack& viewStack,
+        MessageClientSender& client,
+        EntityDatabase& entityUtil);
     
     EntityService entityService() const;
     ViewService viewService(ViewController& controller) const;
     
 private:
-    EntityUtility* _entityUtility;
+    EntityDatabase* _entityProxy;
     ViewStack* _viewStack;
+    MessageClientSender* _sender;
 };
 
 

@@ -13,24 +13,29 @@
 #include <ckentity/entity.h>
 #include <cinek/types.hpp>
 
-#include <array>
-
 namespace cinek {
     namespace ove {
 
+        class EntityDatabase;
+        class EntityComponentFactory;
+        class EntityService;
+        
         class ViewStack;
         class ViewController;
-        
-        class EntityStoreDictionary;
-        class EntityUtility;
-        
         class ViewService;
-        class EntityService;
         
         class ViewAPI;
 
-        class Asset;
-        class AssetLoader;
+        class AssetManifest;
+        class AssetManifestLoader;
+        class AssetManfiestFactory;
+        
+        enum class AssetType
+        {
+            kNone,
+            kTexture,
+            kModel
+        };
 
     } /* namespace ove */
 } /* namespace cinek */

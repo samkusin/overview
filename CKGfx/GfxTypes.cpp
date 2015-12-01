@@ -69,6 +69,12 @@ namespace cinek {
     template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>::release();
     template class ManagedObjectPoolBase<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>;
 
+    template class ManagedObjectPool<gfx::NodeGraph, void>;
+    template void ManagedHandle<gfx::NodeGraph, ManagedObjectPool<gfx::NodeGraph, void>>::acquire();
+    template void ManagedHandle<gfx::NodeGraph, ManagedObjectPool<gfx::NodeGraph, void>>::release();
+    template class ManagedObjectPoolBase<gfx::NodeGraph, ManagedObjectPool<gfx::NodeGraph, void>>;
+
+
     namespace gfx {
     
     const Vector4 Vector4::kUnitX = { 1.0f, 0.0f, 0.0f, 0.0f };

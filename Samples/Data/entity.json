@@ -2,12 +2,11 @@
     "entity" : {
         "test_bot" : {
             "renderable" : {
-                "source" : "character.json"
+                "model" : "character"
             },
             "rigidbody" : {
                 "class" : "dynamic",
-                "hull" : "cylinder",
-                "proxy" : "character.json",
+                "shape" : "cylinder",
                 "mass" : 70.0
             }
         }

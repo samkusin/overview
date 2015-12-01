@@ -29,7 +29,7 @@ void GameView::onViewUnload()
 
 void GameView::onViewAdded()
 {
-    _viewAPI->entityService().addDefinitions("main", "entity.json");
+
 }
 
 void GameView::onViewRemoved()

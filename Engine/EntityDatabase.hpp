@@ -1,28 +1,46 @@
 //
-//  EntityStoreDictionary.hpp
+//  EntityDatabase.hpp
 //  EnginePrototype
 //
 //  Created by Samir Sinha on 11/11/15.
 //
 //
 
-#ifndef Overview_EntityStoreDictionary_hpp
-#define Overview_EntityStoreDictionary_hpp
+#ifndef Overview_entityDatabase_hpp
+#define Overview_entityDatabase_hpp
 
 #include "EntityTypes.hpp"
 
 #include <ckentity/entitystore.hpp>
+#include <cinek/allocator.hpp>
+#include <cinek/task.hpp>
+#include <unordered_map>
 #include <vector>
 
 namespace cinek {
     namespace ove {
 
+class EntityComponentFactory
+{
+public:
+    virtual ~EntityComponentFactory() {}
+    
+    virtual void onCustomComponentCreateFn(Entity entity,
+                        EntityStore& store,
+                        const std::string& componentName,
+                        const cinek::JsonValue& definitions,
+                        const cinek::JsonValue& data) = 0;
+    virtual void onCustomComponentDestroyFn(EntityDataTable& table,
+                        ComponentRowIndex compRowIndex) = 0;
+};
+
+
 /**
- *  @class EntityStoreDictionary
+ *  @class EntityDatabase
  *  @brief Defines a collection of EntityStore objects mapped to the entity
  *         context.
  *  
- *  The EntityStoreDictionary defines a collection of EntityStore objects.
+ *  The EntityDatabase defines a collection of EntityStore objects.
  *  These stores are mapped to an index value into a std vector.  Of special
  *  note, this index is also the Entity context.  So it's possible to have
  *  various entity stores and maintain unique entity IDs per dictionary.
@@ -38,11 +56,12 @@ namespace cinek {
  *
  *  The goal of this approach is to keep these sets together in memory.
  *  Applications should manage what entities go to which stores.  The
- *  EntityStoreDictionary helps applications achieve this goal.
+ *  EntityDatabase helps applications achieve this goal.
  */
-class EntityStoreDictionary
+
+class EntityDatabase
 {
-    CK_CLASS_NON_COPYABLE(EntityStoreDictionary);
+    CK_CLASS_NON_COPYABLE(EntityDatabase);
     
 public:
     /**
@@ -56,11 +75,12 @@ public:
      *                  are more initializers than this limit, then initializers
      *                  beyond the limit are ignored.
      */
-    EntityStoreDictionary(const std::vector<EntityStore::InitParams>& stores);
+    EntityDatabase(const std::vector<EntityStore::InitParams>& stores,
+        EntityComponentFactory& provider);
     
-    EntityStoreDictionary() = default;
-    EntityStoreDictionary(EntityStoreDictionary&& other);
-    EntityStoreDictionary& operator=(EntityStoreDictionary&& other);
+    EntityDatabase() = default;
+    EntityDatabase(EntityDatabase&& other);
+    EntityDatabase& operator=(EntityDatabase&& other);
     /** 
      *  @return The number of stores in the dictionary 
      */
@@ -80,15 +100,44 @@ public:
      */
     EntityStore& getStore(EntityContextType index);
     /**
+     *  Creates an entity from a definition template.
+     *
+     *  @param  context The entity's context if applicable
+     *  @param  ns      The namespace
+     *  @param  templateName    The name of the template
+     *  @return The Entity ID created
+     */
+    Entity createEntity(EntityContextType context, const std::string& ns,
+                        const std::string& templateName);
+    /**
+     *  Components are destroyed during the garbage collection phase.   This
+     *  method flags the entity for destruction.
+     *
+     *  @param  The entity to destroy.
+     */
+    void destroyEntity(Entity entity);
+    /**
      *  Runs garbage collection pass on all EntityStores
      */
     void gc();
+    /**
+     *  Adds the supplied manifest, mapping it to a namespace.
+     *
+     *  @param  manifest    The manifest object
+     */
+    void setManifest(unique_ptr<AssetManifest>&& manifest);
+    /**
+     *  @param  name        The manifest to clear
+     */
+    void clearManifest(const std::string& name);
     
 private:
     std::vector<EntityStore> _stores;
+    std::unordered_map<std::string, unique_ptr<AssetManifest>> _manifests;
+    EntityComponentFactory* _factory;
 };
 
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* Overview_EntityStoreDictionary_hpp */
+#endif /* Overview_entityDatabase_hpp */

@@ -7,14 +7,16 @@
 //
 
 #include "EntityService.hpp"
+#include "Engine/EntityDatabase.hpp"
+#include "Engine/Messages/Entity.hpp"
 
-#include "Engine/EntityUtility.hpp"
-#include "Engine/Debug.hpp"
+#include "Debug.hpp"
 
 #include <ckentity/entitystore.hpp>
 #include <cinek/filestreambuf.hpp>
 #include <ckjson/json.hpp>
 #include <ckjson/jsonstreambuf.hpp>
+#include <ckmsg/client.hpp>
 
 namespace cinek {
     namespace ove {
@@ -22,8 +24,8 @@ namespace cinek {
 Entity EntityService::createEntity
 (
     EntityContextType storeId,
-    const char* ns,
-    const char* templateName
+    const std::string& ns,
+    const std::string& templateName
 )
 {
     return _context->createEntity(storeId, ns, templateName);
@@ -50,34 +52,26 @@ bool EntityService::isEntityValid(Entity e) const
     return _context->getStore(cinek_entity_context(e)).valid(e);
 }
 
-void EntityService::addDefinitions
+void EntityService::loadDefinitions
 (
-    const char* ns,
-    const char* definitionsFilePath
+    const std::string& name,
+    std::function<void(const EntityLoadDefinitionsResponse&)> cb
 )
 {
-    FileStreamBuf streamBuf(definitionsFilePath);
-    
-    if (!streamBuf) {
-        OVENGINE_LOG_ERROR("EntityService.addDefinitions - "
-                           "Failed to load %s", definitionsFilePath);
-        return;
-    }
-    
-    RapidJsonStdStreamBuf jsonStreamBuf(streamBuf);
-    JsonDocument document(nullptr, 64*1024);
-    if (document.ParseStream<0>(jsonStreamBuf).HasParseError()) {
-        OVENGINE_LOG_ERROR("EntityService.addDefinitions - "
-                           "Failed to parse %s", definitionsFilePath);
-        return;
-    }
-    
-    _context->addDefinitions(ns, document);
+    EntityLoadDefinitionsRequest req;
+    strncpy(req.name, name.c_str(), sizeof(req.name));
+    _sender->client->send(_sender->server,
+        kMsgEntityLoadDefinitions,
+        makePayloadFromData(req),
+        [cb](uint32_t, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
+            CK_ASSERT(cid==kMsgEntityLoadDefinitions);
+            cb(*reinterpret_cast<const EntityLoadDefinitionsResponse*>(payload->data()));
+        });
 }
 
-void EntityService::resetDefinitions()
+void EntityService::clearDefinitions(const std::string& path)
 {
-    _context->resetDefinitions();
+    _context->clearManifest(path);
 }
 
 template<typename Component>

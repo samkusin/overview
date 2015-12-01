@@ -25,23 +25,6 @@ struct RenderableComponent;
 struct MeshRenderableComponent;
 struct TransformComponent;
 struct UpdateTransformComponent;
-    
-    
-enum class ComponentFactoryResult
-{
-    kSuccess,       ///< Component creation success
-    kFailed,        ///< Component creation error
-    kPassthrough    ///< Factory method did not apply to the supplied component
-};
-
-using CustomComponentCreateFn =
-    std::function<void(Entity entity,
-                       const cinek::JsonValue& definitions,
-                       const char* componentName,
-                       const cinek::JsonValue& data)>;
-using CustomComponentDestroyFn =
-    std::function<void(EntityDataTable& table, ComponentRowIndex rowIndex)>;
-
 
 enum
 {

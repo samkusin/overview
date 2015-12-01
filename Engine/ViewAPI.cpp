@@ -12,29 +12,32 @@ namespace cinek {
     namespace ove {
 
 ViewAPI::ViewAPI() :
-    _entityUtility(nullptr),
-    _viewStack(nullptr)
+    _entityProxy(nullptr),
+    _viewStack(nullptr),
+    _sender(nullptr)
 {
 }
 
 ViewAPI::ViewAPI
 (
-    EntityUtility& entityUtil,
-    ViewStack& viewStack
+    ViewStack& viewStack,
+    MessageClientSender& sender,
+    EntityDatabase& entityUtil
 ) :
-    _entityUtility(&entityUtil),
-    _viewStack(&viewStack)
+    _entityProxy(&entityUtil),
+    _viewStack(&viewStack),
+    _sender(&sender)
 {
 }
 
 EntityService ViewAPI::entityService() const
 {
-    return EntityService(_entityUtility);
+    return EntityService(*_entityProxy, *_sender);
 }
 
 ViewService ViewAPI::viewService(ViewController& controller) const
 {
-    return ViewService(_viewStack, &controller);
+    return ViewService(*_viewStack, controller);
 }
  
 

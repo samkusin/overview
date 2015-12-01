@@ -11,12 +11,14 @@
 
 #include "Engine/EngineTypes.hpp"
 
+#include <string>
+
 namespace cinek { namespace ove {
 
 class ViewService
 {
 public:
-    ViewService(ViewStack* context, ViewController* owner);
+    ViewService(ViewStack& context, ViewController& owner);
     ViewService() = default;
 
     void load(const std::string& name);
@@ -28,10 +30,12 @@ public:
 private:
     ViewStack* _context = nullptr;
     ViewController* _owner = nullptr;
+
 };
 
-inline ViewService::ViewService(ViewStack* context, ViewController* owner) :
-    _context(context)
+inline ViewService::ViewService(ViewStack& context, ViewController& owner) :
+    _context(&context),
+    _owner(&owner)
 {
 }
 

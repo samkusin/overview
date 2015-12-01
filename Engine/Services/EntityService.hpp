@@ -11,6 +11,7 @@
 
 #include "Engine/EngineTypes.hpp"
 #include "Engine/EntityTypes.hpp"
+#include "Engine/Messages/Entity.hpp"
 
 #include <ckentity/entitygroupmap.hpp>
 #include <ckentity/entitydatatable.hpp>
@@ -20,7 +21,7 @@ namespace cinek { namespace ove {
 class EntityService
 {
 public:
-    EntityService(EntityUtility* context);
+    EntityService(EntityDatabase& context, MessageClientSender& sender);
     EntityService() = default;
 
     /**
@@ -31,8 +32,8 @@ public:
      *  @param  templateName The template definition name
      *  @return A valid Entity or 0 if the template does not exist
      */
-    Entity createEntity(EntityContextType storeId, const char* ns,
-                        const char* templateName);
+    Entity createEntity(EntityContextType storeId, const std::string& ns,
+                        const std::string& templateName);
     /**
      *  Retrieve a component table by explicit type Component.
      *
@@ -55,15 +56,15 @@ public:
      *  Loads template defintions from a file path.  Typically done during
      *  level load or initialization.
      *
-     *  @param  ns          The namespace for the definition
-     *  @param definitionsFilePath Where to load the definitions from
+     *  @param name Where to load the definitions from
+     *  @param cb   The callback executed on completion with result 
      */
-    void addDefinitions(const char* ns, const char* definitionsFilePath);
+    void loadDefinitions(const std::string& name,
+                         std::function<void(const EntityLoadDefinitionsResponse&)> cb);
     /**
-     *  Resets template definitions to empty.   Use with care - typically
-     *  during initialization or level loading events.
+     *  Clears the specified definitions
      */
-    void resetDefinitions();
+    void clearDefinitions(const std::string& name);
     /**
      *  Creates a component by explicit type that is attached to the specified
      *  entity.
@@ -91,12 +92,18 @@ public:
     template<typename Component> Component* getData(Entity entity);
     
 private:
-    EntityUtility* _context = nullptr;
+    EntityDatabase* _context = nullptr;
+    MessageClientSender* _sender = nullptr;
 };
 
 
-inline EntityService::EntityService(EntityUtility* context) :
-    _context(context)
+inline EntityService::EntityService
+(
+    EntityDatabase& context,
+    MessageClientSender& sender
+) :
+    _context(&context),
+    _sender(&sender)
 {
 }
     

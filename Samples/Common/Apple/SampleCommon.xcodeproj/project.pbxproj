@@ -14,6 +14,11 @@
 		370B59A71BFBAFC5009062FA /* buffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A61BFBAFC5009062FA /* buffer.hpp */; };
 		377ECCAF1C0507D6002040D7 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCAD1C0507D6002040D7 /* file.c */; };
 		377ECCB01C0507D6002040D7 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCAE1C0507D6002040D7 /* file.h */; };
+		377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCBE1C07AB75002040D7 /* taskscheduler.cpp */; };
+		377ECCC11C07AB75002040D7 /* taskscheduler.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCBF1C07AB75002040D7 /* taskscheduler.hpp */; };
+		377ECCC41C07AD69002040D7 /* task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCC21C07AD69002040D7 /* task.cpp */; };
+		377ECCC71C07ADFF002040D7 /* intrusive_list.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCC61C07ADFF002040D7 /* intrusive_list.hpp */; };
+		377ECCE31C0BBC28002040D7 /* task.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCE21C0BBC28002040D7 /* task.hpp */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
 		37E636061BF010270081E59E /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636051BF010270081E59E /* Common.cpp */; };
 		37E636081BF010F70081E59E /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636071BF010F70081E59E /* Common.hpp */; };
@@ -189,6 +194,12 @@
 		370B59A61BFBAFC5009062FA /* buffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buffer.hpp; path = ../../../CKLibs/ckmsg/buffer.hpp; sourceTree = "<group>"; };
 		377ECCAD1C0507D6002040D7 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ckio/file.c; sourceTree = "<group>"; };
 		377ECCAE1C0507D6002040D7 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = ckio/file.h; sourceTree = "<group>"; };
+		377ECCBA1C06A9A0002040D7 /* managed_dictionary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = managed_dictionary.hpp; sourceTree = "<group>"; };
+		377ECCBE1C07AB75002040D7 /* taskscheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = taskscheduler.cpp; sourceTree = "<group>"; };
+		377ECCBF1C07AB75002040D7 /* taskscheduler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = taskscheduler.hpp; sourceTree = "<group>"; };
+		377ECCC21C07AD69002040D7 /* task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = task.cpp; sourceTree = "<group>"; };
+		377ECCC61C07ADFF002040D7 /* intrusive_list.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = intrusive_list.hpp; sourceTree = "<group>"; };
+		377ECCE21C0BBC28002040D7 /* task.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = task.hpp; sourceTree = "<group>"; };
 		37E635F41BF00EA40081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSampleCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E636001BF00F650081E59E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		37E636021BF00F840081E59E /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
@@ -413,6 +424,7 @@
 		37E636181BF024330081E59E /* cinek */ = {
 			isa = PBXGroup;
 			children = (
+				377ECCC61C07ADFF002040D7 /* intrusive_list.hpp */,
 				37E636191BF024330081E59E /* allocator.cpp */,
 				37E6361A1BF024330081E59E /* allocator.hpp */,
 				37E6361B1BF024330081E59E /* buffer.hpp */,
@@ -437,7 +449,12 @@
 				37E6362E1BF024330081E59E /* string.hpp */,
 				37E636341BF024330081E59E /* types.cpp */,
 				37E636351BF024330081E59E /* types.hpp */,
+				377ECCC21C07AD69002040D7 /* task.cpp */,
+				377ECCE21C0BBC28002040D7 /* task.hpp */,
+				377ECCBE1C07AB75002040D7 /* taskscheduler.cpp */,
+				377ECCBF1C07AB75002040D7 /* taskscheduler.hpp */,
 				37E636361BF024330081E59E /* vector.hpp */,
+				377ECCBA1C06A9A0002040D7 /* managed_dictionary.hpp */,
 			);
 			path = cinek;
 			sourceTree = "<group>";
@@ -561,8 +578,8 @@
 				37E636D71BF0246D0081E59E /* Camera.hpp */,
 				37E636D91BF0246D0081E59E /* Context.hpp */,
 				37E636D81BF0246D0081E59E /* Context.cpp */,
-				37E636E81BF0246D0081E59E /* GfxTypes.cpp */,
 				37E636E91BF0246D0081E59E /* GfxTypes.hpp */,
+				37E636E81BF0246D0081E59E /* GfxTypes.cpp */,
 				37E636EA1BF0246D0081E59E /* Light.hpp */,
 				37E636EB1BF0246D0081E59E /* Material.hpp */,
 				37E636EC1BF0246D0081E59E /* Mesh.cpp */,
@@ -656,6 +673,7 @@
 				37E636A41BF024330081E59E /* encodings.h in Headers */,
 				37E636B01BF024330081E59E /* prettywriter.h in Headers */,
 				37E637111BF0246D0081E59E /* stb_image.h in Headers */,
+				377ECCE31C0BBC28002040D7 /* task.hpp in Headers */,
 				37E636B31BF024330081E59E /* stringbuffer.h in Headers */,
 				37E636A91BF024330081E59E /* filewritestream.h in Headers */,
 				370B59A11BFA8A96009062FA /* messenger.hpp in Headers */,
@@ -706,9 +724,11 @@
 				37E6368C1BF024330081E59E /* datarowset.hpp in Headers */,
 				37E6370E1BF0246D0081E59E /* nanovg.h in Headers */,
 				37E636AB1BF024330081E59E /* pow10.h in Headers */,
+				377ECCC11C07AB75002040D7 /* taskscheduler.hpp in Headers */,
 				37E637261BF0246D0081E59E /* VertexTypes.hpp in Headers */,
 				37E6368A1BF024330081E59E /* vector.hpp in Headers */,
 				37E6370B1BF0246D0081E59E /* fontstash.h in Headers */,
+				377ECCC71C07ADFF002040D7 /* intrusive_list.hpp in Headers */,
 				37E637211BF0246D0081E59E /* ShaderLibrary.hpp in Headers */,
 				37E637141BF0246D0081E59E /* Light.hpp in Headers */,
 				37E636C61BF024600081E59E /* blendish.h in Headers */,
@@ -791,6 +811,7 @@
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
 				37E637101BF0246D0081E59E /* stb.cpp in Sources */,
 				377ECCAF1C0507D6002040D7 /* file.c in Sources */,
+				377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */,
 				37E637091BF0246D0081E59E /* Context.cpp in Sources */,
 				37E637221BF0246D0081E59E /* Texture.cpp in Sources */,
 				37E636801BF024330081E59E /* memorystack.cpp in Sources */,
@@ -807,6 +828,7 @@
 				37E6371C1BF0246D0081E59E /* NodeGraph.cpp in Sources */,
 				37E6369B1BF024330081E59E /* json.cpp in Sources */,
 				37E6370D1BF0246D0081E59E /* nanovg.cpp in Sources */,
+				377ECCC41C07AD69002040D7 /* task.cpp in Sources */,
 				37E6367D1BF024330081E59E /* filestreambuf.cpp in Sources */,
 				37E637181BF0246D0081E59E /* ModelJsonSerializer.cpp in Sources */,
 				37E636061BF010270081E59E /* Common.cpp in Sources */,

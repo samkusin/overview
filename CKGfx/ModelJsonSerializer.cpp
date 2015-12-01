@@ -399,7 +399,7 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
             const char* texname = textures.Begin()->GetString();
             auto texhandle = context.findTexture(texname);
             if (!texhandle) {
-                texhandle = context.loadTexture(texname, texname);
+                texhandle = context.loadTexture(texname);
             }
             material.diffuseTex = texhandle;
         }

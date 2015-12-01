@@ -39,6 +39,7 @@ using AnimationSetPool = ManagedObjectPool<AnimationSet, void>;
 using AnimationControllerPool = ManagedObjectPool<AnimationController, void>;
 using LightPool = ManagedObjectPool<Light, void>;
 using NodePool = ManagedObjectPool<Node, NodeGraph*>;
+using NodeGraphPool = ManagedObjectPool<NodeGraph, void>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
 using TextureHandle = ManagedHandle<Texture, TexturePool>;
@@ -47,6 +48,7 @@ using AnimationSetHandle = ManagedHandle<AnimationSet, AnimationSetPool>;
 using AnimationControllerHandle = ManagedHandle<AnimationController, AnimationControllerPool>;
 using LightHandle = ManagedHandle<Light, LightPool>;
 using NodeHandle = ManagedHandle<Node, NodePool>;
+using NodeGraphHandle = ManagedHandle<NodeGraph, NodeGraphPool>;
 
 class ShaderLibrary;
 
