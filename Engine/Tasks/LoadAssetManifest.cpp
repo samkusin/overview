@@ -56,6 +56,8 @@ void LoadAssetManifest::onFileLoaded()
 
 void LoadAssetManifest::onUpdate(uint32_t deltaTimeMs)
 {
+    LoadFile::onUpdate(deltaTimeMs);
+
     if (_manifest) {
         _loader.update();
     }
@@ -66,6 +68,8 @@ void LoadAssetManifest::onCancel()
     if (_manifest) {
         _loader.cancel();
     }
+
+    LoadFile::onCancel();
 }
  
     }  /* namespace ove */

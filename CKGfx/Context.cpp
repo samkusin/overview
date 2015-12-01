@@ -22,7 +22,8 @@ Context::Context(const ResourceInitParams& params) :
     _materials(params.numMaterials),
     _textures(params.numTextures),
     _animationSets(params.numAnimations),
-    _lights(params.numLights)
+    _lights(params.numLights),
+    _models(params.numModels)
 {
 }
 

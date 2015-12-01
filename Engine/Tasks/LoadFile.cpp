@@ -68,6 +68,7 @@ void LoadFile::onUpdate(uint32_t )
     if (_file) {
         ckio_status status = ckio_get_status(_file, nullptr);
         if (status == kCKIO_Success) {
+            close();
             onFileLoaded();
         }
         else if (status != kCKIO_Pending) {

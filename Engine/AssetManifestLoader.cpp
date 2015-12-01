@@ -58,8 +58,10 @@ auto AssetManifestLoader::State::increment() -> State&
         {
         case kArray:
             ++iterator();
+            break;
         case kMember:
             ++memberIterator();
+            break;
         default:
             break;
         }
@@ -199,46 +201,45 @@ void AssetManifestLoader::cancel()
 }
 
 void AssetManifestLoader::update()
-{
-    if (_stack.empty() || _requestId > 0)
-        return;
-    
-    auto& state = _stack.back();
-    
-    if (state.done()) {
-        _stack.pop_back();
-        if (_stack.empty()) {
-            end(LoadResult::kSuccess);
-        }
-    }
-    else {
-        if (state.classType() == State::kMember) {
-            auto member = state.currentMember();
-            const char* field = member->name.GetString();
-            auto valueType = member->value.GetType();
-            
-            if (!strcmp(field,"textures") &&
-                 valueType == rapidjson::kArrayType) {
-                _stack.emplace_back(AssetType::kTexture,
-                        member->value.Begin(), member->value.End());
-            }
-            else if (!strcmp(field, "model") &&
-                      valueType == rapidjson::kStringType) {
-                requestAssetLoad(AssetType::kModel, member->value.GetString());
-            }
-            else if (valueType == rapidjson::kObjectType) {
-                _stack.emplace_back(AssetType::kNone,
-                        member->value.MemberBegin(), member->value.MemberEnd());
+{    
+    while (!_stack.empty() && !_requestId) {
+        auto& state = _stack.back();
+        
+        if (state.done()) {
+            _stack.pop_back();
+            if (_stack.empty()) {
+                end(LoadResult::kSuccess);
             }
         }
         else {
-            auto value = state.currentValue();
-            if (state.assetType() == AssetType::kTexture) {
-                requestAssetLoad(state.assetType(), value->GetString());
+            if (state.classType() == State::kMember) {
+                auto member = state.currentMember();
+                const char* field = member->name.GetString();
+                auto valueType = member->value.GetType();
+                
+                if (!strcmp(field,"textures") &&
+                     valueType == rapidjson::kArrayType) {
+                    _stack.emplace_back(AssetType::kTexture,
+                            member->value.Begin(), member->value.End());
+                }
+                else if (!strcmp(field, "model") &&
+                          valueType == rapidjson::kStringType) {
+                    requestAssetLoad(AssetType::kModel, member->value.GetString());
+                }
+                else if (valueType == rapidjson::kObjectType) {
+                    _stack.emplace_back(AssetType::kNone,
+                            member->value.MemberBegin(), member->value.MemberEnd());
+                }
             }
+            else {
+                auto value = state.currentValue();
+                if (state.assetType() == AssetType::kTexture) {
+                    requestAssetLoad(state.assetType(), value->GetString());
+                }
+            }
+        
+            state.increment();
         }
-    
-        state.increment();
     }
 }
 

@@ -75,11 +75,20 @@ auto ResourceFactory::onAssetManifestRequest
                     requestFinished(t.id(), task.name(), state);
                 })
             );
+
         }
         break;
     case AssetType::kNone:
         break;
+    default:
+        CK_ASSERT(false);
+        break;
     };
+    
+    if (reqId > 0) {
+        _requests.emplace_back(reqId, std::move(cb));
+    }
+    
     return reqId;
 }
 
