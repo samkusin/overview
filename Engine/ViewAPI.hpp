@@ -13,25 +13,30 @@
 
 #include "Services/ViewService.hpp"
 #include "Services/EntityService.hpp"
+#include "Services/SceneService.hpp"
 
 namespace cinek {
     namespace ove {
-
+    
+template<typename SceneType, typename SceneService=SceneService<SceneType>>
 class ViewAPI
 {
 public:
     ViewAPI();
     ViewAPI(ViewStack& viewStack,
         MessageClientSender& client,
-        EntityDatabase& entityUtil);
+        EntityDatabase& entityUtil,
+        SceneType& scene);
     
     EntityService entityService() const;
     ViewService viewService(ViewController& controller) const;
+    SceneService sceneService() const;
     
 private:
     EntityDatabase* _entityProxy;
     ViewStack* _viewStack;
     MessageClientSender* _sender;
+    SceneType* _sceneType;
 };
 
 

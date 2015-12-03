@@ -72,11 +72,13 @@ struct ModelBuilderFromJSONFn
     (
         Context& context,
         std::vector<std::pair<MeshHandle, MaterialHandle>>& meshes,
-        std::vector<LightHandle>& lights
+        std::vector<LightHandle>& lights,
+        const std::vector<std::string>& nodeTypesExcluded
     ) :
         _context(&context),
         _meshes(&meshes),
-        _lights(&lights)
+        _lights(&lights),
+        _nodeTypesExcluded(&nodeTypesExcluded)
     {
     }
 
@@ -91,11 +93,24 @@ private:
     Context* _context;
     std::vector<std::pair<MeshHandle, MaterialHandle>>* _meshes;
     std::vector<LightHandle>* _lights;
+    const std::vector<std::string>* _nodeTypesExcluded;
 
     NodeHandle build(NodeGraph& model, const JsonValue& node)
     {
         NodeHandle thisNode;
-        
+
+        //  filter by node types if available
+        if (!_nodeTypesExcluded->empty()) {
+            auto typeNodeIt = node.FindMember("type");
+            if (typeNodeIt != node.MemberEnd()) {
+                const char* type = typeNodeIt->value.GetString();
+                for (auto& excludedType : *_nodeTypesExcluded) {
+                    if (excludedType == type)
+                        return nullptr;
+                }
+            }
+        }
+
         //  create our leaf child element nodes (meshes for example)
         if (node.HasMember("meshes")) {
             const JsonValue& elements = node["meshes"];
@@ -140,7 +155,10 @@ private:
             if (children.IsArray() && !children.Empty()) {
 
                 for (auto it = children.Begin(); it != children.End(); ++it) {
-                    model.addChildNodeToNode(build(model, *it), thisNode);
+                    NodeHandle child = build(model, *it);
+                    if (child) {
+                        model.addChildNodeToNode(child, thisNode);
+                    }
                 }
             }
         }
@@ -154,7 +172,8 @@ NodeGraph loadNodeGraphFromJSON
 (
     Context& context,
     const JsonValue& root,
-    const NodeElementCounts& extra
+    const NodeElementCounts& extra,
+    const std::vector<std::string>& nodeTypeExcludeFilter
 )
 {
     NodeGraph model;
@@ -268,7 +287,8 @@ NodeGraph loadNodeGraphFromJSON
         }
     }
     
-    ModelBuilderFromJSONFn buildFn(context, meshesByIndex, lightsByIndex);
+    ModelBuilderFromJSONFn buildFn(context, meshesByIndex, lightsByIndex,
+                                   nodeTypeExcludeFilter);
     
     buildFn(model, modelNode);
     

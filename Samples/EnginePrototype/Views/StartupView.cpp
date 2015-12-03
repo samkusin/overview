@@ -13,7 +13,7 @@
 namespace cinek {
     namespace ove {
 
-StartupView::StartupView(ViewAPI& api) :
+StartupView::StartupView(GameViewAPI& api) :
     _viewAPI(&api)
 {
     

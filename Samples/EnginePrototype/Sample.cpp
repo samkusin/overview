@@ -48,10 +48,12 @@
 
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Messages/Entity.hpp"
+#include "Engine/Messages/Scene.hpp"
 
 #include "Engine/Scenes/Scene.inl"
 #include "Engine/Scenes/BulletPhysicsScene.hpp"
-#include "Engine/ViewAPI.hpp"
+#include "Engine/ViewAPI.inl"
+#include "Engine/Services/SceneService.inl"
 #include "Engine/ViewStack.hpp"
 #include "Engine/EntityDatabase.hpp"
 
@@ -64,10 +66,9 @@
 #include <ckmsg/server.hpp>
 #include <ckmsg/client.hpp>
 
-
 template class cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
-
-using GameScene = cinek::ove::Scene<cinek::ove::BulletPhysicsScene>;
+template class cinek::ove::SceneService<cinek::ove::GameScene>;
+template class cinek::ove::ViewAPI<cinek::ove::GameScene, cinek::ove::GameSceneService>;
 
 
 /*  The Overview Sample illustrates core engine features and acts as a testbed
@@ -113,7 +114,7 @@ private:
     cinek::ove::MessageClientSender _clientSender;
 
     cinek::TaskScheduler _scheduler;
-    cinek::ove::ViewAPI _viewAPI;
+    cinek::ove::GameViewAPI _viewAPI;
     cinek::ove::ViewStack _viewStack;
     cinek::ove::EntityDatabase _entityDatabase;
     
@@ -125,7 +126,7 @@ private:
     static constexpr double kSecsPerActionFrame = 1/kActionFPS;
     
     double _timeUntilActionFrame;
-    cinek::unique_ptr<GameScene> _scene;
+    cinek::unique_ptr<cinek::ove::GameScene> _scene;
     
     ////////////////////////////////////////////////////////////////////////////
 
@@ -178,6 +179,11 @@ OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
             );
         });
     
+    _server.on(cinek::ove::kMsgSceneLoad,
+        [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* payload) {
+        
+        });
+    
     /*
     _server.on(kAlphaRequest,
         [this](ckmsg::ServerRequestId reqId, const ckmsg::Payload* ) {
@@ -219,9 +225,13 @@ OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
         256
     );
     
-    _scene = cinek::allocate_unique<GameScene>();
+    _scene = cinek::allocate_unique<cinek::ove::GameScene>();
     
-    _viewAPI = std::move(cinek::ove::ViewAPI(_viewStack, _clientSender, _entityDatabase));
+    _viewAPI = std::move(cinek::ove::GameViewAPI(_viewStack,
+                            _clientSender,
+                            _entityDatabase,
+                            *_scene.get())
+                        );
     
     _viewStack.setFactory(
         [this](const std::string& viewName)

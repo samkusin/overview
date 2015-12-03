@@ -17,7 +17,8 @@
 		377ECCE11C0BB028002040D7 /* LoadAssetManifest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCDF1C0BB028002040D7 /* LoadAssetManifest.cpp */; };
 		377ECCE91C0CEB3A002040D7 /* LoadTextureAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCE71C0CEB3A002040D7 /* LoadTextureAsset.cpp */; };
 		377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */; };
-		37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */; };
+		377ECCF41C0FCB30002040D7 /* SceneService.inl in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCF21C0FCB30002040D7 /* SceneService.inl */; };
+		37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.inl in Sources */ = {isa = PBXBuildFile; fileRef = 37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.inl */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
 		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
@@ -80,7 +81,11 @@
 		377ECCE81C0CEB3A002040D7 /* LoadTextureAsset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadTextureAsset.hpp; path = Tasks/LoadTextureAsset.hpp; sourceTree = "<group>"; };
 		377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadFile.cpp; path = Tasks/LoadFile.cpp; sourceTree = "<group>"; };
 		377ECCEB1C0CFA55002040D7 /* LoadFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadFile.hpp; path = Tasks/LoadFile.hpp; sourceTree = "<group>"; };
-		37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewAPI.cpp; sourceTree = "<group>"; };
+		377ECCF11C0FC80F002040D7 /* Scene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = Messages/Scene.hpp; sourceTree = "<group>"; };
+		377ECCF21C0FCB30002040D7 /* SceneService.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SceneService.inl; sourceTree = "<group>"; };
+		377ECCF31C0FCB30002040D7 /* SceneService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SceneService.hpp; sourceTree = "<group>"; };
+		377ECCF51C0FD4E7002040D7 /* GameTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameTypes.hpp; sourceTree = "<group>"; };
+		37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewAPI.inl; sourceTree = "<group>"; };
 		37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewAPI.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -179,6 +184,7 @@
 				377ECCDC1C0AA0A9002040D7 /* Core.hpp */,
 				377ECCDB1C0AA0A9002040D7 /* Core.cpp */,
 				377ECCD91C0A9FAA002040D7 /* Entity.hpp */,
+				377ECCF11C0FC80F002040D7 /* Scene.hpp */,
 			);
 			name = Messages;
 			sourceTree = "<group>";
@@ -256,7 +262,7 @@
 				37E637E01BF119EA0081E59E /* ViewStack.hpp */,
 				37E637DF1BF119EA0081E59E /* ViewStack.cpp */,
 				37B3BCDC1BFE5EFA00870FE5 /* ViewAPI.hpp */,
-				37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.cpp */,
+				37B3BCDB1BFE5EFA00870FE5 /* ViewAPI.inl */,
 				377ECCCE1C09382A002040D7 /* AssetManifestFactory.hpp */,
 				377ECCBC1C078CBB002040D7 /* AssetManifestLoader.hpp */,
 				377ECCBB1C078CBB002040D7 /* AssetManifestLoader.cpp */,
@@ -293,6 +299,8 @@
 		37E637F91BF2ACD90081E59E /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				377ECCF31C0FCB30002040D7 /* SceneService.hpp */,
+				377ECCF21C0FCB30002040D7 /* SceneService.inl */,
 				37E6382D1BF4155F0081E59E /* ViewService.hpp */,
 				37E6382C1BF4155F0081E59E /* ViewService.cpp */,
 				37E6382F1BF416920081E59E /* EntityService.hpp */,
@@ -350,6 +358,7 @@
 				377ECCED1C0D072B002040D7 /* Tasks */,
 				37E638071BF2C8E60081E59E /* Views */,
 				37E636141BF023E40081E59E /* Sample.cpp */,
+				377ECCF51C0FD4E7002040D7 /* GameTypes.hpp */,
 				377ECCCC1C0934E9002040D7 /* ResourceFactory.hpp */,
 				377ECCCB1C0934E9002040D7 /* ResourceFactory.cpp */,
 			);
@@ -412,13 +421,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */,
+				37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.inl in Sources */,
 				37E6382A1BF3FAB90081E59E /* Components.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
 				377ECCBD1C078CBB002040D7 /* AssetManifestLoader.cpp in Sources */,
 				377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */,
 				37E636151BF023E40081E59E /* Sample.cpp in Sources */,
 				37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */,
+				377ECCF41C0FCB30002040D7 /* SceneService.inl in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,
 				377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */,
 				377ECCCD1C0934E9002040D7 /* ResourceFactory.cpp in Sources */,

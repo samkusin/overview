@@ -11,6 +11,8 @@
 
 #include "bullet/btBulletDynamicsCommon.h"
 
+#include <ckjson/jsontypes.hpp>
+
 class btDiscreteDynamicsWorld;
 
 namespace cinek {
@@ -22,7 +24,12 @@ public:
     BulletPhysicsScene();
     ~BulletPhysicsScene();
     
+    //void loadManifest(
+    
     void simulate(double dt);
+    
+private:
+    void buildObjectPools(JsonValue& manifestRoot);
     
 private:
     btDefaultCollisionConfiguration _btCollisionConfig;

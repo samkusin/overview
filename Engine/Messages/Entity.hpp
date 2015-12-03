@@ -10,21 +10,20 @@
 #define Overview_EntityMessages_hpp
 
 #include "Core.hpp"
-#include "Engine/EngineTypes.hpp"
 
 namespace cinek {
     namespace ove {
    
-const ckmsg::ClassId kMsgEntityLoadDefinitions = 0x01000000;
+const ckmsg::ClassId kMsgEntityLoadDefinitions = MakeMessageClassId(kMsgClassEntity, 0x0001);
 
 struct EntityLoadDefinitionsRequest
 {
-    char name[32];
+    char name[64];
 };
 
 struct EntityLoadDefinitionsResponse
 {
-    char name[32];
+    char name[64];
 };
 
     

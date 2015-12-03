@@ -30,6 +30,12 @@ void BulletPhysicsScene::simulate(double dt)
 {
     _btWorld.stepSimulation(dt);
 }
+
+
+void BulletPhysicsScene::buildObjectPools(JsonValue &manifestRoot)
+{
+    //  enumerates objects needed for the scene based on the scene manifest
+}
     
     }   /* namespace ove */
 }   /* namespace cinek */

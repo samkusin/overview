@@ -24,7 +24,8 @@ namespace cinek {
 
 
 NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root,
-    const NodeElementCounts& extra = {});
+    const NodeElementCounts& extra = {},
+    const std::vector<std::string>& nodeTypeExcludeFilter = {});
 Mesh loadMeshFromJSON(Context& context, const JsonValue& root);
 Material loadMaterialFromJSON(Context& context, const JsonValue& root);
 AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root);

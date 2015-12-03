@@ -32,6 +32,8 @@ public:
     Scene();
     ~Scene();
     
+    //void loadManifest(const char* path
+    
     /**
      *  Updates the scene simulations using the specified timestep.  It's best
      *  to run this using a fixed timestep, though this requirement depends

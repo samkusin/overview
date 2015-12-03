@@ -9,8 +9,8 @@
 #ifndef Sample_Engine_StartupView_hpp
 #define Sample_Engine_StartupView_hpp
 
+#include "GameTypes.hpp"
 #include "Engine/ViewController.hpp"
-#include "Engine/EngineTypes.hpp"
 
 namespace cinek {
     namespace ove {
@@ -19,7 +19,7 @@ namespace cinek {
 class StartupView : public ViewController
 {
 public:
-    StartupView(ViewAPI& viewAPI);
+    StartupView(GameViewAPI& viewAPI);
     
     virtual void onViewLoad();
     virtual void onViewUnload();
@@ -33,7 +33,7 @@ public:
     virtual const char* viewId() const;
     
 private:
-    ViewAPI* _viewAPI;
+    GameViewAPI* _viewAPI;
 };
 
 
