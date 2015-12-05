@@ -24,11 +24,14 @@ namespace cinek {
         class ViewController;
         class ViewService;
         
-        class BulletPhysicsScene;
+        class Scene;
+        class SceneFixedBodyHull;
+        class SceneTriangleMeshShape;
+        class SceneBody;
+        class SceneDataContext;
         
-        template<typename SceneImpl> class Scene;
-        template<typename SceneType> class SceneService;
-        template<typename SceneType, typename SceneService> class ViewAPI;
+        class SceneService;
+        class ViewAPI;
         
         class AssetManifest;
         class AssetManifestLoader;

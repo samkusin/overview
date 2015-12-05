@@ -60,6 +60,126 @@ NodeElementCounts& enumerateNodeResourcesFromJSON
     return counts;
 }
 
+/*
+struct NodeJsonLoader
+{
+    gfx::Context* context;
+    const JsonValue* jsonMeshes;
+    const JsonValue* jsonMaterials;
+    const JsonValue* jsonAnimations;
+    const JsonValue* jsonLights;
+    
+    std::vector<std::pair<MeshHandle, MaterialHandle>> meshes;
+    std::vector<LightHandle> lights;
+    
+    NodeHandle createNodeFromJSON(NodeGraph& nodeGraph, const JsonValue& jsonNode);    
+};
+*/
+
+NodeHandle NodeJsonLoader::operator()
+(
+    NodeGraph& nodeGraph,
+    const JsonValue &jsonNode
+)
+{
+    NodeHandle thisNode;
+
+    //  create our leaf child element nodes (meshes for example)
+    if (jsonNode.HasMember("meshes")) {
+        const JsonValue& elements = jsonNode["meshes"];
+        if (elements.IsArray() && !elements.Empty()) {
+            thisNode = nodeGraph.createMeshNode(elements.Size());
+            MeshElement* meshElement = thisNode->mesh();
+            for (auto it = elements.Begin(); it != elements.End(); ++it) {
+                CK_ASSERT(meshElement);
+                if (meshElement) {
+                    int meshIndex = it->GetInt();
+                    if (meshIndex >= meshes.size()) {
+                        meshes.resize(meshIndex+1);
+                    }
+                    //  create new mesh/material entry, which involves
+                    //  parsing the requisite elements if necessary
+                    //
+                    auto& jsonMesh = jsonMeshes->value[meshIndex];
+                    auto& meshPair = meshes.at(meshIndex);
+                    if (!meshPair.second) {
+                        // find or create material
+                        const char* materialName = jsonMesh["material"].GetString();
+                        auto materialHandle = context->findMaterial(materialName);
+                        if (!materialHandle) {
+                            auto jsonMaterialIt = jsonMaterials->value.FindMember(materialName);
+                            if (jsonMaterialIt != jsonMaterials->value.MemberEnd()) {
+                                materialHandle = context->registerMaterial(
+                                    std::move(loadMaterialFromJSON(*context, jsonMaterialIt->value)),
+                                    jsonMaterialIt->name.GetString());
+                            }
+                        }
+                        meshPair.second = materialHandle;
+                    }
+                    if (!meshPair.first) {
+                        meshPair.first =  context->registerMesh(
+                            std::move(loadMeshFromJSON(*context, jsonMesh))
+                        );
+                    }
+                    meshElement->mesh = meshPair.first;
+                    meshElement->material = meshPair.second;
+                    meshElement = meshElement->next;
+                }
+            }
+        }
+    }
+    else if (jsonNode.HasMember("animation")) {
+        const char* animationSetName = jsonNode["animation"].GetString();
+        thisNode = nodeGraph.createArmatureNode();
+        
+        auto animationSetHandle = context->findAnimationSet(animationSetName);
+        if (!animationSetHandle) {
+            auto objIt = jsonAnimations->value.FindMember(animationSetName);
+            auto& jsonObject = objIt->value;
+            const char* name = objIt->name.GetString();
+            animationSetHandle = context->registerAnimationSet(
+                    std::move(loadAnimationSetFromJSON(*context, jsonObject)),
+                    name
+                );
+        }
+
+        thisNode->armature()->animSet = animationSetHandle;
+    }
+    else if (jsonNode.HasMember("light")) {
+        thisNode = nodeGraph.createLightNode();
+        
+        int lightIndex = jsonNode["light"].GetInt();
+        if (lightIndex >= 0) {
+            if (lightIndex >= lights.size()) {
+                lights.resize(lightIndex+1);
+            }
+            //  create new light entry, which involves parsing the requisite elements
+            //  if necessary
+            //
+            auto lightHandle = lights.at(lightIndex);
+            if (!lightHandle) {
+                auto& jsonLight = jsonLights->value[lightIndex];
+                lightHandle = context->registerLight(
+                        std::move(loadLightFromJSON(*context, jsonLight)));
+                lights[lightIndex] = lightHandle;
+            }
+            thisNode->light()->light = lightHandle;
+        }
+    }
+    else {
+        thisNode = nodeGraph.createObjectNode(0);
+    }
+    
+    loadMatrixFromJSON(thisNode->transform(), jsonNode["matrix"]);
+    
+    if (jsonNode.HasMember("obb")) {
+        loadAABBFromJSON(thisNode->obb(), jsonNode["obb"]);
+    }
+
+    return thisNode;
+}
+
+
 
 struct ModelBuilderFromJSONFn
 {
@@ -70,14 +190,10 @@ struct ModelBuilderFromJSONFn
     //
     ModelBuilderFromJSONFn
     (
-        Context& context,
-        std::vector<std::pair<MeshHandle, MaterialHandle>>& meshes,
-        std::vector<LightHandle>& lights,
+        NodeJsonLoader& loader,
         const std::vector<std::string>& nodeTypesExcluded
     ) :
-        _context(&context),
-        _meshes(&meshes),
-        _lights(&lights),
+        _loader(&loader),
         _nodeTypesExcluded(&nodeTypesExcluded)
     {
     }
@@ -90,9 +206,7 @@ struct ModelBuilderFromJSONFn
     }
 
 private:
-    Context* _context;
-    std::vector<std::pair<MeshHandle, MaterialHandle>>* _meshes;
-    std::vector<LightHandle>* _lights;
+    NodeJsonLoader* _loader;
     const std::vector<std::string>* _nodeTypesExcluded;
 
     NodeHandle build(NodeGraph& model, const JsonValue& node)
@@ -110,45 +224,8 @@ private:
                 }
             }
         }
-
-        //  create our leaf child element nodes (meshes for example)
-        if (node.HasMember("meshes")) {
-            const JsonValue& elements = node["meshes"];
-            if (elements.IsArray() && !elements.Empty()) {
-                thisNode = model.createMeshNode(elements.Size());
-                MeshElement* meshElement = thisNode->mesh();
-                for (auto it = elements.Begin(); it != elements.End(); ++it) {
-                    CK_ASSERT(meshElement);
-                    if (meshElement) {
-                        auto& meshPair = _meshes->at(it->GetInt());
-                        meshElement->mesh = meshPair.first;
-                        meshElement->material = meshPair.second;
-                        meshElement = meshElement->next;
-                    }
-                }
-            }
-        }
-        else if (node.HasMember("animation")) {
-            thisNode = model.createArmatureNode();
-            thisNode->armature()->animSet =
-                _context->findAnimationSet(node["animation"].GetString());
         
-        }
-        else if (node.HasMember("light")) {
-            thisNode = model.createLightNode();
-            
-            int lightIndex = node["light"].GetInt();
-            if (lightIndex >= 0) {
-                thisNode->light()->light = _lights->at(lightIndex);
-            }
-        }
-        else {
-            thisNode = model.createObjectNode(0);
-        }
-        loadMatrixFromJSON(thisNode->transform(), node["matrix"]);
-        if (node.HasMember("obb")) {
-            loadAABBFromJSON(thisNode->obb(), node["obb"]);
-        }
+        thisNode = (*_loader)(model, node);
 
         if (node.HasMember("children")) {
             const JsonValue& children = node["children"];
@@ -197,98 +274,19 @@ NodeGraph loadNodeGraphFromJSON
     
     //  Build model's graph by visiting our json nodes.
     //
-    std::vector<std::pair<MeshHandle, MaterialHandle>> meshesByIndex;
-    std::vector<LightHandle> lightsByIndex;
+    NodeJsonLoader loader;
+    loader.context = &context;
+    loader.jsonAnimations = root.FindMember("animations");
+    loader.jsonMeshes = root.FindMember("meshes");
+    loader.jsonMaterials = root.FindMember("materials");
+    loader.jsonLights = root.FindMember("lights");
     
-    //  load animations
-    if (root.HasMember("animations")) {
-        const JsonValue& jsonObjects = root["animations"];
-        
-        for (auto objIt = jsonObjects.MemberBegin();
-             objIt != jsonObjects.MemberEnd();
-             ++objIt) {
-            
-            auto& jsonObject = objIt->value;
-            const char* name = objIt->name.GetString();
-            auto obj = context.findAnimationSet(name);
-            if (!obj) {
-                context.registerAnimationSet(
-                    std::move(loadAnimationSetFromJSON(context, jsonObject)),
-                    name
-                );
-            }
-        }
+    loader.meshes.reserve(loader.jsonMeshes->value.Size());
+    if (loader.jsonLights != root.MemberEnd() && !loader.jsonLights->value.Empty()) {
+        loader.lights.reserve(loader.jsonLights->value.Size());
     }
 
-    //  create materials
-    if (root.HasMember("materials")) {
-        const JsonValue& jsonObjects = root["materials"];
-        
-        for (auto objIt = jsonObjects.MemberBegin();
-             objIt != jsonObjects.MemberEnd();
-             ++objIt) {
-            
-            auto& jsonObject = objIt->value;
-            const char* name = objIt->name.GetString();
-            auto obj = context.findMaterial(name);
-            if (!obj) {
-                context.registerMaterial(
-                    std::move(loadMaterialFromJSON(context, jsonObject)),
-                    name
-                );
-            }
-        }
-    }
-    
-    //  create meshes
-    if (root.HasMember("meshes")) {
-        const JsonValue& jsonObjects = root["meshes"];
-        if (!jsonObjects.Empty()) {
-            meshesByIndex.reserve(jsonObjects.Size());
-            
-            for (auto objIt = jsonObjects.Begin();
-                 objIt != jsonObjects.End();
-                 ++objIt) {
-                auto& jsonObject = *objIt;
-                MaterialHandle material;
-                if (jsonObject.HasMember("material")) {
-                    material = context.findMaterial(jsonObject["material"].GetString());
-                }
-                
-                auto meshHandle = context.registerMesh(
-                    std::move(loadMeshFromJSON(context, jsonObject))
-                );
-            
-                meshesByIndex.emplace_back(
-                    meshHandle,
-                    material
-                );
-            }
-        }
-    }
-    
-    //  create lights
-    if (root.HasMember("lights")) {
-        const JsonValue& jsonObjects = root["lights"];
-        if (!jsonObjects.Empty()) {
-            lightsByIndex.reserve(jsonObjects.Size());
-            
-            for (auto objIt = jsonObjects.Begin();
-                 objIt != jsonObjects.End();
-                 ++objIt) {
-                auto& jsonObject = *objIt;
-                
-                auto lightHandle = context.registerLight(
-                    std::move(loadLightFromJSON(context, jsonObject))
-                );
-                
-                lightsByIndex.emplace_back(lightHandle);
-            }
-        }
-    }
-    
-    ModelBuilderFromJSONFn buildFn(context, meshesByIndex, lightsByIndex,
-                                   nodeTypeExcludeFilter);
+    ModelBuilderFromJSONFn buildFn(loader, nodeTypeExcludeFilter);
     
     buildFn(model, modelNode);
     

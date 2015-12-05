@@ -20,7 +20,7 @@ namespace cinek {
 class GameView : public ViewController
 {
 public:
-    GameView(GameViewAPI& viewAPI);
+    GameView(ViewAPI& viewAPI);
     
     virtual void onViewLoad();
     virtual void onViewUnload();
@@ -34,7 +34,7 @@ public:
     virtual const char* viewId() const;
     
 private:
-    GameViewAPI* _viewAPI;
+    ViewAPI* _viewAPI;
 };
 
 

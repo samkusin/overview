@@ -12,10 +12,15 @@
 
 #include "Engine/EngineTypes.hpp"
 
+#include <cinek/objectpool.hpp>
 #include <cinek/allocator.hpp>
+#include <bullet/btBulletDynamicsCommon.h>
+
+#include <vector>
 
 namespace cinek {
     namespace ove {
+     
 /**
  *  @class  Scene
  *  @brief  A Scene represents the physical world of a simulation.
@@ -25,15 +30,20 @@ namespace cinek {
  *  place entities within a Scene for simulation.
  *
  */
-template<typename Impl>
 class Scene
 {
 public:
     Scene();
     ~Scene();
-    
-    //void loadManifest(const char* path
-    
+
+    /**
+     *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
+     */
+    SceneBody* attachBody(SceneBody* object);
+    /**
+     *  Removes the body from the Scene.
+     */
+    SceneBody* detachBody(Entity entity);
     /**
      *  Updates the scene simulations using the specified timestep.  It's best
      *  to run this using a fixed timestep, though this requirement depends
@@ -44,10 +54,16 @@ public:
     void simulate(double dt);
     
 private:
-    unique_ptr<Impl> _impl;
+    std::vector<SceneBody*> _objects;
+    
+    btDefaultCollisionConfiguration _btCollisionConfig;
+    btCollisionDispatcher _btCollisionDispatcher;
+    btDbvtBroadphase _btBroadphase;
+    btSequentialImpulseConstraintSolver _btConstraintSolver;
+    btDiscreteDynamicsWorld _btWorld;
 };
     
     } /* namespace ove */
 } /* namespace cinek  */
 
-#endif /* Scene_hpp */
+#endif /* Overview_Scene_hpp */

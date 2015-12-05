@@ -18,7 +18,6 @@
 namespace cinek {
     namespace ove {
     
-template<typename SceneType, typename SceneService=SceneService<SceneType>>
 class ViewAPI
 {
 public:
@@ -26,7 +25,7 @@ public:
     ViewAPI(ViewStack& viewStack,
         MessageClientSender& client,
         EntityDatabase& entityUtil,
-        SceneType& scene);
+        Scene& scene);
     
     EntityService entityService() const;
     ViewService viewService(ViewController& controller) const;
@@ -36,7 +35,7 @@ private:
     EntityDatabase* _entityProxy;
     ViewStack* _viewStack;
     MessageClientSender* _sender;
-    SceneType* _sceneType;
+    Scene* _scene;
 };
 
 

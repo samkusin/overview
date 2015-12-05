@@ -12,17 +12,22 @@
 #include "Engine/EngineTypes.hpp"
 #include "Engine/Messages/Scene.hpp"
 
+#include <functional>
+#include <string>
+
 namespace cinek { namespace ove {
 
-template<typename SceneType>
 class SceneService
 {
 public:    
-    SceneService(SceneType& context, MessageClientSender& sender);
+    SceneService(Scene& context, MessageClientSender& sender);
     SceneService() = default;
+    
+    void loadScene(const std::string& name,
+        std::function<void(const SceneLoadResponse&)> cb);
 
 private:
-    SceneType* _context = nullptr;
+    Scene* _context = nullptr;
     MessageClientSender* _sender = nullptr;
 };
 

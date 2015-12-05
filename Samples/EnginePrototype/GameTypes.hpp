@@ -13,9 +13,7 @@
 
 namespace cinek {
     namespace ove {
-        using GameScene = Scene<BulletPhysicsScene>;
-        using GameSceneService = SceneService<GameScene>;
-        using GameViewAPI = ViewAPI<GameScene, GameSceneService>;
+
     }
 }
 

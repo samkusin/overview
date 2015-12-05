@@ -29,7 +29,7 @@ public:
                         EntityStore& store,
                         const std::string& componentName,
                         const cinek::JsonValue& definitions,
-                        const cinek::JsonValue& data) = 0;
+                        const cinek::JsonValue& compTemplate) = 0;
     virtual void onCustomComponentDestroyFn(EntityDataTable& table,
                         ComponentRowIndex compRowIndex) = 0;
 };

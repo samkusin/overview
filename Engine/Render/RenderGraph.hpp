@@ -42,9 +42,11 @@ public:
      *  @param  sourceNode  The graphics node to clone into the scene graph
      *  @param  context     A context pointer associated with the Node (used
      *                      during prepare() when the preparation delegate is
-     *                      called.)(
+     *                      called.)
+     *  @return A handle to the created Node within the NodeGraph
      */
-    void cloneAndAddNode(Entity e, gfx::NodeHandle sourceNode, void* context);
+    gfx::NodeHandle cloneAndAddNode(Entity e, gfx::NodeHandle sourceNode,
+                                    void* context);
     /**
      *  Dereferences the gfx Node associated with the supplied entity.  Removing
      *  is a O(log n) operation in most cases.  It is a O(n) operation if 
@@ -59,17 +61,16 @@ public:
      */
     void clear();
     /**
-     *  Prepares the nodes on the render graph for rendering using gfx.
-     *
-     *  @param  renderTime  The current render time in seconds
-     *  @param  dt          The frame timestep, used for updating animations
-     */
-    template<typename _Delegate>
-    void prepare(double dt, _Delegate del=_Delegate());
-    /**
      *  @return The root of the generated gfx::NodeGraph.
      */
     gfx::NodeHandle root() const;
+    
+    /**
+     *  @return The underlying node graph
+     */
+    cinek::gfx::NodeGraph& nodeGraph() {
+        return _nodeGraph;
+    }
 
 private:
     void updateRenderNodes(double dt);

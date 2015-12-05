@@ -9,11 +9,12 @@
 #include "GameView.hpp"
 
 #include "Engine/ViewAPI.hpp"
+#include "Engine/Services/SceneService.hpp"
 
 namespace cinek {
     namespace ove {
 
-GameView::GameView(GameViewAPI& api) :
+GameView::GameView(ViewAPI& api) :
     _viewAPI(&api)
 {
     
@@ -29,7 +30,10 @@ void GameView::onViewUnload()
 
 void GameView::onViewAdded()
 {
-
+    _viewAPI->sceneService().loadScene("scenes/room.json",
+        [this](const SceneLoadResponse& resp) {
+            printf("Loaded %s\n", resp.name);
+        });
 }
 
 void GameView::onViewRemoved()

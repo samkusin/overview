@@ -34,7 +34,7 @@ RenderGraph::RenderGraph
     _animNodes.reserve(animCount);
 }
 
-void RenderGraph::cloneAndAddNode
+gfx::NodeHandle RenderGraph::cloneAndAddNode
 (
     Entity e,
     gfx::NodeHandle sourceNode,
@@ -49,6 +49,7 @@ void RenderGraph::cloneAndAddNode
     //  add to end of render nodes list for sort during prepare()
     //  note, this may leads to duplicates
     _renderNodes.emplace_back(Node{ e, rootNode, context });
+    return rootNode;
 }
 
 void RenderGraph::removeNode(Entity e)

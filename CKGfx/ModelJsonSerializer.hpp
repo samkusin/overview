@@ -22,10 +22,25 @@
 namespace cinek {
     namespace gfx {
 
+struct NodeJsonLoader
+{
+    gfx::Context* context;
+    
+    JsonValue::ConstMemberIterator jsonMaterials;
+    JsonValue::ConstMemberIterator jsonAnimations;
+    JsonValue::ConstMemberIterator jsonMeshes;
+    JsonValue::ConstMemberIterator jsonLights;
+    
+    std::vector<std::pair<MeshHandle, MaterialHandle>> meshes;
+    std::vector<LightHandle> lights;
+    
+    NodeHandle operator()(NodeGraph& nodeGraph, const JsonValue& jsonNode);
+};
 
 NodeGraph loadNodeGraphFromJSON(Context& context, const JsonValue& root,
     const NodeElementCounts& extra = {},
     const std::vector<std::string>& nodeTypeExcludeFilter = {});
+        
 Mesh loadMeshFromJSON(Context& context, const JsonValue& root);
 Material loadMaterialFromJSON(Context& context, const JsonValue& root);
 AnimationSet loadAnimationSetFromJSON(Context& context, const JsonValue& root);

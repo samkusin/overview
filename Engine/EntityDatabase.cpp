@@ -73,9 +73,11 @@ Entity EntityDatabase::createEntity
     Entity entity = 0;
     auto it = _manifests.find(ns);
     if (it != _manifests.end()) {
-        const JsonValue& root = it->second->root("entity");
-        auto templateIt = root.FindMember(templateName.c_str());
-        if (templateIt != root.MemberEnd()) {
+        const JsonValue& root = it->second->root();
+        const JsonValue& entityDefinitions = root.FindMember("entity")->value;
+        
+        auto templateIt = entityDefinitions.FindMember(templateName.c_str());
+        if (templateIt != entityDefinitions.MemberEnd()) {
             auto& store = getStore(context);
             entity = store.create(context);
         

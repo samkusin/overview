@@ -13,8 +13,9 @@
 namespace cinek {
     namespace ove {
 
-StartupView::StartupView(GameViewAPI& api) :
-    _viewAPI(&api)
+StartupView::StartupView(ViewAPI& api) :
+    _viewAPI(&api),
+    _state(kStart)
 {
     
 }
@@ -29,8 +30,10 @@ void StartupView::onViewUnload()
 
 void StartupView::onViewAdded()
 {
+    _state = kLoad;
     _viewAPI->entityService().loadDefinitions("entity.json",
-        [](const EntityLoadDefinitionsResponse& resp) {
+        [this](const EntityLoadDefinitionsResponse& resp) {
+            _state = kEnd;
             printf("Loaded %s\n", resp.name);
         });
 }
@@ -57,6 +60,9 @@ void StartupView::layoutView()
 
 void StartupView::frameUpdateView(double dt)
 {
+    if (_state == kEnd) {
+        _viewAPI->viewService(*this).present("GameView");
+    }
 }
 
 const char* StartupView::viewId() const

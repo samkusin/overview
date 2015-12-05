@@ -19,7 +19,7 @@ namespace cinek {
 class StartupView : public ViewController
 {
 public:
-    StartupView(GameViewAPI& viewAPI);
+    StartupView(ViewAPI& viewAPI);
     
     virtual void onViewLoad();
     virtual void onViewUnload();
@@ -33,7 +33,15 @@ public:
     virtual const char* viewId() const;
     
 private:
-    GameViewAPI* _viewAPI;
+    ViewAPI* _viewAPI;
+    
+    enum
+    {
+        kStart,
+        kLoad,
+        kEnd
+    }
+    _state;
 };
 
 
