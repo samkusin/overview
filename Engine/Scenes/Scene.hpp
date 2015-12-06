@@ -39,11 +39,11 @@ public:
     /**
      *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
      */
-    SceneBody* attachBody(SceneBody* object);
+    btRigidBody* attachBody(btRigidBody* object, Entity entity);
     /**
      *  Removes the body from the Scene.
      */
-    SceneBody* detachBody(Entity entity);
+    btRigidBody* detachBody(Entity entity);
     /**
      *  Updates the scene simulations using the specified timestep.  It's best
      *  to run this using a fixed timestep, though this requirement depends
@@ -54,6 +54,12 @@ public:
     void simulate(double dt);
     
 private:
+    struct SceneBody
+    {
+        btRigidBody* btBody;
+        Entity entity;
+    };
+    ObjectPool<SceneBody> _bodies;
     std::vector<SceneBody*> _objects;
     
     btDefaultCollisionConfiguration _btCollisionConfig;

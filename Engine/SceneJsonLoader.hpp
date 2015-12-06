@@ -10,8 +10,8 @@
 #define Overview_SceneJsonLoader_hpp
 
 #include "Engine/EngineTypes.hpp"
+#include "CKGfx/GfxTypes.hpp"
 
-#include <cinek/allocator.hpp>
 #include <ckjson/jsontypes.hpp>
 
 namespace cinek {
@@ -29,15 +29,29 @@ namespace cinek {
 class SceneJsonLoader
 {
 public:
-    SceneJsonLoader(SceneDataContext& context, EntityDatabase& entityDb);
+    SceneJsonLoader(SceneDataContext& context, gfx::Context& gfxContext,
+                    EntityDatabase& entityDb);
     ~SceneJsonLoader();
     
-    unique_ptr<Scene> operator()(JsonValue& root);
+    Scene& operator()(Scene& scene, RenderGraph& renderGraph,
+                      const JsonValue& jsonRoot);
     
 private:
-    SceneDataContext* _context;
+    struct Node;
+    struct Context
+    {
+        Scene* scene;
+        RenderGraph* renderGraph;
+        gfx::NodeJsonLoader* gfxJsonLoader;
+        SceneObjectJsonLoader* sceneObjectJsonLoader;
+        Entity entity;
+    };
+
+    Node parseJsonNode(Context context, const Node& parent, const JsonValue& jsonNode);
+
+    SceneDataContext* _sceneContext;
+    gfx::Context* _gfxContext;
     EntityDatabase* _entityDb;
-    unique_ptr<Scene> _scene;
 };
     
     } /* namespace ove */

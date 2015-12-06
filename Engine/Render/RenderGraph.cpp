@@ -24,9 +24,6 @@ RenderGraph::RenderGraph
     _nodeGraph(counts),
     _animControllerPool(animCount)
 {
-    auto rootNode = _nodeGraph.createObjectNode(0);
-    _nodeGraph.setRoot(rootNode);
-    
     _renderNodes.reserve(entityCount);
     _nodeEndIndex = 0;
     _removedNodeCount = 0;
@@ -41,15 +38,24 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
     void* context
 )
 {
-
-    auto rootNode = _nodeGraph.createObjectNode(e);
-    _nodeGraph.addChildNodeToNode(_nodeGraph.clone(sourceNode), rootNode);
-    _nodeGraph.addChildNodeToNode(rootNode, _nodeGraph.root());
+    auto rootNode = _nodeGraph.root();
+    if (!rootNode)
+        return nullptr;
+        
+    auto parentNode = _nodeGraph.createObjectNode(e);
+    _nodeGraph.addChildNodeToNode(_nodeGraph.clone(sourceNode), parentNode);
+    _nodeGraph.addChildNodeToNode(parentNode, rootNode);
     
     //  add to end of render nodes list for sort during prepare()
     //  note, this may leads to duplicates
-    _renderNodes.emplace_back(Node{ e, rootNode, context });
-    return rootNode;
+    _renderNodes.emplace_back(Node{ e, parentNode, context });
+    return parentNode;
+}
+
+gfx::NodeHandle RenderGraph::setNodeEntity(Entity e, gfx::NodeHandle h)
+{
+    _renderNodes.emplace_back(Node{ e, h, nullptr });
+    return h;
 }
 
 void RenderGraph::removeNode(Entity e)
@@ -155,6 +161,7 @@ gfx::NodeHandle RenderGraph::root() const
 {
     return _nodeGraph.root();
 }
+
     
     }   /* namesapce ove */
 }   /* namespace cinek */

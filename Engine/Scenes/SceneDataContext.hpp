@@ -12,6 +12,7 @@
 #include "Engine/EngineTypes.hpp"
 
 #include "SceneFixedBodyHull.hpp"
+#include "SceneMotionState.hpp"
 
 #include <cinek/objectpool.hpp>
 
@@ -40,28 +41,39 @@ public:
     //  resources shared among multiple bodies
     SceneFixedBodyHull* allocateFixedBodyHull
     (
-        const SceneFixedBodyHull::VertexIndexCount& counts
+        const SceneFixedBodyHull::VertexIndexCount& counts,
+        const std::string& name
     );
-    void freeFixedBodyHull(SceneFixedBodyHull* hull);
-    SceneTriangleMeshShape* allocateTriangleMeshShape
+    SceneFixedBodyHull* acquireFixedBodyHull(const std::string& name);
+    void releaseFixedBodyHull(SceneFixedBodyHull* hull);
+    
+    btBvhTriangleMeshShape* allocateTriangleMeshShape
     (
         SceneFixedBodyHull* hull,
-        std::string name
+        const btVector3& scale
     );
-    SceneTriangleMeshShape* triangleMeshShapeAcquire(const std::string& name);
-    void tringleMeshShapeRelease(SceneTriangleMeshShape* shape);
+    void freeTriangleMeshShape(btBvhTriangleMeshShape* shape);
     
     //  body
-    SceneBody* allocateBody(const btRigidBody::btRigidBodyConstructionInfo& info,
-                            Entity entity);
-    void releaseBody(SceneBody* body);
+    struct SceneBodyInitParams
+    {
+        btCollisionShape* collisionShape;
+        float mass;
+    };
+    btRigidBody* allocateBody
+    (
+        const SceneBodyInitParams& info,
+        gfx::NodeHandle gfxNodeHandle
+    );
+    void freeBody(btRigidBody* body);
     
 private:
     ObjectPool<SceneFixedBodyHull> _triMeshPool;
-    ObjectPool<SceneTriangleMeshShape> _triMeshShapePool;
-    ObjectPool<SceneBody> _rigidBodyPool;
+    ObjectPool<btBvhTriangleMeshShape> _triMeshShapePool;
+    ObjectPool<btRigidBody> _rigidBodyPool;
+    ObjectPool<SceneMotionState> _motionStatesPool;
     
-    std::vector<SceneTriangleMeshShape*> _triMeshShapes;
+    std::vector<SceneFixedBodyHull*> _fixedBodyHulls;
 };
     
     } /* namespace ove */

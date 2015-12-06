@@ -12,21 +12,6 @@
 namespace cinek {
     namespace ove {
 
-SceneTriangleMeshShape::SceneTriangleMeshShape
-(
-    SceneFixedBodyHull* hull,
-    std::string name
-) :
-    SceneObject<btBvhTriangleMeshShape>(),
-    _name(std::move(name))
-{
-    auto obj = ::new(buffer()) btBvhTriangleMeshShape(hull, false);
-    obj->setUserPointer(this);
-}
-    
-
-
-
 SceneBody::SceneBody
 (
     const btRigidBody::btRigidBodyConstructionInfo& info,
@@ -37,6 +22,7 @@ SceneBody::SceneBody
 {
     auto obj = ::new(buffer()) btRigidBody(info);
     obj->setUserPointer(this);
+    setInitialized(true);
 }
 
     } /* namespace ove */

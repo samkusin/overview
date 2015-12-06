@@ -16,97 +16,99 @@ SceneDataContext::SceneDataContext(const InitParams& params) :
     _triMeshPool(params.numTriMeshShapes),
     _triMeshShapePool(params.numTriMeshShapes),
     _rigidBodyPool(params.numRigidBodies),
-    _triMeshShapes()
+    _motionStatesPool(params.numRigidBodies)
 {
-    _triMeshShapes.reserve(params.numTriMeshShapes);
+    _fixedBodyHulls.reserve(params.numTriMeshShapes);
 }
 
 SceneFixedBodyHull* SceneDataContext::allocateFixedBodyHull
 (
-    const SceneFixedBodyHull::VertexIndexCount& counts
+    const SceneFixedBodyHull::VertexIndexCount& counts,
+    const std::string& name
 )
 {
-    return _triMeshPool.construct(counts);
+    return _triMeshPool.construct(name, counts);
 }
 
-void SceneDataContext::freeFixedBodyHull(SceneFixedBodyHull* hull)
-{
-    _triMeshPool.destruct(hull);
-}
-
-SceneTriangleMeshShape* SceneDataContext::allocateTriangleMeshShape
-(
-    SceneFixedBodyHull* hull,
-    std::string name
-)
-{
-    auto it = std::lower_bound(_triMeshShapes.begin(), _triMeshShapes.end(), name,
-        [](const SceneTriangleMeshShape* obj, const std::string& name) -> bool {
-            return obj->name() < name;
-        });
-    if (it != _triMeshShapes.end() && (*it)->name() == name)
-        return nullptr;
-    
-    it = _triMeshShapes.emplace(it, _triMeshShapePool.construct(hull, std::move(name)));
-    (*it)->incRef();
-    
-    return *it;
-}
-
-SceneTriangleMeshShape* SceneDataContext::triangleMeshShapeAcquire
+SceneFixedBodyHull* SceneDataContext::acquireFixedBodyHull
 (
     const std::string& name
 )
 {
-    auto it = std::lower_bound(_triMeshShapes.begin(), _triMeshShapes.end(), name,
-        [](const SceneTriangleMeshShape* obj, const std::string& name) -> bool {
+    auto it = std::lower_bound(_fixedBodyHulls.begin(), _fixedBodyHulls.end(), name,
+        [](const SceneFixedBodyHull* obj, const std::string& name) -> bool {
             return obj->name() < name;
         });
-    if (it == _triMeshShapes.end() || (*it)->name() != name)
+    if (it == _fixedBodyHulls.end() || (*it)->name() != name)
         return nullptr;
     
     (*it)->incRef();
     return *it;
 }
 
-void SceneDataContext::tringleMeshShapeRelease(SceneTriangleMeshShape* shape)
+void SceneDataContext::releaseFixedBodyHull(SceneFixedBodyHull* hull)
 {
-    auto it = std::lower_bound(_triMeshShapes.begin(), _triMeshShapes.end(), shape->name(),
-        [](const SceneTriangleMeshShape* obj, const std::string& name) -> bool {
+    if (!hull)
+        return;
+    auto it = std::lower_bound(_fixedBodyHulls.begin(), _fixedBodyHulls.end(), hull->name(),
+        [](const SceneFixedBodyHull* obj, const std::string& name) -> bool {
             return obj->name() < name;
         });
-    if (it == _triMeshShapes.end() || (*it)->name() != shape->name())
+    if (it == _fixedBodyHulls.end() || (*it)->name() != hull->name())
         return;
     
     auto obj = *it;
     obj->decRef();
     if (obj->refCnt() <= 0) {
-        _triMeshShapes.erase(it);
-        auto triMeshHull = static_cast<SceneFixedBodyHull*>(obj->impl()->getMeshInterface());
-        if (triMeshHull) {
-            _triMeshPool.destruct(triMeshHull);
-        }
-        _triMeshShapePool.destruct(obj);
+        _fixedBodyHulls.erase(it);
+        _triMeshPool.destruct(obj);
     }
 }
 
-SceneBody* SceneDataContext::allocateBody
+
+btBvhTriangleMeshShape* SceneDataContext::allocateTriangleMeshShape
 (
-    const btRigidBody::btRigidBodyConstructionInfo& info,
-    Entity entity
+    SceneFixedBodyHull* hull,
+    const btVector3& scale
 )
 {
-    auto obj = _rigidBodyPool.construct(info, entity);
-    obj->incRef();
+    btBvhTriangleMeshShape* triMeshShape = _triMeshShapePool.construct(hull, false);
+    triMeshShape->setLocalScaling(scale);
+    return triMeshShape;
+}
+
+void SceneDataContext::freeTriangleMeshShape(btBvhTriangleMeshShape* shape)
+{
+    SceneFixedBodyHull* hull = static_cast<SceneFixedBodyHull*>(shape->getMeshInterface());
+    releaseFixedBodyHull(hull);
+    _triMeshShapePool.destruct(shape);
+}
+
+
+
+btRigidBody* SceneDataContext::allocateBody
+(
+    const SceneBodyInitParams& info,
+    gfx::NodeHandle gfxNodeHandle
+)
+{
+    SceneMotionState* motionState = _motionStatesPool.construct(gfxNodeHandle);
+    btRigidBody::btRigidBodyConstructionInfo btInfo(info.mass,
+        motionState,
+        info.collisionShape);
+    
+    auto obj = _rigidBodyPool.construct(btInfo);
     return obj;
 }
 
-void SceneDataContext::releaseBody(SceneBody* body)
+void SceneDataContext::freeBody(btRigidBody* body)
 {
-    body->decRef();
-    if (body->refCnt() <= 0) {
-        _rigidBodyPool.destruct(body);
+    SceneMotionState* state = static_cast<SceneMotionState*>(body->getMotionState());
+    if (state) {
+        body->setMotionState(nullptr);
+        _motionStatesPool.destruct(state);
     }
+    _rigidBodyPool.destruct(body);
 }
 
     }

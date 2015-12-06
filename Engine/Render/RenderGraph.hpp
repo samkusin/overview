@@ -48,6 +48,12 @@ public:
     gfx::NodeHandle cloneAndAddNode(Entity e, gfx::NodeHandle sourceNode,
                                     void* context);
     /**
+     *  @param  e           The entity (acts as a key)
+     *  @param  h           The node handle (created from this RenderGraph's
+     *                      node graph.)
+     */
+    gfx::NodeHandle setNodeEntity(Entity e, gfx::NodeHandle h);
+    /**
      *  Dereferences the gfx Node associated with the supplied entity.  Removing
      *  is a O(log n) operation in most cases.  It is a O(n) operation if 
      *  removing nodes that have been added before calling prepare(), which
@@ -64,14 +70,13 @@ public:
      *  @return The root of the generated gfx::NodeGraph.
      */
     gfx::NodeHandle root() const;
-    
     /**
-     *  @return The underlying node graph
+     *  @return The associated node graph
      */
-    cinek::gfx::NodeGraph& nodeGraph() {
+    gfx::NodeGraph& nodeGraph() {
         return _nodeGraph;
     }
-
+    
 private:
     void updateRenderNodes(double dt);
 

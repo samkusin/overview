@@ -24,11 +24,13 @@ namespace cinek {
         class ViewController;
         class ViewService;
         
+        class RenderGraph;
+        
         class Scene;
         class SceneFixedBodyHull;
-        class SceneTriangleMeshShape;
-        class SceneBody;
         class SceneDataContext;
+        class SceneMotionState;
+        struct SceneObjectJsonLoader;
         
         class SceneService;
         class ViewAPI;

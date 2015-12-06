@@ -15,6 +15,7 @@ namespace cinek {
 ////////////////////////////////////////////////////////////////////////////////
 
 Scene::Scene() :
+    _bodies(256),
     _btCollisionDispatcher(&_btCollisionConfig),
     _btWorld(&_btCollisionDispatcher,
              &_btBroadphase,
@@ -33,45 +34,50 @@ void Scene::simulate(double dt)
     _btWorld.stepSimulation(dt);
 }
 
-SceneBody* Scene::attachBody
+btRigidBody* Scene::attachBody
 (
-    SceneBody* object
+    btRigidBody* object,
+    Entity entity
 )
 {
-    auto it = std::lower_bound(_objects.begin(), _objects.end(), object,
-        [](const SceneBody* obj0, const SceneBody* obj1) -> bool {
-            return obj0->entity() < obj1->entity();
+    auto it = std::lower_bound(_objects.begin(), _objects.end(), entity,
+        [](const SceneBody* obj0, Entity e) -> bool {
+            return obj0->entity < e;
         });
-    if (it != _objects.end() && (*it)->entity() == object->entity())
+    if (it != _objects.end() && (*it)->entity == entity)
         return nullptr;
     
-    auto body = *_objects.emplace(it, object);
-    body->incRef();
+    auto body = _bodies.construct();
+    if (!body)
+        return nullptr;
     
-    _btWorld.addRigidBody(body->impl());
+    body->btBody = object;
+    body->entity = entity;
+    object->setUserPointer(body);
+    _objects.emplace(it, body);
+    _btWorld.addRigidBody(object);
     
-    return body;
+    return body->btBody;
 }
 
-SceneBody* Scene::detachBody
+btRigidBody* Scene::detachBody
 (
     Entity entity
 )
 {
     auto it = std::lower_bound(_objects.begin(), _objects.end(), entity,
         [](const SceneBody* obj0, Entity e) -> bool {
-            return obj0->entity() < e;
+            return obj0->entity < e;
         });
-    if (it == _objects.end() || (*it)->entity() != entity)
+    if (it == _objects.end() || (*it)->entity != entity)
         return nullptr;
     
     auto obj = *it;
     
-    _btWorld.removeRigidBody(obj->impl());
-    
-    obj->decRef();
+    _btWorld.removeRigidBody(obj->btBody);
+
     _objects.erase(it);
-    return obj;
+    return obj->btBody;
 }
 
         

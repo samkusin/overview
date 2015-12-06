@@ -55,7 +55,7 @@
   "animations": {},
   "meshes": [
     {
-      "name": "Room View.0",
+      "name": "RoomView.0",
       "material": "Test/Floor",
       "vertices": [
         {
@@ -1801,7 +1801,7 @@
       ]
     },
     {
-      "name": "Room View.1",
+      "name": "RoomView.1",
       "material": "Test/Marble",
       "vertices": [
         {
@@ -3133,7 +3133,7 @@
       ]
     },
     {
-      "name": "Room View.2",
+      "name": "RoomView.2",
       "material": "Test/Wall",
       "vertices": [
         {
@@ -4475,7 +4475,7 @@
   ],
   "hulls": [
     {
-      "name": "Room Hull.0",
+      "name": "RoomHull.0",
       "vertices": [
         {
           "x": 1.0,
@@ -6332,7 +6332,7 @@
         },
         "children": [
           {
-            "name": "Room Hull",
+            "name": "RoomHull",
             "type": "Hull",
             "matrix": [
               7.0,
@@ -6369,7 +6369,7 @@
             ]
           },
           {
-            "name": "Room View",
+            "name": "RoomView",
             "type": "View",
             "matrix": [
               7.0,

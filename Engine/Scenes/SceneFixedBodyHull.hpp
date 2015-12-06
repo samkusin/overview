@@ -14,6 +14,7 @@
 #include <cinek/allocator.hpp>
 #include <bullet/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h>
 
+#include <string>
 
 namespace cinek {
     namespace ove {
@@ -32,11 +33,21 @@ public:
         uint16_t numVertices;
     };
     SceneFixedBodyHull();
-    SceneFixedBodyHull(const VertexIndexCount& initParams);
+    SceneFixedBodyHull(const std::string& name, const VertexIndexCount& initParams);
+    virtual ~SceneFixedBodyHull();
     
     btVector3* pullVertices(uint16_t triCount);
     uint16_t* pullFaceIndices(uint16_t faceCount);
     void finialize();
+    
+    const std::string& name() const { return _name; }
+
+    int refCnt() const { return _refcnt; }
+        
+private:
+    friend class SceneDataContext;
+    int incRef() { return ++_refcnt; }
+    int decRef() { return --_refcnt; }
 
 private:
     Allocator _allocator;
@@ -44,6 +55,9 @@ private:
     uint16_t* _indexMemory;
     VertexIndexCount _tail;
     VertexIndexCount _limit;
+    
+    std::string _name;
+    int16_t _refcnt;
 };
 
 

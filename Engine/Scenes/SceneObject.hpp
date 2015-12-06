@@ -45,28 +45,20 @@ public:
     const ImplObject* impl() const {
         return reinterpret_cast<const ImplObject*>(buffer());
     }
-    
-    int refCnt() const { return _refcnt; }
-    
+
 protected:
     SceneObject();
     uint8_t* buffer() { return _buffer; }
-    
-private:
-    friend class SceneDataContext;
-    friend class Scene;
-    int incRef() { return ++_refcnt; }
-    int decRef() { return --_refcnt; }
+    void setInitialized(bool b) { _initialized = b; }
+    bool initialized() const { return _initialized; }
     
 private:
     uint8_t _buffer[sizeof(ImplObject)];
-    int16_t _refcnt;
     bool    _initialized;
 };
 
 template<typename _ImplObject>
 SceneObject<_ImplObject>::SceneObject() :
-    _refcnt(0),
     _initialized(false)
 {
 }
@@ -78,19 +70,6 @@ SceneObject<_ImplObject>::~SceneObject()
         impl()->~ImplObject();
     }
 }
-
-class SceneTriangleMeshShape : public SceneObject<btBvhTriangleMeshShape>
-{
-public:
-    SceneTriangleMeshShape(SceneFixedBodyHull* hull,
-                           std::string name);
-    
-    const std::string& name() const { return _name; }
-    
-private:
-    std::string _name;
-};
-
 
 class SceneBody : public SceneObject<btRigidBody>
 {

@@ -53,6 +53,7 @@
 #include "Engine/Scenes/SceneDataContext.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 
+#include "Engine/SceneJsonLoader.hpp"
 #include "Engine/ViewAPI.hpp"
 #include "Engine/ViewStack.hpp"
 #include "Engine/EntityDatabase.hpp"
@@ -295,6 +296,10 @@ void OverviewSample::loadSceneCmd
             auto manifest = task.acquireManifest();
             
             //  generate scene from the manifest
+            cinek::ove::SceneJsonLoader loader(*_sceneData, *_gfxContext,
+                                               _entityDatabase);
+            
+            loader(*_scene, *_renderGraph, manifest->root());
             
             //  prepare to send response
             strncpy(resp.name, manifest->name().c_str(), sizeof(resp.name));
