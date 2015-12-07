@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Common_hpp
-#define Common_hpp
+#ifndef Overview_Common_hpp
+#define Overview_Common_hpp
 
 #include "CKGfx/GfxTypes.hpp"
 
@@ -16,7 +16,10 @@ enum
     kPollSDLEvent_Quit = 0x0001
 };
 
-struct PollStateSDL
+namespace cinek {
+    namespace ove {
+
+struct InputState
 {
     int mx, my;
     int mdx, mdy;
@@ -28,7 +31,10 @@ struct PollStateSDL
     int keystateArraySize;
 };
 
-extern uint32_t pollSDLEvents(PollStateSDL& state);
+    } /* namespace ove */
+} /* namespace cinek */
+
+extern uint32_t pollSDLEvents(cinek::ove::InputState& state);
 
 extern int runSample(int viewWidth, int viewHeight);
 

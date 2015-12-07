@@ -24,6 +24,10 @@
 		377ECD131C161BE7002040D7 /* vs_bone_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37E636FD1BF0246D0081E59E /* vs_bone_uv.vs */; };
 		377ECD141C161BE7002040D7 /* vs_std_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37E636FE1BF0246D0081E59E /* vs_std_uv.vs */; };
 		377ECD151C161BE7002040D7 /* vs_flat_pos.vs in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD0F1C1617F4002040D7 /* vs_flat_pos.vs */; };
+		377ECD1F1C1628A8002040D7 /* ClientUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD1D1C1628A8002040D7 /* ClientUtility.cpp */; };
+		377ECD201C1628A8002040D7 /* ClientUtility.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECD1E1C1628A8002040D7 /* ClientUtility.hpp */; };
+		377ECD231C1638A0002040D7 /* FreeCameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD211C1638A0002040D7 /* FreeCameraController.cpp */; };
+		377ECD241C1638A0002040D7 /* FreeCameraController.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECD221C1638A0002040D7 /* FreeCameraController.hpp */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
 		37E636061BF010270081E59E /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636051BF010270081E59E /* Common.cpp */; };
 		37E636081BF010F70081E59E /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636071BF010F70081E59E /* Common.hpp */; };
@@ -207,6 +211,10 @@
 		377ECCE21C0BBC28002040D7 /* task.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = task.hpp; sourceTree = "<group>"; };
 		377ECD0F1C1617F4002040D7 /* vs_flat_pos.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_flat_pos.vs; sourceTree = "<group>"; };
 		377ECD101C161817002040D7 /* fs_flat_col.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_flat_col.fs; sourceTree = "<group>"; };
+		377ECD1D1C1628A8002040D7 /* ClientUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClientUtility.cpp; path = ../ClientUtility.cpp; sourceTree = "<group>"; };
+		377ECD1E1C1628A8002040D7 /* ClientUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ClientUtility.hpp; path = ../ClientUtility.hpp; sourceTree = "<group>"; };
+		377ECD211C1638A0002040D7 /* FreeCameraController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FreeCameraController.cpp; path = ../FreeCameraController.cpp; sourceTree = "<group>"; };
+		377ECD221C1638A0002040D7 /* FreeCameraController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FreeCameraController.hpp; path = ../FreeCameraController.hpp; sourceTree = "<group>"; };
 		37E635F41BF00EA40081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSampleCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E636001BF00F650081E59E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		37E636021BF00F840081E59E /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
@@ -401,6 +409,10 @@
 				37E636051BF010270081E59E /* Common.cpp */,
 				37E6360A1BF018870081E59E /* Renderer.hpp */,
 				37E636091BF018870081E59E /* Renderer.cpp */,
+				377ECD221C1638A0002040D7 /* FreeCameraController.hpp */,
+				377ECD211C1638A0002040D7 /* FreeCameraController.cpp */,
+				377ECD1E1C1628A8002040D7 /* ClientUtility.hpp */,
+				377ECD1D1C1628A8002040D7 /* ClientUtility.cpp */,
 				37E635FF1BF00F500081E59E /* Apple */,
 			);
 			name = Source;
@@ -711,6 +723,7 @@
 				37E636CE1BF024600081E59E /* UIEngine.hpp in Headers */,
 				370B59A71BFBAFC5009062FA /* buffer.hpp in Headers */,
 				37E636781BF024330081E59E /* cstringstack.hpp in Headers */,
+				377ECD241C1638A0002040D7 /* FreeCameraController.hpp in Headers */,
 				37E636A21BF024330081E59E /* document.h in Headers */,
 				37E636B51BF024330081E59E /* aabb.hpp in Headers */,
 				37E636C91BF024600081E59E /* oui.h in Headers */,
@@ -721,6 +734,7 @@
 				37E636C71BF024600081E59E /* blendish_defines.h in Headers */,
 				37E636951BF024330081E59E /* entitystore.hpp in Headers */,
 				37E6367C1BF024330081E59E /* file.hpp in Headers */,
+				377ECD201C1628A8002040D7 /* ClientUtility.hpp in Headers */,
 				37E6371B1BF0246D0081E59E /* Node.hpp in Headers */,
 				37E636A11BF024330081E59E /* allocators.h in Headers */,
 				37E636911BF024330081E59E /* entitygroup.hpp in Headers */,
@@ -825,6 +839,7 @@
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
 				37E637101BF0246D0081E59E /* stb.cpp in Sources */,
 				377ECCAF1C0507D6002040D7 /* file.c in Sources */,
+				377ECD1F1C1628A8002040D7 /* ClientUtility.cpp in Sources */,
 				377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */,
 				37E637091BF0246D0081E59E /* Context.cpp in Sources */,
 				37E637221BF0246D0081E59E /* Texture.cpp in Sources */,
@@ -858,6 +873,7 @@
 				37E636881BF024330081E59E /* types.cpp in Sources */,
 				37E6371E1BF0246D0081E59E /* NodeRenderer.cpp in Sources */,
 				37E6371A1BF0246D0081E59E /* Node.cpp in Sources */,
+				377ECD231C1638A0002040D7 /* FreeCameraController.cpp in Sources */,
 				37E636831BF024330081E59E /* string.cpp in Sources */,
 				37E636711BF024330081E59E /* allocator.cpp in Sources */,
 			);

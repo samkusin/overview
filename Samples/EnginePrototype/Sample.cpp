@@ -46,6 +46,8 @@
 #include "ResourceFactory.hpp"
 #include "SceneDebugDrawer.hpp"
 
+#include "FreeCameraController.hpp"
+
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Messages/Entity.hpp"
 #include "Engine/Messages/Scene.hpp"
@@ -89,9 +91,10 @@ public:
     
     void startFrame();
     void simulate(double time, double dt);
-    void endFrame(double dt);
+    void endFrame(double dt, const cinek::ove::InputState& state);
     
-    void render(cinek::gfx::NodeRenderer& renderer);
+    void render(cinek::gfx::NodeRenderer& renderer,
+                const cinek::gfx::Rect& viewRect);
     
 public:
     virtual void onCustomComponentCreateFn(cinek::Entity entity,
@@ -114,6 +117,11 @@ private:
     const cinek::gfx::NodeRenderer::ProgramMap* _programs;
     const cinek::gfx::NodeRenderer::UniformMap* _uniforms;
     cinek::gfx::Context* _gfxContext;
+    
+    cinek::ove::InputState _inputState;
+    
+    cinek::gfx::Camera _mainCamera;
+    cinek::ove::FreeCameraController _cameraController;
     
     ckmsg::Messenger _messenger;
     cinek::ove::MessageServer _server;
@@ -179,6 +187,13 @@ OverviewSample::OverviewSample
     
     _clientSender.client = &_client;
     _clientSender.server = _server.address();
+    
+    static_assert(std::is_pod<cinek::ove::InputState>(), "Input State must be POD for now");
+    memset(&_inputState, 0, sizeof(_inputState));
+    
+    cinek::gfx::Matrix4 cameraRotMtx;
+    bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
+    _cameraController.setTransform({ 0,2,-12}, cameraRotMtx);
  
     ////////////////////////////////////////////////////////////////////////////
     
@@ -355,8 +370,14 @@ void OverviewSample::simulate(double systemTime, double dt)
 }
 
 
-void OverviewSample::endFrame(double dt)
+void OverviewSample::endFrame
+(
+    double dt,
+    const cinek::ove::InputState& state
+)
 {
+    _inputState = state;
+    
     _viewStack.layout();
     _viewStack.frameUpdate(dt);
    
@@ -366,12 +387,25 @@ void OverviewSample::endFrame(double dt)
     
     _client.transmit();
     _server.transmit();
+    
+    _cameraController.handleCameraInput(_mainCamera, state, dt);
 }
 
 
-void OverviewSample::render(cinek::gfx::NodeRenderer& renderer)
+void OverviewSample::render
+(
+    cinek::gfx::NodeRenderer& renderer,
+    const cinek::gfx::Rect& viewRect
+)
 {
+    bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
+ 
+    _mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
+        (float)viewRect.w/viewRect.h);
+    
+    renderer.setCamera(_mainCamera);
     renderer(_renderGraph->root());
+    
     _sceneDbgDraw->setup(*_programs, *_uniforms, renderer.camera());
     _scene->debugRender();
 }
@@ -482,11 +516,6 @@ int runSample(int viewWidth, int viewHeight)
 
     //  Renderer initialization
     cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
-    cinek::gfx::Camera mainCamera;
-    mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
-        (float)viewWidth/viewHeight);
-    
-    bx::mtxSRT(mainCamera.worldMtx, 1, 1, 1, 0, 0, 0, 0, 2, -12);
     
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
@@ -496,6 +525,8 @@ int runSample(int viewWidth, int viewHeight)
     
     uint32_t systemTimeMs = SDL_GetTicks();
     bool running = true;
+    
+    cinek::ove::InputState polledInputState;
     
     while (running) {
         uint32_t nextSystemTimeMs = SDL_GetTicks();
@@ -525,19 +556,14 @@ int runSample(int viewWidth, int viewHeight)
         //  SIMULATION END
         ////////////////////////////////////////////////////////////////////////
 
-        PollStateSDL polledInputState;
-        
         if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
             running = false;
         
-        application.endFrame(frameTime);
+        application.endFrame(frameTime, polledInputState);
         
         gfxContext.update();
         
-        bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-        
-        nodeRenderer.setCamera(mainCamera);
-        application.render(nodeRenderer);
+        application.render(nodeRenderer, viewRect);
 
         cinek::uicore::render(nvg, viewRect);
     

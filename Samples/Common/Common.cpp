@@ -23,7 +23,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-uint32_t pollSDLEvents(PollStateSDL& state)
+uint32_t pollSDLEvents(cinek::ove::InputState& state)
 {
     int mx, my;
     

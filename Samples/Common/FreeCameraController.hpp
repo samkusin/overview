@@ -12,11 +12,14 @@
 #include "Common.hpp"
 
 namespace cinek {
+    namespace ove {
 
-class AppController
+class FreeCameraController
 {
 public:
-    AppController();
+    FreeCameraController();
+    
+    void setTransform(const gfx::Vector3& pos, const gfx::Matrix4& rotMtx);
     
     void handleCameraInput(gfx::Camera& camera, const cinek::ove::InputState& state,
                            float frameDelta);
@@ -44,7 +47,7 @@ private:
     
     LocalTransform _cameraTransform;
 };
-
-}
+    } /* namespace ove */
+} /* namespace cinek */
 
 #endif /* Controller_hpp */

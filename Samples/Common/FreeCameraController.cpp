@@ -6,7 +6,7 @@
 //
 //
 
-#include "Controller.hpp"
+#include "FreeCameraController.hpp"
 #include "CKGfx/Camera.hpp"
 
 #include <bx/fpumath.h>
@@ -16,17 +16,27 @@
 
 
 namespace cinek {
+    namespace ove {
 
-AppController::AppController() :
+FreeCameraController::FreeCameraController() :
     _moveFlags(0),
     _moveYaw(0),
     _movePitch(0)
 {
-    _cameraTransform.pos = { 0,1.0, -8.0f };
     bx::mtxIdentity(_cameraTransform.rotMtx);
 }
 
-void AppController::handleCameraInput
+void FreeCameraController::setTransform
+(
+    const gfx::Vector3& pos,
+    const gfx::Matrix4& rotMtx
+)
+{
+    _cameraTransform.pos = pos;
+    _cameraTransform.rotMtx = rotMtx;
+}
+
+void FreeCameraController::handleCameraInput
 (
     gfx::Camera &camera,
     const cinek::ove::InputState &state,
@@ -137,4 +147,5 @@ void AppController::handleCameraInput
     bx::mtxMul(camera.worldMtx, _cameraTransform.rotMtx, translate);
 }
 
-}
+    } /* namespace ove */
+} /* namespace cinek */

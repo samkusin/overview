@@ -314,7 +314,7 @@ int runSample(int viewWidth, int viewHeight)
         }
         */
 
-        PollStateSDL polledInputState;
+        cinek::ove::InputState polledInputState;
         
         if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
             running = false;
