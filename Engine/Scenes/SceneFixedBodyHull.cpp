@@ -78,7 +78,7 @@ void SceneFixedBodyHull::finialize()
     mesh.m_triangleIndexStride = 3 * sizeof(uint16_t);
     mesh.m_vertexStride = sizeof(btVector3);
     
-    btTriangleIndexVertexArray::addIndexedMesh(mesh);
+    btTriangleIndexVertexArray::addIndexedMesh(mesh, PHY_SHORT);
 }
 
     } /* namespace ove */

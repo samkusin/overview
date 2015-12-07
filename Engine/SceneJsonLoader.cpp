@@ -199,6 +199,7 @@ auto SceneJsonLoader::parseJsonNode
             
             btRigidBody* body = _sceneContext->allocateBody(initParams,
                 node.gfxNodeHandle);
+
             context.scene->attachBody(body, context.entity);
         }
     }

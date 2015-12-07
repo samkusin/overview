@@ -44,6 +44,7 @@
 #include "Views/StartupView.hpp"
 
 #include "ResourceFactory.hpp"
+#include "SceneDebugDrawer.hpp"
 
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Messages/Entity.hpp"
@@ -79,14 +80,18 @@
 class OverviewSample : public cinek::ove::EntityComponentFactory
 {
 public:
-    OverviewSample(cinek::gfx::Context& gfxContext);
+    OverviewSample
+    (
+        const cinek::gfx::NodeRenderer::ProgramMap& programs,
+        const cinek::gfx::NodeRenderer::UniformMap& uniforms,
+        cinek::gfx::Context& gfxContext
+    );
     
     void startFrame();
     void simulate(double time, double dt);
     void endFrame(double dt);
     
     void render(cinek::gfx::NodeRenderer& renderer);
-    
     
 public:
     virtual void onCustomComponentCreateFn(cinek::Entity entity,
@@ -106,6 +111,8 @@ private:
                       const cinek::ove::SceneLoadRequest& req);
     
 private:
+    const cinek::gfx::NodeRenderer::ProgramMap* _programs;
+    const cinek::gfx::NodeRenderer::UniformMap* _uniforms;
     cinek::gfx::Context* _gfxContext;
     
     ckmsg::Messenger _messenger;
@@ -126,6 +133,7 @@ private:
     static constexpr double kSecsPerActionFrame = 1/kActionFPS;
     
     double _timeUntilActionFrame;
+    cinek::unique_ptr<cinek::ove::SceneDebugDrawer> _sceneDbgDraw;
     cinek::unique_ptr<cinek::ove::SceneDataContext> _sceneData;
     cinek::unique_ptr<cinek::ove::Scene> _scene;
     
@@ -135,12 +143,19 @@ private:
 
 };
 
-OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
+OverviewSample::OverviewSample
+(
+    const cinek::gfx::NodeRenderer::ProgramMap& programs,
+    const cinek::gfx::NodeRenderer::UniformMap& uniforms,
+    cinek::gfx::Context& gfxContext
+) :
+    _programs(&programs),
+    _uniforms(&uniforms),
+    _gfxContext(&gfxContext),
     _server(_messenger, { 64*1024, 64*1024 }),
     _client(_messenger, { 32*1024, 32*1024 }),
     _scheduler(64),
-    _timeUntilActionFrame(0.0),
-    _gfxContext(&gfxContext)
+    _timeUntilActionFrame(0.0)
 {
     _entityDatabase = std::move(
         cinek::ove::EntityDatabase({
@@ -204,9 +219,10 @@ OverviewSample::OverviewSample(cinek::gfx::Context& gfxContext) :
     cinek::ove::SceneDataContext::InitParams sceneDataInit;
     sceneDataInit.numRigidBodies = 256;
     sceneDataInit.numTriMeshShapes = 32;
-    _sceneData = cinek::allocate_unique<cinek::ove::SceneDataContext>(sceneDataInit);
     
-    _scene = cinek::allocate_unique<cinek::ove::Scene>();
+    _sceneDbgDraw = cinek::allocate_unique<cinek::ove::SceneDebugDrawer>();
+    _sceneData = cinek::allocate_unique<cinek::ove::SceneDataContext>(sceneDataInit);
+    _scene = cinek::allocate_unique<cinek::ove::Scene>(_sceneDbgDraw.get());
     
     _viewAPI = std::move(cinek::ove::ViewAPI(_viewStack,
                             _clientSender,
@@ -343,7 +359,6 @@ void OverviewSample::endFrame(double dt)
 {
     _viewStack.layout();
     _viewStack.frameUpdate(dt);
- 
    
     _scheduler.update(dt * 1000);
     
@@ -357,8 +372,9 @@ void OverviewSample::endFrame(double dt)
 void OverviewSample::render(cinek::gfx::NodeRenderer& renderer)
 {
     renderer(_renderGraph->root());
+    _sceneDbgDraw->setup(*_programs, *_uniforms, renderer.camera());
+    _scene->debugRender();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -369,7 +385,8 @@ void OverviewSample::render(cinek::gfx::NodeRenderer& renderer)
 enum
 {
     kShaderProgramStdMesh   = 0x00000001,
-    kShaderProgramBoneMesh  = 0x00000002
+    kShaderProgramBoneMesh  = 0x00000002,
+    kShaderProgramFlat      = 0x00000003
 };
 
 int runSample(int viewWidth, int viewHeight)
@@ -398,9 +415,14 @@ int runSample(int viewWidth, int viewHeight)
                 "bin/fs_std_tex.bin"
             },
             {
-                cinek::gfx::kNodeProgramBoneMesh,kShaderProgramBoneMesh,
+                cinek::gfx::kNodeProgramBoneMesh, kShaderProgramBoneMesh,
                 "bin/vs_bone_uv.bin",
                 "bin/fs_std_tex.bin"
+            },
+            {
+                cinek::gfx::kNodeProgramFlat, kShaderProgramFlat,
+                "bin/vs_flat_pos.bin",
+                "bin/fs_flat_col.bin"
             }
         });
 
@@ -415,7 +437,7 @@ int runSample(int viewWidth, int viewHeight)
     
     cinek::gfx::Context gfxContext(gfxInitParams);
     
-    OverviewSample application(gfxContext);
+    OverviewSample application(shaderPrograms, shaderUniforms, gfxContext);
     
     //  Application
     

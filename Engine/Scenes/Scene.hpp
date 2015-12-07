@@ -33,7 +33,7 @@ namespace cinek {
 class Scene
 {
 public:
-    Scene();
+    Scene(btIDebugDraw* debugDrawer=nullptr);
     ~Scene();
 
     /**
@@ -52,6 +52,10 @@ public:
      *  @param  dt      Time step in seconds
      */
     void simulate(double dt);
+    /**
+     *  Executes per render frame updates.
+     */
+    void debugRender();
     
 private:
     struct SceneBody

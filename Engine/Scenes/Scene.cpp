@@ -14,7 +14,7 @@ namespace cinek {
     
 ////////////////////////////////////////////////////////////////////////////////
 
-Scene::Scene() :
+Scene::Scene(btIDebugDraw* debugDrawer) :
     _bodies(256),
     _btCollisionDispatcher(&_btCollisionConfig),
     _btWorld(&_btCollisionDispatcher,
@@ -23,6 +23,8 @@ Scene::Scene() :
              &_btCollisionConfig)
 {
     _objects.reserve(256);
+    
+    _btWorld.setDebugDrawer(debugDrawer);
 }
 
 Scene::~Scene()
@@ -32,6 +34,11 @@ Scene::~Scene()
 void Scene::simulate(double dt)
 {
     _btWorld.stepSimulation(dt);
+}
+
+void Scene::debugRender()
+{
+    _btWorld.debugDrawWorld();
 }
 
 btRigidBody* Scene::attachBody

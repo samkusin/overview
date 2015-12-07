@@ -26,6 +26,7 @@ enum NodeProgramSlot
 {
     kNodeProgramMesh,
     kNodeProgramBoneMesh,
+    kNodeProgramFlat,
     kNodeProgramLimit       = 16,
     
     kNodeProgramNone        = -1
@@ -64,6 +65,9 @@ enum NodeUniformSlot
     //  For the basic lighting model, the origin used in spot or point lights
     //
     kNodeUniformLightOrigin,
+    //  For flat shading (color)
+    //
+    kNodeUniformColor,
     
     kNodeUniformLimit,
     
@@ -83,7 +87,7 @@ public:
                  const UniformMap& uniforms);
 
     void setCamera(const Camera& camera);
-    
+    const Camera& camera() const { return _camera; }
     
     enum
     {

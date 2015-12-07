@@ -80,4 +80,6 @@ void registerShaders
     uniforms[cinek::gfx::kNodeUniformLightOrigin] =
             bgfx::createUniform("u_lightOrigin", bgfx::UniformType::Vec4,
                                 CKGFX_SHADERS_LIGHT_COUNT);
+    uniforms[cinek::gfx::kNodeUniformColor] =
+            bgfx::createUniform("u_color", bgfx::UniformType::Vec4, 1);
 }

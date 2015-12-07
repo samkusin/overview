@@ -19,6 +19,11 @@
 		377ECCC41C07AD69002040D7 /* task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCC21C07AD69002040D7 /* task.cpp */; };
 		377ECCC71C07ADFF002040D7 /* intrusive_list.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCC61C07ADFF002040D7 /* intrusive_list.hpp */; };
 		377ECCE31C0BBC28002040D7 /* task.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCE21C0BBC28002040D7 /* task.hpp */; };
+		377ECD111C161BE7002040D7 /* fs_std_tex.fs in Sources */ = {isa = PBXBuildFile; fileRef = 37E636FA1BF0246D0081E59E /* fs_std_tex.fs */; };
+		377ECD121C161BE7002040D7 /* fs_flat_col.fs in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD101C161817002040D7 /* fs_flat_col.fs */; };
+		377ECD131C161BE7002040D7 /* vs_bone_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37E636FD1BF0246D0081E59E /* vs_bone_uv.vs */; };
+		377ECD141C161BE7002040D7 /* vs_std_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37E636FE1BF0246D0081E59E /* vs_std_uv.vs */; };
+		377ECD151C161BE7002040D7 /* vs_flat_pos.vs in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD0F1C1617F4002040D7 /* vs_flat_pos.vs */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
 		37E636061BF010270081E59E /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636051BF010270081E59E /* Common.cpp */; };
 		37E636081BF010F70081E59E /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636071BF010F70081E59E /* Common.hpp */; };
@@ -200,6 +205,8 @@
 		377ECCC21C07AD69002040D7 /* task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = task.cpp; sourceTree = "<group>"; };
 		377ECCC61C07ADFF002040D7 /* intrusive_list.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = intrusive_list.hpp; sourceTree = "<group>"; };
 		377ECCE21C0BBC28002040D7 /* task.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = task.hpp; sourceTree = "<group>"; };
+		377ECD0F1C1617F4002040D7 /* vs_flat_pos.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_flat_pos.vs; sourceTree = "<group>"; };
+		377ECD101C161817002040D7 /* fs_flat_col.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_flat_col.fs; sourceTree = "<group>"; };
 		37E635F41BF00EA40081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSampleCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E636001BF00F650081E59E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		37E636021BF00F840081E59E /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
@@ -641,10 +648,12 @@
 			children = (
 				37E636F91BF0246D0081E59E /* ckgfx.sh */,
 				37E636FA1BF0246D0081E59E /* fs_std_tex.fs */,
+				377ECD101C161817002040D7 /* fs_flat_col.fs */,
 				37E636FB1BF0246D0081E59E /* shaderlib.sh */,
 				37E636FC1BF0246D0081E59E /* varying.def.sc */,
 				37E636FD1BF0246D0081E59E /* vs_bone_uv.vs */,
 				37E636FE1BF0246D0081E59E /* vs_std_uv.vs */,
+				377ECD0F1C1617F4002040D7 /* vs_flat_pos.vs */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -803,6 +812,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				377ECD111C161BE7002040D7 /* fs_std_tex.fs in Sources */,
+				377ECD121C161BE7002040D7 /* fs_flat_col.fs in Sources */,
+				377ECD131C161BE7002040D7 /* vs_bone_uv.vs in Sources */,
+				377ECD141C161BE7002040D7 /* vs_std_uv.vs in Sources */,
+				377ECD151C161BE7002040D7 /* vs_flat_pos.vs in Sources */,
 				37E6372B1BF026210081E59E /* fs_nanovg_fill.hfs in Sources */,
 				37E6372C1BF026210081E59E /* vs_nanovg_fill.hvs in Sources */,
 				37E636941BF024330081E59E /* entitystore.cpp in Sources */,
