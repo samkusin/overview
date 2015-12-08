@@ -18,6 +18,7 @@
 #include "NodeGraph.hpp"
 
 #include <ckm/math.hpp>
+#include <ckm/aabb.hpp>
 
 #include <cinek/debug.h>
 #include <bx/fpumath.h>
@@ -128,12 +129,81 @@ namespace cinek {
         return *this;
     }
 
+    AABB transformAABB(const AABB& aabb, const Matrix4& mtx)
+    {
+        AABB newAABB;
+        
+        //  todo - optimize
+        std::array<Vector3, 8> vertices;
+        aabb.generateVertices(vertices);
+        
+        Vector3& min = newAABB.min;
+        Vector3& max = newAABB.max;
+        
+        for (auto& vertex : vertices) {
+            Vector3 pt;
+            bx::vec3MulMtx(pt, vertex, mtx);
+            
+            if (pt.x < min.x)
+                min.x = pt.x;
+            if (pt.x > max.x)
+                max.x = pt.x;
+
+            if (pt.y < min.y)
+                min.y = pt.y;
+            if (pt.y > max.y)
+                max.y = pt.y;
+
+            if (pt.z < min.z)
+                min.z = pt.z;
+            if (pt.z > max.z)
+                max.z = pt.z;
+        }
+        
+        return newAABB;
+    }
+    
+    
+        /*
+    template<class _Point>
+    template<class _Matrix>
+    void AABB<_Point>::rotate(const _Matrix& mtxRot)
+    {
+        std::array<point_type, 8> box;
+        generateVertices(box);
+        
+        typedef typename _Matrix::col_type column;
+        
+        for (auto& pt : box)
+        {
+            column col = column(pt, (typename column::value_type)1);
+            col *= mtxRot;
+            
+            if (pt.x < min.x)
+                min.x = pt.x;
+            if (pt.x > max.x)
+                max.x = pt.x;
+
+            if (pt.y < min.y)
+                min.y = pt.y;
+            if (pt.y > max.y)
+                max.y = pt.y;
+
+            if (pt.z < min.z)
+                min.z = pt.z;
+            if (pt.z > max.z)
+                max.z = pt.z;
+        }
+    }
+    */
+
     }   //  namespace gfx
+    
+    
+
     
 }   //  namespace cinek
 
-#include <ckm/aabb.hpp>
-#include <ckm/math.hpp>
 #define CKM_MATH_IMPLEMENTATION
 #include <ckm/math.inl>
 
@@ -187,6 +257,5 @@ template<> Vector2 zero<Vector2>() {
 template struct Plane3<Vector3>;
 template class Frustrum<Vector3>;
 template struct AABB<Vector3>;
-
 
 }   // namespace ckm

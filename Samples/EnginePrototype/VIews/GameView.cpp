@@ -30,10 +30,7 @@ void GameView::onViewUnload()
 
 void GameView::onViewAdded()
 {
-    _viewAPI->sceneService().loadScene("scenes/room.json",
-        [this](const SceneLoadResponse& resp) {
-            printf("Loaded %s\n", resp.name);
-        });
+
 }
 
 void GameView::onViewRemoved()

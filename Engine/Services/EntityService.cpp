@@ -28,20 +28,9 @@ Entity EntityService::createEntity
     return _context->createEntity(storeId, ns, templateName);
 }
 
-template<typename Component>
-component::Table<Component> EntityService::getTable(EntityContextType storeId)
+void EntityService::destroyEntity(Entity entity)
 {
-    return _context->getStore(storeId).table<Component>();
-}
-
-EntityGroupTable EntityService::entityGroupTable
-(
-    EntityContextType storeId,
-    EntityGroupMapId id
-)
-const
-{
-    return _context->getStore(storeId).entityGroupTable(id);
+    _context->destroyEntity(entity);
 }
 
 bool EntityService::isEntityValid(Entity e) const
@@ -71,34 +60,6 @@ void EntityService::clearDefinitions(const std::string& path)
     _context->clearManifest(path);
 }
 
-template<typename Component>
-Component* EntityService::createData(Entity entity)
-{
-    auto table = _context->getStore(cinek_entity_context(entity)).table<Component>();
-    return table.addDataForEntity(entity);
-}
-
-bool EntityService::hasComponent(Entity entity, ComponentId compId) const
-{
-    auto table = _context->getStore(cinek_entity_context(entity)).entityTable(compId);
-    if (!table)
-        return false;
-    return table->hasEntity(entity);
-}
-
-template<typename Component>
-const Component* EntityService::getData(Entity entity) const
-{
-    auto table = _context->getStore(cinek_entity_context(entity)).table<Component>();
-    return table.dataForEntity(entity);
-}
-
-template<typename Component>
-Component* EntityService::getData(Entity entity)
-{
-    auto table = _context->getStore(cinek_entity_context(entity)).table<Component>();
-    return table.dataForEntity(entity);
-}
 
 
     } /* namespace ove */

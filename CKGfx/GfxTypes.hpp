@@ -221,6 +221,8 @@ Vector3 operator*(const Vector3& v0, float scalar);
 using Frustrum = ckm::Frustrum<Vector3>;
 using AABB = ckm::AABB<Vector3>;
 
+AABB transformAABB(const AABB& aabb, const Matrix4& mtx);
+
 struct NodeJsonLoader;
 
 

@@ -2,11 +2,7 @@
     "entity" : {
         "test_bot" : {
             "renderable" : {
-                "model" : "models/simple.json",
-                "textures" : [
-                    "textures/black_marble.png",
-                    "textures/woodfloor.png"
-                ]
+                "model" : "models/simple.json"
             },
             "rigidbody" : {
                 "class" : "dynamic",

@@ -1,7 +1,7 @@
 bl_info = {
     "name" : "Export OVEngine Objects (.json)",
     "author" : "Samir Sinha",
-    "version" : (0,0,1),
+    "version" : (0,0,2),
     "blender" : (2,7,5),
     "category" : "Import-Export"
 }
@@ -234,12 +234,15 @@ def generate_mesh_elements(obj, mesh, resources):
 
     return our_mesh_elements
 
-def convert_matrix(y_up):
-    lh_convert_mtx = mathutils.Matrix.Scale(-1,4,(0,0,1))
+def transform_obj_mtx_lh(obj):
+    return mathutils.Matrix.Scale(-1,4,(0,0,1)) * obj.matrix_world
+
+def transform_axis_mtx(y_up):
+    convert_mtx = mathutils.Matrix.Identity(4)
     if y_up:
-        return mathutils.Matrix.Rotation(math.radians(90.0),4,'X') * lh_convert_mtx
+        return mathutils.Matrix.Rotation(math.radians(90.0),4,'X') * convert_mtx
     else:
-        return lh_convert_mtx
+        return convert_mtx
 
 class ExportOVObjectJSON(bpy.types.Operator):
     """Export to OVEngine Objects (.json)"""
@@ -586,7 +589,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
             }
             node['animation'] = obj.name
         elif obj.type == 'MESH':
-            if node['type'] == 'Hull':
+            if node['type'] == 'Hull' or node['type'] == 'Entity':
                 node['hulls'] = self.exportObjectAsMesh(scene, obj, resources, node['type'])
             else:
                 node['meshes'] = self.exportObjectAsMesh(scene, obj, resources, node['type'])
@@ -633,13 +636,13 @@ class ExportOVObjectJSON(bpy.types.Operator):
             root['children'] = []
             for obj in scene.objects:
                 if not obj.parent:
-                    world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
+                    world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
                     child = self.exportNode(scene, obj, resources, matrix=world_matrix)
                     if child:
                         root['children'].append(child)
         else:
             obj = scene.objects.active
-            world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
+            world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
             root = self.exportNode(scene, obj, resources, matrix=world_matrix)
 
         document = OrderedDict()

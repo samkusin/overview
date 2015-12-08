@@ -35,20 +35,13 @@ public:
     Entity createEntity(EntityContextType storeId, const std::string& ns,
                         const std::string& templateName);
     /**
-     *  Retrieve a component table by explicit type Component.
+     *  Destroys the selected entity.
      *
-     *  @param  storeId      The context (store) used
+     *  @param  entity      The entity to destroy
      */
-    template<typename Component> component::Table<Component> getTable(EntityContextType storeId);
+    void destroyEntity(Entity entity);
     /**
-     *  Returns an EntityGroup table given its ID.
-     *  
-     *  @param  storeId      The context (store) used
-     *  @param  id           The EntityGroupTable's ID for lookup
-     */
-    EntityGroupTable entityGroupTable(EntityContextType storeId, EntityGroupMapId id) const;
-    /**
-     *  @param  entity       The entity to check
+     *  @param  entity      The entity to check
      *  @return True if the entity has not been destroyed
      */
     bool isEntityValid(Entity e) const;
@@ -65,31 +58,6 @@ public:
      *  Clears the specified definitions
      */
     void clearDefinitions(const std::string& name);
-    /**
-     *  Creates a component by explicit type that is attached to the specified
-     *  entity.
-     */
-    template<typename Component> Component* createData(Entity entity);
-    /** 
-     *  Returns whether the entity has the specified component
-     *  @param  entity      The entity
-     *  @param  compId      The component Id
-     *  @return True if the entity possesses the component
-     */
-    bool hasComponent(Entity entity, ComponentId compId) const;
-    /**
-     *  Returns a (const) component by explicit type attached to the specified
-     *  entity.
-     *  @param  entity      The entity.
-     *  @return A const pointer to the component data or nullptr if not found.
-     */
-    template<typename Component> const Component* getData(Entity entity) const;
-    /**
-     *  Returns a component by explicit type attached to the specified entity.
-     *  @param  entity      The entity.
-     *  @return A  pointer to the component data or nullptr if not found.
-     */
-    template<typename Component> Component* getData(Entity entity);
     
 private:
     EntityDatabase* _context = nullptr;

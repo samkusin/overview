@@ -35,13 +35,8 @@ public:
 private:
     ViewAPI* _viewAPI;
     
-    enum
-    {
-        kStart,
-        kLoad,
-        kEnd
-    }
-    _state;
+    void loadScene();
+    void endView();
 };
 
 

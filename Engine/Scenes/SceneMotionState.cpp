@@ -48,6 +48,8 @@ void SceneMotionState::setWorldTransform(const btTransform& worldTrans)
                  "Types must be the same to extract matrix from worldTrans");
     
    worldTrans.getOpenGLMatrix(mtx.comp);
+   
+   //TODO, mark node aabb is dirty for later aabb regeneration
 }
  
 
