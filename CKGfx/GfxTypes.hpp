@@ -8,13 +8,10 @@
 #ifndef CK_Graphics_GfxTypes_hpp
 #define CK_Graphics_GfxTypes_hpp
 
-#include <cstddef>
-
 #include <cinek/objectpool.hpp>
 #include <cinek/types.hpp>
 #include <cinek/debug.h>
 #include <ckm/mathtypes.hpp>
-
 
 namespace cinek {
     namespace gfx {
@@ -24,11 +21,12 @@ class Texture;
 class Mesh;
 struct Material;
 struct Node;
-struct NodeGraph;
 struct Camera;
 struct Animation;
 struct AnimationSet;
 struct Light;
+struct NodeElementCounts;
+class NodeGraph;
 class NodeRenderer;
 class AnimationController;
 
@@ -41,6 +39,7 @@ using AnimationSetPool = ManagedObjectPool<AnimationSet, void>;
 using AnimationControllerPool = ManagedObjectPool<AnimationController, void>;
 using LightPool = ManagedObjectPool<Light, void>;
 using NodePool = ManagedObjectPool<Node, NodeGraph*>;
+using NodeGraphPool = ManagedObjectPool<NodeGraph, void>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
 using TextureHandle = ManagedHandle<Texture, TexturePool>;
@@ -49,6 +48,7 @@ using AnimationSetHandle = ManagedHandle<AnimationSet, AnimationSetPool>;
 using AnimationControllerHandle = ManagedHandle<AnimationController, AnimationControllerPool>;
 using LightHandle = ManagedHandle<Light, LightPool>;
 using NodeHandle = ManagedHandle<Node, NodePool>;
+using NodeGraphHandle = ManagedHandle<NodeGraph, NodeGraphPool>;
 
 class ShaderLibrary;
 
@@ -72,6 +72,8 @@ struct Rect
 /// A 4x4 uniform
 struct Matrix4
 {
+    static const Matrix4 kIdentity;
+    
     typedef float value_type;
     value_type comp[16];
     operator float*() { return comp; }
@@ -220,6 +222,10 @@ Vector3 operator*(const Vector3& v0, float scalar);
 
 using Frustrum = ckm::Frustrum<Vector3>;
 using AABB = ckm::AABB<Vector3>;
+
+AABB transformAABB(const AABB& aabb, const Matrix4& mtx);
+
+struct NodeJsonLoader;
 
 
     }   // namepace gfx

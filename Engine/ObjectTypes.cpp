@@ -8,7 +8,7 @@
 
 #include "ObjectTypes.hpp"
 
-namespace cinek { namespace overview {
+namespace cinek { namespace ove {
 
 namespace msg
 {

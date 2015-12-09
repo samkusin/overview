@@ -18,7 +18,7 @@ class AppController
 public:
     AppController();
     
-    void handleCameraInput(gfx::Camera& camera, const PollStateSDL& state,
+    void handleCameraInput(gfx::Camera& camera, const cinek::ove::InputState& state,
                            float frameDelta);
 
 private:

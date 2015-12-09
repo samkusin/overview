@@ -26,7 +26,7 @@ NodeGraph::NodeGraph(const NodeElementCounts& params) :
     _nodes.setDelegate(this);
 }
 
-NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
+NodeGraph::NodeGraph(NodeGraph&& other) :
     _meshElementPool(std::move(other._meshElementPool)),
     _armatureElementPool(std::move(other._armatureElementPool)),
     _lightElementPool(std::move(other._lightElementPool)),
@@ -36,7 +36,7 @@ NodeGraph::NodeGraph(NodeGraph&& other) noexcept :
     _nodes.setDelegate(this);
 }
 
-NodeGraph& NodeGraph::operator=(NodeGraph&& other) noexcept
+NodeGraph& NodeGraph::operator=(NodeGraph&& other)
 {
     _meshElementPool = std::move(other._meshElementPool);
     _armatureElementPool = std::move(other._armatureElementPool);
@@ -102,8 +102,7 @@ NodeHandle NodeGraph::createObjectNode(NodeId id)
 {
     NodeHandle handle;
     Node node(Node::kElementTypeObject);
-    node.setObjectNodeId(id);
-    
+    node.setObjectNodeId(id);    
     handle = _nodes.add(std::move(node));
     return handle;
 }
@@ -140,6 +139,11 @@ void NodeGraph::onReleaseManagedObject(cinek::gfx::Node &node)
 void NodeGraph::setRoot(NodeHandle node)
 {
     _root = node;
+}
+
+void NodeGraph::clearRoot()
+{
+    _root = nullptr;
 }
 
 NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)

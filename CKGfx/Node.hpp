@@ -10,9 +10,9 @@
 #define CK_Graphics_Node_hpp
 
 #include "GfxTypes.hpp"
-#include "AABB.hpp"
 
 #include <cinek/debug.h>
+#include <ckm/aabb.hpp>
 
 namespace cinek {
     namespace gfx {
@@ -129,7 +129,7 @@ private:
     friend class NodeGraph;
  
     Matrix4 _mtx;
-    ckm::AABB<Vector3> _obb;
+    AABB _obb;
  
     //  parent node
     NodeHandle _parent;
@@ -214,6 +214,13 @@ bool visit(NodeHandle node, Fn&& fn)
     
     return true;
 }
+
+void generateAABBForNode
+(
+    AABB& aabb,
+    const Node& node,
+    const Matrix4& parentMtx = Matrix4::kIdentity
+);
 
     }   //  namespace gfx
 }   //  namespace cinek

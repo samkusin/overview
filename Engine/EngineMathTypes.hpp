@@ -11,6 +11,7 @@
 #define Overview_Engine_Math_Types_hpp
 
 #include <cinek/types.hpp>
+#include <ckm/mathtypes.hpp>
 
 #define GLM_FORCE_NO_CTOR_INIT
 #include <glm/fwd.hpp>
@@ -27,12 +28,6 @@ namespace ckm
     using quat = glm::tquat<scalar, glm::highp>;
     
     constexpr ckm::scalar kHalfScalar = 0.5;
-    
-    template<typename _Point> struct AABB;
-    template<typename _Point> struct AABB2;
-    
-    struct Plane3;
-    class Frustrum;
 }
 
 #endif

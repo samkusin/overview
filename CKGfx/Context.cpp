@@ -12,67 +12,29 @@
 #include "Mesh.hpp"
 #include "Animation.hpp"
 #include "Light.hpp"
+#include "NodeGraph.hpp"
 
 namespace cinek {
     namespace gfx {
     
-
-template<typename Dictionary>
-typename Dictionary::mapped_type Context::registerResource
-(
-    typename Dictionary::mapped_type::Value&& value,
-    typename Dictionary::mapped_type::Owner& pool,
-    Dictionary& dictionary,
-    const char* name
-)
-{
-    typename Dictionary::mapped_type h;
-    
-    auto it = dictionary.end();
-    
-    if (name && *name) {
-        std::string key = name;
-        it = dictionary.find(key);
-        if (it != dictionary.end()) {
-            h = it->second;
-        }
-        else {
-            it = dictionary.emplace(key, h).first;
-        }
-    }
-    if (h) {
-        //  existing handle, emplacing a new material into it
-        h.setValue(std::move(value));
-    }
-    else {
-        //  new handle - add it to the dictionary if applicable
-        h = pool.add(std::move(value));
-        if (it != dictionary.end()) {
-            it->second = h;
-        }
-    }
-    return h;
-}
-
-
-template<typename Dictionary>
-void Context::unregisterResource(Dictionary& dictionary, const char* name)
-{
-    std::string key = name;
-    auto it = dictionary.find(key);
-    if (it != dictionary.end()) {
-        dictionary.erase(it);
-    }
-}
-
-
 Context::Context(const ResourceInitParams& params) :
     _meshes(params.numMeshes),
     _materials(params.numMaterials),
     _textures(params.numTextures),
     _animationSets(params.numAnimations),
-    _lights(params.numLights)
+    _lights(params.numLights),
+    _models(params.numModels)
 {
+}
+
+void Context::setTextureLoadDelegate(TextureLoadDelegate delegate)
+{
+    _textureLoadDelegate = std::move(delegate);
+}
+
+auto Context::textureLoadDelegate() const -> TextureLoadDelegate
+{
+    return _textureLoadDelegate;
 }
 
 MeshHandle Context::registerMesh(Mesh&& mesh)
@@ -85,11 +47,16 @@ TextureHandle Context::registerTexture(Texture&& texture, const char* name)
     return registerResource(std::move(texture), _textures, _textureDictionary, name);
 }
 
-TextureHandle Context::loadTexture(const char* pathname, const char* name)
+TextureHandle Context::loadTexture(const char* pathname)
 {
-    Texture texture = Texture::loadTextureFromFile(pathname);
-    
-    return registerTexture(std::move(texture), name);
+    Texture texture;
+    if (_textureLoadDelegate) {
+        texture = _textureLoadDelegate(*this, pathname);
+    }
+    else {
+        texture = Texture::loadTextureFromFile(pathname);
+    }
+    return registerTexture(std::move(texture), pathname);
 }
 
 void Context::unregisterTexture(const char* name)
@@ -142,7 +109,7 @@ void Context::unregisterAnimationSet(const char* name)
 }
 
 
-AnimationSetHandle Context::findAnimationSet(const char* name)
+AnimationSetHandle Context::findAnimationSet(const char* name) const
 {
     auto it = _animationSetDictionary.find(name);
     if (it == _animationSetDictionary.end())
@@ -151,12 +118,33 @@ AnimationSetHandle Context::findAnimationSet(const char* name)
     return it->second;
 }
 
-//  Registers a light handle with an optional name
 LightHandle Context::registerLight(Light&& light)
 {
     return _lights.add(std::move(light));
 }
 
+NodeGraphHandle Context::registerModel
+(
+    NodeGraph&& graph,
+    const char* name
+)
+{
+    return registerResource(std::move(graph), _models, _modelDictionary, name);
+}
+
+void Context::unregisterModel(const char *name)
+{
+    unregisterResource(_modelDictionary, name);
+}
+
+NodeGraphHandle Context::findModel(const char* name) const
+{
+    auto it = _modelDictionary.find(name);
+    if (it == _modelDictionary.end())
+        return nullptr;
+    
+    return it->second;
+}
 
 void Context::update()
 {

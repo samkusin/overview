@@ -1,0 +1,17 @@
+//
+//  Settings.xcconfig
+//  Overview
+//
+//  Created by Samir Sinha on 6/30/13.
+//  Copyright (c) 2013 Cinekine. All rights reserved.
+//
+
+//  Environment (move to project specific folder?)
+OVERVIEW_ROOT = /Users/samir/Development/cinekine/Overview
+PACKAGES_ROOT = $(OVERVIEW_ROOT)/Ext
+DATA_ROOT = $(OVERVIEW_ROOT)/Samples/Data
+
+//  Common Compiler and Linker Build Settings
+HEADER_SEARCH_PATHS = $(PACKAGES_ROOT)/include $(PACKAGES_ROOT)/include/freetype2 $(OVERVIEW_ROOT)/CKLibs $(OVERVIEW_ROOT) ../../Common
+LIBRARY_SEARCH_PATHS = $(PACKAGES_ROOT)/lib
+GCC_ENABLE_CPP_RTTI = NO

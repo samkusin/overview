@@ -70,6 +70,30 @@ Texture Texture::loadTextureFromFile(const char* pathname)
     return texture;
 }
 
+Texture Texture::loadTextureFromMemory(const uint8_t* data, size_t len)
+{
+    Texture texture;
+    
+    int width = 0;
+    int height = 0;
+    int comp = 0;
+    stbi_uc* bmpMemory = stbi_load_from_memory(data, (int)len, &width, &height, &comp, 4);
+    
+    if (bmpMemory) {
+        texture._bgfxHandle = bgfx::createTexture2D
+                              (
+                                width, height, 1,
+                                bgfx::TextureFormat::RGBA8,
+                                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+                                bgfx::copy(bmpMemory, width*height*4)
+                              );
+        stbi_image_free(bmpMemory);
+    }
+    
+    return texture;
+
+}
+
 Texture::Texture() :
     _bgfxHandle(BGFX_INVALID_HANDLE)
 {

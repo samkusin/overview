@@ -143,8 +143,8 @@ AnimationSet& AnimationSet::operator=(AnimationSet&& other)
 
 AnimationSet::AnimationSet
 (
-    std::vector<Bone>&& bones,
-    std::vector<StateDefinition>&& states
+    std::vector<Bone, std_allocator<Bone>>&& bones,
+    std::vector<StateDefinition, std_allocator<StateDefinition>>&& states
 ) :
     _bones(std::move(bones)),
     _animations(std::move(states))

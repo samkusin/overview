@@ -1,0 +1,13 @@
+{
+    "entity" : {
+        "test_bot" : {
+            "renderable" : {
+                "model" : "models/simple.json"
+            },
+            "scenebody" : {
+                "shape" : "cylinder",
+                "mass" : 70.0
+            }
+        }
+    }
+}

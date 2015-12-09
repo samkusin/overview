@@ -11,8 +11,9 @@
 
 #include "GfxTypes.hpp"
 
-#include <unordered_map>
-#include <string>
+#include <cinek/managed_dictionary.hpp>
+
+#include <functional>
 
 namespace cinek {
     namespace gfx {
@@ -27,10 +28,21 @@ public:
         uint32_t numTextures;
         uint32_t numAnimations;
         uint32_t numLights;
+        uint32_t numModels;
     };
     
     Context() = default;
     explicit Context(const ResourceInitParams& params);
+    
+    //  Used for texture loading by an external system.  The external system
+    //  uses the supplied name to load a Texture, and then to use the context
+    //  to register it.
+    using TextureLoadDelegate = std::function<Texture(Context&, const std::string&)>;
+    
+    //  Sets the Texture load delegate issued when a call to loadTexture is
+    //  made.
+    void setTextureLoadDelegate(TextureLoadDelegate delegate);
+    TextureLoadDelegate textureLoadDelegate() const;
     
     //  Run periodically to update the context's state.  State in this case
     //  includes file I/O, resource cleanup and other periodic functions
@@ -46,7 +58,7 @@ public:
     //  immediately - so the returned texture could be empty, but filled in
     //  at a later time (i.e. asynchronously, if the underlying system supports
     //  async file IO.)
-    TextureHandle loadTexture(const char* pathname, const char* name="");
+    TextureHandle loadTexture(const char* pathname);
     //  Unregisters the named Texture from the Context's dictionary
     void unregisterTexture(const char* name);
     //  Finds a texture from the Context's dictionary
@@ -64,9 +76,15 @@ public:
     //  Unregisters the named AnimationSet
     void unregisterAnimationSet(const char* name);
     //  Finds an AnimationSet given its name
-    AnimationSetHandle findAnimationSet(const char* name);
-    //  Registers a light handle with an optional name
+    AnimationSetHandle findAnimationSet(const char* name) const;
+    //  Registers a light handle
     LightHandle registerLight(Light&& light);
+    //  Registers a NodeGraph Model with an noptinoal name
+    NodeGraphHandle registerModel(NodeGraph&& graph, const char* name="");
+    //  Unregisters a Model
+    void unregisterModel(const char *name);
+    //  FInds a Model given its name
+    NodeGraphHandle findModel(const char* name) const;
     
 private:
     //  restrict Context access to pointer and reference -
@@ -78,30 +96,25 @@ private:
     Context& operator=(const Context&);
     Context& operator=(Context&&);
     
-    template<typename Dictionary>
-    typename Dictionary::mapped_type registerResource(
-        typename Dictionary::mapped_type::Value&& value,
-        typename Dictionary::mapped_type::Owner& pool,
-        Dictionary& dictionary,
-        const char* name);
-    
-    template<typename Dictionary>
-    void unregisterResource(Dictionary& dictionary, const char* name);
-    
 private:
     MeshPool _meshes;
     MaterialPool _materials;
     TexturePool _textures;
     AnimationSetPool _animationSets;
     LightPool _lights;
+    NodeGraphPool _models;
     
-    using TextureDictionary = std::unordered_map<std::string, TextureHandle>;
-    using MaterialDictionary = std::unordered_map<std::string, MaterialHandle>;
-    using AnimationSetDictionary = std::unordered_map<std::string, AnimationSetHandle>;
+    using TextureDictionary = ManagedDictionary<TextureHandle>;
+    using MaterialDictionary = ManagedDictionary<MaterialHandle>;
+    using AnimationSetDictionary = ManagedDictionary<AnimationSetHandle>;
+    using ModelDictionary = ManagedDictionary<NodeGraphHandle>;
     
     TextureDictionary _textureDictionary;
     MaterialDictionary _materialDictionary;
     AnimationSetDictionary _animationSetDictionary;
+    ModelDictionary _modelDictionary;
+    
+    TextureLoadDelegate _textureLoadDelegate;
 };
 
     

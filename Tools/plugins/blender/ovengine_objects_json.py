@@ -1,7 +1,7 @@
 bl_info = {
     "name" : "Export OVEngine Objects (.json)",
     "author" : "Samir Sinha",
-    "version" : (0,0,1),
+    "version" : (0,0,2),
     "blender" : (2,7,5),
     "category" : "Import-Export"
 }
@@ -51,40 +51,46 @@ def generate_mesh_elements(obj, mesh, resources):
 
     our_materials = resources['materials']
     our_mesh_elements = []
+    has_ovobject_props = hasattr(obj, 'ovobject_type_property')
+    is_viewable = not has_ovobject_props or obj.ovobject_type_property == 'View'
+    face_has_uvs = face_has_uvs and is_viewable
 
     while mesh_faces:
         # Subdivide the Mesh into MeshElements (An element being a mesh
         # with a single common material)
         #
-        material_index = mesh_faces[0].material_index
-        material = mesh.materials[material_index]
-        material_name = material.name
-        if not material.name in our_materials:
-            diffuse = OrderedDict(
-                [('r',material.diffuse_color[0]),
-                 ('g',material.diffuse_color[1]),
-                 ('b',material.diffuse_color[2]),
-                 ('textures',[])]
-            )
-            if material.texture_slots:
-                texture = material.texture_slots[0].texture
-                if texture.type == 'IMAGE':
-                    diffuse['textures'].append(
-                        make_texture_path(resources['texture_path'], texture.image.filepath)
-                    )
+        if is_viewable:
+            material_index = mesh_faces[0].material_index
+            material = mesh.materials[material_index]
+            material_name = material.name
+            if not material.name in our_materials:
+                diffuse = OrderedDict(
+                    [('r',material.diffuse_color[0]),
+                     ('g',material.diffuse_color[1]),
+                     ('b',material.diffuse_color[2]),
+                     ('textures',[])]
+                )
+                if len(material.texture_slots):
+                    material_texture = material.texture_slots[0]
+                    if material_texture:
+                        texture = material.texture_slots[0].texture
+                        if texture.type == 'IMAGE':
+                            diffuse['textures'].append(
+                                make_texture_path(resources['texture_path'], texture.image.filepath)
+                            )
 
-            specular = OrderedDict(
-                [('r',material.specular_color[0]),
-                 ('g',material.specular_color[1]),
-                 ('b',material.specular_color[2]),
-                 ('power',material.specular_hardness),
-                 ('intensity',material.specular_intensity)]
-            )
-            material = OrderedDict(
-                [('diffuse',diffuse),
-                ('specular',specular)]
-            )
-            our_materials[material_name] = material
+                specular = OrderedDict(
+                    [('r',material.specular_color[0]),
+                     ('g',material.specular_color[1]),
+                     ('b',material.specular_color[2]),
+                     ('power',material.specular_hardness),
+                     ('intensity',material.specular_intensity)]
+                )
+                material = OrderedDict(
+                    [('diffuse',diffuse),
+                    ('specular',specular)]
+                )
+                our_materials[material_name] = material
 
         # Collect the vertices for our mesh element
         # It's likely that we'll have 'duplicate' vertices when splitting our main
@@ -112,7 +118,7 @@ def generate_mesh_elements(obj, mesh, resources):
                 continue
             elif len(face.vertices) != 3:
                 raise RuntimeError("Faces must be triangulated with vertex count = " + str(len(face.vertices)))
-            elif face.material_index != material_index:
+            elif is_viewable and face.material_index != material_index:
                 continue
             # This face belongs to the current MeshElement
             mesh_faces.remove(face)
@@ -183,9 +189,11 @@ def generate_mesh_elements(obj, mesh, resources):
         #   Generate our final mesh_element dictionary
         our_mesh = OrderedDict()
         our_mesh['name'] = mesh_name + '.' + str(len(our_mesh_elements))
-        our_mesh['material'] = material_name
+        if is_viewable:
+            our_mesh['material'] = material_name
         our_mesh['vertices'] = []
-        our_mesh['normals'] = []
+        if is_viewable:
+            our_mesh['normals'] = []
         if face_has_uvs:
             our_mesh['tex0'] = []
         if has_weights:
@@ -212,8 +220,10 @@ def generate_mesh_elements(obj, mesh, resources):
             uv = our_vertices[vindex].uv
             weights = our_vertices[vindex].weights
             our_mesh['vertices'].append(OrderedDict([('x',pos[0]),('y',pos[1]),('z',pos[2])]))
-            our_mesh['normals'].append(OrderedDict([('x',norm[0]),('y',norm[1]),('z',norm[2])]))
-            our_mesh['tex0'].append(OrderedDict([('u',uv[0]),('v',uv[1])]))
+            if 'normals' in our_mesh:
+                our_mesh['normals'].append(OrderedDict([('x',norm[0]),('y',norm[1]),('z',norm[2])]))
+            if 'tex0' in our_mesh:
+                our_mesh['tex0'].append(OrderedDict([('u',uv[0]),('v',uv[1])]))
             if weights:
                 bone_weights = []
                 for w in weights:
@@ -224,12 +234,15 @@ def generate_mesh_elements(obj, mesh, resources):
 
     return our_mesh_elements
 
-def convert_matrix(y_up):
-    lh_convert_mtx = mathutils.Matrix.Scale(-1,4,(0,0,1))
+def transform_obj_mtx_lh(obj):
+    return mathutils.Matrix.Scale(-1,4,(0,0,1)) * obj.matrix_world
+
+def transform_axis_mtx(y_up):
+    convert_mtx = mathutils.Matrix.Identity(4)
     if y_up:
-        return mathutils.Matrix.Rotation(math.radians(90.0),4,'X') * lh_convert_mtx
+        return mathutils.Matrix.Rotation(math.radians(90.0),4,'X') * convert_mtx
     else:
-        return lh_convert_mtx
+        return convert_mtx
 
 class ExportOVObjectJSON(bpy.types.Operator):
     """Export to OVEngine Objects (.json)"""
@@ -336,7 +349,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
         return len(resources['lights'])-1
 
-    def exportObjectAsMesh(self, scene, obj, resources):
+    def exportObjectAsMesh(self, scene, obj, resources, type):
         # Process the selected mesh
         apply_modifiers = False
         export_settings = 'PREVIEW'
@@ -356,11 +369,18 @@ class ExportOVObjectJSON(bpy.types.Operator):
         try:
             our_meshes = generate_mesh_elements(obj, object_mesh, resources)
 
-            mesh_index = len(resources['meshes'])
-            for mesh in our_meshes:
-                resources['meshes'].append(mesh)
-                mesh_indices.append(mesh_index)
-                mesh_index += 1
+            if type == 'Hull':
+                hull_index = len(resources['hulls'])
+                for hull in our_meshes:
+                    resources['hulls'].append(hull)
+                    mesh_indices.append(hull_index)
+                    hull_index += 1
+            else:
+                mesh_index = len(resources['meshes'])
+                for mesh in our_meshes:
+                    resources['meshes'].append(mesh)
+                    mesh_indices.append(mesh_index)
+                    mesh_index += 1
 
         except Exception as e:
             self.report({'ERROR'}, str(e))
@@ -507,9 +527,18 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
         return { 'skeleton': bones, 'bone_names': bone_names, 'animations': animations }
 
-    def createNode(self, name, matrix):
+    def createNode(self, obj, matrix):
         node = OrderedDict()
-        node['name'] = name
+        if type(obj) is str:
+            node['name'] = obj
+            node['type'] = 'Node'
+        else:
+            node['name'] = obj.name
+            if hasattr(obj, 'ovobject_type_property'):
+                node['type'] = obj.ovobject_type_property
+            else:
+                node['type'] = 'Node'
+
         node['matrix'] = matrix_to_list(matrix)
         node['obb'] = OrderedDict()
         node['obb']['min'] = OrderedDict([('x', 0.0),('y', 0.0), ('z', 0.0)])
@@ -525,7 +554,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
             print("Skipping camera [",obj.name,"] of type ",obj.type)
             return None
 
-        node = self.createNode(obj.name, matrix)
+        node = self.createNode(obj, matrix)
 
         min = node['obb']['min']
         max = node['obb']['max']
@@ -560,7 +589,10 @@ class ExportOVObjectJSON(bpy.types.Operator):
             }
             node['animation'] = obj.name
         elif obj.type == 'MESH':
-            node['meshes'] = self.exportObjectAsMesh(scene, obj, resources)
+            if node['type'] == 'Hull' or node['type'] == 'Entity':
+                node['hulls'] = self.exportObjectAsMesh(scene, obj, resources, node['type'])
+            else:
+                node['meshes'] = self.exportObjectAsMesh(scene, obj, resources, node['type'])
 
         # Seems hacky.  But the only way I found to determine if an object has custom
         # props is to check for the _RNA_UI key
@@ -593,6 +625,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
             'animations': {},
             'lights' : [],
             'meshes' : [],
+            'hulls' : [],
             'texture_path' : 'textures'
         }
 
@@ -603,13 +636,13 @@ class ExportOVObjectJSON(bpy.types.Operator):
             root['children'] = []
             for obj in scene.objects:
                 if not obj.parent:
-                    world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
+                    world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
                     child = self.exportNode(scene, obj, resources, matrix=world_matrix)
                     if child:
                         root['children'].append(child)
         else:
             obj = scene.objects.active
-            world_matrix = convert_matrix(self.opt_export_y_up) * obj.matrix_world
+            world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
             root = self.exportNode(scene, obj, resources, matrix=world_matrix)
 
         document = OrderedDict()
@@ -620,6 +653,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
             document['animations'] = resources['animations']
         if self.opt_export_type == 'Everything' or self.opt_export_type == 'Meshes':
             document['meshes'] = resources['meshes']
+            document['hulls'] = resources['hulls']
             document['lights'] = resources['lights']
             document['nodes'] = root
 
@@ -638,18 +672,45 @@ class ExportOVObjectJSON(bpy.types.Operator):
         context.window_manager.fileselect_add(self)
         return { 'RUNNING_MODAL' }
 
+class OVObjectPanel(bpy.types.Panel):
+    bl_label = "OVEngine Properties"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
+
+    type_options = (
+        ('Node', 'Node', ''),
+        ('Entity', 'Entity', ''),
+        ('View', 'View', ''),
+        ('Hull', 'Hull', '')
+    )
+    bpy.types.Object.ovobject_type_property = bpy.props.EnumProperty(name='Type', default='Node',
+                                                    items=type_options)
+
+    def draw(self, context):
+        self.layout.operator("prop.ovobject_debug", text='Debug')
+        self.layout.prop(context.active_object,"ovobject_type_property")
+
+class OBJECT_OT_PropCopyButton(bpy.types.Operator):
+    bl_idname = "prop.ovobject_debug"
+    bl_label = "OVEngine Debug"
+
+    def execute(self, context):
+        sc0 = context.active_object
+        print("OVObject Property : ", sc0.ovobject_type_property)
+        return{'FINISHED'}
 
 def menu_func(self, context):
     self.layout.operator_context = 'INVOKE_DEFAULT'
     self.layout.operator(ExportOVObjectJSON.bl_idname, text="OVEngine Objects (.json)")
 
 def register():
-    bpy.utils.register_module(__name__);
+    bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
 
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
-    bpy.utils.unregister_module(__name__);
+    bpy.utils.unregister_module(__name__)
 
 #if __name__ == "__main__":
 #    register()

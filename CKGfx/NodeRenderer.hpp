@@ -26,6 +26,7 @@ enum NodeProgramSlot
 {
     kNodeProgramMesh,
     kNodeProgramBoneMesh,
+    kNodeProgramFlat,
     kNodeProgramLimit       = 16,
     
     kNodeProgramNone        = -1
@@ -64,6 +65,9 @@ enum NodeUniformSlot
     //  For the basic lighting model, the origin used in spot or point lights
     //
     kNodeUniformLightOrigin,
+    //  For flat shading (color)
+    //
+    kNodeUniformColor,
     
     kNodeUniformLimit,
     
@@ -83,7 +87,7 @@ public:
                  const UniformMap& uniforms);
 
     void setCamera(const Camera& camera);
-    
+    const Camera& camera() const { return _camera; }
     
     enum
     {
@@ -140,20 +144,20 @@ private:
     Matrix4 _viewProjMtx;
         
     //  Calculated State during Lighting Object Pass
-    using Lights = std::vector<LightState>;
+    using Lights = std::vector<LightState, std_allocator<LightState>>;
     Lights _globalLights;
     Lights _directionalLights;
     
     //  various stacks used to store current rendering state during execution
-    std::vector<NodeHandle> _nodeStack;
-    std::vector<Matrix4> _transformStack;
-    std::vector<ArmatureState> _armatureStack;
+    std::vector<NodeHandle, std_allocator<NodeHandle>> _nodeStack;
+    std::vector<Matrix4, std_allocator<Matrix4>> _transformStack;
+    std::vector<ArmatureState, std_allocator<ArmatureState>> _armatureStack;
     
-    std::vector<Vector4> _lightColors;
-    std::vector<Vector4> _lightParams;
-    std::vector<Vector4> _lightDirs;
-    std::vector<Vector4> _lightOrigins;
-    std::vector<Vector4> _lightCoeffs;
+    std::vector<Vector4, std_allocator<Vector4>> _lightColors;
+    std::vector<Vector4, std_allocator<Vector4>> _lightParams;
+    std::vector<Vector4, std_allocator<Vector4>> _lightDirs;
+    std::vector<Vector4, std_allocator<Vector4>> _lightOrigins;
+    std::vector<Vector4, std_allocator<Vector4>> _lightCoeffs;
 };
 
 

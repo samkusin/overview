@@ -29,7 +29,7 @@ AppController::AppController() :
 void AppController::handleCameraInput
 (
     gfx::Camera &camera,
-    const PollStateSDL &state,
+    const cinek::ove::InputState &state,
     float frameDelta
 )
 {

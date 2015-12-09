@@ -42,6 +42,10 @@ namespace VertexTypes
             .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
             .end();
         
+        s_decls[kVPosition].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .end();
+        
         //  allow custom presets starting at the preset limit index
         for (int i = kPresetCount; i < kFormatLimit; ++i)
         {

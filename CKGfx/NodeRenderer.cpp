@@ -251,9 +251,15 @@ void NodeRenderer::operator()
         
         }
         
+        popTransform();     // cleanup default top-level transform
+        
         stages >>= 1;
         currentStage <<= 1;
     }
+    
+    CK_ASSERT(_transformStack.empty());
+    CK_ASSERT(_nodeStack.empty());
+    CK_ASSERT(_armatureStack.empty());
 }
 
 void NodeRenderer::pushTransform(const Matrix4& mtx)

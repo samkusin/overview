@@ -24,6 +24,7 @@ namespace cinek {
     
     public:
         static Texture loadTextureFromFile(const char* pathname);
+        static Texture loadTextureFromMemory(const uint8_t* data, size_t len);
     
     public:
         Texture();

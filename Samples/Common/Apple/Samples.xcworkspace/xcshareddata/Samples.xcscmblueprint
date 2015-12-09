@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D0A63CBB2608E59B323EDE59F971B56D43E4A618",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "D0A63CBB2608E59B323EDE59F971B56D43E4A618" : 0,
+    "C4F97136603E28F4AEB8CE322CA641CD81C17279" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "307EB7B2-1C8D-4C49-A953-88E5CD84942B",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "D0A63CBB2608E59B323EDE59F971B56D43E4A618" : "Overview\/",
+    "C4F97136603E28F4AEB8CE322CA641CD81C17279" : "Overview\/CKLibs\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Samples",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Samples\/Common\/Apple\/Samples.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "hitchcock.cinekine.com:cinekine\/cinek.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C4F97136603E28F4AEB8CE322CA641CD81C17279"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "hitchcock.cinekine.com:cinekine\/overview.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D0A63CBB2608E59B323EDE59F971B56D43E4A618"
+    }
+  ]
+}
