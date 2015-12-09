@@ -9,7 +9,7 @@
 #include "GameView.hpp"
 
 #include "Engine/ViewAPI.hpp"
-#include "Engine/Services/SceneService.hpp"
+#include "Engine/Services/EntityService.hpp"
 
 namespace cinek {
     namespace ove {
@@ -22,6 +22,7 @@ GameView::GameView(ViewAPI& api) :
     
 void GameView::onViewLoad()
 {
+    _viewAPI->entityService().createEntity(0, "entity", "test_bot");
 }
 
 void GameView::onViewUnload()

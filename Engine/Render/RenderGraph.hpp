@@ -63,9 +63,21 @@ public:
      */
     void removeNode(Entity e);
     /**
+     *  Find the node associated with an entity.
+     *
+     *  @param  entity  The entity to lookup
+     *  @return The associated node, or an empty node if there is no entity
+     *          mapped to a node.
+     */
+    gfx::NodeHandle findNode(Entity e) const;
+    /**
      *  Clears the render graph to entity map.
      */
     void clear();
+    /**
+     *  Updates the render graph
+     */
+    void update(double dt);
     /**
      *  @return The root of the generated gfx::NodeGraph.
      */
@@ -76,9 +88,6 @@ public:
     gfx::NodeGraph& nodeGraph() {
         return _nodeGraph;
     }
-    
-private:
-    void updateRenderNodes(double dt);
 
 private:
     cinek::gfx::NodeGraph _nodeGraph;

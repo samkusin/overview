@@ -45,6 +45,10 @@ public:
      */
     btRigidBody* detachBody(Entity entity);
     /**
+     *  @param  What entity to find a body for
+     */
+    btRigidBody* findBody(Entity entity) const;
+    /**
      *  Updates the scene simulations using the specified timestep.  It's best
      *  to run this using a fixed timestep, though this requirement depends
      *  on the needs of an application.

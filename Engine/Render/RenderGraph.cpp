@@ -43,6 +43,8 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
         return nullptr;
         
     auto parentNode = _nodeGraph.createObjectNode(e);
+    parentNode->setTransform(gfx::Matrix4::kIdentity);
+    
     _nodeGraph.addChildNodeToNode(_nodeGraph.clone(sourceNode), parentNode);
     _nodeGraph.addChildNodeToNode(parentNode, rootNode);
     
@@ -98,6 +100,40 @@ void RenderGraph::removeNode(Entity e)
     }
 }
 
+gfx::NodeHandle RenderGraph::findNode(Entity e) const
+{
+ //  search within our sorted region first
+    struct comparator
+    {
+        bool operator()(const Node& n, Entity e) const {
+            return n.entity < e;
+        }
+        bool operator()(Entity e, const Node& n) const {
+            return e < n.entity;
+        }
+    };
+    auto itRange = std::equal_range(_renderNodes.begin(),
+                        _renderNodes.begin() + _nodeEndIndex, e, comparator());
+    if (itRange.first == itRange.second) {
+        // not inside the sorted region, check the added node region, which is
+        // just a vector of added, not sorted, nodes
+        for (auto it = _renderNodes.begin() + _nodeEndIndex; it != _renderNodes.end(); ) {
+            auto& node = *it;
+            
+            if (node.entity == e) {
+                return node.gfxNode;
+            }
+            else {
+                ++it;
+            }
+        }
+        return nullptr;
+    }
+    
+    //  return the first found node
+    return itRange.first->gfxNode;
+}
+
 void RenderGraph::clear()
 {
     //  NOTE - this might be inefficient if our intent is to reset the NodeGraph
@@ -127,7 +163,7 @@ void RenderGraph::clear()
     _nodeGraph.clearRoot();
 }
 
-void RenderGraph::updateRenderNodes(double dt)
+void RenderGraph::update(double dt)
 {
     //  resort vector to include any added nodes (at end of list)
     //  sort removed nodes to the end of the vector and remove them

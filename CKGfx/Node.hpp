@@ -215,6 +215,13 @@ bool visit(NodeHandle node, Fn&& fn)
     return true;
 }
 
+void generateAABBForNode
+(
+    AABB& aabb,
+    const Node& node,
+    const Matrix4& parentMtx = Matrix4::kIdentity
+);
+
     }   //  namespace gfx
 }   //  namespace cinek
 

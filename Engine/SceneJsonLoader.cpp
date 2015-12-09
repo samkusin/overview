@@ -175,7 +175,7 @@ auto SceneJsonLoader::parseJsonNode
             }
             else if (child.type == Node::kSceneTriMeshShape) {
                 if (triMeshShape) {
-                    _sceneContext->freeTriangleMeshShape(triMeshShape);
+                    _sceneContext->freeShape(triMeshShape);
                 }
                 triMeshShape = child.sceneTriMeshShape;
             }

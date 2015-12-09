@@ -72,6 +72,8 @@ struct Rect
 /// A 4x4 uniform
 struct Matrix4
 {
+    static const Matrix4 kIdentity;
+    
     typedef float value_type;
     value_type comp[16];
     operator float*() { return comp; }

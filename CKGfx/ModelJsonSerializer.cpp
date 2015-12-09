@@ -200,14 +200,8 @@ struct ModelBuilderFromJSONFn
 
     NodeGraph& operator()(NodeGraph& model, const JsonValue& node)
     {
-        _modelAABB.clear();
-        
-        gfx::Matrix4 worldMtx;
-        bx::mtxIdentity(worldMtx);
-        
-        auto root = build(model, node, worldMtx);
-        root->obb() = _modelAABB;
-        
+        auto root = build(model, node);
+    
         model.setRoot(root);
         
         return model;
@@ -216,13 +210,11 @@ struct ModelBuilderFromJSONFn
 private:
     NodeJsonLoader* _loader;
     const std::vector<std::string>* _nodeTypesExcluded;
-    AABB _modelAABB;
 
     NodeHandle build
     (
         NodeGraph& model,
-        const JsonValue& node,
-        const gfx::Matrix4& parentMtx
+        const JsonValue& node
     )
     {
         NodeHandle thisNode;
@@ -240,21 +232,16 @@ private:
         }
         
         thisNode = (*_loader)(model, node);
-        
-        Matrix4 worldMtx;
-        bx::mtxMul(worldMtx, thisNode->transform(), parentMtx);
-        
-        AABB worldAABB = transformAABB(thisNode->obb(), worldMtx);
-        _modelAABB.merge(worldAABB);
-
+     
         if (node.HasMember("children")) {
             const JsonValue& children = node["children"];
             if (children.IsArray() && !children.Empty()) {
 
                 for (auto it = children.Begin(); it != children.End(); ++it) {
-                    NodeHandle child = build(model, *it, worldMtx);
+                    NodeHandle child = build(model, *it);
                     if (child) {
                         model.addChildNodeToNode(child, thisNode);
+                        
                     }
                 }
             }

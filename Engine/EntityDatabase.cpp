@@ -80,15 +80,30 @@ Entity EntityDatabase::createEntity
         if (templateIt != entityDefinitions.MemberEnd()) {
             auto& store = getStore(context);
             entity = store.create(context);
-        
+            
+            //  create renderable component first if it exists. useful so that
+            //  other components that reply on renderable have the data they
+            //  need
             const cinek::JsonValue& templ = templateIt->value;
-            for (cinek::JsonValue::ConstMemberIterator it = templ.MemberBegin();
+            cinek::JsonValue::ConstMemberIterator it = templ.FindMember("renderable");
+            if (it != templ.MemberEnd()) {
+                 _factory->onCustomComponentCreateFn(entity,
+                        store, it->name.GetString(),
+                        root,
+                        it->value);
+            }
+        
+            for (it = templ.MemberBegin();
                  it != templ.MemberEnd();
                  ++it)
             {
                 const char* componentName = it->name.GetString();
-                const cinek::JsonValue& componentData = it->value;
                 
+                if (!strcasecmp(componentName, "renderable")) {
+                    continue;   // handled before this loop
+                }
+                
+                const cinek::JsonValue& componentData = it->value;
                 _factory->onCustomComponentCreateFn(entity,
                         store, componentName,
                         root,

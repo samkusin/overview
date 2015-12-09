@@ -4,8 +4,7 @@
             "renderable" : {
                 "model" : "models/simple.json"
             },
-            "rigidbody" : {
-                "class" : "dynamic",
+            "scenebody" : {
                 "shape" : "cylinder",
                 "mass" : 70.0
             }

@@ -8,6 +8,8 @@
 
 #include "Node.hpp"
 
+#include <bx/fpumath.h>
+
 namespace cinek {
     namespace gfx {
     
@@ -31,6 +33,23 @@ Node* Node::prevSibling()
 {
     return const_cast<Node*>(static_cast<const Node*>(this)->prevSibling());
 }
+
+
+void generateAABBForNode(AABB& aabb, const Node& node, const Matrix4& parentMtx)
+{
+    Matrix4 mtx;
+    bx::mtxMul(mtx, node.transform(), parentMtx);
+
+    for (const Node* child = node.firstChild();
+         child;
+         child = child->nextSibling()) {
+        
+        generateAABBForNode(aabb, *child, mtx);
+    }
+    
+    aabb.merge(transformAABB(node.obb(), mtx));
+}
+
 
     }   // namespace gfx
 }   // namespace cinek

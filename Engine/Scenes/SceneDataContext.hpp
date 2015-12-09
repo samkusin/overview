@@ -17,6 +17,9 @@
 #include <cinek/objectpool.hpp>
 
 #include <bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
+#include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
+#include <bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
+#include <bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
 #include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
 
 #include <vector>
@@ -33,6 +36,8 @@ public:
     struct InitParams
     {
         uint32_t numTriMeshShapes;
+        uint32_t numCylinderShapes;
+        uint32_t numBoxShapes;
         uint32_t numRigidBodies;
     };
     SceneDataContext() = default;
@@ -52,7 +57,12 @@ public:
         SceneFixedBodyHull* hull,
         const btVector3& scale
     );
-    void freeTriangleMeshShape(btBvhTriangleMeshShape* shape);
+    
+    btCompoundShape* allocateBoxShape(const btVector3& halfDims,
+        const btTransform& localTransform);
+    btCompoundShape* allocateCylinderShape(const btVector3& halfDims,
+        const btTransform& localTransform);
+    void freeShape(btCollisionShape* shape);
     
     //  body
     struct SceneBodyInitParams
@@ -67,9 +77,15 @@ public:
     );
     void freeBody(btRigidBody* body);
     
+    SceneMotionState* allocateMotionState(gfx::NodeHandle h);
+    void freeMotionState(SceneMotionState* state);
+    
 private:
     ObjectPool<SceneFixedBodyHull> _triMeshPool;
     ObjectPool<btBvhTriangleMeshShape> _triMeshShapePool;
+    ObjectPool<btCylinderShape> _cylinderShapePool;
+    ObjectPool<btBoxShape> _boxShapePool;
+    ObjectPool<btCompoundShape> _compoundShapePool;
     ObjectPool<btRigidBody> _rigidBodyPool;
     ObjectPool<SceneMotionState> _motionStatesPool;
     

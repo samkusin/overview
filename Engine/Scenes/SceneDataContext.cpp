@@ -15,6 +15,9 @@ namespace cinek {
 SceneDataContext::SceneDataContext(const InitParams& params) :
     _triMeshPool(params.numTriMeshShapes),
     _triMeshShapePool(params.numTriMeshShapes),
+    _cylinderShapePool(params.numCylinderShapes),
+    _boxShapePool(params.numBoxShapes),
+    _compoundShapePool(params.numBoxShapes + params.numCylinderShapes),
     _rigidBodyPool(params.numRigidBodies),
     _motionStatesPool(params.numRigidBodies)
 {
@@ -77,14 +80,70 @@ btBvhTriangleMeshShape* SceneDataContext::allocateTriangleMeshShape
     return triMeshShape;
 }
 
-void SceneDataContext::freeTriangleMeshShape(btBvhTriangleMeshShape* shape)
+btCompoundShape* SceneDataContext::allocateBoxShape
+(
+    const btVector3& halfDims,
+    const btTransform& localTransform
+)
 {
-    SceneFixedBodyHull* hull = static_cast<SceneFixedBodyHull*>(shape->getMeshInterface());
-    releaseFixedBodyHull(hull);
-    _triMeshShapePool.destruct(shape);
+    btCompoundShape* compShape = _compoundShapePool.construct(true, 1);
+    if (compShape) {
+        btBoxShape* shape = _boxShapePool.construct(halfDims);
+        compShape->addChildShape(localTransform, shape);
+    }
+    return compShape;
 }
 
+btCompoundShape* SceneDataContext::allocateCylinderShape
+(
+    const btVector3& halfDims,
+    const btTransform& localTransform
+)
+{
+    btCompoundShape* compShape = _compoundShapePool.construct(true, 1);
+    if (compShape) {
+        btCylinderShape* shape = _cylinderShapePool.construct(halfDims);
+        compShape->addChildShape(localTransform, shape);
+    }
+    return compShape;
+}
 
+void SceneDataContext::freeShape(btCollisionShape* collisionShape)
+{
+    switch (collisionShape->getShapeType())
+    {
+    case TRIANGLE_MESH_SHAPE_PROXYTYPE: {
+        btBvhTriangleMeshShape* shape = static_cast<btBvhTriangleMeshShape*>(collisionShape);
+        releaseFixedBodyHull(static_cast<SceneFixedBodyHull*>(shape->getMeshInterface()));
+        _triMeshShapePool.destruct(shape);
+    }
+    break;
+    case COMPOUND_SHAPE_PROXYTYPE: {
+        btCompoundShape* compShape = static_cast<btCompoundShape*>(collisionShape);
+        for (int i = compShape->getNumChildShapes(); i > 0; --i) {
+            btCollisionShape* shape = compShape->getChildShape(i-1);
+            freeShape(shape);
+            compShape->removeChildShapeByIndex(i-1);
+        }
+    }
+    break;
+    case BOX_SHAPE_PROXYTYPE: {
+        btBoxShape* shape = static_cast<btBoxShape*>(collisionShape);
+        _boxShapePool.destruct(shape);
+    }
+    break;
+    case CYLINDER_SHAPE_PROXYTYPE: {
+        btCylinderShape* shape = static_cast<btCylinderShape*>(collisionShape);
+        _cylinderShapePool.destruct(shape);
+    }
+    break;
+    default:
+        //  unsupported shape type
+        CK_ASSERT(false);
+        break;
+    }
+    
+}
 
 btRigidBody* SceneDataContext::allocateBody
 (
@@ -92,7 +151,10 @@ btRigidBody* SceneDataContext::allocateBody
     gfx::NodeHandle gfxNodeHandle
 )
 {
-    SceneMotionState* motionState = _motionStatesPool.construct(gfxNodeHandle);
+    SceneMotionState* motionState = nullptr;
+    if (gfxNodeHandle) {
+        motionState = allocateMotionState(gfxNodeHandle);
+    }
     btRigidBody::btRigidBodyConstructionInfo btInfo(info.mass,
         motionState,
         info.collisionShape);
@@ -106,10 +168,21 @@ void SceneDataContext::freeBody(btRigidBody* body)
     SceneMotionState* state = static_cast<SceneMotionState*>(body->getMotionState());
     if (state) {
         body->setMotionState(nullptr);
-        _motionStatesPool.destruct(state);
+        freeMotionState(state);
     }
     _rigidBodyPool.destruct(body);
 }
+
+SceneMotionState* SceneDataContext::allocateMotionState(gfx::NodeHandle h)
+{
+    return _motionStatesPool.construct(h);
+}
+
+void SceneDataContext::freeMotionState(SceneMotionState* state)
+{
+    _motionStatesPool.destruct(state);
+}
+    
 
     }
 }

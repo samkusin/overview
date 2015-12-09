@@ -87,6 +87,19 @@ btRigidBody* Scene::detachBody
     return obj->btBody;
 }
 
+btRigidBody* Scene::findBody(Entity entity) const
+{
+    auto it = std::lower_bound(_objects.begin(), _objects.end(), entity,
+        [](const SceneBody* obj0, Entity e) -> bool {
+            return obj0->entity < e;
+        });
+    if (it == _objects.end() || (*it)->entity != entity)
+        return nullptr;
+    
+    auto obj = *it;
+    return obj->btBody;
+}
+
         
     }   /* namespace ove */
 }   /* namespace cinek */
