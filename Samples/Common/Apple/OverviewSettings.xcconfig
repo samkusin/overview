@@ -7,7 +7,7 @@
 //
 
 //  Environment (move to project specific folder?)
-OVERVIEW_ROOT = /Users/samir/Development/cinekine/Overview
+OVERVIEW_ROOT = /Users/samkusin/Development/cinekine/Overview
 PACKAGES_ROOT = $(OVERVIEW_ROOT)/Ext
 DATA_ROOT = $(OVERVIEW_ROOT)/Samples/Data
 
