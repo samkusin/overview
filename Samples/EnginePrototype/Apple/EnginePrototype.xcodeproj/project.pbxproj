@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28C055E11C20D7D600C1E3B5 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28C055E01C20D7D600C1E3B5 /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCA81C000A65002040D7 /* RenderGraph.cpp */; };
 		377ECCBD1C078CBB002040D7 /* AssetManifestLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCBB1C078CBB002040D7 /* AssetManifestLoader.cpp */; };
 		377ECCCA1C08FEFD002040D7 /* AssetManifest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCC81C08FEFD002040D7 /* AssetManifest.cpp */; };
@@ -62,6 +63,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		28C055E01C20D7D600C1E3B5 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		377ECC9F1BFFA60D002040D7 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = Scenes/Scene.hpp; sourceTree = "<group>"; };
 		377ECCA01BFFA60D002040D7 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = Scenes/Scene.cpp; sourceTree = "<group>"; };
 		377ECCA81C000A65002040D7 /* RenderGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderGraph.cpp; path = Render/RenderGraph.cpp; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				37E635DF1BF009CC0081E59E /* IOKit.framework in Frameworks */,
 				37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */,
 				37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */,
+				28C055E11C20D7D600C1E3B5 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +237,7 @@
 		37E635E61BF00A9B0081E59E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				28C055E01C20D7D600C1E3B5 /* Metal.framework */,
 				37E636111BF022B30081E59E /* libSampleCommon.a */,
 				37E6372D1BF02A900081E59E /* libz.tbd */,
 				37E635E41BF00A760081E59E /* libiconv.tbd */,
