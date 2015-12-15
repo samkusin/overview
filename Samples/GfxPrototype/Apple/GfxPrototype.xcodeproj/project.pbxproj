@@ -254,6 +254,7 @@
 			baseConfigurationReference = 37EF60911BEFFF98007284DB /* OverviewSettings.xcconfig */;
 			buildSettings = {
 				GCC_ENABLE_CPP_RTTI = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 			};
 			name = Debug;
 		};
@@ -262,6 +263,7 @@
 			baseConfigurationReference = 37EF60911BEFFF98007284DB /* OverviewSettings.xcconfig */;
 			buildSettings = {
 				GCC_ENABLE_CPP_RTTI = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 			};
 			name = Release;
 		};

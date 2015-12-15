@@ -6,15 +6,19 @@
 //
 //
 
-#ifndef Overview_GameTypes_hpp
-#define Overview_GameTypes_hpp
+#ifndef Prototype_GameTypes_hpp
+#define Prototype_GameTypes_hpp
 
 #include "Engine/EngineTypes.hpp"
+#include "Engine/State.hpp"
 
 namespace cinek {
-    namespace ove {
 
-    }
+class GameController;
+class GameControllerContext;
+
+using GameState = ove::State<GameControllerContext>;
+
 }
 
 

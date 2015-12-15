@@ -30,6 +30,7 @@ namespace cinek {
         class SceneFixedBodyHull;
         class SceneDataContext;
         class SceneMotionState;
+        class SceneDebugDrawer;
         struct SceneObjectJsonLoader;
         
         class SceneService;

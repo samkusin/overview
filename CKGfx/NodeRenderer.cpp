@@ -96,17 +96,6 @@ namespace cinek {
  
 NodeRenderer::NodeRenderer()
 {
-}
-
-NodeRenderer::NodeRenderer
-(
-    const ProgramMap& programs,
-    const UniformMap& uniforms
-)
-{
-    std::copy(programs.begin(), programs.end(), _programs.begin());
-    std::copy(uniforms.begin(), uniforms.end(), _uniforms.begin());
-
     _nodeStack.reserve(32);
     _transformStack.reserve(32);
     _armatureStack.reserve(4);
@@ -120,7 +109,6 @@ NodeRenderer::NodeRenderer
     
     _globalLights.reserve(8);
     _directionalLights.reserve(64);
-    
 }
 
 void NodeRenderer::setCamera(const Camera& camera)
@@ -139,6 +127,8 @@ void NodeRenderer::setCamera(const Camera& camera)
 
 void NodeRenderer::operator()
 (
+    const ProgramMap& programs,
+    const UniformMap& uniforms,
     NodeHandle root,
     uint32_t stages /*=kStageAll */
 )
@@ -210,7 +200,7 @@ void NodeRenderer::operator()
                         case Node::kElementTypeMesh: {
                                 const MeshElement* mesh = node->mesh();
                                 while (mesh) {
-                                    renderMeshElement(node->transform(), *mesh);
+                                    renderMeshElement(programs, uniforms, node->transform(), *mesh);
                                     mesh = mesh->next;
                                 }
                             }
@@ -287,6 +277,8 @@ void NodeRenderer::popTransform()
 
 void NodeRenderer::renderMeshElement
 (
+    const ProgramMap& programs,
+    const UniformMap& uniforms,
     const Matrix4& localTransform,
     const MeshElement& element
 )
@@ -294,7 +286,7 @@ void NodeRenderer::renderMeshElement
     //  setup rendering state
     if (element.material->diffuseTex) {
         bgfx::TextureHandle texDiffuse = element.material->diffuseTex->bgfxHandle();
-        bgfx::setTexture(0, _uniforms[kNodeUniformTexDiffuse], texDiffuse,
+        bgfx::setTexture(0, uniforms[kNodeUniformTexDiffuse], texDiffuse,
             BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_ANISOTROPIC);
     }
     //  TODO - include specular color?
@@ -303,13 +295,13 @@ void NodeRenderer::renderMeshElement
     specular.y = element.material->specularPower;
     specular.z = 0;
     specular.w = 0;
-    bgfx::setUniform(_uniforms[kNodeUniformMatSpecular], specular);
+    bgfx::setUniform(uniforms[kNodeUniformMatSpecular], specular);
     
     Matrix4 worldTransform;
     bx::mtxMul(worldTransform, localTransform, _transformStack.back());
     
     //  setup lighting
-    setupLightUniforms(worldTransform);
+    setupLightUniforms(uniforms, worldTransform);
     
         //  setup mesh rendering
     const Mesh* mesh = element.mesh.resource();
@@ -326,9 +318,9 @@ void NodeRenderer::renderMeshElement
         bx::mtxMul(worldViewProjMtx, armatureState.armatureToWorldMtx,
                                      _viewProjMtx);
         
-        bgfx::setUniform(_uniforms[kNodeUniformWorldMtx],
+        bgfx::setUniform(uniforms[kNodeUniformWorldMtx],
                          armatureState.armatureToWorldMtx.comp, 1);
-        bgfx::setUniform(_uniforms[kNodeUniformWorldViewProjMtx],
+        bgfx::setUniform(uniforms[kNodeUniformWorldViewProjMtx],
                          worldViewProjMtx.comp, 1);
    
         bgfx::Transform boneTransforms;
@@ -361,10 +353,14 @@ void NodeRenderer::renderMeshElement
                         | BGFX_STATE_CULL_CW
 						);
 
-    bgfx::submit(0, _programs[programSlot]);
+    bgfx::submit(0, programs[programSlot]);
 }
 
-void NodeRenderer::setupLightUniforms(const Matrix4& objWorldMtx)
+void NodeRenderer::setupLightUniforms
+(
+    const UniformMap& uniforms,
+    const Matrix4& objWorldMtx
+)
 {
     //  reset uniforms generated during the stack traversal
     _lightColors.clear();
@@ -430,20 +426,20 @@ void NodeRenderer::setupLightUniforms(const Matrix4& objWorldMtx)
     }
     
     if (!_lightColors.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightColor], _lightColors.data(), _lightColors.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightColor], _lightColors.data(), _lightColors.size());
     }
     if (!_lightParams.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightParam], _lightParams.data(), _lightParams.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightParam], _lightParams.data(), _lightParams.size());
     }
     if (!_lightDirs.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightDir], _lightDirs.data(), _lightDirs.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightDir], _lightDirs.data(), _lightDirs.size());
     }
     
     if (!_lightOrigins.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), _lightOrigins.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), _lightOrigins.size());
     }
     if (!_lightCoeffs.empty()) {
-        bgfx::setUniform(_uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), _lightCoeffs.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), _lightCoeffs.size());
     }
 }
 

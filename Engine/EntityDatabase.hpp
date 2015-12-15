@@ -10,6 +10,7 @@
 #define Overview_entityDatabase_hpp
 
 #include "EntityTypes.hpp"
+#include "AssetManifest.hpp"
 
 #include <ckentity/entitystore.hpp>
 #include <cinek/allocator.hpp>

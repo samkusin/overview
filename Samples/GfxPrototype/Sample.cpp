@@ -291,7 +291,7 @@ int runSample(int viewWidth, int viewHeight)
     });
 
     //  Renderer initialization
-    cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
+    cinek::gfx::NodeRenderer nodeRenderer;
     cinek::gfx::Camera mainCamera;
     mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
         (float)viewWidth/viewHeight);
@@ -329,7 +329,7 @@ int runSample(int viewWidth, int viewHeight)
             bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
             
             nodeRenderer.setCamera(mainCamera);
-            nodeRenderer(scene.root());
+            nodeRenderer(shaderPrograms, shaderUniforms, scene.root());
 
             cinek::uicore::render(nvg, viewRect);
         }

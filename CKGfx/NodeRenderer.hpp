@@ -83,8 +83,6 @@ public:
     using UniformMap = std::array<bgfx::UniformHandle, kNodeUniformLimit>;
     
     NodeRenderer();
-    NodeRenderer(const ProgramMap& programs,
-                 const UniformMap& uniforms);
 
     void setCamera(const Camera& camera);
     const Camera& camera() const { return _camera; }
@@ -100,7 +98,8 @@ public:
                                         | kStageFlagRender
     };
     
-    void operator()(NodeHandle root, uint32_t stages=kStageAll);
+    void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    NodeHandle root, uint32_t stages=kStageAll);
     
 private:
     struct ArmatureState;
@@ -109,8 +108,13 @@ private:
     void popTransform();
     
 
-    void renderMeshElement(const Matrix4& localTransform,
-            const MeshElement& element);
+    void renderMeshElement
+    (
+        const ProgramMap& programs,
+        const UniformMap& uniforms,
+        const Matrix4& localTransform,
+        const MeshElement& element
+    );
     
     void buildBoneTransforms(const ArmatureState& armatureState,
                              int boneIndex,
@@ -118,7 +122,7 @@ private:
                              const Matrix4& parentBoneTransform,
                              float* outTransforms);
     
-    void setupLightUniforms(const Matrix4& objWorldMtx);
+    void setupLightUniforms(const UniformMap& uniforms, const Matrix4& objWorldMtx);
     
 private:
     struct ArmatureState
@@ -132,10 +136,6 @@ private:
         Matrix4 worldMtx;
         LightHandle light;
     };
-    
-    //  Global State
-    ProgramMap _programs;
-    UniformMap _uniforms;
     
     //  Local State
     Camera _camera;

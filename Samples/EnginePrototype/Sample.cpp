@@ -44,7 +44,6 @@
 #include "Views/StartupView.hpp"
 
 #include "ResourceFactory.hpp"
-#include "SceneDebugDrawer.hpp"
 
 #include "FreeCameraController.hpp"
 
@@ -54,6 +53,7 @@
 
 #include "Engine/Scenes/Scene.hpp"
 #include "Engine/Scenes/SceneDataContext.hpp"
+#include "Engine/Scenes/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 
 #include "Engine/Debug.hpp"
@@ -63,7 +63,6 @@
 #include "Engine/EntityDatabase.hpp"
 
 #include "Engine/AssetManifestLoader.hpp"
-#include "Engine/Comp/Transform.hpp"
 #include "Engine/Tasks/LoadAssetManifest.hpp"
 
 #include <cinek/taskscheduler.hpp>
@@ -136,8 +135,6 @@ private:
     
     cinek::unique_ptr<cinek::ove::ResourceFactory> _resourceFactory;
     
-    cinek::ove::AssetManifestLoader _loader;
-    
     static constexpr double kActionFPS = 60.0;
     static constexpr double kSecsPerActionFrame = 1/kActionFPS;
     
@@ -171,7 +168,6 @@ OverviewSample::OverviewSample
             cinek::EntityStore::InitParams {
                 1024,           // num entities
                 {
-                     cinek::ove::TransformComponent::makeDescriptor(1024)
                 },
                 {
                 },
@@ -235,6 +231,8 @@ OverviewSample::OverviewSample
     cinek::ove::SceneDataContext::InitParams sceneDataInit;
     sceneDataInit.numRigidBodies = 256;
     sceneDataInit.numTriMeshShapes = 32;
+    sceneDataInit.numCylinderShapes = 32;
+    sceneDataInit.numBoxShapes = 32;
     
     _sceneDbgDraw = cinek::allocate_unique<cinek::ove::SceneDebugDrawer>();
     _sceneData = cinek::allocate_unique<cinek::ove::SceneDataContext>(sceneDataInit);
@@ -504,7 +502,7 @@ void OverviewSample::render
         (float)viewRect.w/viewRect.h);
     
     renderer.setCamera(_mainCamera);
-    renderer(_renderGraph->root());
+    renderer(*_programs, *_uniforms, _renderGraph->root());
     
     _sceneDbgDraw->setup(*_programs, *_uniforms, renderer.camera());
     _scene->debugRender();
@@ -615,7 +613,7 @@ int runSample(int viewWidth, int viewHeight)
     */
 
     //  Renderer initialization
-    cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
+    cinek::gfx::NodeRenderer nodeRenderer;
     
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;

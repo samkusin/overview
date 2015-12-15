@@ -1280,7 +1280,7 @@ void GalaxyViewController::frameUpdateView(double dt)
             bgfx::setTransform(_mapTransform);
          
             bgfx::setVertexBuffer(&starTVB, 0, starCount*4);
-            bgfx::setIndexBuffer(&starTIB, 0, starCount*6);
+            bgfx::setIndexBuffer(&starTIB, 0, starCount*6)
             
             //  enable alpha blending and disable the depth test since we've
             //  sorted our stars by Z.
