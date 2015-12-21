@@ -546,12 +546,12 @@ class ExportOVObjectJSON(bpy.types.Operator):
         return node
 
     def exportNode(self, scene, obj, resources, matrix):
-        skip_object = False
+        skip_object = obj.hide_render
         if obj.type == 'CAMERA':
             skip_object = True
 
         if skip_object:
-            print("Skipping camera [",obj.name,"] of type ",obj.type)
+            print("Skipping [",obj.name,"] of type ",obj.type)
             return None
 
         node = self.createNode(obj, matrix)
