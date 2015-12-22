@@ -23,16 +23,18 @@ void SceneMotionState::getWorldTransform(btTransform& worldTrans ) const
 {
     const gfx::Matrix4& mtx = _gfxNode->transform();
     
+    //  verify there's no scale/shearing
     CK_ASSERT(bx::vec3Length(&mtx.comp[0]) < 1.01f);
     CK_ASSERT(bx::vec3Length(&mtx.comp[4]) < 1.01f);
     CK_ASSERT(bx::vec3Length(&mtx.comp[8]) < 1.01f);
     
+    //  convert from column major (Overview) to row major (Bullet)
     btMatrix3x3& basis = worldTrans.getBasis();
-    btVector3& translate = worldTrans.getOrigin();
+    basis[0].setValue(mtx.comp[0], mtx.comp[4], mtx.comp[8]);
+    basis[1].setValue(mtx.comp[1], mtx.comp[5], mtx.comp[9]);
+    basis[2].setValue(mtx.comp[2], mtx.comp[6], mtx.comp[10]);
     
-    basis[0].setValue(mtx.comp[0], mtx.comp[1], mtx.comp[2]);
-    basis[1].setValue(mtx.comp[4], mtx.comp[5], mtx.comp[6]);
-    basis[2].setValue(mtx.comp[8], mtx.comp[9], mtx.comp[10]);
+    btVector3& translate = worldTrans.getOrigin();
     translate.setValue(mtx.comp[12], mtx.comp[13], mtx.comp[14]);
 }
 

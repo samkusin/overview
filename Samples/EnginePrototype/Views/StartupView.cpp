@@ -38,7 +38,7 @@ void StartupView::onViewAdded()
 
 void StartupView::loadScene()
 {
-    _viewAPI->sceneService().loadScene("scenes/room.json",
+    _viewAPI->sceneService().loadScene("scenes/ship_bridge.json",
         [this](const SceneLoadResponse& resp) {
             printf("Loaded %s\n", resp.name);
             endView();

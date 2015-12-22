@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		372035E01BC583CF001B99E2 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035DE1BC583CF001B99E2 /* Controller.cpp */; };
 		3720364F1BC6FC89001B99E2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3720364E1BC6FC89001B99E2 /* QuartzCore.framework */; };
-		373740251BD8840900729919 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 373740241BD8840900729919 /* Metal.framework */; };
+		373740251BD8840900729919 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 373740241BD8840900729919 /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		379429821BB31BBF00C5FAF6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429811BB31BBF00C5FAF6 /* IOKit.framework */; };
 		379429841BB31BC500C5FAF6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429831BB31BC500C5FAF6 /* Cocoa.framework */; };
 		379429861BB31BCB00C5FAF6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429851BB31BCB00C5FAF6 /* Carbon.framework */; };
@@ -105,7 +105,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				37E636041BF00FC70081E59E /* libSampleCommon.a in Frameworks */,
-				373740251BD8840900729919 /* Metal.framework in Frameworks */,
 				37942A391BB3256F00C5FAF6 /* libiconv.dylib in Frameworks */,
 				3794298A1BB31BE400C5FAF6 /* libbz2.dylib in Frameworks */,
 				379429881BB31BDE00C5FAF6 /* libz.dylib in Frameworks */,
@@ -113,6 +112,7 @@
 				379429841BB31BC500C5FAF6 /* Cocoa.framework in Frameworks */,
 				379429821BB31BBF00C5FAF6 /* IOKit.framework in Frameworks */,
 				3720364F1BC6FC89001B99E2 /* QuartzCore.framework in Frameworks */,
+				373740251BD8840900729919 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
