@@ -60,7 +60,7 @@ public:
     void destroyScene();
     
 private:
-    void switchToState(const std::string& nextState);
+    void switchToNextState();
     unique_ptr<GameState> createState(const std::string& name);
     
 private:
