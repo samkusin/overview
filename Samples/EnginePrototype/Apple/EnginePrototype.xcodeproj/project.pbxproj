@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37420BAC1C290A21003D702B /* Sample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636141BF023E40081E59E /* Sample.cpp */; };
+		37420BB01C290E81003D702B /* LoadSceneState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37420BAE1C290E81003D702B /* LoadSceneState.cpp */; };
 		377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCA81C000A65002040D7 /* RenderGraph.cpp */; };
 		377ECCBD1C078CBB002040D7 /* AssetManifestLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCBB1C078CBB002040D7 /* AssetManifestLoader.cpp */; };
 		377ECCCA1C08FEFD002040D7 /* AssetManifest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCC81C08FEFD002040D7 /* AssetManifest.cpp */; };
@@ -38,7 +40,6 @@
 		37E635E31BF00A5A0081E59E /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635E21BF00A5A0081E59E /* libbz2.tbd */; };
 		37E635E51BF00A760081E59E /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635E41BF00A760081E59E /* libiconv.tbd */; };
 		37E636121BF022B30081E59E /* libSampleCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E636111BF022B30081E59E /* libSampleCommon.a */; };
-		37E636151BF023E40081E59E /* Sample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636141BF023E40081E59E /* Sample.cpp */; };
 		37E6372E1BF02A900081E59E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E6372D1BF02A900081E59E /* libz.tbd */; };
 		37E637E31BF119EA0081E59E /* EngineMathGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637BC1BF119EA0081E59E /* EngineMathGfx.cpp */; };
 		37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637CC1BF119EA0081E59E /* ObjectTypes.cpp */; };
@@ -64,6 +65,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		37420BAE1C290E81003D702B /* LoadSceneState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadSceneState.cpp; path = States/LoadSceneState.cpp; sourceTree = "<group>"; };
+		37420BAF1C290E81003D702B /* LoadSceneState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadSceneState.hpp; path = States/LoadSceneState.hpp; sourceTree = "<group>"; };
 		377ECC9F1BFFA60D002040D7 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = Scenes/Scene.hpp; sourceTree = "<group>"; };
 		377ECCA01BFFA60D002040D7 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = Scenes/Scene.cpp; sourceTree = "<group>"; };
 		377ECCA81C000A65002040D7 /* RenderGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderGraph.cpp; path = Render/RenderGraph.cpp; sourceTree = "<group>"; };
@@ -179,6 +182,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		37420BAD1C290E24003D702B /* States */ = {
+			isa = PBXGroup;
+			children = (
+				37420BAF1C290E81003D702B /* LoadSceneState.hpp */,
+				37420BAE1C290E81003D702B /* LoadSceneState.cpp */,
+			);
+			name = States;
+			sourceTree = "<group>";
+		};
 		377896F21BFFA5C100B23038 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -377,6 +389,7 @@
 			children = (
 				37E635E71BF00B720081E59E /* Apple */,
 				377ECCED1C0D072B002040D7 /* Tasks */,
+				37420BAD1C290E24003D702B /* States */,
 				37E638071BF2C8E60081E59E /* Views */,
 				377ECCF51C0FD4E7002040D7 /* GameTypes.hpp */,
 				37804D0E1C1A2FF6002109DF /* GameTypes.cpp */,
@@ -449,13 +462,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37420BB01C290E81003D702B /* LoadSceneState.cpp in Sources */,
 				37B3BCDD1BFE5EFA00870FE5 /* ViewAPI.cpp in Sources */,
 				377ECD901C18F834002040D7 /* GameController.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
 				377ECD081C139EFD002040D7 /* SceneObjectJsonLoader.cpp in Sources */,
 				377ECCBD1C078CBB002040D7 /* AssetManifestLoader.cpp in Sources */,
 				377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */,
-				37E636151BF023E40081E59E /* Sample.cpp in Sources */,
 				37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */,
 				377ECCF41C0FCB30002040D7 /* SceneService.cpp in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,
@@ -471,6 +484,7 @@
 				37E6382E1BF4155F0081E59E /* ViewService.cpp in Sources */,
 				377ECD0B1C14B464002040D7 /* SceneMotionState.cpp in Sources */,
 				377ECCFC1C115C43002040D7 /* SceneDataContext.cpp in Sources */,
+				37420BAC1C290A21003D702B /* Sample.cpp in Sources */,
 				37E638151BF3F6A30081E59E /* GameView.cpp in Sources */,
 				37E638211BF3FA220081E59E /* EngineTypes.cpp in Sources */,
 				377ECCCA1C08FEFD002040D7 /* AssetManifest.cpp in Sources */,

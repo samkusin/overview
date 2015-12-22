@@ -17,6 +17,8 @@
 
 #include "GameController.hpp"
 
+#include "States/LoadSceneState.hpp"
+
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
 #include <vector>
@@ -177,6 +179,10 @@ void GameController::switchToNextState()
 unique_ptr<GameState> GameController::createState(const std::string &name)
 {
     unique_ptr<GameState> state;
+    
+    if (name == "LoadScene") {
+        state = allocate_unique<LoadSceneState>();
+    }
     
     return state;
 }

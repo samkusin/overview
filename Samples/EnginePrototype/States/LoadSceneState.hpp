@@ -6,9 +6,22 @@
 //
 //
 
-#ifndef LoadSceneState_hpp
-#define LoadSceneState_hpp
+#ifndef Prototype_LoadSceneState_hpp
+#define Prototype_LoadSceneState_hpp
 
-#include <stdio.h>
+#include "GameTypes.hpp"
+
+namespace cinek {
+
+class LoadSceneState : public GameState
+{
+public:
+    virtual void onBegin(GameControllerContext& controller) override;
+    virtual void onUpdate(GameControllerContext& controller, double dt) override;
+    virtual void onFrameUpdate(GameControllerContext& controller, double dt) override;
+    virtual void onEnd(GameControllerContext& controller) override;
+};
+
+}
 
 #endif /* LoadSceneState_hpp */

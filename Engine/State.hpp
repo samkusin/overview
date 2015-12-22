@@ -22,18 +22,6 @@ public:
     virtual void onUpdate(Controller& controller, double dt) = 0;
     virtual void onFrameUpdate(Controller& controller, double dt) = 0;
     virtual void onEnd(Controller& controller) = 0;
-    
-    virtual const std::string& stateName() const = 0;
-    
-    std::string nextState() const { return std::move(_nextState); }
-    
-protected:
-    void setNextState(std::string nextState) {
-        _nextState = std::move(nextState);
-    }
-    
-private:
-    std::string _nextState;
 };
 
     

@@ -7,3 +7,23 @@
 //
 
 #include "LoadSceneState.hpp"
+
+namespace cinek {
+
+void LoadSceneState::onBegin(GameControllerContext& controller)
+{
+}
+
+void LoadSceneState::onUpdate(GameControllerContext& controller, double dt)
+{
+}
+
+void LoadSceneState::onFrameUpdate(GameControllerContext& controller, double dt)
+{
+}
+
+void LoadSceneState::onEnd(GameControllerContext& controller)
+{
+}
+
+}

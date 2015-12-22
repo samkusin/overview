@@ -36,7 +36,9 @@
 
 #include "Engine/EngineTypes.hpp"
 
+#include "GameController.hpp"
 
+/*
 ////////////////////////////////////////////////////////////////////////////////
 //  OverviewSample
 
@@ -71,14 +73,6 @@
 #include <ckmsg/client.hpp>
 
 
-/*  The Overview Sample illustrates core engine features and acts as a testbed
-    for experimental features integrated into an application.
-  
-    Features Include:
-    
-    * ViewController Management
-    * EntityStores
-*/
 class OverviewSample : public cinek::ove::EntityComponentFactory
 {
 public:
@@ -507,6 +501,7 @@ void OverviewSample::render
     _sceneDbgDraw->setup(*_programs, *_uniforms, renderer.camera());
     _scene->debugRender();
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -569,52 +564,10 @@ int runSample(int viewWidth, int viewHeight)
     
     cinek::gfx::Context gfxContext(gfxInitParams);
     
-    OverviewSample application(shaderPrograms, shaderUniforms, gfxContext);
-    
     //  Application
-    
-    /*
-    auto sceneRoot = scene.root();
-    cinek::gfx::NodeHandle newObjectNode;
-    cinek::gfx::NodeHandle newObjectRoot;
+    //
+    cinek::GameController controller(gfxContext, shaderPrograms, shaderUniforms);
 
-    struct GfxNodeVisitContext
-    {
-        cinek::gfx::NodeId nodeId;
-        cinek::gfx::AnimationControllerPool* ctrlPool;
-        std::unordered_map<cinek::gfx::NodeId, cinek::gfx::AnimationControllerHandle>* ctrlMap;
-    };
-
-    newObjectNode = scene.clone(factorybot.root());
-    newObjectRoot = scene.createObjectNode(100);
-    bx::mtxSRT(newObjectRoot->transform(),
-        1.0f, 1.0f, 1.0f,
-        0, 0, 0,
-        0, 0, -5);
-    scene.addChildNodeToNode(newObjectNode, newObjectRoot);
-    scene.addChildNodeToNode(newObjectRoot, scene.root());
-    
-    GfxNodeVisitContext nodeVisitCtx {
-        newObjectRoot->objectNodeId(),
-        &animControllerPool,
-        &animControllers
-    };
-    
-    cinek::gfx::visit(newObjectNode, [&nodeVisitCtx](cinek::gfx::NodeHandle node) -> bool {
-        if (node->elementType() == cinek::gfx::Node::kElementTypeArmature) {
-            cinek::gfx::AnimationController controller(node->armature()->animSet);
-            auto animController = nodeVisitCtx.ctrlPool->add(std::move(controller));
-            node->armature()->animController = animController;
-            nodeVisitCtx.ctrlMap->emplace(nodeVisitCtx.nodeId, animController);
-            animController->transitionToState("aggro");
-        }
-        return true;
-    });
-    */
-
-    //  Renderer initialization
-    cinek::gfx::NodeRenderer nodeRenderer;
-    
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
     
@@ -630,9 +583,9 @@ int runSample(int viewWidth, int viewHeight)
         uint32_t nextSystemTimeMs = SDL_GetTicks();
         int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
         systemTimeMs = nextSystemTimeMs;
-
-        application.startFrame();
-    
+        
+        controller.beginFrame();
+        
         //  TODO: Lag should not be incremented while Sim is Paused
         double frameTime = frameTimeMs*0.001;
         lagSecsSim += frameTime;
@@ -643,7 +596,7 @@ int runSample(int viewWidth, int viewHeight)
         //
         while (lagSecsSim >= kSecsPerSimFrame)
         {
-            application.simulate(simTime, kSecsPerSimFrame);
+            controller.simulateFrame(kSecsPerSimFrame);
 
             lagSecsSim -= kSecsPerSimFrame;
             simTime += kSecsPerSimFrame;
@@ -657,11 +610,11 @@ int runSample(int viewWidth, int viewHeight)
         if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
             running = false;
         
-        application.endFrame(frameTime, polledInputState);
+        controller.updateFrame(frameTime, polledInputState);
         
         gfxContext.update();
         
-        application.render(nodeRenderer, viewRect);
+        controller.renderFrame(viewRect);
 
         cinek::uicore::render(nvg, viewRect);
     
