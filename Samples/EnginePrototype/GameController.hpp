@@ -53,14 +53,11 @@ public:
     void renderFrame(const gfx::Rect& viewRect);
     void endFrame();
     
-    //  Initiates a load scene chain, tearing down the old scene and
-    //  loading + bringing up the new scene.  Upon completion of this chain,
-    //  the supplied callback is issued
-    void loadScene(const std::string& path,
-                   std::function<void(bool)> sceneCb);
+    //  initializes a scene
+    void createScene(const ove::AssetManifest& manifest);
     
     //  Tears down all scene objects and data
-    void endScene();
+    void destroyScene();
     
 private:
     void switchToState(const std::string& nextState);
@@ -84,8 +81,8 @@ private:
     unique_ptr<ove::RenderGraph> _renderGraph;
     
     unique_ptr<ove::SceneDataContext> _sceneData;
-    unique_ptr<ove::Scene> _scene;
     unique_ptr<ove::SceneDebugDrawer> _sceneDbgDraw;
+    unique_ptr<ove::Scene> _scene;
     
     unique_ptr<GameEntityFactory> _componentFactory;
     unique_ptr<ove::EntityDatabase> _entityDb;

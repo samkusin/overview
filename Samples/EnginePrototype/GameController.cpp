@@ -59,8 +59,9 @@ GameController::GameController
     sceneDataInit.numBoxShapes = 32;
     
     _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
-    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
     _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
+    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
+
     
     _componentFactory = allocate_unique<GameEntityFactory>(
         *_gfxContext,
@@ -149,7 +150,6 @@ void GameController::renderFrame(const gfx::Rect& viewRect)
     
     _sceneDbgDraw->setup(_renderPrograms, _renderUniforms, _renderer.camera());
     _scene->debugRender();
-
 }
 
 void GameController::endFrame()
@@ -187,15 +187,14 @@ unique_ptr<GameState> GameController::createState(const std::string &name)
 }
 
 
-void GameController::loadScene
+void GameController::createScene
 (
-    const std::string& path,
-    std::function<void(bool)> sceneCb
+    const ove::AssetManifest& manifest
 )
 {
 }
 
-void GameController::endScene()
+void GameController::destroyScene()
 {
 }
 
