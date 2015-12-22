@@ -105,9 +105,8 @@ void GameController::simulateFrame(double dt)
     if (_currentState) {
         _currentState->onUpdate(*_controllerContext, dt);
         
-        auto nextStateName = _currentState->nextState();
-        if (!nextStateName.empty()) {
-            switchToState(nextStateName);
+        if (!_nextStateName.empty()) {
+            switchToNextState();
         }
     }
 
@@ -125,9 +124,8 @@ void GameController::updateFrame
     if (_currentState) {
          _currentState->onFrameUpdate(*_controllerContext, dt);
         
-        auto nextStateName = _currentState->nextState();
-        if (!nextStateName.empty()) {
-            switchToState(nextStateName);
+        if (!_nextStateName.empty()) {
+            switchToNextState();
         }
     }
 
@@ -169,14 +167,11 @@ void GameController::endFrame()
     }
 }
 
-void GameController::switchToState(const std::string& nextStateName)
+void GameController::switchToNextState()
 {
-    CK_ASSERT(_nextStateName.empty());
-    
     if (_currentState) {
         _endingState = std::move(_currentState);
     }
-    _nextStateName = nextStateName;
 }
 
 unique_ptr<GameState> GameController::createState(const std::string &name)
