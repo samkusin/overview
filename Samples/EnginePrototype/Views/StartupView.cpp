@@ -7,72 +7,55 @@
 //
 
 #include "StartupView.hpp"
-
-#include "Engine/ViewAPI.hpp"
+#include "Engine/ViewStack.hpp"
 
 namespace cinek {
-    namespace ove {
 
-StartupView::StartupView(ViewAPI& api) :
-    _viewAPI(&api)
+StartupView::StartupView(const ApplicationContext& api) :
+    AppViewController(api),
+    _loadCompleted(false)
 {
     
 }
     
-void StartupView::onViewLoad()
+void StartupView::onViewAdded(ove::ViewStack& stateController)
 {
-}
-
-void StartupView::onViewUnload()
-{
-}
-
-void StartupView::onViewAdded()
-{
-    _viewAPI->entityService().loadDefinitions("entity.json",
-        [this](const EntityLoadDefinitionsResponse& resp) {
-            printf("Loaded %s\n", resp.name);
-            loadScene();
+    assetService().loadManifest("entity.json",
+        [this](std::shared_ptr<ove::AssetManifest> manifest) {
+            entityService().addDefintions("entity", manifest);
+            _loadCompleted = true;
         });
 }
 
-void StartupView::loadScene()
-{
-    _viewAPI->sceneService().loadScene("scenes/ship_bridge.json",
-        [this](const SceneLoadResponse& resp) {
-            printf("Loaded %s\n", resp.name);
-            endView();
-        });
-}
-
-void StartupView::endView()
-{
-    _viewAPI->viewService(*this).present("GameView");
-}
-
-void StartupView::onViewRemoved()
+void StartupView::onViewRemoved(ove::ViewStack& stateController)
 {
 }
 
-void StartupView::onViewForeground()
+void StartupView::onViewForeground(ove::ViewStack& stateController)
 {
 }
 
-void StartupView::onViewBackground()
+void StartupView::onViewBackground(ove::ViewStack& stateController)
 {
 }
 
-void StartupView::simulateView(double time, double dt)
+void StartupView::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void StartupView::layoutView()
+void StartupView::simulateView(ove::ViewStack& stateController, double dt)
 {
 }
 
-void StartupView::frameUpdateView(double dt)
+void StartupView::frameUpdateView(ove::ViewStack& stateController, double dt)
 {
+    if (_loadCompleted) {
+        stateController.present("GameView");
+    }
+}
 
+void StartupView::onViewEndFrame(ove::ViewStack& stateController)
+{
 }
 
 const char* StartupView::viewId() const
@@ -80,5 +63,4 @@ const char* StartupView::viewId() const
     return "StartupView";
 }
 
-    } /* namespace ove */
 } /* namespace cinek */

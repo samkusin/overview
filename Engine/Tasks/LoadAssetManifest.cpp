@@ -31,7 +31,7 @@ LoadAssetManifest::LoadAssetManifest
 
 }
     
-unique_ptr<AssetManifest>  LoadAssetManifest::acquireManifest()
+std::shared_ptr<AssetManifest> LoadAssetManifest::acquireManifest()
 {
     return std::move(_manifest);
 }
@@ -43,7 +43,8 @@ void LoadAssetManifest::onFileLoaded()
     if (idx != std::string::npos) {
         manifestName.erase(idx);
     }
-    _manifest = allocate_unique<AssetManifest>(
+    _manifest = std::allocate_shared<AssetManifest>(
+                    std_allocator<AssetManifest>(),
                     std::move(manifestName),
                     std::move(acquireBuffer())
                 );

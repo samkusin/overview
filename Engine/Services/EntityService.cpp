@@ -38,21 +38,13 @@ bool EntityService::isEntityValid(Entity e) const
     return _context->getStore(cinek_entity_context(e)).valid(e);
 }
 
-void EntityService::loadDefinitions
+void EntityService::addDefintions
 (
-    const std::string& name,
-    std::function<void(const EntityLoadDefinitionsResponse&)> cb
+    std::string name,
+    std::shared_ptr<AssetManifest> manifest
 )
 {
-    EntityLoadDefinitionsRequest req;
-    strncpy(req.name, name.c_str(), sizeof(req.name));
-    _sender->client->send(_sender->server,
-        kMsgEntityLoadDefinitions,
-        makePayloadFromData(req),
-        [cb](uint32_t, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
-            CK_ASSERT(cid==kMsgEntityLoadDefinitions);
-            cb(*reinterpret_cast<const EntityLoadDefinitionsResponse*>(payload->data()));
-        });
+    _context->setManifest(std::move(name), std::move(manifest));
 }
 
 void EntityService::clearDefinitions(const std::string& path)

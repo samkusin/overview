@@ -8,6 +8,8 @@
 
 #include "SceneService.hpp"
 #include "Engine/Scenes/Scene.hpp"
+#include "Engine/SceneJsonLoader.hpp"
+#include "Engine/AssetManifest.hpp"
 #include "Engine/Debug.hpp"
 
 #include <ckmsg/client.hpp>
@@ -18,29 +20,23 @@ namespace cinek {
 
 SceneService::SceneService
 (
-    Scene& context,
-    MessageClientSender& sender
+    const SceneServiceContext& context
 ) :
-    _context(&context),
-    _sender(&sender)
+    _context(context)
 {
 }
 
-void SceneService::loadScene
-(
-    const std::string& name,
-    std::function<void(const SceneLoadResponse&)> cb
-)
+
+void SceneService::initializeScene(std::shared_ptr<AssetManifest> manifest)
 {
-    SceneLoadRequest req;
-    strncpy(req.name, name.c_str(), sizeof(req.name));
-    _sender->client->send(_sender->server,
-        kMsgSceneLoad,
-        makePayloadFromData(req),
-        [cb](uint32_t, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
-            CK_ASSERT(cid==kMsgSceneLoad);
-            cb(*reinterpret_cast<const SceneLoadResponse*>(payload->data()));
-        });
+    //  use shared pointer in case we need to persist the manifest (like we do for entity
+    //  manifests.)
+
+    SceneJsonLoader loader(*_context.sceneData,
+                           *_context.gfxContext,
+                           *_context.entityDb);
+            
+    loader(*_context.scene, *_context.renderGraph, manifest->root());
 }
 
 

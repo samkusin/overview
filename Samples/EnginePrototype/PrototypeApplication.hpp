@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Prototype_GameController_hpp
-#define Prototype_GameController_hpp
+#ifndef Prototype_Application_hpp
+#define Prototype_Application_hpp
 
 #include "GameTypes.hpp"
 #include "Common.hpp"
@@ -15,6 +15,7 @@
 #include "FreeCameraController.hpp"
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
+#include "Engine/ViewStack.hpp"
 
 #include "CKGfx/GfxTypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
@@ -31,19 +32,18 @@
 
 namespace cinek {
 
-class GameControllerContext;
 class GameEntityFactory;
     
-class GameController
+class PrototypeApplication
 {
 public:
-    GameController
+    PrototypeApplication
     (
         gfx::Context& gfxContext,
         const gfx::NodeRenderer::ProgramMap& programs,
         const gfx::NodeRenderer::UniformMap& uniforms
     );
-    ~GameController();
+    ~PrototypeApplication();
     
     void beginFrame();
     
@@ -59,13 +59,12 @@ public:
     //  Tears down all scene objects and data
     void destroyScene();
     
-private:
-    void switchToNextState();
-    unique_ptr<GameState> createState(const std::string& name);
     
 private:
     gfx::Context* _gfxContext;
     TaskScheduler _taskScheduler;
+    
+    ove::ViewStack _viewStack;
     
     ckmsg::Messenger _messenger;
     ove::MessageServer _server;
@@ -89,14 +88,8 @@ private:
     
     gfx::Camera _camera;
     ove::FreeCameraController _freeCameraController;
-    
-    std::string _nextStateName;
-    
-    unique_ptr<GameControllerContext> _controllerContext;
-    unique_ptr<GameState> _currentState;
-    unique_ptr<GameState> _endingState;
 };
     
 }
 
-#endif /* GameController_hpp */
+#endif /* Prototype_Application_hpp */

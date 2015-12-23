@@ -13,11 +13,12 @@
 #include "Engine/EntityDatabase.hpp"
 
 #include "GameEntityFactory.hpp"
-#include "GameControllerContext.hpp"
 
-#include "GameController.hpp"
+#include "PrototypeApplication.hpp"
 
-#include "States/LoadSceneState.hpp"
+#include "Views/StartupView.hpp"
+#include "Views/GameView.hpp"
+
 
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
@@ -25,7 +26,7 @@
 
 namespace cinek {
 
-GameController::GameController
+PrototypeApplication::PrototypeApplication
 (
     gfx::Context& gfxContext,
     const gfx::NodeRenderer::ProgramMap& programs,
@@ -90,54 +91,72 @@ GameController::GameController
     bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
     _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
     
-    _controllerContext = allocate_unique<GameControllerContext>(*this);
+    //  define the top-level states for this application
+    ApplicationContext context;
+    
+    context.entityDatabase = _entityDb.get();
+    context.taskScheduler = &_taskScheduler;
+    context.resourceFactory = &_resourceFactory;
+    context.msgClientSender = &_clientSender;
+    context.scene = _scene.get();
+    context.sceneData = _sceneData.get();
+    context.gfxContext = _gfxContext;
+    context.renderGraph = _renderGraph.get();
+    
+    _viewStack.setFactory(
+        [context](const std::string& viewName, ove::ViewController* ) -> unique_ptr<ove::ViewController> {
+            //  Startup View initialzes common data for the application
+            //  Game View encompasses the whole game simulation
+            //  Ship View encompasses the in-game ship mode
+            //  Ship Bridge View encompasses the in-game ship bridge mode
+            if (viewName == "StartupView") {
+                return allocate_unique<StartupView>(context);
+            }
+            else if (viewName == "GameView") {
+                return allocate_unique<GameView>(context);
+            }
+            
+            return nullptr;
+        });
+    
+    _viewStack.present("StartupView");
 }
 
-GameController::~GameController()
+PrototypeApplication::~PrototypeApplication()
 {
 }
     
-void GameController::beginFrame()
+void PrototypeApplication::beginFrame()
 {
     _server.receive();
     _client.receive();
+
+    _viewStack.startFrame();
 }
 
-void GameController::simulateFrame(double dt)
+void PrototypeApplication::simulateFrame(double dt)
 {
-    if (_currentState) {
-        _currentState->onUpdate(*_controllerContext, dt);
-        
-        if (!_nextStateName.empty()) {
-            switchToNextState();
-        }
-    }
-
     _scene->simulate(dt);
 
     _taskScheduler.update(dt * 1000);
+    
+    _viewStack.simulate(dt);
 }
 
-void GameController::updateFrame
+void PrototypeApplication::updateFrame
 (
     double dt,
     const ove::InputState& inputState
 )
 {
-    if (_currentState) {
-         _currentState->onFrameUpdate(*_controllerContext, dt);
-        
-        if (!_nextStateName.empty()) {
-            switchToNextState();
-        }
-    }
-
+    _viewStack.frameUpdate(dt);
+    
     _freeCameraController.handleCameraInput(_camera, inputState, dt);
 
     _renderGraph->update(dt);
 }
 
-void GameController::renderFrame(const gfx::Rect& viewRect)
+void PrototypeApplication::renderFrame(const gfx::Rect& viewRect)
 {
     bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
 
@@ -152,50 +171,25 @@ void GameController::renderFrame(const gfx::Rect& viewRect)
     _scene->debugRender();
 }
 
-void GameController::endFrame()
+void PrototypeApplication::endFrame()
 {
+    _viewStack.endFrame();
+
     _client.transmit();
     _server.transmit();
 
     _entityDb->gc();
-    
-    if (_endingState) {
-        _endingState->onEnd(*_controllerContext);
-        _endingState = nullptr;
-    }
-    if (!_nextStateName.empty()) {
-        _currentState = createState(_nextStateName);
-        _nextStateName.clear();
-    }
-}
-
-void GameController::switchToNextState()
-{
-    if (_currentState) {
-        _endingState = std::move(_currentState);
-    }
-}
-
-unique_ptr<GameState> GameController::createState(const std::string &name)
-{
-    unique_ptr<GameState> state;
-    
-    if (name == "LoadScene") {
-        state = allocate_unique<LoadSceneState>();
-    }
-    
-    return state;
 }
 
 
-void GameController::createScene
+void PrototypeApplication::createScene
 (
     const ove::AssetManifest& manifest
 )
 {
 }
 
-void GameController::destroyScene()
+void PrototypeApplication::destroyScene()
 {
 }
 

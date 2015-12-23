@@ -10,16 +10,11 @@
 #define Prototype_GameTypes_hpp
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/State.hpp"
 
 namespace cinek {
 
-class GameController;
-class GameControllerContext;
-
-using GameState = ove::State<GameControllerContext>;
+class TaskScheduler;
 
 }
 
-
-#endif /* Overview_GameTypes_hpp */
+#endif /* Prototype_GameTypes_hpp */

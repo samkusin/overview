@@ -11,24 +11,32 @@
 
 #include "Engine/EngineTypes.hpp"
 #include "Engine/Messages/Scene.hpp"
+#include "CKGfx/GfxTypes.hpp"
 
 #include <functional>
 #include <string>
 
 namespace cinek { namespace ove {
 
+struct SceneServiceContext
+{
+    gfx::Context* gfxContext;
+    Scene* scene;
+    SceneDataContext* sceneData;
+    MessageClientSender* sender;
+    EntityDatabase* entityDb;
+    RenderGraph* renderGraph;
+};
+
 class SceneService
 {
 public:    
-    SceneService(Scene& context, MessageClientSender& sender);
-    SceneService() = default;
+    SceneService(const SceneServiceContext& context);
     
-    void loadScene(const std::string& name,
-        std::function<void(const SceneLoadResponse&)> cb);
+    void initializeScene(std::shared_ptr<AssetManifest> manifest);
 
 private:
-    Scene* _context = nullptr;
-    MessageClientSender* _sender = nullptr;
+    SceneServiceContext _context;
 };
 
 } /* namespace ove */ } /* namespace cinek */

@@ -124,9 +124,10 @@ public:
     /**
      *  Adds the supplied manifest, mapping it to a namespace.
      *
+     *  @param  name        The manifest name
      *  @param  manifest    The manifest object
      */
-    void setManifest(unique_ptr<AssetManifest>&& manifest);
+    void setManifest(std::string name, std::shared_ptr<AssetManifest> manifest);
     /**
      *  @param  name        The manifest to clear
      */
@@ -134,7 +135,7 @@ public:
     
 private:
     std::vector<EntityStore> _stores;
-    std::unordered_map<std::string, unique_ptr<AssetManifest>> _manifests;
+    std::unordered_map<std::string, std::shared_ptr<AssetManifest>> _manifests;
     EntityComponentFactory* _factory;
 };
 

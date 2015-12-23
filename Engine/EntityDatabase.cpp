@@ -132,10 +132,11 @@ void EntityDatabase::gc()
 
 void EntityDatabase::setManifest
 (
-    unique_ptr<AssetManifest>&& manifest
+    std::string name,
+    std::shared_ptr<AssetManifest> manifest
 )
 {
-    _manifests.emplace(manifest->name(), std::move(manifest));
+    _manifests.emplace(std::move(name), std::move(manifest));
 }
 
 void EntityDatabase::clearManifest(const std::string& name)

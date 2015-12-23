@@ -9,36 +9,30 @@
 #ifndef Sample_Engine_GameView_hpp
 #define Sample_Engine_GameView_hpp
 
-#include "GameTypes.hpp"
-#include "Engine/ViewController.hpp"
+#include "AppViewController.hpp"
 
+#include <cinek/allocator.hpp>
 
 namespace cinek {
-    namespace ove {
 
-
-class GameView : public ViewController
+class GameView : public AppViewController
 {
 public:
-    GameView(ViewAPI& viewAPI);
+    GameView(const ApplicationContext& context);
     
-    virtual void onViewLoad();
-    virtual void onViewUnload();
-    virtual void onViewAdded();
-    virtual void onViewRemoved();
-    virtual void onViewForeground();
-    virtual void onViewBackground();
-    virtual void simulateView(double time, double dt);
-    virtual void layoutView();
-    virtual void frameUpdateView(double dt);
+    virtual void onViewAdded(ove::ViewStack& stateController);
+    virtual void onViewRemoved(ove::ViewStack& stateController);
+    virtual void onViewForeground(ove::ViewStack& stateController);
+    virtual void onViewBackground(ove::ViewStack& stateController);
+    virtual void onViewStartFrame(ove::ViewStack& stateController);
+    virtual void simulateView(ove::ViewStack& stateController, double dt);
+    virtual void frameUpdateView(ove::ViewStack& stateController, double dt);
+    virtual void onViewEndFrame(ove::ViewStack& stateController);
+    
     virtual const char* viewId() const;
     
-private:
-    ViewAPI* _viewAPI;
 };
 
-
-    } /* namespace ove */
 } /* namespace cinek */
 
 #endif /* Sample_Engine_GameView_hpp */

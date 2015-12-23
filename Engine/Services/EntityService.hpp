@@ -13,15 +13,12 @@
 #include "Engine/EntityTypes.hpp"
 #include "Engine/Messages/Entity.hpp"
 
-#include <ckentity/entitygroupmap.hpp>
-#include <ckentity/entitydatatable.hpp>
-
 namespace cinek { namespace ove {
 
 class EntityService
 {
 public:
-    EntityService(EntityDatabase& context, MessageClientSender& sender);
+    EntityService(EntityDatabase* context, MessageClientSender* sender);
     EntityService() = default;
 
     /**
@@ -49,11 +46,10 @@ public:
      *  Loads template defintions from a file path.  Typically done during
      *  level load or initialization.
      *
-     *  @param name Where to load the definitions from
-     *  @param cb   The callback executed on completion with result 
+     *  @param name         Where to load the definitions from
+     *  @param manifest     The manifest object
      */
-    void loadDefinitions(const std::string& name,
-                         std::function<void(const EntityLoadDefinitionsResponse&)> cb);
+    void addDefintions(std::string name, std::shared_ptr<AssetManifest> manifest);
     /**
      *  Clears the specified definitions
      */
@@ -67,11 +63,11 @@ private:
 
 inline EntityService::EntityService
 (
-    EntityDatabase& context,
-    MessageClientSender& sender
+    EntityDatabase* context,
+    MessageClientSender* sender
 ) :
-    _context(&context),
-    _sender(&sender)
+    _context(context),
+    _sender(sender)
 {
 }
     

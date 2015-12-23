@@ -22,7 +22,6 @@ namespace cinek {
         
         class ViewStack;
         class ViewController;
-        class ViewService;
         
         class RenderGraph;
         
@@ -34,7 +33,6 @@ namespace cinek {
         struct SceneObjectJsonLoader;
         
         class SceneService;
-        class ViewAPI;
         
         class AssetManifest;
         class AssetManifestLoader;

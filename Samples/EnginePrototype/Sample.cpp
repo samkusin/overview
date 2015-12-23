@@ -36,7 +36,7 @@
 
 #include "Engine/EngineTypes.hpp"
 
-#include "GameController.hpp"
+#include "PrototypeApplication.hpp"
 
 /*
 ////////////////////////////////////////////////////////////////////////////////
@@ -566,7 +566,7 @@ int runSample(int viewWidth, int viewHeight)
     
     //  Application
     //
-    cinek::GameController controller(gfxContext, shaderPrograms, shaderUniforms);
+    cinek::PrototypeApplication controller(gfxContext, shaderPrograms, shaderUniforms);
 
     const double kSimFPS = 60.0;
     const double kSecsPerSimFrame = 1/kSimFPS;
@@ -619,6 +619,8 @@ int runSample(int viewWidth, int viewHeight)
         cinek::uicore::render(nvg, viewRect);
     
         uiProcess(systemTimeMs);
+        
+        controller.endFrame();
         
         bgfx::frame();
     }

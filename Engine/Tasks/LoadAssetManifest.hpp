@@ -29,7 +29,7 @@ public:
     LoadAssetManifest(std::string name, AssetManfiestFactory& factory,
                       EndCallback cb=0);
 
-    unique_ptr<AssetManifest> acquireManifest();
+    std::shared_ptr<AssetManifest> acquireManifest();
     
     virtual const TaskClassId& classId() const override { return kUUID; }
     
@@ -40,7 +40,7 @@ private:
     virtual void onCancel() override;
         
 private:
-    unique_ptr<AssetManifest> _manifest;
+    std::shared_ptr<AssetManifest> _manifest;
     AssetManfiestFactory* _factory;
     AssetManifestLoader _loader;
 };

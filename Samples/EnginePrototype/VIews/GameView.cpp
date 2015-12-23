@@ -8,53 +8,65 @@
 
 #include "GameView.hpp"
 
-#include "Engine/ViewAPI.hpp"
-#include "Engine/Services/EntityService.hpp"
-
 namespace cinek {
-    namespace ove {
 
-GameView::GameView(ViewAPI& api) :
-    _viewAPI(&api)
+GameView::GameView(const ApplicationContext& api) :
+    AppViewController(api)
 {
     
 }
+
+/*
+void StartupView::loadScene()
+{
+    _viewAPI->sceneService().loadScene("scenes/ship_bridge.json",
+        [this](const SceneLoadResponse& resp) {
+            printf("Loaded %s\n", resp.name);
+            endView();
+        });
+}
+
+void StartupView::endView()
+{
+    _viewAPI->viewService(*this).present("GameView");
+}
+*/
+
     
-void GameView::onViewLoad()
+void GameView::onViewAdded(ove::ViewStack& stateController)
 {
-    _viewAPI->entityService().createEntity(0, "entity", "test_bot");
+    assetService().loadManifest("scenes/ship_bridge.json",
+        [this](std::shared_ptr<ove::AssetManifest> manifest) {
+            sceneService().initializeScene(manifest);
+            entityService().createEntity(0, "entity", "test_bot");
+        });
 }
 
-void GameView::onViewUnload()
-{
-}
-
-void GameView::onViewAdded()
-{
-
-}
-
-void GameView::onViewRemoved()
+void GameView::onViewRemoved(ove::ViewStack& stateController)
 {
 }
 
-void GameView::onViewForeground()
+void GameView::onViewForeground(ove::ViewStack& stateController)
 {
 }
 
-void GameView::onViewBackground()
+void GameView::onViewBackground(ove::ViewStack& stateController)
 {
 }
 
-void GameView::simulateView(double time, double dt)
+void GameView::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void GameView::layoutView()
+void GameView::simulateView(ove::ViewStack& stateController, double dt)
 {
 }
 
-void GameView::frameUpdateView(double dt)
+void GameView::frameUpdateView(ove::ViewStack& stateController, double dt)
+{
+}
+
+void GameView::onViewEndFrame(ove::ViewStack& stateController)
 {
 }
 
@@ -63,5 +75,4 @@ const char* GameView::viewId() const
     return "GameView";
 }
 
-    } /* namespace ove */
 } /* namespace cinek */

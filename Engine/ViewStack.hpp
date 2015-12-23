@@ -23,31 +23,24 @@ class ViewController;
 class ViewStack
 {
 public:
-    using FactoryCallback = std::function<unique_ptr<ViewController>(const std::string&)>;
+    using FactoryCallback = std::function<unique_ptr<ViewController>(const std::string&, ViewController*)>;
     
     ViewStack();
     ~ViewStack();
     
     void setFactory(FactoryCallback callback);
     
+    //  executes start frame logic for each view
+    void startFrame();
     //  processes view state changes (load, unload, etc.)
-    void process();
-    
-    //  executes layout of view controllers
-    void layout();
+    void endFrame();
     
     //  updates the view controllers on the stack
-    void simulate(double time, double dt);
+    void simulate(double dt);
     
     //  render the stack
     void frameUpdate(double dt);
     
-    //  loads a view (or ups the reference count if already loaded)
-    void load(const std::string& id);
-    //  unloads a view (or decrements the ref count.)  if this is the last
-    //  reference, and the view is on the stack, the view and its successors on
-    //  the stack are also unloaded
-    void unload(const std::string&  id);
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,
     //  all views are popped above the presented view.
@@ -80,8 +73,6 @@ private:
     {
         enum
         {
-            kLoad,
-            kUnload,
             kPresent,
             kPush,
             kPop
