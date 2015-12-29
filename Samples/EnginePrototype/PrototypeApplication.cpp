@@ -182,16 +182,5 @@ void PrototypeApplication::endFrame()
 }
 
 
-void PrototypeApplication::createScene
-(
-    const ove::AssetManifest& manifest
-)
-{
-}
-
-void PrototypeApplication::destroyScene()
-{
-}
-
 }
 

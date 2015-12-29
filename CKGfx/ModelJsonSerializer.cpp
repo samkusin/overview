@@ -334,10 +334,16 @@ Mesh loadMeshFromJSON
                 vertexType = VertexTypes::kVNormal_Tex0;
             }
         }
+        else {
+            vertexType = VertexTypes::kVPositionNormal;
+        }
     }
     else {
         if (hasTexCoords) {
             vertexType = VertexTypes::kVTex0;
+        }
+        else {
+            vertexType = VertexTypes::kVPosition;
         }
     }
     

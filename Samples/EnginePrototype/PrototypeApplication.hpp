@@ -53,13 +53,6 @@ public:
     void renderFrame(const gfx::Rect& viewRect);
     void endFrame();
     
-    //  initializes a scene
-    void createScene(const ove::AssetManifest& manifest);
-    
-    //  Tears down all scene objects and data
-    void destroyScene();
-    
-    
 private:
     gfx::Context* _gfxContext;
     TaskScheduler _taskScheduler;

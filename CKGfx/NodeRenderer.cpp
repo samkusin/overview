@@ -284,6 +284,9 @@ void NodeRenderer::renderMeshElement
 )
 {
     //  setup rendering state
+    
+    bgfx::setUniform(uniforms[kNodeUniformColor], element.material->diffuseColor, 1);
+    
     if (element.material->diffuseTex) {
         bgfx::TextureHandle texDiffuse = element.material->diffuseTex->bgfxHandle();
         bgfx::setTexture(0, uniforms[kNodeUniformTexDiffuse], texDiffuse,
@@ -309,7 +312,7 @@ void NodeRenderer::renderMeshElement
     bgfx::setIndexBuffer(mesh->indexBuffer());
 
     NodeProgramSlot programSlot;
-    if (!_armatureStack.empty()) {
+    if (!_armatureStack.empty() && mesh->format() == VertexTypes::kVNormal_Tex0_Weights) {
         programSlot = kNodeProgramBoneMesh;
 
         const ArmatureState& armatureState = _armatureStack.back();
@@ -339,7 +342,15 @@ void NodeRenderer::renderMeshElement
     }
     else
     {
-        programSlot = kNodeProgramMesh;
+        if (mesh->format() == VertexTypes::kVPosition) {
+            programSlot = kNodeProgramFlat;
+        }
+        else if (mesh->format() == VertexTypes::kVPositionNormal) {
+            programSlot = kNodeProgramFlatMesh;
+        }
+        else {
+            programSlot = kNodeProgramMesh;
+        }
         bgfx::setTransform(worldTransform);
     }
 

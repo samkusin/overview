@@ -27,6 +27,7 @@ enum NodeProgramSlot
     kNodeProgramMesh,
     kNodeProgramBoneMesh,
     kNodeProgramFlat,
+    kNodeProgramFlatMesh,
     kNodeProgramLimit       = 16,
     
     kNodeProgramNone        = -1

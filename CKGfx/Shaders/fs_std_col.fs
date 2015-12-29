@@ -1,4 +1,4 @@
-$input v_normal, v_texcoord0, v_position
+$input v_normal, v_position
 
 /*
  * Copyright 2011-2015 Branimir Karadzic. All rights reserved.
@@ -9,7 +9,6 @@ $input v_normal, v_texcoord0, v_position
 #include "shaderlib.sh"
 #include "ckgfx.sh"
 
-SAMPLER2D(u_texColor, 0);
 
 /*  Direct Lighting Info
 
@@ -94,7 +93,6 @@ vec4 colorOfLightFromDirection(int index, vec3 direction, vec3 normal)
 
 void main()
 {
-    vec4 tex0Color = texture2D(u_texColor, v_texcoord0);
     vec3 surfaceNorm = normalize(v_normal);
     vec4 totalColor = vec4(0,0,0,0);
 
@@ -145,5 +143,5 @@ void main()
       }
     }
 
-    gl_FragColor = tex0Color * totalColor;
+    gl_FragColor = totalColor;
 }
