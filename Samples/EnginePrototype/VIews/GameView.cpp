@@ -35,7 +35,7 @@ void StartupView::endView()
     
 void GameView::onViewAdded(ove::ViewStack& stateController)
 {
-    assetService().loadManifest("scenes/cityblock.json",
+    assetService().loadManifest("scenes/apartment.json",
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
             sceneService().initializeScene(manifest);
             entityService().createEntity(0, "entity", "test_bot");

@@ -130,6 +130,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         btRigidBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode);
         if (body) {
             _scene->attachBody(body, entity);
+            body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
         }
         else {
             CK_LOG_WARN("OverviewSample",
