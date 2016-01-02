@@ -10569,7 +10569,7 @@
   "lights": [],
   "nodes": {
     "name": "DumbSlinky",
-    "type": "View",
+    "type": "Entity",
     "matrix": [
       0.47914785146713257,
       0.0,

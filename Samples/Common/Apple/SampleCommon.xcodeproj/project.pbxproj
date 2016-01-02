@@ -14,6 +14,8 @@
 		370B59A11BFA8A96009062FA /* messenger.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B599F1BFA8A96009062FA /* messenger.hpp */; };
 		370B59A51BFAA428009062FA /* server.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A31BFAA428009062FA /* server.hpp */; };
 		370B59A71BFBAFC5009062FA /* buffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A61BFBAFC5009062FA /* buffer.hpp */; };
+		37287CB41C3769F000DD380F /* ModelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37287CB21C3769F000DD380F /* ModelSet.cpp */; };
+		37287CB51C3769F000DD380F /* ModelSet.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37287CB31C3769F000DD380F /* ModelSet.hpp */; };
 		377ECCAF1C0507D6002040D7 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCAD1C0507D6002040D7 /* file.c */; };
 		377ECCB01C0507D6002040D7 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCAE1C0507D6002040D7 /* file.h */; };
 		377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCBE1C07AB75002040D7 /* taskscheduler.cpp */; };
@@ -205,6 +207,8 @@
 		370B59A21BFAA428009062FA /* server.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = server.inl; path = ../../../CKLibs/ckmsg/server.inl; sourceTree = "<group>"; };
 		370B59A31BFAA428009062FA /* server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = server.hpp; path = ../../../CKLibs/ckmsg/server.hpp; sourceTree = "<group>"; };
 		370B59A61BFBAFC5009062FA /* buffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buffer.hpp; path = ../../../CKLibs/ckmsg/buffer.hpp; sourceTree = "<group>"; };
+		37287CB21C3769F000DD380F /* ModelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelSet.cpp; sourceTree = "<group>"; };
+		37287CB31C3769F000DD380F /* ModelSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModelSet.hpp; sourceTree = "<group>"; };
 		377ECCAD1C0507D6002040D7 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ckio/file.c; sourceTree = "<group>"; };
 		377ECCAE1C0507D6002040D7 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = ckio/file.h; sourceTree = "<group>"; };
 		377ECCBA1C06A9A0002040D7 /* managed_dictionary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = managed_dictionary.hpp; sourceTree = "<group>"; };
@@ -609,6 +613,8 @@
 				37E636ED1BF0246D0081E59E /* Mesh.hpp */,
 				37E636EE1BF0246D0081E59E /* ModelJsonSerializer.cpp */,
 				37E636EF1BF0246D0081E59E /* ModelJsonSerializer.hpp */,
+				37287CB21C3769F000DD380F /* ModelSet.cpp */,
+				37287CB31C3769F000DD380F /* ModelSet.hpp */,
 				37E636F01BF0246D0081E59E /* Node.cpp */,
 				37E636F11BF0246D0081E59E /* Node.hpp */,
 				37E636F21BF0246D0081E59E /* NodeGraph.cpp */,
@@ -739,6 +745,7 @@
 				37E637231BF0246D0081E59E /* Texture.hpp in Headers */,
 				37E636C71BF024600081E59E /* blendish_defines.h in Headers */,
 				37E636951BF024330081E59E /* entitystore.hpp in Headers */,
+				37287CB51C3769F000DD380F /* ModelSet.hpp in Headers */,
 				37E6367C1BF024330081E59E /* file.hpp in Headers */,
 				377ECD201C1628A8002040D7 /* ClientUtility.hpp in Headers */,
 				37E6371B1BF0246D0081E59E /* Node.hpp in Headers */,
@@ -843,6 +850,7 @@
 				37E6372C1BF026210081E59E /* vs_nanovg_fill.hvs in Sources */,
 				37E636941BF024330081E59E /* entitystore.cpp in Sources */,
 				37E6368E1BF024330081E59E /* entitydatatable.cpp in Sources */,
+				37287CB41C3769F000DD380F /* ModelSet.cpp in Sources */,
 				37E636771BF024330081E59E /* cstringstack.cpp in Sources */,
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
 				37E637101BF0246D0081E59E /* stb.cpp in Sources */,

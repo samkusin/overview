@@ -181,7 +181,7 @@ auto SceneJsonLoader::parseJsonNode
             }
         }
     }
-    //  initialize component data - TODO Motion States!
+    
     if (newEntity) {
         CK_ASSERT(context.entity);
         if (node.type == Node::kGfxNode) {

@@ -1,7 +1,7 @@
 bl_info = {
     "name" : "Export OVEngine Objects (.json)",
     "author" : "Samir Sinha",
-    "version" : (0,0,2),
+    "version" : (0,0,3),
     "blender" : (2,7,5),
     "category" : "Import-Export"
 }
@@ -629,21 +629,25 @@ class ExportOVObjectJSON(bpy.types.Operator):
             'texture_path' : 'textures'
         }
 
+        def exportObject(scene, obj):
+            world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
+            return self.exportNode(scene, obj, resources, matrix=world_matrix)
+
+        exported_objects = None
+        if self.opt_export_scene:
+            exported_objects = scene.objects
+        else:
+            exported_objects = bpy.context.selected_objects
+
         root = None
         scene = bpy.context.scene
-        if self.opt_export_scene:
-            root = self.createNode('root', mathutils.Matrix.Identity(4))
-            root['children'] = []
-            for obj in scene.objects:
-                if not obj.parent:
-                    world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
-                    child = self.exportNode(scene, obj, resources, matrix=world_matrix)
-                    if child:
-                        root['children'].append(child)
-        else:
-            obj = scene.objects.active
-            world_matrix = transform_axis_mtx(self.opt_export_y_up) * transform_obj_mtx_lh(obj)
-            root = self.exportNode(scene, obj, resources, matrix=world_matrix)
+        root = self.createNode('root', mathutils.Matrix.Identity(4))
+        root['children'] = []
+        for obj in exported_objects:
+            if not obj.parent:
+                child = exportObject(scene, obj)
+                if child:
+                    root['children'].append(child)
 
         document = OrderedDict()
 
@@ -711,6 +715,7 @@ def register():
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.utils.unregister_module(__name__)
+
 
 #if __name__ == "__main__":
 #    register()

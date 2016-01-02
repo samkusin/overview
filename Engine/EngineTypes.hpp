@@ -42,7 +42,7 @@ namespace cinek {
         {
             kNone,
             kTexture,
-            kModel
+            kModelSet
         };
 
     } /* namespace ove */

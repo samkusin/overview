@@ -103,7 +103,7 @@ int runSample(int viewWidth, int viewHeight)
     gfxInitParams.numTextures = 256;
     gfxInitParams.numAnimations = 256;
     gfxInitParams.numLights = 64;
-    gfxInitParams.numModels = 64;
+    gfxInitParams.numModelSets = 64;
     
     cinek::gfx::Context gfxContext(gfxInitParams);
     

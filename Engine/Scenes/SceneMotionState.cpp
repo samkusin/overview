@@ -49,6 +49,11 @@ void SceneMotionState::setWorldTransform(const btTransform& worldTrans)
    static_assert(sizeof(btScalar) == sizeof(gfx::Matrix4::value_type),
                  "Types must be the same to extract matrix from worldTrans");
     
+   __m128 *test = (__m128 *)mtx.comp;
+   __m128 vec0;
+   
+   //test[0] = vec0;
+    
    worldTrans.getOpenGLMatrix(mtx.comp);
    
    //TODO, mark node aabb is dirty for later aabb regeneration

@@ -2,7 +2,8 @@
     "entity" : {
         "test_bot" : {
             "renderable" : {
-                "model" : "models/simple.json"
+                "modelset" : "models/simple.json",
+                "model" : "DumbSlinky"
             },
             "scenebody" : {
                 "shape" : "cylinder",

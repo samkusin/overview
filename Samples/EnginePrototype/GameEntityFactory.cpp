@@ -10,6 +10,7 @@
 #include "Engine/Scenes/Scene.hpp"
 #include "Engine/Scenes/SceneDataContext.hpp"
 #include "Engine/Render/RenderGraph.hpp"
+#include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Context.hpp"
 
 #include <ckjson/json.hpp>
@@ -41,16 +42,24 @@ void GameEntityFactory::onCustomComponentCreateFn
 )
 {
     if (componentName == "renderable") {
+        const char* modelSetName = compTemplate["modelset"].GetString();
         const char* modelName = compTemplate["model"].GetString();
-        auto modelHandle = _gfxContext->findModel(modelName);
+        
+        gfx::ModelSetHandle modelSetHandle = _gfxContext->findModelSet(modelSetName);
+        gfx::NodeHandle modelHandle;
+        
+        if (modelSetHandle) {
+            modelHandle = modelSetHandle->find(modelName);
+        }
+        
         if (modelHandle) {
             _renderGraph->cloneAndAddNode(entity,
-                modelHandle->root(), nullptr);
+                modelHandle, nullptr);
         }
         else {
-            CK_LOG_WARN("OverviewSample",
-                        "Entity: %" PRIu64 ", Component %s: %s not found\n",
-                        entity, componentName.c_str(), modelName);
+                CK_LOG_WARN("OverviewSample",
+                        "Entity: %" PRIu64 ", Component %s: %s/%s not found\n",
+                        entity, componentName.c_str(), modelSetName, modelName);
         }
     }
     else if (componentName == "scenebody") {
@@ -130,7 +139,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         btRigidBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode);
         if (body) {
             _scene->attachBody(body, entity);
-            body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
+            //body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
         }
         else {
             CK_LOG_WARN("OverviewSample",

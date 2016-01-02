@@ -9,8 +9,14 @@
 #include "NodeGraph.hpp"
 
 #include <cinek/debug.h>
+#include <cinek/objectpool.inl>
 
 namespace cinek {
+
+    template class ObjectPool<gfx::MeshElement>;
+    template class ObjectPool<gfx::ArmatureElement>;
+    template class ObjectPool<gfx::LightElement>;
+
     namespace gfx {
  
 NodeGraph::NodeGraph(const NodeElementCounts& params) :

@@ -9,7 +9,12 @@
 #include "Scene.hpp"
 #include "SceneObject.hpp"
 
+#include <cinek/objectpool.inl>
+
 namespace cinek {
+
+    template class ObjectPool<ove::SceneBody>;
+    
     namespace ove {
     
 ////////////////////////////////////////////////////////////////////////////////

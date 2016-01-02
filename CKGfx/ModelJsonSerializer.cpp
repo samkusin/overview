@@ -83,7 +83,14 @@ NodeHandle NodeJsonLoader::operator()
 )
 {
     NodeHandle thisNode;
-
+    
+    const char* nodeName = jsonNode["name"].GetString();
+    const char* nodeType = nullptr;
+    
+    if (jsonNode.HasMember("type")) {
+        nodeType = jsonNode["type"].GetString();
+    }
+    
     //  create our leaf child element nodes (meshes for example)
     if (jsonNode.HasMember("meshes")) {
         const JsonValue& elements = jsonNode["meshes"];
@@ -176,6 +183,10 @@ NodeHandle NodeJsonLoader::operator()
         loadAABBFromJSON(thisNode->obb(), jsonNode["obb"]);
     }
 
+    if (!strcasecmp(nodeType, "entity") || !strcasecmp(nodeType, "model")) {
+        modelNodes.emplace_back(nodeName, thisNode);
+    }
+
     return thisNode;
 }
 
@@ -190,11 +201,9 @@ struct ModelBuilderFromJSONFn
     //
     ModelBuilderFromJSONFn
     (
-        NodeJsonLoader& loader,
-        const std::vector<std::string>& nodeTypesExcluded
+        NodeJsonLoader& loader
     ) :
-        _loader(&loader),
-        _nodeTypesExcluded(&nodeTypesExcluded)
+        _loader(&loader)
     {
     }
 
@@ -209,7 +218,6 @@ struct ModelBuilderFromJSONFn
 
 private:
     NodeJsonLoader* _loader;
-    const std::vector<std::string>* _nodeTypesExcluded;
 
     NodeHandle build
     (
@@ -218,18 +226,6 @@ private:
     )
     {
         NodeHandle thisNode;
-
-        //  filter by node types if available
-        if (!_nodeTypesExcluded->empty()) {
-            auto typeNodeIt = node.FindMember("type");
-            if (typeNodeIt != node.MemberEnd()) {
-                const char* type = typeNodeIt->value.GetString();
-                for (auto& excludedType : *_nodeTypesExcluded) {
-                    if (excludedType == type)
-                        return nullptr;
-                }
-            }
-        }
         
         thisNode = (*_loader)(model, node);
      
@@ -254,10 +250,8 @@ private:
 
 NodeGraph loadNodeGraphFromJSON
 (
-    Context& context,
-    const JsonValue& root,
-    const NodeElementCounts& extra,
-    const std::vector<std::string>& nodeTypeExcludeFilter
+    NodeJsonLoader& loader,
+    const JsonValue& root
 )
 {
     NodeGraph model;
@@ -274,15 +268,13 @@ NodeGraph loadNodeGraphFromJSON
     //  to run an enumeration pass on the model document before generating our
     //  model's graph
     
-    NodeElementCounts modelInitParams = extra;
+    NodeElementCounts modelInitParams = {};
     modelInitParams = enumerateNodeResourcesFromJSON(modelInitParams, modelNode);
     
     model = std::move(NodeGraph(modelInitParams));
     
     //  Build model's graph by visiting our json nodes.
     //
-    NodeJsonLoader loader;
-    loader.context = &context;
     loader.jsonAnimations = root.FindMember("animations");
     loader.jsonMeshes = root.FindMember("meshes");
     loader.jsonMaterials = root.FindMember("materials");
@@ -293,11 +285,45 @@ NodeGraph loadNodeGraphFromJSON
         loader.lights.reserve(loader.jsonLights->value.Size());
     }
 
-    ModelBuilderFromJSONFn buildFn(loader, nodeTypeExcludeFilter);
+    ModelBuilderFromJSONFn buildFn(loader);
     
     buildFn(model, modelNode);
     
     return model;
+}
+
+ModelSet loadModelSetFromJSON
+(
+    Context& context,
+    const JsonValue& root
+)
+{
+    ModelSet modelSet;
+    
+    NodeJsonLoader loader;
+    loader.context = &context;
+    
+    NodeGraph nodeGraph = loadNodeGraphFromJSON(loader, root);
+    
+    modelSet = std::move(ModelSet(std::move(nodeGraph), std::move(loader.modelNodes)));
+    
+    return std::move(modelSet);
+}
+
+NodeGraph loadNodeGraphFromJSON
+(
+    Context& context,
+    const JsonValue& root
+)
+{
+    NodeGraph nodeGraph;
+    
+    NodeJsonLoader loader;
+    loader.context = &context;
+    
+    nodeGraph = loadNodeGraphFromJSON(loader, root);
+    
+    return std::move(nodeGraph);
 }
 
 Mesh loadMeshFromJSON

@@ -26,8 +26,8 @@
         "r": 1.0,
         "g": 1.0,
         "b": 1.0,
-        "power": 50,
-        "intensity": 0.5
+        "power": 10,
+        "intensity": 0.10000000149011612
       }
     },
     "Apt/Low-CounterTop": {
@@ -71,8 +71,8 @@
         "r": 1.0,
         "g": 1.0,
         "b": 1.0,
-        "power": 50,
-        "intensity": 0.5
+        "power": 10,
+        "intensity": 0.10000000149011612
       }
     },
     "Apt/Low-BathroomTile": {

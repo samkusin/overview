@@ -60,22 +60,23 @@ auto ResourceFactory::onAssetManifestRequest
             );
         }
         break;
-    case AssetType::kModel:
-        if (!_gfxContext->findModel(name.c_str())) {
-            reqId = _scheduler->schedule(allocate_unique<LoadAssetManifest>(
-                name,
-                *this,
-                [this](Task::State state, Task& t) {
-                    auto& task = static_cast<LoadAssetManifest&>(t);
-                    if (state == Task::State::kEnded) {
-                        auto manifest = task.acquireManifest();
-                        auto model = gfx::loadNodeGraphFromJSON(*_gfxContext, manifest->root());
-                        _gfxContext->registerModel(std::move(model), task.name().c_str());
-                    }
-                    requestFinished(t.id(), task.name(), state);
-                })
-            );
-
+    case AssetType::kModelSet:
+        {
+            if (!_gfxContext->findModelSet(name.c_str())) {
+                reqId = _scheduler->schedule(allocate_unique<LoadAssetManifest>(
+                    name,
+                    *this,
+                    [this](Task::State state, Task& t) {
+                        auto& task = static_cast<LoadAssetManifest&>(t);
+                        if (state == Task::State::kEnded) {
+                            auto manifest = task.acquireManifest();
+                            auto modelSet = gfx::loadModelSetFromJSON(*_gfxContext, manifest->root());
+                            _gfxContext->registerModelSet(std::move(modelSet), task.name().c_str());
+                        }
+                        requestFinished(t.id(), task.name(), state);
+                    })
+                );
+            }
         }
         break;
     case AssetType::kNone:

@@ -9,9 +9,20 @@
 #include "SceneDataContext.hpp"
 #include "SceneObject.hpp"
 
-namespace cinek {
-    namespace ove {
+#include <cinek/objectpool.inl>
 
+namespace cinek {
+    
+    template class ObjectPool<ove::SceneFixedBodyHull>;
+    template class ObjectPool<btBvhTriangleMeshShape>;
+    template class ObjectPool<btCylinderShape>;
+    template class ObjectPool<btBoxShape>;
+    template class ObjectPool<btCompoundShape>;
+    template class ObjectPool<btRigidBody>;
+    template class ObjectPool<ove::SceneMotionState>;
+    
+    namespace ove {
+    
 SceneDataContext::SceneDataContext(const InitParams& params) :
     _triMeshPool(params.numTriMeshShapes),
     _triMeshShapePool(params.numTriMeshShapes),
