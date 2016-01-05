@@ -55,6 +55,10 @@ PrototypeApplication::PrototypeApplication
         256
     );
     
+    _renderContext.programs = &_renderPrograms;
+    _renderContext.uniforms = &_renderUniforms;
+    _renderContext.renderer = &_renderer;
+    
     ove::SceneDataContext::InitParams sceneDataInit;
     sceneDataInit.numRigidBodies = 256;
     sceneDataInit.numTriMeshShapes = 32;
@@ -87,9 +91,6 @@ PrototypeApplication::PrototypeApplication
     _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
         *_componentFactory);
 
-    cinek::gfx::Matrix4 cameraRotMtx;
-    bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
-    _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
     
     //  define the top-level states for this application
     ApplicationContext context;
@@ -100,6 +101,7 @@ PrototypeApplication::PrototypeApplication
     context.msgClientSender = &_clientSender;
     context.scene = _scene.get();
     context.sceneData = _sceneData.get();
+    context.sceneDebugDrawer = _sceneDbgDraw.get();
     context.gfxContext = _gfxContext;
     context.renderGraph = _renderGraph.get();
     
@@ -143,32 +145,42 @@ void PrototypeApplication::simulateFrame(double dt)
     _viewStack.simulate(dt);
 }
 
-void PrototypeApplication::updateFrame
+void PrototypeApplication::renderFrame
 (
     double dt,
+    const gfx::Rect& viewRect,
     const ove::InputState& inputState
 )
 {
-    _viewStack.frameUpdate(dt);
+    _renderContext.frameRect = viewRect;
     
-    _freeCameraController.handleCameraInput(_camera, inputState, dt);
+    ove::RenderService renderService(_renderContext);
+    
+    struct
+    {
+        PrototypeApplication* self;
+        ove::RenderService* renderService;
+        const ove::InputState* inputState;
+    }
+    context = {
+        this,
+        &renderService,
+        &inputState
+    };
 
     _renderGraph->update(dt);
-}
-
-void PrototypeApplication::renderFrame(const gfx::Rect& viewRect)
-{
+    
     bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
 
-    _camera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
-        (float)viewRect.w/viewRect.h);
-    
-    _renderer.setCamera(_camera);
-    
-    _renderer(_renderPrograms, _renderUniforms, _renderGraph->root());
-    
-    _sceneDbgDraw->setup(_renderPrograms, _renderUniforms, _renderer.camera());
-    _scene->debugRender();
+    _viewStack.frameUpdate(dt,
+        [&context](ove::ViewController& viewController, ove::ViewStack& stateController, double dt) {
+            AppViewController& appViewController = static_cast<AppViewController&>(viewController);
+            appViewController.frameUpdateView(stateController, dt,
+                *context.inputState,
+                *context.renderService);
+        });
+        
+    _gfxContext->update();
 }
 
 void PrototypeApplication::endFrame()

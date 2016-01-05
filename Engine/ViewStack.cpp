@@ -168,7 +168,11 @@ void ViewStack::simulate(double dt)
     }
 }
 
-void ViewStack::frameUpdate(double dt)
+void ViewStack::frameUpdate
+(
+    double dt,
+    const std::function<void(ViewController&, ViewStack&, double)>& cb
+)
 {
     if (_activeThread == std::thread::id())
     {
@@ -179,7 +183,7 @@ void ViewStack::frameUpdate(double dt)
         for (auto& vc : _stack)
         {
             _activeController = vc;
-            _activeController->frameUpdateView(*this, dt);
+            cb(*_activeController, *this, dt);
         }
         _activeController = nullptr;
         _activeThread = std::thread::id();

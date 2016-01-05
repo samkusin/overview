@@ -47,7 +47,13 @@ void StartupView::simulateView(ove::ViewStack& stateController, double dt)
 {
 }
 
-void StartupView::frameUpdateView(ove::ViewStack& stateController, double dt)
+void StartupView::frameUpdateView
+(
+    ove::ViewStack& stateController,
+    double /* dt */,
+    const ove::InputState& /* inputState */,
+    ove::RenderService& /* renderContext */
+)
 {
     if (_loadCompleted) {
         stateController.present("GameView");

@@ -17,6 +17,7 @@ AppViewController::AppViewController(const ApplicationContext& context) :
     _assetService({ context.taskScheduler, context.resourceFactory }),
     _entityService( context.entityDatabase, context.msgClientSender ),
     _sceneService({ context.gfxContext, context.scene, context.sceneData,
+                    context.sceneDebugDrawer,
                     context.msgClientSender, context.entityDatabase,
                     context.renderGraph })
 {

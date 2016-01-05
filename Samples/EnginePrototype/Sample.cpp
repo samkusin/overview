@@ -153,11 +153,9 @@ int runSample(int viewWidth, int viewHeight)
         if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
             running = false;
         
-        controller.updateFrame(frameTime, polledInputState);
-        
-        gfxContext.update();
-        
-        controller.renderFrame(viewRect);
+        uiBeginLayout();
+        controller.renderFrame(frameTime, viewRect, polledInputState);
+        uiEndLayout();
 
         cinek::uicore::render(nvg, viewRect);
     

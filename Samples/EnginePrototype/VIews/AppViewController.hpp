@@ -10,11 +10,13 @@
 #define Prototype_AppViewController_hpp
 
 #include "GameTypes.hpp"
-
+#include "Common.hpp"
+#include "CKGfx/NodeRenderer.hpp"
 #include "Engine/ViewController.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"
 #include "Engine/Services/SceneService.hpp"
+#include "Engine/Services/RenderService.hpp"
 
 namespace cinek {
 
@@ -25,11 +27,11 @@ struct ApplicationContext
     ove::AssetManfiestFactory* resourceFactory;
     ove::EntityDatabase* entityDatabase;
     gfx::Context* gfxContext;
+    ove::SceneDebugDrawer* sceneDebugDrawer;
     ove::SceneDataContext* sceneData;
     ove::Scene* scene;
     ove::RenderGraph* renderGraph;
 };
-
 
 class AppViewController : public ove::ViewController
 {
@@ -37,6 +39,10 @@ public:
     AppViewController(const ApplicationContext& context);
     
     virtual ~AppViewController();
+    
+    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
+                                 const ove::InputState& inputState,
+                                 ove::RenderService& renderService) = 0;
     
 protected:
     ove::AssetService& assetService() {

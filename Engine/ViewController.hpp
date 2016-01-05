@@ -36,8 +36,6 @@ public:
     //  within an interval, but not necessary every frame (or more than once a
     //  frame depending on the owning loop.)
     virtual void simulateView(ViewStack& stateController, double dt) = 0;
-    //  Called once per render frame
-    virtual void frameUpdateView(ViewStack& stateController, double dt) = 0;
     //  Executed upon the the end of a frame
     virtual void onViewEndFrame(ViewStack& stateController) = 0;
     //  the name of the view

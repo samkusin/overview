@@ -47,31 +47,37 @@ uint32_t pollSDLEvents(cinek::ove::InputState& state)
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT)
+        switch (event.type)
         {
+        case SDL_QUIT:
             flags |= kPollSDLEvent_Quit;
             break;
-        }
-        else if (event.type == SDL_MOUSEWHEEL)
-        {
-            if (event.wheel.which != SDL_TOUCH_MOUSEID)
-            {
+            
+        case SDL_WINDOWEVENT:
+            break;
+        
+        case SDL_MOUSEWHEEL:
+            if (event.wheel.which != SDL_TOUCH_MOUSEID) {
                 state.mxWheel += event.wheel.x;
                 state.myWheel += event.wheel.y;
                 uiSetScroll(state.mxWheel, state.myWheel);
             }
-        }
-        else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-        {
-            SDL_KeyboardEvent& kevt = event.key;
-            if (!kevt.repeat)
+            break;
+        case SDL_KEYDOWN:
+        case SDL_KEYUP:
             {
-                uiSetKey(kevt.keysym.scancode, kevt.keysym.mod, kevt.state);
+                SDL_KeyboardEvent& kevt = event.key;
+                if (!kevt.repeat) {
+                    uiSetKey(kevt.keysym.scancode, kevt.keysym.mod, kevt.state);
+                }
             }
-        }
-        else if (event.type == SDL_TEXTINPUT)
-        {
+            break;
+            
+        case SDL_TEXTINPUT:
             uiSetChar(event.text.text[0]);
+            break;
+        default:
+            break;
         }
     }
     
@@ -86,29 +92,52 @@ int OverviewMain(SDL_Window* window, int argc, char* argv[])
 {
     cinek::file::setOpsStdio();
     
-    //  renderer initialization
-    //
-    bgfx::sdlSetWindow(window);
-    bgfx::init();
-    
     int viewWidth;
     int viewHeight;
     
     SDL_GetWindowSize(window, &viewWidth, &viewHeight);
 
-    bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
-    bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS*/ );
-    
-    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-        0x001122ff,
-        1.0f,
-        0);
-    
-    int result = runSample(viewWidth, viewHeight);
-    
-    //  subsystem termination
+    //  renderer initialization
     //
-    bgfx::shutdown();
+    bgfx::sdlSetWindow(window);
+    
+    bool windowShown = false;
+    
+    SDL_Event event;
+    while (!windowShown && SDL_WaitEvent(&event)) {
+        if (event.type == SDL_WINDOWEVENT) {
+            printf("SDL_WINDOWEVENT: %u (%d,%d)\n", event.window.event, event.window.data1, event.window.data2);
+         
+            if (event.window.event == SDL_WINDOWEVENT_SHOWN) {
+                
+                bgfx::init();
+
+                bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
+                bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS*/ );
+                
+                bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
+                    0x001122ff,
+                    1.0f,
+                    0);
+
+                windowShown = true;
+            }
+        }
+        else if (event.type == SDL_QUIT) {
+            break;
+        }
+    }
+    
+    int result = 1;
+    
+    if (windowShown) {
+    
+        result = runSample(viewWidth, viewHeight);
+    
+        //  subsystem termination
+        //
+        bgfx::shutdown();
+    }
     
     return result;
 }

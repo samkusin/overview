@@ -39,7 +39,8 @@ public:
     void simulate(double dt);
     
     //  render the stack
-    void frameUpdate(double dt);
+    void frameUpdate(double dt,
+                     const std::function<void(ViewController&, ViewStack&, double)>& cb);
     
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,

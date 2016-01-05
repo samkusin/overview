@@ -12,14 +12,13 @@
 #include "GameTypes.hpp"
 #include "Common.hpp"
 #include "ResourceFactory.hpp"
-#include "FreeCameraController.hpp"
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "CKGfx/GfxTypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
-#include "CKGfx/Camera.hpp"
 
 #include <cinek/allocator.hpp>
 #include <cinek/taskscheduler.hpp>
@@ -48,9 +47,8 @@ public:
     void beginFrame();
     
     void simulateFrame(double dt);
-    void updateFrame(double dt, const ove::InputState& inputState);
-    
-    void renderFrame(const gfx::Rect& viewRect);
+    void renderFrame(double dt, const gfx::Rect& viewRect,
+        const ove::InputState& inputState);
     void endFrame();
     
 private:
@@ -68,7 +66,6 @@ private:
     
     gfx::NodeRenderer::ProgramMap _renderPrograms;
     gfx::NodeRenderer::UniformMap _renderUniforms;
-    gfx::NodeRenderer _renderer;
     
     unique_ptr<ove::RenderGraph> _renderGraph;
     
@@ -79,8 +76,8 @@ private:
     unique_ptr<GameEntityFactory> _componentFactory;
     unique_ptr<ove::EntityDatabase> _entityDb;
     
-    gfx::Camera _camera;
-    ove::FreeCameraController _freeCameraController;
+    gfx::NodeRenderer _renderer;
+    ove::RenderContext _renderContext;
 };
     
 }
