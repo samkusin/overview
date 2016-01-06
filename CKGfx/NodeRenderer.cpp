@@ -111,6 +111,7 @@ NodeRenderer::NodeRenderer()
     _directionalLights.reserve(64);
 }
 
+/*
 void NodeRenderer::setCamera(const Camera& camera)
 {
     _camera = camera;
@@ -124,11 +125,13 @@ void NodeRenderer::setCamera(const Camera& camera)
         _camera.viewFrustrum.farZ(),
         false);
 }
+*/
 
 void NodeRenderer::operator()
 (
     const ProgramMap& programs,
     const UniformMap& uniforms,
+    const Camera& camera, 
     NodeHandle root,
     uint32_t stages /*=kStageAll */
 )
@@ -147,8 +150,8 @@ void NodeRenderer::operator()
             switch (currentStage) {
             case kStageFlagRender: {
 
-                    bgfx::setViewTransform(0, _viewMtx.comp, _projMtx.comp);
-                    bx::mtxMul(_viewProjMtx, _viewMtx, _projMtx);
+                    bgfx::setViewTransform(0, camera.viewMtx.comp, camera.projMtx.comp);
+                    bx::mtxMul(_viewProjMtx, camera.viewMtx, camera.projMtx);
                 }
                 break;
             case kStageFlagLightEnum: {

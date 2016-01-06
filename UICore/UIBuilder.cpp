@@ -83,7 +83,7 @@ void Layout::pushTop()
     }
 }
 
-int32_t Layout::popItem()
+int Layout::popItem()
 {
     int32_t item = -1;
     if ((_size & 0x80000000))
@@ -127,9 +127,12 @@ void Layout::insertItem(int32_t item, int32_t parent)
 
 Layout& Layout::frame
 (
-    UIRenderCallback renderCb,
+    int id,
+    unsigned int eventFlags,
+    FrameHandler* frameHandler,
+    RenderCallback renderCb,
     void* context,
-    uint32_t layoutFlags
+    unsigned int layoutFlags
 )
 {
     pushTop();
@@ -140,7 +143,10 @@ Layout& Layout::frame
     OUIFrame* data = reinterpret_cast<OUIFrame*>(
         uiAllocHandle(_topItem, sizeof(OUIFrame))
     );
-    data->header.init(OUIItemType::frame);
+    data->header.itemType = OUIItemType::frame;
+    data->header.handler = OUIFrame::handler;
+    data->id = id;
+    data->frameHandler = frameHandler;
     data->renderCb = renderCb;
     data->callbackContext = context;
     
@@ -149,11 +155,12 @@ Layout& Layout::frame
         uiSetLayout(_topItem, layoutFlags);
     }
     uiSetBox(_topItem, UI_COLUMN);
+    uiSetEvents(_topItem, eventFlags);
     
     return *this;
 }
 
-Layout& Layout::column(uint32_t layoutFlags)
+Layout& Layout::column(unsigned int layoutFlags)
 {
     pushTop();
     
@@ -163,7 +170,8 @@ Layout& Layout::column(uint32_t layoutFlags)
     OUIHeader* header = reinterpret_cast<OUIHeader*>(
         uiAllocHandle(_topItem, sizeof(OUIHeader))
     );
-    header->init(OUIItemType::column);
+    header->itemType = OUIItemType::column;
+    header->handler = nullptr;
     
     uiSetBox(_topItem, UI_COLUMN);
     if (layoutFlags)
@@ -174,46 +182,28 @@ Layout& Layout::column(uint32_t layoutFlags)
     return *this;
 }
 
-Layout& Layout::setEvents
-(
-    uint32_t flags,
-    UISubscriber* subscriber,
-    int32_t evtId
-)
-{
-    OUIHeader* header = reinterpret_cast<OUIHeader*>(uiGetHandle(_topItem));
-    header->subscriber = subscriber;
-    header->itemId = evtId;
-    
-    uiSetEvents(_topItem, flags);
-    
-    return *this;
-}
-
-Layout& Layout::setSize(int32_t w, int32_t h)
+Layout& Layout::setSize(int w, int h)
 {
     uiSetSize(_topItem, w, h);
     return *this;
 }
 
-Layout& Layout::buttonItem
+Layout& Layout::button
 (
-    int32_t iconId,
-    const char* label,
-    UISubscriber* subscriber,
-    int32_t evtId
+    int id,
+    ButtonHandler* btnHandler,
+    int iconId,
+    const char* label
 )
 {
     int item = uiItem();
     OUIButtonData* data = reinterpret_cast<OUIButtonData*>(
         uiAllocHandle(item, sizeof(OUIButtonData))
     );
-    data->header.init(OUIItemType::button);
-    if (subscriber)
-    {
-        data->header.subscriber = subscriber;
-        data->header.itemId = evtId;
-    }
+    data->header.itemType = OUIItemType::button;
+    data->header.handler = OUIButtonData::handler;
+    data->id = id;
+    data->fireHandler = btnHandler;
     data->iconId = iconId;
     data->label = label;
  
@@ -225,9 +215,34 @@ Layout& Layout::buttonItem
     return *this;
 }
 
+Layout& Layout::listbox
+(
+    DataProvider* dataProvider,
+    int32_t providerId,
+    ListboxLayout layout,
+    int* selected
+)
+{
+    int item = uiItem();
+    OUIListBoxData* data = reinterpret_cast<OUIListBoxData*>(
+        uiAllocHandle(item, sizeof(OUIListBoxData))
+    );
+    data->header.itemType = OUIItemType::listbox;
+    data->header.handler = OUIListBoxData::handler;
+    data->provider = dataProvider;
+    data->providerId = providerId;
+    data->layout = layout;
+    data->anchorIndex = -1;
+    data->selected = selected;
+    
+    uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT * 2);
+    
+    return *this;
+}
+
 Layout& Layout::end()
 {
-    int32_t parent = popItem();
+    int parent = popItem();
     if (parent >= 0)
     {
         const OUIHeader* hdr = reinterpret_cast<const OUIHeader*>(uiGetHandle(parent));

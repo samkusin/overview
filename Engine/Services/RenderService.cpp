@@ -28,8 +28,7 @@ void RenderService::renderNodeWithCamera
     const gfx::Camera& camera
 )
 {
-    _context.renderer->setCamera(camera);
-    (*_context.renderer)(*_context.programs, *_context.uniforms, node);
+    (*_context.renderer)(*_context.programs, *_context.uniforms, camera, node);
 }
 
 

@@ -13,6 +13,8 @@
 
 #include <cinek/vector.hpp>
 
+#include <functional>
+
 namespace cinek { namespace uicore {
 
 
@@ -46,24 +48,27 @@ public:
     /// Starts a frame - which is an encompassing region designed to act as an
     /// Event subscriber for views, or as a container for other ui items.
     ///
-    Layout& frame(UIRenderCallback renderCb, void* cbContext, uint32_t layoutFlags=0);
+    Layout& frame(int id, unsigned int eventFlags, FrameHandler* frameHandler,
+                  RenderCallback renderCb=nullptr, void* cbContext=nullptr,
+                  unsigned int layoutFlags=0);
     ///
     /// Starts a vertical group of ui widgets - used for positioning.
     ///
-    Layout& column(uint32_t layoutFlags=0);
-    ///
-    /// Subscribe the current UI group to one or more events.
-    ///
-    Layout& setEvents(uint32_t flags, UISubscriber* subscriber, int32_t evtId);
+    Layout& column(unsigned int layoutFlags=0);
     ///
     /// Sets the size of the current UI region.
     ///
-    Layout& setSize(int32_t w, int32_t h);
+    Layout& setSize(int w, int h);
     ///
     /// An individual button widget within the encompassing UI group.
     ///
-    Layout& buttonItem(int32_t iconId, const char* label,
-                         UISubscriber* subscriber, int32_t evtId);
+    Layout& button(int id, ButtonHandler* btnHandler, int iconId, const char* label);
+    ///
+    /// A list box whose data is updated by events sent to the subscriber
+    ///
+    Layout& listbox(DataProvider* dataProvider, int providerId,
+                    ListboxLayout layout,
+                    int* selected);
     ///
     /// Completes a layout group (frame, column)
     ///
@@ -82,7 +87,7 @@ private:
     
     uint8_t _data[kDataSize];
     uint32_t _size;             // high bit, then _data contains a vector
-    int32_t _topItem;
+    int _topItem;
     
     enum
     {
@@ -93,7 +98,7 @@ private:
     
     void insertItem(int32_t item, int32_t parent);
     void pushTop();
-    int32_t popItem();
+    int popItem();
 };
 
 

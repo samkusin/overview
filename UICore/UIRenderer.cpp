@@ -84,6 +84,8 @@ static void renderItem
                     (BNDwidgetState)uiGetState(item), data->iconId, data->label);
             }
             break;
+        case OUIItemType::listbox:
+            break;
         default:
             break;
         }

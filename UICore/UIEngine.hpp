@@ -21,32 +21,56 @@ enum class OUIItemType
 {
     frame,
     column,
-    button
+    button,
+    listbox,
+    combobox
 };
 
 struct OUIHeader
 {
     OUIItemType itemType;
-    UISubscriber* subscriber;
-    int itemId;
-    
-    void init(OUIItemType type);
+    UIhandler handler;
 };
 
 struct OUIFrame
 {
     OUIHeader header;
-    UIRenderCallback renderCb;
+    int id;
+    FrameHandler* frameHandler;
+    RenderCallback renderCb;
     void* callbackContext;
+    
+    static void handler(int item, UIevent event);
 };
 
 struct OUIButtonData
 {
     OUIHeader header;
+    int id;
+    ButtonHandler* fireHandler;
     int iconId;
     const char* label;
+    
+    static void handler(int item, UIevent event);
 };
 
+/*
+ *  OUIListBox uses a UISubscriber data request to lookup what items to render 
+ *  by index.
+ *  
+ *  Upon selection, a subscriber can lookup what item has been selected from .
+ */
+struct OUIListBoxData
+{
+    OUIHeader header;
+    ListboxLayout layout;   /* layout of items */
+    DataProvider* provider;
+    int32_t providerId;     /* Data provider object and ID */
+    int32_t anchorIndex;    /* first visible item - for scrolling */
+    int32_t *selected;      /* what data object is active (selected) */
+    
+    static void handler(int item, UIevent event);
+};
 
 } /* namespace uicore */ } /* namespace cinek */
 

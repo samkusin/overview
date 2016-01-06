@@ -18,9 +18,12 @@ namespace cinek {
 
 struct Camera
 {
-    //  world transform matrix (with 'world' as defined for the rendered graph.)
+    void update();
+
     Matrix4 worldMtx;
-    //  view frustrum relative to the current view matrix
+    Matrix4 viewMtx;
+    Matrix4 projMtx;
+    Matrix4 invProjMtx;
     Frustrum viewFrustrum;
 };
 

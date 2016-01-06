@@ -19,20 +19,20 @@
 
 namespace cinek {
 
-class GameView : public AppViewController, uicore::UISubscriber
+class GameView : public AppViewController, uicore::DataProvider, uicore::FrameHandler
 {
 public:
     GameView(const ApplicationContext& context);
     
-    virtual void onViewAdded(ove::ViewStack& stateController);
-    virtual void onViewRemoved(ove::ViewStack& stateController);
-    virtual void onViewForeground(ove::ViewStack& stateController);
-    virtual void onViewBackground(ove::ViewStack& stateController);
-    virtual void onViewStartFrame(ove::ViewStack& stateController);
-    virtual void simulateView(ove::ViewStack& stateController, double dt);
-    virtual void onViewEndFrame(ove::ViewStack& stateController);
+    virtual void onViewAdded(ove::ViewStack& stateController) override;
+    virtual void onViewRemoved(ove::ViewStack& stateController) override;
+    virtual void onViewForeground(ove::ViewStack& stateController) override;
+    virtual void onViewBackground(ove::ViewStack& stateController) override;
+    virtual void onViewStartFrame(ove::ViewStack& stateController) override;
+    virtual void simulateView(ove::ViewStack& stateController, double dt) override;
+    virtual void onViewEndFrame(ove::ViewStack& stateController) override;
         
-    virtual const char* viewId() const;
+    virtual const char* viewId() const override;
     
 private:
     static void viewUIRenderHook(void* context, NVGcontext* nvg);
@@ -40,12 +40,17 @@ private:
     //  AppViewController
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
                          const ove::InputState& inputState,
-                         ove::RenderService& renderService);
+                         ove::RenderService& renderService) override;
     
 
-    //  UISubscriber
-    virtual void onUIEvent(int evtId, UIevent evtType, const uicore::UIeventdata& data);
+    //  DataProvider
+    virtual void onUIDataItemRequest(int item, int index, uicore::DataObject& data) override;
+    virtual void onUIDataUpdateItemAnchor(int item, int index,
+        const UIvec2& anchor,
+        const UIvec2& dimensions) override;
     
+    //  FrameHandler
+    virtual void onUIFrameEvent(int id, const uicore::FrameEvent& evt) override;
     
 private:
     enum

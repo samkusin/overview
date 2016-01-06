@@ -84,9 +84,6 @@ public:
     using UniformMap = std::array<bgfx::UniformHandle, kNodeUniformLimit>;
     
     NodeRenderer();
-
-    void setCamera(const Camera& camera);
-    const Camera& camera() const { return _camera; }
     
     enum
     {
@@ -100,6 +97,7 @@ public:
     };
     
     void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    const Camera& camera,
                     NodeHandle root, uint32_t stages=kStageAll);
     
 private:

@@ -67,8 +67,7 @@ void GameView::frameUpdateView
 {
     uicore::Layout uiLayout;
     
-    uiLayout.frame(viewUIRenderHook, this)
-        .setEvents(UI_BUTTON0_DOWN, this, kUIEvtId_GameView)
+    uiLayout.frame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this)
         .setSize(renderService.getViewWidth(), renderService.getViewHeight())
         .end();
     
@@ -91,10 +90,12 @@ void GameView::frameUpdateView
     end();
  
 */
+    //  todo - perfhaps a convenience method to automate this step?
     _camera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
         (float)renderService.getViewWidth()/renderService.getViewHeight());
   
     _freeCameraController.handleCameraInput(_camera, inputState, dt);
+    _camera.update();
 
     renderService.renderNodeWithCamera(sceneService().getGfxRootNode(), _camera);
     sceneService().renderSceneDebug(renderService, _camera);
@@ -111,13 +112,48 @@ const char* GameView::viewId() const
 
 ////////////////////////////////////////////////////////////////////////
 
-void GameView::onUIEvent(int evtId, UIevent evtType, const uicore::UIeventdata& data)
-{
-}
-
 void GameView::viewUIRenderHook(void* context, NVGcontext* nvg)
 {
 }
 
+void GameView::onUIDataItemRequest
+(
+    int item,
+    int index,
+    uicore::DataObject& data
+)
+{
+}
+
+
+void GameView::onUIDataUpdateItemAnchor
+(
+    int item,
+    int index,
+    const UIvec2& anchor,
+    const UIvec2& dimensions
+)
+{
+}
+
+void GameView::onUIFrameEvent(int id, const uicore::FrameEvent& evt)
+{
+    if (id == kUIEvtId_GameView) {
+        if (evt.evtType == UI_BUTTON0_DOWN) {
+            gfx::Vector4 hitPt = {
+                (2.0f * evt.cursor.x) / evt.size.x - 1.0f,
+                1.0f - (2.0f*evt.cursor.y)/evt.size.y,
+                1.0f,
+                1.0f
+            };
+            
+            gfx::Vector4 eyePt;
+            bx::vec4MulMtx(eyePt, hitPt, _camera.invProjMtx);
+            
+            printf("HitPoint = {%.2f,%.2f,%.2f}\n", hitPt.x, hitPt.y, hitPt.z);
+            printf("HitEye = {%.2f,%.2f,%.2f}\n", eyePt.x, eyePt.y, eyePt.z);
+        }
+    }
+}
 
 } /* namespace cinek */

@@ -18,38 +18,52 @@ void OUIHandler(int item, UIevent event)
     if (!header)
         return;
     
-    switch (header->itemType)
-    {
-    default:
-        break;
-    }
-    
-    if (header->subscriber)
-    {
-        UIeventdata data;
-        data.item = item;
-        data.keymod = uiGetModifier();
-        if (event == UI_KEY_DOWN || event == UI_KEY_UP || event == UI_CHAR)
-        {
-            data.keycode = uiGetKey();
-        }
-        if (event == UI_SCROLL)
-        {
-            data.scroll = uiGetScroll();
-        }
-        else
-        {
-            data.cursor = uiGetCursor();
-        }
-        header->subscriber->onUIEvent(header->itemId, event, data);
+    if (header->handler) {
+        header->handler(item, event);
     }
 }
 
-void OUIHeader::init(OUIItemType type)
+void OUIFrame::handler(int item, UIevent event)
 {
-    itemType = type;
-    itemId = -1;
-    subscriber = nullptr;
+    OUIFrame* frame = reinterpret_cast<OUIFrame*>(uiGetHandle(item));
+    
+    if (frame->frameHandler) {
+        FrameEvent outEvent;
+        outEvent.evtType = event;
+        outEvent.item = item;
+        outEvent.keymod = uiGetModifier();
+        if (event == UI_KEY_DOWN || event == UI_KEY_UP || event == UI_CHAR)
+        {
+            outEvent.keycode = uiGetKey();
+        }
+        if (event == UI_SCROLL)
+        {
+            outEvent.scroll = uiGetScroll();
+        }
+        else
+        {
+            outEvent.cursor = uiGetCursor();
+        }
+        
+        outEvent.size.x = uiGetWidth(item);
+        outEvent.size.y = uiGetHeight(item);
+        
+        frame->frameHandler->onUIFrameEvent(frame->id, outEvent);
+    }
+}
+
+void OUIButtonData::handler(int item, UIevent event)
+{
+    OUIButtonData* button = reinterpret_cast<OUIButtonData*>(uiGetHandle(item));
+    if (button && button->fireHandler) {
+        if (event == UI_BUTTON0_HOT_UP) {
+            button->fireHandler->onUIButtonHit(button->id);
+        }
+    }
+}
+
+void OUIListBoxData::handler(int item, UIevent event)
+{
 }
 
 } /* namespace uicore */ } /* namespace cinek */

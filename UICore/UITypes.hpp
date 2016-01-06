@@ -44,11 +44,23 @@ enum
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+//  UI Types
+
+enum class ListboxLayout
+{
+    kList,
+    kTiled
+};
+
+////////////////////////////////////////////////////////////////////////////////
 //  UI Subscriber class
-struct UIeventdata
+
+struct FrameEvent
 {
     int item;
+    UIevent evtType;
     unsigned int keymod;
+    UIvec2 size;
     union
     {
         UIvec2 cursor;
@@ -56,15 +68,74 @@ struct UIeventdata
     };
     unsigned int keycode;
 };
-class UISubscriber
+
+
+//  Used for UI items that require data from the application (i.e. lists )
+struct DataObject
 {
-public:
-    virtual ~UISubscriber() {}
+    enum class Type
+    {
+        undefined,
+        string,
+        custom
+    };
     
-    virtual void onUIEvent(int evtId, UIevent evtType, const UIeventdata& data) {}
+    enum class ImageType
+    {
+        icon,                   // themed icon
+        image                   // nvg image
+    };
+    
+    Type type;
+    ImageType imageType;
+    
+    //  generated coordinates during rendering for input (mouse) handling
+    UIvec2 anchor;
+    UIvec2 dimensions;
+    
+    //  icon visualization of data (-1 if no static icon)
+    int iconId;
+    
+    //  data depending on object Type
+    union
+    {
+        const char* str;        // static C String object
+        void* custom;           // custom data
+    };
 };
 
-typedef void (*UIRenderCallback)(void* context, NVGcontext* nvg);
+class DataProvider
+{
+public:
+    virtual ~DataProvider() {}
+    
+    //  Issued when the UI system needs data for rendering or lookup.  Typically
+    //  used by UI items for lists or other UI items that need object data.
+    virtual void onUIDataItemRequest(int item, int index, DataObject& data) {
+        data.type = DataObject::Type::undefined;
+    }
+    //  Issued by the UI system when the anchor information needs updating
+    virtual void onUIDataUpdateItemAnchor(int item, int index,
+        const UIvec2& anchor,
+        const UIvec2& dimensions) {}
+};
+
+class ButtonHandler
+{
+public:
+    virtual ~ButtonHandler() {}
+    
+    virtual void onUIButtonHit(int id) = 0;
+};
+
+class FrameHandler
+{
+public:
+    virtual ~FrameHandler() {}
+    virtual void onUIFrameEvent(int id, const FrameEvent& evt) = 0;
+};
+
+typedef void (*RenderCallback)(void* context, NVGcontext* nvg);
 
 } /* namespace uicore */ } /* namespace cinek */
 

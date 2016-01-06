@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2875CF221C3C9E200049FA02 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2875CF211C3C9E200049FA02 /* Camera.cpp */; };
 		28F11E201C31FE5A00860E5D /* fs_std_col.fs in Sources */ = {isa = PBXBuildFile; fileRef = 28F11E1F1C31FDCD00860E5D /* fs_std_col.fs */; };
 		28F11E221C3200C200860E5D /* vs_std_flat.vs in Sources */ = {isa = PBXBuildFile; fileRef = 28F11E211C32009F00860E5D /* vs_std_flat.vs */; };
 		370B599B1BFA7205009062FA /* message.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B599A1BFA7205009062FA /* message.hpp */; };
@@ -197,6 +198,7 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		2875CF211C3C9E200049FA02 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		28F11E1F1C31FDCD00860E5D /* fs_std_col.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_std_col.fs; sourceTree = "<group>"; };
 		28F11E211C32009F00860E5D /* vs_std_flat.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_std_flat.vs; sourceTree = "<group>"; };
 		370B59991BFA6D75009062FA /* client.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = client.hpp; path = ../../../CKLibs/ckmsg/client.hpp; sourceTree = "<group>"; };
@@ -603,6 +605,7 @@
 				37E636D51BF0246D0081E59E /* AnimationController.cpp */,
 				37E636D61BF0246D0081E59E /* AnimationController.hpp */,
 				37E636D71BF0246D0081E59E /* Camera.hpp */,
+				2875CF211C3C9E200049FA02 /* Camera.cpp */,
 				37E636D91BF0246D0081E59E /* Context.hpp */,
 				37E636D81BF0246D0081E59E /* Context.cpp */,
 				37E636E91BF0246D0081E59E /* GfxTypes.hpp */,
@@ -861,6 +864,7 @@
 				37E637221BF0246D0081E59E /* Texture.cpp in Sources */,
 				37E636801BF024330081E59E /* memorystack.cpp in Sources */,
 				37E6360B1BF018870081E59E /* Renderer.cpp in Sources */,
+				2875CF221C3C9E200049FA02 /* Camera.cpp in Sources */,
 				37E636CF1BF024600081E59E /* UIRenderer.cpp in Sources */,
 				37E636C81BF024600081E59E /* oui.cpp in Sources */,
 				37E6367B1BF024330081E59E /* file.cpp in Sources */,
