@@ -686,7 +686,8 @@ class OVObjectPanel(bpy.types.Panel):
         ('Node', 'Node', ''),
         ('Entity', 'Entity', ''),
         ('View', 'View', ''),
-        ('Hull', 'Hull', '')
+        ('Hull', 'Hull', ''),
+        ('Model', 'Model', '')
     )
     bpy.types.Object.ovobject_type_property = bpy.props.EnumProperty(name='Type', default='Node',
                                                     items=type_options)

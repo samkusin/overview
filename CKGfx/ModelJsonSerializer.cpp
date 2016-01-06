@@ -183,7 +183,7 @@ NodeHandle NodeJsonLoader::operator()
         loadAABBFromJSON(thisNode->obb(), jsonNode["obb"]);
     }
 
-    if (!strcasecmp(nodeType, "entity") || !strcasecmp(nodeType, "model")) {
+    if (nodeType && (!strcasecmp(nodeType, "entity") || !strcasecmp(nodeType, "model"))) {
         modelNodes.emplace_back(nodeName, thisNode);
     }
 

@@ -328,8 +328,8 @@ int runSample(int viewWidth, int viewHeight)
             
             bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
             
-            nodeRenderer.setCamera(mainCamera);
-            nodeRenderer(shaderPrograms, shaderUniforms, scene.root());
+            mainCamera.update();
+            nodeRenderer(shaderPrograms, shaderUniforms, mainCamera, scene.root());
 
             cinek::uicore::render(nvg, viewRect);
         }
