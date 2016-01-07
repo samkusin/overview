@@ -49,7 +49,7 @@ enum
 enum class ListboxLayout
 {
     kList,
-    kTiled
+    kGrid
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,13 +103,9 @@ public:
     
     //  Issued when the UI system needs data for rendering or lookup.  Typically
     //  used by UI items for lists or other UI items that need object data.
-    virtual void onUIDataItemRequest(int item, int index, DataObject& data) {
+    virtual void onUIDataItemRequest(int id, int index, DataObject& data) {
         data.type = DataObject::Type::undefined;
     }
-    //  Issued by the UI system when the anchor information needs updating
-    virtual void onUIDataUpdateItemAnchor(int item, int index,
-        const UIvec2& anchor,
-        const UIvec2& dimensions) {}
 };
 
 class ButtonHandler

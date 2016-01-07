@@ -15,7 +15,8 @@
 namespace cinek {
 
 GameView::GameView(const ApplicationContext& api) :
-    AppViewController(api)
+    AppViewController(api),
+    _selectedEntityTemplateIndex(-1)
 {
     
 }
@@ -67,9 +68,15 @@ void GameView::frameUpdateView
 {
     uicore::Layout uiLayout;
     
-    uiLayout.frame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this)
+    uiLayout.frame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this, UI_FILL)
         .setSize(renderService.getViewRect().w, renderService.getViewRect().h)
-        .end();
+        .column(UI_RIGHT | UI_VFILL)
+            .setSize(400, 100)
+            .listbox(this, kUIProviderId_EntityTemplates,
+                uicore::ListboxLayout::kGrid,
+                &_selectedEntityTemplateIndex)
+        .end()
+    .end();
     
     /*
     layout.frame(layout_flags).events(UI_BUTTON0_DOWN).size(w,h).
@@ -136,23 +143,14 @@ void GameView::viewUIRenderHook(void* context, NVGcontext* nvg)
 
 void GameView::onUIDataItemRequest
 (
-    int item,
+    int id,
     int index,
     uicore::DataObject& data
 )
 {
+
 }
 
-
-void GameView::onUIDataUpdateItemAnchor
-(
-    int item,
-    int index,
-    const UIvec2& anchor,
-    const UIvec2& dimensions
-)
-{
-}
 
 void GameView::onUIFrameEvent(int id, const uicore::FrameEvent& evt)
 {

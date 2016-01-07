@@ -150,12 +150,16 @@ Layout& Layout::frame
     data->renderCb = renderCb;
     data->callbackContext = context;
     
-    if (layoutFlags)
-    {
+    if (layoutFlags) {
+        uiSetBox(_topItem, UI_LAYOUT);
         uiSetLayout(_topItem, layoutFlags);
     }
-    uiSetBox(_topItem, UI_COLUMN);
+    else {
+        uiSetBox(_topItem, UI_COLUMN);
+    }
+
     uiSetEvents(_topItem, eventFlags);
+    uiSetSize(_topItem, 0, 0);
     
     return *this;
 }
@@ -174,10 +178,7 @@ Layout& Layout::column(unsigned int layoutFlags)
     header->handler = nullptr;
     
     uiSetBox(_topItem, UI_COLUMN);
-    if (layoutFlags)
-    {
-        uiSetLayout(_topItem, layoutFlags);
-    }
+    uiSetLayout(_topItem, layoutFlags);
     
     return *this;
 }
@@ -218,7 +219,7 @@ Layout& Layout::button
 Layout& Layout::listbox
 (
     DataProvider* dataProvider,
-    int32_t providerId,
+    int id,
     ListboxLayout layout,
     int* selected
 )
@@ -230,12 +231,19 @@ Layout& Layout::listbox
     data->header.itemType = OUIItemType::listbox;
     data->header.handler = OUIListBoxData::handler;
     data->provider = dataProvider;
-    data->providerId = providerId;
+    data->providerId = id;
     data->layout = layout;
     data->anchorIndex = -1;
     data->selected = selected;
     
+    //  default height of two items
     uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT * 2);
+    uiSetLayout(item, UI_HFILL);
+    
+    // for selection and scroll
+    uiSetEvents(item, UI_BUTTON0_DOWN | UI_BUTTON0_CAPTURE);
+    
+    insertItem(item, _topItem);
     
     return *this;
 }

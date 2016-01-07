@@ -54,7 +54,7 @@ public:
     ///
     /// Starts a vertical group of ui widgets - used for positioning.
     ///
-    Layout& column(unsigned int layoutFlags=0);
+    Layout& column(unsigned int layoutFlags=UI_FILL);
     ///
     /// Sets the size of the current UI region.
     ///

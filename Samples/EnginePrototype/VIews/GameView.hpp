@@ -44,23 +44,31 @@ private:
     
 
     //  DataProvider
-    virtual void onUIDataItemRequest(int item, int index, uicore::DataObject& data) override;
-    virtual void onUIDataUpdateItemAnchor(int item, int index,
-        const UIvec2& anchor,
-        const UIvec2& dimensions) override;
+    virtual void onUIDataItemRequest(int id, int index, uicore::DataObject& data) override;
+
     
     //  FrameHandler
     virtual void onUIFrameEvent(int id, const uicore::FrameEvent& evt) override;
     
 private:
+    gfx::NodeRenderer _renderer;
+    gfx::Camera _camera;
+    ove::FreeCameraController _freeCameraController;
+    
+    
+private:
+
     enum
     {
         kUIEvtId_GameView
     };
     
-    gfx::NodeRenderer _renderer;
-    gfx::Camera _camera;
-    ove::FreeCameraController _freeCameraController;
+    enum
+    {
+        kUIProviderId_EntityTemplates
+    };
+    
+    int _selectedEntityTemplateIndex;
 };
 
 } /* namespace cinek */
