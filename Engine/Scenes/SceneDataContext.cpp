@@ -7,7 +7,6 @@
 //
 
 #include "SceneDataContext.hpp"
-#include "SceneObject.hpp"
 
 #include <cinek/objectpool.inl>
 

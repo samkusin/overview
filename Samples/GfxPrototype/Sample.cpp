@@ -293,9 +293,11 @@ int runSample(int viewWidth, int viewHeight)
     //  Renderer initialization
     cinek::gfx::NodeRenderer nodeRenderer;
     cinek::gfx::Camera mainCamera;
-    mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
-        (float)viewWidth/viewHeight);
-    
+    mainCamera.fovDegrees = 60.0f;
+    mainCamera.near = 0.1f;
+    mainCamera.far = 100.0f;
+    mainCamera.viewportRect = viewRect;
+
     uint32_t systemTimeMs = SDL_GetTicks();
     //uint32_t testTimeMs = 0;
     bool running = true;
@@ -326,7 +328,8 @@ int runSample(int viewWidth, int viewHeight)
         
             gfxContext.update();
             
-            bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
+            bgfx::setViewRect(0, mainCamera.viewportRect.x, mainCamera.viewportRect.y,
+                mainCamera.viewportRect.w, mainCamera.viewportRect.h);
             
             mainCamera.update();
             nodeRenderer(shaderPrograms, shaderUniforms, mainCamera, scene.root());

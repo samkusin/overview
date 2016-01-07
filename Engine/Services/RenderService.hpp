@@ -20,12 +20,7 @@ class RenderService
 public:
     RenderService(const RenderContext& context);
     
-    int32_t getViewWidth() const {
-        return _context.frameRect.w;
-    }
-    int32_t getViewHeight() const {
-        return _context.frameRect.h;
-    }
+    const gfx::Rect& getViewRect() const { return _context.frameRect; }
     
     void renderNodeWithCamera(gfx::NodeHandle node, const gfx::Camera& camera);
     

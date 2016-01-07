@@ -12,7 +12,6 @@
 #include "EntityDatabase.hpp"
 #include "Render/RenderGraph.hpp"
 
-#include "Scenes/SceneObject.hpp"
 #include "Scenes/SceneDataContext.hpp"
 #include "Scenes/SceneObjectJsonLoader.hpp"
 

@@ -25,7 +25,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
 {
     assetService().loadManifest("scenes/apartment.json",
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
-            sceneService().initializeScene(manifest);
+            sceneService().initialize(manifest);
             entityService().createEntity(0, "entity", "test_bot");
             
             cinek::gfx::Matrix4 cameraRotMtx;
@@ -68,7 +68,7 @@ void GameView::frameUpdateView
     uicore::Layout uiLayout;
     
     uiLayout.frame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this)
-        .setSize(renderService.getViewWidth(), renderService.getViewHeight())
+        .setSize(renderService.getViewRect().w, renderService.getViewRect().h)
         .end();
     
     /*
@@ -90,15 +90,33 @@ void GameView::frameUpdateView
     end();
  
 */
-    //  todo - perfhaps a convenience method to automate this step?
-    _camera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
-        (float)renderService.getViewWidth()/renderService.getViewHeight());
-  
+    _camera.near = 0.1f;
+    _camera.far = 1000.0f;
+    _camera.fovDegrees = 60.0f;
+    _camera.viewportRect = renderService.getViewRect();
     _freeCameraController.handleCameraInput(_camera, inputState, dt);
     _camera.update();
 
+    int32_t vx = inputState.mx - _camera.viewportRect.x;
+    int32_t vy = inputState.my - _camera.viewportRect.y;
+
+    gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
+    gfx::Vector3 pos = _camera.worldPosition();
+    /*
+    printf("RayWorldOrigin = {%.2f,%.2f,%.2f}\n", pos.x, pos.y, pos.z);
+    printf("RayWorldDir = {%.2f,%.2f,%.2f}\n", dir.x, dir.y, dir.z);
+    */
+    
+    ove::SceneRayTestResult rayTestResult = sceneService().rayTestClosest({ pos.x, pos.y, pos.z },
+        { dir.x , dir.y, dir.z },
+        100.0f);
+    
+    
+    sceneService().renderDebugAddRayTestHit(rayTestResult, { pos.x, pos.y, pos.z }, 0.1f, false);
+    
     renderService.renderNodeWithCamera(sceneService().getGfxRootNode(), _camera);
-    sceneService().renderSceneDebug(renderService, _camera);
+    
+    sceneService().renderDebug(renderService, _camera);
 }
 
 void GameView::onViewEndFrame(ove::ViewStack& stateController)
@@ -138,20 +156,10 @@ void GameView::onUIDataUpdateItemAnchor
 
 void GameView::onUIFrameEvent(int id, const uicore::FrameEvent& evt)
 {
+    //  frame's region is the same as the camera viewport
     if (id == kUIEvtId_GameView) {
         if (evt.evtType == UI_BUTTON0_DOWN) {
-            gfx::Vector4 hitPt = {
-                (2.0f * evt.cursor.x) / evt.size.x - 1.0f,
-                1.0f - (2.0f*evt.cursor.y)/evt.size.y,
-                1.0f,
-                1.0f
-            };
-            
-            gfx::Vector4 eyePt;
-            bx::vec4MulMtx(eyePt, hitPt, _camera.invProjMtx);
-            
-            printf("HitPoint = {%.2f,%.2f,%.2f}\n", hitPt.x, hitPt.y, hitPt.z);
-            printf("HitEye = {%.2f,%.2f,%.2f}\n", eyePt.x, eyePt.y, eyePt.z);
+           
         }
     }
 }

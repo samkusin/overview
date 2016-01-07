@@ -9,7 +9,7 @@
 #ifndef Overview_SceneObjectJsonLoader_hpp
 #define Overview_SceneObjectJsonLoader_hpp
 
-#include "SceneObject.hpp"
+#include "SceneTypes.hpp"
 
 #include <ckjson/json.hpp>
 

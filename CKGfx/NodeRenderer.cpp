@@ -111,22 +111,6 @@ NodeRenderer::NodeRenderer()
     _directionalLights.reserve(64);
 }
 
-/*
-void NodeRenderer::setCamera(const Camera& camera)
-{
-    _camera = camera;
-    
-    bx::mtxInverse(_viewMtx, _camera.worldMtx);
-    
-    bx::mtxProj(_projMtx,
-        180.0f * _camera.viewFrustrum.fovRadians()/ckm::pi<float>(),
-        _camera.viewFrustrum.aspect(),
-        _camera.viewFrustrum.nearZ(),
-        _camera.viewFrustrum.farZ(),
-        false);
-}
-*/
-
 void NodeRenderer::operator()
 (
     const ProgramMap& programs,

@@ -31,23 +31,6 @@ void OUIFrame::handler(int item, UIevent event)
         FrameEvent outEvent;
         outEvent.evtType = event;
         outEvent.item = item;
-        outEvent.keymod = uiGetModifier();
-        if (event == UI_KEY_DOWN || event == UI_KEY_UP || event == UI_CHAR)
-        {
-            outEvent.keycode = uiGetKey();
-        }
-        if (event == UI_SCROLL)
-        {
-            outEvent.scroll = uiGetScroll();
-        }
-        else
-        {
-            outEvent.cursor = uiGetCursor();
-        }
-        
-        outEvent.size.x = uiGetWidth(item);
-        outEvent.size.y = uiGetHeight(item);
-        
         frame->frameHandler->onUIFrameEvent(frame->id, outEvent);
     }
 }

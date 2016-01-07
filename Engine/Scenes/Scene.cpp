@@ -7,9 +7,10 @@
 //
 
 #include "Scene.hpp"
-#include "SceneObject.hpp"
 
 #include <cinek/objectpool.inl>
+
+#include <bullet/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 
 namespace cinek {
 
@@ -103,6 +104,35 @@ btRigidBody* Scene::findBody(Entity entity) const
     
     auto obj = *it;
     return obj->btBody;
+}
+
+SceneRayTestResult Scene::rayTestClosest
+(
+    const btVector3& origin,
+    const btVector3& dir,
+    float dist
+)
+const
+{
+    SceneRayTestResult result;
+    
+    btVector3 to { dir };
+    to *= dist;
+    to += origin;
+    
+    btCollisionWorld::ClosestRayResultCallback cb(origin, to);
+    cb.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+    
+    _btWorld.rayTest(origin, to, cb);
+    
+    if (cb.hasHit()) {
+        SceneBody* body = reinterpret_cast<SceneBody*>(cb.m_collisionObject->getUserPointer());
+        result.body = *body;
+        result.normal = cb.m_hitNormalWorld;
+        result.position = cb.m_hitPointWorld;
+    }
+    
+    return result;
 }
 
         

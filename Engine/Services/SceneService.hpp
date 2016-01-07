@@ -9,7 +9,7 @@
 #ifndef Overview_Services_Scene_hpp
 #define Overview_Services_Scene_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "Engine/Scenes/SceneTypes.hpp"
 #include "Engine/Messages/Scene.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
@@ -31,16 +31,29 @@ struct SceneServiceContext
     RenderGraph* renderGraph;
 };
 
+
+
 class SceneService
 {
 public:    
     SceneService(const SceneServiceContext& context);
     
-    void initializeScene(std::shared_ptr<AssetManifest> manifest);
-    
-    void renderSceneDebug(RenderService& renderService, const gfx::Camera& camera);
+    void initialize(std::shared_ptr<AssetManifest> manifest);
     
     gfx::NodeHandle getGfxRootNode() const;
+    
+    SceneRayTestResult rayTestClosest(const btVector3& origin, const btVector3& dir,
+                                      btScalar dist) const;
+    
+    
+    //  debug methods
+    void renderDebugAddRayTestHit(const SceneRayTestResult& rayTestResult,
+        const btVector3& origin,
+        btScalar radius,
+        bool drawRay);
+    void renderDebugAddLine(const btVector3& p0, const btVector3& p1,
+        const gfx::Color3& color);
+    void renderDebug(RenderService& renderService, const gfx::Camera& camera);
     
 private:
     SceneServiceContext _context;

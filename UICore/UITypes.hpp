@@ -59,14 +59,6 @@ struct FrameEvent
 {
     int item;
     UIevent evtType;
-    unsigned int keymod;
-    UIvec2 size;
-    union
-    {
-        UIvec2 cursor;
-        UIvec2 scroll;
-    };
-    unsigned int keycode;
 };
 
 

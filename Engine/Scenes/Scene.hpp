@@ -10,7 +10,7 @@
 #ifndef Overview_Scene_hpp
 #define Overview_Scene_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "SceneTypes.hpp"
 
 #include <cinek/objectpool.hpp>
 #include <cinek/allocator.hpp>
@@ -20,7 +20,8 @@
 
 namespace cinek {
     namespace ove {
-     
+    
+
 /**
  *  @class  Scene
  *  @brief  A Scene represents the physical world of a simulation.
@@ -60,13 +61,18 @@ public:
      *  Executes per render frame updates.
      */
     void debugRender();
+    /**
+     *  Retrieve the closest hit point with a given ray.
+     *  
+     *  @param  origin  The ray origin
+     *  @param  dir     The ray normalized direction
+     *  @param  dist    The ray distance from origin
+     */
+    SceneRayTestResult rayTestClosest(const btVector3& origin,
+        const btVector3& dir,
+        btScalar dist) const;
     
 private:
-    struct SceneBody
-    {
-        btRigidBody* btBody;
-        Entity entity;
-    };
     ObjectPool<SceneBody> _bodies;
     std::vector<SceneBody*> _objects;
     

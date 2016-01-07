@@ -9,7 +9,7 @@
 #ifndef Overview_SceneContextData_hpp
 #define Overview_SceneContextData_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "SceneTypes.hpp"
 
 #include "SceneFixedBodyHull.hpp"
 #include "SceneMotionState.hpp"
