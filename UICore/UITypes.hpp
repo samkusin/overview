@@ -100,8 +100,9 @@ public:
     
     //  Issued when the UI system needs data for rendering or lookup.  Typically
     //  used by UI items for lists or other UI items that need object data.
-    virtual void onUIDataItemRequest(int id, int index, DataObject& data) {
+    virtual bool onUIDataItemRequest(int id, int row, int col, DataObject& data) {
         data.type = DataObject::Type::undefined;
+        return false;
     }
 };
 

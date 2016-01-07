@@ -17,6 +17,8 @@
 
 #include <cinek/allocator.hpp>
 
+#include <vector>
+
 namespace cinek {
 
 class GameView : public AppViewController, uicore::DataProvider, uicore::FrameHandler
@@ -43,7 +45,7 @@ private:
     
 
     //  DataProvider
-    virtual void onUIDataItemRequest(int id, int index, uicore::DataObject& data) override;
+    virtual bool onUIDataItemRequest(int id, int row, int col, uicore::DataObject& data) override;
 
     
     //  FrameHandler
@@ -67,6 +69,13 @@ private:
     
     gfx::NodeGraph _modelGraph;
     
+    struct EntityTemplateUIData
+    {
+        int image;
+        
+    };
+    
+    std::vector<EntityTemplateUIData> _entityTemplateUIList;
     int _selectedEntityTemplateIndex;
 };
 

@@ -142,14 +142,15 @@ void GameView::viewUIRenderHook(void* context, NVGcontext* nvg)
 {
 }
 
-void GameView::onUIDataItemRequest
+bool GameView::onUIDataItemRequest
 (
     int id,
-    int index,
+    int row,
+    int col,
     uicore::DataObject& data
 )
 {
-
+    return false;
 }
 
 
