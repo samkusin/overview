@@ -134,7 +134,9 @@ void NodeRenderer::operator()
             switch (currentStage) {
             case kStageFlagRender: {
 
-                    bgfx::setViewTransform(0, camera.viewMtx.comp, camera.projMtx.comp);
+                    bgfx::setViewTransform(camera.viewIndex,
+                        camera.viewMtx.comp,
+                        camera.projMtx.comp);
                     bx::mtxMul(_viewProjMtx, camera.viewMtx, camera.projMtx);
                 }
                 break;
@@ -351,7 +353,7 @@ void NodeRenderer::renderMeshElement
                         | BGFX_STATE_CULL_CW
 						);
 
-    bgfx::submit(0, programs[programSlot]);
+    bgfx::submit(_camera.viewIndex, programs[programSlot]);
 }
 
 void NodeRenderer::setupLightUniforms

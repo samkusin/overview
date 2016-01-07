@@ -51,8 +51,7 @@ void StartupView::frameUpdateView
 (
     ove::ViewStack& stateController,
     double /* dt */,
-    const ove::InputState& /* inputState */,
-    ove::RenderService& /* renderContext */
+    const ove::InputState& /* inputState */
 )
 {
     if (_loadCompleted) {

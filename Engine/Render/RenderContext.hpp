@@ -21,7 +21,6 @@ namespace cinek {
         gfx::Rect frameRect;
         gfx::NodeRenderer::ProgramMap* programs;
         gfx::NodeRenderer::UniformMap* uniforms;
-        gfx::NodeRenderer* renderer;
     };
 
     }

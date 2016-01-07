@@ -39,8 +39,7 @@ private:
 
     //  AppViewController
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                         const ove::InputState& inputState,
-                         ove::RenderService& renderService) override;
+                         const ove::InputState& inputState) override;
     
 
     //  DataProvider
@@ -55,9 +54,7 @@ private:
     gfx::Camera _camera;
     ove::FreeCameraController _freeCameraController;
     
-    
 private:
-
     enum
     {
         kUIEvtId_GameView
@@ -67,6 +64,8 @@ private:
     {
         kUIProviderId_EntityTemplates
     };
+    
+    gfx::NodeGraph _modelGraph;
     
     int _selectedEntityTemplateIndex;
 };

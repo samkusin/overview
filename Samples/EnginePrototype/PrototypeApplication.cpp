@@ -57,7 +57,7 @@ PrototypeApplication::PrototypeApplication
     
     _renderContext.programs = &_renderPrograms;
     _renderContext.uniforms = &_renderUniforms;
-    _renderContext.renderer = &_renderer;
+    _renderContext.frameRect = gfx::Rect { 0,0,0,0 };
     
     ove::SceneDataContext::InitParams sceneDataInit;
     sceneDataInit.numRigidBodies = 256;
@@ -104,6 +104,7 @@ PrototypeApplication::PrototypeApplication
     context.sceneDebugDrawer = _sceneDbgDraw.get();
     context.gfxContext = _gfxContext;
     context.renderGraph = _renderGraph.get();
+    context.renderContext = &_renderContext;
     
     _viewStack.setFactory(
         [context](const std::string& viewName, ove::ViewController* ) -> unique_ptr<ove::ViewController> {
@@ -154,17 +155,13 @@ void PrototypeApplication::renderFrame
 {
     _renderContext.frameRect = viewRect;
     
-    ove::RenderService renderService(_renderContext);
-    
     struct
     {
         PrototypeApplication* self;
-        ove::RenderService* renderService;
         const ove::InputState* inputState;
     }
     context = {
         this,
-        &renderService,
         &inputState
     };
 
@@ -176,8 +173,7 @@ void PrototypeApplication::renderFrame
         [&context](ove::ViewController& viewController, ove::ViewStack& stateController, double dt) {
             AppViewController& appViewController = static_cast<AppViewController&>(viewController);
             appViewController.frameUpdateView(stateController, dt,
-                *context.inputState,
-                *context.renderService);
+                *context.inputState);
         });
         
     _gfxContext->update();

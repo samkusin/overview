@@ -81,10 +81,6 @@ struct DataObject
     Type type;
     ImageType imageType;
     
-    //  generated coordinates during rendering for input (mouse) handling
-    UIvec2 anchor;
-    UIvec2 dimensions;
-    
     //  icon visualization of data (-1 if no static icon)
     int iconId;
     
@@ -92,6 +88,7 @@ struct DataObject
     union
     {
         const char* str;        // static C String object
+        int image;              // image handle
         void* custom;           // custom data
     };
 };

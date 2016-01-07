@@ -31,6 +31,7 @@ struct ApplicationContext
     ove::SceneDataContext* sceneData;
     ove::Scene* scene;
     ove::RenderGraph* renderGraph;
+    ove::RenderContext* renderContext;
 };
 
 class AppViewController : public ove::ViewController
@@ -41,8 +42,7 @@ public:
     virtual ~AppViewController();
     
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                                 const ove::InputState& inputState,
-                                 ove::RenderService& renderService) = 0;
+                                 const ove::InputState& inputState) = 0;
     
 protected:
     ove::AssetService& assetService() {
@@ -54,11 +54,15 @@ protected:
     ove::SceneService& sceneService() {
         return _sceneService;
     }
+    ove::RenderService& renderService() {
+        return _renderService;
+    }
 private:
-    ApplicationContext _appContext;
+    const ApplicationContext* _appContext;
     ove::AssetService _assetService;
     ove::EntityService _entityService;
     ove::SceneService _sceneService;
+    ove::RenderService _renderService;
 };
 
 }

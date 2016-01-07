@@ -18,6 +18,8 @@ namespace cinek {
 
 struct Camera
 {
+    Camera() : viewIndex(0) {}
+    
     void update();
 
     const Frustrum& viewFrustrum() const { return _viewFrustrum; }
@@ -33,6 +35,8 @@ struct Camera
     float near;
     float far;
     float fovDegrees;
+    
+    int viewIndex;
 
 private:
     Frustrum _viewFrustrum;

@@ -18,20 +18,24 @@ namespace cinek {
 class RenderService
 {
 public:
-    RenderService(const RenderContext& context);
+    RenderService(gfx::Context* gfxContext, RenderContext* context);
     
-    const gfx::Rect& getViewRect() const { return _context.frameRect; }
+    const gfx::Rect& getViewRect() const { return _context->frameRect; }
     
-    void renderNodeWithCamera(gfx::NodeHandle node, const gfx::Camera& camera);
+    void renderNode(gfx::NodeRenderer& renderer,
+        gfx::NodeHandle node,
+        const gfx::Camera& camera);
+    
+    
+    gfx::LightHandle createLight(gfx::Light light);
     
 private:
     friend class SceneService;
     
-    const RenderContext& renderContext() const { return _context; }
+    const RenderContext& renderContext() const { return *_context; }
     
-    RenderContext _context;
-    Scene* _scene;
-    SceneDebugDrawer* _sceneDbgDrawer;
+    gfx::Context* _gfxContext;
+    RenderContext* _context;
 };
     
     } /* namespace ove */

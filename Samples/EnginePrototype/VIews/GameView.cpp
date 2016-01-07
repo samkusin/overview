@@ -9,8 +9,10 @@
 #include "GameView.hpp"
 
 #include "UICore/UIBuilder.hpp"
+#include "CKGfx/Light.hpp"
 
 #include <bx/fpumath.h>
+#include <bgfx/bgfx.h>
 
 namespace cinek {
 
@@ -18,7 +20,25 @@ GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
     _selectedEntityTemplateIndex(-1)
 {
+    //  create our offscreen node graph for rendering models
+    //
+    gfx::NodeElementCounts counts;
+    counts.meshNodeCount = 32;
+    counts.lightNodeCount = 2;
+    counts.transformNodeCount = 16;
+    counts.armatureNodeCount = 1;
+    counts.objectNodeCount = 1;
     
+    _modelGraph = std::move(gfx::NodeGraph(counts));
+    _modelGraph.setRoot(_modelGraph.createObjectNode(0));
+    
+    auto lightNode = _modelGraph.createLightNode();
+    gfx::Light light;
+    light.type = gfx::LightType::kAmbient;
+    light.ambientComp = 1.0f;
+    light.color = gfx::Color4(1.0f,1.0f,1.0f,1.0f).toABGR();
+    lightNode->light()->light = renderService().createLight(light);
+    _modelGraph.addChildNodeToNode(lightNode, _modelGraph.root());
 }
 
     
@@ -62,14 +82,14 @@ void GameView::frameUpdateView
 (
     ove::ViewStack& stateController,
     double dt,
-    const ove::InputState& inputState,
-    ove::RenderService& renderService
+    const ove::InputState& inputState
 )
 {
+    //  generate UI
     uicore::Layout uiLayout;
     
     uiLayout.frame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this, UI_FILL)
-        .setSize(renderService.getViewRect().w, renderService.getViewRect().h)
+        .setSize(renderService().getViewRect().w, renderService().getViewRect().h)
         .column(UI_RIGHT | UI_VFILL)
             .setSize(400, 100)
             .listbox(this, kUIProviderId_EntityTemplates,
@@ -78,29 +98,10 @@ void GameView::frameUpdateView
         .end()
     .end();
     
-    /*
-    layout.frame(layout_flags).events(UI_BUTTON0_DOWN).size(w,h).
-        end();
-        
-    layout.frame().events(UI_BUTTON0_DOWN).size(w,h).
-        column(UI_TOP|UI_HFILL).margins(10,10,10,10).
-            button(BND_ICON_GHOST, "Item 1", ui_subscriber, ID_OK).
-            hgroup().margins(5,5,5,5).
-                radio(BND_ICON_REC, "Radio 1", &radio1).
-                radio(BND_ICON_REC, "Radio 2", &radio1).
-                radio(BND_ICON_REC, "Radio 3", &radio1).
-            end().
-        end().
-        row().
-            ...
-        end().
-    end();
- 
-*/
     _camera.near = 0.1f;
     _camera.far = 1000.0f;
     _camera.fovDegrees = 60.0f;
-    _camera.viewportRect = renderService.getViewRect();
+    _camera.viewportRect = renderService().getViewRect();
     _freeCameraController.handleCameraInput(_camera, inputState, dt);
     _camera.update();
 
@@ -121,9 +122,9 @@ void GameView::frameUpdateView
     
     sceneService().renderDebugAddRayTestHit(rayTestResult, { pos.x, pos.y, pos.z }, 0.1f, false);
     
-    renderService.renderNodeWithCamera(sceneService().getGfxRootNode(), _camera);
+    renderService().renderNode(_renderer, sceneService().getGfxRootNode(), _camera);
     
-    sceneService().renderDebug(renderService, _camera);
+    sceneService().renderDebug(renderService(), _camera);
 }
 
 void GameView::onViewEndFrame(ove::ViewStack& stateController)
