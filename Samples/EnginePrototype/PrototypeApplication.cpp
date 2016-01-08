@@ -140,8 +140,6 @@ void PrototypeApplication::beginFrame()
 void PrototypeApplication::simulateFrame(double dt)
 {
     _scene->simulate(dt);
-
-    _taskScheduler.update(dt * 1000);
     
     _viewStack.simulate(dt);
 }
@@ -153,6 +151,8 @@ void PrototypeApplication::renderFrame
     const ove::InputState& inputState
 )
 {
+    _taskScheduler.update(dt * 1000);
+    
     _renderContext.frameRect = viewRect;
     
     struct
