@@ -100,44 +100,21 @@ int OverviewMain(SDL_Window* window, int argc, char* argv[])
     //  renderer initialization
     //
     bgfx::sdlSetWindow(window);
-    
-    bool windowShown = false;
-    
-    SDL_Event event;
-    while (!windowShown && SDL_WaitEvent(&event)) {
-        if (event.type == SDL_WINDOWEVENT) {
-            printf("SDL_WINDOWEVENT: %u (%d,%d)\n", event.window.event, event.window.data1, event.window.data2);
-         
-            if (event.window.event == SDL_WINDOWEVENT_SHOWN) {
-                
-                bgfx::init();
+    bgfx::init();
 
-                bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
-                bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS*/ );
-                
-                bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-                    0x001122ff,
-                    1.0f,
-                    0);
+    bgfx::reset(viewWidth, viewHeight, BGFX_RESET_VSYNC);
+    bgfx::setDebug(BGFX_DEBUG_TEXT /*|BGFX_DEBUG_STATS*/ );
+    
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
+        0x001122ff,
+        1.0f,
+        0);
 
-                windowShown = true;
-            }
-        }
-        else if (event.type == SDL_QUIT) {
-            break;
-        }
-    }
+    int result = runSample(viewWidth, viewHeight);
     
-    int result = 1;
-    
-    if (windowShown) {
-    
-        result = runSample(viewWidth, viewHeight);
-    
-        //  subsystem termination
-        //
-        bgfx::shutdown();
-    }
+    //  subsystem termination
+    //
+    bgfx::shutdown();
     
     return result;
 }

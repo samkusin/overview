@@ -19,6 +19,7 @@ namespace cinek {
 
 GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
+    _sceneLoaded(false),
     _selectedEntityTemplateIndex(-1)
 {
    createModelStage();
@@ -35,8 +36,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
             cinek::gfx::Matrix4 cameraRotMtx;
             bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
             _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
-            
-            test1();
+            _sceneLoaded = true;
         });
     
         
@@ -70,6 +70,14 @@ void GameView::frameUpdateView
     const ove::InputState& inputState
 )
 {
+    if (!_sceneLoaded)
+        return;
+    
+    if (!_testTarget) {
+        test1();
+        return;
+    }
+
     //  generate UI
     uicore::Layout uiLayout;
     
@@ -112,48 +120,45 @@ void GameView::frameUpdateView
     
     sceneService().renderDebug(renderService(), _camera);
     
-    if (_testTarget)
-    {
-        bgfx::setViewRect(0, _camera.viewportRect.x, _camera.viewportRect.y,
-            _camera.viewportRect.w, _camera.viewportRect.h);
-        
-        gfx::Color4 color { 1.0f, 1.0f, 1.0f, 1.0f };
-        gfx::Vector4 param { 0.0f, 0.0f, 0.0f, 0.0f };
-        
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
-        
-        bgfx::setTexture(0, renderService().bgfxUniformHandle(gfx::kNodeUniformTexDiffuse),
-            _testTarget.texture()->bgfxHandle());
+    bgfx::setViewRect(0, _camera.viewportRect.x, _camera.viewportRect.y,
+        _camera.viewportRect.w, _camera.viewportRect.h);
+    
+    gfx::Color4 color { 1.0f, 1.0f, 1.0f, 1.0f };
+    gfx::Vector4 param { 0.0f, 0.0f, 0.0f, 0.0f };
+    
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
+    
+    bgfx::setTexture(0, renderService().bgfxUniformHandle(gfx::kNodeUniformTexDiffuse),
+        _testTarget.texture()->bgfxHandle());
 
-        gfx::Matrix4 worldTransform;
-        bx::mtxSRT(worldTransform, 1, 1, 1, 0, 0, 0, 0, 6.0f, 2.0f);
-        
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightColor), color);
-        
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightDir), param);
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param);
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param);
-        param = { 1.0f, 0, 0, 0 };
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightParam), param);
-   
-        bgfx::setVertexBuffer(_testQuadMesh.vertexBuffer());
-        bgfx::setIndexBuffer(_testQuadMesh.indexBuffer());
-        
-        bgfx::setTransform(worldTransform);
-        
-          
-        bgfx::setState(0
-						| BGFX_STATE_RGB_WRITE
-						| BGFX_STATE_ALPHA_WRITE
-						| BGFX_STATE_DEPTH_WRITE
-						| BGFX_STATE_DEPTH_TEST_LESS
-						| BGFX_STATE_MSAA
-                        | BGFX_STATE_CULL_CW
-						);
+    gfx::Matrix4 worldTransform;
+    bx::mtxSRT(worldTransform, 1, 1, 1, 0, 0, 0, 0, 6.0f, 2.0f);
+    
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightColor), color);
+    
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightDir), param);
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param);
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param);
+    param = { 1.0f, 0, 0, 0 };
+    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightParam), param);
 
-        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramMesh));
-    }
+    bgfx::setVertexBuffer(_testQuadMesh.vertexBuffer());
+    bgfx::setIndexBuffer(_testQuadMesh.indexBuffer());
+    
+    bgfx::setTransform(worldTransform);
+    
+      
+    bgfx::setState(0
+                    | BGFX_STATE_RGB_WRITE
+                    | BGFX_STATE_ALPHA_WRITE
+                    | BGFX_STATE_DEPTH_WRITE
+                    | BGFX_STATE_DEPTH_TEST_LESS
+                    | BGFX_STATE_MSAA
+                    | BGFX_STATE_CULL_CW
+                    );
+
+    bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramMesh));
 }
 
 void GameView::onViewEndFrame(ove::ViewStack& stateController)
@@ -184,13 +189,26 @@ void GameView::createModelStage()
     counts.objectNodeCount = 1;
     
     _modelGraph = std::move(gfx::NodeGraph(counts));
-    _modelGraph.setRoot(_modelGraph.createObjectNode(0));
+    auto root = _modelGraph.createObjectNode(0);
+    bx::mtxIdentity(root->transform());
+    _modelGraph.setRoot(root);
     
-    auto lightNode = _modelGraph.createLightNode();
     gfx::Light light;
     light.type = gfx::LightType::kAmbient;
-    light.ambientComp = 1.0f;
+    light.ambientComp = 0.50f;
     light.color = gfx::Color4(1.0f,1.0f,1.0f,1.0f).toABGR();
+    auto lightNode = _modelGraph.createLightNode();
+    lightNode->light()->light = renderService().createLight(light);
+    _modelGraph.addChildNodeToNode(lightNode, _modelGraph.root());
+    
+    light.type = gfx::LightType::kPoint;
+    light.ambientComp = 0.0f;
+    light.diffuseComp = 1.0f;
+    light.distance = 8.0f;
+    light.coeff = { 1.0f, 0.25f, 0.75f };
+    light.color = gfx::Color4(1.0f,1.0f,1.0f,1.0f).toABGR();
+    lightNode = _modelGraph.createLightNode();
+    bx::mtxTranslate(lightNode->transform(), 4.0f, 4.0f, 0.0f);
     lightNode->light()->light = renderService().createLight(light);
     _modelGraph.addChildNodeToNode(lightNode, _modelGraph.root());
 }
@@ -226,22 +244,28 @@ void GameView::test1()
         auto model = modelset->find("DumbSlinky");
         _modelGraph.addChildNodeToNode(_modelGraph.clone(model), _modelGraph.root());
     }
-
+ 
     _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0);
 
     _modelStageCamera.viewIndex = 2;
     _modelStageCamera.near = 0.1f;
     _modelStageCamera.far = 100.f;
     _modelStageCamera.fovDegrees = 60.0f;
-    _modelStageCamera.viewportRect = gfx::Rect { 0, 0, 256, 256 };
-    bx::mtxSRT(_modelStageCamera.worldMtx, 1, 1, 1, 0, 0, 0, 0, 0, -2.0f);
+    _modelStageCamera.viewportRect = gfx::Rect { 0, 0, 128, 128 };
+    bx::mtxSRT(_modelStageCamera.worldMtx, 1, 1, 1, 0, 0, 0, 0, 0.75f, -1.75f);
     _modelStageCamera.update();
     
     _testTarget = gfx::MultiTextureRenderTarget::createWithDepthTarget(
         _modelStageCamera.viewportRect.w,
         _modelStageCamera.viewportRect.h,
         bgfx::TextureFormat::BGRA8, bgfx::TextureFormat::D16);
-    
+
+    bgfx::setViewClear(_modelStageCamera.viewIndex
+				, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
+				, 0x303030ff
+				, 1.0f
+				, 0
+				);
 
     renderService().renderNodeToTarget(_renderer,
         (const gfx::RenderTarget&)_testTarget,

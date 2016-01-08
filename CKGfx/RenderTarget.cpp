@@ -83,9 +83,8 @@ MultiTextureRenderTarget MultiTextureRenderTarget::createWithDepthTarget
     fmt[0] = format;
     
     th[1] = bgfx::createTexture2D(w, h, 1, depthFormat,
-        BGFX_TEXTURE_RT_BUFFER_ONLY |
-        ((msaa+1) << BGFX_TEXTURE_RT_MSAA_SHIFT)
-    );
+        BGFX_TEXTURE_RT_BUFFER_ONLY);
+        
     if (!bgfx::isValid(th[1])) {
         bgfx::destroyTexture(th[0]);
         return target;
@@ -96,7 +95,7 @@ MultiTextureRenderTarget MultiTextureRenderTarget::createWithDepthTarget
     
     bgfx::FrameBufferHandle fbh = bgfx::createFrameBuffer(2,
         th,
-        false);
+        true);
     target._target = std::move(RenderTarget(fbh));
     
     Allocator allocator;

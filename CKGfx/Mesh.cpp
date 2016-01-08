@@ -572,14 +572,14 @@ Mesh createQuad
         { -scale, -scale, 0.0f },
         { scale, -scale, 0.0f },
         { scale, scale, 0.0f },
-        { scale, 1.0, 0.0 }
+        { -scale, scale, 0.0 }
     };
     
     const Vector2 vertexUVs[] = {
-        { 0.0f, 1.0f },
-        { 1.0f, 1.0f },
+        { 0.0f, 0.0f },
         { 1.0f, 0.0f },
-        { 0.0f, 0.0f }
+        { 1.0f, 1.0f },
+        { 0.0f, 1.0f }
     };
     
     for (int iv = 0; iv < 4; ++iv) {

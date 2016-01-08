@@ -59,7 +59,8 @@ private:
     gfx::NodeRenderer _renderer;
     gfx::Camera _camera;
     ove::FreeCameraController _freeCameraController;
-    
+    bool _sceneLoaded;
+
 private:
     enum
     {
@@ -90,6 +91,7 @@ private:
     void test1();
     gfx::MultiTextureRenderTarget _testTarget;
     gfx::Mesh _testQuadMesh;
+
 };
 
 } /* namespace cinek */

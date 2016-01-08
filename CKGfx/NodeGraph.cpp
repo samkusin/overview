@@ -108,7 +108,7 @@ NodeHandle NodeGraph::createObjectNode(NodeId id)
 {
     NodeHandle handle;
     Node node(Node::kElementTypeObject);
-    node.setObjectNodeId(id);    
+    node.setObjectNodeId(id);
     handle = _nodes.add(std::move(node));
     return handle;
 }

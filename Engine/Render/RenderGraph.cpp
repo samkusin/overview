@@ -44,7 +44,6 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
         
     auto parentNode = _nodeGraph.createObjectNode(e);
     parentNode->setTransform(gfx::Matrix4::kIdentity);
-    
     _nodeGraph.addChildNodeToNode(_nodeGraph.clone(sourceNode), parentNode);
     _nodeGraph.addChildNodeToNode(parentNode, rootNode);
     
