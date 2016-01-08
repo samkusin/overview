@@ -144,6 +144,19 @@ void EntityDatabase::clearManifest(const std::string& name)
     _manifests.erase(name);
 }
 
+std::shared_ptr<AssetManifest> EntityDatabase::getManifest
+(
+    const std::string& name
+)
+const
+{
+    auto it = _manifests.find(name);
+    if (it == _manifests.end())
+        return nullptr;
+    
+    return it->second;
+}
+
 
     }   /* namespace ove */
 }   /* namespace cinek */

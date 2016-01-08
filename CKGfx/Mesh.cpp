@@ -548,6 +548,66 @@ Mesh createIcoSphere
     return mesh;
 }
 
+
+Mesh createQuad
+(
+    float scale,
+    VertexTypes::Format vertexType
+)
+{
+    const bgfx::VertexDecl& vertexDecl = VertexTypes::declaration(vertexType);
+    
+    //  allocate packed buffers based on vertex declaration and generate our
+    //  hardware buffers
+    MeshBuilder::BuilderState meshBuilder;
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.vertexLimit = 4;
+    meshBuilder.indexLimit = 6;
+    meshBuilder.indexType = VertexTypes::kIndex16;
+    
+    MeshBuilder::create(meshBuilder);
+    
+    //  CCW winding order
+    const Vector3 verts[] = {
+        { -scale, -scale, 0.0f },
+        { scale, -scale, 0.0f },
+        { scale, scale, 0.0f },
+        { scale, 1.0, 0.0 }
+    };
+    
+    const Vector2 vertexUVs[] = {
+        { 0.0f, 1.0f },
+        { 1.0f, 1.0f },
+        { 1.0f, 0.0f },
+        { 0.0f, 0.0f }
+    };
+    
+    for (int iv = 0; iv < 4; ++iv) {
+        meshBuilder.position(verts[iv]);
+        
+        if (vertexDecl.has(bgfx::Attrib::Normal)) {
+            meshBuilder.normal({ 0.0f, 0.0f, -1.0f });
+        }
+        if (vertexDecl.has(bgfx::Attrib::TexCoord0)) {
+            meshBuilder.uv2(vertexUVs[iv]);
+        }
+        
+        meshBuilder.next();
+    }
+    
+    meshBuilder.triangle<uint16_t>(0, 1, 2);
+    meshBuilder.triangle<uint16_t>(3, 0, 2);
+    
+    
+    Mesh mesh(vertexType, meshBuilder.indexType,
+              meshBuilder.vertexMemory,
+              meshBuilder.indexMemory);
+    
+
+    return mesh;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 Mesh::Mesh() :

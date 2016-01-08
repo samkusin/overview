@@ -62,6 +62,7 @@ Texture Texture::loadTextureFromFile(const char* pathname)
                                 BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
                                 bgfx::copy(data, width*height*4)
                               );
+        texture._bgfxFormat = bgfx::TextureFormat::RGBA8;
         stbi_image_free(data);
     }
     
@@ -87,6 +88,7 @@ Texture Texture::loadTextureFromMemory(const uint8_t* data, size_t len)
                                 BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
                                 bgfx::copy(bmpMemory, width*height*4)
                               );
+        texture._bgfxFormat = bgfx::TextureFormat::RGBA8;
         stbi_image_free(bmpMemory);
     }
     
@@ -94,8 +96,18 @@ Texture Texture::loadTextureFromMemory(const uint8_t* data, size_t len)
 
 }
 
+Texture::Texture
+(
+    bgfx::TextureHandle handle,
+    bgfx::TextureFormat::Enum format
+) :
+    _bgfxHandle(handle),
+    _bgfxFormat(format)
+{
+}
+
 Texture::Texture() :
-    _bgfxHandle(BGFX_INVALID_HANDLE)
+    Texture(BGFX_INVALID_HANDLE, bgfx::TextureFormat::Unknown)
 {
 }
 
@@ -108,16 +120,19 @@ Texture::~Texture()
 }
 
 Texture::Texture(Texture&& other) :
-    _bgfxHandle(other._bgfxHandle)
+    _bgfxHandle(other._bgfxHandle),
+    _bgfxFormat(other._bgfxFormat)
 {
     other._bgfxHandle = BGFX_INVALID_HANDLE;
+    other._bgfxFormat = bgfx::TextureFormat::Unknown;
 }
 
 Texture& Texture::operator=(Texture&& other)
 {
     _bgfxHandle = other._bgfxHandle;
+    _bgfxFormat = other._bgfxFormat;
     other._bgfxHandle = BGFX_INVALID_HANDLE;
-    
+    other._bgfxFormat = bgfx::TextureFormat::Unknown;
     return *this;
 }
     

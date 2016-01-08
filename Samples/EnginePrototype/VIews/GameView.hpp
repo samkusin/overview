@@ -11,12 +11,16 @@
 
 #include "AppViewController.hpp"
 #include "UICore/UITypes.hpp"
-#include "CKGfx/Camera.hpp"
 
 #include "FreeCameraController.hpp"
 
-#include <cinek/allocator.hpp>
 
+#include "CKGfx/Camera.hpp"
+#include "CKGfx/RenderTarget.hpp"
+#include "CKGfx/Texture.hpp"
+#include "CKGfx/Mesh.hpp"
+
+#include <cinek/allocator.hpp>
 #include <vector>
 
 namespace cinek {
@@ -67,16 +71,25 @@ private:
         kUIProviderId_EntityTemplates
     };
     
+    //  Node graph to render to our dedicated
     gfx::NodeGraph _modelGraph;
+    gfx::Camera _modelStageCamera;
+    void createModelStage();
     
+    //  Storage for UI
     struct EntityTemplateUIData
     {
-        int image;
-        
+        gfx::MultiTextureRenderTarget rt;
+        std::string name;
     };
     
     std::vector<EntityTemplateUIData> _entityTemplateUIList;
     int _selectedEntityTemplateIndex;
+    
+private:
+    void test1();
+    gfx::MultiTextureRenderTarget _testTarget;
+    gfx::Mesh _testQuadMesh;
 };
 
 } /* namespace cinek */

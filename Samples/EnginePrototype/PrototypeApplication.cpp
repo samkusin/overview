@@ -167,8 +167,6 @@ void PrototypeApplication::renderFrame
 
     _renderGraph->update(dt);
     
-    bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-
     _viewStack.frameUpdate(dt,
         [&context](ove::ViewController& viewController, ove::ViewStack& stateController, double dt) {
             AppViewController& appViewController = static_cast<AppViewController&>(viewController);

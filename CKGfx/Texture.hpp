@@ -27,6 +27,7 @@ namespace cinek {
         static Texture loadTextureFromMemory(const uint8_t* data, size_t len);
     
     public:
+        Texture(bgfx::TextureHandle handle, bgfx::TextureFormat::Enum format);
         Texture();
         ~Texture();
         
@@ -36,9 +37,11 @@ namespace cinek {
         operator bool() const { return bgfx::isValid(_bgfxHandle); }
         
         bgfx::TextureHandle bgfxHandle() const { return _bgfxHandle; }
+        bgfx::TextureFormat::Enum bgfxFormat() const { return _bgfxFormat; }
         
     private:
         bgfx::TextureHandle _bgfxHandle;
+        bgfx::TextureFormat::Enum _bgfxFormat;
     };
     
     }   // namespace gfx

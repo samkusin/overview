@@ -88,6 +88,10 @@ void SceneDebugDrawer::setup
 
 void SceneDebugDrawer::flushLines()
 {
+    bgfx::setViewRect(_camera->viewIndex,
+        _camera->viewportRect.x, _camera->viewportRect.y,
+        _camera->viewportRect.w ,_camera->viewportRect.h);
+    
     if (_uniforms && _programs) {
         bgfx::TransientVertexBuffer linesTVB;
         bgfx::TransientIndexBuffer linesTIB;

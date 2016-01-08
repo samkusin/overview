@@ -228,6 +228,8 @@ AABB transformAABB(const AABB& aabb, const Matrix4& mtx);
 
 struct NodeJsonLoader;
 
+class RenderTarget;
+class MultiTextureRenderTarget;
 
     }   // namepace gfx
 }   // namespace cinek

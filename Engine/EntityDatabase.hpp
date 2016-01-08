@@ -132,6 +132,13 @@ public:
      *  @param  name        The manifest to clear
      */
     void clearManifest(const std::string& name);
+    /**
+     *  Obtains a handle to the manifest identified by name.
+     *
+     *  @param  name        The name of the manifest to obtain
+     *  @return A handle to the manifest
+     */
+    std::shared_ptr<AssetManifest> getManifest(const std::string& name) const;
     
 private:
     std::vector<EntityStore> _stores;

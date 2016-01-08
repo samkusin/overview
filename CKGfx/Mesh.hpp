@@ -101,6 +101,12 @@ Mesh createIcoSphere
     VertexTypes::Format vertexType
 );
 
+Mesh createQuad
+(
+    float scale,
+    VertexTypes::Format vertexType
+);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -74,22 +74,28 @@ struct DataObject
     
     enum class ImageType
     {
+        undefined,
         icon,                   // themed icon
-        image                   // nvg image
+        image,                  // nvg image
+        texture                 // gfx texture
     };
     
     Type type;
     ImageType imageType;
     
-    //  icon visualization of data (-1 if no static icon)
-    int iconId;
     
     //  data depending on object Type
     union
     {
         const char* str;        // static C String object
-        int image;              // image handle
         void* custom;           // custom data
+    };
+    
+    union
+    {
+        int iconId;
+        int image;              // image handle
+        const gfx::Texture* texture;
     };
 };
 
@@ -102,6 +108,7 @@ public:
     //  used by UI items for lists or other UI items that need object data.
     virtual bool onUIDataItemRequest(int id, int row, int col, DataObject& data) {
         data.type = DataObject::Type::undefined;
+        data.imageType = DataObject::ImageType::undefined;
         return false;
     }
 };

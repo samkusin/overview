@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2875CF221C3C9E200049FA02 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2875CF211C3C9E200049FA02 /* Camera.cpp */; };
+		28BCF4901C3F1A300040BAA8 /* RenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BCF48E1C3F1A300040BAA8 /* RenderTarget.cpp */; };
+		28BCF4911C3F1A300040BAA8 /* RenderTarget.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 28BCF48F1C3F1A300040BAA8 /* RenderTarget.hpp */; };
 		28F11E201C31FE5A00860E5D /* fs_std_col.fs in Sources */ = {isa = PBXBuildFile; fileRef = 28F11E1F1C31FDCD00860E5D /* fs_std_col.fs */; };
 		28F11E221C3200C200860E5D /* vs_std_flat.vs in Sources */ = {isa = PBXBuildFile; fileRef = 28F11E211C32009F00860E5D /* vs_std_flat.vs */; };
 		370B599B1BFA7205009062FA /* message.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B599A1BFA7205009062FA /* message.hpp */; };
@@ -199,6 +201,8 @@
 
 /* Begin PBXFileReference section */
 		2875CF211C3C9E200049FA02 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		28BCF48E1C3F1A300040BAA8 /* RenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTarget.cpp; sourceTree = "<group>"; };
+		28BCF48F1C3F1A300040BAA8 /* RenderTarget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RenderTarget.hpp; sourceTree = "<group>"; };
 		28F11E1F1C31FDCD00860E5D /* fs_std_col.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_std_col.fs; sourceTree = "<group>"; };
 		28F11E211C32009F00860E5D /* vs_std_flat.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_std_flat.vs; sourceTree = "<group>"; };
 		370B59991BFA6D75009062FA /* client.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = client.hpp; path = ../../../CKLibs/ckmsg/client.hpp; sourceTree = "<group>"; };
@@ -606,10 +610,10 @@
 				37E636D61BF0246D0081E59E /* AnimationController.hpp */,
 				37E636D71BF0246D0081E59E /* Camera.hpp */,
 				2875CF211C3C9E200049FA02 /* Camera.cpp */,
-				37E636D91BF0246D0081E59E /* Context.hpp */,
 				37E636D81BF0246D0081E59E /* Context.cpp */,
-				37E636E91BF0246D0081E59E /* GfxTypes.hpp */,
+				37E636D91BF0246D0081E59E /* Context.hpp */,
 				37E636E81BF0246D0081E59E /* GfxTypes.cpp */,
+				37E636E91BF0246D0081E59E /* GfxTypes.hpp */,
 				37E636EA1BF0246D0081E59E /* Light.hpp */,
 				37E636EB1BF0246D0081E59E /* Material.hpp */,
 				37E636EC1BF0246D0081E59E /* Mesh.cpp */,
@@ -622,8 +626,10 @@
 				37E636F11BF0246D0081E59E /* Node.hpp */,
 				37E636F21BF0246D0081E59E /* NodeGraph.cpp */,
 				37E636F31BF0246D0081E59E /* NodeGraph.hpp */,
-				37E636F51BF0246D0081E59E /* NodeRenderer.hpp */,
 				37E636F41BF0246D0081E59E /* NodeRenderer.cpp */,
+				37E636F51BF0246D0081E59E /* NodeRenderer.hpp */,
+				28BCF48E1C3F1A300040BAA8 /* RenderTarget.cpp */,
+				28BCF48F1C3F1A300040BAA8 /* RenderTarget.hpp */,
 				37E636F61BF0246D0081E59E /* ShaderLibrary.cpp */,
 				37E636F71BF0246D0081E59E /* ShaderLibrary.hpp */,
 				37E636FF1BF0246D0081E59E /* Texture.cpp */,
@@ -769,6 +775,7 @@
 				37E6370B1BF0246D0081E59E /* fontstash.h in Headers */,
 				377ECCC71C07ADFF002040D7 /* intrusive_list.hpp in Headers */,
 				37E637211BF0246D0081E59E /* ShaderLibrary.hpp in Headers */,
+				28BCF4911C3F1A300040BAA8 /* RenderTarget.hpp in Headers */,
 				37E637141BF0246D0081E59E /* Light.hpp in Headers */,
 				37E636C61BF024600081E59E /* blendish.h in Headers */,
 				37E637151BF0246D0081E59E /* Material.hpp in Headers */,
@@ -889,6 +896,7 @@
 				37E6369D1BF024330081E59E /* jsoncollectionloader.cpp in Sources */,
 				37E637121BF0246D0081E59E /* GfxTypes.cpp in Sources */,
 				37E636011BF00F650081E59E /* main.mm in Sources */,
+				28BCF4901C3F1A300040BAA8 /* RenderTarget.cpp in Sources */,
 				37E636CB1BF024600081E59E /* UIBuilder.cpp in Sources */,
 				37E636881BF024330081E59E /* types.cpp in Sources */,
 				37E6371E1BF0246D0081E59E /* NodeRenderer.cpp in Sources */,

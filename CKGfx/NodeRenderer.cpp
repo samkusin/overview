@@ -16,6 +16,7 @@
 #include "Animation.hpp"
 #include "AnimationController.hpp"
 #include "Light.hpp"
+#include "RenderTarget.hpp"
 
 #include "Shaders/ckgfx.sh"
 
@@ -120,7 +121,22 @@ void NodeRenderer::operator()
     uint32_t stages /*=kStageAll */
 )
 {
+    (*this)(programs, uniforms, RenderTarget(), camera, root, stages);
+}
+
+void NodeRenderer::operator()
+(
+    const ProgramMap& programs,
+    const UniformMap& uniforms,
+    const RenderTarget& renderTarget,
+    const Camera& camera, 
+    NodeHandle root,
+    uint32_t stages /*=kStageAll */
+)
+{
     uint32_t currentStage = 1;
+    
+    _camera = &camera;
     
     while (stages) {
         if ((stages & 0x01)!=0) {
@@ -133,11 +149,18 @@ void NodeRenderer::operator()
         
             switch (currentStage) {
             case kStageFlagRender: {
+                    bgfx::setViewRect(_camera->viewIndex,
+                        _camera->viewportRect.x, _camera->viewportRect.y,
+                        _camera->viewportRect.w ,_camera->viewportRect.h);
+                
+                    if (renderTarget) {
+                        bgfx::setViewFrameBuffer(_camera->viewIndex, renderTarget.bgfxHandle());
+                    }
 
-                    bgfx::setViewTransform(camera.viewIndex,
-                        camera.viewMtx.comp,
-                        camera.projMtx.comp);
-                    bx::mtxMul(_viewProjMtx, camera.viewMtx, camera.projMtx);
+                    bgfx::setViewTransform(_camera->viewIndex,
+                        _camera->viewMtx.comp,
+                        _camera->projMtx.comp);
+                    bx::mtxMul(_viewProjMtx, _camera->viewMtx, _camera->projMtx);
                 }
                 break;
             case kStageFlagLightEnum: {
@@ -353,7 +376,7 @@ void NodeRenderer::renderMeshElement
                         | BGFX_STATE_CULL_CW
 						);
 
-    bgfx::submit(_camera.viewIndex, programs[programSlot]);
+    bgfx::submit(_camera->viewIndex, programs[programSlot]);
 }
 
 void NodeRenderer::setupLightUniforms

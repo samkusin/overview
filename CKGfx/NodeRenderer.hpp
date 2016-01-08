@@ -100,6 +100,11 @@ public:
                     const Camera& camera,
                     NodeHandle root, uint32_t stages=kStageAll);
     
+    void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    const RenderTarget& renderTarget,
+                    const Camera& camera,
+                    NodeHandle root, uint32_t stages=kStageAll);
+    
 private:
     struct ArmatureState;
     
@@ -137,7 +142,7 @@ private:
     };
     
     //  Local State
-    Camera _camera;
+    const Camera* _camera;
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
     Matrix4 _viewProjMtx;
