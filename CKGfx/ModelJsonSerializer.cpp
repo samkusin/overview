@@ -228,7 +228,7 @@ private:
         NodeHandle thisNode;
         
         thisNode = (*_loader)(model, node);
-     
+        
         if (node.HasMember("children")) {
             const JsonValue& children = node["children"];
             if (children.IsArray() && !children.Empty()) {
@@ -237,7 +237,7 @@ private:
                     NodeHandle child = build(model, *it);
                     if (child) {
                         model.addChildNodeToNode(child, thisNode);
-                        
+                        thisNode->obb().merge(child->calculateAABB());
                     }
                 }
             }

@@ -51,6 +51,29 @@ void destroyRenderingContext(NVGcontext* nvg)
 static void renderItems(NVGcontext* context, int parent);
 static void renderItemsVertical(NVGcontext* context, int parent);
 
+
+static void renderListbox
+(
+    const OUIListBoxData* lbcontext,
+    NVGcontext* nvg,
+    const UIrect& rect,
+    int item,
+    int corners
+)
+{
+    const float kCornerRadius = 3.0f;
+ 
+    nvgSave(nvg);
+    
+    //  draw the box window
+    nvgBeginPath(nvg);
+    nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
+    nvgFillColor(nvg, nvgRGBA(200,200,200,255));
+    nvgFill(nvg);
+    nvgRestore(nvg);
+}
+
+
 static void renderItem
 (
     NVGcontext* context,
@@ -85,6 +108,8 @@ static void renderItem
             }
             break;
         case OUIItemType::listbox:
+            renderListbox(reinterpret_cast<const OUIListBoxData*>(header),
+                context, rect, item, corners);
             break;
         default:
             break;

@@ -51,6 +51,7 @@ void AssetService::loadManifest
     
     _context.taskScheduler->schedule(std::move(task), this);
 }
+
     
     } /* namespace ove */
 } /* namespace cinek */

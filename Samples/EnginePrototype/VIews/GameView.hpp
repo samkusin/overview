@@ -49,7 +49,8 @@ private:
     
 
     //  DataProvider
-    virtual bool onUIDataItemRequest(int id, int row, int col, uicore::DataObject& data) override;
+    virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col,
+        uicore::DataObject& data) override;
 
     
     //  FrameHandler
@@ -73,9 +74,8 @@ private:
     };
     
     //  Node graph to render to our dedicated
-    gfx::NodeGraph _modelGraph;
+    unique_ptr<gfx::NodeGraph> _modelStageGraph;
     gfx::Camera _modelStageCamera;
-    void createModelStage();
     
     //  Storage for UI
     struct EntityTemplateUIData
@@ -85,13 +85,15 @@ private:
     };
     
     std::vector<EntityTemplateUIData> _entityTemplateUIList;
+    gfx::MultiTextureRenderTarget _defaultEntityTemplateRT;
     int _selectedEntityTemplateIndex;
+
+    void addEntityTemplateUIData(std::string name, const JsonValue& entityTemplate);
     
 private:
-    void test1();
-    gfx::MultiTextureRenderTarget _testTarget;
     gfx::Mesh _testQuadMesh;
 
+    void test1();
 };
 
 } /* namespace cinek */

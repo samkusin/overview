@@ -71,7 +71,8 @@ void GameEntityFactory::onCustomComponentCreateFn
         gfx::Vector3 nodeTranslate;
         if (gfxNode) {
             auto& transform = gfxNode->transform();
-            cinek::gfx::generateAABBForNode(nodeAABB, *gfxNode.resource());
+            nodeAABB = gfxNode->calculateAABB();
+            //cinek::gfx::generateAABBForNode(nodeAABB, *gfxNode.resource());
             nodeTranslate.x = transform[12];
             nodeTranslate.y = transform[13];
             nodeTranslate.z = transform[14];

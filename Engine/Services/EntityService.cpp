@@ -52,6 +52,10 @@ void EntityService::clearDefinitions(const std::string& path)
     _context->clearManifest(path);
 }
 
+const AssetManifest* EntityService::getDefinitions(const std::string& name) const
+{
+    return _context->getManifest(name);
+}
 
 
     } /* namespace ove */

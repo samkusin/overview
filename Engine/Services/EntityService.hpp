@@ -55,6 +55,9 @@ public:
      */
     void clearDefinitions(const std::string& name);
     
+    
+    const AssetManifest* getDefinitions(const std::string& ns) const;
+    
 private:
     EntityDatabase* _context = nullptr;
     MessageClientSender* _sender = nullptr;

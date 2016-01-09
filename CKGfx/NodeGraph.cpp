@@ -171,6 +171,9 @@ NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
         child->_prevSibling = child;
     }
     child->_nextSibling = nullptr;
+    
+    //  update the parent's obb to reflect the new child
+    node->obb().merge(child->calculateAABB());
 
     return child;
 }
@@ -197,6 +200,8 @@ NodeHandle NodeGraph::removeNode(NodeHandle child)
     if (child == _root) {
         _root = child->_nextSibling;
     }
+
+    //  TODO - flag to recalculate parent's obb on next renderer pass
     
     child->_parent = nullptr;
     child->_prevSibling = nullptr;

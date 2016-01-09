@@ -155,7 +155,7 @@ Layout& Layout::frame
         uiSetLayout(_topItem, layoutFlags);
     }
     else {
-        uiSetBox(_topItem, UI_COLUMN);
+        uiSetBox(_topItem, UI_ROW);
     }
 
     uiSetEvents(_topItem, eventFlags);
@@ -237,9 +237,7 @@ Layout& Layout::listbox
     data->selected = selected;
     
     //  default height of two items
-    uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT * 2);
-    uiSetLayout(item, UI_HFILL);
-    
+    uiSetLayout(item, UI_FILL);
     // for selection and scroll
     uiSetEvents(item, UI_BUTTON0_DOWN | UI_BUTTON0_CAPTURE);
     

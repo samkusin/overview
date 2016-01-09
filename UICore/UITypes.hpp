@@ -89,14 +89,16 @@ struct DataObject
     {
         const char* str;        // static C String object
         void* custom;           // custom data
-    };
+    }
+    data;
     
     union
     {
         int iconId;
-        int image;              // image handle
+        int imageId;            // image handle
         const gfx::Texture* texture;
-    };
+    }
+    image;
 };
 
 class DataProvider
@@ -106,7 +108,7 @@ public:
     
     //  Issued when the UI system needs data for rendering or lookup.  Typically
     //  used by UI items for lists or other UI items that need object data.
-    virtual bool onUIDataItemRequest(int id, int row, int col, DataObject& data) {
+    virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col, DataObject& data) {
         data.type = DataObject::Type::undefined;
         data.imageType = DataObject::ImageType::undefined;
         return false;

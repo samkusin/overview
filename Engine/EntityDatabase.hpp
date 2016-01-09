@@ -138,7 +138,7 @@ public:
      *  @param  name        The name of the manifest to obtain
      *  @return A handle to the manifest
      */
-    std::shared_ptr<AssetManifest> getManifest(const std::string& name) const;
+    const AssetManifest* getManifest(const std::string& name) const;
     
 private:
     std::vector<EntityStore> _stores;

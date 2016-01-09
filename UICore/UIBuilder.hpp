@@ -52,7 +52,11 @@ public:
                   RenderCallback renderCb=nullptr, void* cbContext=nullptr,
                   unsigned int layoutFlags=0);
     ///
-    /// Starts a vertical group of ui widgets - used for positioning.
+    /// Starts a horizontal group of ui widgets - used for grouping.
+    ///
+    Layout& row(unsigned int layoutFlags=UI_FILL);
+    ///
+    /// Starts a vertical group of ui widgets - used for grouping.
     ///
     Layout& column(unsigned int layoutFlags=UI_FILL);
     ///

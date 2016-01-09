@@ -144,7 +144,7 @@ void EntityDatabase::clearManifest(const std::string& name)
     _manifests.erase(name);
 }
 
-std::shared_ptr<AssetManifest> EntityDatabase::getManifest
+const AssetManifest* EntityDatabase::getManifest
 (
     const std::string& name
 )
@@ -154,7 +154,7 @@ const
     if (it == _manifests.end())
         return nullptr;
     
-    return it->second;
+    return it->second.get();
 }
 
 
