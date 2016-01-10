@@ -137,15 +137,24 @@ void GameView::frameUpdateView
     if (!_sceneLoaded)
         return;
     
+    uicore::Layout::Style style;
+    style.mask = uicore::Layout::Style::has_margins;
+    style.margins = { 8, 8, 8, 8 };
+    
     //  generate UI
     uicore::Layout uiLayout;
-    
-    uiLayout.frame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this, UI_FILL)
-        .setSize(renderService().getViewRect().w, renderService().getViewRect().h)
-        .column(UI_RIGHT | UI_FILL)
+    auto frameWidth = renderService().getViewRect().w;
+    auto frameHeight = renderService().getViewRect().h;
+    uiLayout.beginFrame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this)
+        .setSize(frameWidth, frameHeight)
+        .beginColumn()
+            .setLayout(UI_RIGHT | UI_VFILL)
+            .setSize(frameWidth/5, 0)
+            .button(kUIEvtId_GameView, nullptr, -1, "Start", &style)
             .listbox(this, kUIProviderId_EntityTemplates,
-                uicore::ListboxLayout::kGrid,
-                &_selectedEntityTemplateIndex)
+                uicore::ListboxType::kGrid,
+                &_selectedEntityTemplateIndex,
+                &style)
         .end()
     .end();
     
@@ -167,12 +176,16 @@ void GameView::frameUpdateView
         { dir.x , dir.y, dir.z },
         100.0f);
     
+    
+    //  RENDERING
+    sceneService().renderDebugStart(renderService(), _camera);
+    
     sceneService().renderDebugAddRayTestHit(rayTestResult,
         { pos.x, pos.y, pos.z }, 0.1f, false);
     
     renderService().renderNode(_renderer, sceneService().getGfxRootNode(), _camera);
     
-    sceneService().renderDebug(renderService(), _camera);
+    sceneService().renderDebugEnd();
     
     /*
     bgfx::setViewRect(0, _camera.viewportRect.x, _camera.viewportRect.y,

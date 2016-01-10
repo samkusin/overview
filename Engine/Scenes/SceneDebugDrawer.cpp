@@ -88,6 +88,8 @@ void SceneDebugDrawer::setup
 
 void SceneDebugDrawer::flushLines()
 {
+    CK_ASSERT_RETURN(_camera);
+    
     bgfx::setViewRect(_camera->viewIndex,
         _camera->viewportRect.x, _camera->viewportRect.y,
         _camera->viewportRect.w ,_camera->viewportRect.h);

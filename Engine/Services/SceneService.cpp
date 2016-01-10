@@ -68,6 +68,16 @@ void SceneService::renderDebugAddRayTestHit
     }
 }
 
+void SceneService::renderDebugStart
+(
+    RenderService &renderService,
+    const gfx::Camera& camera
+)
+{
+    const RenderContext& renderContext = renderService.renderContext();
+    _context.debugDrawer->setup(*renderContext.programs, *renderContext.uniforms, camera);
+}
+
 void SceneService::renderDebugAddLine
 (
     const btVector3& p0,
@@ -78,18 +88,10 @@ void SceneService::renderDebugAddLine
     _context.debugDrawer->drawLine(p0, p1, btVector3(color.x,color.y,color.z));
 }
 
-void SceneService::renderDebug
-(
-    RenderService &renderService,
-    const gfx::Camera &camera
-)
+void SceneService::renderDebugEnd()
 {
-    const RenderContext& renderContext = renderService.renderContext();
-    
-    _context.debugDrawer->setup(*renderContext.programs, *renderContext.uniforms, camera);
     _context.scene->debugRender();
 }
-
 
 gfx::NodeHandle SceneService::getGfxRootNode() const
 {

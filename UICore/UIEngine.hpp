@@ -63,7 +63,7 @@ struct OUIButtonData
 struct OUIListBoxData
 {
     OUIHeader header;
-    ListboxLayout layout;   /* layout of items */
+    ListboxType lbtype;     /* layout of items */
     DataProvider* provider;
     int32_t providerId;     /* Data provider object and ID */
     int32_t anchorIndex;    /* first visible item - for scrolling */

@@ -47,13 +47,14 @@ public:
     
     
     //  debug methods
+    void renderDebugStart(RenderService &renderService, const gfx::Camera& camera);
     void renderDebugAddRayTestHit(const SceneRayTestResult& rayTestResult,
         const btVector3& origin,
         btScalar radius,
         bool drawRay);
     void renderDebugAddLine(const btVector3& p0, const btVector3& p1,
         const gfx::Color3& color);
-    void renderDebug(RenderService& renderService, const gfx::Camera& camera);
+    void renderDebugEnd();
     
 private:
     SceneServiceContext _context;

@@ -44,35 +44,61 @@ public:
     Layout();
     ~Layout();
     
+    struct Box
+    {
+        int l, t, r, b;
+    };
+    
+    struct Style
+    {
+        enum
+        {
+            has_layout = 0x0001,
+            has_margins = 0x0002
+        };
+        unsigned int mask;
+        unsigned int layout;
+        Box margins;
+    };
+    
     ///
     /// Starts a frame - which is an encompassing region designed to act as an
     /// Event subscriber for views, or as a container for other ui items.
     ///
-    Layout& frame(int id, unsigned int eventFlags, FrameHandler* frameHandler,
-                  RenderCallback renderCb=nullptr, void* cbContext=nullptr,
-                  unsigned int layoutFlags=0);
+    Layout& beginFrame(int id, unsigned int eventFlags, FrameHandler* frameHandler,
+                       RenderCallback renderCb=nullptr, void* cbContext=nullptr);
     ///
     /// Starts a horizontal group of ui widgets - used for grouping.
     ///
-    Layout& row(unsigned int layoutFlags=UI_FILL);
+    Layout& beginRow();
     ///
     /// Starts a vertical group of ui widgets - used for grouping.
     ///
-    Layout& column(unsigned int layoutFlags=UI_FILL);
+    Layout& beginColumn();
     ///
     /// Sets the size of the current UI region.
     ///
     Layout& setSize(int w, int h);
     ///
+    /// Sets the margins of the current UI region.
+    ///
+    Layout& setMargins(Box box);
+    ///
+    /// Overrides the current item's layout
+    ///
+    Layout& setLayout(unsigned int layout);
+    ///
     /// An individual button widget within the encompassing UI group.
     ///
-    Layout& button(int id, ButtonHandler* btnHandler, int iconId, const char* label);
+    Layout& button(int id, ButtonHandler* btnHandler, int iconId, const char* label,
+                   const Style* style=nullptr);
     ///
     /// A list box whose data is updated by events sent to the subscriber
     ///
     Layout& listbox(DataProvider* dataProvider, int providerId,
-                    ListboxLayout layout,
-                    int* selected);
+                    ListboxType lbtype,
+                    int* selected,
+                    const Style* style=nullptr);
     ///
     /// Completes a layout group (frame, column)
     ///
@@ -86,23 +112,24 @@ public:
     int currentGroupItem() const { return _topItem; }
     
 private:
-    static constexpr size_t kDataSize = sizeof(vector<int32_t>);
-    static constexpr size_t kMaxItemsInData = kDataSize / sizeof(int32_t);
+    struct State
+    {
+        int item;
+        unsigned int layout;
+    };
+
+    static constexpr size_t kDataSize = sizeof(vector<State>) * 4;
+    static constexpr size_t kMaxItemsInData = kDataSize / sizeof(State);
     
     uint8_t _data[kDataSize];
     uint32_t _size;             // high bit, then _data contains a vector
+    
     int _topItem;
+    unsigned int _topLayout;
     
-    enum
-    {
-        kFreeLayout,
-        kColumnLayout
-    }
-    _mode;
-    
-    void insertItem(int32_t item, int32_t parent);
     void pushTop();
-    int popItem();
+    void popItem();
+    void applyStyleToItem(int item, const Style* style, const Style* defaultStyle);
 };
 
 
