@@ -68,7 +68,7 @@ static void renderListbox
     //  draw the box window
     nvgBeginPath(nvg);
     nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
-    nvgFillColor(nvg, nvgRGBA(200,200,200,255));
+    nvgFillColor(nvg, bnd_theme.backgroundColor);
     nvgFill(nvg);
     nvgRestore(nvg);
 }
