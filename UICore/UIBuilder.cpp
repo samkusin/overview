@@ -90,6 +90,24 @@ Layout& Layout::beginFrame
     return *this;
 }
 
+Layout& Layout::beginWindow()
+{
+    pushTop();
+     
+    _topItem = uiItem();
+    _topLayout = UI_FILL;  // to be set or altered upon end()
+    
+    uiSetBox(_topItem, UI_COLUMN);
+    
+    OUIHeader* header = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    );
+    header->itemType = OUIItemType::window;
+    header->handler = nullptr;
+    
+    return *this;
+}
+
 Layout& Layout::beginColumn()
 {
     pushTop();

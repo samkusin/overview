@@ -76,6 +76,10 @@ public:
     ///
     Layout& beginColumn();
     ///
+    /// Starts a vertical group of ui widgets - used for grouping.
+    ///
+    Layout& beginWindow();
+    ///
     /// Sets the size of the current UI region.
     ///
     Layout& setSize(int w, int h);

@@ -25,6 +25,7 @@ namespace cinek {
 GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
     _sceneLoaded(false),
+    _shiftModifierAction(false),
     _selectedEntityTemplateIndex(-1)
 {
 }
@@ -138,6 +139,8 @@ void GameView::frameUpdateView
     if (!_sceneLoaded)
         return;
     
+    _shiftModifierAction = inputState.testKeyMod(KMOD_SHIFT);
+    
     uicore::Layout::Style style;
     style.mask = uicore::Layout::Style::has_margins;
     style.margins = { 8, 8, 8, 8 };
@@ -149,13 +152,15 @@ void GameView::frameUpdateView
     uiLayout.beginFrame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this)
         .setSize(frameWidth, frameHeight)
         .beginColumn()
-            .setLayout(UI_RIGHT | UI_VFILL)
-            .setSize(frameWidth/5, 0)
-            .button(kUIEvtId_GameView, nullptr, -1, "Start", &style)
-            .listbox(this, kUIProviderId_EntityTemplates,
-                uicore::ListboxType::kList,
-                &_selectedEntityTemplateIndex,
-                &style)
+            .setLayout(UI_RIGHT | UI_VCENTER)
+            .setSize(frameWidth/5, frameHeight*3/4)
+            .beginWindow()
+                .button(kUIEvtId_GameView, nullptr, -1, "Start", &style)
+                .listbox(this, kUIProviderId_EntityTemplates,
+                    uicore::ListboxType::kList,
+                    &_selectedEntityTemplateIndex,
+                    &style)
+            .end()
         .end()
     .end();
     

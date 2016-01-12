@@ -73,6 +73,8 @@ private:
         kUIProviderId_EntityTemplates
     };
     
+    bool _shiftModifierAction;
+    
     //  Node graph to render to our dedicated
     unique_ptr<gfx::NodeGraph> _modelStageGraph;
     gfx::Camera _modelStageCamera;

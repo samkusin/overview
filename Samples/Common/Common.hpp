@@ -10,6 +10,7 @@
 #define Overview_Common_hpp
 
 #include "CKGfx/GfxTypes.hpp"
+#include <SDL2/SDL_Keycode.h>
 
 enum
 {
@@ -29,6 +30,10 @@ struct InputState
     //  key mappings
     const uint8_t* keystate;
     int keystateArraySize;
+    SDL_Keymod keyModifiers;
+    
+    bool testKey(uint8_t key) const;
+    bool testKeyMod(int mod) const;
 };
 
     } /* namespace ove */

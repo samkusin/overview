@@ -23,6 +23,23 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace cinek {
+    namespace ove {
+
+bool InputState::testKey(uint8_t key) const
+{
+    CK_ASSERT_RETURN_VALUE(key < keystateArraySize, false);
+    return keystate[key];
+}
+
+bool InputState::testKeyMod(int mod) const
+{
+    return (keyModifiers & mod) != 0;
+}
+
+    }
+}
+
 uint32_t pollSDLEvents(cinek::ove::InputState& state)
 {
     int mx, my;

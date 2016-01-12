@@ -71,6 +71,7 @@ static void renderListbox
     //  start
     nvgSave(nvg);
 
+    /*
     //  drop shadow
     struct NVGpaint shadow = nvgBoxGradient(nvg, rect.x, rect.y+4, rect.w, rect.h,
         kCornerRadius*2, 10,
@@ -81,11 +82,11 @@ static void renderListbox
     nvgPathWinding(nvg, NVG_HOLE);
     nvgFillPaint(nvg, shadow);
     nvgFill(nvg);
-    
+    */
     //  draw the box window
     nvgBeginPath(nvg);
     nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
-    nvgFillColor(nvg, nvgRGBA(69, 69, 69, 255));
+    nvgFillColor(nvg, nvgRGBA(76, 76, 76, 255));
     nvgFill(nvg);
     
     //  content
@@ -199,6 +200,41 @@ static void renderListbox
     nvgRestore(nvg);
 }
 
+static void renderWindow
+(
+    OUIHeader* header,
+    NVGcontext* nvg,
+    const UIrect& rect,
+    int item
+)
+{
+    const float kCornerRadius = 3.0f;
+    
+	struct NVGpaint shadowPaint;
+	
+	nvgSave(nvg);
+	//	nvgClearState(vg);
+
+	// Window
+	nvgBeginPath(nvg);
+	nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
+	nvgFillColor(nvg, nvgRGBA(28,30,34,192) );
+	//	nvgFillColor(vg, nvgRGBA(0,0,0,128) );
+	nvgFill(nvg);
+
+	// Drop shadow
+	shadowPaint = nvgBoxGradient(nvg, rect.x, rect.y+2, rect.w, rect.h,
+        kCornerRadius*2, 10, nvgRGBA(0,0,0,128), nvgRGBA(0,0,0,0) );
+	nvgBeginPath(nvg);
+	nvgRect(nvg, rect.x-10, rect.y-10, rect.w+20, rect.h+30);
+	nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
+	nvgPathWinding(nvg, NVG_HOLE);
+	nvgFillPaint(nvg, shadowPaint);
+	nvgFill(nvg);
+
+	nvgRestore(nvg);
+}
+
 static void renderItem
 (
     NVGcontext* context,
@@ -224,6 +260,12 @@ static void renderItem
             break;
         case OUIItemType::column:
             renderItemsVertical(context, item);
+            break;
+        case OUIItemType::window:
+            {
+                renderWindow(header, context, rect, item);
+                renderItems(context, item);
+            }
             break;
         case OUIItemType::button:
             {

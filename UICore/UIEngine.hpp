@@ -21,6 +21,7 @@ enum class OUIItemType
 {
     frame,
     column,
+    window,
     button,
     listbox,
     combobox
