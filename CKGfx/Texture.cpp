@@ -135,6 +135,14 @@ Texture& Texture::operator=(Texture&& other)
     other._bgfxFormat = bgfx::TextureFormat::Unknown;
     return *this;
 }
+
+bgfx::TextureHandle Texture::release()
+{
+    bgfx::TextureHandle h = _bgfxHandle;
+    _bgfxHandle = BGFX_INVALID_HANDLE;
+    _bgfxFormat = bgfx::TextureFormat::Unknown;
+    return h;
+}
     
     }   // namespace gfx
 }   // namespace cinek

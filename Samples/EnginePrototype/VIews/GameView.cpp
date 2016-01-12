@@ -12,6 +12,7 @@
 #include "UICore/UIBuilder.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
+#include "CKGfx/External/nanovg/nanovg.h"
 
 #include <ckjson/json.hpp>
 #include <ckm/math.hpp>
@@ -152,7 +153,7 @@ void GameView::frameUpdateView
             .setSize(frameWidth/5, 0)
             .button(kUIEvtId_GameView, nullptr, -1, "Start", &style)
             .listbox(this, kUIProviderId_EntityTemplates,
-                uicore::ListboxType::kGrid,
+                uicore::ListboxType::kList,
                 &_selectedEntityTemplateIndex,
                 &style)
         .end()
@@ -251,6 +252,7 @@ void GameView::addEntityTemplateUIData
     const JsonValue& entityTemplate
 )
 {
+    /*
     auto renderable = entityTemplate.FindMember("renderable");
     if (renderable == entityTemplate.MemberEnd()) {
         //  TODO - how about editor only displays for non-renderable entities?
@@ -296,8 +298,28 @@ void GameView::addEntityTemplateUIData
     
     _modelStageGraph->removeNode(modelNode);
     
-    EntityTemplateUIData data = { std::move(renderTarget), std::move(name) };
+    //bgfx::TextureFormat::Enum renderTextureFormat = renderTarget.texture()->bgfxFormat();
+    bgfx::TextureHandle renderTexture = renderTarget.texture()->release();
+    
+    int nvImage = nvgCreateImageFromBackendTexture(nvgContext(),
+        renderTarget.target().width(), renderTarget.target().height(),
+        NVG_TEXTURE_RGBA,
+        &renderTexture);
+    */
+    
+    EntityTemplateUIData data;
+    data.name = std::move(name);
+    
+    auto editorTemplate = entityTemplate.FindMember("editor");
+    if (editorTemplate != entityTemplate.MemberEnd()) {
+        data.longname = editorTemplate->value["name"].GetString();
+    }
+    
     _entityTemplateUIList.emplace_back(std::move(data));
+    
+    if (_selectedEntityTemplateIndex < 0) {
+        _selectedEntityTemplateIndex = (int)(_entityTemplateUIList.size() - 1);
+    }
 }
 
 bool GameView::onUIDataItemRequest
@@ -313,9 +335,8 @@ bool GameView::onUIDataItemRequest
             auto& source = _entityTemplateUIList[row];
             if (col == 0) {
                 data.type = uicore::DataObject::Type::string;
-                data.data.str = source.name.c_str();
-                data.imageType = uicore::DataObject::ImageType::texture;
-                data.image.texture = source.rt.texture();
+                data.data.str = source.longname.empty() ? source.name.c_str()
+                                    : source.longname.c_str();
                 return true;
             }
         }
@@ -323,6 +344,14 @@ bool GameView::onUIDataItemRequest
     }
     
     return false;
+}
+
+uint32_t GameView::onUIDataItemRowCountRequest(int id)
+{
+    if (id == kUIProviderId_EntityTemplates) {
+        return (uint32_t)_entityTemplateUIList.size();
+    }
+    return 0;
 }
 
 

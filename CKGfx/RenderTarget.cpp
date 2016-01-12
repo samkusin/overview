@@ -15,8 +15,10 @@
 namespace cinek {
     namespace gfx {
     
-RenderTarget::RenderTarget(bgfx::FrameBufferHandle h) :
-    _bgfxHandle(h)
+RenderTarget::RenderTarget(bgfx::FrameBufferHandle handle, uint16_t w, uint16_t h) :
+    _bgfxHandle(handle),
+    _width(w),
+    _height(h)
 {
 }
 
@@ -33,15 +35,23 @@ RenderTarget::~RenderTarget()
 }
         
 RenderTarget::RenderTarget(RenderTarget&& other) :
-    _bgfxHandle(other._bgfxHandle)
+    _bgfxHandle(other._bgfxHandle),
+    _width(other._width),
+    _height(other._height)
 {
     other._bgfxHandle = BGFX_INVALID_HANDLE;
+    other._width = 0;
+    other._height = 0;
 }
 
 RenderTarget& RenderTarget::operator=(RenderTarget&& other)
 {
     _bgfxHandle = other._bgfxHandle;
+    _width = other._width;
+    _height = other._height;
     other._bgfxHandle = BGFX_INVALID_HANDLE;
+    other._width = 0;
+    other._height = 0;
     return *this;
 }
         
@@ -56,6 +66,8 @@ RenderTarget RenderTarget::create
     
     target._bgfxHandle = bgfx::createFrameBuffer(w, h, format,
         (msaa+1)<<BGFX_TEXTURE_RT_MSAA_SHIFT);
+    target._width = w;
+    target._height = h;
     
     return target;
 }
@@ -94,14 +106,13 @@ MultiTextureRenderTarget MultiTextureRenderTarget::createWithDepthTarget
     const uint8_t numTextures = static_cast<uint8_t>(sizeof(th)/ sizeof(bgfx::TextureHandle));
     
     bgfx::FrameBufferHandle fbh = bgfx::createFrameBuffer(2,
-        th,
-        true);
-    target._target = std::move(RenderTarget(fbh));
+        th);
+    target._target = std::move(RenderTarget(fbh, w, h));
     
     Allocator allocator;
     target._textures = allocator.allocItems<Texture>(numTextures);
     for (uint8_t i = 0; i < numTextures; ++i) {
-        ::new(&target._textures[i]) Texture(th[0], fmt[i]);
+        ::new(&target._textures[i]) Texture(th[i], fmt[i]);
     }
     target._textureCount = numTextures;
     

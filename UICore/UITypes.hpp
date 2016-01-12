@@ -48,9 +48,14 @@ enum
 
 enum class ListboxType
 {
-    kList,
-    kGrid
+    kList
 };
+
+struct Box
+{
+    int t, r, b, l;
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //  UI Subscriber class
@@ -76,8 +81,7 @@ struct DataObject
     {
         undefined,
         icon,                   // themed icon
-        image,                  // nvg image
-        texture                 // gfx texture
+        image                   // nvg image
     };
     
     Type type;
@@ -96,9 +100,10 @@ struct DataObject
     {
         int iconId;
         int imageId;            // image handle
-        const gfx::Texture* texture;
     }
     image;
+    
+    DataObject() : type(Type::undefined), imageType(ImageType::undefined) {}
 };
 
 class DataProvider
@@ -112,6 +117,11 @@ public:
         data.type = DataObject::Type::undefined;
         data.imageType = DataObject::ImageType::undefined;
         return false;
+    }
+    //  Issued when a UI needs to retrieve an item count for the specified data
+    //  index
+    virtual uint32_t onUIDataItemRowCountRequest(int id) {
+        return 0;
     }
 };
 

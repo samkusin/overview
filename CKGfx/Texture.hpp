@@ -39,6 +39,9 @@ namespace cinek {
         bgfx::TextureHandle bgfxHandle() const { return _bgfxHandle; }
         bgfx::TextureFormat::Enum bgfxFormat() const { return _bgfxFormat; }
         
+        //  releases the backend handle from management by the Texture
+        bgfx::TextureHandle release();
+        
     private:
         bgfx::TextureHandle _bgfxHandle;
         bgfx::TextureFormat::Enum _bgfxFormat;

@@ -51,7 +51,7 @@ private:
     //  DataProvider
     virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col,
         uicore::DataObject& data) override;
-
+    virtual uint32_t onUIDataItemRowCountRequest(int id) override;
     
     //  FrameHandler
     virtual void onUIFrameEvent(int id, const uicore::FrameEvent& evt) override;
@@ -80,8 +80,8 @@ private:
     //  Storage for UI
     struct EntityTemplateUIData
     {
-        gfx::MultiTextureRenderTarget rt;
         std::string name;
+        std::string longname;
     };
     
     std::vector<EntityTemplateUIData> _entityTemplateUIList;

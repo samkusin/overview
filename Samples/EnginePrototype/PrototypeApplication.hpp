@@ -12,6 +12,9 @@
 #include "GameTypes.hpp"
 #include "Common.hpp"
 #include "ResourceFactory.hpp"
+
+#include "UICore/UITypes.hpp"
+
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Render/RenderContext.hpp"
@@ -40,7 +43,8 @@ public:
     (
         gfx::Context& gfxContext,
         const gfx::NodeRenderer::ProgramMap& programs,
-        const gfx::NodeRenderer::UniformMap& uniforms
+        const gfx::NodeRenderer::UniformMap& uniforms,
+        NVGcontext* nvg
     );
     ~PrototypeApplication();
     
@@ -78,6 +82,7 @@ private:
     
     gfx::NodeRenderer _renderer;
     ove::RenderContext _renderContext;
+    NVGcontext* _nvg;
 };
     
 }

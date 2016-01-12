@@ -17,6 +17,7 @@
 #include "blendish.h"
 
 #include <bgfx/bgfx.h>
+#include <ckm/math.hpp>
 
 namespace cinek { namespace uicore {
 
@@ -54,7 +55,7 @@ static void renderItemsVertical(NVGcontext* context, int parent);
 
 static void renderListbox
 (
-    const OUIListBoxData* lbcontext,
+    OUIListBoxData* lbcontext,
     NVGcontext* nvg,
     const UIrect& rect,
     int item,
@@ -62,17 +63,141 @@ static void renderListbox
 )
 {
     const float kCornerRadius = 3.0f;
- 
+    const int kBoxMarginLR = 5;
+    const int kBoxMarginTB = 10;
+    
+    UIvec2 mouse = uiGetCursor();
+    
+    //  start
     nvgSave(nvg);
+
+    //  drop shadow
+    struct NVGpaint shadow = nvgBoxGradient(nvg, rect.x, rect.y+4, rect.w, rect.h,
+        kCornerRadius*2, 10,
+        nvgRGBA(0,0,0,128), nvgRGBA(0,0,0,0));
+    nvgBeginPath(nvg);
+    nvgRect(nvg, rect.x-10, rect.y-10, rect.w+20, rect.h+30);
+    nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
+    nvgPathWinding(nvg, NVG_HOLE);
+    nvgFillPaint(nvg, shadow);
+    nvgFill(nvg);
     
     //  draw the box window
     nvgBeginPath(nvg);
     nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
-    nvgFillColor(nvg, bnd_theme.backgroundColor);
+    nvgFillColor(nvg, nvgRGBA(69, 69, 69, 255));
     nvgFill(nvg);
+    
+    //  content
+    //  - we're rendering the entire listbox and using a scissor to clip
+    //    contents to a frame within our window.  this is the simplest way to
+    //    handle listboxes.  this method should suffice for most listboxes.  if
+    //    we have a case of listboxes with an 'infinite' (dynamically generated)
+    //    list of contents, we'll have to employ another method
+    
+    if (lbcontext->provider) {
+        int numItems = lbcontext->provider->onUIDataItemRowCountRequest(lbcontext->providerId);
+        
+        int lmargin = rect.x+kBoxMarginLR;
+        int rmargin = lmargin + rect.w-2*kBoxMarginLR;
+        
+        if (numItems > 0 && lmargin < rmargin) {
+            nvgSave(nvg);
+            nvgFontSize(nvg, BND_LABEL_FONT_SIZE);
+            nvgFontFaceId(nvg, bnd_font);
+            nvgTextAlign(nvg, NVG_ALIGN_LEFT|NVG_ALIGN_TOP);
+            
+            nvgScissor(nvg, rect.x, rect.y, rect.w, rect.h);
+        
+            float cellWidth;
+            float cellHeight;
+            
+            Box cellMargins;         // trbl
+            
+            if (lbcontext->lbtype == ListboxType::kList) {
+                cellMargins.t = 1;
+                cellMargins.r = 2;
+                cellMargins.b = 1;
+                cellMargins.l = 2;
+                cellWidth = rect.w - cellMargins.l - cellMargins.r;
+                cellHeight = 0;
+            }
+            else {
+                cellMargins.t = cellMargins.r = cellMargins.b = cellMargins.l = 0;
+                cellWidth = 0;
+                cellHeight = 0;
+                CK_ASSERT(false);   // unsupported type?  bad things may happen
+            }
+            
+            UIvec2 cellOrigin { lmargin, rect.y + kBoxMarginTB };
+        
+            uint32_t row = 0;
+            DataObject data;
+            while (lbcontext->provider->onUIDataItemRequest(lbcontext->providerId, row, 0, data)) {
+                
+                UIvec2 rowDim = { 0, 1 };
+                
+                if (lbcontext->lbtype == ListboxType::kList) {
+                    //  listbox cells have a fixed height, determined by the first
+                    //  row's height.  width will be the width of the longest row
+                    //
+                    
+                    //  visual style is modelled against Blender's file dialog list
+                    
+                    float offsetX = cellOrigin.x + cellMargins.l;
+                    float offsetY = cellOrigin.y + cellMargins.t;
+        
+                    //  attempt to fill the row with content
+                    if (data.type == DataObject::Type::string) {
+                        //float width = nvgTextBounds(nvg, 0, 0, data.data.str, nullptr, nullptr);
+                        
+                        if (cellHeight < ckm::epsilon<float>()) {
+                            nvgTextMetrics(nvg, NULL, NULL, &cellHeight);
+                        }
+                        
+                        rowDim.x = cellMargins.l + cellWidth + cellMargins.r;
+                        rowDim.y = cellMargins.t + cellHeight + cellMargins.b;
+                        
+                        if (row == *lbcontext->selected) {
+                            nvgBeginPath(nvg);
+                            nvgFillColor(nvg, nvgRGBA(191, 116, 40, 255));
+                            nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
+                                rmargin-lmargin, cellMargins.t + cellHeight + cellMargins.b,
+                                kCornerRadius);
+                            nvgFill(nvg);
+                        }
+                        else if (mouse.y < cellOrigin.y + rowDim.y && mouse.y >= cellOrigin.y &&
+                                 mouse.x < cellOrigin.x + rowDim.x && mouse.x >= cellOrigin.x) {
+                            nvgBeginPath(nvg);
+                            nvgFillColor(nvg, nvgRGBA(96, 96, 96, 255));
+                            nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
+                                rmargin-lmargin, cellMargins.t + cellHeight + cellMargins.b,
+                                kCornerRadius);
+                            nvgFill(nvg);
+                            lbcontext->hover = (int)row;
+                        }
+                        
+                        //printf("%d,%d\n", mouse.x, mouse.y);
+                        
+                        nvgFillColor(nvg, BND_COLOR_TEXT_SELECTED);
+                        nvgText(nvg, offsetX, offsetY, data.data.str, nullptr);
+                    }
+
+                    
+                }
+                
+                cellOrigin.y += rowDim.y;
+                
+                ++row;
+            }
+           
+            nvgRestore(nvg);
+        }
+    }
+    
+    //  finished
     nvgRestore(nvg);
 }
-
 
 static void renderItem
 (
@@ -81,7 +206,7 @@ static void renderItem
     int corners
 )
 {
-    const OUIHeader* header = reinterpret_cast<const OUIHeader*>(uiGetHandle(item));
+    OUIHeader* header = reinterpret_cast<OUIHeader*>(uiGetHandle(item));
     UIrect rect = uiGetRect(item);
     if (header)
     {
@@ -108,7 +233,7 @@ static void renderItem
             }
             break;
         case OUIItemType::listbox:
-            renderListbox(reinterpret_cast<const OUIListBoxData*>(header),
+            renderListbox(reinterpret_cast<OUIListBoxData*>(header),
                 context, rect, item, corners);
             break;
         default:

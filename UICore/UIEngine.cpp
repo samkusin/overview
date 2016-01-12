@@ -47,6 +47,12 @@ void OUIButtonData::handler(int item, UIevent event)
 
 void OUIListBoxData::handler(int item, UIevent event)
 {
+    OUIListBoxData* lb = reinterpret_cast<OUIListBoxData*>(uiGetHandle(item));
+    if (lb) {
+        if (event == UI_BUTTON0_DOWN && lb->hover >= 0) {
+            *lb->selected = lb->hover;
+        }
+    }
 }
 
 } /* namespace uicore */ } /* namespace cinek */

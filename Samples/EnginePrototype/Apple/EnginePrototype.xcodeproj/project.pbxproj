@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2875CF251C3DC3EF0049FA02 /* UIService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2875CF231C3DC3EF0049FA02 /* UIService.cpp */; };
 		28BCF4551C3DDE450040BAA8 /* SceneTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BCF4541C3DDE450040BAA8 /* SceneTypes.cpp */; };
 		28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20841C2A1F480059B56F /* AssetService.cpp */; };
 		28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20871C2A210D0059B56F /* AppViewController.cpp */; };
@@ -65,8 +64,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2875CF231C3DC3EF0049FA02 /* UIService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIService.cpp; sourceTree = "<group>"; };
-		2875CF241C3DC3EF0049FA02 /* UIService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = UIService.hpp; sourceTree = "<group>"; };
 		28BCF4531C3DDAEF0040BAA8 /* SceneTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SceneTypes.hpp; path = Scenes/SceneTypes.hpp; sourceTree = "<group>"; };
 		28BCF4541C3DDE450040BAA8 /* SceneTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneTypes.cpp; path = Scenes/SceneTypes.cpp; sourceTree = "<group>"; };
 		28CE20831C2A17710059B56F /* AppViewController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AppViewController.hpp; sourceTree = "<group>"; };
@@ -331,8 +328,6 @@
 				28CE20841C2A1F480059B56F /* AssetService.cpp */,
 				28F11E5E1C3B5D4100860E5D /* RenderService.hpp */,
 				28F11E5D1C3B5D4100860E5D /* RenderService.cpp */,
-				2875CF241C3DC3EF0049FA02 /* UIService.hpp */,
-				2875CF231C3DC3EF0049FA02 /* UIService.cpp */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -469,7 +464,6 @@
 				28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */,
 				377ECCCD1C0934E9002040D7 /* ResourceFactory.cpp in Sources */,
 				377ECD051C12596F002040D7 /* SceneJsonLoader.cpp in Sources */,
-				2875CF251C3DC3EF0049FA02 /* UIService.cpp in Sources */,
 				37804D0F1C1A2FF6002109DF /* GameTypes.cpp in Sources */,
 				37804D0A1C191965002109DF /* SceneDebugDrawer.cpp in Sources */,
 				377ECCF91C10F4FF002040D7 /* SceneFixedBodyHull.cpp in Sources */,

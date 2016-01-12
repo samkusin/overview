@@ -1,6 +1,35 @@
 {
     "entity" : {
         "test_bot" : {
+            "editor" : {
+                "name" : "Test Entity Bot"
+            },
+            "renderable" : {
+                "modelset" : "models/simple.json",
+                "model" : "DumbSlinky"
+            },
+            "scenebody" : {
+                "shape" : "cylinder",
+                "mass" : 70.0
+            }
+        },
+        "empty1" : {
+            "editor" : {
+                "name" : "Placeholder 1"
+            },
+            "renderable" : {
+                "modelset" : "models/simple.json",
+                "model" : "DumbSlinky"
+            },
+            "scenebody" : {
+                "shape" : "cylinder",
+                "mass" : 70.0
+            }
+        },
+        "empty2" : {
+            "editor" : {
+                "name" : "Placeholder 2"
+            },
             "renderable" : {
                 "modelset" : "models/simple.json",
                 "model" : "DumbSlinky"

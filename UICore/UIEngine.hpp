@@ -66,10 +66,12 @@ struct OUIListBoxData
     ListboxType lbtype;     /* layout of items */
     DataProvider* provider;
     int32_t providerId;     /* Data provider object and ID */
-    int32_t anchorIndex;    /* first visible item - for scrolling */
+    UIvec2 viewAnchor;      /* Used for scrolling */
     int32_t *selected;      /* what data object is active (selected) */
+    int32_t hover;          /* what data object is in the hover state */
     
     static void handler(int item, UIevent event);
+    
 };
 
 } /* namespace uicore */ } /* namespace cinek */

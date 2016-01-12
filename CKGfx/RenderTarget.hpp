@@ -28,7 +28,7 @@ namespace cinek {
             int msaa=0);
      
     public:
-        explicit RenderTarget(bgfx::FrameBufferHandle h);
+        RenderTarget(bgfx::FrameBufferHandle handle, uint16_t w, uint16_t h);
         RenderTarget();
         
         ~RenderTarget();
@@ -39,10 +39,12 @@ namespace cinek {
         operator bool() const { return bgfx::isValid(_bgfxHandle); }
         
         bgfx::FrameBufferHandle bgfxHandle() const { return _bgfxHandle; }
-        
+        uint16_t width() const { return _width; }
+        uint16_t height() const { return _height; }
         
     private:
         bgfx::FrameBufferHandle _bgfxHandle;
+        int _width, _height;
     };
     
     

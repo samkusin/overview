@@ -30,7 +30,8 @@ PrototypeApplication::PrototypeApplication
 (
     gfx::Context& gfxContext,
     const gfx::NodeRenderer::ProgramMap& programs,
-    const gfx::NodeRenderer::UniformMap& uniforms
+    const gfx::NodeRenderer::UniformMap& uniforms,
+    NVGcontext* nvg
 ) :
     _gfxContext(&gfxContext),
     _taskScheduler(64),
@@ -40,7 +41,8 @@ PrototypeApplication::PrototypeApplication
     _resourceFactory(*_gfxContext, _taskScheduler),
     _renderPrograms(programs),
     _renderUniforms(uniforms),
-    _renderer()
+    _renderer(),
+    _nvg(nvg)
 {
     gfx::NodeElementCounts sceneElementCounts;
     sceneElementCounts.meshNodeCount = 128;
@@ -95,6 +97,7 @@ PrototypeApplication::PrototypeApplication
     //  define the top-level states for this application
     ApplicationContext context;
     
+    context.nvg = _nvg;
     context.entityDatabase = _entityDb.get();
     context.taskScheduler = &_taskScheduler;
     context.resourceFactory = &_resourceFactory;

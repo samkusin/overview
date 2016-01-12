@@ -11,6 +11,7 @@
 
 #include "GameTypes.hpp"
 #include "Common.hpp"
+#include "UICore/UITypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
 #include "Engine/ViewController.hpp"
 #include "Engine/Services/AssetService.hpp"
@@ -22,6 +23,7 @@ namespace cinek {
 
 struct ApplicationContext
 {
+    NVGcontext* nvg;
     TaskScheduler* taskScheduler;
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;
@@ -57,6 +59,10 @@ protected:
     ove::RenderService& renderService() {
         return _renderService;
     }
+    NVGcontext* nvgContext() {
+        return _appContext->nvg;
+    }
+    
 private:
     const ApplicationContext* _appContext;
     ove::AssetService _assetService;

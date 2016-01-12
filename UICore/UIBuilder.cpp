@@ -184,8 +184,9 @@ Layout& Layout::listbox
     data->provider = dataProvider;
     data->providerId = id;
     data->lbtype = lbtype;
-    data->anchorIndex = -1;
+    data->viewAnchor = { 0, 0 };
     data->selected = selected;
+    data->hover = -1;
     
     
     uiInsert(_topItem, item);

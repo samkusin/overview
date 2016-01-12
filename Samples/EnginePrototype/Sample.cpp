@@ -65,107 +65,112 @@ int runSample(int viewWidth, int viewHeight)
     if (!nvg)
         return 1;
     
-    //  GFX
-    cinek::gfx::Rect viewRect = { 0, 0, viewWidth, viewHeight };
-    cinek::gfx::VertexTypes::initialize();
-    cinek::gfx::ShaderLibrary shaderLibrary;
-    cinek::gfx::NodeRenderer::ProgramMap shaderPrograms;
-    cinek::gfx::NodeRenderer::UniformMap shaderUniforms;
-    
-    registerShaders(
-        shaderLibrary, shaderPrograms, shaderUniforms, {
-            {
-                cinek::gfx::kNodeProgramMesh, kShaderProgramStdMesh,
-                "bin/vs_std_uv.bin",
-                "bin/fs_std_tex.bin"
-            },
-            {
-                cinek::gfx::kNodeProgramBoneMesh, kShaderProgramBoneMesh,
-                "bin/vs_bone_uv.bin",
-                "bin/fs_std_tex.bin"
-            },
-            {
-                cinek::gfx::kNodeProgramFlat, kShaderProgramFlat,
-                "bin/vs_flat_pos.bin",
-                "bin/fs_flat_col.bin"
-            },
-            {
-                cinek::gfx::kNodeProgramFlatMesh, kShaderProgramFlatMesh,
-                "bin/vs_std_flat.bin",
-                "bin/fs_std_col.bin"
-            }
-        });
-
-    cinek::gfx::Context::ResourceInitParams gfxInitParams;
-    
-    gfxInitParams.numMeshes = 1024;
-    gfxInitParams.numMaterials = 1024;
-    gfxInitParams.numTextures = 256;
-    gfxInitParams.numAnimations = 256;
-    gfxInitParams.numLights = 64;
-    gfxInitParams.numModelSets = 64;
-    
-    cinek::gfx::Context gfxContext(gfxInitParams);
-    
-    //  Application
-    //
-    cinek::PrototypeApplication controller(gfxContext, shaderPrograms, shaderUniforms);
-
-    const double kSimFPS = 60.0;
-    const double kSecsPerSimFrame = 1/kSimFPS;
-    
-    double simTime = 0.0;
-    double lagSecsSim = 0.0;
-    
-    uint32_t systemTimeMs = SDL_GetTicks();
-    bool running = true;
-    
-    cinek::ove::InputState polledInputState;
-    
-    while (running) {
-        uint32_t nextSystemTimeMs = SDL_GetTicks();
-        int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
-        systemTimeMs = nextSystemTimeMs;
+    //  nvg destruction should occur after the below scope's objects have been
+    //  lost
+    {
+        //  GFX
+        cinek::gfx::Rect viewRect = { 0, 0, viewWidth, viewHeight };
+        cinek::gfx::VertexTypes::initialize();
+        cinek::gfx::ShaderLibrary shaderLibrary;
+        cinek::gfx::NodeRenderer::ProgramMap shaderPrograms;
+        cinek::gfx::NodeRenderer::UniformMap shaderUniforms;
         
-        controller.beginFrame();
+        registerShaders(
+            shaderLibrary, shaderPrograms, shaderUniforms, {
+                {
+                    cinek::gfx::kNodeProgramMesh, kShaderProgramStdMesh,
+                    "bin/vs_std_uv.bin",
+                    "bin/fs_std_tex.bin"
+                },
+                {
+                    cinek::gfx::kNodeProgramBoneMesh, kShaderProgramBoneMesh,
+                    "bin/vs_bone_uv.bin",
+                    "bin/fs_std_tex.bin"
+                },
+                {
+                    cinek::gfx::kNodeProgramFlat, kShaderProgramFlat,
+                    "bin/vs_flat_pos.bin",
+                    "bin/fs_flat_col.bin"
+                },
+                {
+                    cinek::gfx::kNodeProgramFlatMesh, kShaderProgramFlatMesh,
+                    "bin/vs_std_flat.bin",
+                    "bin/fs_std_col.bin"
+                }
+            });
+
+        cinek::gfx::Context::ResourceInitParams gfxInitParams;
         
-        //  TODO: Lag should not be incremented while Sim is Paused
-        double frameTime = frameTimeMs*0.001;
-        lagSecsSim += frameTime;
-    
-        ////////////////////////////////////////////////////////////////////////
-        //  SIMULATION START (using a fixed timestep)
-        //      All subsystems driven by the application simulation framerate.
+        gfxInitParams.numMeshes = 1024;
+        gfxInitParams.numMaterials = 1024;
+        gfxInitParams.numTextures = 256;
+        gfxInitParams.numAnimations = 256;
+        gfxInitParams.numLights = 64;
+        gfxInitParams.numModelSets = 64;
+        
+        cinek::gfx::Context gfxContext(gfxInitParams);
+        
+        //  Application
         //
-        while (lagSecsSim >= kSecsPerSimFrame)
-        {
-            controller.simulateFrame(kSecsPerSimFrame);
+        cinek::PrototypeApplication controller(gfxContext, shaderPrograms, shaderUniforms,
+                                               nvg);
 
-            lagSecsSim -= kSecsPerSimFrame;
-            simTime += kSecsPerSimFrame;
+        const double kSimFPS = 60.0;
+        const double kSecsPerSimFrame = 1/kSimFPS;
+        
+        double simTime = 0.0;
+        double lagSecsSim = 0.0;
+        
+        uint32_t systemTimeMs = SDL_GetTicks();
+        bool running = true;
+        
+        cinek::ove::InputState polledInputState;
+        
+        while (running) {
+            uint32_t nextSystemTimeMs = SDL_GetTicks();
+            int32_t frameTimeMs = nextSystemTimeMs - systemTimeMs;
+            systemTimeMs = nextSystemTimeMs;
             
-            //  diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
+            controller.beginFrame();
+            
+            //  TODO: Lag should not be incremented while Sim is Paused
+            double frameTime = frameTimeMs*0.001;
+            lagSecsSim += frameTime;
+        
+            ////////////////////////////////////////////////////////////////////////
+            //  SIMULATION START (using a fixed timestep)
+            //      All subsystems driven by the application simulation framerate.
+            //
+            while (lagSecsSim >= kSecsPerSimFrame)
+            {
+                controller.simulateFrame(kSecsPerSimFrame);
+
+                lagSecsSim -= kSecsPerSimFrame;
+                simTime += kSecsPerSimFrame;
+                
+                //  diagnostics.incrementRateGauge(Diagnostics::kFrameRate_Update);
+            }
+            //
+            //  SIMULATION END
+            ////////////////////////////////////////////////////////////////////////
+
+            if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
+                running = false;
+            
+            uiBeginLayout();
+            controller.renderFrame(frameTime, viewRect, polledInputState);
+            uiEndLayout();
+
+            cinek::uicore::render(nvg, viewRect);
+        
+            uiProcess(systemTimeMs);
+            
+            controller.endFrame();
+            
+            bgfx::frame();
         }
-        //
-        //  SIMULATION END
-        ////////////////////////////////////////////////////////////////////////
-
-        if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
-            running = false;
-        
-        uiBeginLayout();
-        controller.renderFrame(frameTime, viewRect, polledInputState);
-        uiEndLayout();
-
-        cinek::uicore::render(nvg, viewRect);
-    
-        uiProcess(systemTimeMs);
-        
-        controller.endFrame();
-        
-        bgfx::frame();
     }
-
+    
     cinek::uicore::destroyRenderingContext(nvg);
     
     return 0;

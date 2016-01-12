@@ -770,6 +770,12 @@ void nvgUpdateImage(NVGcontext* ctx, int image, const unsigned char* data)
 	ctx->params.renderUpdateTexture(ctx->params.userPtr, image, 0,0, w,h, data);
 }
 
+// Added by Samir Sinha (1/11/2016) - bind backend-compatible texture to an nvgImage context.
+int nvgCreateImageFromBackendTexture(NVGcontext* ctx, int w, int h, int type, void* handle)
+{
+    return ctx->params.renderBindTexture(ctx->params.userPtr, w, h, type, handle);
+}
+
 void nvgImageSize(NVGcontext* ctx, int image, int* w, int* h)
 {
 	ctx->params.renderGetTextureSize(ctx->params.userPtr, image, w, h);
