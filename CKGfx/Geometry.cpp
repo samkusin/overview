@@ -270,12 +270,14 @@ namespace MeshBuilder
         PrimitiveType primType
     )
     {
+        IndexType baseIndex = state.indexCount;
+        
         //  split into primitives
         if (primType == PrimitiveType::kTriangles) {
             //  bottom first
             int32_t stack = 0;
             for (int32_t slice = 0; slice < sliceCnt-1; ++slice) {
-                IndexType i0 = (IndexType)(stack * sliceCnt + slice);
+                IndexType i0 = baseIndex + (IndexType)(stack * sliceCnt + slice);
                 state.triangle<IndexType>(i0, i0+sliceCnt+1, i0+sliceCnt);
 //              printf("(%u,%u,%u)\n", i0, i0+sliceCnt+1, i0+sliceCnt);
             }
@@ -284,7 +286,7 @@ namespace MeshBuilder
             
             for (; stack < stackCnt-2; ++stack) {
                 for (int32_t slice = 0; slice < sliceCnt-1; ++slice) {
-                    IndexType i0 = (IndexType)(stack * sliceCnt + slice);
+                    IndexType i0 = baseIndex + (IndexType)(stack * sliceCnt + slice);
                     state.triangle<IndexType>(i0, i0+1, i0+sliceCnt+1);
                     state.triangle<IndexType>(i0, i0+sliceCnt+1, i0+sliceCnt);
 //                  printf("(%u,%u,%u)\n", i0, i0+1, i0+sliceCnt+1);
@@ -294,7 +296,7 @@ namespace MeshBuilder
             }
             //  top last
             for (int32_t slice = 0; slice < sliceCnt-1; ++slice) {
-                IndexType i0 =  (IndexType)(stack * sliceCnt + slice);
+                IndexType i0 = baseIndex + (IndexType)(stack * sliceCnt + slice);
                 state.triangle<IndexType>(i0, i0+1, i0+sliceCnt);
 //              printf("(%u,%u,%u)\n", i0, i0+1, i0+sliceCnt);
             }
@@ -308,7 +310,7 @@ namespace MeshBuilder
             //
             int32_t stack = 0;
             for (int32_t slice = 0; slice < sliceCnt-1; ++slice) {
-                IndexType i0 = (IndexType)(stack * sliceCnt + slice);
+                IndexType i0 = baseIndex + (IndexType)(stack * sliceCnt + slice);
                 state.line<IndexType>(i0, i0+sliceCnt+1);
                 state.line<IndexType>(i0+sliceCnt+1, i0+sliceCnt);
                 state.line<IndexType>(i0+sliceCnt, i0);
@@ -318,7 +320,7 @@ namespace MeshBuilder
             
             for (; stack < stackCnt-2; ++stack) {
                 for (int32_t slice = 0; slice < sliceCnt-1; ++slice) {
-                    IndexType i0 = (IndexType)(stack * sliceCnt + slice);
+                    IndexType i0 = baseIndex + (IndexType)(stack * sliceCnt + slice);
                     state.line<IndexType>(i0, i0+1);
                     state.line<IndexType>(i0+1, i0+sliceCnt+1);
                     state.line<IndexType>(i0+sliceCnt+1, i0+sliceCnt);
@@ -327,7 +329,7 @@ namespace MeshBuilder
             }
             //  top last
             for (int32_t slice = 0; slice < sliceCnt-1; ++slice) {
-                IndexType i0 =  (IndexType)(stack * sliceCnt + slice);
+                IndexType i0 = baseIndex + (IndexType)(stack * sliceCnt + slice);
                 state.line<IndexType>(i0, i0+1);
                 state.line<IndexType>(i0+1, i0+sliceCnt);
                 state.line<IndexType>(i0+sliceCnt, i0);
