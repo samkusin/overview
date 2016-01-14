@@ -265,13 +265,12 @@ namespace MeshBuilder
     void buildUVSphereIndices
     (
         BuilderState& state,
+        IndexType baseIndex,
         int32_t stackCnt,
         int32_t sliceCnt,
         PrimitiveType primType
     )
     {
-        IndexType baseIndex = state.indexCount;
-        
         //  split into primitives
         if (primType == PrimitiveType::kTriangles) {
             //  bottom first
@@ -356,6 +355,8 @@ namespace MeshBuilder
         Counts space = calculateUVSphereCounts(stackCnt, sliceCnt, primType);
         CK_ASSERT_RETURN_VALUE(state.hasSpaceFor(space), state);
       
+        uint32_t baseIndex = state.vertexCount;
+        
         //  stacks
         const float kStackFraction = 1.0f/(stackCnt-1);
         const float kSliceFraction = 1.0f/(sliceCnt-1);
@@ -387,10 +388,12 @@ namespace MeshBuilder
         
         //  split into primitives
         if (state.indexType == VertexTypes::kIndex16) {
-            buildUVSphereIndices<uint16_t>(state, stackCnt, sliceCnt, primType);
+            buildUVSphereIndices<uint16_t>(state, (uint16_t)baseIndex,
+                stackCnt, sliceCnt, primType);
         }
         else {
-            buildUVSphereIndices<uint32_t>(state, stackCnt, sliceCnt, primType);
+            buildUVSphereIndices<uint32_t>(state, baseIndex,
+                stackCnt, sliceCnt, primType);
         }
         return state;
     }
