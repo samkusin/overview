@@ -65,7 +65,7 @@ public:
     /// Starts a frame - which is an encompassing region designed to act as an
     /// Event subscriber for views, or as a container for other ui items.
     ///
-    Layout& beginFrame(int id, unsigned int eventFlags, FrameHandler* frameHandler,
+    Layout& beginFrame(unsigned int eventFlags, FrameState* frameState,
                        RenderCallback renderCb=nullptr, void* cbContext=nullptr);
     ///
     /// Starts a horizontal group of ui widgets - used for grouping.
@@ -101,7 +101,7 @@ public:
     ///
     Layout& listbox(DataProvider* dataProvider, int providerId,
                     ListboxType lbtype,
-                    int* selected,
+                    ListboxState* state,
                     const Style* style=nullptr);
     ///
     /// Completes a layout group (frame, column)

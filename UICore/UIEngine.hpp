@@ -36,10 +36,9 @@ struct OUIHeader
 struct OUIFrame
 {
     OUIHeader header;
-    int id;
-    FrameHandler* frameHandler;
-    RenderCallback renderCb;
-    void* callbackContext;
+    FrameState* state;          /* reported back to controller */
+    RenderCallback renderCb;    /* custom rendering callback */
+    void* callbackContext;      /* custom rendering callback context */
     
     static void handler(int item, UIevent event);
 };
@@ -68,11 +67,9 @@ struct OUIListBoxData
     DataProvider* provider;
     int32_t providerId;     /* Data provider object and ID */
     UIvec2 viewAnchor;      /* Used for scrolling */
-    int32_t *selected;      /* what data object is active (selected) */
-    int32_t hover;          /* what data object is in the hover state */
+    ListboxState* state;    /* State accessible by the controller */
     
     static void handler(int item, UIevent event);
-    
 };
 
 } /* namespace uicore */ } /* namespace cinek */

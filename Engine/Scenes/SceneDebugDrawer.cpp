@@ -98,8 +98,7 @@ void SceneDebugDrawer::flushLines()
         bgfx::TransientVertexBuffer linesTVB;
         bgfx::TransientIndexBuffer linesTIB;
         
-        gfx::Matrix4 mainTransform;
-        bx::mtxIdentity(mainTransform);
+        gfx::Matrix4 mainTransform = gfx::Matrix4::kIdentity;
         
          //  draw line buffer
         const bgfx::VertexDecl& vertexDecl =
@@ -117,7 +116,7 @@ void SceneDebugDrawer::flushLines()
         }
         
         gfx::Vector3* vertices = reinterpret_cast<gfx::Vector3*>(linesTVB.data);
-        uint16_t* indices = reinterpret_cast<uint16_t*>(linesTIB.data);
+        uint16_t* sindices = reinterpret_cast<uint16_t*>(linesTIB.data);
         uint16_t vidx = 0;
         for (auto it = _lineBuffer.begin(); it != _lineBuffer.end(); ++it) {
             auto& line = *it;
@@ -129,8 +128,8 @@ void SceneDebugDrawer::flushLines()
             vertices->y = line.second.getY();
             vertices->z = line.second.getZ();
             ++vertices;
-            *(indices++) = vidx++;
-            *(indices++) = vidx++;
+            *(sindices++) = vidx++;
+            *(sindices++) = vidx++;
         }
 
         //  simple flat shader for lines

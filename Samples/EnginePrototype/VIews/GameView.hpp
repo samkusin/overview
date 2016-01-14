@@ -25,7 +25,7 @@
 
 namespace cinek {
 
-class GameView : public AppViewController, uicore::DataProvider, uicore::FrameHandler
+class GameView : public AppViewController, uicore::DataProvider
 {
 public:
     GameView(const ApplicationContext& context);
@@ -47,14 +47,10 @@ private:
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
                          const ove::InputState& inputState) override;
     
-
     //  DataProvider
     virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col,
         uicore::DataObject& data) override;
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
-    
-    //  FrameHandler
-    virtual void onUIFrameEvent(int id, const uicore::FrameEvent& evt) override;
     
 private:
     gfx::NodeRenderer _renderer;
@@ -65,15 +61,13 @@ private:
 private:
     enum
     {
-        kUIEvtId_GameView
-    };
-    
-    enum
-    {
         kUIProviderId_EntityTemplates
     };
     
     bool _shiftModifierAction;
+    bool _displayTemplateSelector;
+    
+    uicore::FrameState _sceneFrameState;
     
     //  Node graph to render to our dedicated
     unique_ptr<gfx::NodeGraph> _modelStageGraph;
@@ -88,12 +82,13 @@ private:
     
     std::vector<EntityTemplateUIData> _entityTemplateUIList;
     gfx::MultiTextureRenderTarget _defaultEntityTemplateRT;
-    int _selectedEntityTemplateIndex;
+    uicore::ListboxState _entityTemplateListboxState;
 
     void addEntityTemplateUIData(std::string name, const JsonValue& entityTemplate);
     
 private:
     gfx::Mesh _testQuadMesh;
+    gfx::Mesh _testSphereMesh;
 
     void test1();
 };

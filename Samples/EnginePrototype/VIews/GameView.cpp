@@ -26,8 +26,9 @@ GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
     _sceneLoaded(false),
     _shiftModifierAction(false),
-    _selectedEntityTemplateIndex(-1)
+    _displayTemplateSelector(false)
 {
+    _entityTemplateListboxState.highlightItem = -1;
 }
 
     
@@ -98,12 +99,13 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
     _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
     
+    test1();
+    
     //  load scene
     assetService().loadManifest("scenes/apartment.json",
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
             sceneService().initialize(manifest);
-            entityService().createEntity(0, "entity", "test_bot");
-            test1();
+            entityService().createEntity(kEntityStore_Default, "entity", "test_bot");
             _sceneLoaded = true;
         });
 }
@@ -139,31 +141,43 @@ void GameView::frameUpdateView
     if (!_sceneLoaded)
         return;
     
+    //  handle keyboard inputs - shortcuts
     _shiftModifierAction = inputState.testKeyMod(KMOD_SHIFT);
     
+    if (_shiftModifierAction) {
+        if (inputState.testKey(SDL_SCANCODE_A)) {
+            _displayTemplateSelector = true;
+        }
+    }
+    
+    
+    //  layout UI
     uicore::Layout::Style style;
     style.mask = uicore::Layout::Style::has_margins;
     style.margins = { 8, 8, 8, 8 };
     
-    //  generate UI
     uicore::Layout uiLayout;
     auto frameWidth = renderService().getViewRect().w;
     auto frameHeight = renderService().getViewRect().h;
-    uiLayout.beginFrame(kUIEvtId_GameView, UI_BUTTON0_DOWN, this, viewUIRenderHook, this)
-        .setSize(frameWidth, frameHeight)
-        .beginColumn()
+    uiLayout.beginFrame(UI_BUTTON0_DOWN, &_sceneFrameState, viewUIRenderHook, this)
+        .setSize(frameWidth, frameHeight);
+    
+    if (_displayTemplateSelector) {
+        uiLayout.beginColumn()
             .setLayout(UI_RIGHT | UI_VCENTER)
             .setSize(frameWidth/5, frameHeight*3/4)
             .beginWindow()
-                .button(kUIEvtId_GameView, nullptr, -1, "Start", &style)
                 .listbox(this, kUIProviderId_EntityTemplates,
                     uicore::ListboxType::kList,
-                    &_selectedEntityTemplateIndex,
+                    &_entityTemplateListboxState,
                     &style)
             .end()
-        .end()
-    .end();
+        .end();
+    }
     
+    uiLayout.end();
+    
+    //  update camera
     _camera.near = 0.1f;
     _camera.far = 1000.0f;
     _camera.fovDegrees = 60.0f;
@@ -193,51 +207,114 @@ void GameView::frameUpdateView
     
     sceneService().renderDebugEnd();
     
-    /*
+    
     bgfx::setViewRect(0, _camera.viewportRect.x, _camera.viewportRect.y,
         _camera.viewportRect.w, _camera.viewportRect.h);
+    bgfx::setViewTransform(0, _camera.viewMtx, _camera.projMtx);
     
-    gfx::Color4 color { 1.0f, 1.0f, 1.0f, 1.0f };
-    gfx::Vector4 param { 0.0f, 0.0f, 0.0f, 0.0f };
+    gfx::Matrix4 mainTransform;
+    bx::mtxTranslate(mainTransform, 0.0f, 4.0f, 15.0f);
     
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
-    
-    bgfx::setTexture(0, renderService().bgfxUniformHandle(gfx::kNodeUniformTexDiffuse),
-        _testTarget.texture()->bgfxHandle());
+    if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kTriangles) {
+        /*
+        bgfx::setTexture(0, renderService().bgfxUniformHandle(gfx::kNodeUniformTexDiffuse),
+            _testTarget.texture()->bgfxHandle());
+        */
+        gfx::Color4 color[2] {
+            { 1.0f, 1.0f, 1.0f, 1.0f },
+            { 1.0f, 1.0f, 1.0f, 1.0f }
+        };
+        gfx::Vector4 param[2] {
+            { 0.0f, 0.0f, 0.0f, 0.0f },
+            { 0.0f, 0.0f, 0.0f, 0.0f }
+        };
+        
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
+        
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightColor), color, 2);
 
-    gfx::Matrix4 worldTransform;
-    bx::mtxSRT(worldTransform, 1, 1, 1, 0, 0, 0, 0, 6.0f, 2.0f);
-    
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightColor), color);
-    
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightDir), param);
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param);
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param);
-    param = { 1.0f, 0, 0, 0 };
-    bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightParam), param);
+        param[0] = { 0.10f, 0, 0, 0 };
+        param[1] = { 0.0f, 1.0f, 0, 0 };
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightParam), param, 2);
 
-    bgfx::setVertexBuffer(_testQuadMesh.vertexBuffer());
-    bgfx::setIndexBuffer(_testQuadMesh.indexBuffer());
-    
-    bgfx::setTransform(worldTransform);
-    
-      
-    bgfx::setState(0
-                    | BGFX_STATE_RGB_WRITE
-                    | BGFX_STATE_ALPHA_WRITE
-                    | BGFX_STATE_DEPTH_WRITE
-                    | BGFX_STATE_DEPTH_TEST_LESS
-                    | BGFX_STATE_MSAA
-                    | BGFX_STATE_CULL_CW
-                    );
+        param[0] = { 0,0,0,0 };
+        param[1] = { -1, -1, 0, 0 };
+        bx::vec3Norm(param[1], param[1]);
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightDir), param, 2);
+        
+        param[0] = { 0,0,0,0 };
+        param[1] = { 0,0,0,0 };
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param, 2);
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param, 2);
 
-    bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramMesh));
-    */
+        bgfx::setTransform(mainTransform);
+    
+        /*
+        bgfx::setVertexBuffer(_testQuadMesh.vertexBuffer());
+        bgfx::setIndexBuffer(_testQuadMesh.indexBuffer());
+        
+        
+        bgfx::setState(0
+                        | BGFX_STATE_RGB_WRITE
+                        | BGFX_STATE_ALPHA_WRITE
+                        | BGFX_STATE_DEPTH_WRITE
+                        | BGFX_STATE_DEPTH_TEST_LESS
+                        | BGFX_STATE_MSAA
+                        | BGFX_STATE_CULL_CW
+                        );
+
+        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramMesh));
+        */
+        
+        bgfx::setVertexBuffer(_testSphereMesh.vertexBuffer());
+        bgfx::setIndexBuffer(_testSphereMesh.indexBuffer());
+        
+        bgfx::setState(
+            BGFX_STATE_RGB_WRITE
+          | BGFX_STATE_ALPHA_WRITE
+          | BGFX_STATE_DEPTH_WRITE
+          | BGFX_STATE_DEPTH_TEST_LESS
+          | BGFX_STATE_MSAA
+          | BGFX_STATE_CULL_CW
+        );
+        
+        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramFlatMesh));
+    }
+    else if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kLines) {
+        gfx::Color4 color { 1,1,1,1 };
+        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
+        
+        bgfx::setTransform(mainTransform);
+        
+        bgfx::setVertexBuffer(_testSphereMesh.vertexBuffer());
+        bgfx::setIndexBuffer(_testSphereMesh.indexBuffer());
+        
+        bgfx::setState(
+            BGFX_STATE_RGB_WRITE
+          | BGFX_STATE_ALPHA_WRITE
+          | BGFX_STATE_DEPTH_WRITE
+          | BGFX_STATE_DEPTH_TEST_LESS
+          | BGFX_STATE_MSAA
+          | BGFX_STATE_PT_LINES
+        );
+        
+        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramFlat));
+    }
 }
 
 void GameView::onViewEndFrame(ove::ViewStack& stateController)
 {
+    if (_displayTemplateSelector) {
+        if (_entityTemplateListboxState.selected()) {
+            _displayTemplateSelector = false;
+            
+            //  create staging entity with specified template
+            //      create entity with the staging store
+            //      place at the current cursor 
+            
+        }
+    }
 }
 
 const char* GameView::viewId() const
@@ -322,8 +399,8 @@ void GameView::addEntityTemplateUIData
     
     _entityTemplateUIList.emplace_back(std::move(data));
     
-    if (_selectedEntityTemplateIndex < 0) {
-        _selectedEntityTemplateIndex = (int)(_entityTemplateUIList.size() - 1);
+    if (_entityTemplateListboxState.highlightItem < 0) {
+        _entityTemplateListboxState.highlightItem = (int)(_entityTemplateUIList.size() - 1);
     }
 }
 
@@ -359,22 +436,14 @@ uint32_t GameView::onUIDataItemRowCountRequest(int id)
     return 0;
 }
 
-
-void GameView::onUIFrameEvent(int id, const uicore::FrameEvent& evt)
-{
-    //  frame's region is the same as the camera viewport
-    if (id == kUIEvtId_GameView) {
-        if (evt.evtType == UI_BUTTON0_DOWN) {
-           
-        }
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////
 
 void GameView::test1()
 {
-    _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0);
+    _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0,
+        gfx::PrimitiveType::kTriangles);
+    _testSphereMesh = gfx::createUVSphere(4.0f, 64, 128, gfx::VertexTypes::kVPositionNormal,
+        gfx::PrimitiveType::kTriangles);
 }
 
 } /* namespace cinek */

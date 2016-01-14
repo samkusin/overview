@@ -8,6 +8,8 @@
 
 #include "VertexTypes.hpp"
 
+#include <bgfx/bgfx.h>
+
 namespace cinek {
     namespace gfx {
     

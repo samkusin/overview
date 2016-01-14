@@ -27,11 +27,8 @@ void OUIFrame::handler(int item, UIevent event)
 {
     OUIFrame* frame = reinterpret_cast<OUIFrame*>(uiGetHandle(item));
     
-    if (frame->frameHandler) {
-        FrameEvent outEvent;
-        outEvent.evtType = event;
-        outEvent.item = item;
-        frame->frameHandler->onUIFrameEvent(frame->id, outEvent);
+    if (frame->state) {
+        frame->state->evtType = event;
     }
 }
 
@@ -48,9 +45,15 @@ void OUIButtonData::handler(int item, UIevent event)
 void OUIListBoxData::handler(int item, UIevent event)
 {
     OUIListBoxData* lb = reinterpret_cast<OUIListBoxData*>(uiGetHandle(item));
-    if (lb) {
-        if (event == UI_BUTTON0_DOWN && lb->hover >= 0) {
-            *lb->selected = lb->hover;
+    if (lb && lb->state) {
+        ListboxState* state = lb->state;
+        if (event == UI_BUTTON0_DOWN) {
+            if (state->hoverItem >= 0) {
+                state->highlightItem = state->hoverItem;
+            }
+            if (uiGetClicks() > 1 && state->highlightItem == state->hoverItem) {
+                state->selectedItem = state->highlightItem;
+            }
         }
     }
 }

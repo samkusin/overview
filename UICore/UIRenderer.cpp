@@ -159,7 +159,7 @@ static void renderListbox
                         rowDim.x = cellMargins.l + cellWidth + cellMargins.r;
                         rowDim.y = cellMargins.t + cellHeight + cellMargins.b;
                         
-                        if (row == *lbcontext->selected) {
+                        if (row == lbcontext->state->highlightItem) {
                             nvgBeginPath(nvg);
                             nvgFillColor(nvg, nvgRGBA(191, 116, 40, 255));
                             nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
@@ -167,15 +167,18 @@ static void renderListbox
                                 kCornerRadius);
                             nvgFill(nvg);
                         }
-                        else if (mouse.y < cellOrigin.y + rowDim.y && mouse.y >= cellOrigin.y &&
-                                 mouse.x < cellOrigin.x + rowDim.x && mouse.x >= cellOrigin.x) {
-                            nvgBeginPath(nvg);
-                            nvgFillColor(nvg, nvgRGBA(96, 96, 96, 255));
-                            nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
-                                rmargin-lmargin, cellMargins.t + cellHeight + cellMargins.b,
-                                kCornerRadius);
-                            nvgFill(nvg);
-                            lbcontext->hover = (int)row;
+                        
+                        if (mouse.y < cellOrigin.y + rowDim.y && mouse.y >= cellOrigin.y &&
+                            mouse.x < cellOrigin.x + rowDim.x && mouse.x >= cellOrigin.x) {
+                            if (row != lbcontext->state->highlightItem) {
+                                nvgBeginPath(nvg);
+                                nvgFillColor(nvg, nvgRGBA(96, 96, 96, 255));
+                                nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
+                                    rmargin-lmargin, cellMargins.t + cellHeight + cellMargins.b,
+                                    kCornerRadius);
+                                nvgFill(nvg);
+                            }
+                            lbcontext->state->hoverItem = (int)row;
                         }
                         
                         //printf("%d,%d\n", mouse.x, mouse.y);

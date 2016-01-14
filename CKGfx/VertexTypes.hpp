@@ -11,8 +11,9 @@
 
 #include "GfxTypes.hpp"
 
-#include <bgfx/bgfx.h>
-#include <bx/fpumath.h>
+namespace bgfx {
+    struct VertexDecl;
+}
 
 namespace cinek {
     namespace gfx {

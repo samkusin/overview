@@ -15,6 +15,17 @@
 
 namespace cinek {
     namespace gfx {
+    
+namespace MeshBuilder {
+    struct BuilderState;
+}
+
+enum class PrimitiveType
+{
+    kUndefined,
+    kTriangles,
+    kLines
+};
 
 class Context;
 class Texture;

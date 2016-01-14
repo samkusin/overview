@@ -8,8 +8,11 @@
 
 #include "ModelJsonSerializer.hpp"
 #include "Context.hpp"
+#include "Geometry.hpp"
 
 #include <cinek/debug.h>
+#include <bx/fpumath.h>
+
 #include <vector>
 
 namespace cinek {
@@ -379,12 +382,13 @@ Mesh loadMeshFromJSON
     
     MeshBuilder::BuilderState meshBuilder;
     
-    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
-    meshBuilder.indexLimit = triangles.Size() * 3;
-    meshBuilder.indexType = VertexTypes::kIndex16;
-    meshBuilder.vertexLimit = vertices.Size();
+    int32_t indexLimit = (int)triangles.Size() * 3;
+    CK_ASSERT(indexLimit <= UINT16_MAX);
     
-    MeshBuilder::create(meshBuilder);
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.indexType = VertexTypes::kIndex16;
+    
+    MeshBuilder::create(meshBuilder, { (int)vertices.Size(), indexLimit });
     
     JsonValue::ConstValueIterator vertexIt = vertices.Begin();
     JsonValue::ConstValueIterator normalIt = nullptr;
@@ -440,7 +444,8 @@ Mesh loadMeshFromJSON
     
     return Mesh(vertexType, meshBuilder.indexType,
                     meshBuilder.vertexMemory,
-                    meshBuilder.indexMemory);
+                    meshBuilder.indexMemory,
+                    PrimitiveType::kTriangles);
 }
 
 Material loadMaterialFromJSON(Context& context, const JsonValue& root)

@@ -62,9 +62,8 @@ Layout::~Layout()
 
 Layout& Layout::beginFrame
 (
-    int id,
     unsigned int eventFlags,
-    FrameHandler* frameHandler,
+    FrameState* frameState,
     RenderCallback renderCb,
     void* context
 )
@@ -82,10 +81,10 @@ Layout& Layout::beginFrame
     );
     data->header.itemType = OUIItemType::frame;
     data->header.handler = OUIFrame::handler;
-    data->id = id;
-    data->frameHandler = frameHandler;
     data->renderCb = renderCb;
     data->callbackContext = context;
+    data->state = frameState;
+    data->state->evtType = UI_EVENT_NULL;
     
     return *this;
 }
@@ -183,7 +182,7 @@ Layout& Layout::listbox
     DataProvider* dataProvider,
     int id,
     ListboxType lbtype,
-    int* selected,
+    ListboxState* state,
     const Style* style
 )
 {
@@ -203,8 +202,8 @@ Layout& Layout::listbox
     data->providerId = id;
     data->lbtype = lbtype;
     data->viewAnchor = { 0, 0 };
-    data->selected = selected;
-    data->hover = -1;
+    data->state = state;
+    data->state->init();
     
     
     uiInsert(_topItem, item);

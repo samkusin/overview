@@ -366,15 +366,24 @@ void NodeRenderer::renderMeshElement
         bgfx::setTransform(worldTransform);
     }
 
+    auto state = BGFX_STATE_RGB_WRITE
+        | BGFX_STATE_ALPHA_WRITE
+        | BGFX_STATE_DEPTH_WRITE
+        | BGFX_STATE_DEPTH_TEST_LESS
+        | BGFX_STATE_MSAA;
     
-    bgfx::setState(0
-						| BGFX_STATE_RGB_WRITE
-						| BGFX_STATE_ALPHA_WRITE
-						| BGFX_STATE_DEPTH_WRITE
-						| BGFX_STATE_DEPTH_TEST_LESS
-						| BGFX_STATE_MSAA
-                        | BGFX_STATE_CULL_CW
-						);
+    
+    if (mesh->primitiveType() == PrimitiveType::kTriangles) {
+        state |= BGFX_STATE_CULL_CW;
+    }
+    else if (mesh->primitiveType() == PrimitiveType::kLines) {
+        state |= BGFX_STATE_PT_LINES;
+    }
+    else {
+        CK_ASSERT(false);
+    }
+    
+    bgfx::setState(state);
 
     bgfx::submit(_camera->viewIndex, programs[programSlot]);
 }

@@ -56,15 +56,34 @@ struct Box
     int t, r, b, l;
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
-//  UI Subscriber class
+//  UI State Data (for imgui-like query)
 
-struct FrameEvent
+struct ListboxState
+{
+    int highlightItem;          // Item currently highlighted
+    int hoverItem;              // Item in the hover state (reset when laying out)
+    int selectedItem;           // Item selected (reset when laying out)
+    
+    void init() {
+        hoverItem = -1;
+        selectedItem = -1;
+    }
+    
+    bool selected() const {
+        return selectedItem != -1 && highlightItem == selectedItem;
+    }
+};
+
+struct FrameState
 {
     int item;
     UIevent evtType;
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  UI Subscriber class
 
 
 //  Used for UI items that require data from the application (i.e. lists )
@@ -131,13 +150,6 @@ public:
     virtual ~ButtonHandler() {}
     
     virtual void onUIButtonHit(int id) = 0;
-};
-
-class FrameHandler
-{
-public:
-    virtual ~FrameHandler() {}
-    virtual void onUIFrameEvent(int id, const FrameEvent& evt) = 0;
 };
 
 typedef void (*RenderCallback)(void* context, NVGcontext* nvg);
