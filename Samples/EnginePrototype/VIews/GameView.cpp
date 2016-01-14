@@ -12,6 +12,7 @@
 #include "UICore/UIBuilder.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
+#include "CKGfx/Geometry.hpp"
 #include "CKGfx/External/nanovg/nanovg.h"
 
 #include <ckjson/json.hpp>
@@ -213,7 +214,7 @@ void GameView::frameUpdateView
     bgfx::setViewTransform(0, _camera.viewMtx, _camera.projMtx);
     
     gfx::Matrix4 mainTransform;
-    bx::mtxTranslate(mainTransform, 0.0f, 4.0f, 15.0f);
+    bx::mtxTranslate(mainTransform, 0.0f, 4.0f, 0.0f);
     
     if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kTriangles) {
         /*
@@ -442,8 +443,32 @@ void GameView::test1()
 {
     _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0,
         gfx::PrimitiveType::kTriangles);
-    _testSphereMesh = gfx::createUVSphere(4.0f, 64, 128, gfx::VertexTypes::kVPositionNormal,
-        gfx::PrimitiveType::kTriangles);
+    
+    gfx::MeshBuilder::BuilderState cursorBuilder;
+    cursorBuilder.vertexDecl = &gfx::VertexTypes::declaration(gfx::VertexTypes::kVPosition);
+    cursorBuilder.indexType = gfx::VertexTypes::Index::kIndex16;
+    
+    gfx::MeshBuilder::Counts counts =
+        gfx::MeshBuilder::calculateUVSphereCounts(7, 14, gfx::PrimitiveType::kLines);
+    counts.vertexCount += 2;
+    counts.indexCount += 2;
+    
+    gfx::MeshBuilder::create(cursorBuilder, counts);
+    gfx::MeshBuilder::buildUVSphere(cursorBuilder, 0.1f, 7, 14, gfx::PrimitiveType::kLines);
+    
+    uint16_t i0 = cursorBuilder.vertexCount;
+    cursorBuilder.position({ 0,0,0 });
+    cursorBuilder.next();
+    cursorBuilder.position({ 0,0.5,0 });
+    cursorBuilder.next();
+    cursorBuilder.line<uint16_t>(i0, i0+1);
+    
+    _testSphereMesh = std::move(
+        gfx::Mesh(gfx::VertexTypes::kVPosition, cursorBuilder.indexType,
+            cursorBuilder.vertexMemory,
+            cursorBuilder.indexMemory,
+            gfx::PrimitiveType::kLines)
+    );
 }
 
 } /* namespace cinek */
