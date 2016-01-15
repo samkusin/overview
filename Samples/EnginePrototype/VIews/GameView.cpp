@@ -26,6 +26,7 @@ namespace cinek {
 GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
     _sceneLoaded(false),
+    _mode(EditorMode::kNull),
     _stagedEntity(0),
     _shiftModifierAction(false),
     _displayTemplateSelector(false)
@@ -194,25 +195,18 @@ void GameView::frameUpdateView
     gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
     gfx::Vector3 pos = _camera.worldPosition();
     
-    ove::SceneRayTestResult rayTestResult = sceneService().rayTestClosest(
+    ove::SceneRayTestResult mouseHitTestResult = sceneService().rayTestClosest(
         { pos.x, pos.y, pos.z },
         { dir.x , dir.y, dir.z },
         100.0f);
     
     //  Editor Live Actions based on mouse position and editing state
-    if (_stagedEntity && rayTestResult && rayTestResult.entity != _stagedEntity) {
-        if (!rayTestResult.normal.fuzzyZero()) {
-            sceneService().setEntityPosition(_stagedEntity,
-                rayTestResult.position,
-                rayTestResult.normal);
-        }
-    }
-    
+    updateStagedEntity(mouseHitTestResult);
     
     //  RENDERING
     sceneService().renderDebugStart(renderService(), _camera);
     
-    sceneService().renderDebugAddRayTestHit(rayTestResult,
+    sceneService().renderDebugAddRayTestHit(mouseHitTestResult,
         { pos.x, pos.y, pos.z }, 0.1f, false);
     
     renderService().renderNode(_renderer, sceneService().getGfxRootNode(), _camera);
@@ -229,10 +223,8 @@ void GameView::onViewEndFrame(ove::ViewStack& stateController)
         if (_entityTemplateListboxState.selected()) {
             _displayTemplateSelector = false;
             
-            //  create staging entity with specified template
-            //      create entity with the staging store
-            //      place at the current cursor 
-            _stagedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
+            createAndStageEntity(kEntityStore_Staging,
+                "entity",
                 _entityTemplateUIList[_entityTemplateListboxState.selectedItem].name);
         }
     }
@@ -241,6 +233,36 @@ void GameView::onViewEndFrame(ove::ViewStack& stateController)
 const char* GameView::viewId() const
 {
     return "GameView";
+}
+
+void GameView::createAndStageEntity
+(
+    EntityContextType storeId,
+    const std::string &ns,
+    const std::string &name
+)
+{
+    //  create staging entity with specified template
+    //      create entity with the staging store
+    _stagedEntity = entityService().createEntity(kEntityStore_Staging, ns, name);
+}
+
+void GameView::updateStagedEntity(const ove::SceneRayTestResult& hitResult)
+{
+    if (!_stagedEntity || !hitResult)
+        return;
+    
+    if (hitResult.entity != _stagedEntity) {
+        if (!hitResult.normal.fuzzyZero()) {
+            sceneService().setEntityPosition(_stagedEntity,
+                hitResult.position,
+                hitResult.normal);
+        }
+    }
+}
+
+void GameView::unstageEntity(UnstageOption option)
+{
 }
 
 ////////////////////////////////////////////////////////////////////////

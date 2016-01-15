@@ -58,13 +58,29 @@ private:
     ove::FreeCameraController _freeCameraController;
     bool _sceneLoaded;
     
-
-    
 private:
     enum
     {
         kUIProviderId_EntityTemplates
     };
+    
+    enum class EditorMode
+    {
+        kNull,
+        kIdle,
+        kPlaceEntity
+    };
+
+    void createAndStageEntity(EntityContextType storeId,
+        const std::string& ns, const std::string& name);
+    
+    enum class UnstageOption { kPlace, kDiscard };
+    void unstageEntity(UnstageOption option);
+    
+    void updateStagedEntity(const ove::SceneRayTestResult& hitResult);
+    
+private:
+    EditorMode _mode;
     
     bool _shiftModifierAction;
     bool _displayTemplateSelector;
