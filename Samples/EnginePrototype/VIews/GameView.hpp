@@ -57,7 +57,9 @@ private:
     gfx::Camera _camera;
     ove::FreeCameraController _freeCameraController;
     bool _sceneLoaded;
+    
 
+    
 private:
     enum
     {
@@ -79,10 +81,12 @@ private:
         std::string name;
         std::string longname;
     };
-    
     std::vector<EntityTemplateUIData> _entityTemplateUIList;
     gfx::MultiTextureRenderTarget _defaultEntityTemplateRT;
+    
+    //  used for staging an entity for placement into the active scene
     uicore::ListboxState _entityTemplateListboxState;
+    Entity _stagedEntity;
 
     void addEntityTemplateUIData(std::string name, const JsonValue& entityTemplate);
     
@@ -91,6 +95,7 @@ private:
     gfx::Mesh _testSphereMesh;
 
     void test1();
+    void test2();
 };
 
 } /* namespace cinek */

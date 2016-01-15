@@ -45,6 +45,13 @@ public:
     SceneRayTestResult rayTestClosest(const btVector3& origin, const btVector3& dir,
                                       btScalar dist) const;
     
+    //  useful for switching between "running" and "editor" modes
+    void disableSimulation();
+    void enableSimulation();
+    bool isSimulationRunning() const;
+    
+    //  modify entity properties
+    void setEntityPosition(Entity entity, const btVector3& pos, btVector3 up);
     
     //  debug methods
     void renderDebugStart(RenderService &renderService, const gfx::Camera& camera);

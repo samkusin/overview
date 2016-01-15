@@ -26,6 +26,7 @@ namespace cinek {
 GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
     _sceneLoaded(false),
+    _stagedEntity(0),
     _shiftModifierAction(false),
     _displayTemplateSelector(false)
 {
@@ -107,6 +108,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
             sceneService().initialize(manifest);
             entityService().createEntity(kEntityStore_Default, "entity", "test_bot");
+            sceneService().disableSimulation();
             _sceneLoaded = true;
         });
 }
@@ -197,6 +199,15 @@ void GameView::frameUpdateView
         { dir.x , dir.y, dir.z },
         100.0f);
     
+    //  Editor Live Actions based on mouse position and editing state
+    if (_stagedEntity && rayTestResult && rayTestResult.entity != _stagedEntity) {
+        if (!rayTestResult.normal.fuzzyZero()) {
+            sceneService().setEntityPosition(_stagedEntity,
+                rayTestResult.position,
+                rayTestResult.normal);
+        }
+    }
+    
     
     //  RENDERING
     sceneService().renderDebugStart(renderService(), _camera);
@@ -208,7 +219,125 @@ void GameView::frameUpdateView
     
     sceneService().renderDebugEnd();
     
+    test2();
     
+}
+
+void GameView::onViewEndFrame(ove::ViewStack& stateController)
+{
+    if (_displayTemplateSelector) {
+        if (_entityTemplateListboxState.selected()) {
+            _displayTemplateSelector = false;
+            
+            //  create staging entity with specified template
+            //      create entity with the staging store
+            //      place at the current cursor 
+            _stagedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
+                _entityTemplateUIList[_entityTemplateListboxState.selectedItem].name);
+        }
+    }
+}
+
+const char* GameView::viewId() const
+{
+    return "GameView";
+}
+
+////////////////////////////////////////////////////////////////////////
+
+void GameView::viewUIRenderHook(void* context, NVGcontext* nvg)
+{
+}
+
+void GameView::addEntityTemplateUIData
+(
+    std::string name,
+    const JsonValue& entityTemplate
+)
+{
+    EntityTemplateUIData data;
+    data.name = std::move(name);
+    
+    auto editorTemplate = entityTemplate.FindMember("editor");
+    if (editorTemplate != entityTemplate.MemberEnd()) {
+        data.longname = editorTemplate->value["name"].GetString();
+    }
+    
+    _entityTemplateUIList.emplace_back(std::move(data));
+    
+    if (_entityTemplateListboxState.highlightItem < 0) {
+        _entityTemplateListboxState.highlightItem = (int)(_entityTemplateUIList.size() - 1);
+    }
+}
+
+bool GameView::onUIDataItemRequest
+(
+    int id,
+    uint32_t row,
+    uint32_t col,
+    uicore::DataObject& data
+)
+{
+    if (id == kUIProviderId_EntityTemplates) {
+        if (row < _entityTemplateUIList.size()) {
+            auto& source = _entityTemplateUIList[row];
+            if (col == 0) {
+                data.type = uicore::DataObject::Type::string;
+                data.data.str = source.longname.empty() ? source.name.c_str()
+                                    : source.longname.c_str();
+                return true;
+            }
+        }
+    
+    }
+    
+    return false;
+}
+
+uint32_t GameView::onUIDataItemRowCountRequest(int id)
+{
+    if (id == kUIProviderId_EntityTemplates) {
+        return (uint32_t)_entityTemplateUIList.size();
+    }
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////
+
+void GameView::test1()
+{
+    _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0,
+        gfx::PrimitiveType::kTriangles);
+    
+    gfx::MeshBuilder::BuilderState cursorBuilder;
+    cursorBuilder.vertexDecl = &gfx::VertexTypes::declaration(gfx::VertexTypes::kVPosition);
+    cursorBuilder.indexType = gfx::VertexTypes::Index::kIndex16;
+    
+    gfx::MeshBuilder::Counts counts =
+        gfx::MeshBuilder::calculateUVSphereCounts(7, 14, gfx::PrimitiveType::kLines);
+    counts.vertexCount += 2;
+    counts.indexCount += 2;
+    
+    gfx::MeshBuilder::create(cursorBuilder, counts);
+    gfx::MeshBuilder::buildUVSphere(cursorBuilder, 0.1f, 7, 14, gfx::PrimitiveType::kLines);
+    
+    uint16_t i0 = cursorBuilder.vertexCount;
+    cursorBuilder.position({ 0,0,0 });
+    cursorBuilder.next();
+    cursorBuilder.position({ 0,0.5,0 });
+    cursorBuilder.next();
+    cursorBuilder.line<uint16_t>(i0, i0+1);
+    
+    _testSphereMesh = std::move(
+        gfx::Mesh(gfx::VertexTypes::kVPosition, cursorBuilder.indexType,
+            cursorBuilder.vertexMemory,
+            cursorBuilder.indexMemory,
+            gfx::PrimitiveType::kLines)
+    );
+}
+
+void GameView::test2()
+{
     bgfx::setViewRect(0, _camera.viewportRect.x, _camera.viewportRect.y,
         _camera.viewportRect.w, _camera.viewportRect.h);
     bgfx::setViewTransform(0, _camera.viewMtx, _camera.projMtx);
@@ -304,38 +433,7 @@ void GameView::frameUpdateView
     }
 }
 
-void GameView::onViewEndFrame(ove::ViewStack& stateController)
-{
-    if (_displayTemplateSelector) {
-        if (_entityTemplateListboxState.selected()) {
-            _displayTemplateSelector = false;
-            
-            //  create staging entity with specified template
-            //      create entity with the staging store
-            //      place at the current cursor 
-            
-        }
-    }
-}
-
-const char* GameView::viewId() const
-{
-    return "GameView";
-}
-
-////////////////////////////////////////////////////////////////////////
-
-void GameView::viewUIRenderHook(void* context, NVGcontext* nvg)
-{
-}
-
-void GameView::addEntityTemplateUIData
-(
-    std::string name,
-    const JsonValue& entityTemplate
-)
-{
-    /*
+  /*
     auto renderable = entityTemplate.FindMember("renderable");
     if (renderable == entityTemplate.MemberEnd()) {
         //  TODO - how about editor only displays for non-renderable entities?
@@ -389,86 +487,6 @@ void GameView::addEntityTemplateUIData
         NVG_TEXTURE_RGBA,
         &renderTexture);
     */
-    
-    EntityTemplateUIData data;
-    data.name = std::move(name);
-    
-    auto editorTemplate = entityTemplate.FindMember("editor");
-    if (editorTemplate != entityTemplate.MemberEnd()) {
-        data.longname = editorTemplate->value["name"].GetString();
-    }
-    
-    _entityTemplateUIList.emplace_back(std::move(data));
-    
-    if (_entityTemplateListboxState.highlightItem < 0) {
-        _entityTemplateListboxState.highlightItem = (int)(_entityTemplateUIList.size() - 1);
-    }
-}
 
-bool GameView::onUIDataItemRequest
-(
-    int id,
-    uint32_t row,
-    uint32_t col,
-    uicore::DataObject& data
-)
-{
-    if (id == kUIProviderId_EntityTemplates) {
-        if (row < _entityTemplateUIList.size()) {
-            auto& source = _entityTemplateUIList[row];
-            if (col == 0) {
-                data.type = uicore::DataObject::Type::string;
-                data.data.str = source.longname.empty() ? source.name.c_str()
-                                    : source.longname.c_str();
-                return true;
-            }
-        }
-    
-    }
-    
-    return false;
-}
-
-uint32_t GameView::onUIDataItemRowCountRequest(int id)
-{
-    if (id == kUIProviderId_EntityTemplates) {
-        return (uint32_t)_entityTemplateUIList.size();
-    }
-    return 0;
-}
-
-////////////////////////////////////////////////////////////////////////
-
-void GameView::test1()
-{
-    _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0,
-        gfx::PrimitiveType::kTriangles);
-    
-    gfx::MeshBuilder::BuilderState cursorBuilder;
-    cursorBuilder.vertexDecl = &gfx::VertexTypes::declaration(gfx::VertexTypes::kVPosition);
-    cursorBuilder.indexType = gfx::VertexTypes::Index::kIndex16;
-    
-    gfx::MeshBuilder::Counts counts =
-        gfx::MeshBuilder::calculateUVSphereCounts(7, 14, gfx::PrimitiveType::kLines);
-    counts.vertexCount += 2;
-    counts.indexCount += 2;
-    
-    gfx::MeshBuilder::create(cursorBuilder, counts);
-    gfx::MeshBuilder::buildUVSphere(cursorBuilder, 0.1f, 7, 14, gfx::PrimitiveType::kLines);
-    
-    uint16_t i0 = cursorBuilder.vertexCount;
-    cursorBuilder.position({ 0,0,0 });
-    cursorBuilder.next();
-    cursorBuilder.position({ 0,0.5,0 });
-    cursorBuilder.next();
-    cursorBuilder.line<uint16_t>(i0, i0+1);
-    
-    _testSphereMesh = std::move(
-        gfx::Mesh(gfx::VertexTypes::kVPosition, cursorBuilder.indexType,
-            cursorBuilder.vertexMemory,
-            cursorBuilder.indexMemory,
-            gfx::PrimitiveType::kLines)
-    );
-}
 
 } /* namespace cinek */

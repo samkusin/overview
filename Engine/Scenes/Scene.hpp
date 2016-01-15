@@ -58,6 +58,23 @@ public:
      */
     void simulate(double dt);
     /**
+     *  Deactivates dynamic physics simulation
+     *
+     *  Useful for freezing the simulation.  Collision detection is still
+     *  active.
+     */
+    void deactivateSimulation();
+    /**
+     *  Activates dynamic physics simulation if inactive
+     *
+     *  Useful for continuing the dynamic simulation.
+     */
+    void activateSimulation();
+    /**
+     *  @return Simulation activation status
+     */
+    bool isActive() const;
+    /**
      *  Executes per render frame updates.
      */
     void debugRender();
@@ -75,6 +92,8 @@ public:
 private:
     ObjectPool<SceneBody> _bodies;
     std::vector<SceneBody*> _objects;
+    
+    bool _simulateDynamics;
     
     btDefaultCollisionConfiguration _btCollisionConfig;
     btCollisionDispatcher _btCollisionDispatcher;

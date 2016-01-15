@@ -23,16 +23,34 @@ namespace cinek {
 
 struct SceneBody
 {
-    btRigidBody* btBody;
-    Entity entity;
+    btRigidBody* btBody = nullptr;
+    Entity entity = 0;
+    
+    struct SavedState
+    {
+        enum
+        {
+            kNone           = 0x0000,
+            kDynamic        = 0x0001
+        };
+        
+        uint32_t flags;
+        btScalar mass;
+        btVector3 inertia;
+    };
+    
+    SavedState savedState;
+    
+    void activate();
+    void deactivate();
 };
    
 struct SceneRayTestResult
 {
-    SceneRayTestResult() : body { nullptr, 0 } {}
-    operator bool() const { return body.btBody != nullptr; }
+    operator bool() const { return body != nullptr; }
     
-    SceneBody body;
+    btRigidBody* body;
+    Entity entity;
     btVector3 normal;
     btVector3 position;
 };

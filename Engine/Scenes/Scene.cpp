@@ -22,6 +22,7 @@ namespace cinek {
 
 Scene::Scene(btIDebugDraw* debugDrawer) :
     _bodies(256),
+    _simulateDynamics(true),
     _btCollisionDispatcher(&_btCollisionConfig),
     _btWorld(&_btCollisionDispatcher,
              &_btBroadphase,
@@ -40,6 +41,33 @@ Scene::~Scene()
 void Scene::simulate(double dt)
 {
     _btWorld.stepSimulation(dt);
+}
+
+void Scene::deactivateSimulation()
+{
+    if (_simulateDynamics) {
+        for (auto& obj : _objects) {
+            obj->deactivate();
+        }
+        
+        _simulateDynamics = false;
+    }
+}
+
+void Scene::activateSimulation()
+{
+    if (!_simulateDynamics) {
+        for (auto& obj : _objects) {
+            obj->activate();
+        }
+    
+        _simulateDynamics = true;
+    }
+}
+
+bool Scene::isActive() const
+{
+    return _simulateDynamics;
 }
 
 void Scene::debugRender()
@@ -66,6 +94,13 @@ btRigidBody* Scene::attachBody
     
     body->btBody = object;
     body->entity = entity;
+    body->savedState.flags = SceneBody::SavedState::kNone;
+    
+    //  reflect current simulation state
+    if (!_simulateDynamics) {
+        body->deactivate();
+    }
+
     object->setUserPointer(body);
     _objects.emplace(it, body);
     _btWorld.addRigidBody(object);
@@ -86,11 +121,14 @@ btRigidBody* Scene::detachBody
         return nullptr;
     
     auto obj = *it;
+    auto body = obj->btBody;
     
-    _btWorld.removeRigidBody(obj->btBody);
-
+    _btWorld.removeRigidBody(body);
     _objects.erase(it);
-    return obj->btBody;
+    
+    _bodies.destruct(obj);
+    
+    return body;
 }
 
 btRigidBody* Scene::findBody(Entity entity) const
@@ -127,13 +165,16 @@ const
     
     if (cb.hasHit()) {
         SceneBody* body = reinterpret_cast<SceneBody*>(cb.m_collisionObject->getUserPointer());
-        result.body = *body;
+        result.body = body->btBody;
+        result.entity = body->entity;
         result.normal = cb.m_hitNormalWorld;
         result.position = cb.m_hitPointWorld;
     }
     
     return result;
 }
+
+
 
         
     }   /* namespace ove */
