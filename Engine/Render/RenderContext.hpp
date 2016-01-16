@@ -23,7 +23,7 @@ namespace cinek {
         gfx::NodeRenderer::UniformMap* uniforms;
     };
 
-    }
-}
+    } /* namespace ove */
+} /* namespace cinek */
 
 #endif /* Overview_RenderContext_hpp */

@@ -1,12 +1,12 @@
 //
-//  GameView.cpp
+//  EditorView.cpp
 //  EnginePrototype
 //
-//  Created by Samir Sinha on 11/10/15.
+//  Created by Samir Sinha on 1/15/16.
 //
 //
 
-#include "GameView.hpp"
+#include "EditorView.hpp"
 
 #include "Engine/AssetManifest.hpp"
 #include "UICore/UIBuilder.hpp"
@@ -23,10 +23,13 @@
 
 namespace cinek {
 
-GameView::GameView(const ApplicationContext& api) :
-    AppViewController(api),
-    _sceneLoaded(false),
-    _mode(EditorMode::kNull),
+EditorView::EditorView
+(
+    const ApplicationContext& context,
+    const GameViewContext& gameContext
+) :
+    AppViewController(context),
+    _gameContext(&gameContext),
     _stagedEntity(0),
     _shiftModifierAction(false),
     _displayTemplateSelector(false)
@@ -35,7 +38,7 @@ GameView::GameView(const ApplicationContext& api) :
 }
 
     
-void GameView::onViewAdded(ove::ViewStack& stateController)
+void EditorView::onViewAdded(ove::ViewStack& stateController)
 {
     //  create our offscreen node graph for rendering models
     //  uses a simple ambient light - might add another light
@@ -105,46 +108,38 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     test1();
     
     //  load scene
-    assetService().loadManifest("scenes/apartment.json",
-        [this](std::shared_ptr<ove::AssetManifest> manifest) {
-            sceneService().initialize(manifest);
-            entityService().createEntity(kEntityStore_Default, "entity", "test_bot");
-            sceneService().disableSimulation();
-            _sceneLoaded = true;
-        });
+    
+    sceneService().disableSimulation();
 }
 
-void GameView::onViewRemoved(ove::ViewStack& stateController)
+void EditorView::onViewRemoved(ove::ViewStack& stateController)
 {
     _modelStageGraph = nullptr;
 }
 
-void GameView::onViewForeground(ove::ViewStack& stateController)
+void EditorView::onViewForeground(ove::ViewStack& stateController)
 {
 }
 
-void GameView::onViewBackground(ove::ViewStack& stateController)
+void EditorView::onViewBackground(ove::ViewStack& stateController)
 {
 }
 
-void GameView::onViewStartFrame(ove::ViewStack& stateController)
+void EditorView::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void GameView::simulateView(ove::ViewStack& stateController, double dt)
+void EditorView::simulateView(ove::ViewStack& stateController, double dt)
 {
 }
 
-void GameView::frameUpdateView
+void EditorView::frameUpdateView
 (
     ove::ViewStack& stateController,
     double dt,
     const ove::InputState& inputState
 )
 {
-    if (!_sceneLoaded)
-        return;
-    
     //  handle keyboard inputs - shortcuts
     _shiftModifierAction = inputState.testKeyMod(KMOD_SHIFT);
     
@@ -181,43 +176,15 @@ void GameView::frameUpdateView
     
     uiLayout.end();
     
-    //  update camera
-    _camera.near = 0.1f;
-    _camera.far = 1000.0f;
-    _camera.fovDegrees = 60.0f;
-    _camera.viewportRect = renderService().getViewRect();
-    _freeCameraController.handleCameraInput(_camera, inputState, dt);
-    _camera.update();
-
-    int32_t vx = inputState.mx - _camera.viewportRect.x;
-    int32_t vy = inputState.my - _camera.viewportRect.y;
-
-    gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
-    gfx::Vector3 pos = _camera.worldPosition();
-    
-    ove::SceneRayTestResult mouseHitTestResult = sceneService().rayTestClosest(
-        { pos.x, pos.y, pos.z },
-        { dir.x , dir.y, dir.z },
-        100.0f);
-    
     //  Editor Live Actions based on mouse position and editing state
-    updateStagedEntity(mouseHitTestResult);
-    
-    //  RENDERING
-    sceneService().renderDebugStart(renderService(), _camera);
-    
-    sceneService().renderDebugAddRayTestHit(mouseHitTestResult,
-        { pos.x, pos.y, pos.z }, 0.1f, false);
-    
-    renderService().renderNode(_renderer, sceneService().getGfxRootNode(), _camera);
-    
-    sceneService().renderDebugEnd();
+    updateStagedEntity(*_gameContext->_screenRayTestResult);
     
     test2();
     
+    _freeCameraController.handleCameraInput(*_gameContext->_camera, inputState, dt);
 }
 
-void GameView::onViewEndFrame(ove::ViewStack& stateController)
+void EditorView::onViewEndFrame(ove::ViewStack& stateController)
 {
     if (_displayTemplateSelector) {
         if (_entityTemplateListboxState.selected()) {
@@ -230,12 +197,12 @@ void GameView::onViewEndFrame(ove::ViewStack& stateController)
     }
 }
 
-const char* GameView::viewId() const
+const char* EditorView::viewId() const
 {
-    return "GameView";
+    return "EditorView";
 }
 
-void GameView::createAndStageEntity
+void EditorView::createAndStageEntity
 (
     EntityContextType storeId,
     const std::string &ns,
@@ -247,7 +214,7 @@ void GameView::createAndStageEntity
     _stagedEntity = entityService().createEntity(kEntityStore_Staging, ns, name);
 }
 
-void GameView::updateStagedEntity(const ove::SceneRayTestResult& hitResult)
+void EditorView::updateStagedEntity(const ove::SceneRayTestResult& hitResult)
 {
     if (!_stagedEntity || !hitResult)
         return;
@@ -261,17 +228,17 @@ void GameView::updateStagedEntity(const ove::SceneRayTestResult& hitResult)
     }
 }
 
-void GameView::unstageEntity(UnstageOption option)
+void EditorView::unstageEntity(UnstageOption option)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-void GameView::viewUIRenderHook(void* context, NVGcontext* nvg)
+void EditorView::viewUIRenderHook(void* context, NVGcontext* nvg)
 {
 }
 
-void GameView::addEntityTemplateUIData
+void EditorView::addEntityTemplateUIData
 (
     std::string name,
     const JsonValue& entityTemplate
@@ -292,7 +259,7 @@ void GameView::addEntityTemplateUIData
     }
 }
 
-bool GameView::onUIDataItemRequest
+bool EditorView::onUIDataItemRequest
 (
     int id,
     uint32_t row,
@@ -316,7 +283,7 @@ bool GameView::onUIDataItemRequest
     return false;
 }
 
-uint32_t GameView::onUIDataItemRowCountRequest(int id)
+uint32_t EditorView::onUIDataItemRowCountRequest(int id)
 {
     if (id == kUIProviderId_EntityTemplates) {
         return (uint32_t)_entityTemplateUIList.size();
@@ -326,7 +293,7 @@ uint32_t GameView::onUIDataItemRowCountRequest(int id)
 
 ////////////////////////////////////////////////////////////////////////
 
-void GameView::test1()
+void EditorView::test1()
 {
     _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0,
         gfx::PrimitiveType::kTriangles);
@@ -358,11 +325,12 @@ void GameView::test1()
     );
 }
 
-void GameView::test2()
+void EditorView::test2()
 {
-    bgfx::setViewRect(0, _camera.viewportRect.x, _camera.viewportRect.y,
-        _camera.viewportRect.w, _camera.viewportRect.h);
-    bgfx::setViewTransform(0, _camera.viewMtx, _camera.projMtx);
+    auto& camera = *_gameContext->_camera;
+    bgfx::setViewRect(0, camera.viewportRect.x, camera.viewportRect.y,
+        camera.viewportRect.w, camera.viewportRect.h);
+    bgfx::setViewTransform(0, camera.viewMtx, camera.projMtx);
     
     gfx::Matrix4 mainTransform;
     bx::mtxTranslate(mainTransform, 0.0f, 4.0f, 0.0f);

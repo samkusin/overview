@@ -7,6 +7,8 @@
 //
 
 #include "FreeCameraController.hpp"
+#include "Engine/Input.hpp"
+
 #include "CKGfx/Camera.hpp"
 
 #include <bx/fpumath.h>

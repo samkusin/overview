@@ -35,6 +35,7 @@
 #include <unordered_map>
 
 #include "Engine/EngineTypes.hpp"
+#include "Engine/Input.hpp"
 
 #include "PrototypeApplication.hpp"
 
@@ -154,7 +155,7 @@ int runSample(int viewWidth, int viewHeight)
             //  SIMULATION END
             ////////////////////////////////////////////////////////////////////////
 
-            if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
+            if (pollSDLEvents(polledInputState) & cinek::ove::kPollSDLEvent_Quit)
                 running = false;
             
             uiBeginLayout();

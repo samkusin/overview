@@ -36,6 +36,10 @@ public:
     //  within an interval, but not necessary every frame (or more than once a
     //  frame depending on the owning loop.)
     virtual void simulateView(ViewStack& stateController, double dt) = 0;
+    //  Executed once per render frame.  Useful for polling input, rendering,
+    //  and any other per-frame operation that isn't deterministic
+    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
+                                 const ove::InputState& inputState) = 0;
     //  Executed upon the the end of a frame
     virtual void onViewEndFrame(ViewStack& stateController) = 0;
     //  the name of the view

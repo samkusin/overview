@@ -17,7 +17,7 @@
 #include "PrototypeApplication.hpp"
 
 #include "Views/StartupView.hpp"
-#include "Views/GameView.hpp"
+#include "Views/Game/GameView.hpp"
 
 
 #include <bgfx/bgfx.h>
@@ -120,16 +120,19 @@ PrototypeApplication::PrototypeApplication
     context.renderContext = &_renderContext;
     
     _viewStack.setFactory(
-        [context](const std::string& viewName, ove::ViewController* ) -> unique_ptr<ove::ViewController> {
+        [context](const std::string& viewName, ove::ViewController* )
+            -> std::shared_ptr<ove::ViewController> {
             //  Startup View initialzes common data for the application
             //  Game View encompasses the whole game simulation
             //  Ship View encompasses the in-game ship mode
             //  Ship Bridge View encompasses the in-game ship bridge mode
             if (viewName == "StartupView") {
-                return allocate_unique<StartupView>(context);
+                return std::allocate_shared<StartupView>(
+                    std_allocator<StartupView>(), context);
             }
             else if (viewName == "GameView") {
-                return allocate_unique<GameView>(context);
+                return std::allocate_shared<GameView>(
+                    std_allocator<GameView>(), context);
             }
             
             return nullptr;
@@ -167,25 +170,10 @@ void PrototypeApplication::renderFrame
     _taskScheduler.update(dt * 1000);
     
     _renderContext.frameRect = viewRect;
-    
-    struct
-    {
-        PrototypeApplication* self;
-        const ove::InputState* inputState;
-    }
-    context = {
-        this,
-        &inputState
-    };
-
+ 
     _renderGraph->update(dt);
     
-    _viewStack.frameUpdate(dt,
-        [&context](ove::ViewController& viewController, ove::ViewStack& stateController, double dt) {
-            AppViewController& appViewController = static_cast<AppViewController&>(viewController);
-            appViewController.frameUpdateView(stateController, dt,
-                *context.inputState);
-        });
+    _viewStack.frameUpdate(dt, inputState);
         
     _gfxContext->update();
 }

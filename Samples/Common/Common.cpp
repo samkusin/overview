@@ -7,38 +7,21 @@
 //
 
 #include "Common.hpp"
+#include "Engine/Input.hpp"
 
 #include "UICore/oui.h"
 
-
 #include <cinek/file.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_syswm.h>
+#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
+
 #include <bgfx/bgfxplatform.h>
 #include <bgfx/bgfx.h>
 
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-namespace cinek {
-    namespace ove {
-
-bool InputState::testKey(uint8_t key) const
-{
-    CK_ASSERT_RETURN_VALUE(key < keystateArraySize, false);
-    return keystate[key];
-}
-
-bool InputState::testKeyMod(int mod) const
-{
-    return (keyModifiers & mod) != 0;
-}
-
-    }
-}
 
 uint32_t pollSDLEvents(cinek::ove::InputState& state)
 {
@@ -67,7 +50,7 @@ uint32_t pollSDLEvents(cinek::ove::InputState& state)
         switch (event.type)
         {
         case SDL_QUIT:
-            flags |= kPollSDLEvent_Quit;
+            flags |= cinek::ove::kPollSDLEvent_Quit;
             break;
             
         case SDL_WINDOWEVENT:
@@ -102,6 +85,7 @@ uint32_t pollSDLEvents(cinek::ove::InputState& state)
     
     return flags;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

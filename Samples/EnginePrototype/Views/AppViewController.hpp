@@ -13,6 +13,7 @@
 #include "Common.hpp"
 #include "UICore/UITypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
+#include "Engine/Input.hpp"
 #include "Engine/ViewController.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"
@@ -42,9 +43,6 @@ public:
     AppViewController(const ApplicationContext& context);
     
     virtual ~AppViewController();
-    
-    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                                 const ove::InputState& inputState) = 0;
     
 protected:
     ove::AssetService& assetService() {

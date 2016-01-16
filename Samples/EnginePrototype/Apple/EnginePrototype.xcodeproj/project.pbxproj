@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		289A4E011C49829700367E3B /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4DFF1C49829700367E3B /* GameView.cpp */; };
+		289A4E041C49834800367E3B /* EditorView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E021C49834800367E3B /* EditorView.cpp */; };
+		289A4E0A1C49A6F300367E3B /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E081C49A6F300367E3B /* Input.cpp */; };
+		289A4E0D1C49B3F500367E3B /* GameViewContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E0B1C49B3F500367E3B /* GameViewContext.cpp */; };
 		28BCF4551C3DDE450040BAA8 /* SceneTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BCF4541C3DDE450040BAA8 /* SceneTypes.cpp */; };
 		28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20841C2A1F480059B56F /* AssetService.cpp */; };
 		28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20871C2A210D0059B56F /* AppViewController.cpp */; };
@@ -45,7 +49,6 @@
 		37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637CC1BF119EA0081E59E /* ObjectTypes.cpp */; };
 		37E637EF1BF119EA0081E59E /* ViewStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637DF1BF119EA0081E59E /* ViewStack.cpp */; };
 		37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E637F31BF2753F0081E59E /* EngineMath.cpp */; };
-		37E638151BF3F6A30081E59E /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638131BF3F6A30081E59E /* GameView.cpp */; };
 		37E6381F1BF3FA220081E59E /* EntityDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638181BF3FA220081E59E /* EntityDatabase.cpp */; };
 		37E638211BF3FA220081E59E /* EngineTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6381C1BF3FA220081E59E /* EngineTypes.cpp */; };
 		37E638311BF416A40081E59E /* EntityService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E638301BF416A40081E59E /* EntityService.cpp */; };
@@ -64,6 +67,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		289A4DFF1C49829700367E3B /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Views/Game/GameView.cpp; sourceTree = "<group>"; };
+		289A4E001C49829700367E3B /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Views/Game/GameView.hpp; sourceTree = "<group>"; };
+		289A4E021C49834800367E3B /* EditorView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorView.cpp; path = ../Views/Game/EditorView.cpp; sourceTree = "<group>"; };
+		289A4E031C49834800367E3B /* EditorView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorView.hpp; path = ../Views/Game/EditorView.hpp; sourceTree = "<group>"; };
+		289A4E081C49A6F300367E3B /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
+		289A4E091C49A6F300367E3B /* Input.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Input.hpp; sourceTree = "<group>"; };
+		289A4E0B1C49B3F500367E3B /* GameViewContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameViewContext.cpp; path = ../Views/Game/GameViewContext.cpp; sourceTree = "<group>"; };
+		289A4E0C1C49B3F500367E3B /* GameViewContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameViewContext.hpp; path = ../Views/Game/GameViewContext.hpp; sourceTree = "<group>"; };
 		28BCF4531C3DDAEF0040BAA8 /* SceneTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SceneTypes.hpp; path = Scenes/SceneTypes.hpp; sourceTree = "<group>"; };
 		28BCF4541C3DDE450040BAA8 /* SceneTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneTypes.cpp; path = Scenes/SceneTypes.cpp; sourceTree = "<group>"; };
 		28CE20831C2A17710059B56F /* AppViewController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AppViewController.hpp; sourceTree = "<group>"; };
@@ -145,8 +156,6 @@
 		37E637E01BF119EA0081E59E /* ViewStack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewStack.hpp; sourceTree = "<group>"; };
 		37E637F31BF2753F0081E59E /* EngineMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineMath.cpp; sourceTree = "<group>"; };
 		37E637F41BF2753F0081E59E /* EngineMath.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EngineMath.hpp; sourceTree = "<group>"; };
-		37E638131BF3F6A30081E59E /* GameView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameView.cpp; path = ../Views/GameView.cpp; sourceTree = "<group>"; };
-		37E638141BF3F6A30081E59E /* GameView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameView.hpp; path = ../Views/GameView.hpp; sourceTree = "<group>"; };
 		37E638181BF3FA220081E59E /* EntityDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDatabase.cpp; sourceTree = "<group>"; };
 		37E638191BF3FA220081E59E /* EntityDatabase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityDatabase.hpp; sourceTree = "<group>"; };
 		37E6381C1BF3FA220081E59E /* EngineTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineTypes.cpp; sourceTree = "<group>"; };
@@ -180,6 +189,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		289A4DFE1C49815100367E3B /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				289A4DFF1C49829700367E3B /* GameView.cpp */,
+				289A4E001C49829700367E3B /* GameView.hpp */,
+				289A4E0B1C49B3F500367E3B /* GameViewContext.cpp */,
+				289A4E0C1C49B3F500367E3B /* GameViewContext.hpp */,
+				289A4E021C49834800367E3B /* EditorView.cpp */,
+				289A4E031C49834800367E3B /* EditorView.hpp */,
+			);
+			name = Game;
+			sourceTree = "<group>";
+		};
 		377896F21BFFA5C100B23038 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -299,6 +321,8 @@
 				377ECCBB1C078CBB002040D7 /* AssetManifestLoader.cpp */,
 				377ECCC91C08FEFD002040D7 /* AssetManifest.hpp */,
 				377ECCC81C08FEFD002040D7 /* AssetManifest.cpp */,
+				289A4E081C49A6F300367E3B /* Input.cpp */,
+				289A4E091C49A6F300367E3B /* Input.hpp */,
 			);
 			name = Engine;
 			path = ../../../Engine;
@@ -335,12 +359,11 @@
 		37E638071BF2C8E60081E59E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				28CE20831C2A17710059B56F /* AppViewController.hpp */,
+				289A4DFE1C49815100367E3B /* Game */,
 				28CE20871C2A210D0059B56F /* AppViewController.cpp */,
-				377ECCCF1C093F64002040D7 /* StartupView.hpp */,
+				28CE20831C2A17710059B56F /* AppViewController.hpp */,
 				377ECCD01C093F78002040D7 /* StartupView.cpp */,
-				37E638141BF3F6A30081E59E /* GameView.hpp */,
-				37E638131BF3F6A30081E59E /* GameView.cpp */,
+				377ECCCF1C093F64002040D7 /* StartupView.hpp */,
 			);
 			name = Views;
 			path = VIews;
@@ -454,11 +477,14 @@
 				377ECD901C18F834002040D7 /* PrototypeApplication.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
 				28F11E5F1C3B5D4100860E5D /* RenderService.cpp in Sources */,
+				289A4E041C49834800367E3B /* EditorView.cpp in Sources */,
 				377ECD081C139EFD002040D7 /* SceneObjectJsonLoader.cpp in Sources */,
 				377ECCBD1C078CBB002040D7 /* AssetManifestLoader.cpp in Sources */,
+				289A4E0A1C49A6F300367E3B /* Input.cpp in Sources */,
 				377ECCAA1C000A65002040D7 /* RenderGraph.cpp in Sources */,
 				37E637E91BF119EA0081E59E /* ObjectTypes.cpp in Sources */,
 				377ECCF41C0FCB30002040D7 /* SceneService.cpp in Sources */,
+				289A4E0D1C49B3F500367E3B /* GameViewContext.cpp in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,
 				377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */,
 				28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */,
@@ -473,7 +499,6 @@
 				377ECD0B1C14B464002040D7 /* SceneMotionState.cpp in Sources */,
 				377ECCFC1C115C43002040D7 /* SceneDataContext.cpp in Sources */,
 				37420BAC1C290A21003D702B /* Sample.cpp in Sources */,
-				37E638151BF3F6A30081E59E /* GameView.cpp in Sources */,
 				37E638211BF3FA220081E59E /* EngineTypes.cpp in Sources */,
 				377ECCCA1C08FEFD002040D7 /* AssetManifest.cpp in Sources */,
 				377ECCD11C093F78002040D7 /* StartupView.cpp in Sources */,
@@ -484,6 +509,7 @@
 				377ECCF61C10E25F002040D7 /* Scene.cpp in Sources */,
 				28BCF4551C3DDE450040BAA8 /* SceneTypes.cpp in Sources */,
 				377ECCE11C0BB028002040D7 /* LoadAssetManifest.cpp in Sources */,
+				289A4E011C49829700367E3B /* GameView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +595,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PACKAGES_ROOT)/include/bullet",
+					"$(PACKAGES_ROOT)/include/freetype2",
+					"$(PACKAGES_ROOT)/include",
+					"$(OVERVIEW_ROOT)/CKLibs",
+					"$(OVERVIEW_ROOT)",
+					../../Common,
+					..,
+				);
 				INFOPLIST_FILE = EnginePrototype.plist;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -617,6 +652,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PACKAGES_ROOT)/include/bullet",
+					"$(PACKAGES_ROOT)/include/freetype2",
+					"$(PACKAGES_ROOT)/include",
+					"$(OVERVIEW_ROOT)/CKLibs",
+					"$(OVERVIEW_ROOT)",
+					../../Common,
+					..,
+				);
 				INFOPLIST_FILE = EnginePrototype.plist;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;

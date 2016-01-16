@@ -9,7 +9,9 @@
 #ifndef Controller_hpp
 #define Controller_hpp
 
-#include "Common.hpp"
+#include "Engine/EngineTypes.hpp"
+#include "CKGfx/GfxTypes.hpp"
+
 
 namespace cinek {
     namespace ove {
