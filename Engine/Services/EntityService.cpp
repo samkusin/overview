@@ -33,6 +33,11 @@ void EntityService::destroyEntity(Entity entity)
     _context->destroyEntity(entity);
 }
 
+Entity EntityService::cloneEntity(Entity entity)
+{
+    return 0;
+}
+
 bool EntityService::isEntityValid(Entity e) const
 {
     return _context->getStore(cinek_entity_context(e)).valid(e);

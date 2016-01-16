@@ -31,9 +31,10 @@ public:
                         const std::string& componentName,
                         const cinek::JsonValue& definitions,
                         const cinek::JsonValue& compTemplate);
-    virtual void onCustomComponentDestroyFn(EntityDataTable& table,
-                        ComponentRowIndex compRowIndex);
-
+    
+    virtual void onCustomComponentEntityDestroyFn(Entity entity);
+                        
+    virtual void onCustomComponentEntityCloneFn(Entity target, Entity origin);
 
 private:
     gfx::Context* _gfxContext;

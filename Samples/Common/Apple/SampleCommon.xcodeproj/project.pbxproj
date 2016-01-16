@@ -65,18 +65,9 @@
 		37E636881BF024330081E59E /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636341BF024330081E59E /* types.cpp */; };
 		37E636891BF024330081E59E /* types.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636351BF024330081E59E /* types.hpp */; };
 		37E6368A1BF024330081E59E /* vector.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636361BF024330081E59E /* vector.hpp */; };
-		37E6368B1BF024330081E59E /* datarowset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636381BF024330081E59E /* datarowset.cpp */; };
-		37E6368C1BF024330081E59E /* datarowset.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636391BF024330081E59E /* datarowset.hpp */; };
 		37E6368D1BF024330081E59E /* entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E6363A1BF024330081E59E /* entity.h */; };
-		37E6368E1BF024330081E59E /* entitydatatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6363B1BF024330081E59E /* entitydatatable.cpp */; };
-		37E6368F1BF024330081E59E /* entitydatatable.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6363C1BF024330081E59E /* entitydatatable.hpp */; };
-		37E636901BF024330081E59E /* entitygroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6363D1BF024330081E59E /* entitygroup.cpp */; };
-		37E636911BF024330081E59E /* entitygroup.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6363E1BF024330081E59E /* entitygroup.hpp */; };
-		37E636921BF024330081E59E /* entitygroupmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6363F1BF024330081E59E /* entitygroupmap.cpp */; };
-		37E636931BF024330081E59E /* entitygroupmap.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636401BF024330081E59E /* entitygroupmap.hpp */; };
 		37E636941BF024330081E59E /* entitystore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636411BF024330081E59E /* entitystore.cpp */; };
 		37E636951BF024330081E59E /* entitystore.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636421BF024330081E59E /* entitystore.hpp */; };
-		37E6369A1BF024330081E59E /* vectordatarowset.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636491BF024330081E59E /* vectordatarowset.hpp */; };
 		37E6369B1BF024330081E59E /* json.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6364B1BF024330081E59E /* json.cpp */; };
 		37E6369C1BF024330081E59E /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6364C1BF024330081E59E /* json.hpp */; };
 		37E6369D1BF024330081E59E /* jsoncollectionloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E6364D1BF024330081E59E /* jsoncollectionloader.cpp */; };
@@ -265,18 +256,9 @@
 		37E636341BF024330081E59E /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = types.cpp; sourceTree = "<group>"; };
 		37E636351BF024330081E59E /* types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
 		37E636361BF024330081E59E /* vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vector.hpp; sourceTree = "<group>"; };
-		37E636381BF024330081E59E /* datarowset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = datarowset.cpp; sourceTree = "<group>"; };
-		37E636391BF024330081E59E /* datarowset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = datarowset.hpp; sourceTree = "<group>"; };
 		37E6363A1BF024330081E59E /* entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entity.h; sourceTree = "<group>"; };
-		37E6363B1BF024330081E59E /* entitydatatable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entitydatatable.cpp; sourceTree = "<group>"; };
-		37E6363C1BF024330081E59E /* entitydatatable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = entitydatatable.hpp; sourceTree = "<group>"; };
-		37E6363D1BF024330081E59E /* entitygroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entitygroup.cpp; sourceTree = "<group>"; };
-		37E6363E1BF024330081E59E /* entitygroup.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = entitygroup.hpp; sourceTree = "<group>"; };
-		37E6363F1BF024330081E59E /* entitygroupmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entitygroupmap.cpp; sourceTree = "<group>"; };
-		37E636401BF024330081E59E /* entitygroupmap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = entitygroupmap.hpp; sourceTree = "<group>"; };
 		37E636411BF024330081E59E /* entitystore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entitystore.cpp; sourceTree = "<group>"; };
 		37E636421BF024330081E59E /* entitystore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = entitystore.hpp; sourceTree = "<group>"; };
-		37E636491BF024330081E59E /* vectordatarowset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vectordatarowset.hpp; sourceTree = "<group>"; };
 		37E6364B1BF024330081E59E /* json.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = json.cpp; sourceTree = "<group>"; };
 		37E6364C1BF024330081E59E /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		37E6364D1BF024330081E59E /* jsoncollectionloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsoncollectionloader.cpp; sourceTree = "<group>"; };
@@ -497,18 +479,9 @@
 		37E636371BF024330081E59E /* ckentity */ = {
 			isa = PBXGroup;
 			children = (
-				37E636381BF024330081E59E /* datarowset.cpp */,
-				37E636391BF024330081E59E /* datarowset.hpp */,
 				37E6363A1BF024330081E59E /* entity.h */,
-				37E6363B1BF024330081E59E /* entitydatatable.cpp */,
-				37E6363C1BF024330081E59E /* entitydatatable.hpp */,
-				37E6363D1BF024330081E59E /* entitygroup.cpp */,
-				37E6363E1BF024330081E59E /* entitygroup.hpp */,
-				37E6363F1BF024330081E59E /* entitygroupmap.cpp */,
-				37E636401BF024330081E59E /* entitygroupmap.hpp */,
 				37E636411BF024330081E59E /* entitystore.cpp */,
 				37E636421BF024330081E59E /* entitystore.hpp */,
-				37E636491BF024330081E59E /* vectordatarowset.hpp */,
 			);
 			path = ckentity;
 			sourceTree = "<group>";
@@ -732,7 +705,6 @@
 				37E636A31BF024330081E59E /* encodedstream.h in Headers */,
 				37E636B81BF024330081E59E /* mathtypes.hpp in Headers */,
 				37E6369F1BF024330081E59E /* jsonstreambuf.hpp in Headers */,
-				37E6369A1BF024330081E59E /* vectordatarowset.hpp in Headers */,
 				37E637191BF0246D0081E59E /* ModelJsonSerializer.hpp in Headers */,
 				37E636731BF024330081E59E /* buffer.hpp in Headers */,
 				37E636AA1BF024330081E59E /* meta.h in Headers */,
@@ -743,8 +715,6 @@
 				37E636741BF024330081E59E /* circular_queue.hpp in Headers */,
 				37E636761BF024330081E59E /* ckopts.h in Headers */,
 				37E636891BF024330081E59E /* types.hpp in Headers */,
-				37E6368F1BF024330081E59E /* entitydatatable.hpp in Headers */,
-				37E636931BF024330081E59E /* entitygroupmap.hpp in Headers */,
 				37E637051BF0246D0081E59E /* Animation.hpp in Headers */,
 				37E636B11BF024330081E59E /* rapidjson.h in Headers */,
 				289A4DFD1C45C0AF00367E3B /* Geometry.hpp in Headers */,
@@ -765,14 +735,12 @@
 				37E6367C1BF024330081E59E /* file.hpp in Headers */,
 				37E6371B1BF0246D0081E59E /* Node.hpp in Headers */,
 				37E636A11BF024330081E59E /* allocators.h in Headers */,
-				37E636911BF024330081E59E /* entitygroup.hpp in Headers */,
 				37E6369C1BF024330081E59E /* json.hpp in Headers */,
 				37E636A61BF024330081E59E /* error.h in Headers */,
 				37E636D01BF024600081E59E /* UIRenderer.hpp in Headers */,
 				37E6367E1BF024330081E59E /* filestreambuf.hpp in Headers */,
 				37E637171BF0246D0081E59E /* Mesh.hpp in Headers */,
 				37E636B41BF024330081E59E /* writer.h in Headers */,
-				37E6368C1BF024330081E59E /* datarowset.hpp in Headers */,
 				289A4E111C49D0BD00367E3B /* Input.hpp in Headers */,
 				37E6370E1BF0246D0081E59E /* nanovg.h in Headers */,
 				37E636AB1BF024330081E59E /* pow10.h in Headers */,
@@ -867,7 +835,6 @@
 				37E6372C1BF026210081E59E /* vs_nanovg_fill.hvs in Sources */,
 				37E636941BF024330081E59E /* entitystore.cpp in Sources */,
 				289A4E101C49D0BD00367E3B /* Input.cpp in Sources */,
-				37E6368E1BF024330081E59E /* entitydatatable.cpp in Sources */,
 				37287CB41C3769F000DD380F /* ModelSet.cpp in Sources */,
 				37E636771BF024330081E59E /* cstringstack.cpp in Sources */,
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
@@ -884,11 +851,9 @@
 				289A4DFC1C45C0AF00367E3B /* Geometry.cpp in Sources */,
 				37E6367B1BF024330081E59E /* file.cpp in Sources */,
 				37E637251BF0246D0081E59E /* VertexTypes.cpp in Sources */,
-				37E636921BF024330081E59E /* entitygroupmap.cpp in Sources */,
 				37E637041BF0246D0081E59E /* Animation.cpp in Sources */,
 				37E637201BF0246D0081E59E /* ShaderLibrary.cpp in Sources */,
 				37E6370F1BF0246D0081E59E /* nanovg_bgfx.cpp in Sources */,
-				37E6368B1BF024330081E59E /* datarowset.cpp in Sources */,
 				37E6371C1BF0246D0081E59E /* NodeGraph.cpp in Sources */,
 				37E6369B1BF024330081E59E /* json.cpp in Sources */,
 				37E6370D1BF0246D0081E59E /* nanovg.cpp in Sources */,
@@ -897,7 +862,6 @@
 				37E637181BF0246D0081E59E /* ModelJsonSerializer.cpp in Sources */,
 				37E636061BF010270081E59E /* Common.cpp in Sources */,
 				37E636791BF024330081E59E /* debug.c in Sources */,
-				37E636901BF024330081E59E /* entitygroup.cpp in Sources */,
 				37E637161BF0246D0081E59E /* Mesh.cpp in Sources */,
 				37E636CD1BF024600081E59E /* UIEngine.cpp in Sources */,
 				37E637061BF0246D0081E59E /* AnimationController.cpp in Sources */,

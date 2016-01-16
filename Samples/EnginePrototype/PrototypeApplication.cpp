@@ -82,21 +82,11 @@ PrototypeApplication::PrototypeApplication
     std::vector<EntityStore::InitParams> entityStoreInitializers = {
         //  default
         cinek::EntityStore::InitParams {
-                16384,          // num entities
-                {
-                },
-                {
-                },
-                12345678        // random seed
+                16384
         },
         //  staging
         cinek::EntityStore::InitParams {
-                1024,           // num entities
-                {
-                },
-                {
-                },
-                34567890        //  random seed
+                1024
         }
     };
 

@@ -124,9 +124,7 @@ void EntityDatabase::destroyEntity(Entity entity)
 void EntityDatabase::gc()
 {
     for (auto& store : _stores) {
-        store.gc([this](EntityDataTable& table, ComponentRowIndex compRowIndex) {
-            _factory->onCustomComponentDestroyFn(table, compRowIndex);
-        });
+        store.gc();
     }
 }
 

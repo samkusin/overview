@@ -12,6 +12,7 @@
 #include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
 #include "Engine/AssetManifest.hpp"
+#include "Engine/ViewStack.hpp"
 
 #include "UICore/UIBuilder.hpp"
 
@@ -106,6 +107,10 @@ void EditorAddEntityToScene::onViewAdded(ove::ViewStack& stateController)
 void EditorAddEntityToScene::onViewRemoved(ove::ViewStack& stateController)
 {
     _displayTemplateSelector = false;
+    if (_stagedEntity) {
+        _gc->entityService->destroyEntity(_stagedEntity);
+        _stagedEntity = 0;
+    }
 }
 
 void EditorAddEntityToScene::onViewStartFrame(ove::ViewStack& stateController)
@@ -131,6 +136,7 @@ void EditorAddEntityToScene::frameUpdateView
     uicore::Layout uiLayout;
     auto frameWidth = _gc->renderService->getViewRect().w;
     auto frameHeight = _gc->renderService->getViewRect().h;
+    
     uiLayout.beginFrame(UI_BUTTON0_DOWN, &_sceneFrameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);
     
@@ -148,7 +154,11 @@ void EditorAddEntityToScene::frameUpdateView
     }
     
     uiLayout.end();
-
+    
+    if (inputState.testKey(SDL_SCANCODE_ESCAPE)) {
+        stateController.present("EditorMain");
+        return;
+    }
 
     auto& hitResult = *_gc->screenRayTestResult;
     
@@ -172,6 +182,12 @@ void EditorAddEntityToScene::onViewEndFrame(ove::ViewStack& stateController)
             _displayTemplateSelector = false;
             _stagedEntity = _gc->entityService->createEntity(kEntityStore_Staging, "entity",
                 _entityTemplateUIList[_entityTemplateListboxState.selectedItem].name);
+        }
+    }
+    else if (_stagedEntity) {
+        if (_sceneFrameState.evtType == UI_BUTTON0_DOWN) {
+            //_gc->entityService->clone(_stagedEntity);
+            stateController.present("EditorMain");
         }
     }
 

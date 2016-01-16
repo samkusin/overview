@@ -150,10 +150,14 @@ void GameEntityFactory::onCustomComponentCreateFn
     }
 }
 
-void GameEntityFactory::onCustomComponentDestroyFn
+void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
+{
+}
+
+void GameEntityFactory::onCustomComponentEntityCloneFn
 (
-    EntityDataTable& table,
-    ComponentRowIndex compRowIndex
+    Entity target,
+    Entity origin
 )
 {
 }

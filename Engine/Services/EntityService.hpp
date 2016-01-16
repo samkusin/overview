@@ -10,7 +10,6 @@
 #define Overview_Services_Entity_hpp
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/EntityTypes.hpp"
 #include "Engine/Messages/Entity.hpp"
 
 namespace cinek { namespace ove {
@@ -37,6 +36,13 @@ public:
      *  @param  entity      The entity to destroy
      */
     void destroyEntity(Entity entity);
+    /**
+     *  Clones the selected entity.
+     *
+     *  @param  entity      The entity to clone
+     *  @return The cloned enity
+     */
+    Entity cloneEntity(Entity entity);
     /**
      *  @param  entity      The entity to check
      *  @return True if the entity has not been destroyed

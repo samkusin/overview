@@ -84,7 +84,7 @@ Layout& Layout::beginFrame
     data->renderCb = renderCb;
     data->callbackContext = context;
     data->state = frameState;
-    data->state->evtType = UI_EVENT_NULL;
+    data->state->init();
     
     return *this;
 }

@@ -28,6 +28,7 @@ void OUIFrame::handler(int item, UIevent event)
     OUIFrame* frame = reinterpret_cast<OUIFrame*>(uiGetHandle(item));
     
     if (frame->state) {
+        frame->state->item = item;
         frame->state->evtType = event;
     }
 }

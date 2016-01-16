@@ -9,7 +9,7 @@
 #ifndef Overview_entityDatabase_hpp
 #define Overview_entityDatabase_hpp
 
-#include "EntityTypes.hpp"
+#include "EngineTypes.hpp"
 #include "AssetManifest.hpp"
 
 #include <ckentity/entitystore.hpp>
@@ -31,8 +31,10 @@ public:
                         const std::string& componentName,
                         const cinek::JsonValue& definitions,
                         const cinek::JsonValue& compTemplate) = 0;
-    virtual void onCustomComponentDestroyFn(EntityDataTable& table,
-                        ComponentRowIndex compRowIndex) = 0;
+    
+    virtual void onCustomComponentEntityDestroyFn(Entity entity) = 0;
+    
+    virtual void onCustomComponentEntityCloneFn(Entity target, Entity origin) = 0;
 };
 
 

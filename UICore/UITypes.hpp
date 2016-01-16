@@ -81,6 +81,11 @@ struct FrameState
 {
     int item;
     UIevent evtType;
+    
+    void init() {
+        evtType = UI_EVENT_NULL;
+        item = -1;
+    }
 };
 
 

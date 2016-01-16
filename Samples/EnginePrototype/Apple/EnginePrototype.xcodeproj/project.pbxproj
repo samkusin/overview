@@ -162,7 +162,6 @@
 		37E638181BF3FA220081E59E /* EntityDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDatabase.cpp; sourceTree = "<group>"; };
 		37E638191BF3FA220081E59E /* EntityDatabase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityDatabase.hpp; sourceTree = "<group>"; };
 		37E6381C1BF3FA220081E59E /* EngineTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineTypes.cpp; sourceTree = "<group>"; };
-		37E6381D1BF3FA220081E59E /* EntityTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityTypes.hpp; sourceTree = "<group>"; };
 		37E6382F1BF416920081E59E /* EntityService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityService.hpp; sourceTree = "<group>"; };
 		37E638301BF416A40081E59E /* EntityService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityService.cpp; sourceTree = "<group>"; };
 		37EF609D1BF0047C007284DB /* ovsample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ovsample; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -312,7 +311,6 @@
 				37E637BC1BF119EA0081E59E /* EngineMathGfx.cpp */,
 				37E637BF1BF119EA0081E59E /* EngineTypes.hpp */,
 				37E6381C1BF3FA220081E59E /* EngineTypes.cpp */,
-				37E6381D1BF3FA220081E59E /* EntityTypes.hpp */,
 				37E638191BF3FA220081E59E /* EntityDatabase.hpp */,
 				37E638181BF3FA220081E59E /* EntityDatabase.cpp */,
 				37E637CD1BF119EA0081E59E /* ObjectTypes.hpp */,
