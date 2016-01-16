@@ -62,6 +62,8 @@ public:
         const btTransform& localTransform);
     btCompoundShape* allocateCylinderShape(const btVector3& halfDims,
         const btTransform& localTransform);
+    btCompoundShape* cloneCompoundShape(const btCompoundShape* source);
+    
     void freeShape(btCollisionShape* shape);
     
     //  body
@@ -75,8 +77,13 @@ public:
         const SceneBodyInitParams& info,
         gfx::NodeHandle gfxNodeHandle
     );
+    btRigidBody* cloneBody
+    (
+        const btRigidBody* source,
+        gfx::NodeHandle gfxNodeHandle
+    );
     void freeBody(btRigidBody* body);
-    
+
     SceneMotionState* allocateMotionState(gfx::NodeHandle h);
     void freeMotionState(SceneMotionState* state);
     

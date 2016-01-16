@@ -118,6 +118,11 @@ btCompoundShape* SceneDataContext::allocateCylinderShape
     return compShape;
 }
 
+btCompoundShape* SceneDataContext::cloneCompoundShape(const btCompoundShape* source)
+{
+    return nullptr;
+}
+
 void SceneDataContext::freeShape(btCollisionShape* collisionShape)
 {
     switch (collisionShape->getShapeType())
@@ -168,6 +173,71 @@ btRigidBody* SceneDataContext::allocateBody
     btRigidBody::btRigidBodyConstructionInfo btInfo(info.mass,
         motionState,
         info.collisionShape);
+    
+    auto obj = _rigidBodyPool.construct(btInfo);
+    return obj;
+}
+
+void btRigidBodyCloneConstructionInfo
+(
+    btRigidBody::btRigidBodyConstructionInfo& info,
+    const btRigidBody& source
+)
+{
+}
+
+btRigidBody* SceneDataContext::cloneBody
+(
+    const btRigidBody* source,
+    gfx::NodeHandle gfxNodeHandle
+)
+{
+    SceneBodyMassProps massProps;
+    massProps.fromRigidBody(*source);
+    
+    //  clone collision shape
+    const btCollisionShape* shape = source->getCollisionShape();
+    const btVector3& sourceLocalScaling = shape->getLocalScaling();
+    btCollisionShape* clonedShape = nullptr;
+    
+    switch (shape->getShapeType())
+    {
+    case TRIANGLE_MESH_SHAPE_PROXYTYPE:
+        {
+            const btBvhTriangleMeshShape* triMeshShape = static_cast<const btBvhTriangleMeshShape*>(shape);
+            
+            //  fixed body hulls do not change - but the reference count changes
+            //  so we cast off the const for this special case.
+            SceneFixedBodyHull* hull = const_cast<SceneFixedBodyHull*>(
+                static_cast<const SceneFixedBodyHull*>(triMeshShape->getMeshInterface())
+            );
+            hull->incRef();
+            clonedShape = allocateTriangleMeshShape(hull, sourceLocalScaling);
+        }
+        break;
+        
+    case COMPOUND_SHAPE_PROXYTYPE:
+        {
+            clonedShape = cloneCompoundShape(static_cast<const btCompoundShape*>(shape));
+        }
+        break;
+    default:
+        
+        break;
+    }
+    CK_ASSERT_RETURN_VALUE(clonedShape != nullptr, nullptr);
+    
+    SceneMotionState* motionState = nullptr;
+    if (gfxNodeHandle) {
+        motionState = allocateMotionState(gfxNodeHandle);
+    }
+    
+    btRigidBody::btRigidBodyConstructionInfo btInfo(massProps.mass,
+        motionState,
+        clonedShape,
+        massProps.inertia);
+    
+    btRigidBodyCloneConstructionInfo(btInfo, *source);
     
     auto obj = _rigidBodyPool.construct(btInfo);
     return obj;

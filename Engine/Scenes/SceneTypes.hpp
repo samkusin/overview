@@ -20,6 +20,14 @@ class btBvhTriangleMeshShape;
 
 namespace cinek {
     namespace ove {
+    
+struct SceneBodyMassProps
+{
+    btScalar mass;
+    btVector3 inertia;
+
+    void fromRigidBody(const btRigidBody& body);
+};
 
 struct SceneBody
 {
@@ -35,8 +43,7 @@ struct SceneBody
         };
         
         uint32_t flags;
-        btScalar mass;
-        btVector3 inertia;
+        SceneBodyMassProps massProps;
     };
     
     SavedState savedState;

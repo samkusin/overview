@@ -13,10 +13,21 @@
 namespace cinek {
     namespace ove {
 
+void SceneBodyMassProps::fromRigidBody(const btRigidBody& btBody)
+{
+    mass = 1/btBody.getInvMass();
+    const btVector3& invInertia = btBody.getInvInertiaDiagLocal();
+    inertia.setValue(
+        invInertia.x() != btScalar(0) ? 1/invInertia.x() : btScalar(0),
+        invInertia.y() != btScalar(0) ? 1/invInertia.y() : btScalar(0),
+        invInertia.z() != btScalar(0) ? 1/invInertia.z() : btScalar(0)
+    );
+}
+
 void SceneBody::activate()
 {
     if ((savedState.flags & SavedState::kDynamic)!=0) {
-        btBody->setMassProps(savedState.mass, savedState.inertia);
+        btBody->setMassProps(savedState.massProps.mass, savedState.massProps.inertia);
     }
     
     savedState.flags = SavedState::kNone;
@@ -27,13 +38,7 @@ void SceneBody::deactivate()
     if (!btBody->isStaticOrKinematicObject()) {
         savedState.flags |= SavedState::kDynamic;
         
-        savedState.mass = 1/btBody->getInvMass();
-        const btVector3& invInertia = btBody->getInvInertiaDiagLocal();
-        savedState.inertia.setValue(
-            invInertia.x() != btScalar(0) ? 1/invInertia.x() : btScalar(0),
-            invInertia.y() != btScalar(0) ? 1/invInertia.y() : btScalar(0),
-            invInertia.z() != btScalar(0) ? 1/invInertia.z() : btScalar(0)
-        );
+        savedState.massProps.fromRigidBody(*btBody);
         
         btBody->setMassProps(btScalar(0), btVector3(0,0,0));
     }

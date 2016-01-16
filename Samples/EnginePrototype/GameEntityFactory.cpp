@@ -152,6 +152,17 @@ void GameEntityFactory::onCustomComponentCreateFn
 
 void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
 {
+    //  iterate through all components
+    //  TODO - perhaps we need to identify what components are attached to
+    //         the entity for optimization
+    
+    //  destroy scene
+    btRigidBody* body = _scene->detachBody(entity);
+    if (body) {
+        _sceneDataContext->freeBody(body);
+    }
+    //  destroy renderable
+    _renderGraph->removeNode(entity);
 }
 
 void GameEntityFactory::onCustomComponentEntityCloneFn
@@ -160,6 +171,21 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
     Entity origin
 )
 {
+    //  clone all components
+    //  TODO - perhaps we need to identify what components are attached to
+    //         the entity for optimization
+    
+    //  renderable
+    gfx::NodeHandle gfxNode = _renderGraph->findNode(origin);
+    if (gfxNode) {
+        gfxNode = _renderGraph->cloneAndAddNode(target, gfxNode, nullptr);
+    }
+    //  scene
+    btRigidBody* body = _scene->findBody(origin);
+    if (body) {
+        body = _sceneDataContext->cloneBody(body, gfxNode);
+        _scene->attachBody(body, target);
+    }
 }
 
 

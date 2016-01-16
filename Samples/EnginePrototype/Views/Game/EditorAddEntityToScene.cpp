@@ -186,7 +186,7 @@ void EditorAddEntityToScene::onViewEndFrame(ove::ViewStack& stateController)
     }
     else if (_stagedEntity) {
         if (_sceneFrameState.evtType == UI_BUTTON0_DOWN) {
-            //_gc->entityService->clone(_stagedEntity);
+            _gc->entityService->cloneEntity(kEntityStore_Default, _stagedEntity);
             stateController.present("EditorMain");
         }
     }

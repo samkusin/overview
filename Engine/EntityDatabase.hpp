@@ -113,6 +113,14 @@ public:
     Entity createEntity(EntityContextType context, const std::string& ns,
                         const std::string& templateName);
     /**
+     *  Duplicates an entity
+     *  
+     *  @param  context The cloned entity's context
+     *  @param  entity  The source entity
+     *  @return The cloned entity
+     */
+    Entity cloneEntity(EntityContextType context, Entity source);
+    /**
      *  Components are destroyed during the garbage collection phase.   This
      *  method flags the entity for destruction.
      *

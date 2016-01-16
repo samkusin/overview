@@ -113,12 +113,28 @@ Entity EntityDatabase::createEntity
     }
     
     return entity;
-    
+}
+
+Entity EntityDatabase::cloneEntity
+(
+    EntityContextType context,
+    Entity source
+)
+{
+    Entity cloned = getStore(context).create(context);
+    _factory->onCustomComponentEntityCloneFn(cloned, source);
+    return cloned;
 }
 
 void EntityDatabase::destroyEntity(Entity entity)
 {
     getStore(cinek_entity_context(entity)).destroy(entity);
+    
+    //  TODO - consider delaying this until the gc() phase
+    //  need a way to flag an entity as dead and group them together so
+    //  that the gc() phase only acts on destroyed entities for that timeslice
+    //
+    _factory->onCustomComponentEntityDestroyFn(entity);
 }
 
 void EntityDatabase::gc()

@@ -39,10 +39,11 @@ public:
     /**
      *  Clones the selected entity.
      *
+     *  @param  context     The cloned entity context
      *  @param  entity      The entity to clone
      *  @return The cloned enity
      */
-    Entity cloneEntity(Entity entity);
+    Entity cloneEntity(EntityContextType context, Entity entity);
     /**
      *  @param  entity      The entity to check
      *  @return True if the entity has not been destroyed

@@ -33,9 +33,9 @@ void EntityService::destroyEntity(Entity entity)
     _context->destroyEntity(entity);
 }
 
-Entity EntityService::cloneEntity(Entity entity)
+Entity EntityService::cloneEntity(EntityContextType context, Entity entity)
 {
-    return 0;
+    return _context->cloneEntity(context, entity);
 }
 
 bool EntityService::isEntityValid(Entity e) const
