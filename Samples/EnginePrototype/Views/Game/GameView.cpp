@@ -26,18 +26,30 @@ namespace cinek {
 
 GameView::GameView(const ApplicationContext& api) :
     AppViewController(api),
-    _gameViewContext { &_camera, &_viewToSceneRayTestResult },
+    _gameViewContext {
+        &_camera,
+        &_viewToSceneRayTestResult,
+        &sceneService(),
+        &entityService(),
+        &renderService(),
+        &assetService(),
+        nvgContext()
+    },
     _sceneLoaded(false)
 {
-
-    _editorView = std::allocate_shared<EditorView>(
-        std_allocator<EditorView>(),
-        api, _gameViewContext);
 }
 
     
 void GameView::onViewAdded(ove::ViewStack& stateController)
 {
+    //  As an AppViewController, GameView must initialize its states
+    //  explicity upon switching from another application view.
+    //
+    //  Substates do not need to follow this rule.
+    
+    _editorView = std::allocate_shared<EditorView>(
+        std_allocator<EditorView>(), _gameViewContext);
+        
     //  initialize common objects for all substates
     _camera.near = 0.1f;
     _camera.far = 1000.0f;
@@ -70,14 +82,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
 
 void GameView::onViewRemoved(ove::ViewStack& stateController)
 {
-}
-
-void GameView::onViewForeground(ove::ViewStack& stateController)
-{
-}
-
-void GameView::onViewBackground(ove::ViewStack& stateController)
-{
+    _editorView = nullptr;
 }
 
 void GameView::onViewStartFrame(ove::ViewStack& stateController)

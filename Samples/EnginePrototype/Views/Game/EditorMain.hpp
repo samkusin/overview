@@ -1,29 +1,25 @@
 //
-//  GameView.hpp
+//  EditorMain.hpp
 //  EnginePrototype
 //
-//  Created by Samir Sinha on 11/10/15.
+//  Created by Samir Sinha on 1/15/16.
 //
 //
 
-#ifndef Sample_Engine_GameView_hpp
-#define Sample_Engine_GameView_hpp
+#ifndef Prototype_Game_Editor_Main_hpp
+#define Prototype_Game_Editor_Main_hpp
 
-#include "Views/AppViewController.hpp"
-#include "Engine/ViewStack.hpp"
-#include "Engine/Scenes/SceneTypes.hpp"
-#include "CKGfx/Camera.hpp"
+#include "Engine/ViewController.hpp"
 
 #include "GameViewContext.hpp"
 
-#include <cinek/allocator.hpp>
 
 namespace cinek {
 
-class GameView : public AppViewController
+class EditorMain : public ove::ViewController
 {
 public:
-    GameView(const ApplicationContext& context);
+    EditorMain(const GameViewContext& gameContext);
     
 private:
     //  ViewController
@@ -38,19 +34,9 @@ private:
     virtual const char* viewId() const override;
 
 private:
-    gfx::NodeRenderer _renderer;
-    gfx::Camera _camera;
-    ove::SceneRayTestResult _viewToSceneRayTestResult;
-    
-    ove::ViewStack _viewStack;
-    
-    GameViewContext _gameViewContext;
-    
-    std::shared_ptr<EditorView> _editorView;
-    
-    bool _sceneLoaded;
+    const GameViewContext* _gc;
 };
 
 } /* namespace cinek */
 
-#endif /* Sample_Engine_GameView_hpp */
+#endif

@@ -7,8 +7,13 @@
 //
 
 #include "EditorView.hpp"
+#include "EditorMain.hpp"
+#include "EditorAddEntityToScene.hpp"
 
 #include "Engine/AssetManifest.hpp"
+#include "Engine/Services/SceneService.hpp"
+#include "Engine/Services/RenderService.hpp"
+
 #include "UICore/UIBuilder.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
@@ -25,21 +30,40 @@ namespace cinek {
 
 EditorView::EditorView
 (
-    const ApplicationContext& context,
     const GameViewContext& gameContext
 ) :
-    AppViewController(context),
-    _gameContext(&gameContext),
-    _stagedEntity(0),
-    _shiftModifierAction(false),
-    _displayTemplateSelector(false)
+    _gc(&gameContext)
 {
-    _entityTemplateListboxState.highlightItem = -1;
+    _mainState = std::allocate_shared<EditorMain>(std_allocator<EditorMain>(), gameContext);
+    _addEntityToSceneState = std::allocate_shared<EditorAddEntityToScene>(
+        std_allocator<EditorAddEntityToScene>(),
+        *_gc);
 }
 
     
 void EditorView::onViewAdded(ove::ViewStack& stateController)
 {
+    _viewStack.setFactory(
+        [this](const std::string& viewName, ove::ViewController* )
+            -> std::shared_ptr<ove::ViewController> {
+            //  Startup View initialzes common data for the application
+            //  Game View encompasses the whole game simulation
+            //  Ship View encompasses the in-game ship mode
+            //  Ship Bridge View encompasses the in-game ship bridge mode
+            if (viewName == "EditorMain") {
+                return _mainState;
+            }
+            else if (viewName == "EditorAddEntityToScene") {
+                return _addEntityToSceneState;
+            }
+            
+            return nullptr;
+        });
+    
+    _viewStack.present("EditorMain");
+
+
+    /*
     //  create our offscreen node graph for rendering models
     //  uses a simple ambient light - might add another light
     //
@@ -88,17 +112,8 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
 				, 1.0f
 				, 0
 				);
+    */
     
-    auto templateManifest = entityService().getDefinitions("entity");
-    if (templateManifest && templateManifest->root().HasMember("entity")) {
-        auto& templates = templateManifest->root()["entity"];
-        for (auto templateIt = templates.MemberBegin();
-             templateIt != templates.MemberEnd();
-             ++templateIt)
-        {
-            addEntityTemplateUIData(templateIt->name.GetString(), templateIt->value);
-        }
-    }
     
     //  reset camera
     cinek::gfx::Matrix4 cameraRotMtx;
@@ -109,28 +124,21 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
     
     //  load scene
     
-    sceneService().disableSimulation();
+    _gc->sceneService->disableSimulation();
 }
 
 void EditorView::onViewRemoved(ove::ViewStack& stateController)
-{
-    _modelStageGraph = nullptr;
-}
-
-void EditorView::onViewForeground(ove::ViewStack& stateController)
-{
-}
-
-void EditorView::onViewBackground(ove::ViewStack& stateController)
 {
 }
 
 void EditorView::onViewStartFrame(ove::ViewStack& stateController)
 {
+    _viewStack.startFrame();
 }
 
 void EditorView::simulateView(ove::ViewStack& stateController, double dt)
 {
+    _viewStack.simulate(dt);
 }
 
 void EditorView::frameUpdateView
@@ -140,61 +148,16 @@ void EditorView::frameUpdateView
     const cinek::uicore::InputState& inputState
 )
 {
-    //  handle keyboard inputs - shortcuts
-    _shiftModifierAction = inputState.testKeyMod(KMOD_SHIFT);
-    
-    if (_shiftModifierAction) {
-        if (inputState.testKey(SDL_SCANCODE_A)) {
-            _displayTemplateSelector = true;
-        }
-    }
-    
-    
-    //  layout UI
-    uicore::Layout::Style style;
-    style.mask = uicore::Layout::Style::has_margins;
-    style.margins = { 8, 8, 8, 8 };
-    
-    uicore::Layout uiLayout;
-    auto frameWidth = renderService().getViewRect().w;
-    auto frameHeight = renderService().getViewRect().h;
-    uiLayout.beginFrame(UI_BUTTON0_DOWN, &_sceneFrameState, viewUIRenderHook, this)
-        .setSize(frameWidth, frameHeight);
-    
-    if (_displayTemplateSelector) {
-        uiLayout.beginColumn()
-            .setLayout(UI_RIGHT | UI_VCENTER)
-            .setSize(frameWidth/5, frameHeight*3/4)
-            .beginWindow()
-                .listbox(this, kUIProviderId_EntityTemplates,
-                    uicore::ListboxType::kList,
-                    &_entityTemplateListboxState,
-                    &style)
-            .end()
-        .end();
-    }
-    
-    uiLayout.end();
-    
-    //  Editor Live Actions based on mouse position and editing state
-    updateStagedEntity(*_gameContext->_screenRayTestResult);
-    
     test2();
     
-    _freeCameraController.handleCameraInput(*_gameContext->_camera, inputState, dt);
+    _freeCameraController.handleCameraInput(*_gc->camera, inputState, dt);
+    
+    _viewStack.frameUpdate(dt, inputState);
 }
 
 void EditorView::onViewEndFrame(ove::ViewStack& stateController)
 {
-    if (_displayTemplateSelector) {
-        if (_entityTemplateListboxState.selected()) {
-            _displayTemplateSelector = false;
-            
-            createAndStageEntity(kEntityStore_Staging,
-                "entity",
-                _entityTemplateUIList[_entityTemplateListboxState.selectedItem].name);
-        }
-    }
+    _viewStack.endFrame();
 }
 
 const char* EditorView::viewId() const
@@ -202,62 +165,8 @@ const char* EditorView::viewId() const
     return "EditorView";
 }
 
-void EditorView::createAndStageEntity
-(
-    EntityContextType storeId,
-    const std::string &ns,
-    const std::string &name
-)
-{
-    //  create staging entity with specified template
-    //      create entity with the staging store
-    _stagedEntity = entityService().createEntity(kEntityStore_Staging, ns, name);
-}
-
-void EditorView::updateStagedEntity(const ove::SceneRayTestResult& hitResult)
-{
-    if (!_stagedEntity || !hitResult)
-        return;
-    
-    if (hitResult.entity != _stagedEntity) {
-        if (!hitResult.normal.fuzzyZero()) {
-            sceneService().setEntityPosition(_stagedEntity,
-                hitResult.position,
-                hitResult.normal);
-        }
-    }
-}
-
-void EditorView::unstageEntity(UnstageOption option)
-{
-}
 
 ////////////////////////////////////////////////////////////////////////
-
-void EditorView::viewUIRenderHook(void* context, NVGcontext* nvg)
-{
-}
-
-void EditorView::addEntityTemplateUIData
-(
-    std::string name,
-    const JsonValue& entityTemplate
-)
-{
-    EntityTemplateUIData data;
-    data.name = std::move(name);
-    
-    auto editorTemplate = entityTemplate.FindMember("editor");
-    if (editorTemplate != entityTemplate.MemberEnd()) {
-        data.longname = editorTemplate->value["name"].GetString();
-    }
-    
-    _entityTemplateUIList.emplace_back(std::move(data));
-    
-    if (_entityTemplateListboxState.highlightItem < 0) {
-        _entityTemplateListboxState.highlightItem = (int)(_entityTemplateUIList.size() - 1);
-    }
-}
 
 bool EditorView::onUIDataItemRequest
 (
@@ -267,27 +176,11 @@ bool EditorView::onUIDataItemRequest
     uicore::DataObject& data
 )
 {
-    if (id == kUIProviderId_EntityTemplates) {
-        if (row < _entityTemplateUIList.size()) {
-            auto& source = _entityTemplateUIList[row];
-            if (col == 0) {
-                data.type = uicore::DataObject::Type::string;
-                data.data.str = source.longname.empty() ? source.name.c_str()
-                                    : source.longname.c_str();
-                return true;
-            }
-        }
-    
-    }
-    
-    return false;
+     return false;
 }
 
 uint32_t EditorView::onUIDataItemRowCountRequest(int id)
 {
-    if (id == kUIProviderId_EntityTemplates) {
-        return (uint32_t)_entityTemplateUIList.size();
-    }
     return 0;
 }
 
@@ -327,7 +220,9 @@ void EditorView::test1()
 
 void EditorView::test2()
 {
-    auto& camera = *_gameContext->_camera;
+    auto& camera = *_gc->camera;
+    auto& renderService = *_gc->renderService;
+    
     bgfx::setViewRect(0, camera.viewportRect.x, camera.viewportRect.y,
         camera.viewportRect.w, camera.viewportRect.h);
     bgfx::setViewTransform(0, camera.viewMtx, camera.projMtx);
@@ -348,25 +243,25 @@ void EditorView::test2()
             { 0.0f, 0.0f, 0.0f, 0.0f },
             { 0.0f, 0.0f, 0.0f, 0.0f }
         };
+
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformColor), color);
         
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
-        
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightColor), color, 2);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightColor), color, 2);
 
         param[0] = { 0.10f, 0, 0, 0 };
         param[1] = { 0.0f, 1.0f, 0, 0 };
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightParam), param, 2);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightParam), param, 2);
 
         param[0] = { 0,0,0,0 };
         param[1] = { -1, -1, 0, 0 };
         bx::vec3Norm(param[1], param[1]);
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightDir), param, 2);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightDir), param, 2);
         
         param[0] = { 0,0,0,0 };
         param[1] = { 0,0,0,0 };
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param, 2);
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param, 2);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param, 2);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param, 2);
 
         bgfx::setTransform(mainTransform);
     
@@ -399,11 +294,11 @@ void EditorView::test2()
           | BGFX_STATE_CULL_CW
         );
         
-        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramFlatMesh));
+        bgfx::submit(0, renderService.bgfxProgramHandle(gfx::kNodeProgramFlatMesh));
     }
     else if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kLines) {
         gfx::Color4 color { 1,1,1,1 };
-        bgfx::setUniform(renderService().bgfxUniformHandle(gfx::kNodeUniformColor), color);
+        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformColor), color);
         
         bgfx::setTransform(mainTransform);
         
@@ -419,7 +314,7 @@ void EditorView::test2()
           | BGFX_STATE_PT_LINES
         );
         
-        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramFlat));
+        bgfx::submit(0, renderService.bgfxProgramHandle(gfx::kNodeProgramFlat));
     }
 }
 

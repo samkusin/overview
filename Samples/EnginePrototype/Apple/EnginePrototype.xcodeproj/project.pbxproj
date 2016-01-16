@@ -10,6 +10,8 @@
 		289A4E011C49829700367E3B /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4DFF1C49829700367E3B /* GameView.cpp */; };
 		289A4E041C49834800367E3B /* EditorView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E021C49834800367E3B /* EditorView.cpp */; };
 		289A4E0D1C49B3F500367E3B /* GameViewContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E0B1C49B3F500367E3B /* GameViewContext.cpp */; };
+		289A4E141C49D8FA00367E3B /* EditorMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E121C49D8FA00367E3B /* EditorMain.cpp */; };
+		289A4E171C49E01000367E3B /* EditorAddEntityToScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289A4E161C49E01000367E3B /* EditorAddEntityToScene.cpp */; };
 		28BCF4551C3DDE450040BAA8 /* SceneTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BCF4541C3DDE450040BAA8 /* SceneTypes.cpp */; };
 		28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20841C2A1F480059B56F /* AssetService.cpp */; };
 		28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20871C2A210D0059B56F /* AppViewController.cpp */; };
@@ -72,6 +74,10 @@
 		289A4E031C49834800367E3B /* EditorView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorView.hpp; path = ../Views/Game/EditorView.hpp; sourceTree = "<group>"; };
 		289A4E0B1C49B3F500367E3B /* GameViewContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameViewContext.cpp; path = ../Views/Game/GameViewContext.cpp; sourceTree = "<group>"; };
 		289A4E0C1C49B3F500367E3B /* GameViewContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameViewContext.hpp; path = ../Views/Game/GameViewContext.hpp; sourceTree = "<group>"; };
+		289A4E121C49D8FA00367E3B /* EditorMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorMain.cpp; path = ../Views/Game/EditorMain.cpp; sourceTree = "<group>"; };
+		289A4E131C49D8FA00367E3B /* EditorMain.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorMain.hpp; path = ../Views/Game/EditorMain.hpp; sourceTree = "<group>"; };
+		289A4E151C49DFFA00367E3B /* EditorAddEntityToScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorAddEntityToScene.hpp; path = ../Views/Game/EditorAddEntityToScene.hpp; sourceTree = "<group>"; };
+		289A4E161C49E01000367E3B /* EditorAddEntityToScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorAddEntityToScene.cpp; path = ../Views/Game/EditorAddEntityToScene.cpp; sourceTree = "<group>"; };
 		28BCF4531C3DDAEF0040BAA8 /* SceneTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = SceneTypes.hpp; path = Scenes/SceneTypes.hpp; sourceTree = "<group>"; };
 		28BCF4541C3DDE450040BAA8 /* SceneTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneTypes.cpp; path = Scenes/SceneTypes.cpp; sourceTree = "<group>"; };
 		28CE20831C2A17710059B56F /* AppViewController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AppViewController.hpp; sourceTree = "<group>"; };
@@ -195,6 +201,10 @@
 				289A4E0C1C49B3F500367E3B /* GameViewContext.hpp */,
 				289A4E021C49834800367E3B /* EditorView.cpp */,
 				289A4E031C49834800367E3B /* EditorView.hpp */,
+				289A4E121C49D8FA00367E3B /* EditorMain.cpp */,
+				289A4E131C49D8FA00367E3B /* EditorMain.hpp */,
+				289A4E161C49E01000367E3B /* EditorAddEntityToScene.cpp */,
+				289A4E151C49DFFA00367E3B /* EditorAddEntityToScene.hpp */,
 			);
 			name = Game;
 			sourceTree = "<group>";
@@ -487,6 +497,7 @@
 				37804D0F1C1A2FF6002109DF /* GameTypes.cpp in Sources */,
 				37804D0A1C191965002109DF /* SceneDebugDrawer.cpp in Sources */,
 				377ECCF91C10F4FF002040D7 /* SceneFixedBodyHull.cpp in Sources */,
+				289A4E141C49D8FA00367E3B /* EditorMain.cpp in Sources */,
 				37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */,
 				37E637E31BF119EA0081E59E /* EngineMathGfx.cpp in Sources */,
 				28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */,
@@ -494,6 +505,7 @@
 				377ECCFC1C115C43002040D7 /* SceneDataContext.cpp in Sources */,
 				37420BAC1C290A21003D702B /* Sample.cpp in Sources */,
 				37E638211BF3FA220081E59E /* EngineTypes.cpp in Sources */,
+				289A4E171C49E01000367E3B /* EditorAddEntityToScene.cpp in Sources */,
 				377ECCCA1C08FEFD002040D7 /* AssetManifest.cpp in Sources */,
 				377ECCD11C093F78002040D7 /* StartupView.cpp in Sources */,
 				37E6381F1BF3FA220081E59E /* EntityDatabase.cpp in Sources */,

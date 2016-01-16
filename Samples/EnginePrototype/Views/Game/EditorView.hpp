@@ -9,11 +9,12 @@
 #ifndef Prototype_Game_EditorView_hpp
 #define Prototype_Game_EditorView_hpp
 
-#include "Views/AppViewController.hpp"
+#include "Engine/ViewController.hpp"
 #include "Engine/ViewStack.hpp"
 #include "CKGfx/RenderTarget.hpp"
 #include "CKGfx/Texture.hpp"
 #include "CKGfx/Mesh.hpp"
+#include "CKGfx/Camera.hpp"
 
 #include "GameViewContext.hpp"
 #include "FreeCameraController.hpp"
@@ -23,19 +24,19 @@
 
 namespace cinek {
 
-class EditorView : public AppViewController,
+class EditorMain;
+class EditorAddEntityToScene;
+
+class EditorView : public ove::ViewController,
                    public uicore::DataProvider
 {
 public:
-    EditorView(const ApplicationContext& context,
-               const GameViewContext& gameContext);
+    EditorView(const GameViewContext& gameContext);
 
 private:
     //  ViewController
     virtual void onViewAdded(ove::ViewStack& stateController) override;
-    virtual void onViewRemoved(ove::ViewStack& stateController) override;
-    virtual void onViewForeground(ove::ViewStack& stateController) override;
-    virtual void onViewBackground(ove::ViewStack& stateController) override;
+    virtual void onViewRemoved(ove::ViewStack& stateController) override;;
     virtual void onViewStartFrame(ove::ViewStack& stateController) override;
     virtual void simulateView(ove::ViewStack& stateController, double dt) override;
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
@@ -50,48 +51,20 @@ private:
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
 private:
-    enum
-    {
-        kUIProviderId_EntityTemplates
-    };
-
-    static void viewUIRenderHook(void* context, NVGcontext* nvg);
-
-    void createAndStageEntity(EntityContextType storeId,
-        const std::string& ns, const std::string& name);
+    const GameViewContext* _gc;
+    ove::ViewStack _viewStack;
     
-    enum class UnstageOption { kPlace, kDiscard };
-    void unstageEntity(UnstageOption option);
-    
-    void updateStagedEntity(const ove::SceneRayTestResult& hitResult);
-
-private:
-    const GameViewContext* _gameContext;
     ove::FreeCameraController _freeCameraController;
     
-    uicore::FrameState _sceneFrameState;
-    bool _shiftModifierAction;
-    bool _displayTemplateSelector;
-
-private:
+    std::shared_ptr<EditorMain> _mainState;
+    std::shared_ptr<EditorAddEntityToScene> _addEntityToSceneState;
+    
+    /*
     //  Node graph to render to our dedicated
     unique_ptr<gfx::NodeGraph> _modelStageGraph;
     gfx::Camera _modelStageCamera;
-    
-    //  Storage for UI
-    struct EntityTemplateUIData
-    {
-        std::string name;
-        std::string longname;
-    };
-    std::vector<EntityTemplateUIData> _entityTemplateUIList;
     gfx::MultiTextureRenderTarget _defaultEntityTemplateRT;
-    
-    //  used for staging an entity for placement into the active scene
-    uicore::ListboxState _entityTemplateListboxState;
-    Entity _stagedEntity;
-
-    void addEntityTemplateUIData(std::string name, const JsonValue& entityTemplate);
+    */
     
 private:
     gfx::Mesh _testQuadMesh;

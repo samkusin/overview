@@ -77,6 +77,13 @@ void ViewStack::endFrame()
         
         _activeThread = std::this_thread::get_id();
         
+        for (auto& vc : _stack)
+        {
+            _activeController = vc;
+            _activeController->onViewEndFrame(*this);
+        }
+        _activeController = nullptr;
+        
         //  process commands on stack
         for (auto& cmd : _commands)
         {
@@ -139,13 +146,6 @@ void ViewStack::endFrame()
         
         _commands.clear();
         
-        // render everything
-        for (auto& vc : _stack)
-        {
-            _activeController = vc;
-            _activeController->onViewEndFrame(*this);
-        }
-        _activeController = nullptr;
         
         _activeThread = std::thread::id();
     }

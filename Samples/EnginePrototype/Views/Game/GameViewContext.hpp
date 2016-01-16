@@ -11,6 +11,8 @@
 
 #include "GameTypes.hpp"
 #include "Engine/Scenes/SceneTypes.hpp"
+#include "UICore/Input.hpp"
+#include "UICore/UITypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {
@@ -20,8 +22,13 @@ class PlayView;
 
 struct GameViewContext
 {
-    gfx::Camera* _camera;
-    ove::SceneRayTestResult* _screenRayTestResult;
+    gfx::Camera* camera;
+    ove::SceneRayTestResult* screenRayTestResult;
+    ove::SceneService* sceneService;
+    ove::EntityService* entityService;
+    ove::RenderService* renderService;
+    ove::AssetService* assetService;
+    NVGcontext* nvgContext;
 };
 
 } /* namespace cinek */

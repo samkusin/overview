@@ -32,10 +32,10 @@ public:
     //  Executed when a view is brought into the foreground, called when a view
     //  higher up on the stack is removed, bringing this view back into the
     //  foreground
-    virtual void onViewForeground(ViewStack& stateController) = 0;
+    virtual void onViewForeground(ViewStack& stateController) {}
     //  Executed when a view is put into the background, usually called when a
     //  view is added to the stack, over the current view
-    virtual void onViewBackground(ViewStack& stateController) = 0;
+    virtual void onViewBackground(ViewStack& stateController) {}
     //  Executed upon the the start of a frame
     virtual void onViewStartFrame(ViewStack& stateController) = 0;
     //  Updates simulation of the current view controller.  Execution occurs
