@@ -12,7 +12,13 @@
 #include "EngineTypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
-namespace cinek { namespace ove {
+namespace cinek {
+
+namespace uicore {
+    struct InputState;
+}
+
+namespace ove {
 
 class ViewController
 {
@@ -39,7 +45,7 @@ public:
     //  Executed once per render frame.  Useful for polling input, rendering,
     //  and any other per-frame operation that isn't deterministic
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                                 const ove::InputState& inputState) = 0;
+                                 const cinek::uicore::InputState& inputState) = 0;
     //  Executed upon the the end of a frame
     virtual void onViewEndFrame(ViewStack& stateController) = 0;
     //  the name of the view

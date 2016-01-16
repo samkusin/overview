@@ -18,6 +18,8 @@ typedef struct NVGcontext NVGcontext;
 
 namespace cinek { namespace uicore {
 
+struct InputState;
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Generalized Theme defines
 

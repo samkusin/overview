@@ -8,6 +8,7 @@
 
 #include "Controller.hpp"
 #include "CKGfx/Camera.hpp"
+#include "UICore/Input.hpp"
 
 #include <bx/fpumath.h>
 
@@ -29,7 +30,7 @@ AppController::AppController() :
 void AppController::handleCameraInput
 (
     gfx::Camera &camera,
-    const cinek::ove::InputState &state,
+    const uicore::InputState &state,
     float frameDelta
 )
 {

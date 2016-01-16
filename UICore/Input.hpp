@@ -12,7 +12,7 @@
 #include <SDL2/SDL_Keycode.h>
 
 namespace cinek {
-    namespace ove {
+    namespace uicore {
 
     enum
     {
@@ -34,8 +34,11 @@ namespace cinek {
         bool testKey(uint8_t key) const;
         bool testKeyMod(int mod) const;
     };
-    
-    } /* namespace ove */
+
+
+    uint32_t pollSDLEvents(InputState& state);
+
+    } /* namespace uicore */
 } /* namespace cinek */
 
 

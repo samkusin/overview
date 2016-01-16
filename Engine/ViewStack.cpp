@@ -171,7 +171,7 @@ void ViewStack::simulate(double dt)
 void ViewStack::frameUpdate
 (
     double dt,
-    const InputState& inputState
+    const cinek::uicore::InputState& inputState
 )
 {
     if (_activeThread == std::thread::id())

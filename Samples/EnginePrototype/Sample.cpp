@@ -29,13 +29,13 @@
 #include "UICore/UITypes.hpp"
 #include "UICore/UIEngine.hpp"
 #include "UICore/UIRenderer.hpp"
+#include "UICore/Input.hpp"
 
 #include "UICore/oui.h"
 
 #include <unordered_map>
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/Input.hpp"
 
 #include "PrototypeApplication.hpp"
 
@@ -125,7 +125,7 @@ int runSample(int viewWidth, int viewHeight)
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
         
-        cinek::ove::InputState polledInputState;
+        cinek::uicore::InputState polledInputState;
         
         while (running) {
             uint32_t nextSystemTimeMs = SDL_GetTicks();
@@ -155,7 +155,7 @@ int runSample(int viewWidth, int viewHeight)
             //  SIMULATION END
             ////////////////////////////////////////////////////////////////////////
 
-            if (pollSDLEvents(polledInputState) & cinek::ove::kPollSDLEvent_Quit)
+            if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
                 running = false;
             
             uiBeginLayout();

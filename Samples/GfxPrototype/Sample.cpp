@@ -29,10 +29,12 @@
 
 #include <SDL2/SDL_timer.h>
 #include <bgfx/bgfx.h>
+#include <bx/fpumath.h>
 
 #include "UICore/UITypes.hpp"
 #include "UICore/UIEngine.hpp"
 #include "UICore/UIRenderer.hpp"
+#include "UICore/Input.hpp"
 
 #include "UICore/oui.h"
 
@@ -316,9 +318,9 @@ int runSample(int viewWidth, int viewHeight)
         }
         */
 
-        cinek::ove::InputState polledInputState;
+        cinek::uicore::InputState polledInputState;
         
-        if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
+        if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
             running = false;
 
         {

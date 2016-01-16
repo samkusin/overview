@@ -16,7 +16,13 @@
 #include <thread>
 #include <mutex>
 
-namespace cinek { namespace ove {
+namespace cinek {
+
+namespace uicore {
+    struct InputState;
+}
+
+namespace ove {
 
 class ViewController;
 struct InputState;
@@ -43,7 +49,7 @@ public:
     void simulate(double dt);
     
     //  render the stack
-    void frameUpdate(double dt, const InputState& inputState);
+    void frameUpdate(double dt, const cinek::uicore::InputState& inputState);
     
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,

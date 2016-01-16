@@ -164,7 +164,7 @@ void PrototypeApplication::renderFrame
 (
     double dt,
     const gfx::Rect& viewRect,
-    const ove::InputState& inputState
+    const cinek::uicore::InputState& inputState
 )
 {
     _taskScheduler.update(dt * 1000);

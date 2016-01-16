@@ -11,6 +11,7 @@
 
 #include "Engine/EngineTypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
+#include "UICore/UITypes.hpp"
 
 
 namespace cinek {
@@ -23,7 +24,7 @@ public:
     
     void setTransform(const gfx::Vector3& pos, const gfx::Matrix4& rotMtx);
     
-    void handleCameraInput(gfx::Camera& camera, const cinek::ove::InputState& state,
+    void handleCameraInput(gfx::Camera& camera, const cinek::uicore::InputState& state,
                            float frameDelta);
 
 private:

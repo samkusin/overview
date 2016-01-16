@@ -52,7 +52,7 @@ public:
     
     void simulateFrame(double dt);
     void renderFrame(double dt, const gfx::Rect& viewRect,
-        const ove::InputState& inputState);
+        const cinek::uicore::InputState& inputState);
     void endFrame();
     
 private:

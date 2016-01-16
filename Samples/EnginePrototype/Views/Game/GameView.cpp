@@ -94,7 +94,7 @@ void GameView::frameUpdateView
 (
     ove::ViewStack& stateController,
     double dt,
-    const ove::InputState& inputState
+    const cinek::uicore::InputState& inputState
 )
 {
     if (!_sceneLoaded)

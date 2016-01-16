@@ -32,7 +32,7 @@ public:
 private:
     //  AppViewController
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                         const ove::InputState& inputState);
+                         const cinek::uicore::InputState& inputState);
 private:
     bool _loadCompleted;
     

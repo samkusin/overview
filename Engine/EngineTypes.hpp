@@ -44,9 +44,6 @@ namespace cinek {
             kTexture,
             kModelSet
         };
-        
-        struct InputState;
-
     } /* namespace ove */
 } /* namespace cinek */
 

@@ -7,7 +7,7 @@
 //
 
 #include "FreeCameraController.hpp"
-#include "Engine/Input.hpp"
+#include "UICore/Input.hpp"
 
 #include "CKGfx/Camera.hpp"
 
@@ -41,7 +41,7 @@ void FreeCameraController::setTransform
 void FreeCameraController::handleCameraInput
 (
     gfx::Camera &camera,
-    const cinek::ove::InputState &state,
+    const cinek::uicore::InputState &state,
     float frameDelta
 )
 {

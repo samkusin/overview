@@ -13,7 +13,7 @@
 #include "Common.hpp"
 #include "UICore/UITypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
-#include "Engine/Input.hpp"
+#include "UICore/Input.hpp"
 #include "Engine/ViewController.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"

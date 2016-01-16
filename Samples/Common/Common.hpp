@@ -11,7 +11,6 @@
 
 #include "Engine/EngineTypes.hpp"
 
-extern uint32_t pollSDLEvents(cinek::ove::InputState& state);
 extern int runSample(int viewWidth, int viewHeight);
 
 #endif /* Common_hpp */
