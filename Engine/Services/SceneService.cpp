@@ -65,9 +65,9 @@ void SceneService::setEntityPosition
     btVector3 up
 )
 {
-    btRigidBody* body = _context.scene->findBody(entity);
+    SceneBody* body = _context.scene->findBody(entity);
     CK_ASSERT_RETURN(body);
-    CK_ASSERT(body->isStaticOrKinematicObject());
+    CK_ASSERT(body->btBody->isStaticOrKinematicObject());
     
     if (up.isZero()) {
         up.setValue(0,1,0);
@@ -98,9 +98,9 @@ void SceneService::setEntityPosition
                                   -forward.x(), -forward.y(), -forward.z());
     transform.setOrigin(pos);
     
-    body->setCenterOfMassTransform(transform);
-    if (body->getMotionState()) {
-        body->getMotionState()->setWorldTransform(transform);
+    body->btBody->setCenterOfMassTransform(transform);
+    if (body->btBody->getMotionState()) {
+        body->btBody->getMotionState()->setWorldTransform(transform);
     }
 }
 

@@ -36,7 +36,7 @@ namespace cinek {
         RenderTarget(RenderTarget&& other);
         RenderTarget& operator=(RenderTarget&& other);
         
-        operator bool() const { return bgfx::isValid(_bgfxHandle); }
+        explicit operator bool() const { return bgfx::isValid(_bgfxHandle); }
         
         bgfx::FrameBufferHandle bgfxHandle() const { return _bgfxHandle; }
         uint16_t width() const { return _width; }
@@ -67,7 +67,7 @@ namespace cinek {
         MultiTextureRenderTarget(MultiTextureRenderTarget&& other);
         MultiTextureRenderTarget& operator=(MultiTextureRenderTarget&& other);
         
-        operator bool() const { return bgfx::isValid(_target.bgfxHandle()); }
+        explicit operator bool() const { return bgfx::isValid(_target.bgfxHandle()); }
         explicit operator RenderTarget&() { return _target; }
     
         Texture* texture(uint32_t index=0);

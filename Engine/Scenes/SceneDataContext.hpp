@@ -62,8 +62,9 @@ public:
         const btTransform& localTransform);
     btCompoundShape* allocateCylinderShape(const btVector3& halfDims,
         const btTransform& localTransform);
-    btCompoundShape* cloneCompoundShape(const btCompoundShape* source);
     
+    btCollisionShape* cloneCollisionShape(const btCollisionShape* source);
+
     void freeShape(btCollisionShape* shape);
     
     //  body
@@ -97,6 +98,20 @@ private:
     ObjectPool<SceneMotionState> _motionStatesPool;
     
     std::vector<SceneFixedBodyHull*> _fixedBodyHulls;
+    
+    static inline intptr_t shapeRefCnt(btCollisionShape* shape) {
+        return reinterpret_cast<intptr_t>(shape->getUserPointer());
+    }
+    static inline void shapeRefCntDec(btCollisionShape* shape) {
+        intptr_t cnt = reinterpret_cast<intptr_t>(shape->getUserPointer());
+        --cnt;
+        shape->setUserPointer(reinterpret_cast<void*>(cnt));
+    }
+    static inline void shapeRefCntInc(btCollisionShape* shape) {
+        intptr_t cnt = reinterpret_cast<intptr_t>(shape->getUserPointer());
+        ++cnt;
+        shape->setUserPointer(reinterpret_cast<void*>(cnt));
+    }
 };
     
     } /* namespace ove */

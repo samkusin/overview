@@ -47,14 +47,11 @@ struct SceneBody
     };
     
     SavedState savedState;
-    
-    void activate();
-    void deactivate();
 };
    
 struct SceneRayTestResult
 {
-    operator bool() const { return body != nullptr; }
+    explicit operator bool() const { return body != nullptr; }
     
     btRigidBody* body;
     Entity entity;

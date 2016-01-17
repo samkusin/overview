@@ -178,13 +178,26 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
     //  renderable
     gfx::NodeHandle gfxNode = _renderGraph->findNode(origin);
     if (gfxNode) {
+        CK_ASSERT_RETURN(gfxNode->elementType() == gfx::Node::kElementTypeObject);
+        //  do not replicate the root object node, which identifies its
+        //  entity.  but we still need to replicate its transform later
+        //  Also make sure that our root object node is indeed an entity
+        //  node, which is attached to the a single child
+        CK_ASSERT_RETURN(gfxNode->firstChild() && !gfxNode->firstChild()->nextSibling());
+        const gfx::Matrix4& mtx = gfxNode->transform();
+        gfxNode = gfxNode->firstChildHandle();
         gfxNode = _renderGraph->cloneAndAddNode(target, gfxNode, nullptr);
+        gfxNode->setTransform(mtx);
     }
     //  scene
-    btRigidBody* body = _scene->findBody(origin);
+    ove::SceneBody* body = _scene->findBody(origin);
     if (body) {
-        body = _sceneDataContext->cloneBody(body, gfxNode);
-        _scene->attachBody(body, target);
+        btRigidBody* btBody = _sceneDataContext->cloneBody(body->btBody, gfxNode);
+        ove::SceneBody* clonedBody = _scene->attachBody(btBody, target);
+        if (clonedBody) {
+            clonedBody->savedState = body->savedState;
+        }
+        body = clonedBody;
     }
 }
 

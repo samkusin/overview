@@ -40,15 +40,15 @@ public:
     /**
      *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
      */
-    btRigidBody* attachBody(btRigidBody* object, Entity entity);
+    SceneBody* attachBody(btRigidBody* object, Entity entity);
     /**
      *  Removes the body from the Scene.
      */
     btRigidBody* detachBody(Entity entity);
     /**
-     *  @param  What entity to find a body for
+     *  @param  entity  What entity to find a body for
      */
-    btRigidBody* findBody(Entity entity) const;
+    SceneBody* findBody(Entity entity) const;
     /**
      *  Updates the scene simulations using the specified timestep.  It's best
      *  to run this using a fixed timestep, though this requirement depends

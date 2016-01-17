@@ -23,26 +23,6 @@ void SceneBodyMassProps::fromRigidBody(const btRigidBody& btBody)
         invInertia.z() != btScalar(0) ? 1/invInertia.z() : btScalar(0)
     );
 }
-
-void SceneBody::activate()
-{
-    if ((savedState.flags & SavedState::kDynamic)!=0) {
-        btBody->setMassProps(savedState.massProps.mass, savedState.massProps.inertia);
-    }
-    
-    savedState.flags = SavedState::kNone;
-}
-
-void SceneBody::deactivate()
-{
-    if (!btBody->isStaticOrKinematicObject()) {
-        savedState.flags |= SavedState::kDynamic;
-        
-        savedState.massProps.fromRigidBody(*btBody);
-        
-        btBody->setMassProps(btScalar(0), btVector3(0,0,0));
-    }
-}
-    
+  
     } /* namespace ove */
 } /* namespace cinek */

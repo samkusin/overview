@@ -35,7 +35,7 @@ public:
     Mesh(Mesh&& other);
     Mesh& operator=(Mesh&& other);
     
-    operator bool() const { return _format != VertexTypes::kInvalid; };
+    explicit operator bool() const { return _format != VertexTypes::kInvalid; };
 
     VertexTypes::Format format() const;
     VertexTypes::Index indexType() const;

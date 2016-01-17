@@ -34,7 +34,7 @@ namespace cinek {
         Texture(Texture&& other);
         Texture& operator=(Texture&& other);
         
-        operator bool() const { return bgfx::isValid(_bgfxHandle); }
+        explicit operator bool() const { return bgfx::isValid(_bgfxHandle); }
         
         bgfx::TextureHandle bgfxHandle() const { return _bgfxHandle; }
         bgfx::TextureFormat::Enum bgfxFormat() const { return _bgfxFormat; }

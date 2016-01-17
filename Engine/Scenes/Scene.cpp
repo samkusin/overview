@@ -7,6 +7,7 @@
 //
 
 #include "Scene.hpp"
+#include "SceneDataContext.hpp"
 
 #include <cinek/objectpool.inl>
 
@@ -19,6 +20,32 @@ namespace cinek {
     namespace ove {
     
 ////////////////////////////////////////////////////////////////////////////////
+
+void activate(SceneBody& body)
+{
+    auto& savedState = body.savedState;
+    auto btBody = body.btBody;
+    
+    if ((savedState.flags & SceneBody::SavedState::kDynamic)!=0) {
+        btBody->setMassProps(savedState.massProps.mass, savedState.massProps.inertia);
+    }
+    
+    savedState.flags = SceneBody::SavedState::kNone;
+}
+
+void deactivate(SceneBody& body)
+{
+    auto& savedState = body.savedState;
+    auto btBody = body.btBody;
+    
+    if (!btBody->isStaticOrKinematicObject()) {
+        savedState.flags |= SceneBody::SavedState::kDynamic;
+        
+        savedState.massProps.fromRigidBody(*btBody);
+        
+        btBody->setMassProps(btScalar(0), btVector3(0,0,0));
+    }
+}
 
 Scene::Scene(btIDebugDraw* debugDrawer) :
     _bodies(256),
@@ -47,7 +74,7 @@ void Scene::deactivateSimulation()
 {
     if (_simulateDynamics) {
         for (auto& obj : _objects) {
-            obj->deactivate();
+            deactivate(*obj);
         }
         
         _simulateDynamics = false;
@@ -58,7 +85,7 @@ void Scene::activateSimulation()
 {
     if (!_simulateDynamics) {
         for (auto& obj : _objects) {
-            obj->activate();
+            activate(*obj);
         }
     
         _simulateDynamics = true;
@@ -75,7 +102,7 @@ void Scene::debugRender()
     _btWorld.debugDrawWorld();
 }
 
-btRigidBody* Scene::attachBody
+SceneBody* Scene::attachBody
 (
     btRigidBody* object,
     Entity entity
@@ -98,14 +125,14 @@ btRigidBody* Scene::attachBody
     
     //  reflect current simulation state
     if (!_simulateDynamics) {
-        body->deactivate();
+        deactivate(*body);
     }
 
     object->setUserPointer(body);
     _objects.emplace(it, body);
     _btWorld.addRigidBody(object);
     
-    return body->btBody;
+    return body;
 }
 
 btRigidBody* Scene::detachBody
@@ -131,7 +158,7 @@ btRigidBody* Scene::detachBody
     return body;
 }
 
-btRigidBody* Scene::findBody(Entity entity) const
+SceneBody* Scene::findBody(Entity entity) const
 {
     auto it = std::lower_bound(_objects.begin(), _objects.end(), entity,
         [](const SceneBody* obj0, Entity e) -> bool {
@@ -141,7 +168,7 @@ btRigidBody* Scene::findBody(Entity entity) const
         return nullptr;
     
     auto obj = *it;
-    return obj->btBody;
+    return obj;
 }
 
 SceneRayTestResult Scene::rayTestClosest

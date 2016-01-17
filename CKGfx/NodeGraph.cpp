@@ -218,6 +218,7 @@ NodeHandle NodeGraph::clone(NodeHandle source)
     //  select node type to clone
     switch (source->elementType()) {
     case Node::kElementTypeNone:
+    case Node::kElementTypeObject:
         cloned = createObjectNode(source->objectNodeId());
         break;
     case Node::kElementTypeMesh: {
