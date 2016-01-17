@@ -89,6 +89,7 @@ uint32_t pollSDLEvents(InputState& state)
     }
     
     state.keystate = SDL_GetKeyboardState(&state.keystateArraySize);
+    state.keyModifiers = SDL_GetModState();
     
     return flags;
 }
