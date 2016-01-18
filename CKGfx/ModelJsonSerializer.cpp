@@ -103,7 +103,7 @@ NodeHandle NodeJsonLoader::operator()
             for (auto it = elements.Begin(); it != elements.End(); ++it) {
                 CK_ASSERT(meshElement);
                 if (meshElement) {
-                    int meshIndex = it->GetInt();
+                    unsigned meshIndex = it->GetInt();
                     if (meshIndex >= meshes.size()) {
                         meshes.resize(meshIndex+1);
                     }
@@ -158,23 +158,21 @@ NodeHandle NodeJsonLoader::operator()
     else if (jsonNode.HasMember("light")) {
         thisNode = nodeGraph.createLightNode();
         
-        int lightIndex = jsonNode["light"].GetInt();
-        if (lightIndex >= 0) {
-            if (lightIndex >= lights.size()) {
-                lights.resize(lightIndex+1);
-            }
-            //  create new light entry, which involves parsing the requisite elements
-            //  if necessary
-            //
-            auto lightHandle = lights.at(lightIndex);
-            if (!lightHandle) {
-                auto& jsonLight = jsonLights->value[lightIndex];
-                lightHandle = context->registerLight(
-                        std::move(loadLightFromJSON(*context, jsonLight)));
-                lights[lightIndex] = lightHandle;
-            }
-            thisNode->light()->light = lightHandle;
+        unsigned lightIndex = jsonNode["light"].GetInt();
+        if (lightIndex >= lights.size()) {
+            lights.resize(lightIndex+1);
         }
+        //  create new light entry, which involves parsing the requisite elements
+        //  if necessary
+        //
+        auto lightHandle = lights.at(lightIndex);
+        if (!lightHandle) {
+            auto& jsonLight = jsonLights->value[lightIndex];
+            lightHandle = context->registerLight(
+                    std::move(loadLightFromJSON(*context, jsonLight)));
+            lights[lightIndex] = lightHandle;
+        }
+        thisNode->light()->light = lightHandle;
     }
     else {
         thisNode = nodeGraph.createObjectNode(0);
@@ -483,7 +481,7 @@ int loadAnimationSkeletonFromJSON
     std::vector<Bone, std_allocator<Bone>>& bones
 )
 {
-    int index = node["bone_index"].GetInt();
+    unsigned index = node["bone_index"].GetInt();
     if (index >=bones.size())
         bones.resize(index);
 
