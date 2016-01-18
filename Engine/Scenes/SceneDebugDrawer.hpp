@@ -30,7 +30,7 @@ class SceneDebugDrawer : public btIDebugDraw
     const cinek::gfx::NodeRenderer::UniformMap* _uniforms;
     const cinek::gfx::Camera* _camera;
     
-    static constexpr int kLineBufferSize = 256;
+    static constexpr int kLineBufferSize = 1024;
     
 public:
     SceneDebugDrawer();

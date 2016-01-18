@@ -12,7 +12,7 @@
 #include "Mesh.hpp"
 #include "Animation.hpp"
 #include "Light.hpp"
-#include "NodeGraph.hpp"
+#include "ModelSet.hpp"
 
 namespace cinek {
     namespace gfx {
@@ -23,7 +23,7 @@ Context::Context(const ResourceInitParams& params) :
     _textures(params.numTextures),
     _animationSets(params.numAnimations),
     _lights(params.numLights),
-    _models(params.numModels)
+    _modelSets(params.numModelSets)
 {
 }
 
@@ -123,24 +123,24 @@ LightHandle Context::registerLight(Light&& light)
     return _lights.add(std::move(light));
 }
 
-NodeGraphHandle Context::registerModel
+ModelSetHandle Context::registerModelSet
 (
-    NodeGraph&& graph,
+    ModelSet&& modelSet,
     const char* name
 )
 {
-    return registerResource(std::move(graph), _models, _modelDictionary, name);
+    return registerResource(std::move(modelSet), _modelSets, _modelSetDictionary, name);
 }
 
-void Context::unregisterModel(const char *name)
+void Context::unregisterModelSet(const char *name)
 {
-    unregisterResource(_modelDictionary, name);
+    unregisterResource(_modelSetDictionary, name);
 }
 
-NodeGraphHandle Context::findModel(const char* name) const
+ModelSetHandle Context::findModelSet(const char* name) const
 {
-    auto it = _modelDictionary.find(name);
-    if (it == _modelDictionary.end())
+    auto it = _modelSetDictionary.find(name);
+    if (it == _modelSetDictionary.end())
         return nullptr;
     
     return it->second;

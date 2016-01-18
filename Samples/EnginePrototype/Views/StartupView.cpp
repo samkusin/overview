@@ -47,7 +47,12 @@ void StartupView::simulateView(ove::ViewStack& stateController, double dt)
 {
 }
 
-void StartupView::frameUpdateView(ove::ViewStack& stateController, double dt)
+void StartupView::frameUpdateView
+(
+    ove::ViewStack& stateController,
+    double /* dt */,
+    const cinek::uicore::InputState& /* inputState */
+)
 {
     if (_loadCompleted) {
         stateController.present("GameView");

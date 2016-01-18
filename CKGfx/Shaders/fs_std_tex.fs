@@ -52,6 +52,7 @@ uniform vec4 u_lightDir[CKGFX_SHADERS_LIGHT_COUNT];
 uniform vec4 u_lightParam[CKGFX_SHADERS_LIGHT_COUNT];
 uniform vec4 u_lightCoeff[CKGFX_SHADERS_LIGHT_COUNT];
 uniform vec4 u_lightOrigin[CKGFX_SHADERS_LIGHT_COUNT];
+uniform vec4 u_color;
 
 /*  Materials */
 uniform vec4 u_specularity;
@@ -65,7 +66,7 @@ uniform vec4 u_specularity;
 vec4 colorOfLightFromDirection(int index, vec3 direction, vec3 normal)
 {
     vec4 ambientColor = u_lightColor[index] * u_ambientIntensity(index);
-    vec4 diffuseColor = u_lightColor[index] * u_diffuseIntensity(index);
+    vec4 diffuseColor = u_lightColor[index] * u_diffuseIntensity(index) * u_color;
     vec4 specularColor = vec4(0,0,0,0);
 
     float diffuseScalar = dot(normal, -direction);

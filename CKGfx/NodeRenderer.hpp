@@ -27,6 +27,7 @@ enum NodeProgramSlot
     kNodeProgramMesh,
     kNodeProgramBoneMesh,
     kNodeProgramFlat,
+    kNodeProgramFlatMesh,
     kNodeProgramLimit       = 16,
     
     kNodeProgramNone        = -1
@@ -83,9 +84,6 @@ public:
     using UniformMap = std::array<bgfx::UniformHandle, kNodeUniformLimit>;
     
     NodeRenderer();
-
-    void setCamera(const Camera& camera);
-    const Camera& camera() const { return _camera; }
     
     enum
     {
@@ -99,6 +97,12 @@ public:
     };
     
     void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    const Camera& camera,
+                    NodeHandle root, uint32_t stages=kStageAll);
+    
+    void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    const RenderTarget& renderTarget,
+                    const Camera& camera,
                     NodeHandle root, uint32_t stages=kStageAll);
     
 private:
@@ -138,7 +142,7 @@ private:
     };
     
     //  Local State
-    Camera _camera;
+    const Camera* _camera;
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
     Matrix4 _viewProjMtx;

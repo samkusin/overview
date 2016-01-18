@@ -77,6 +77,13 @@ void ViewStack::endFrame()
         
         _activeThread = std::this_thread::get_id();
         
+        for (auto& vc : _stack)
+        {
+            _activeController = vc;
+            _activeController->onViewEndFrame(*this);
+        }
+        _activeController = nullptr;
+        
         //  process commands on stack
         for (auto& cmd : _commands)
         {
@@ -139,13 +146,6 @@ void ViewStack::endFrame()
         
         _commands.clear();
         
-        // render everything
-        for (auto& vc : _stack)
-        {
-            _activeController = vc;
-            _activeController->onViewEndFrame(*this);
-        }
-        _activeController = nullptr;
         
         _activeThread = std::thread::id();
     }
@@ -168,7 +168,11 @@ void ViewStack::simulate(double dt)
     }
 }
 
-void ViewStack::frameUpdate(double dt)
+void ViewStack::frameUpdate
+(
+    double dt,
+    const cinek::uicore::InputState& inputState
+)
 {
     if (_activeThread == std::thread::id())
     {
@@ -179,7 +183,7 @@ void ViewStack::frameUpdate(double dt)
         for (auto& vc : _stack)
         {
             _activeController = vc;
-            _activeController->frameUpdateView(*this, dt);
+            _activeController->frameUpdateView(*this, dt, inputState);
         }
         _activeController = nullptr;
         _activeThread = std::thread::id();

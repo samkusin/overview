@@ -7,9 +7,19 @@
 //
 
 #include "SceneDataContext.hpp"
-#include "SceneObject.hpp"
+
+#include <cinek/objectpool.inl>
 
 namespace cinek {
+    
+    template class ObjectPool<ove::SceneFixedBodyHull>;
+    template class ObjectPool<btBvhTriangleMeshShape>;
+    template class ObjectPool<btCylinderShape>;
+    template class ObjectPool<btBoxShape>;
+    template class ObjectPool<btCompoundShape>;
+    template class ObjectPool<btRigidBody>;
+    template class ObjectPool<ove::SceneMotionState>;
+    
     namespace ove {
 
 SceneDataContext::SceneDataContext(const InitParams& params) :
@@ -68,7 +78,6 @@ void SceneDataContext::releaseFixedBodyHull(SceneFixedBodyHull* hull)
     }
 }
 
-
 btBvhTriangleMeshShape* SceneDataContext::allocateTriangleMeshShape
 (
     SceneFixedBodyHull* hull,
@@ -77,6 +86,7 @@ btBvhTriangleMeshShape* SceneDataContext::allocateTriangleMeshShape
 {
     btBvhTriangleMeshShape* triMeshShape = _triMeshShapePool.construct(hull, false);
     triMeshShape->setLocalScaling(scale);
+    shapeRefCntInc(triMeshShape);
     return triMeshShape;
 }
 
@@ -89,7 +99,9 @@ btCompoundShape* SceneDataContext::allocateBoxShape
     btCompoundShape* compShape = _compoundShapePool.construct(true, 1);
     if (compShape) {
         btBoxShape* shape = _boxShapePool.construct(halfDims);
+        shapeRefCntInc(shape);
         compShape->addChildShape(localTransform, shape);
+        shapeRefCntInc(compShape);
     }
     return compShape;
 }
@@ -103,13 +115,79 @@ btCompoundShape* SceneDataContext::allocateCylinderShape
     btCompoundShape* compShape = _compoundShapePool.construct(true, 1);
     if (compShape) {
         btCylinderShape* shape = _cylinderShapePool.construct(halfDims);
+        shapeRefCntInc(shape);
         compShape->addChildShape(localTransform, shape);
+        shapeRefCntInc(compShape);
     }
     return compShape;
 }
 
+btCollisionShape* SceneDataContext::cloneCollisionShape(const btCollisionShape* source)
+{
+    btCollisionShape* clonedShape = nullptr;
+    const btVector3& sourceLocalScaling = source->getLocalScaling();
+
+    switch (source->getShapeType())
+    {
+    case TRIANGLE_MESH_SHAPE_PROXYTYPE:
+        {
+            const btBvhTriangleMeshShape* triMeshShape = static_cast<const btBvhTriangleMeshShape*>(source);
+            
+            //  fixed body hulls do not change - but the reference count changes
+            //  so we cast off the const for this special case.
+            SceneFixedBodyHull* hull = const_cast<SceneFixedBodyHull*>(
+                static_cast<const SceneFixedBodyHull*>(triMeshShape->getMeshInterface())
+            );
+            hull->incRef();
+            clonedShape = allocateTriangleMeshShape(hull, sourceLocalScaling);
+            //  ref count already incremented inside allocateTriangleMeshShape
+        }
+        return clonedShape;
+        
+    case COMPOUND_SHAPE_PROXYTYPE:
+        {
+            //  deep clone the parent compound shape
+            //  which means duplicating the compound shape
+            const btCompoundShape* sourceCompound = static_cast<const btCompoundShape*>(source);
+            int numChildShapes = sourceCompound->getNumChildShapes();
+            btCompoundShape* compound = _compoundShapePool.construct(true, numChildShapes);
+
+            for (int i = 0; i < numChildShapes; ++i) {
+                const btCollisionShape* child = sourceCompound->getChildShape(i);
+                btCollisionShape* shape = cloneCollisionShape(child);
+                compound->addChildShape(sourceCompound->getChildTransform(i), shape);
+            }
+            clonedShape = compound;
+            shapeRefCntInc(clonedShape);
+        }
+        break;
+    default:
+        break;
+    }
+    
+    if (clonedShape) {
+        //  non trivial shapes are created from child shapes
+        //  so we perform a trivial clone (upping ref counts) on child shapes
+        //  while replicating the encompassing parent shape, and thus need to
+        //  duplicate attributes
+        clonedShape->setLocalScaling(sourceLocalScaling);
+        clonedShape->setMargin(source->getMargin());
+    }
+    else {
+        //  cloning here is simply upping the refcount (for trivial shapes)
+        clonedShape = const_cast<btCollisionShape*>(source);
+        shapeRefCntInc(clonedShape);
+    }
+    
+    return clonedShape;
+}
+
 void SceneDataContext::freeShape(btCollisionShape* collisionShape)
 {
+    shapeRefCntDec(collisionShape);
+    if (shapeRefCnt(collisionShape) != 0)
+        return;
+    
     switch (collisionShape->getShapeType())
     {
     case TRIANGLE_MESH_SHAPE_PROXYTYPE: {
@@ -142,7 +220,6 @@ void SceneDataContext::freeShape(btCollisionShape* collisionShape)
         CK_ASSERT(false);
         break;
     }
-    
 }
 
 btRigidBody* SceneDataContext::allocateBody
@@ -158,6 +235,54 @@ btRigidBody* SceneDataContext::allocateBody
     btRigidBody::btRigidBodyConstructionInfo btInfo(info.mass,
         motionState,
         info.collisionShape);
+    
+    auto obj = _rigidBodyPool.construct(btInfo);
+    return obj;
+}
+
+void btRigidBodyCloneConstructionInfo
+(
+    btRigidBody::btRigidBodyConstructionInfo& info,
+    const btRigidBody& source
+)
+{
+    info.m_linearDamping = source.getLinearDamping();
+    info.m_angularDamping = source.getAngularDamping();
+    info.m_friction = source.getFriction();
+    info.m_rollingFriction = source.getRollingFriction();
+    info.m_restitution = source.getRestitution();
+    info.m_linearSleepingThreshold = source.getLinearSleepingThreshold();
+    info.m_angularSleepingThreshold = source.getAngularSleepingThreshold();
+
+    //  TODO - additional values?
+}
+
+btRigidBody* SceneDataContext::cloneBody
+(
+    const btRigidBody* source,
+    gfx::NodeHandle gfxNodeHandle
+)
+{
+    SceneBodyMassProps massProps;
+    massProps.fromRigidBody(*source);
+    
+    //  clone collision shape
+    const btCollisionShape* shape = source->getCollisionShape();
+    btCollisionShape* clonedShape = cloneCollisionShape(shape);
+    
+    CK_ASSERT_RETURN_VALUE(clonedShape != nullptr, nullptr);
+    
+    SceneMotionState* motionState = nullptr;
+    if (gfxNodeHandle) {
+        motionState = allocateMotionState(gfxNodeHandle);
+    }
+    
+    btRigidBody::btRigidBodyConstructionInfo btInfo(massProps.mass,
+        motionState,
+        clonedShape,
+        massProps.inertia);
+    
+    btRigidBodyCloneConstructionInfo(btInfo, *source);
     
     auto obj = _rigidBodyPool.construct(btInfo);
     return obj;

@@ -16,6 +16,7 @@
 #include "Light.hpp"
 #include "Node.hpp"
 #include "NodeGraph.hpp"
+#include "ModelSet.hpp"
 
 #include <ckm/math.hpp>
 #include <ckm/aabb.hpp>
@@ -35,45 +36,54 @@ namespace cinek {
     //  the ManagedObjectPool implementation to compile and link.
     
 
+    template class ObjectPool<gfx::Texture>;
     template class ManagedObjectPool<gfx::Texture, void>;
     template void ManagedHandle<gfx::Texture, ManagedObjectPool<gfx::Texture, void>>::acquire();
     template void ManagedHandle<gfx::Texture, ManagedObjectPool<gfx::Texture, void>>::release();
     template class ManagedObjectPoolBase<gfx::Texture, ManagedObjectPool<gfx::Texture, void>>;
     
+    template class ObjectPool<gfx::Material>;
     template class ManagedObjectPool<gfx::Material, void>;
     template void ManagedHandle<gfx::Material, ManagedObjectPool<gfx::Material, void>>::acquire();
     template void ManagedHandle<gfx::Material, ManagedObjectPool<gfx::Material, void>>::release();
     template class ManagedObjectPoolBase<gfx::Material, ManagedObjectPool<gfx::Material, void>>;
     
+    template class ObjectPool<gfx::AnimationSet>;
     template class ManagedObjectPool<gfx::AnimationSet, void>;
     template void ManagedHandle<gfx::AnimationSet, ManagedObjectPool<gfx::AnimationSet, void>>::acquire();
     template void ManagedHandle<gfx::AnimationSet, ManagedObjectPool<gfx::AnimationSet, void>>::release();
     template class ManagedObjectPoolBase<gfx::AnimationSet, ManagedObjectPool<gfx::AnimationSet, void>>;
     
+    template class ObjectPool<gfx::AnimationController>;
     template class ManagedObjectPool<gfx::AnimationController, void>;
     template void ManagedHandle<gfx::AnimationController, ManagedObjectPool<gfx::AnimationController, void>>::acquire();
     template void ManagedHandle<gfx::AnimationController, ManagedObjectPool<gfx::AnimationController, void>>::release();
     template class ManagedObjectPoolBase<gfx::AnimationController, ManagedObjectPool<gfx::AnimationController, void>>;
     
+    template class ObjectPool<gfx::Mesh>;
     template class ManagedObjectPool<gfx::Mesh, void>;
     template void ManagedHandle<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>::acquire();
     template void ManagedHandle<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>::release();
     template class ManagedObjectPoolBase<gfx::Mesh, ManagedObjectPool<gfx::Mesh, void>>;
     
+    template class ObjectPool<gfx::Light>;
     template class ManagedObjectPool<gfx::Light, void>;
     template void ManagedHandle<gfx::Light, ManagedObjectPool<gfx::Light, void>>::acquire();
     template void ManagedHandle<gfx::Light, ManagedObjectPool<gfx::Light, void>>::release();
     template class ManagedObjectPoolBase<gfx::Light, ManagedObjectPool<gfx::Light, void>>;
     
-    template class ManagedObjectPool<gfx::Node, gfx::NodeGraph*>;
-    template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>::acquire();
-    template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>::release();
-    template class ManagedObjectPoolBase<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*>>;
+    /* Use 16-byte alignment for nodes - matrix alignment conforms to SSE 128-bit ops */
+    template class ObjectPool<gfx::Node, 16>;
+    template class ManagedObjectPool<gfx::Node, gfx::NodeGraph*, 16>;
+    template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*, 16>>::acquire();
+    template void ManagedHandle<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*, 16>>::release();
+    template class ManagedObjectPoolBase<gfx::Node, ManagedObjectPool<gfx::Node, gfx::NodeGraph*, 16>, 16>;
 
-    template class ManagedObjectPool<gfx::NodeGraph, void>;
-    template void ManagedHandle<gfx::NodeGraph, ManagedObjectPool<gfx::NodeGraph, void>>::acquire();
-    template void ManagedHandle<gfx::NodeGraph, ManagedObjectPool<gfx::NodeGraph, void>>::release();
-    template class ManagedObjectPoolBase<gfx::NodeGraph, ManagedObjectPool<gfx::NodeGraph, void>>;
+    template class ObjectPool<gfx::ModelSet>;
+    template class ManagedObjectPool<gfx::ModelSet, void>;
+    template void ManagedHandle<gfx::ModelSet, ManagedObjectPool<gfx::ModelSet, void>>::acquire();
+    template void ManagedHandle<gfx::ModelSet, ManagedObjectPool<gfx::ModelSet, void>>::release();
+    template class ManagedObjectPoolBase<gfx::ModelSet, ManagedObjectPool<gfx::ModelSet, void>>;
 
 
     namespace gfx {

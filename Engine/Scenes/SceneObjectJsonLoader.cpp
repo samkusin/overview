@@ -11,6 +11,7 @@
 
 #include "CKGfx/ModelJsonSerializer.hpp"
 
+#include <bx/fpumath.h>
 
 namespace cinek {
     namespace ove {

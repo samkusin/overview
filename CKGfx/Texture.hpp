@@ -27,18 +27,24 @@ namespace cinek {
         static Texture loadTextureFromMemory(const uint8_t* data, size_t len);
     
     public:
+        Texture(bgfx::TextureHandle handle, bgfx::TextureFormat::Enum format);
         Texture();
         ~Texture();
         
         Texture(Texture&& other);
         Texture& operator=(Texture&& other);
         
-        operator bool() const { return bgfx::isValid(_bgfxHandle); }
+        explicit operator bool() const { return bgfx::isValid(_bgfxHandle); }
         
         bgfx::TextureHandle bgfxHandle() const { return _bgfxHandle; }
+        bgfx::TextureFormat::Enum bgfxFormat() const { return _bgfxFormat; }
+        
+        //  releases the backend handle from management by the Texture
+        bgfx::TextureHandle release();
         
     private:
         bgfx::TextureHandle _bgfxHandle;
+        bgfx::TextureFormat::Enum _bgfxFormat;
     };
     
     }   // namespace gfx

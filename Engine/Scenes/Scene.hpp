@@ -10,7 +10,7 @@
 #ifndef Overview_Scene_hpp
 #define Overview_Scene_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "SceneTypes.hpp"
 
 #include <cinek/objectpool.hpp>
 #include <cinek/allocator.hpp>
@@ -20,7 +20,8 @@
 
 namespace cinek {
     namespace ove {
-     
+    
+
 /**
  *  @class  Scene
  *  @brief  A Scene represents the physical world of a simulation.
@@ -39,15 +40,15 @@ public:
     /**
      *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
      */
-    btRigidBody* attachBody(btRigidBody* object, Entity entity);
+    SceneBody* attachBody(btRigidBody* object, Entity entity);
     /**
      *  Removes the body from the Scene.
      */
     btRigidBody* detachBody(Entity entity);
     /**
-     *  @param  What entity to find a body for
+     *  @param  entity  What entity to find a body for
      */
-    btRigidBody* findBody(Entity entity) const;
+    SceneBody* findBody(Entity entity) const;
     /**
      *  Updates the scene simulations using the specified timestep.  It's best
      *  to run this using a fixed timestep, though this requirement depends
@@ -57,18 +58,42 @@ public:
      */
     void simulate(double dt);
     /**
+     *  Deactivates dynamic physics simulation
+     *
+     *  Useful for freezing the simulation.  Collision detection is still
+     *  active.
+     */
+    void deactivateSimulation();
+    /**
+     *  Activates dynamic physics simulation if inactive
+     *
+     *  Useful for continuing the dynamic simulation.
+     */
+    void activateSimulation();
+    /**
+     *  @return Simulation activation status
+     */
+    bool isActive() const;
+    /**
      *  Executes per render frame updates.
      */
     void debugRender();
+    /**
+     *  Retrieve the closest hit point with a given ray.
+     *  
+     *  @param  origin  The ray origin
+     *  @param  dir     The ray normalized direction
+     *  @param  dist    The ray distance from origin
+     */
+    SceneRayTestResult rayTestClosest(const btVector3& origin,
+        const btVector3& dir,
+        btScalar dist) const;
     
 private:
-    struct SceneBody
-    {
-        btRigidBody* btBody;
-        Entity entity;
-    };
     ObjectPool<SceneBody> _bodies;
     std::vector<SceneBody*> _objects;
+    
+    bool _simulateDynamics;
     
     btDefaultCollisionConfiguration _btCollisionConfig;
     btCollisionDispatcher _btCollisionDispatcher;

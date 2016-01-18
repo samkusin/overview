@@ -9,7 +9,7 @@
 #ifndef Overview_SceneContextData_hpp
 #define Overview_SceneContextData_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "SceneTypes.hpp"
 
 #include "SceneFixedBodyHull.hpp"
 #include "SceneMotionState.hpp"
@@ -62,6 +62,9 @@ public:
         const btTransform& localTransform);
     btCompoundShape* allocateCylinderShape(const btVector3& halfDims,
         const btTransform& localTransform);
+    
+    btCollisionShape* cloneCollisionShape(const btCollisionShape* source);
+
     void freeShape(btCollisionShape* shape);
     
     //  body
@@ -75,8 +78,13 @@ public:
         const SceneBodyInitParams& info,
         gfx::NodeHandle gfxNodeHandle
     );
+    btRigidBody* cloneBody
+    (
+        const btRigidBody* source,
+        gfx::NodeHandle gfxNodeHandle
+    );
     void freeBody(btRigidBody* body);
-    
+
     SceneMotionState* allocateMotionState(gfx::NodeHandle h);
     void freeMotionState(SceneMotionState* state);
     
@@ -90,6 +98,20 @@ private:
     ObjectPool<SceneMotionState> _motionStatesPool;
     
     std::vector<SceneFixedBodyHull*> _fixedBodyHulls;
+    
+    static inline intptr_t shapeRefCnt(btCollisionShape* shape) {
+        return reinterpret_cast<intptr_t>(shape->getUserPointer());
+    }
+    static inline void shapeRefCntDec(btCollisionShape* shape) {
+        intptr_t cnt = reinterpret_cast<intptr_t>(shape->getUserPointer());
+        --cnt;
+        shape->setUserPointer(reinterpret_cast<void*>(cnt));
+    }
+    static inline void shapeRefCntInc(btCollisionShape* shape) {
+        intptr_t cnt = reinterpret_cast<intptr_t>(shape->getUserPointer());
+        ++cnt;
+        shape->setUserPointer(reinterpret_cast<void*>(cnt));
+    }
 };
     
     } /* namespace ove */

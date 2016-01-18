@@ -34,6 +34,11 @@ Node* Node::prevSibling()
     return const_cast<Node*>(static_cast<const Node*>(this)->prevSibling());
 }
 
+ckm::AABB<Vector3> Node::calculateAABB() const
+{
+    return transformAABB(_obb, _mtx);
+}
+
 
 void generateAABBForNode(AABB& aabb, const Node& node, const Matrix4& parentMtx)
 {
@@ -49,7 +54,6 @@ void generateAABBForNode(AABB& aabb, const Node& node, const Matrix4& parentMtx)
     
     aabb.merge(transformAABB(node.obb(), mtx));
 }
-
 
     }   // namespace gfx
 }   // namespace cinek

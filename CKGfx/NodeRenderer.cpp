@@ -16,6 +16,7 @@
 #include "Animation.hpp"
 #include "AnimationController.hpp"
 #include "Light.hpp"
+#include "RenderTarget.hpp"
 
 #include "Shaders/ckgfx.sh"
 
@@ -111,29 +112,31 @@ NodeRenderer::NodeRenderer()
     _directionalLights.reserve(64);
 }
 
-void NodeRenderer::setCamera(const Camera& camera)
+void NodeRenderer::operator()
+(
+    const ProgramMap& programs,
+    const UniformMap& uniforms,
+    const Camera& camera, 
+    NodeHandle root,
+    uint32_t stages /*=kStageAll */
+)
 {
-    _camera = camera;
-    
-    bx::mtxInverse(_viewMtx, _camera.worldMtx);
-    
-    bx::mtxProj(_projMtx,
-        180.0f * _camera.viewFrustrum.fovRadians()/ckm::pi<float>(),
-        _camera.viewFrustrum.aspect(),
-        _camera.viewFrustrum.nearZ(),
-        _camera.viewFrustrum.farZ(),
-        false);
+    (*this)(programs, uniforms, RenderTarget(), camera, root, stages);
 }
 
 void NodeRenderer::operator()
 (
     const ProgramMap& programs,
     const UniformMap& uniforms,
+    const RenderTarget& renderTarget,
+    const Camera& camera, 
     NodeHandle root,
     uint32_t stages /*=kStageAll */
 )
 {
     uint32_t currentStage = 1;
+    
+    _camera = &camera;
     
     while (stages) {
         if ((stages & 0x01)!=0) {
@@ -146,9 +149,18 @@ void NodeRenderer::operator()
         
             switch (currentStage) {
             case kStageFlagRender: {
+                    bgfx::setViewRect(_camera->viewIndex,
+                        _camera->viewportRect.x, _camera->viewportRect.y,
+                        _camera->viewportRect.w ,_camera->viewportRect.h);
+                
+                    if (renderTarget) {
+                        bgfx::setViewFrameBuffer(_camera->viewIndex, renderTarget.bgfxHandle());
+                    }
 
-                    bgfx::setViewTransform(0, _viewMtx.comp, _projMtx.comp);
-                    bx::mtxMul(_viewProjMtx, _viewMtx, _projMtx);
+                    bgfx::setViewTransform(_camera->viewIndex,
+                        _camera->viewMtx.comp,
+                        _camera->projMtx.comp);
+                    bx::mtxMul(_viewProjMtx, _camera->viewMtx, _camera->projMtx);
                 }
                 break;
             case kStageFlagLightEnum: {
@@ -284,6 +296,9 @@ void NodeRenderer::renderMeshElement
 )
 {
     //  setup rendering state
+    
+    bgfx::setUniform(uniforms[kNodeUniformColor], element.material->diffuseColor, 1);
+    
     if (element.material->diffuseTex) {
         bgfx::TextureHandle texDiffuse = element.material->diffuseTex->bgfxHandle();
         bgfx::setTexture(0, uniforms[kNodeUniformTexDiffuse], texDiffuse,
@@ -309,7 +324,7 @@ void NodeRenderer::renderMeshElement
     bgfx::setIndexBuffer(mesh->indexBuffer());
 
     NodeProgramSlot programSlot;
-    if (!_armatureStack.empty()) {
+    if (!_armatureStack.empty() && mesh->format() == VertexTypes::kVNormal_Tex0_Weights) {
         programSlot = kNodeProgramBoneMesh;
 
         const ArmatureState& armatureState = _armatureStack.back();
@@ -339,21 +354,38 @@ void NodeRenderer::renderMeshElement
     }
     else
     {
-        programSlot = kNodeProgramMesh;
+        if (mesh->format() == VertexTypes::kVPosition) {
+            programSlot = kNodeProgramFlat;
+        }
+        else if (mesh->format() == VertexTypes::kVPositionNormal) {
+            programSlot = kNodeProgramFlatMesh;
+        }
+        else {
+            programSlot = kNodeProgramMesh;
+        }
         bgfx::setTransform(worldTransform);
     }
 
+    auto state = BGFX_STATE_RGB_WRITE
+        | BGFX_STATE_ALPHA_WRITE
+        | BGFX_STATE_DEPTH_WRITE
+        | BGFX_STATE_DEPTH_TEST_LESS
+        | BGFX_STATE_MSAA;
     
-    bgfx::setState(0
-						| BGFX_STATE_RGB_WRITE
-						| BGFX_STATE_ALPHA_WRITE
-						| BGFX_STATE_DEPTH_WRITE
-						| BGFX_STATE_DEPTH_TEST_LESS
-						| BGFX_STATE_MSAA
-                        | BGFX_STATE_CULL_CW
-						);
+    
+    if (mesh->primitiveType() == PrimitiveType::kTriangles) {
+        state |= BGFX_STATE_CULL_CW;
+    }
+    else if (mesh->primitiveType() == PrimitiveType::kLines) {
+        state |= BGFX_STATE_PT_LINES;
+    }
+    else {
+        CK_ASSERT(false);
+    }
+    
+    bgfx::setState(state);
 
-    bgfx::submit(0, programs[programSlot]);
+    bgfx::submit(_camera->viewIndex, programs[programSlot]);
 }
 
 void NodeRenderer::setupLightUniforms

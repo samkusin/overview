@@ -20,6 +20,17 @@
 
 namespace cinek {
     namespace gfx {
+    
+namespace MeshBuilder {
+    struct BuilderState;
+}
+
+enum class PrimitiveType
+{
+    kUndefined,
+    kTriangles,
+    kLines
+};
 
 class Context;
 class Texture;
@@ -34,6 +45,7 @@ struct NodeElementCounts;
 class NodeGraph;
 class NodeRenderer;
 class AnimationController;
+class ModelSet;
 
 using NodeId = uint64_t;
 
@@ -43,8 +55,8 @@ using MaterialPool = ManagedObjectPool<Material, void>;
 using AnimationSetPool = ManagedObjectPool<AnimationSet, void>;
 using AnimationControllerPool = ManagedObjectPool<AnimationController, void>;
 using LightPool = ManagedObjectPool<Light, void>;
-using NodePool = ManagedObjectPool<Node, NodeGraph*>;
-using NodeGraphPool = ManagedObjectPool<NodeGraph, void>;
+using NodePool = ManagedObjectPool<Node, NodeGraph*, 16>;
+using ModelSetPool = ManagedObjectPool<ModelSet, void>;
 
 using MeshHandle = ManagedHandle<Mesh, MeshPool>;
 using TextureHandle = ManagedHandle<Texture, TexturePool>;
@@ -53,7 +65,7 @@ using AnimationSetHandle = ManagedHandle<AnimationSet, AnimationSetPool>;
 using AnimationControllerHandle = ManagedHandle<AnimationController, AnimationControllerPool>;
 using LightHandle = ManagedHandle<Light, LightPool>;
 using NodeHandle = ManagedHandle<Node, NodePool>;
-using NodeGraphHandle = ManagedHandle<NodeGraph, NodeGraphPool>;
+using ModelSetHandle = ManagedHandle<ModelSet, ModelSetPool>;
 
 class ShaderLibrary;
 
@@ -223,6 +235,8 @@ AABB transformAABB(const AABB& aabb, const Matrix4& mtx);
 
 struct NodeJsonLoader;
 
+class RenderTarget;
+class MultiTextureRenderTarget;
 
     }   // namepace gfx
 }   // namespace cinek

@@ -9,7 +9,7 @@
 #ifndef Overview_SceneFixedBodyHull_hpp
 #define Overview_SceneFixedBodyHull_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "SceneTypes.hpp"
 
 #include <cinek/allocator.hpp>
 #include <bullet/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h>

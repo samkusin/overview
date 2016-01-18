@@ -10,6 +10,7 @@
 #include "Engine/Scenes/Scene.hpp"
 #include "Engine/Scenes/SceneDataContext.hpp"
 #include "Engine/Render/RenderGraph.hpp"
+#include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Context.hpp"
 
 #include <ckjson/json.hpp>
@@ -41,16 +42,24 @@ void GameEntityFactory::onCustomComponentCreateFn
 )
 {
     if (componentName == "renderable") {
+        const char* modelSetName = compTemplate["modelset"].GetString();
         const char* modelName = compTemplate["model"].GetString();
-        auto modelHandle = _gfxContext->findModel(modelName);
+        
+        gfx::ModelSetHandle modelSetHandle = _gfxContext->findModelSet(modelSetName);
+        gfx::NodeHandle modelHandle;
+        
+        if (modelSetHandle) {
+            modelHandle = modelSetHandle->find(modelName);
+        }
+        
         if (modelHandle) {
             _renderGraph->cloneAndAddNode(entity,
-                modelHandle->root(), nullptr);
+                modelHandle, nullptr);
         }
         else {
-            CK_LOG_WARN("OverviewSample",
-                        "Entity: %" PRIu64 ", Component %s: %s not found\n",
-                        entity, componentName.c_str(), modelName);
+                CK_LOG_WARN("OverviewSample",
+                        "Entity: %" PRIu64 ", Component %s: %s/%s not found\n",
+                        entity, componentName.c_str(), modelSetName, modelName);
         }
     }
     else if (componentName == "scenebody") {
@@ -62,7 +71,8 @@ void GameEntityFactory::onCustomComponentCreateFn
         gfx::Vector3 nodeTranslate;
         if (gfxNode) {
             auto& transform = gfxNode->transform();
-            cinek::gfx::generateAABBForNode(nodeAABB, *gfxNode.resource());
+            nodeAABB = gfxNode->calculateAABB();
+            //cinek::gfx::generateAABBForNode(nodeAABB, *gfxNode.resource());
             nodeTranslate.x = transform[12];
             nodeTranslate.y = transform[13];
             nodeTranslate.z = transform[14];
@@ -130,6 +140,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         btRigidBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode);
         if (body) {
             _scene->attachBody(body, entity);
+            //body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
         }
         else {
             CK_LOG_WARN("OverviewSample",
@@ -139,12 +150,55 @@ void GameEntityFactory::onCustomComponentCreateFn
     }
 }
 
-void GameEntityFactory::onCustomComponentDestroyFn
+void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
+{
+    //  iterate through all components
+    //  TODO - perhaps we need to identify what components are attached to
+    //         the entity for optimization
+    
+    //  destroy scene
+    btRigidBody* body = _scene->detachBody(entity);
+    if (body) {
+        _sceneDataContext->freeBody(body);
+    }
+    //  destroy renderable
+    _renderGraph->removeNode(entity);
+}
+
+void GameEntityFactory::onCustomComponentEntityCloneFn
 (
-    EntityDataTable& table,
-    ComponentRowIndex compRowIndex
+    Entity target,
+    Entity origin
 )
 {
+    //  clone all components
+    //  TODO - perhaps we need to identify what components are attached to
+    //         the entity for optimization
+    
+    //  renderable
+    gfx::NodeHandle gfxNode = _renderGraph->findNode(origin);
+    if (gfxNode) {
+        CK_ASSERT_RETURN(gfxNode->elementType() == gfx::Node::kElementTypeObject);
+        //  do not replicate the root object node, which identifies its
+        //  entity.  but we still need to replicate its transform later
+        //  Also make sure that our root object node is indeed an entity
+        //  node, which is attached to the a single child
+        CK_ASSERT_RETURN(gfxNode->firstChild() && !gfxNode->firstChild()->nextSibling());
+        const gfx::Matrix4& mtx = gfxNode->transform();
+        gfxNode = gfxNode->firstChildHandle();
+        gfxNode = _renderGraph->cloneAndAddNode(target, gfxNode, nullptr);
+        gfxNode->setTransform(mtx);
+    }
+    //  scene
+    ove::SceneBody* body = _scene->findBody(origin);
+    if (body) {
+        btRigidBody* btBody = _sceneDataContext->cloneBody(body->btBody, gfxNode);
+        ove::SceneBody* clonedBody = _scene->attachBody(btBody, target);
+        if (clonedBody) {
+            clonedBody->savedState = body->savedState;
+        }
+        body = clonedBody;
+    }
 }
 
 

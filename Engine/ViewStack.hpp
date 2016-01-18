@@ -9,21 +9,31 @@
 #ifndef Overview_View_Manager_hpp
 #define Overview_View_Manager_hpp
 
-#include <cinek/allocator.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 #include <functional>
 #include <thread>
 #include <mutex>
 
-namespace cinek { namespace ove {
+namespace cinek {
+
+namespace uicore {
+    struct InputState;
+}
+
+namespace ove {
 
 class ViewController;
+struct InputState;
 
 class ViewStack
 {
 public:
-    using FactoryCallback = std::function<unique_ptr<ViewController>(const std::string&, ViewController*)>;
+    using FactoryCallback =
+        std::function<std::shared_ptr<ViewController>(
+                            const std::string&,
+                            ViewController*)>;
     
     ViewStack();
     ~ViewStack();
@@ -39,7 +49,7 @@ public:
     void simulate(double dt);
     
     //  render the stack
-    void frameUpdate(double dt);
+    void frameUpdate(double dt, const cinek::uicore::InputState& inputState);
     
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,
@@ -66,7 +76,7 @@ public:
 private:
     FactoryCallback _factoryCb;
     std::mutex _runMutex;
-    std::vector<std::pair<unique_ptr<ViewController>, int>> _views;
+    std::vector<std::pair<std::shared_ptr<ViewController>, int>> _views;
     std::vector<ViewController*> _stack;
     
     struct Command

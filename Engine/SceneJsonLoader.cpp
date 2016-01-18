@@ -12,7 +12,6 @@
 #include "EntityDatabase.hpp"
 #include "Render/RenderGraph.hpp"
 
-#include "Scenes/SceneObject.hpp"
 #include "Scenes/SceneDataContext.hpp"
 #include "Scenes/SceneObjectJsonLoader.hpp"
 
@@ -181,7 +180,7 @@ auto SceneJsonLoader::parseJsonNode
             }
         }
     }
-    //  initialize component data - TODO Motion States!
+    
     if (newEntity) {
         CK_ASSERT(context.entity);
         if (node.type == Node::kGfxNode) {

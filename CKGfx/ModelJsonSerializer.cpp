@@ -8,8 +8,11 @@
 
 #include "ModelJsonSerializer.hpp"
 #include "Context.hpp"
+#include "Geometry.hpp"
 
 #include <cinek/debug.h>
+#include <bx/fpumath.h>
+
 #include <vector>
 
 namespace cinek {
@@ -83,7 +86,14 @@ NodeHandle NodeJsonLoader::operator()
 )
 {
     NodeHandle thisNode;
-
+    
+    const char* nodeName = jsonNode["name"].GetString();
+    const char* nodeType = nullptr;
+    
+    if (jsonNode.HasMember("type")) {
+        nodeType = jsonNode["type"].GetString();
+    }
+    
     //  create our leaf child element nodes (meshes for example)
     if (jsonNode.HasMember("meshes")) {
         const JsonValue& elements = jsonNode["meshes"];
@@ -176,6 +186,10 @@ NodeHandle NodeJsonLoader::operator()
         loadAABBFromJSON(thisNode->obb(), jsonNode["obb"]);
     }
 
+    if (nodeType && (!strcasecmp(nodeType, "entity") || !strcasecmp(nodeType, "model"))) {
+        modelNodes.emplace_back(nodeName, thisNode);
+    }
+
     return thisNode;
 }
 
@@ -190,11 +204,9 @@ struct ModelBuilderFromJSONFn
     //
     ModelBuilderFromJSONFn
     (
-        NodeJsonLoader& loader,
-        const std::vector<std::string>& nodeTypesExcluded
+        NodeJsonLoader& loader
     ) :
-        _loader(&loader),
-        _nodeTypesExcluded(&nodeTypesExcluded)
+        _loader(&loader)
     {
     }
 
@@ -209,7 +221,6 @@ struct ModelBuilderFromJSONFn
 
 private:
     NodeJsonLoader* _loader;
-    const std::vector<std::string>* _nodeTypesExcluded;
 
     NodeHandle build
     (
@@ -218,21 +229,9 @@ private:
     )
     {
         NodeHandle thisNode;
-
-        //  filter by node types if available
-        if (!_nodeTypesExcluded->empty()) {
-            auto typeNodeIt = node.FindMember("type");
-            if (typeNodeIt != node.MemberEnd()) {
-                const char* type = typeNodeIt->value.GetString();
-                for (auto& excludedType : *_nodeTypesExcluded) {
-                    if (excludedType == type)
-                        return nullptr;
-                }
-            }
-        }
         
         thisNode = (*_loader)(model, node);
-     
+        
         if (node.HasMember("children")) {
             const JsonValue& children = node["children"];
             if (children.IsArray() && !children.Empty()) {
@@ -241,7 +240,7 @@ private:
                     NodeHandle child = build(model, *it);
                     if (child) {
                         model.addChildNodeToNode(child, thisNode);
-                        
+                        thisNode->obb().merge(child->calculateAABB());
                     }
                 }
             }
@@ -254,10 +253,8 @@ private:
 
 NodeGraph loadNodeGraphFromJSON
 (
-    Context& context,
-    const JsonValue& root,
-    const NodeElementCounts& extra,
-    const std::vector<std::string>& nodeTypeExcludeFilter
+    NodeJsonLoader& loader,
+    const JsonValue& root
 )
 {
     NodeGraph model;
@@ -274,15 +271,13 @@ NodeGraph loadNodeGraphFromJSON
     //  to run an enumeration pass on the model document before generating our
     //  model's graph
     
-    NodeElementCounts modelInitParams = extra;
+    NodeElementCounts modelInitParams = {};
     modelInitParams = enumerateNodeResourcesFromJSON(modelInitParams, modelNode);
     
     model = std::move(NodeGraph(modelInitParams));
     
     //  Build model's graph by visiting our json nodes.
     //
-    NodeJsonLoader loader;
-    loader.context = &context;
     loader.jsonAnimations = root.FindMember("animations");
     loader.jsonMeshes = root.FindMember("meshes");
     loader.jsonMaterials = root.FindMember("materials");
@@ -293,11 +288,45 @@ NodeGraph loadNodeGraphFromJSON
         loader.lights.reserve(loader.jsonLights->value.Size());
     }
 
-    ModelBuilderFromJSONFn buildFn(loader, nodeTypeExcludeFilter);
+    ModelBuilderFromJSONFn buildFn(loader);
     
     buildFn(model, modelNode);
     
     return model;
+}
+
+ModelSet loadModelSetFromJSON
+(
+    Context& context,
+    const JsonValue& root
+)
+{
+    ModelSet modelSet;
+    
+    NodeJsonLoader loader;
+    loader.context = &context;
+    
+    NodeGraph nodeGraph = loadNodeGraphFromJSON(loader, root);
+    
+    modelSet = std::move(ModelSet(std::move(nodeGraph), std::move(loader.modelNodes)));
+    
+    return std::move(modelSet);
+}
+
+NodeGraph loadNodeGraphFromJSON
+(
+    Context& context,
+    const JsonValue& root
+)
+{
+    NodeGraph nodeGraph;
+    
+    NodeJsonLoader loader;
+    loader.context = &context;
+    
+    nodeGraph = loadNodeGraphFromJSON(loader, root);
+    
+    return std::move(nodeGraph);
 }
 
 Mesh loadMeshFromJSON
@@ -334,10 +363,16 @@ Mesh loadMeshFromJSON
                 vertexType = VertexTypes::kVNormal_Tex0;
             }
         }
+        else {
+            vertexType = VertexTypes::kVPositionNormal;
+        }
     }
     else {
         if (hasTexCoords) {
             vertexType = VertexTypes::kVTex0;
+        }
+        else {
+            vertexType = VertexTypes::kVPosition;
         }
     }
     
@@ -347,12 +382,13 @@ Mesh loadMeshFromJSON
     
     MeshBuilder::BuilderState meshBuilder;
     
-    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
-    meshBuilder.indexLimit = triangles.Size() * 3;
-    meshBuilder.indexType = VertexTypes::kIndex16;
-    meshBuilder.vertexLimit = vertices.Size();
+    int32_t indexLimit = (int)triangles.Size() * 3;
+    CK_ASSERT(indexLimit <= UINT16_MAX);
     
-    MeshBuilder::create(meshBuilder);
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.indexType = VertexTypes::kIndex16;
+    
+    MeshBuilder::create(meshBuilder, { (int)vertices.Size(), indexLimit });
     
     JsonValue::ConstValueIterator vertexIt = vertices.Begin();
     JsonValue::ConstValueIterator normalIt = nullptr;
@@ -408,7 +444,8 @@ Mesh loadMeshFromJSON
     
     return Mesh(vertexType, meshBuilder.indexType,
                     meshBuilder.vertexMemory,
-                    meshBuilder.indexMemory);
+                    meshBuilder.indexMemory,
+                    PrimitiveType::kTriangles);
 }
 
 Material loadMaterialFromJSON(Context& context, const JsonValue& root)

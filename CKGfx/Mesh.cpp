@@ -7,6 +7,7 @@
 //
 
 #include "Mesh.hpp"
+#include "Geometry.hpp"
 
 #include <cinek/debug.h>
 #include <cinek/map.hpp>
@@ -18,134 +19,6 @@
 
 namespace cinek {
     namespace gfx {
-
-
-namespace MeshBuilder
-{
-    BuilderState& BuilderState::position(const Vector3& pos)
-    {
-        return vertex(pos.comp, bgfx::Attrib::Position);
-    }
-    
-    BuilderState& BuilderState::normal(const Vector3& normal)
-    {
-        return vertex(normal.comp, bgfx::Attrib::Normal);
-    }
-    
-    BuilderState& BuilderState::uv2(const Vector2& uv)
-    {
-        return vertex(uv.comp, bgfx::Attrib::TexCoord0);
-    }
-    
-    BuilderState& BuilderState::addweight(uint16_t boneIndex, float weight)
-    {
-        CK_ASSERT_RETURN_VALUE(weightStackIdx < 4, *this);
-        
-        indices.comp[weightStackIdx] = (float)(boneIndex);
-        weights.comp[weightStackIdx] = weight;
-        ++weightStackIdx;
-        
-        return *this;
-    }
-    
-    BuilderState& BuilderState::endweights()
-    {
-        while (weightStackIdx < 4) {
-            indices.comp[weightStackIdx] = 0.0f;
-            weights.comp[weightStackIdx] = 0.0f;
-            ++weightStackIdx;
-        }
-        vertex(indices.comp, bgfx::Attrib::Indices);
-        vertex(weights.comp, bgfx::Attrib::Weight);
-        
-        weightStackIdx = 0;
-        return *this;
-    }
-    
-    
-    BuilderState& BuilderState::vertex
-    (
-        const float* comp,
-        bgfx::Attrib::Enum attrib
-    )
-    {
-        CK_ASSERT(vertexCount < vertexLimit);
-        bool valid = vertexDecl->has(attrib);
-        if (valid) {
-            bgfx::vertexPack(comp, false, attrib,
-                             *vertexDecl,
-                             vertexMemory->data,
-                             vertexCount);
-        }
-        return *this;
-    }
-    
-    BuilderState& BuilderState::next()
-    {
-        ++vertexCount;
-        return *this;
-    }
-    
-    template<>
-    BuilderState& BuilderState::triangle<uint16_t>
-    (
-        uint16_t i0, uint16_t i1, uint16_t i2
-    )
-    {
-        CK_ASSERT(indexCount + 3 <= indexLimit);
-        CK_ASSERT(indexType == VertexTypes::kIndex16);
-        uint16_t* ptr = reinterpret_cast<uint16_t*>(indexMemory->data) + indexCount;
-        ptr[0] = i0;
-        ptr[1] = i1;
-        ptr[2] = i2;
-        indexCount += 3;
-        return *this;
-    }
-    
-    template<>
-    BuilderState& BuilderState::triangle<uint32_t>
-    (
-        uint32_t i0, uint32_t i1, uint32_t i2
-    )
-    {
-        CK_ASSERT(indexCount + 3 <= indexLimit);
-        CK_ASSERT(indexType == VertexTypes::kIndex32);
-        uint32_t* ptr = reinterpret_cast<uint32_t*>(indexMemory->data) + indexCount;
-        ptr[0] = i0;
-        ptr[1] = i1;
-        ptr[2] = i2;
-        indexCount += 3;
-        return *this;
-    }
-
-    BuilderState& create(BuilderState& state)
-    {
-        CK_ASSERT_RETURN_VALUE(state.indexType != VertexTypes::kIndex0, state);
-        
-        uint32_t sz = state.vertexDecl->getSize(state.vertexLimit);
-        state.vertexMemory = bgfx::alloc(sz);
-        state.vertexCount = 0;
-        state.weightStackIdx = 0;
-        
-        if (state.indexType == VertexTypes::kIndex16) {
-            sz = sizeof(uint16_t)*state.indexLimit;
-        }
-        else if (state.indexType == VertexTypes::kIndex32) {
-            sz = sizeof(uint32_t)*state.indexLimit;
-        }
-        else {
-            CK_ASSERT(false);
-            sz = sizeof(uint16_t)*state.indexLimit;
-        }
-        
-        state.indexMemory = bgfx::alloc(sz);
-        state.indexCount = 0;
-        
-        return state;
-    }
-
-}
-
 
 template<typename KeyType, typename IndexType, int BitShift>
 struct IcoSphereUtility
@@ -521,11 +394,13 @@ Mesh createIcoSphere
     //  hardware buffers
     MeshBuilder::BuilderState meshBuilder;
     meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
-    meshBuilder.vertexLimit = (uint32_t)utility.vertices.size();
-    meshBuilder.indexLimit = (uint32_t)utility.faces.size() * 3;
     meshBuilder.indexType = VertexTypes::kIndex16;
     
-    MeshBuilder::create(meshBuilder);
+    MeshBuilder::create(meshBuilder,
+        {
+            (int32_t)utility.vertices.size(),
+            (int32_t)utility.faces.size() * 3
+        });
     
     for (size_t iv = 0; iv < utility.vertices.size(); ++iv) {
         meshBuilder.position(utility.vertices[iv])
@@ -541,18 +416,113 @@ Mesh createIcoSphere
     
     Mesh mesh(vertexType, meshBuilder.indexType,
               meshBuilder.vertexMemory,
-              meshBuilder.indexMemory);
+              meshBuilder.indexMemory,
+              PrimitiveType::kTriangles);
     
     
     
     return mesh;
 }
 
+Mesh createUVSphere
+(
+    float radius,
+    int32_t numStacks,
+    int32_t numSlices,
+    VertexTypes::Format vertexType,
+    PrimitiveType primType
+)
+{
+    MeshBuilder::BuilderState meshBuilder;
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.indexType = VertexTypes::kIndex16;
+    
+    MeshBuilder::create(meshBuilder,
+        MeshBuilder::calculateUVSphereCounts(numStacks, numSlices, primType));
+    MeshBuilder::buildUVSphere(meshBuilder, radius, numStacks, numSlices, primType);
+    
+    return Mesh(vertexType, meshBuilder.indexType,
+        meshBuilder.vertexMemory,
+        meshBuilder.indexMemory,
+        primType);
+}
+
+
+Mesh createQuad
+(
+    float scale,
+    VertexTypes::Format vertexType,
+    PrimitiveType primType
+)
+{
+    const bgfx::VertexDecl& vertexDecl = VertexTypes::declaration(vertexType);
+    
+    //  allocate packed buffers based on vertex declaration and generate our
+    //  hardware buffers
+    MeshBuilder::BuilderState meshBuilder;
+    meshBuilder.vertexDecl = &VertexTypes::declaration(vertexType);
+    meshBuilder.indexType = VertexTypes::kIndex16;
+    
+    MeshBuilder::create(meshBuilder, { 4, 6 });
+    
+    //  CCW winding order
+    const Vector3 verts[] = {
+        { -scale, -scale, 0.0f },
+        { scale, -scale, 0.0f },
+        { scale, scale, 0.0f },
+        { -scale, scale, 0.0 }
+    };
+    
+    const Vector2 vertexUVs[] = {
+        { 0.0f, 0.0f },
+        { 1.0f, 0.0f },
+        { 1.0f, 1.0f },
+        { 0.0f, 1.0f }
+    };
+    
+    for (int iv = 0; iv < 4; ++iv) {
+        meshBuilder.position(verts[iv]);
+        
+        if (vertexDecl.has(bgfx::Attrib::Normal)) {
+            meshBuilder.normal({ 0.0f, 0.0f, -1.0f });
+        }
+        if (vertexDecl.has(bgfx::Attrib::TexCoord0)) {
+            meshBuilder.uv2(vertexUVs[iv]);
+        }
+        
+        meshBuilder.next();
+    }
+    
+    if (primType == PrimitiveType::kTriangles) {
+        meshBuilder.triangle<uint16_t>(0, 1, 2);
+        meshBuilder.triangle<uint16_t>(3, 0, 2);
+    }
+    else if (primType == PrimitiveType::kLines) {
+        meshBuilder.line<uint16_t>(0,1);
+        meshBuilder.line<uint16_t>(1,2);
+        meshBuilder.line<uint16_t>(2,3);
+        meshBuilder.line<uint16_t>(3,0);
+    }
+    else {
+        CK_ASSERT(false);
+    }
+    
+    
+    Mesh mesh(vertexType, meshBuilder.indexType,
+              meshBuilder.vertexMemory,
+              meshBuilder.indexMemory,
+              primType);
+    
+    return mesh;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 Mesh::Mesh() :
     _format(VertexTypes::kInvalid),
     _indexType(VertexTypes::Index::kIndex0),
+    _primitiveType(PrimitiveType::kUndefined),
     _vertBufH(BGFX_INVALID_HANDLE),
     _idxBufH(BGFX_INVALID_HANDLE)
 {
@@ -563,10 +533,12 @@ Mesh::Mesh
     VertexTypes::Format format,
     VertexTypes::Index indexType,
     const bgfx::Memory* vertexData,
-    const bgfx::Memory* indexData
+    const bgfx::Memory* indexData,
+    PrimitiveType primitiveType
 ) :
     _format(format),
     _indexType(indexType),
+    _primitiveType(primitiveType),
     _vertBufH(BGFX_INVALID_HANDLE),
     _idxBufH(BGFX_INVALID_HANDLE)
 {
@@ -604,11 +576,13 @@ Mesh::~Mesh()
 Mesh::Mesh(Mesh&& other) :
     _format(other._format),
     _indexType(other._indexType),
+    _primitiveType(other._primitiveType),
     _vertBufH(other._vertBufH),
     _idxBufH(other._idxBufH)
 {
     other._format = VertexTypes::kInvalid;
     other._indexType = VertexTypes::Index::kIndex0;
+    other._primitiveType = PrimitiveType::kUndefined;
     other._vertBufH = BGFX_INVALID_HANDLE;
     other._idxBufH = BGFX_INVALID_HANDLE;
 }
@@ -617,11 +591,13 @@ Mesh& Mesh::operator=(Mesh&& other)
 {
     _format = other._format;
     _indexType = other._indexType;
+    _primitiveType = other._primitiveType;
     _vertBufH = other._vertBufH;
     _idxBufH = other._idxBufH;
     
     other._format = VertexTypes::kInvalid;
     other._indexType = VertexTypes::kIndex0;
+    other._primitiveType = PrimitiveType::kUndefined;
     other._vertBufH = BGFX_INVALID_HANDLE;
     other._idxBufH = BGFX_INVALID_HANDLE;
     

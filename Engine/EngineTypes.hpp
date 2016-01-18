@@ -18,7 +18,7 @@ namespace cinek {
 
         class EntityDatabase;
         class EntityComponentFactory;
-        class EntityService;
+
         
         class ViewStack;
         class ViewController;
@@ -32,6 +32,9 @@ namespace cinek {
         class SceneDebugDrawer;
         struct SceneObjectJsonLoader;
         
+        class AssetService;
+        class EntityService;
+        class RenderService;
         class SceneService;
         
         class AssetManifest;
@@ -42,9 +45,8 @@ namespace cinek {
         {
             kNone,
             kTexture,
-            kModel
+            kModelSet
         };
-
     } /* namespace ove */
 } /* namespace cinek */
 

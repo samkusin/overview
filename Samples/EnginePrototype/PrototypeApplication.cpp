@@ -17,7 +17,7 @@
 #include "PrototypeApplication.hpp"
 
 #include "Views/StartupView.hpp"
-#include "Views/GameView.hpp"
+#include "Views/Game/GameView.hpp"
 
 
 #include <bgfx/bgfx.h>
@@ -30,7 +30,8 @@ PrototypeApplication::PrototypeApplication
 (
     gfx::Context& gfxContext,
     const gfx::NodeRenderer::ProgramMap& programs,
-    const gfx::NodeRenderer::UniformMap& uniforms
+    const gfx::NodeRenderer::UniformMap& uniforms,
+    NVGcontext* nvg
 ) :
     _gfxContext(&gfxContext),
     _taskScheduler(64),
@@ -40,7 +41,8 @@ PrototypeApplication::PrototypeApplication
     _resourceFactory(*_gfxContext, _taskScheduler),
     _renderPrograms(programs),
     _renderUniforms(uniforms),
-    _renderer()
+    _renderer(),
+    _nvg(nvg)
 {
     gfx::NodeElementCounts sceneElementCounts;
     sceneElementCounts.meshNodeCount = 128;
@@ -54,6 +56,10 @@ PrototypeApplication::PrototypeApplication
         1024,
         256
     );
+    
+    _renderContext.programs = &_renderPrograms;
+    _renderContext.uniforms = &_renderUniforms;
+    _renderContext.frameRect = gfx::Rect { 0,0,0,0 };
     
     ove::SceneDataContext::InitParams sceneDataInit;
     sceneDataInit.numRigidBodies = 256;
@@ -74,46 +80,49 @@ PrototypeApplication::PrototypeApplication
     );
     
     std::vector<EntityStore::InitParams> entityStoreInitializers = {
+        //  default
         cinek::EntityStore::InitParams {
-                1024,           // num entities
-                {
-                },
-                {
-                },
-                12345678        // random seed
+                16384
+        },
+        //  staging
+        cinek::EntityStore::InitParams {
+                1024
         }
     };
 
     _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
         *_componentFactory);
 
-    cinek::gfx::Matrix4 cameraRotMtx;
-    bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
-    _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
     
     //  define the top-level states for this application
     ApplicationContext context;
     
+    context.nvg = _nvg;
     context.entityDatabase = _entityDb.get();
     context.taskScheduler = &_taskScheduler;
     context.resourceFactory = &_resourceFactory;
     context.msgClientSender = &_clientSender;
     context.scene = _scene.get();
     context.sceneData = _sceneData.get();
+    context.sceneDebugDrawer = _sceneDbgDraw.get();
     context.gfxContext = _gfxContext;
     context.renderGraph = _renderGraph.get();
+    context.renderContext = &_renderContext;
     
     _viewStack.setFactory(
-        [context](const std::string& viewName, ove::ViewController* ) -> unique_ptr<ove::ViewController> {
+        [context](const std::string& viewName, ove::ViewController* )
+            -> std::shared_ptr<ove::ViewController> {
             //  Startup View initialzes common data for the application
             //  Game View encompasses the whole game simulation
             //  Ship View encompasses the in-game ship mode
             //  Ship Bridge View encompasses the in-game ship bridge mode
             if (viewName == "StartupView") {
-                return allocate_unique<StartupView>(context);
+                return std::allocate_shared<StartupView>(
+                    std_allocator<StartupView>(), context);
             }
             else if (viewName == "GameView") {
-                return allocate_unique<GameView>(context);
+                return std::allocate_shared<GameView>(
+                    std_allocator<GameView>(), context);
             }
             
             return nullptr;
@@ -137,38 +146,26 @@ void PrototypeApplication::beginFrame()
 void PrototypeApplication::simulateFrame(double dt)
 {
     _scene->simulate(dt);
-
-    _taskScheduler.update(dt * 1000);
     
     _viewStack.simulate(dt);
 }
 
-void PrototypeApplication::updateFrame
+void PrototypeApplication::renderFrame
 (
     double dt,
-    const ove::InputState& inputState
+    const gfx::Rect& viewRect,
+    const cinek::uicore::InputState& inputState
 )
 {
-    _viewStack.frameUpdate(dt);
+    _taskScheduler.update(dt * 1000);
     
-    _freeCameraController.handleCameraInput(_camera, inputState, dt);
-
+    _renderContext.frameRect = viewRect;
+ 
     _renderGraph->update(dt);
-}
-
-void PrototypeApplication::renderFrame(const gfx::Rect& viewRect)
-{
-    bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
-
-    _camera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
-        (float)viewRect.w/viewRect.h);
     
-    _renderer.setCamera(_camera);
-    
-    _renderer(_renderPrograms, _renderUniforms, _renderGraph->root());
-    
-    _sceneDbgDraw->setup(_renderPrograms, _renderUniforms, _renderer.camera());
-    _scene->debugRender();
+    _viewStack.frameUpdate(dt, inputState);
+        
+    _gfxContext->update();
 }
 
 void PrototypeApplication::endFrame()
@@ -181,17 +178,6 @@ void PrototypeApplication::endFrame()
     _entityDb->gc();
 }
 
-
-void PrototypeApplication::createScene
-(
-    const ove::AssetManifest& manifest
-)
-{
-}
-
-void PrototypeApplication::destroyScene()
-{
-}
 
 }
 

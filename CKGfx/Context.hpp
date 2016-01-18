@@ -28,7 +28,7 @@ public:
         uint32_t numTextures;
         uint32_t numAnimations;
         uint32_t numLights;
-        uint32_t numModels;
+        uint32_t numModelSets;
     };
     
     Context() = default;
@@ -80,11 +80,11 @@ public:
     //  Registers a light handle
     LightHandle registerLight(Light&& light);
     //  Registers a NodeGraph Model with an noptinoal name
-    NodeGraphHandle registerModel(NodeGraph&& graph, const char* name="");
+    ModelSetHandle registerModelSet(ModelSet&& modelSet, const char* name="");
     //  Unregisters a Model
-    void unregisterModel(const char *name);
-    //  FInds a Model given its name
-    NodeGraphHandle findModel(const char* name) const;
+    void unregisterModelSet(const char *name);
+    //  Finds a Model given its name
+    ModelSetHandle findModelSet(const char* name) const;
     
 private:
     //  restrict Context access to pointer and reference -
@@ -102,17 +102,17 @@ private:
     TexturePool _textures;
     AnimationSetPool _animationSets;
     LightPool _lights;
-    NodeGraphPool _models;
+    ModelSetPool _modelSets;
     
     using TextureDictionary = ManagedDictionary<TextureHandle>;
     using MaterialDictionary = ManagedDictionary<MaterialHandle>;
     using AnimationSetDictionary = ManagedDictionary<AnimationSetHandle>;
-    using ModelDictionary = ManagedDictionary<NodeGraphHandle>;
+    using ModelSetDictionary = ManagedDictionary<ModelSetHandle>;
     
     TextureDictionary _textureDictionary;
     MaterialDictionary _materialDictionary;
     AnimationSetDictionary _animationSetDictionary;
-    ModelDictionary _modelDictionary;
+    ModelSetDictionary _modelSetDictionary;
     
     TextureLoadDelegate _textureLoadDelegate;
 };

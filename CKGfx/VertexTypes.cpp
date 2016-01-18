@@ -11,6 +11,7 @@
 #if defined(_MSC_VER)
 #include <cassert>
 #endif
+#include <bgfx/bgfx.h>
 
 namespace cinek {
     namespace gfx {
@@ -67,8 +68,15 @@ namespace VertexTypes
             .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
             .end();
         
+        //  kVPosition
         s_decls[kVPosition].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .end();
+
+        //  kVPositionNormal
+        s_decls[kVPositionNormal].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
             .end();
         
         //  allow custom presets starting at the preset limit index

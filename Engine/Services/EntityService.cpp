@@ -33,6 +33,11 @@ void EntityService::destroyEntity(Entity entity)
     _context->destroyEntity(entity);
 }
 
+Entity EntityService::cloneEntity(EntityContextType context, Entity entity)
+{
+    return _context->cloneEntity(context, entity);
+}
+
 bool EntityService::isEntityValid(Entity e) const
 {
     return _context->getStore(cinek_entity_context(e)).valid(e);
@@ -52,6 +57,10 @@ void EntityService::clearDefinitions(const std::string& path)
     _context->clearManifest(path);
 }
 
+const AssetManifest* EntityService::getDefinitions(const std::string& name) const
+{
+    return _context->getManifest(name);
+}
 
 
     } /* namespace ove */

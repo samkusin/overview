@@ -360,6 +360,29 @@ namespace
 
 		return 1;
 	}
+    
+    // Added by Samir Sinha (1/11/2016) - bind backend-compatible texture to an nvgImage context.
+    static int nvgRenderBindTexture(void* uptr, int w, int h, int type, void* handle)
+    {
+        struct GLNVGcontext* gl = (struct GLNVGcontext*)uptr;
+		struct GLNVGtexture* tex = glnvg__allocTexture(gl);
+
+		if (tex == NULL)
+		{
+			return 0;
+		}
+        
+        tex->width = w;
+        tex->height = h;
+        tex->type = type;
+        tex->flags = 0;
+        
+        bgfx::TextureHandle *bgfxTexture = reinterpret_cast<bgfx::TextureHandle*>(handle);
+        tex->id.idx = bgfxTexture->idx;
+        *bgfxTexture = BGFX_INVALID_HANDLE;
+        
+        return tex->id.idx;
+    }
 
 	static int nvgRenderGetTextureSize(void* _userPtr, int image, int* w, int* h)
 	{
@@ -1036,6 +1059,10 @@ NVGcontext* nvgCreate(int edgeaa, unsigned char viewid)
 	params.renderStroke         = nvgRenderStroke;
 	params.renderTriangles      = nvgRenderTriangles;
 	params.renderDelete         = nvgRenderDelete;
+    
+    // Added by Samir Sinha (1/11/2016) - bind backend-compatible texture to an nvgImage context
+    params.renderBindTexture    = nvgRenderBindTexture;
+    
 	params.userPtr = gl;
 	params.edgeAntiAlias = edgeaa;
 
@@ -1062,6 +1089,14 @@ void nvgViewId(struct NVGcontext* ctx, unsigned char viewid)
 	struct NVGparams* params = nvgInternalParams(ctx);
 	struct GLNVGcontext* gl = (struct GLNVGcontext*)params->userPtr;
 	gl->viewid = uint8_t(viewid);
+}
+
+// Added by Samir Sinha (1/11/2016) - retrieves the view ID for the context
+unsigned char nvgGetViewId(struct NVGcontext* ctx)
+{
+	struct NVGparams* params = nvgInternalParams(ctx);
+	struct GLNVGcontext* gl = (struct GLNVGcontext*)params->userPtr;
+    return gl->viewid;
 }
 
 void nvgDelete(struct NVGcontext* ctx)

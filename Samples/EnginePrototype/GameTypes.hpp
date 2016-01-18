@@ -15,6 +15,12 @@ namespace cinek {
 
 class TaskScheduler;
 
+enum
+{
+    kEntityStore_Default,
+    kEntityStore_Staging
+};
+
 }
 
 #endif /* Prototype_GameTypes_hpp */
