@@ -128,7 +128,7 @@ int ShaderLibrary::loadShader(const char* path)
     {
         shaderIndex = (int)_shaders.size();
         _shaders.emplace_back();
-        if (shaderIndex >= _shaders.size())
+        if (shaderIndex >= (int)_shaders.size())
         {
             CK_ASSERT(false);   // leaking resource on bad alloc
             return BGFX_INVALID_HANDLE;
@@ -145,7 +145,7 @@ int ShaderLibrary::loadShader(const char* path)
 
 void ShaderLibrary::unloadShader(int32_t index)
 {
-    if (index < 0 || index >= _shaders.size())
+    if (index < 0 || index >= (int32_t)_shaders.size())
         return;
     
     auto& shader = _shaders[index];

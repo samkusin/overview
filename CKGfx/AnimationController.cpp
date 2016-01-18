@@ -55,7 +55,7 @@ void AnimationController::transitionToState(const char* stateName)
 void AnimationController::update(double t)
 {
     if (_thisAnim) {
-        _time = fmod(t, _thisAnim->duration);
+        _time = fmod((float)t, _thisAnim->duration);
         /*
         if (_thisAnim->duration < 4.0f) {
             printf("%.4f = %.4f,%.4f\n", _time, t, _thisAnim->duration);

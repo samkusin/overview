@@ -426,20 +426,20 @@ void NodeRenderer::setupLightUniforms
     }
     
     if (!_lightColors.empty()) {
-        bgfx::setUniform(uniforms[kNodeUniformLightColor], _lightColors.data(), _lightColors.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightColor], _lightColors.data(), (uint16_t)_lightColors.size());
     }
     if (!_lightParams.empty()) {
-        bgfx::setUniform(uniforms[kNodeUniformLightParam], _lightParams.data(), _lightParams.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightParam], _lightParams.data(), (uint16_t)_lightParams.size());
     }
     if (!_lightDirs.empty()) {
-        bgfx::setUniform(uniforms[kNodeUniformLightDir], _lightDirs.data(), _lightDirs.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightDir], _lightDirs.data(), (uint16_t)_lightDirs.size());
     }
     
     if (!_lightOrigins.empty()) {
-        bgfx::setUniform(uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), _lightOrigins.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightOrigin], _lightOrigins.data(), (uint16_t)_lightOrigins.size());
     }
     if (!_lightCoeffs.empty()) {
-        bgfx::setUniform(uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), _lightCoeffs.size());
+        bgfx::setUniform(uniforms[kNodeUniformLightCoeffs], _lightCoeffs.data(), (uint16_t)_lightCoeffs.size());
     }
 }
 

@@ -8,10 +8,15 @@
 #ifndef CK_Graphics_GfxTypes_hpp
 #define CK_Graphics_GfxTypes_hpp
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4577)
+#endif
+
 #include <cinek/objectpool.hpp>
 #include <cinek/types.hpp>
 #include <cinek/debug.h>
 #include <ckm/mathtypes.hpp>
+
 
 namespace cinek {
     namespace gfx {
@@ -128,10 +133,6 @@ struct Vector4
     }
 };
 
-static_assert(offsetof(Vector4, comp[1]) == offsetof(Vector4, y) &&
-              offsetof(Vector4, comp[1]) == offsetof(Vector4, g),
-              "ensure array and struct values are at the same offsets");
-
 /// A 3x1 uniform
 struct Vector3
 {
@@ -180,9 +181,7 @@ struct Vector3
     Vector3& operator*=(float scalar);
 };
 
-static_assert(offsetof(Vector3, comp[1]) == offsetof(Vector3, y) &&
-              offsetof(Vector3, comp[1]) == offsetof(Vector3, g),
-              "ensure array and struct values are at the same offsets");
+
 
 struct Vector2
 {
@@ -208,9 +207,6 @@ struct Vector2
         return *this;
     }
 };
-
-static_assert(offsetof(Vector2, comp[1]) == offsetof(Vector2, y),
-              "ensure array and struct values are at the same offsets");
 
 
 using Color4 = Vector4;

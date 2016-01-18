@@ -226,9 +226,9 @@ struct IcoSphereUtility
         if (faces.empty())
             return;
         
-        auto offset = faces.size();
+        size_t offset = faces.size();
         
-        for (auto i = 0; i < offset; ++i)
+        for (size_t i = 0; i < offset; ++i)
         {
             Face& face = faces[i];
             IndexType a = addMiddlePoint(face.idx[0], face.idx[1]);
@@ -278,7 +278,7 @@ struct IcoSphereUtility
     {
         auto& adjFaces = vertexAdjFaces[vertexIndex];
         auto& faceCnt = adjFaces[0];
-        CK_ASSERT(faceCnt+1 < adjFaces.size());
+        CK_ASSERT(faceCnt+1 < (IndexType)adjFaces.size());
         ++faceCnt;
         adjFaces[faceCnt] = faceIndex;
     }
@@ -330,7 +330,7 @@ struct IcoSphereUtility
                 vertexUVs.back().comp[0] += 1.0f;
                 vertices.push_back(vertices[face.idx[index1]]);
                 normals.push_back(normals[face.idx[index1]]);
-                face.idx[index1] = vertices.size()-1;
+                face.idx[index1] = (uint16_t)vertices.size()-1;
             }
             else
             {
@@ -338,7 +338,7 @@ struct IcoSphereUtility
                 vertexUVs.back().comp[0] += 1.0f;
                 vertices.push_back(vertices[face.idx[index0]]);
                 normals.push_back(normals[face.idx[index0]]);
-                face.idx[index0] = vertices.size()-1;
+                face.idx[index0] = (uint16_t)vertices.size()-1;
             }
         }
     }
@@ -420,7 +420,7 @@ Mesh createIcoSphere
     vertexUVs.reserve(utility.vertices.size() + utility.vertices.size()/4);
     normals.reserve(utility.vertices.size() + utility.vertices.size()/4);
     
-    for (int iv = 0; iv < utility.vertices.size(); ++iv)
+    for (size_t iv = 0; iv < utility.vertices.size(); ++iv)
     {
         normals.emplace_back(utility.vertexNormal(iv));
         if (hasUVs)
@@ -493,7 +493,7 @@ Mesh createIcoSphere
                         vertexUVs.push_back(vertexUVs[face.idx[i]]);
                         utility.vertices.push_back(utility.vertices[face.idx[i]]);
                         normals.push_back(normal);
-                        face.idx[i] = utility.vertices.size()-1;
+                        face.idx[i] = (uint16_t)utility.vertices.size()-1;
                     }
                     //  our "new U" will be the average of the other two vertices
                     //  U values (http://sol.gfxile.net/sphere/)
@@ -527,7 +527,7 @@ Mesh createIcoSphere
     
     MeshBuilder::create(meshBuilder);
     
-    for (int iv = 0; iv < utility.vertices.size(); ++iv) {
+    for (size_t iv = 0; iv < utility.vertices.size(); ++iv) {
         meshBuilder.position(utility.vertices[iv])
                    .normal(normals[iv])
                    .uv2(vertexUVs[iv])

@@ -123,7 +123,7 @@ int AnimationSet::findBoneIndex(const char* name) const
 
 const Bone* AnimationSet::boneFromIndex(int index) const
 {
-    CK_ASSERT_RETURN_VALUE(index >= 0 && index < _bones.size(), nullptr);
+    CK_ASSERT_RETURN_VALUE(index >= 0 && index < (int)_bones.size(), nullptr);
     return &_bones[index];
 }
         

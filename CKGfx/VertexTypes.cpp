@@ -8,6 +8,10 @@
 
 #include "VertexTypes.hpp"
 
+#if defined(_MSC_VER)
+#include <cassert>
+#endif
+
 namespace cinek {
     namespace gfx {
     
@@ -15,9 +19,30 @@ namespace VertexTypes
 {
     static bgfx::VertexDecl s_nullDecl;
     static bgfx::VertexDecl s_decls[kFormatLimit];
-    
+
+#if !defined(_MSC_VER)
+    static_assert(offsetof(Vector4, comp[1]) == offsetof(Vector4, y) &&
+        offsetof(Vector4, comp[1]) == offsetof(Vector4, g),
+        "ensure array and struct values are at the same offsets");
+
+    static_assert(offsetof(Vector2, comp[1]) == offsetof(Vector2, y),
+        "ensure array and struct values are at the same offsets");
+
+    static_assert(offsetof(Vector3, comp[1]) == offsetof(Vector3, y) &&
+        offsetof(Vector3, comp[1]) == offsetof(Vector3, g),
+        "ensure array and struct values are at the same offsets");
+#endif
     void initialize()
     {
+    #if defined(_MSC_VER)
+        //  getting around the fact that for some reason, offsetof isn't a constexpr even in
+        //  the latest VS 2015.  our static-asserts are useless
+        assert(offsetof(Vector4, comp[1]) == offsetof(Vector4, y) &&
+            offsetof(Vector4, comp[1]) == offsetof(Vector4, g));
+        assert(offsetof(Vector2, comp[1]) == offsetof(Vector2, y));
+        assert(offsetof(Vector3, comp[1]) == offsetof(Vector3, y) &&
+            offsetof(Vector3, comp[1]) == offsetof(Vector3, g));
+    #endif
         s_nullDecl.begin().end();
 
         // kVTex0
