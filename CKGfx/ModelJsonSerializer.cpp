@@ -306,6 +306,14 @@ ModelSet loadModelSetFromJSON
     
     NodeGraph nodeGraph = loadNodeGraphFromJSON(loader, root);
     
+    //  retranslate all model nodes to X,Z = (0,0) Y is maintained
+    for (auto& modelNode : loader.modelNodes) {
+        gfx::Matrix4& nodeTransform = modelNode.second->transform();
+        nodeTransform.comp[12] = 0.0f;
+        nodeTransform.comp[14] = 0.0f;
+    }
+    
+    
     modelSet = std::move(ModelSet(std::move(nodeGraph), std::move(loader.modelNodes)));
     
     return std::move(modelSet);

@@ -13,30 +13,43 @@
                 "mass" : 70.0
             }
         },
-        "empty1" : {
+        "coffee_table" : {
             "editor" : {
-                "name" : "Placeholder 1"
+                "name" : "Coffee Table (Mid)"
             },
             "renderable" : {
-                "modelset" : "models/simple.json",
-                "model" : "DumbSlinky"
+                "modelset" : "models/furnature-tables-0.json",
+                "model" : "CoffeeTable-Mid"
             },
             "scenebody" : {
-                "shape" : "cylinder",
-                "mass" : 70.0
+                "shape" : "box",
+                "mass" : 10.0
             }
         },
-        "empty2" : {
+        "coffee_table_sm1" : {
             "editor" : {
-                "name" : "Placeholder 2"
+                "name" : "Coffee Table (Small)"
             },
             "renderable" : {
-                "modelset" : "models/simple.json",
-                "model" : "DumbSlinky"
+                "modelset" : "models/furnature-tables-0.json",
+                "model" : "CoffeeTable-Small1"
             },
             "scenebody" : {
-                "shape" : "cylinder",
-                "mass" : 70.0
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "coffee_table_sm2" : {
+            "editor" : {
+                "name" : "Coffee Table (Small Alt)"
+            },
+            "renderable" : {
+                "modelset" : "models/furnature-tables-0.json",
+                "model" : "CoffeeTable-Small2"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
             }
         }
     }

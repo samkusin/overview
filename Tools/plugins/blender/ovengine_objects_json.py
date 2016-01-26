@@ -52,7 +52,7 @@ def generate_mesh_elements(obj, mesh, resources):
     our_materials = resources['materials']
     our_mesh_elements = []
     has_ovobject_props = hasattr(obj, 'ovobject_type_property')
-    is_viewable = not has_ovobject_props or obj.ovobject_type_property == 'View'
+    is_viewable = not has_ovobject_props or obj.ovobject_type_property != 'Hull'
     face_has_uvs = face_has_uvs and is_viewable
 
     while mesh_faces:
