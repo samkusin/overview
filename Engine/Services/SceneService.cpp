@@ -9,6 +9,7 @@
 #include "SceneService.hpp"
 #include "RenderService.hpp"
 #include "Engine/Scenes/Scene.hpp"
+#include "Engine/Scenes/SceneMotionState.hpp"
 #include "Engine/Scenes/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/SceneJsonLoader.hpp"
@@ -98,9 +99,9 @@ void SceneService::setEntityPosition
                                   -forward.x(), -forward.y(), -forward.z());
     transform.setOrigin(pos);
     
-    body->btBody->setCenterOfMassTransform(transform);
-    if (body->btBody->getMotionState()) {
-        body->btBody->getMotionState()->setWorldTransform(transform);
+    body->btBody->setWorldTransform(transform);
+    if (body->motionState) {
+        body->motionState->setWorldTransform(transform);
     }
 }
 

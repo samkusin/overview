@@ -129,6 +129,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         }
 
         //  other properties
+        /*
         it = compTemplate.FindMember("mass");
         if (it != compTemplate.MemberEnd()) {
             initInfo.mass = (float)it->value.GetDouble();
@@ -136,10 +137,11 @@ void GameEntityFactory::onCustomComponentCreateFn
         else {
             initInfo.mass = 0.0f;
         }
+        */
         
-        btRigidBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode);
+        ove::SceneBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode, entity);
         if (body) {
-            _scene->attachBody(body, entity);
+            _scene->attachBody(body);
             //body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
         }
         else {
@@ -157,7 +159,7 @@ void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
     //         the entity for optimization
     
     //  destroy scene
-    btRigidBody* body = _scene->detachBody(entity);
+    ove::SceneBody* body = _scene->detachBody(entity);
     if (body) {
         _sceneDataContext->freeBody(body);
     }
@@ -192,12 +194,11 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
     //  scene
     ove::SceneBody* body = _scene->findBody(origin);
     if (body) {
-        btRigidBody* btBody = _sceneDataContext->cloneBody(body->btBody, gfxNode);
-        ove::SceneBody* clonedBody = _scene->attachBody(btBody, target);
+        ove::SceneBody* clonedBody = _sceneDataContext->cloneBody(body, gfxNode, target);
         if (clonedBody) {
             clonedBody->savedState = body->savedState;
         }
-        body = clonedBody;
+        body = _scene->attachBody(clonedBody);
     }
 }
 

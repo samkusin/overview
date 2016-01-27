@@ -15,23 +15,16 @@
 #include <bullet/LinearMath/btMatrix3x3.h>
 #include <bullet/LinearMath/btQuaternion.h>
 
-class btRigidBody;
+class btCollisionObject;
 class btBvhTriangleMeshShape;
 
 namespace cinek {
     namespace ove {
-    
-struct SceneBodyMassProps
-{
-    btScalar mass;
-    btVector3 inertia;
-
-    void fromRigidBody(const btRigidBody& body);
-};
 
 struct SceneBody
 {
-    btRigidBody* btBody = nullptr;
+    btCollisionObject* btBody = nullptr;
+    SceneMotionState* motionState = nullptr;
     Entity entity = 0;
     
     struct SavedState
@@ -43,7 +36,6 @@ struct SceneBody
         };
         
         uint32_t flags;
-        SceneBodyMassProps massProps;
     };
     
     SavedState savedState;
@@ -53,8 +45,7 @@ struct SceneRayTestResult
 {
     explicit operator bool() const { return body != nullptr; }
     
-    btRigidBody* body;
-    Entity entity;
+    SceneBody* body;
     btVector3 normal;
     btVector3 position;
 };

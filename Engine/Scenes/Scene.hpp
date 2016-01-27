@@ -14,7 +14,7 @@
 
 #include <cinek/objectpool.hpp>
 #include <cinek/allocator.hpp>
-#include <bullet/btBulletDynamicsCommon.h>
+#include <bullet/btBulletCollisionCommon.h>
 
 #include <vector>
 
@@ -40,11 +40,11 @@ public:
     /**
      *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
      */
-    SceneBody* attachBody(btRigidBody* object, Entity entity);
+    SceneBody* attachBody(SceneBody* body);
     /**
      *  Removes the body from the Scene.
      */
-    btRigidBody* detachBody(Entity entity);
+    SceneBody* detachBody(Entity entity);
     /**
      *  @param  entity  What entity to find a body for
      */
@@ -90,7 +90,6 @@ public:
         btScalar dist) const;
     
 private:
-    ObjectPool<SceneBody> _bodies;
     std::vector<SceneBody*> _objects;
     
     bool _simulateDynamics;
@@ -98,8 +97,7 @@ private:
     btDefaultCollisionConfiguration _btCollisionConfig;
     btCollisionDispatcher _btCollisionDispatcher;
     btDbvtBroadphase _btBroadphase;
-    btSequentialImpulseConstraintSolver _btConstraintSolver;
-    btDiscreteDynamicsWorld _btWorld;
+    btCollisionWorld _btWorld;
 };
     
     } /* namespace ove */

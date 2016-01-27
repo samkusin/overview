@@ -20,7 +20,7 @@
 #include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 #include <bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
 #include <bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
-#include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
+#include <bullet/BulletCollision/CollisionDispatch/btCollisionObject.h>
 
 #include <vector>
 #include <string>
@@ -38,7 +38,7 @@ public:
         uint32_t numTriMeshShapes;
         uint32_t numCylinderShapes;
         uint32_t numBoxShapes;
-        uint32_t numRigidBodies;
+        uint32_t numBodies;
     };
     SceneDataContext() = default;
     SceneDataContext(const InitParams& params);
@@ -71,19 +71,20 @@ public:
     struct SceneBodyInitParams
     {
         btCollisionShape* collisionShape;
-        float mass;
     };
-    btRigidBody* allocateBody
+    SceneBody* allocateBody
     (
         const SceneBodyInitParams& info,
-        gfx::NodeHandle gfxNodeHandle
+        gfx::NodeHandle gfxNode,
+        Entity entity
     );
-    btRigidBody* cloneBody
+    SceneBody* cloneBody
     (
-        const btRigidBody* source,
-        gfx::NodeHandle gfxNodeHandle
+        const SceneBody* source,
+        gfx::NodeHandle gfxNode,
+        Entity entity
     );
-    void freeBody(btRigidBody* body);
+    void freeBody(SceneBody* body);
 
     SceneMotionState* allocateMotionState(gfx::NodeHandle h);
     void freeMotionState(SceneMotionState* state);
@@ -94,7 +95,8 @@ private:
     ObjectPool<btCylinderShape> _cylinderShapePool;
     ObjectPool<btBoxShape> _boxShapePool;
     ObjectPool<btCompoundShape> _compoundShapePool;
-    ObjectPool<btRigidBody> _rigidBodyPool;
+    ObjectPool<btCollisionObject> _bodyPool;
+    ObjectPool<SceneBody> _sceneBodyPool;
     ObjectPool<SceneMotionState> _motionStatesPool;
     
     std::vector<SceneFixedBodyHull*> _fixedBodyHulls;

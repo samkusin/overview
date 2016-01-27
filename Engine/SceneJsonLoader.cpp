@@ -194,12 +194,10 @@ auto SceneJsonLoader::parseJsonNode
             SceneDataContext::SceneBodyInitParams initParams;
     
             initParams.collisionShape = triMeshShape;
-            initParams.mass = 0;
-            
-            btRigidBody* body = _sceneContext->allocateBody(initParams,
-                node.gfxNodeHandle);
+            SceneBody* body = _sceneContext->allocateBody(initParams,
+                node.gfxNodeHandle, context.entity);
 
-            context.scene->attachBody(body, context.entity);
+            context.scene->attachBody(body);
         }
     }
         

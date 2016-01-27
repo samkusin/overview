@@ -165,7 +165,7 @@ void EditorAddEntityToScene::frameUpdateView
     if (!_stagedEntity || !hitResult)
         return;
     
-    if (hitResult.entity != _stagedEntity) {
+    if (hitResult.body->entity != _stagedEntity) {
         if (!hitResult.normal.fuzzyZero()) {
             _gc->sceneService->setEntityPosition(_stagedEntity,
                 hitResult.position,

@@ -24,17 +24,20 @@ namespace cinek {
 void activate(SceneBody& body)
 {
     auto& savedState = body.savedState;
+    
+    /*
     auto btBody = body.btBody;
     
     if ((savedState.flags & SceneBody::SavedState::kDynamic)!=0) {
         btBody->setMassProps(savedState.massProps.mass, savedState.massProps.inertia);
     }
-    
+    */
     savedState.flags = SceneBody::SavedState::kNone;
 }
 
 void deactivate(SceneBody& body)
 {
+    /*
     auto& savedState = body.savedState;
     auto btBody = body.btBody;
     
@@ -42,18 +45,16 @@ void deactivate(SceneBody& body)
         savedState.flags |= SceneBody::SavedState::kDynamic;
         
         savedState.massProps.fromRigidBody(*btBody);
-        
-        btBody->setMassProps(btScalar(0), btVector3(0,0,0));
+        btBody->setMassProps(btScalar(0), btVector3(0,0,0));\
     }
+    */
 }
 
 Scene::Scene(btIDebugDraw* debugDrawer) :
-    _bodies(256),
     _simulateDynamics(true),
     _btCollisionDispatcher(&_btCollisionConfig),
     _btWorld(&_btCollisionDispatcher,
              &_btBroadphase,
-             &_btConstraintSolver,
              &_btCollisionConfig)
 {
     _objects.reserve(256);
@@ -67,7 +68,8 @@ Scene::~Scene()
     
 void Scene::simulate(double dt)
 {
-    _btWorld.stepSimulation(dt);
+    _btWorld.performDiscreteCollisionDetection();
+    //_btWorld.stepSimulation(dt);
 }
 
 void Scene::deactivateSimulation()
@@ -104,23 +106,16 @@ void Scene::debugRender()
 
 SceneBody* Scene::attachBody
 (
-    btRigidBody* object,
-    Entity entity
+    SceneBody* body
 )
 {
-    auto it = std::lower_bound(_objects.begin(), _objects.end(), entity,
+    auto it = std::lower_bound(_objects.begin(), _objects.end(), body->entity,
         [](const SceneBody* obj0, Entity e) -> bool {
             return obj0->entity < e;
         });
-    if (it != _objects.end() && (*it)->entity == entity)
+    if (it != _objects.end() && (*it)->entity == body->entity)
         return nullptr;
     
-    auto body = _bodies.construct();
-    if (!body)
-        return nullptr;
-    
-    body->btBody = object;
-    body->entity = entity;
     body->savedState.flags = SceneBody::SavedState::kNone;
     
     //  reflect current simulation state
@@ -128,14 +123,20 @@ SceneBody* Scene::attachBody
         deactivate(*body);
     }
 
-    object->setUserPointer(body);
+    body->btBody->setUserPointer(body);
     _objects.emplace(it, body);
-    _btWorld.addRigidBody(object);
+    _btWorld.addCollisionObject(body->btBody);
+    
+    if (body->motionState) {
+        btTransform btTransform;
+        body->motionState->getWorldTransform(btTransform);
+        body->btBody->setWorldTransform(btTransform);
+    }
     
     return body;
 }
 
-btRigidBody* Scene::detachBody
+SceneBody* Scene::detachBody
 (
     Entity entity
 )
@@ -147,13 +148,11 @@ btRigidBody* Scene::detachBody
     if (it == _objects.end() || (*it)->entity != entity)
         return nullptr;
     
-    auto obj = *it;
-    auto body = obj->btBody;
+    auto body = *it;
+    auto obj = body->btBody;
     
-    _btWorld.removeRigidBody(body);
+    _btWorld.removeCollisionObject(obj);
     _objects.erase(it);
-    
-    _bodies.destruct(obj);
     
     return body;
 }
@@ -192,8 +191,7 @@ const
     
     if (cb.hasHit()) {
         SceneBody* body = reinterpret_cast<SceneBody*>(cb.m_collisionObject->getUserPointer());
-        result.body = body->btBody;
-        result.entity = body->entity;
+        result.body = body;
         result.normal = cb.m_hitNormalWorld;
         result.position = cb.m_hitPointWorld;
     }

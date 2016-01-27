@@ -62,7 +62,7 @@ PrototypeApplication::PrototypeApplication
     _renderContext.frameRect = gfx::Rect { 0,0,0,0 };
     
     ove::SceneDataContext::InitParams sceneDataInit;
-    sceneDataInit.numRigidBodies = 256;
+    sceneDataInit.numBodies = 256;
     sceneDataInit.numTriMeshShapes = 32;
     sceneDataInit.numCylinderShapes = 32;
     sceneDataInit.numBoxShapes = 32;

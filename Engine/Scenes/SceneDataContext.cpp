@@ -17,7 +17,8 @@ namespace cinek {
     template class ObjectPool<btCylinderShape>;
     template class ObjectPool<btBoxShape>;
     template class ObjectPool<btCompoundShape>;
-    template class ObjectPool<btRigidBody>;
+    template class ObjectPool<btCollisionObject>;
+    template class ObjectPool<ove::SceneBody>;
     template class ObjectPool<ove::SceneMotionState>;
     
     namespace ove {
@@ -28,8 +29,9 @@ SceneDataContext::SceneDataContext(const InitParams& params) :
     _cylinderShapePool(params.numCylinderShapes),
     _boxShapePool(params.numBoxShapes),
     _compoundShapePool(params.numBoxShapes + params.numCylinderShapes),
-    _rigidBodyPool(params.numRigidBodies),
-    _motionStatesPool(params.numRigidBodies)
+    _bodyPool(params.numBodies),
+    _sceneBodyPool(params.numBodies),
+    _motionStatesPool(params.numBodies)
 {
     _fixedBodyHulls.reserve(params.numTriMeshShapes);
 }
@@ -222,24 +224,33 @@ void SceneDataContext::freeShape(btCollisionShape* collisionShape)
     }
 }
 
-btRigidBody* SceneDataContext::allocateBody
+SceneBody* SceneDataContext::allocateBody
 (
     const SceneBodyInitParams& info,
-    gfx::NodeHandle gfxNodeHandle
+    gfx::NodeHandle gfxNodeHandle,
+    Entity entity
 )
 {
     SceneMotionState* motionState = nullptr;
     if (gfxNodeHandle) {
         motionState = allocateMotionState(gfxNodeHandle);
     }
+    /*
     btRigidBody::btRigidBodyConstructionInfo btInfo(info.mass,
         motionState,
         info.collisionShape);
+    */
+    auto obj = _bodyPool.construct();
+    obj->setCollisionShape(info.collisionShape);
+    auto sceneObj = _sceneBodyPool.construct();
+    sceneObj->btBody = obj;
+    sceneObj->motionState = motionState;
+    sceneObj->entity = entity;
     
-    auto obj = _rigidBodyPool.construct(btInfo);
-    return obj;
+    return sceneObj;
 }
 
+/*
 void btRigidBodyCloneConstructionInfo
 (
     btRigidBody::btRigidBodyConstructionInfo& info,
@@ -256,18 +267,22 @@ void btRigidBodyCloneConstructionInfo
 
     //  TODO - additional values?
 }
+*/
 
-btRigidBody* SceneDataContext::cloneBody
+SceneBody* SceneDataContext::cloneBody
 (
-    const btRigidBody* source,
-    gfx::NodeHandle gfxNodeHandle
+    const SceneBody* source,
+    gfx::NodeHandle gfxNodeHandle,
+    Entity entity
 )
 {
+    /*
     SceneBodyMassProps massProps;
     massProps.fromRigidBody(*source);
+    */
     
     //  clone collision shape
-    const btCollisionShape* shape = source->getCollisionShape();
+    const btCollisionShape* shape = source->btBody->getCollisionShape();
     btCollisionShape* clonedShape = cloneCollisionShape(shape);
     
     CK_ASSERT_RETURN_VALUE(clonedShape != nullptr, nullptr);
@@ -277,25 +292,31 @@ btRigidBody* SceneDataContext::cloneBody
         motionState = allocateMotionState(gfxNodeHandle);
     }
     
+    /*
     btRigidBody::btRigidBodyConstructionInfo btInfo(massProps.mass,
         motionState,
         clonedShape,
         massProps.inertia);
     
     btRigidBodyCloneConstructionInfo(btInfo, *source);
+    */
+    auto obj = _bodyPool.construct();
+    obj->setCollisionShape(clonedShape);
     
-    auto obj = _rigidBodyPool.construct(btInfo);
-    return obj;
+    auto sceneObj = _sceneBodyPool.construct();
+    sceneObj->btBody = obj;
+    sceneObj->entity = entity;
+    sceneObj->motionState = motionState;
+    
+    return sceneObj;
 }
 
-void SceneDataContext::freeBody(btRigidBody* body)
+void SceneDataContext::freeBody(SceneBody* body)
 {
-    SceneMotionState* state = static_cast<SceneMotionState*>(body->getMotionState());
-    if (state) {
-        body->setMotionState(nullptr);
-        freeMotionState(state);
-    }
-    _rigidBodyPool.destruct(body);
+    freeMotionState(body->motionState);
+    freeShape(body->btBody->getCollisionShape());
+    _bodyPool.destruct(body->btBody);
+    _sceneBodyPool.destruct(body);
 }
 
 SceneMotionState* SceneDataContext::allocateMotionState(gfx::NodeHandle h)
