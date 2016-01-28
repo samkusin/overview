@@ -294,6 +294,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
     kf_fields = {
         'location': ['tx','ty','tz'],
         'rotation_quaternion' : ['qw','qx','qy','qz'],
+        'rotation_euler' : ['rx', 'ry', 'rz'],
         'scale' : ['sx','sy','sz']
     }
 
@@ -444,7 +445,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
                 if kf_props[prop_field] not in bone_animation:
                     bone_animation[kf_props[prop_field]] = []
             else:
-                self.report({'WARN'}, "Action '"+action.name+"' fcurve has an unused property '"+prop_name+"'")
+                self.report({'WARNING'}, "Action '"+action.name+"' fcurve has an unused property '"+prop_name+"'")
 
             if kf_props:
                 kf_sequence = bone_animation[kf_props[prop_field]]
@@ -547,12 +548,14 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
     def exportNode(self, scene, obj, resources, matrix):
         skip_object = obj.hide_render
-        if obj.type == 'CAMERA':
+        if obj.type == 'CAMERA' or obj.type == 'EMPTY':
             skip_object = True
 
         if skip_object:
             print("Skipping [",obj.name,"] of type ",obj.type)
             return None
+        else:
+            print("Exporting [", obj.name,"] of type ",obj.type)
 
         node = self.createNode(obj, matrix)
 

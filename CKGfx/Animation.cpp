@@ -49,8 +49,8 @@ namespace bx {
         }
         else {
             float angle = acosf(theta);
-            float a = sin((1.0f - _factor) * angle);
-            float c = sin(_factor*angle);
+            float a = sinf((1.0f - _factor) * angle);
+            float c = sinf(_factor*angle);
             float invsina = 1.0f/sinf(angle);
             cx = (a * ax + c * cx) * invsina;
             cy = (a * ay + c * cy) * invsina;
@@ -65,6 +65,23 @@ namespace bx {
         _result[2] = cz * qcinvlen;
         _result[3] = cw * qcinvlen;
     }
+    
+    inline void eulerToQuat(float* _result, const float *_euler) {
+        const float ex_2 = _euler[0]*0.5f;
+        const float ey_2 = _euler[1]*0.5f;
+        const float ez_2 = _euler[2]*0.5f;
+        const float cx = cosf(ex_2);
+        const float cy = cosf(ey_2);
+        const float cz = cosf(ez_2);
+        const float sx = sinf(ex_2);
+        const float sy = sinf(ey_2);
+        const float sz = sinf(ez_2);
+        _result[0] = cy*cz*sx - sy*sz*cx;
+        _result[1] = cx*cz*sy + sx*sz*cy;
+        _result[2] = cx*cy*sz - sx*sy*cz;
+        _result[3] = cx*cy*cz + sx*sy*sz;
+    }
+    
 }
 
 namespace cinek {
@@ -169,57 +186,104 @@ void interpRotationFromSequenceChannel
     float dt = 0.0f;
     float start = 0.0f;
 
-    //  keyframe pairs for each sequence are not guaranteed to be aligned by
-    //  time.  this means that we must calculate the delta time between two
-    //  quaternions using the qx,qy,qz,qw keyframe pairs matching the given
-    //  animation time on this channel.
-    //
-    auto kf = channel.keyframePairFromTime(Keyframe::kQuaternionX, animTime);
-    if (!kf.first) return;
-    //printf("qx[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
-    startQ.x = kf.first->v;
-    endQ.x = kf.second->v;
-    float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
-        dt = kfDt;
-    if (kf.first->t > start)
-        start = kf.first->t;
 
-    kf = channel.keyframePairFromTime(Keyframe::kQuaternionY, animTime);
-    if (!kf.first) return;
-    //printf("qy[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
-    startQ.y = kf.first->v;
-    endQ.y = kf.second->v;
-    kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
-        dt = kfDt;
-    if (kf.first->t > start)
-        start = kf.first->t;
-    
-    kf = channel.keyframePairFromTime(Keyframe::kQuaternionZ, animTime);
-    if (!kf.first) return;
-    
-    //printf("qz[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
-    
-    startQ.z = kf.first->v;
-    endQ.z = kf.second->v;
-    kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
-        dt = kfDt;
-    if (kf.first->t > start)
-        start = kf.first->t;
+    //  process euler or quaternion values
+    if (channel.hasQuaternions()) {
+        //  keyframe pairs for each sequence are not guaranteed to be aligned by
+        //  time.  this means that we must calculate the delta time between two
+        //  quaternions using the qx,qy,qz,qw keyframe pairs matching the given
+        //  animation time on this channel.
+        //
+        auto kf = channel.keyframePairFromTime(Keyframe::kQuaternionX, animTime);
+        //if (!kf.first) return;
+        //printf("qx[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+        startQ.x = kf.first->v;
+        endQ.x = kf.second->v;
+        float kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
 
-    kf = channel.keyframePairFromTime(Keyframe::kQuaternionW, animTime);
-    if (!kf.first) return;
-    //printf("qw[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
-    startQ.w = kf.first->v;
-    endQ.w = kf.second->v;
-    kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
-        dt = kfDt;
-    if (kf.first->t > start)
-        start = kf.first->t;
-    
+        kf = channel.keyframePairFromTime(Keyframe::kQuaternionY, animTime);
+        //if (!kf.first) return;
+        //printf("qy[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+        startQ.y = kf.first->v;
+        endQ.y = kf.second->v;
+        kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
+
+        kf = channel.keyframePairFromTime(Keyframe::kQuaternionZ, animTime);
+        //if (!kf.first) return;
+        //printf("qz[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+        startQ.z = kf.first->v;
+        endQ.z = kf.second->v;
+        kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
+
+        kf = channel.keyframePairFromTime(Keyframe::kQuaternionW, animTime);
+        //if (!kf.first) return;
+        //printf("qw[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
+        startQ.w = kf.first->v;
+        endQ.w = kf.second->v;
+        kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
+    }
+    else if (channel.hasEulers()) {
+        // convert to quaternion -
+        //
+        // TODO, perhaps we should do this when ingesting the animation instead
+        // of per frame!?!  That way we don't need to store euler keyframes and
+        // we cut the need for this if quat else euler case.
+        //
+        Vector3 startR;
+        Vector3 endR;
+        
+        //  keyframe pairs for each sequence are not guaranteed to be aligned by
+        //  time.  this means that we must calculate the delta time between two
+        //  quaternions using the qx,qy,qz,qw keyframe pairs matching the given
+        //  animation time on this channel.
+        //
+        auto kf = channel.keyframePairFromTime(Keyframe::kRotationX, animTime);
+        startR.x = kf.first->v;
+        endR.x = kf.second->v;
+        float kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
+
+        kf = channel.keyframePairFromTime(Keyframe::kRotationY, animTime);
+        startR.y = kf.first->v;
+        endR.y = kf.second->v;
+        kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
+
+        kf = channel.keyframePairFromTime(Keyframe::kRotationZ, animTime);
+        startR.z = kf.first->v;
+        endR.z = kf.second->v;
+        kfDt = kf.second->t - kf.first->t;
+        if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+            dt = kfDt;
+        if (kf.first->t > start)
+            start = kf.first->t;
+        
+        bx::eulerToQuat(startQ, startR);
+        bx::eulerToQuat(endQ, endR);
+    }
+
     if (dt < ckm::epsilon<float>())
         return;
     

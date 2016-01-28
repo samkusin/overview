@@ -21,6 +21,7 @@ namespace cinek {
 static const char* sKeyframeTypes[Keyframe::kTypeCount] = {
     "tx", "ty", "tz",
     "qw", "qx", "qy", "qz",
+    "rx", "ry", "rz",
     "sx", "sy", "sz"
 };
 

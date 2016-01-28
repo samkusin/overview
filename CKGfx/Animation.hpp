@@ -28,6 +28,9 @@ namespace cinek {
             kQuaternionX,
             kQuaternionY,
             kQuaternionZ,
+            kRotationX,
+            kRotationY,
+            kRotationZ,
             kScaleX,
             kScaleY,
             kScaleZ,
@@ -52,6 +55,13 @@ namespace cinek {
         
         auto keyframePairFromTime(Keyframe::Type kfType, float t) const ->
             std::pair<const Keyframe*, const Keyframe*>;
+        
+        bool hasQuaternions() const {
+            return !sequences[Keyframe::kQuaternionW].empty();
+        }
+        bool hasEulers() const {
+            return !sequences[Keyframe::kRotationX].empty();
+        }
     };
     
     struct Animation
