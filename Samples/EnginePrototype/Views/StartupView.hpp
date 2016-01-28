@@ -34,7 +34,8 @@ private:
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
                          const cinek::uicore::InputState& inputState);
 private:
-    bool _loadCompleted;
+    bool _templatesLoaded;
+    bool _globalsLoaded;
     
 };
 

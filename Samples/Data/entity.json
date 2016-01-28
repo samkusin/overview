@@ -233,6 +233,19 @@
                 "shape" : "box",
                 "mass" : 10.0
             }
+        },
+        "sample_male" : {
+           "editor" : {
+                "name" : "Sample Male"
+            },
+            "renderable" : {
+                "modelset" : "models/male-mhm-anim.json",
+                "model" : "Sampgame_male"
+            },
+            "scenebody" : {
+                "shape" : "cylinder",
+                "mass" : 70.0
+            }
         }
     }
 }

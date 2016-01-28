@@ -41,6 +41,7 @@ public:
     
     gfx::ModelSetHandle findModelSet(const char* name) const;
     gfx::LightHandle createLight(gfx::Light light);
+    gfx::TextureHandle findTexture(const char* name) const;
     
 private:
     friend class SceneService;

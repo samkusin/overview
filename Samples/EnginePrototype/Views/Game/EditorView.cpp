@@ -294,7 +294,7 @@ void EditorView::test2()
           | BGFX_STATE_CULL_CW
         );
         
-        bgfx::submit(0, renderService.bgfxProgramHandle(gfx::kNodeProgramFlatMesh));
+        bgfx::submit(0, renderService.bgfxProgramHandle(gfx::kNodeProgramMeshColor));
     }
     else if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kLines) {
         gfx::Color4 color { 1,1,1,1 };

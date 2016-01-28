@@ -56,6 +56,8 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     _camera.fovDegrees = 60.0f;
     _camera.worldMtx = gfx::Matrix4::kIdentity;
     
+    _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh.png"));
+    
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
             -> std::shared_ptr<ove::ViewController> {

@@ -49,10 +49,11 @@
 
 enum
 {
-    kShaderProgramStdMesh   = 0x00000001,
-    kShaderProgramBoneMesh  = 0x00000002,
-    kShaderProgramFlat      = 0x00000003,
-    kShaderProgramFlatMesh  = 0x00000004
+    kShaderProgramStdMesh       = 0x00000001,
+    kShaderProgramBoneMesh      = 0x00000002,
+    kShaderProgramBoneColorMesh = 0x00000003,
+    kShaderProgramFlat          = 0x00000004,
+    kShaderProgramColorMesh     = 0x00000005
 };
 
 int runSample(int viewWidth, int viewHeight)
@@ -79,14 +80,19 @@ int runSample(int viewWidth, int viewHeight)
         registerShaders(
             shaderLibrary, shaderPrograms, shaderUniforms, {
                 {
-                    cinek::gfx::kNodeProgramMesh, kShaderProgramStdMesh,
+                    cinek::gfx::kNodeProgramMeshUV, kShaderProgramStdMesh,
                     "bin/vs_std_uv.bin",
                     "bin/fs_std_tex.bin"
                 },
                 {
-                    cinek::gfx::kNodeProgramBoneMesh, kShaderProgramBoneMesh,
+                    cinek::gfx::kNodeProgramBoneMeshUV, kShaderProgramBoneMesh,
                     "bin/vs_bone_uv.bin",
                     "bin/fs_std_tex.bin"
+                },
+                {
+                    cinek::gfx::kNodeProgramBoneMeshColor, kShaderProgramBoneColorMesh,
+                    "bin/vs_bone_col.bin",
+                    "bin/fs_std_col.bin"
                 },
                 {
                     cinek::gfx::kNodeProgramFlat, kShaderProgramFlat,
@@ -94,7 +100,7 @@ int runSample(int viewWidth, int viewHeight)
                     "bin/fs_flat_col.bin"
                 },
                 {
-                    cinek::gfx::kNodeProgramFlatMesh, kShaderProgramFlatMesh,
+                    cinek::gfx::kNodeProgramMeshColor, kShaderProgramColorMesh,
                     "bin/vs_std_flat.bin",
                     "bin/fs_std_col.bin"
                 }

@@ -68,6 +68,14 @@ namespace VertexTypes
             .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
             .end();
         
+        // kVNormal_Tex0_Weights
+        s_decls[kVNormal_Weights].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Indices, 4, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
+            .end();
+        
         //  kVPosition
         s_decls[kVPosition].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)

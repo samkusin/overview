@@ -57,6 +57,11 @@ gfx::ModelSetHandle RenderService::findModelSet(const char *name) const
     return _gfxContext->findModelSet(name);
 }
 
+gfx::TextureHandle RenderService::findTexture(const char* name) const
+{
+    return _gfxContext->findTexture(name);
+}
+
 bgfx::UniformHandle RenderService::bgfxUniformHandle(gfx::NodeUniformSlot uniformSlot) const
 {
     return _context->uniforms->at(uniformSlot);

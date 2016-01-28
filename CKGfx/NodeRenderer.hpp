@@ -24,13 +24,14 @@ namespace cinek {
 
 enum NodeProgramSlot
 {
-    kNodeProgramMesh,
-    kNodeProgramBoneMesh,
+    kNodeProgramMeshUV,
+    kNodeProgramBoneMeshUV,
     kNodeProgramFlat,
-    kNodeProgramFlatMesh,
-    kNodeProgramLimit       = 16,
+    kNodeProgramMeshColor,
+    kNodeProgramBoneMeshColor,
+    kNodeProgramLimit           = 16,
     
-    kNodeProgramNone        = -1
+    kNodeProgramNone            = -1
 };
 
 enum NodeUniformSlot
@@ -96,6 +97,8 @@ public:
                                         | kStageFlagRender
     };
     
+    void setPlaceholderDiffuseTexture(TextureHandle diffuseTexHandle);
+    
     void operator()(const ProgramMap& programs, const UniformMap& uniforms,
                     const Camera& camera,
                     NodeHandle root, uint32_t stages=kStageAll);
@@ -146,6 +149,8 @@ private:
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
     Matrix4 _viewProjMtx;
+    
+    TextureHandle _placeholderDiffuseTex;
         
     //  Calculated State during Lighting Object Pass
     using Lights = std::vector<LightState, std_allocator<LightState>>;

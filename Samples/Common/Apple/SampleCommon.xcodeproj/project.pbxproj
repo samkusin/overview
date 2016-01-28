@@ -37,6 +37,7 @@
 		377ECD151C161BE7002040D7 /* vs_flat_pos.vs in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD0F1C1617F4002040D7 /* vs_flat_pos.vs */; };
 		377ECD231C1638A0002040D7 /* FreeCameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD211C1638A0002040D7 /* FreeCameraController.cpp */; };
 		377ECD241C1638A0002040D7 /* FreeCameraController.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECD221C1638A0002040D7 /* FreeCameraController.hpp */; };
+		379EE6221C5A9B5900EA9A3F /* vs_bone_col.vs in Sources */ = {isa = PBXBuildFile; fileRef = 379EE6211C5A9AE300EA9A3F /* vs_bone_col.vs */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
 		37E636061BF010270081E59E /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636051BF010270081E59E /* Common.cpp */; };
 		37E636081BF010F70081E59E /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636071BF010F70081E59E /* Common.hpp */; };
@@ -224,6 +225,7 @@
 		377ECD101C161817002040D7 /* fs_flat_col.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_flat_col.fs; sourceTree = "<group>"; };
 		377ECD211C1638A0002040D7 /* FreeCameraController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FreeCameraController.cpp; path = ../FreeCameraController.cpp; sourceTree = "<group>"; };
 		377ECD221C1638A0002040D7 /* FreeCameraController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FreeCameraController.hpp; path = ../FreeCameraController.hpp; sourceTree = "<group>"; };
+		379EE6211C5A9AE300EA9A3F /* vs_bone_col.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_bone_col.vs; sourceTree = "<group>"; };
 		37E635F41BF00EA40081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSampleCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E636001BF00F650081E59E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		37E636021BF00F840081E59E /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
@@ -662,6 +664,7 @@
 				377ECD101C161817002040D7 /* fs_flat_col.fs */,
 				37E636FB1BF0246D0081E59E /* shaderlib.sh */,
 				37E636FC1BF0246D0081E59E /* varying.def.sc */,
+				379EE6211C5A9AE300EA9A3F /* vs_bone_col.vs */,
 				37E636FD1BF0246D0081E59E /* vs_bone_uv.vs */,
 				37E636FE1BF0246D0081E59E /* vs_std_uv.vs */,
 				28F11E211C32009F00860E5D /* vs_std_flat.vs */,
@@ -824,6 +827,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				379EE6221C5A9B5900EA9A3F /* vs_bone_col.vs in Sources */,
 				28F11E221C3200C200860E5D /* vs_std_flat.vs in Sources */,
 				28F11E201C31FE5A00860E5D /* fs_std_col.fs in Sources */,
 				377ECD111C161BE7002040D7 /* fs_std_tex.fs in Sources */,

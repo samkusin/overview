@@ -26,6 +26,7 @@ namespace cinek {
             kVTex0,                 ///< XYZ floats + vec2 UVs
             kVNormal_Tex0,          ///< XYZ, Normals, UVs
             kVNormal_Tex0_Weights,  ///< XYZ, Normals, UVs + Indicies/Weights
+            kVNormal_Weights,       ///< XYZ, Normals, Indices/Weights
             kVPosition,             ///< XYZ Only
             kVPositionNormal,       ///< XYZ, Normals
             kPresetCount,           ///< Preset Limit

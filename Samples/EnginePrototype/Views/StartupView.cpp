@@ -13,17 +13,23 @@ namespace cinek {
 
 StartupView::StartupView(const ApplicationContext& api) :
     AppViewController(api),
-    _loadCompleted(false)
+    _templatesLoaded(false),
+    _globalsLoaded(false)
 {
     
 }
     
 void StartupView::onViewAdded(ove::ViewStack& stateController)
 {
+    assetService().loadManifest("global.json",
+        [this](std::shared_ptr<ove::AssetManifest> manifest) {
+            //entityService().addDefintions("entity", manifest);
+            _globalsLoaded = true;
+        });
     assetService().loadManifest("entity.json",
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
             entityService().addDefintions("entity", manifest);
-            _loadCompleted = true;
+            _templatesLoaded = true;
         });
 }
 
@@ -54,7 +60,7 @@ void StartupView::frameUpdateView
     const cinek::uicore::InputState& /* inputState */
 )
 {
-    if (_loadCompleted) {
+    if (_templatesLoaded && _globalsLoaded) {
         stateController.present("GameView");
     }
 }

@@ -112,6 +112,11 @@ NodeRenderer::NodeRenderer()
     _directionalLights.reserve(64);
 }
 
+void NodeRenderer::setPlaceholderDiffuseTexture(TextureHandle diffuseTexHandle)
+{
+    _placeholderDiffuseTex = diffuseTexHandle;
+}
+
 void NodeRenderer::operator()
 (
     const ProgramMap& programs,
@@ -295,14 +300,50 @@ void NodeRenderer::renderMeshElement
     const MeshElement& element
 )
 {
-    //  setup rendering state
+    //  determine program
+    NodeProgramSlot programSlot = kNodeProgramNone;
+    const Mesh* mesh = element.mesh.resource();
+    const bgfx::VertexDecl& meshVertexDecl = VertexTypes::declaration(mesh->format());
     
+    if (!_armatureStack.empty()) {
+        if (mesh->format() == VertexTypes::kVNormal_Tex0_Weights) {
+            programSlot = kNodeProgramBoneMeshUV;
+        }
+        else if (mesh->format() == VertexTypes::kVNormal_Weights) {
+            programSlot = kNodeProgramBoneMeshColor;
+        }
+    }
+    else {
+        if (mesh->format() == VertexTypes::kVPosition) {
+            programSlot = kNodeProgramFlat;
+        }
+        else if (mesh->format() == VertexTypes::kVPositionNormal) {
+            programSlot = kNodeProgramMeshColor;
+        }
+        else if (mesh->format() == VertexTypes::kVNormal_Tex0) {
+            programSlot = kNodeProgramMeshUV;
+        }
+    }
+    
+    CK_ASSERT_RETURN(programSlot != kNodeProgramNone);
+    
+    //  setup rendering state
     bgfx::setUniform(uniforms[kNodeUniformColor], element.material->diffuseColor, 1);
     
+    //  diffuse texture selection
     if (element.material->diffuseTex) {
         bgfx::TextureHandle texDiffuse = element.material->diffuseTex->bgfxHandle();
         bgfx::setTexture(0, uniforms[kNodeUniformTexDiffuse], texDiffuse,
             BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_ANISOTROPIC);
+    }
+    else {
+        //  if our mesh has uvs but no material texture?  use a placeholder
+        //  texture
+        if (meshVertexDecl.has(bgfx::Attrib::TexCoord0)) {
+            bgfx::setTexture(0, uniforms[kNodeUniformTexDiffuse],
+                _placeholderDiffuseTex->bgfxHandle(),
+                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_ANISOTROPIC);
+        }
     }
     //  TODO - include specular color?
     Vector4 specular;
@@ -315,18 +356,16 @@ void NodeRenderer::renderMeshElement
     Matrix4 worldTransform;
     bx::mtxMul(worldTransform, localTransform, _transformStack.back());
     
+    
+    
     //  setup lighting
     setupLightUniforms(uniforms, worldTransform);
     
-        //  setup mesh rendering
-    const Mesh* mesh = element.mesh.resource();
+    //  setup mesh rendering
     bgfx::setVertexBuffer(mesh->vertexBuffer());
     bgfx::setIndexBuffer(mesh->indexBuffer());
-
-    NodeProgramSlot programSlot;
-    if (!_armatureStack.empty() && mesh->format() == VertexTypes::kVNormal_Tex0_Weights) {
-        programSlot = kNodeProgramBoneMesh;
-
+    
+    if (!_armatureStack.empty()) {
         const ArmatureState& armatureState = _armatureStack.back();
 
         Matrix4 worldViewProjMtx;
@@ -354,15 +393,6 @@ void NodeRenderer::renderMeshElement
     }
     else
     {
-        if (mesh->format() == VertexTypes::kVPosition) {
-            programSlot = kNodeProgramFlat;
-        }
-        else if (mesh->format() == VertexTypes::kVPositionNormal) {
-            programSlot = kNodeProgramFlatMesh;
-        }
-        else {
-            programSlot = kNodeProgramMesh;
-        }
         bgfx::setTransform(worldTransform);
     }
 

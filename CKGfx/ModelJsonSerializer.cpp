@@ -371,7 +371,12 @@ Mesh loadMeshFromJSON
             }
         }
         else {
-            vertexType = VertexTypes::kVPositionNormal;
+            if (hasWeights) {
+                vertexType = VertexTypes::kVNormal_Weights;
+            }
+            else {
+                vertexType = VertexTypes::kVPositionNormal;
+            }
         }
     }
     else {
