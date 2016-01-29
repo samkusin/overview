@@ -113,6 +113,11 @@ public:
     Entity createEntity(EntityContextType context, const std::string& ns,
                         const std::string& templateName);
     /**
+     *  @param  entity  The entity to check
+     *  @return Whether the entity is still valid
+     */
+    bool isValid(Entity entity) const;
+    /**
      *  Duplicates an entity
      *  
      *  @param  context The cloned entity's context

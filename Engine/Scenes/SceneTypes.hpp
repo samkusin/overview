@@ -45,7 +45,7 @@ struct SceneRayTestResult
 {
     explicit operator bool() const { return body != nullptr; }
     
-    SceneBody* body;
+    SceneBody* body = nullptr;
     btVector3 normal;
     btVector3 position;
 };

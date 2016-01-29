@@ -115,6 +115,11 @@ Entity EntityDatabase::createEntity
     return entity;
 }
 
+bool EntityDatabase::isValid(Entity entity) const
+{
+    return getStore(cinek_entity_context(entity)).valid(entity);
+}
+
 Entity EntityDatabase::cloneEntity
 (
     EntityContextType context,

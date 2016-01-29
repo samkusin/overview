@@ -195,6 +195,9 @@ const
         result.normal = cb.m_hitNormalWorld;
         result.position = cb.m_hitPointWorld;
     }
+    else {
+        result.body = nullptr;
+    }
     
     return result;
 }
