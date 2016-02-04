@@ -500,9 +500,17 @@ int loadAnimationSkeletonFromJSON
         bones.resize(index);
 
     bones[index].name = node["name"].GetString();
+    
+    //  generate the transformation hierarchy -
+    //  bones are exported with matrices local to armature space.
+    //  here we generate bone-relative matrices used to apply animations from
+    //  parent bones
+    //
     loadMatrixFromJSON(bones[index].mtx, node["matrix"]);
     
-    bx::mtxInverse(bones[index].invMtx, bones[index].mtx);
+    //  retain inverse for offseting vertices in mesh space to bone-local space
+    //  used also for generating bone-relative matrices
+    loadMatrixFromJSON(bones[index].offset, node["offset"]);
     
     auto& children = node["children"];
     int lastChildIndex = -1;
@@ -556,7 +564,7 @@ SequenceChannel loadSequenceChannelFromJSON
                 if (t > *duration)
                     *duration = t;
             }
-            if (seq.size() > 1) {
+            if (seq.size() >= 1) {
                 //  more than one keyframe indicates animation
                 sequenceChannel.animatedSeqMask |= (1 << kfType);
             }

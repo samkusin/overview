@@ -63,7 +63,7 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
             node->armature()->animController = animController;
             
             vc.self->addAnimNode(vc.e, animController);
-            animController->transitionToState("aggro");
+            animController->transitionToState("Idle");
         }
         return true;
     });

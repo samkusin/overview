@@ -125,7 +125,6 @@ private:
     
     void buildBoneTransforms(const ArmatureState& armatureState,
                              int boneIndex,
-                             const Matrix4& worldTransform,
                              const Matrix4& parentBoneTransform,
                              float* outTransforms);
     
@@ -136,7 +135,6 @@ private:
     {
         const ArmatureElement* armature;
         Matrix4 armatureToWorldMtx;
-        Matrix4 worldToArmatureMtx;
     };
     struct LightState
     {
