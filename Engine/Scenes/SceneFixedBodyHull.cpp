@@ -32,11 +32,11 @@ SceneFixedBodyHull::SceneFixedBodyHull
     SceneFixedBodyHull()
 {
     _name = name;
-    _vertexMemory = reinterpret_cast<btVector3*>(
-        _allocator.alloc(initParams.numVertices * sizeof(btVector3))
+    _vertexMemory = reinterpret_cast<float*>(
+        _allocator.alloc(initParams.numVertices * sizeof(float) * 3)
     );
-    _indexMemory = reinterpret_cast<uint16_t*>(
-        _allocator.alloc(initParams.numFaces * sizeof(uint16_t) * 3)
+    _indexMemory = reinterpret_cast<int*>(
+        _allocator.alloc(initParams.numFaces * sizeof(int) * 3)
     );
     _limit = initParams;
 }
@@ -51,34 +51,33 @@ SceneFixedBodyHull::~SceneFixedBodyHull()
     }
 }
     
-btVector3* SceneFixedBodyHull::pullVertices(uint16_t count)
+float* SceneFixedBodyHull::pullVertices(int count)
 {
     CK_ASSERT_RETURN_VALUE(_tail.numVertices + count <= _limit.numVertices, nullptr);
-    btVector3* p = _vertexMemory + _tail.numVertices;
+    float* p = _vertexMemory + _tail.numVertices*3;
     _tail.numVertices += count;
     return p;
 }
 
-uint16_t* SceneFixedBodyHull::pullFaceIndices(uint16_t count)
+int* SceneFixedBodyHull::pullFaceIndices(int count)
 {
     CK_ASSERT_RETURN_VALUE(_tail.numFaces + count <= _limit.numFaces, nullptr);
-    uint16_t* p = _indexMemory + _tail.numFaces*3;
+    int* p = _indexMemory + _tail.numFaces*3;
     _tail.numFaces += count;
     return p;
 }
 
-void SceneFixedBodyHull::finialize()
+void SceneFixedBodyHull::finalize()
 {
     btIndexedMesh mesh;
-    mesh.m_indexType = PHY_SHORT;
     mesh.m_numTriangles = _tail.numFaces;
     mesh.m_numVertices = _tail.numVertices;
     mesh.m_triangleIndexBase = reinterpret_cast<const unsigned char*>(_indexMemory);
     mesh.m_vertexBase = reinterpret_cast<const unsigned char*>(_vertexMemory);
-    mesh.m_triangleIndexStride = 3 * sizeof(uint16_t);
-    mesh.m_vertexStride = sizeof(btVector3);
-    
-    btTriangleIndexVertexArray::addIndexedMesh(mesh, PHY_SHORT);
+    mesh.m_triangleIndexStride = 3 * sizeof(int);
+    mesh.m_vertexStride = sizeof(float) * 3;
+    mesh.m_vertexType = PHY_FLOAT;          // keep as float for Recast compata
+    btTriangleIndexVertexArray::addIndexedMesh(mesh, PHY_INTEGER);
 }
 
     } /* namespace ove */

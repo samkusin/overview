@@ -22,6 +22,10 @@ namespace cinek {
 /**
  *  @class  SceneFixedObject
  *  @brief  A Scene object for fixed, static objects (like architecture.)
+ *
+ *  Uses float value vertices to maintain compatibility with Recast, regardless
+ *  of Bullet precision mode.  Fortunately btIndexedMesh supports this special
+ *  case. 
  */
  
 class SceneFixedBodyHull : public btTriangleIndexVertexArray
@@ -29,16 +33,16 @@ class SceneFixedBodyHull : public btTriangleIndexVertexArray
 public:
     struct VertexIndexCount
     {
-        uint16_t numFaces;
-        uint16_t numVertices;
+        int numFaces;
+        int numVertices;
     };
     SceneFixedBodyHull();
     SceneFixedBodyHull(const std::string& name, const VertexIndexCount& initParams);
     virtual ~SceneFixedBodyHull();
     
-    btVector3* pullVertices(uint16_t triCount);
-    uint16_t* pullFaceIndices(uint16_t faceCount);
-    void finialize();
+    float* pullVertices(int triCount);
+    int* pullFaceIndices(int faceCount);
+    void finalize();
     
     const std::string& name() const { return _name; }
 
@@ -51,8 +55,8 @@ private:
 
 private:
     Allocator _allocator;
-    btVector3* _vertexMemory;
-    uint16_t* _indexMemory;
+    float* _vertexMemory;
+    int* _indexMemory;
     VertexIndexCount _tail;
     VertexIndexCount _limit;
     

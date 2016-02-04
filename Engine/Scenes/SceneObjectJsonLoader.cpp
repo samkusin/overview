@@ -15,6 +15,36 @@
 
 namespace cinek {
     namespace ove {
+    
+template<> float* loadVectorFromJSON(float* vec, const JsonValue& vecObj)
+{
+    CK_ASSERT_RETURN_VALUE(vecObj.IsObject(), vec);
+    vec[0] = (float)vecObj["x"].GetDouble();
+    vec[1] = (float)vecObj["y"].GetDouble();
+    vec[2] = (float)vecObj["z"].GetDouble();
+    return vec;
+}
+
+template<> double* loadVectorFromJSON(double* vec, const JsonValue& vecObj)
+{
+    CK_ASSERT_RETURN_VALUE(vecObj.IsObject(), vec);
+    vec[0] = vecObj["x"].GetDouble();
+    vec[1] = vecObj["y"].GetDouble();
+    vec[2] = vecObj["z"].GetDouble();
+    return vec;
+}
+
+template<> btVector3* loadVectorFromJSON(btVector3* vec, const JsonValue& vecObj)
+{
+    CK_ASSERT_RETURN_VALUE(vecObj.IsObject(), vec);
+    
+    (*vec).setValue((btScalar)vecObj["x"].GetDouble(),
+        (btScalar)vecObj["y"].GetDouble(),
+        (btScalar)vecObj["z"].GetDouble());
+    
+    return vec;
+}
+
 
 btBvhTriangleMeshShape* SceneObjectJsonLoader::operator()
 (
@@ -85,41 +115,29 @@ SceneFixedBodyHull* loadSceneFixedBodyHullFromJSON
     
     hull = context.allocateFixedBodyHull(vertIdxCounts, name);
     if (hull) {
-        btVector3* vertices = hull->pullVertices(vertIdxCounts.numVertices);
+        float* vertices = hull->pullVertices(vertIdxCounts.numVertices);
         JsonValue::ConstValueIterator jsonVertexIt = jsonVertices.Begin();
         for (; jsonVertexIt != jsonVertices.End(); ++jsonVertexIt) {
-            loadVectorFromJSON(*vertices, *jsonVertexIt);
-            ++vertices;
+            loadVectorFromJSON<float>(vertices, *jsonVertexIt);
+            vertices += 3;
         }
        
-        uint16_t* indices = hull->pullFaceIndices(vertIdxCounts.numFaces);
+        int* indices = hull->pullFaceIndices(vertIdxCounts.numFaces);
     
         JsonValue::ConstValueIterator jsonTriIt = jsonTris.Begin();
         for (; jsonTriIt != jsonTris.End(); ++jsonTriIt) {
             const JsonValue& jsonIdxArray = *jsonTriIt;
             CK_ASSERT(jsonIdxArray.IsArray() && jsonIdxArray.Size() == 3);
-            uint16_t i0 = (uint16_t)jsonIdxArray[0U].GetInt();
-            uint16_t i1 = (uint16_t)jsonIdxArray[1U].GetInt();
-            uint16_t i2 = (uint16_t)jsonIdxArray[2U].GetInt();
-            indices[0] = i0;
-            indices[1] = i1;
-            indices[2] = i2;
+            indices[0] = jsonIdxArray[0U].GetInt();
+            indices[1] = jsonIdxArray[1U].GetInt();
+            indices[2] = jsonIdxArray[2U].GetInt();
             indices += 3;
         }
         
-        hull->finialize();
+        hull->finalize();
     }
     
     return hull;
-}
-
-btVector3& loadVectorFromJSON(btVector3& vec, const JsonValue& vecObj)
-{
-    CK_ASSERT_RETURN_VALUE(vecObj.IsObject(), vec);
-    vec.setX((btScalar)vecObj["x"].GetDouble());
-    vec.setY((btScalar)vecObj["y"].GetDouble());
-    vec.setZ((btScalar)vecObj["z"].GetDouble());
-    return vec;
 }
 
 

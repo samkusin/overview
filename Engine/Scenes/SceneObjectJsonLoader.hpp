@@ -35,7 +35,9 @@ SceneFixedBodyHull* loadSceneFixedBodyHullFromJSON
     const JsonValue& root
 );
 
-btVector3& loadVectorFromJSON(btVector3& vec, const JsonValue& vecObj);
+//  supports double, float or btVector3
+template<typename ScalarType>
+ScalarType* loadVectorFromJSON(ScalarType* vec, const JsonValue& vecObj);
     
     } /* namespace ove */
 } /* namespace cinek */
