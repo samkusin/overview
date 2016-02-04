@@ -25,7 +25,8 @@ RenderGraph::RenderGraph
     uint32_t animCount
 ) :
     _animControllerPool(animCount),
-    _nodeGraph(counts)
+    _nodeGraph(counts),
+    _renderTime(0)
 {
     _pendingRenderNodes.reserve(entityCount);
     _removedRenderNodes.reserve(entityCount);
@@ -63,7 +64,7 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
             node->armature()->animController = animController;
             
             vc.self->addAnimNode(vc.e, animController);
-            animController->transitionToState("Idle");
+            animController->transitionToState("Walk");
         }
         return true;
     });
