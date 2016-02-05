@@ -59,7 +59,7 @@ float* SceneFixedBodyHull::pullVertices(int count)
     return p;
 }
 
-int* SceneFixedBodyHull::pullFaceIndices(int count)
+int* SceneFixedBodyHull::pullTriangleIndices(int count)
 {
     CK_ASSERT_RETURN_VALUE(_tail.numFaces + count <= _limit.numFaces, nullptr);
     int* p = _indexMemory + _tail.numFaces*3;

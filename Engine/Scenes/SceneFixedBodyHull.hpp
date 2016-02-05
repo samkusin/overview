@@ -41,8 +41,13 @@ public:
     virtual ~SceneFixedBodyHull();
     
     float* pullVertices(int triCount);
-    int* pullFaceIndices(int faceCount);
+    int* pullTriangleIndices(int faceCount);
     void finalize();
+    
+    const float* vertexData() const { return _vertexMemory; }
+    const int* indexData() const { return _indexMemory; }
+    int vertexCount() const { return _tail.numVertices; }
+    int triangleCount() const { return _tail.numFaces; }
     
     const std::string& name() const { return _name; }
 

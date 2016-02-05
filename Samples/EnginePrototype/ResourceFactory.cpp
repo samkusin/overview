@@ -20,11 +20,11 @@ namespace cinek {
     
 ResourceFactory::ResourceFactory
 (
-    gfx::Context& context,
-    TaskScheduler& scheduler
+    gfx::Context* context,
+    TaskScheduler* scheduler
 ) :
-    _gfxContext(&context),
-    _scheduler(&scheduler)
+    _gfxContext(context),
+    _scheduler(scheduler)
 {
     _requests.reserve(4);
 }

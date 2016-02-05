@@ -122,7 +122,7 @@ SceneFixedBodyHull* loadSceneFixedBodyHullFromJSON
             vertices += 3;
         }
        
-        int* indices = hull->pullFaceIndices(vertIdxCounts.numFaces);
+        int* indices = hull->pullTriangleIndices(vertIdxCounts.numFaces);
     
         JsonValue::ConstValueIterator jsonTriIt = jsonTris.Begin();
         for (; jsonTriIt != jsonTris.End(); ++jsonTriIt) {

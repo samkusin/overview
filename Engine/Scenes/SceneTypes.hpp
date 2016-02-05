@@ -15,6 +15,7 @@
 #include <bullet/LinearMath/btMatrix3x3.h>
 #include <bullet/LinearMath/btQuaternion.h>
 
+class btTransform;
 class btCollisionObject;
 class btBvhTriangleMeshShape;
 

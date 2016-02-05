@@ -38,7 +38,7 @@ PrototypeApplication::PrototypeApplication
     _server(_messenger, { 64*1024, 64*1024 }),
     _client(_messenger, { 32*1024, 32*1024 }),
     _clientSender { &_client, _server.address() } ,
-    _resourceFactory(*_gfxContext, _taskScheduler),
+    _resourceFactory(_gfxContext, &_taskScheduler),
     _renderPrograms(programs),
     _renderUniforms(uniforms),
     _renderer(),

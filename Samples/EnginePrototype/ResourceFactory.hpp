@@ -27,8 +27,8 @@ struct ResourceFactory : public AssetManfiestFactory
 {
     ResourceFactory
     (
-        gfx::Context& gfxContext,
-        TaskScheduler& scheduler
+        gfx::Context* gfxContext,
+        TaskScheduler* scheduler
     );
     
     virtual ~ResourceFactory();
