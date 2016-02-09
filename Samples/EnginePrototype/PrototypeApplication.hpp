@@ -35,6 +35,7 @@
 namespace cinek {
 
 class GameEntityFactory;
+struct ApplicationContext;
     
 class PrototypeApplication
 {
@@ -71,6 +72,7 @@ private:
     gfx::NodeRenderer::ProgramMap _renderPrograms;
     gfx::NodeRenderer::UniformMap _renderUniforms;
     
+    unique_ptr<ApplicationContext> _appContext;
     unique_ptr<ove::RenderGraph> _renderGraph;
     
     unique_ptr<ove::SceneDataContext> _sceneData;

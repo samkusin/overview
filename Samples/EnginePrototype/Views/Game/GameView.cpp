@@ -24,7 +24,7 @@
 
 namespace cinek {
 
-GameView::GameView(const ApplicationContext& api) :
+GameView::GameView(const ApplicationContext* api) :
     AppViewController(api),
     _gameViewContext {
         &_camera,
@@ -34,8 +34,7 @@ GameView::GameView(const ApplicationContext& api) :
         &renderService(),
         &assetService(),
         nvgContext()
-    },
-    _sceneLoaded(false)
+    }
 {
 }
 
@@ -47,9 +46,9 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     //
     //  Substates do not need to follow this rule.
     
-    _editorView = std::allocate_shared<EditorView>(
-        std_allocator<EditorView>(), _gameViewContext);
-        
+    
+    _editorView = std::allocate_shared<EditorView>(std_allocator<EditorView>(), &_gameViewContext);
+    
     //  initialize common objects for all substates
     _camera.near = 0.1f;
     _camera.far = 1000.0f;
@@ -73,17 +72,11 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
         });
     
     _viewStack.present("EditorView");
-    
-    //  load scene
-    assetService().loadManifest("scenes/apartment.json",
-        [this](std::shared_ptr<ove::AssetManifest> manifest) {
-            sceneService().initialize(manifest);
-            _sceneLoaded = true;
-        });
 }
 
 void GameView::onViewRemoved(ove::ViewStack& stateController)
 {
+    _viewStack.pop();
     _editorView = nullptr;
 }
 
@@ -104,9 +97,6 @@ void GameView::frameUpdateView
     const cinek::uicore::InputState& inputState
 )
 {
-    if (!_sceneLoaded)
-        return;
-    
     //  RENDERING
     _camera.viewportRect = renderService().getViewRect();
     _camera.update();
@@ -130,7 +120,7 @@ void GameView::frameUpdateView
         { pos.x, pos.y, pos.z }, 0.1f, false);
     
     sceneService().renderDebugEnd();
-
+    
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);
 

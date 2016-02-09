@@ -30,14 +30,14 @@ namespace cinek {
 
 EditorView::EditorView
 (
-    const GameViewContext& gameContext
+    const GameViewContext* gameContext
 ) :
-    _gc(&gameContext)
+    _gc(gameContext)
 {
     _mainState = std::allocate_shared<EditorMain>(std_allocator<EditorMain>(), gameContext);
     _addEntityToSceneState = std::allocate_shared<EditorAddEntityToScene>(
         std_allocator<EditorAddEntityToScene>(),
-        *_gc);
+        _gc);
 }
 
     
@@ -129,6 +129,7 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
 
 void EditorView::onViewRemoved(ove::ViewStack& stateController)
 {
+    _viewStack.pop();
 }
 
 void EditorView::onViewStartFrame(ove::ViewStack& stateController)

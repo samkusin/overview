@@ -50,7 +50,7 @@ auto ResourceFactory::onAssetManifestRequest
         if (!_gfxContext->findTexture(name.c_str())) {
             reqId = _scheduler->schedule(allocate_unique<LoadTextureAsset>(
                 name,
-                [this](Task::State state, Task& t) {
+                [this](Task::State state, Task& t, void*) {
                     auto& task = static_cast<LoadTextureAsset&>(t);
                     if (state == Task::State::kEnded) {
                         _gfxContext->registerTexture(task.acquireTexture(), task.name().c_str());
@@ -66,7 +66,7 @@ auto ResourceFactory::onAssetManifestRequest
                 reqId = _scheduler->schedule(allocate_unique<LoadAssetManifest>(
                     name,
                     *this,
-                    [this](Task::State state, Task& t) {
+                    [this](Task::State state, Task& t, void*) {
                         auto& task = static_cast<LoadAssetManifest&>(t);
                         if (state == Task::State::kEnded) {
                             auto manifest = task.acquireManifest();

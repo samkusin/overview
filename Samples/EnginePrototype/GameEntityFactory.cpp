@@ -7,8 +7,8 @@
 //
 
 #include "GameEntityFactory.hpp"
-#include "Engine/Scenes/Scene.hpp"
-#include "Engine/Scenes/SceneDataContext.hpp"
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneDataContext.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Context.hpp"
@@ -141,7 +141,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         
         ove::SceneBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode, entity);
         if (body) {
-            _scene->attachBody(body);
+            _scene->attachBody(body, ove::SceneBody::kIsObject);
             //body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
         }
         else {
@@ -195,10 +195,7 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
     ove::SceneBody* body = _scene->findBody(origin);
     if (body) {
         ove::SceneBody* clonedBody = _sceneDataContext->cloneBody(body, gfxNode, target);
-        if (clonedBody) {
-            clonedBody->savedState = body->savedState;
-        }
-        body = _scene->attachBody(clonedBody);
+        body = _scene->attachBody(clonedBody, clonedBody->categoryMask);
     }
 }
 

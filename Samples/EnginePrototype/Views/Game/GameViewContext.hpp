@@ -10,13 +10,14 @@
 #define Prototype_GameViewContext_hpp
 
 #include "GameTypes.hpp"
-#include "Engine/Scenes/SceneTypes.hpp"
+#include "Engine/Physics/SceneTypes.hpp"
 #include "UICore/Input.hpp"
 #include "UICore/UITypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {
 
+class LoadSceneView;
 class EditorView;
 class PlayView;
 

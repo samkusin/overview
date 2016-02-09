@@ -28,18 +28,20 @@ struct SceneBody
     SceneMotionState* motionState = nullptr;
     Entity entity = 0;
     
-    struct SavedState
+    enum
     {
-        enum
-        {
-            kNone           = 0x0000,
-            kDynamic        = 0x0001
-        };
-        
-        uint32_t flags;
+        kSection            = 0x01,
+        kObject             = 0x02
     };
     
-    SavedState savedState;
+    enum
+    {
+        kIsSection          = 1 << kSection,
+        kIsObject           = 1 << kObject,
+        kAllCategories      = 0xffffffff
+    };
+    
+    uint32_t categoryMask = 0;
 };
    
 struct SceneRayTestResult

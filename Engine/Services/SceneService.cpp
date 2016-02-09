@@ -8,14 +8,17 @@
 
 #include "SceneService.hpp"
 #include "RenderService.hpp"
-#include "Engine/Scenes/Scene.hpp"
-#include "Engine/Scenes/SceneMotionState.hpp"
-#include "Engine/Scenes/SceneDebugDrawer.hpp"
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneMotionState.hpp"
+#include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/SceneJsonLoader.hpp"
 #include "Engine/AssetManifest.hpp"
 #include "Engine/Debug.hpp"
 
+#include "Engine/Tasks/InitializeScene.hpp"
+
+#include <cinek/taskscheduler.hpp>
 #include <ckmsg/client.hpp>
 #include <cmath>
 
@@ -30,17 +33,47 @@ SceneService::SceneService
 {
 }
 
-
-void SceneService::initialize(std::shared_ptr<AssetManifest> manifest)
+SceneService::~SceneService()
 {
-    //  use shared pointer in case we need to persist the manifest (like we do for entity
-    //  manifests.)
+    _context.taskScheduler->cancelAll(this);
+}
 
-    SceneJsonLoader loader(*_context.sceneData,
-                           *_context.gfxContext,
-                           *_context.entityDb);
-            
-    loader(*_context.scene, *_context.renderGraph, manifest->root());
+
+void SceneService::load
+(
+    std::shared_ptr<AssetManifest> manifest,
+    std::function<void(bool)> cb
+)
+{
+    SceneJsonLoader loader(
+        _context.sceneData,
+        _context.gfxContext,
+        _context.renderGraph,
+        _context.entityDb
+    );
+    
+    //  InitializeScene and InitializePaths tasks
+    //  together
+    
+   _context.taskScheduler->schedule(allocate_unique<InitializeScene>(
+        std::move(manifest),
+        loader,
+        [cb](Task::State endstate, Task& thisTask, void* context) {
+            SceneService* service = reinterpret_cast<SceneService*>(context);
+            if (endstate == Task::State::kEnded) {
+                auto bodies = reinterpret_cast<InitializeScene&>(thisTask).acquireBodyList();
+                
+                for (auto& body : bodies) {
+                    service->_context.scene->attachBody(body, body->categoryMask);
+                }
+                
+                cb(true);
+            }
+            else {
+                cb(false);
+            }
+        }),
+        this);
 }
 
 void SceneService::disableSimulation()

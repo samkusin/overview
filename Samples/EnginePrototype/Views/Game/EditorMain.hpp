@@ -19,7 +19,7 @@ namespace cinek {
 class EditorMain : public ove::ViewController
 {
 public:
-    EditorMain(const GameViewContext& gameContext);
+    EditorMain(const GameViewContext* gameContext);
     
 private:
     //  ViewController

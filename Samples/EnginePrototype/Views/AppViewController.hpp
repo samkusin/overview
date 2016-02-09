@@ -40,7 +40,7 @@ struct ApplicationContext
 class AppViewController : public ove::ViewController
 {
 public:
-    AppViewController(const ApplicationContext& context);
+    AppViewController(const ApplicationContext* context);
     
     virtual ~AppViewController();
     

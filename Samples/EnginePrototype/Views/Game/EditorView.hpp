@@ -31,7 +31,7 @@ class EditorView : public ove::ViewController,
                    public uicore::DataProvider
 {
 public:
-    EditorView(const GameViewContext& gameContext);
+    EditorView(const GameViewContext* gameContext);
 
 private:
     //  ViewController

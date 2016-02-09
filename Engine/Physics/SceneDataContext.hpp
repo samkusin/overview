@@ -70,6 +70,9 @@ public:
     //  body
     struct SceneBodyInitParams
     {
+        SceneBodyInitParams(btCollisionShape* collShape=nullptr) :
+            collisionShape(collShape) {}
+    
         btCollisionShape* collisionShape;
     };
     SceneBody* allocateBody

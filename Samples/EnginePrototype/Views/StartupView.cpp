@@ -11,7 +11,7 @@
 
 namespace cinek {
 
-StartupView::StartupView(const ApplicationContext& api) :
+StartupView::StartupView(const ApplicationContext* api) :
     AppViewController(api),
     _templatesLoaded(false),
     _globalsLoaded(false)
@@ -61,7 +61,7 @@ void StartupView::frameUpdateView
 )
 {
     if (_templatesLoaded && _globalsLoaded) {
-        stateController.present("GameView");
+        stateController.present("LoadSceneView");
     }
 }
 

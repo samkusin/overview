@@ -6,14 +6,14 @@
 //
 //
 
-#include "Scenes/Scene.hpp"
+#include "Physics/Scene.hpp"
 #include "SceneJsonLoader.hpp"
 #include "Debug.hpp"
 #include "EntityDatabase.hpp"
 #include "Render/RenderGraph.hpp"
 
-#include "Scenes/SceneDataContext.hpp"
-#include "Scenes/SceneObjectJsonLoader.hpp"
+#include "Physics/SceneDataContext.hpp"
+#include "Physics/SceneObjectJsonLoader.hpp"
 
 #include "CKGfx/ModelJsonSerializer.hpp"
 
@@ -42,59 +42,60 @@ struct SceneJsonLoader::Node
     
 SceneJsonLoader::SceneJsonLoader
 (
-    SceneDataContext& context,
-    gfx::Context& gfxContext,
-    EntityDatabase& entityDb
+    SceneDataContext* context,
+    gfx::Context* gfxContext,
+    RenderGraph* renderGraph,
+    EntityDatabase* entityDb
 ) :
-    _sceneContext(&context),
-    _gfxContext(&gfxContext),
-    _entityDb(&entityDb)
+    _sceneContext(context),
+    _gfxContext(gfxContext),
+    _renderGraph(renderGraph),
+    _entityDb(entityDb)
 {
 }
 
 SceneJsonLoader::~SceneJsonLoader() = default;
     
-Scene& SceneJsonLoader::operator()
+std::vector<SceneBody*> SceneJsonLoader::operator()
 (
-    Scene& scene,
-    RenderGraph& renderGraph,
     const JsonValue& jsonRoot
 )
 {
+    std::vector<SceneBody*>  bodyList;
     JsonValue::ConstMemberIterator jsonNodesIt = jsonRoot.FindMember("nodes");
-    if (jsonNodesIt == jsonRoot.MemberEnd())
-        return scene;
-
-    gfx::NodeJsonLoader gfxJsonLoader;
-    gfxJsonLoader.context = _gfxContext;
-    gfxJsonLoader.jsonMeshes = jsonRoot.FindMember("meshes");
-    gfxJsonLoader.jsonLights = jsonRoot.FindMember("lights");
-    gfxJsonLoader.jsonMaterials = jsonRoot.FindMember("materials");
-    gfxJsonLoader.jsonAnimations = jsonRoot.FindMember("animations");
     
-    SceneObjectJsonLoader sceneObjJsonLoader;
-    sceneObjJsonLoader.context = _sceneContext;
-    sceneObjJsonLoader.jsonHullsArrayIt = jsonRoot.FindMember("hulls");
-    if (!sceneObjJsonLoader.jsonHullsArrayIt->value.Empty()) {
-        sceneObjJsonLoader.hulls.reserve(sceneObjJsonLoader.jsonHullsArrayIt->value.Size());
+    if (jsonNodesIt != jsonRoot.MemberEnd()) {
+
+        gfx::NodeJsonLoader gfxJsonLoader;
+        gfxJsonLoader.context = _gfxContext;
+        gfxJsonLoader.jsonMeshes = jsonRoot.FindMember("meshes");
+        gfxJsonLoader.jsonLights = jsonRoot.FindMember("lights");
+        gfxJsonLoader.jsonMaterials = jsonRoot.FindMember("materials");
+        gfxJsonLoader.jsonAnimations = jsonRoot.FindMember("animations");
+        
+        SceneObjectJsonLoader sceneObjJsonLoader;
+        sceneObjJsonLoader.context = _sceneContext;
+        sceneObjJsonLoader.jsonHullsArrayIt = jsonRoot.FindMember("hulls");
+        if (!sceneObjJsonLoader.jsonHullsArrayIt->value.Empty()) {
+            sceneObjJsonLoader.hulls.reserve(sceneObjJsonLoader.jsonHullsArrayIt->value.Size());
+        }
+        
+        const JsonValue& jsonNode = jsonNodesIt->value;
+        
+        Context context;
+        context.bodyList = &bodyList;
+        context.gfxJsonLoader = &gfxJsonLoader;
+        context.sceneObjectJsonLoader = &sceneObjJsonLoader;
+        context.entity = 0;
+        
+        Node root;
+        root.type = Node::kNone;
+        
+        Node node = parseJsonNode(context, root, jsonNode);
+        _renderGraph->nodeGraph().setRoot(node.gfxNodeHandle);
     }
     
-    const JsonValue& jsonNode = jsonNodesIt->value;
-    
-    Context context;
-    context.scene = &scene;
-    context.renderGraph = &renderGraph;
-    context.gfxJsonLoader = &gfxJsonLoader;
-    context.sceneObjectJsonLoader = &sceneObjJsonLoader;
-    context.entity = 0;
-    
-    Node root;
-    root.type = Node::kNone;
-    
-    Node node = parseJsonNode(context, root, jsonNode);
-    context.renderGraph->nodeGraph().setRoot(node.gfxNodeHandle);
-    
-    return scene;
+    return bodyList;
 }
 
 auto SceneJsonLoader::parseJsonNode
@@ -123,7 +124,7 @@ auto SceneJsonLoader::parseJsonNode
             node.type = Node::kGfxNode;
         }
         
-        node.gfxNodeHandle = (*context.gfxJsonLoader)(context.renderGraph->nodeGraph(),
+        node.gfxNodeHandle = (*context.gfxJsonLoader)(_renderGraph->nodeGraph(),
                                                       jsonNode);
         
         if (node.type == Node::kSceneObject) {
@@ -170,7 +171,7 @@ auto SceneJsonLoader::parseJsonNode
         {
             Node child = parseJsonNode(context, node, *jsonChildIt);
             if (child.type == Node::kGfxNode) {
-                context.renderGraph->nodeGraph().addChildNodeToNode(child.gfxNodeHandle, node.gfxNodeHandle);
+                _renderGraph->nodeGraph().addChildNodeToNode(child.gfxNodeHandle, node.gfxNodeHandle);
             }
             else if (child.type == Node::kSceneTriMeshShape) {
                 if (triMeshShape) {
@@ -184,20 +185,21 @@ auto SceneJsonLoader::parseJsonNode
     if (newEntity) {
         CK_ASSERT(context.entity);
         if (node.type == Node::kGfxNode) {
-            context.renderGraph->setNodeEntity(context.entity, node.gfxNodeHandle);
+            _renderGraph->setNodeEntity(context.entity, node.gfxNodeHandle);
         }
         //  support newer scene formats, or older ones where triMeshShapes
         //  were children of the entity gfx node.
         if (node.type == Node::kSceneObject ||
             (node.type == Node::kGfxNode && triMeshShape)) {
             
-            SceneDataContext::SceneBodyInitParams initParams;
-    
-            initParams.collisionShape = triMeshShape;
+            SceneDataContext::SceneBodyInitParams initParams(triMeshShape);
+
             SceneBody* body = _sceneContext->allocateBody(initParams,
                 node.gfxNodeHandle, context.entity);
-
-            context.scene->attachBody(body);
+                
+            body->categoryMask |= SceneBody::kIsSection;
+            
+            context.bodyList->push_back(body);
         }
     }
         

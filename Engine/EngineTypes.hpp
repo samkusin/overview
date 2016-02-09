@@ -26,6 +26,7 @@ namespace cinek {
         class RenderGraph;
         
         class Scene;
+        struct SceneBody;
         class SceneFixedBodyHull;
         class SceneDataContext;
         class SceneMotionState;

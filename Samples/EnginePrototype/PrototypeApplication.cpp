@@ -6,19 +6,19 @@
 //
 //
 
-#include "Engine/Scenes/SceneDataContext.hpp"
-#include "Engine/Scenes/Scene.hpp"
-#include "Engine/Scenes/SceneDebugDrawer.hpp"
+#include "Engine/Physics/SceneDataContext.hpp"
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
 
 #include "GameEntityFactory.hpp"
 
-#include "PrototypeApplication.hpp"
-
 #include "Views/StartupView.hpp"
+#include "Views/LoadSceneView.hpp"
 #include "Views/Game/GameView.hpp"
 
+#include "PrototypeApplication.hpp"
 
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
@@ -95,22 +95,22 @@ PrototypeApplication::PrototypeApplication
 
     
     //  define the top-level states for this application
-    ApplicationContext context;
+    _appContext = allocate_unique<ApplicationContext>();
     
-    context.nvg = _nvg;
-    context.entityDatabase = _entityDb.get();
-    context.taskScheduler = &_taskScheduler;
-    context.resourceFactory = &_resourceFactory;
-    context.msgClientSender = &_clientSender;
-    context.scene = _scene.get();
-    context.sceneData = _sceneData.get();
-    context.sceneDebugDrawer = _sceneDbgDraw.get();
-    context.gfxContext = _gfxContext;
-    context.renderGraph = _renderGraph.get();
-    context.renderContext = &_renderContext;
+    _appContext->nvg = _nvg;
+    _appContext->entityDatabase = _entityDb.get();
+    _appContext->taskScheduler = &_taskScheduler;
+    _appContext->resourceFactory = &_resourceFactory;
+    _appContext->msgClientSender = &_clientSender;
+    _appContext->scene = _scene.get();
+    _appContext->sceneData = _sceneData.get();
+    _appContext->sceneDebugDrawer = _sceneDbgDraw.get();
+    _appContext->gfxContext = _gfxContext;
+    _appContext->renderGraph = _renderGraph.get();
+    _appContext->renderContext = &_renderContext;
     
     _viewStack.setFactory(
-        [context](const std::string& viewName, ove::ViewController* )
+        [this](const std::string& viewName, ove::ViewController* )
             -> std::shared_ptr<ove::ViewController> {
             //  Startup View initialzes common data for the application
             //  Game View encompasses the whole game simulation
@@ -118,11 +118,16 @@ PrototypeApplication::PrototypeApplication
             //  Ship Bridge View encompasses the in-game ship bridge mode
             if (viewName == "StartupView") {
                 return std::allocate_shared<StartupView>(
-                    std_allocator<StartupView>(), context);
+                    std_allocator<StartupView>(), _appContext.get());
             }
             else if (viewName == "GameView") {
                 return std::allocate_shared<GameView>(
-                    std_allocator<GameView>(), context);
+                    std_allocator<GameView>(), _appContext.get());
+            }
+            else if (viewName == "LoadSceneView") {
+                return std::allocate_shared<LoadSceneView>(
+                std_allocator<LoadSceneView>(), _appContext.get());
+
             }
             
             return nullptr;

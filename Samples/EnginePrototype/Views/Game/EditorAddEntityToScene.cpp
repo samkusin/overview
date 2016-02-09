@@ -21,9 +21,9 @@ namespace cinek {
 
 EditorAddEntityToScene::EditorAddEntityToScene
 (
-    const GameViewContext& gameContext
+    const GameViewContext* gameContext
 ) :
-    _gc(&gameContext),
+    _gc(gameContext),
     _stagedEntity(0),
     _displayTemplateSelector(false)
 

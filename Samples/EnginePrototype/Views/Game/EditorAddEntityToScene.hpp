@@ -23,7 +23,7 @@ class EditorAddEntityToScene : public ove::ViewController,
                                public uicore::DataProvider
 {
 public:
-    EditorAddEntityToScene(const GameViewContext& gameContext);
+    EditorAddEntityToScene(const GameViewContext* gameContext);
     
 private:
     //  ViewController

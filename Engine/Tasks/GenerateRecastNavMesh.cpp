@@ -7,7 +7,7 @@
 //
 
 #include "GenerateRecastNavMesh.hpp"
-#include "Engine/Scenes/SceneFixedBodyHull.hpp"
+#include "Engine/Physics/SceneFixedBodyHull.hpp"
 #include "Engine/Debug.hpp"
 
 #include <bullet/LinearMath/btTransform.h>
@@ -26,7 +26,7 @@ GenerateRecastNavMesh::GenerateRecastNavMesh
     const btTransform& transform,
     std::function<void(RecastNavMesh&&)> cb
 ) :
-    Task(),
+    Task(),     // callback defined in our constructor body
     _solid(nullptr),
     _chf(nullptr),
     _cset(nullptr),
@@ -108,7 +108,7 @@ GenerateRecastNavMesh::GenerateRecastNavMesh
     _triareas.resize(_indexData.size()/3);
     
     //  issue completion callback on task completion
-    setCallback([this](Task::State state, Task&) {
+    setCallback([this](Task::State state, Task&, void*) {
         RecastNavMesh mesh;
         if (state == Task::State::kEnded) {
             recast_poly_mesh_unique_ptr pmesh(_polymesh);

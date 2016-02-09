@@ -235,11 +235,7 @@ SceneBody* SceneDataContext::allocateBody
     if (gfxNodeHandle) {
         motionState = allocateMotionState(gfxNodeHandle);
     }
-    /*
-    btRigidBody::btRigidBodyConstructionInfo btInfo(info.mass,
-        motionState,
-        info.collisionShape);
-    */
+    
     auto obj = _bodyPool.construct();
     obj->setCollisionShape(info.collisionShape);
     auto sceneObj = _sceneBodyPool.construct();

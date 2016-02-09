@@ -11,7 +11,7 @@
 
 #include "Views/AppViewController.hpp"
 #include "Engine/ViewStack.hpp"
-#include "Engine/Scenes/SceneTypes.hpp"
+#include "Engine/Physics/SceneTypes.hpp"
 #include "CKGfx/Camera.hpp"
 
 #include "GameViewContext.hpp"
@@ -23,7 +23,7 @@ namespace cinek {
 class GameView : public AppViewController
 {
 public:
-    GameView(const ApplicationContext& context);
+    GameView(const ApplicationContext* context);
     
 private:
     //  ViewController
@@ -47,8 +47,6 @@ private:
     GameViewContext _gameViewContext;
     
     std::shared_ptr<EditorView> _editorView;
-    
-    bool _sceneLoaded;
 };
 
 } /* namespace cinek */

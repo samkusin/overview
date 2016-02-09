@@ -15,9 +15,9 @@ namespace cinek {
 
 EditorMain::EditorMain
 (
-    const GameViewContext& gameContext
+    const GameViewContext* gameContext
 ) :
-    _gc(&gameContext)
+    _gc(gameContext)
 {
 }
 

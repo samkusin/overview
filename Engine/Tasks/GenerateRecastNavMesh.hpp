@@ -12,7 +12,7 @@
 
 #include <cinek/task.hpp>
 
-#include "Engine/Scenes/SceneTypes.hpp"
+#include "Engine/Physics/SceneTypes.hpp"
 #include "Engine/Path/RecastContext.hpp"
 #include "Engine/Contrib/Recast/Recast.h"
 
