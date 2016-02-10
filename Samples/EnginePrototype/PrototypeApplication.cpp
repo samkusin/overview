@@ -9,6 +9,7 @@
 #include "Engine/Physics/SceneDataContext.hpp"
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneDebugDrawer.hpp"
+#include "Engine/Path/Pathfinder.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
 
@@ -71,6 +72,7 @@ PrototypeApplication::PrototypeApplication
     _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
     _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
 
+    _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
     
     _componentFactory = allocate_unique<GameEntityFactory>(
         *_gfxContext,
@@ -96,18 +98,28 @@ PrototypeApplication::PrototypeApplication
     
     //  define the top-level states for this application
     _appContext = allocate_unique<ApplicationContext>();
-    
     _appContext->nvg = _nvg;
     _appContext->entityDatabase = _entityDb.get();
     _appContext->taskScheduler = &_taskScheduler;
     _appContext->resourceFactory = &_resourceFactory;
     _appContext->msgClientSender = &_clientSender;
+    _appContext->gfxContext = _gfxContext;
+    _appContext->renderContext = &_renderContext;
+
+    //  TODO - These should be created and destroyed by View objects
+    //       - Reason, it makes more sense to wholesale drop these objects
+    //          when completing a scenario
+    //       - Problem, our factory objects (resource and entity component)
+    //          need references to the current version of the below objects.
+    //       - Solution, We need to have our factories to share the context
+    //          containing these scene/render/ai system objects and respective
+    //          data contexts.
+    //
+    _appContext->renderGraph = _renderGraph.get();
     _appContext->scene = _scene.get();
     _appContext->sceneData = _sceneData.get();
     _appContext->sceneDebugDrawer = _sceneDbgDraw.get();
-    _appContext->gfxContext = _gfxContext;
-    _appContext->renderGraph = _renderGraph.get();
-    _appContext->renderContext = &_renderContext;
+    _appContext->pathfinder = _pathfinder.get();
     
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
@@ -151,6 +163,7 @@ void PrototypeApplication::beginFrame()
 void PrototypeApplication::simulateFrame(double dt)
 {
     _scene->simulate(dt);
+    _pathfinder->update(dt);
     
     _viewStack.simulate(dt);
 }

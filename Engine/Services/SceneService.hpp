@@ -10,7 +10,6 @@
 #define Overview_Services_Scene_hpp
 
 #include "Engine/Physics/SceneTypes.hpp"
-#include "Engine/Messages/Scene.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 #include <functional>
@@ -30,7 +29,6 @@ struct SceneServiceContext
     Scene* scene;
     SceneDataContext* sceneData;
     SceneDebugDrawer* debugDrawer;
-    MessageClientSender* sender;
     EntityDatabase* entityDb;
     RenderGraph* renderGraph;
     TaskScheduler* taskScheduler;

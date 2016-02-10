@@ -9,11 +9,12 @@
 #include "LoadSceneView.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/SceneService.hpp"
+#include "Engine/Services/PathfinderService.hpp"
 #include "Engine/ViewStack.hpp"
 
 namespace cinek {
 
-LoadSceneView::LoadSceneView(const ApplicationContext* context) :
+LoadSceneView::LoadSceneView(ApplicationContext* context) :
     AppViewController(context),
     _currentTask(kLoadStart),
     _nextTask(kLoadStart)
@@ -49,7 +50,8 @@ void LoadSceneView::frameUpdateView
 {
     if (_currentTask != _nextTask) {
     
-        switch (_nextTask) {
+        _currentTask = _nextTask;
+        switch (_currentTask) {
             case kLoadManifest:
                 assetService().loadManifest("scenes/apartment.json",
                     [this](std::shared_ptr<ove::AssetManifest> manifest) {
@@ -61,16 +63,15 @@ void LoadSceneView::frameUpdateView
             case kLoadScene:
                 sceneService().load(_manifest,
                     [this](bool success) {
-                        if (success) {
-                            _nextTask = kLoadPaths;
-                        }
-                        else {
-                            _nextTask = kLoadError;
-                        }
+                        _nextTask = success ? kLoadPaths : kLoadError;
                     });
                 break;
             case kLoadPaths:
-                _nextTask = kLoadSuccess;
+                //  generates pathfinding data from current scene
+                pathfinderService().generate(
+                    [this](bool success) {
+                        _nextTask = success ? kLoadSuccess : kLoadError;
+                    });
                 break;
             case kLoadError:
                 break;

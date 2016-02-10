@@ -24,7 +24,7 @@
 
 namespace cinek {
 
-GameView::GameView(const ApplicationContext* api) :
+GameView::GameView(ApplicationContext* api) :
     AppViewController(api),
     _gameViewContext {
         &_camera,

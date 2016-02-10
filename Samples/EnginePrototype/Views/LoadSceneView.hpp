@@ -20,7 +20,7 @@ namespace cinek {
 class LoadSceneView : public AppViewController
 {
 public:
-    LoadSceneView(const ApplicationContext* appContext);
+    LoadSceneView(ApplicationContext* appContext);
 
 private:
     //  ViewController

@@ -154,8 +154,9 @@ SceneBody* Scene::detachBody
     uint32_t index = 0;
 
     //  remove from all categories
-    while (categories && (body && body->categoryMask)) {
-        if ((categories & 1) != 0) {
+    uint32_t categoryMask = categories;
+    while (categoryMask && (body && body->categoryMask)) {
+        if ((categoryMask & 1) != 0) {
             auto& container = _containers[index];
             auto it = sceneContainerLowerBound(container, entity);
             if (it != container.end() && (*it)->entity == entity) {
@@ -165,6 +166,7 @@ SceneBody* Scene::detachBody
             }
         }
         ++index;
+        categoryMask >>= 1;
     }
     
     //  remove from the global list
@@ -209,7 +211,7 @@ const
         
             uint32_t i = 0;
             while (categoryMask) {
-                if ((1 << i) == categoryMask) {
+                if (categoryMask & 0x01) {
                     it = _containers[i].begin();
                     itEnd = _containers[i].end();
                     break;

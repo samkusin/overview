@@ -10,14 +10,15 @@
 #define Overview_Services_Entity_hpp
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/Messages/Entity.hpp"
+
+#include <string>
 
 namespace cinek { namespace ove {
 
 class EntityService
 {
 public:
-    EntityService(EntityDatabase* context, MessageClientSender* sender);
+    EntityService(EntityDatabase* context);
     EntityService() = default;
 
     /**
@@ -67,17 +68,14 @@ public:
     
 private:
     EntityDatabase* _context = nullptr;
-    MessageClientSender* _sender = nullptr;
 };
 
 
 inline EntityService::EntityService
 (
-    EntityDatabase* context,
-    MessageClientSender* sender
+    EntityDatabase* context
 ) :
-    _context(context),
-    _sender(sender)
+    _context(context)
 {
 }
     

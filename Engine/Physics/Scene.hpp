@@ -141,15 +141,15 @@ const
         if ((categoryMask != 0) &&
             ((categoryMask & (~categoryMask + 1)) == categoryMask)) {
         
-            uint32_t i = 0;
-            while (categoryMask) {
-                if ((1 << i) == categoryMask) {
+            uint32_t i = 0, categories = categoryMask;
+            while (categories) {
+                if (categories & 1) {
                     it = _containers[i].begin();
                     itEnd = _containers[i].end();
                     break;
                 }
                 ++i;
-                categoryMask >>= 1;
+                categories >>= 1;
             }
          
             for (; it != itEnd; ++it) {

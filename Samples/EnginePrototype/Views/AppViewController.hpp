@@ -15,10 +15,12 @@
 #include "CKGfx/NodeRenderer.hpp"
 #include "UICore/Input.hpp"
 #include "Engine/ViewController.hpp"
+#include "Engine/Messages/Core.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"
 #include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
+#include "Engine/Services/PathfinderService.hpp"
 
 namespace cinek {
 
@@ -35,12 +37,13 @@ struct ApplicationContext
     ove::Scene* scene;
     ove::RenderGraph* renderGraph;
     ove::RenderContext* renderContext;
+    ove::Pathfinder* pathfinder;
 };
 
 class AppViewController : public ove::ViewController
 {
 public:
-    AppViewController(const ApplicationContext* context);
+    AppViewController(ApplicationContext* context);
     
     virtual ~AppViewController();
     
@@ -57,16 +60,20 @@ protected:
     ove::RenderService& renderService() {
         return _renderService;
     }
+    ove::PathfinderService& pathfinderService() {
+        return _pathfinderService;
+    }
     NVGcontext* nvgContext() {
         return _appContext->nvg;
     }
     
 private:
-    const ApplicationContext* _appContext;
+    ApplicationContext* _appContext;
     ove::AssetService _assetService;
     ove::EntityService _entityService;
     ove::SceneService _sceneService;
     ove::RenderService _renderService;
+    ove::PathfinderService _pathfinderService;
 };
 
 }

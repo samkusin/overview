@@ -14,17 +14,18 @@ namespace cinek {
 
 AppViewController::AppViewController
 (
-    const ApplicationContext* context
+    ApplicationContext* context
 ) :
     _appContext(context),
     _assetService({ context->taskScheduler, context->resourceFactory }),
-    _entityService( context->entityDatabase, context->msgClientSender ),
+    _entityService( context->entityDatabase ),
     _sceneService({ context->gfxContext, context->scene, context->sceneData,
                     context->sceneDebugDrawer,
-                    context->msgClientSender, context->entityDatabase,
+                    context->entityDatabase,
                     context->renderGraph,
                     context->taskScheduler }),
-    _renderService(context->gfxContext, context->renderContext)
+    _renderService(context->gfxContext, context->renderContext),
+    _pathfinderService( { context->scene, context->pathfinder } )
 {
 }
 

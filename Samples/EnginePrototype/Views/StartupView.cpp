@@ -11,7 +11,7 @@
 
 namespace cinek {
 
-StartupView::StartupView(const ApplicationContext* api) :
+StartupView::StartupView(ApplicationContext* api) :
     AppViewController(api),
     _templatesLoaded(false),
     _globalsLoaded(false)

@@ -23,7 +23,7 @@ namespace cinek {
 class GameView : public AppViewController
 {
 public:
-    GameView(const ApplicationContext* context);
+    GameView(ApplicationContext* context);
     
 private:
     //  ViewController

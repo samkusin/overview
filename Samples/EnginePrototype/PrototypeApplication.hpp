@@ -73,11 +73,14 @@ private:
     gfx::NodeRenderer::UniformMap _renderUniforms;
     
     unique_ptr<ApplicationContext> _appContext;
+    
     unique_ptr<ove::RenderGraph> _renderGraph;
     
     unique_ptr<ove::SceneDataContext> _sceneData;
     unique_ptr<ove::SceneDebugDrawer> _sceneDbgDraw;
     unique_ptr<ove::Scene> _scene;
+    
+    unique_ptr<ove::Pathfinder> _pathfinder;
     
     unique_ptr<GameEntityFactory> _componentFactory;
     unique_ptr<ove::EntityDatabase> _entityDb;

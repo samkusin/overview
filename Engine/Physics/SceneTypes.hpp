@@ -24,15 +24,22 @@ namespace cinek {
 
 struct SceneBody
 {
-    btCollisionObject* btBody = nullptr;
-    SceneMotionState* motionState = nullptr;
-    Entity entity = 0;
-    
-    enum
+    enum Category
     {
         kSection            = 0x01,
         kObject             = 0x02
     };
+
+    bool isInCategory(Category c) const {
+        return (categoryMask & c) != 0;
+    }
+
+    const SceneFixedBodyHull* getFixedHull() const;
+
+public:
+    btCollisionObject* btBody = nullptr;
+    SceneMotionState* motionState = nullptr;
+    Entity entity = 0;
     
     enum
     {

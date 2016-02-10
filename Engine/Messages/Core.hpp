@@ -37,8 +37,7 @@ namespace cinek {
     
     enum
     {
-        kMsgClassEntity     = 0x0001,
-        kMsgClassScene      = 0x0002
+        kMsgClassScene      = 0x0001
     };
     
     inline constexpr ckmsg::ClassId MakeMessageClassId(uint16_t cid, uint16_t idx) {

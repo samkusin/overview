@@ -22,104 +22,47 @@ const UUID GenerateRecastNavMesh::kUUID = {
 
 GenerateRecastNavMesh::GenerateRecastNavMesh
 (
-    const SceneFixedBodyHull& hull,
-    const btTransform& transform,
-    std::function<void(RecastNavMesh&&)> cb
+    RecastNavMeshInput input
 ) :
     Task(),     // callback defined in our constructor body
+    _vertexData(std::move(input.vertexData)),
+    _indexData(std::move(input.triangleData)),
     _solid(nullptr),
     _chf(nullptr),
     _cset(nullptr),
     _polymesh(nullptr),
     _detailmesh(nullptr),
-    _stage(kInitialStage),
-    _callback(std::move(cb))
+    _stage(kInitialStage)
 {
-    //  generate Recast ingestible vertices from our source hull data
-    //  a transform is supplied in case we're generating a nav-mesh from local
-    //  hull data
-    
-    const float* vertexData = hull.vertexData();
-    const int* indexData = hull.indexData();
-    
-    _vertexData.reserve(hull.vertexCount() * 3);
-    
-    memset(&_config, 0, sizeof(_config));
-    
-    float* bmin = _config.bmin;
-    float* bmax = _config.bmax;
-    
-    for (int vidx = 0; vidx < hull.vertexCount(); ++vidx) {
-        btVector3 btv;
-        btv.setValue(vertexData[0], vertexData[1], vertexData[2]);
-        btv = transform.getBasis() * btv;
-        btv += transform.getOrigin();
-        
-        _vertexData.push_back(btv.getX());
-        _vertexData.push_back(btv.getY());
-        _vertexData.push_back(btv.getZ());
-        
-        if (btv.getX() < bmin[0]) {
-            bmin[0] = btv.getX();
-        }
-        if (btv.getY() < bmin[1]) {
-            bmin[1] = btv.getY();
-        }
-        if (btv.getZ() < bmin[2]) {
-            bmin[2] = btv.getZ();
-        }
-        if (btv.getX() > bmax[0]) {
-            bmax[0] = btv.getX();
-        }
-        if (btv.getY() < bmax[1]) {
-            bmax[1] = btv.getY();
-        }
-        if (btv.getZ() < bmax[2]) {
-            bmax[2] = btv.getZ();
-        }
-        vertexData += 3;
-    }
-    
-    _indexData = std::move(std::vector<int>(indexData, indexData + hull.triangleCount() * 3));
-    
-    CK_ASSERT_RETURN(_vertexData.size() == hull.vertexCount() * 3);
-    CK_ASSERT_RETURN((_indexData.size() == hull.triangleCount() * 3) && (_indexData.size() % 3) == 0);
+    CK_ASSERT_RETURN((_vertexData.size() % 3) == 0);
+    CK_ASSERT_RETURN((_indexData.size() % 3) == 0);
     
     //  TODO - configure?
     const float kAgentHeight = 2.0f;            // 2m - placeholder
-    const float kAgentRadius = 0.75f;           // radius of agent (cylinder)
+    const float kAgentRadius = 0.5f;           // radius of agent (cylinder)
     const float kAgentMaxClimb = 0.75f;         // ledge height
     const float kWalkableSlopeAngle = 45.0f;    // walkable slope (for stairways)
     
-    _config.cs = 0.25f;
-    _config.ch = 0.25f;
+    rcVcopy(_config.bmin, input.bmin);
+    rcVcopy(_config.bmax, input.bmax);
+    _config.cs = 0.10f;
+    _config.ch = 0.50f;
     _config.walkableSlopeAngle = kWalkableSlopeAngle;
     _config.walkableHeight = (int)(ceilf(kAgentHeight / _config.ch));
     _config.walkableClimb = (int)(floorf(kAgentMaxClimb / _config.ch));
     _config.walkableRadius = (int)(ceilf(kAgentRadius / _config.cs));
-    _config.minRegionArea = 12;                 // remove small areas (cells)
-    _config.mergeRegionArea = 20;               // merge small areas (cells) into larger when possible
-    _config.detailSampleDist = 6.0f;
-    _config.detailSampleMaxError = 1.0f;
+    _config.minRegionArea = (int)rcSqr(8);      // remove small areas (cells)
+    _config.mergeRegionArea = (int)rcSqr(20);   // merge small areas (cells) into larger when possible
+    _config.detailSampleDist = _config.cs * 6.0f;
+    _config.detailSampleMaxError = _config.ch * 1.0f;
+    _config.maxEdgeLen = 12.0f/_config.cs;
+    _config.maxSimplificationError = 1.0f;
+    _config.maxVertsPerPoly = 3;
     
     rcCalcGridSize(_config.bmin, _config.bmax, _config.cs,
         &_config.width, &_config.height);
     
     _triareas.resize(_indexData.size()/3);
-    
-    //  issue completion callback on task completion
-    setCallback([this](Task::State state, Task&, void*) {
-        RecastNavMesh mesh;
-        if (state == Task::State::kEnded) {
-            recast_poly_mesh_unique_ptr pmesh(_polymesh);
-            recast_detail_mesh_unique_ptr dmesh(_detailmesh);
-            
-            mesh = std::move(RecastNavMesh(std::move(pmesh), std::move(dmesh)));
-            _polymesh = nullptr;
-            _detailmesh = nullptr;
-        }
-        _callback(std::move(mesh));
-    });
     
     _stage = kRasterizeStage;
 }
@@ -275,7 +218,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                 fail();
                 return;
             }
-            if (!rcBuildPolyMesh(&_context, *_cset, 3, *_polymesh)) {
+            if (!rcBuildPolyMesh(&_context, *_cset, _config.maxVertsPerPoly, *_polymesh)) {
                 OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build poly mesh.\n");
                 fail();
                 return;
@@ -295,6 +238,8 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                 fail();
                 return;
             }
+            
+            end();
         }
         break;
         
@@ -303,6 +248,18 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
         fail();
         break;
     }
+}
+
+void GenerateRecastNavMesh::onEnd()
+{
+    recast_poly_mesh_unique_ptr pmesh(_polymesh);
+    recast_detail_mesh_unique_ptr dmesh(_detailmesh);
+            
+    _navMesh = std::move(RecastNavMesh(std::move(pmesh), std::move(dmesh)));
+    _polymesh = nullptr;
+    _detailmesh = nullptr;
+    
+    Task::onEnd();
 }
 
     }

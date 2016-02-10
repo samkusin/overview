@@ -13,6 +13,7 @@
 #include "Engine/Contrib/Recast/Recast.h"
 
 #include <cinek/allocator.hpp>
+#include <vector>
 
 namespace cinek {
     namespace ove {
@@ -31,6 +32,29 @@ namespace cinek {
         );
     };
     
+    
+    struct RecastNavMeshInput
+    {
+        //  input mesh data for the recast mesh generator
+        std::vector<float> vertexData;
+        std::vector<int> triangleData;
+        float bmin[3];
+        float bmax[3];
+        int numTriangles;
+        int numVertices;
+
+        RecastNavMeshInput() { reset(); }
+
+        void reset()
+        {
+            numTriangles = 0;
+            numVertices = 0;
+            vertexData.clear();
+            triangleData.clear();
+            bmin[0] = bmin[1] = bmin[2] = 0.0f;
+            bmax[0] = bmax[1] = bmax[2] = 0.0f;
+        }
+    };
 
     struct recast_poly_mesh_deleter
     {

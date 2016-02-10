@@ -26,21 +26,20 @@ class GenerateRecastNavMesh : public Task
 public:
     static const UUID kUUID;
     
-    GenerateRecastNavMesh
-    (
-        const SceneFixedBodyHull& hull,
-        const btTransform& transform,
-        std::function<void(RecastNavMesh&&)> cb
-    );
+    GenerateRecastNavMesh(RecastNavMeshInput input);
     
     virtual ~GenerateRecastNavMesh();
     
     virtual const TaskClassId& classId() const override { return kUUID; }
     
+    RecastNavMesh acquireGeneratedMesh() {
+        return std::move(_navMesh);
+    }
     
     
 protected:
     virtual void onUpdate(uint32_t deltaTimeMs) override;
+    virtual void onEnd() override;
     
 private:
     std::vector<float> _vertexData;
@@ -69,7 +68,7 @@ private:
     }
     _stage;
     
-    std::function<void(RecastNavMesh&&)> _callback;
+    RecastNavMesh _navMesh;
 };
     
     }  /* namespace ove */

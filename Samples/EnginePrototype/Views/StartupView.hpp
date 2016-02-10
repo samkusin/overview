@@ -16,7 +16,7 @@ namespace cinek {
 class StartupView : public AppViewController
 {
 public:
-    StartupView(const ApplicationContext* context);
+    StartupView(ApplicationContext* context);
     
     virtual void onViewAdded(ove::ViewStack& stateController);
     virtual void onViewRemoved(ove::ViewStack& stateController);

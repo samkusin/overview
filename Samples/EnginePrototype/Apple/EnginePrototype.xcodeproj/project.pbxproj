@@ -63,6 +63,8 @@
 		377ECD901C18F834002040D7 /* PrototypeApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD8E1C18F834002040D7 /* PrototypeApplication.cpp */; };
 		37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37804D0B1C1A1DD2002109DF /* GameEntityFactory.cpp */; };
 		37804D0F1C1A2FF6002109DF /* GameTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37804D0E1C1A2FF6002109DF /* GameTypes.cpp */; };
+		37B831501C6A7FB00064D316 /* PathfinderService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8314E1C6A7FB00064D316 /* PathfinderService.cpp */; };
+		37B831531C6A8FB60064D316 /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B831511C6A8FB60064D316 /* Pathfinder.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
 		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
@@ -185,7 +187,6 @@
 		377ECCCE1C09382A002040D7 /* AssetManifestFactory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AssetManifestFactory.hpp; sourceTree = "<group>"; };
 		377ECCCF1C093F64002040D7 /* StartupView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StartupView.hpp; path = ../Views/StartupView.hpp; sourceTree = "<group>"; };
 		377ECCD01C093F78002040D7 /* StartupView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StartupView.cpp; path = ../Views/StartupView.cpp; sourceTree = "<group>"; };
-		377ECCD91C0A9FAA002040D7 /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Entity.hpp; path = Messages/Entity.hpp; sourceTree = "<group>"; };
 		377ECCDB1C0AA0A9002040D7 /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Core.cpp; path = Messages/Core.cpp; sourceTree = "<group>"; };
 		377ECCDC1C0AA0A9002040D7 /* Core.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Core.hpp; path = Messages/Core.hpp; sourceTree = "<group>"; };
 		377ECCDF1C0BB028002040D7 /* LoadAssetManifest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadAssetManifest.cpp; path = Tasks/LoadAssetManifest.cpp; sourceTree = "<group>"; };
@@ -206,6 +207,10 @@
 		37804D0B1C1A1DD2002109DF /* GameEntityFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameEntityFactory.cpp; sourceTree = "<group>"; };
 		37804D0C1C1A1DD2002109DF /* GameEntityFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameEntityFactory.hpp; sourceTree = "<group>"; };
 		37804D0E1C1A2FF6002109DF /* GameTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameTypes.cpp; sourceTree = "<group>"; };
+		37B8314E1C6A7FB00064D316 /* PathfinderService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathfinderService.cpp; sourceTree = "<group>"; };
+		37B8314F1C6A7FB00064D316 /* PathfinderService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PathfinderService.hpp; sourceTree = "<group>"; };
+		37B831511C6A8FB60064D316 /* Pathfinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pathfinder.cpp; path = Path/Pathfinder.cpp; sourceTree = "<group>"; };
+		37B831521C6A8FB60064D316 /* Pathfinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Pathfinder.hpp; path = Path/Pathfinder.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		37E635DC1BF009B60081E59E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -344,6 +349,8 @@
 			children = (
 				37386D0A1C656566001A3110 /* RecastContext.cpp */,
 				37386D0B1C656566001A3110 /* RecastContext.hpp */,
+				37B831511C6A8FB60064D316 /* Pathfinder.cpp */,
+				37B831521C6A8FB60064D316 /* Pathfinder.hpp */,
 			);
 			name = Path;
 			sourceTree = "<group>";
@@ -384,7 +391,6 @@
 			children = (
 				377ECCDC1C0AA0A9002040D7 /* Core.hpp */,
 				377ECCDB1C0AA0A9002040D7 /* Core.cpp */,
-				377ECCD91C0A9FAA002040D7 /* Entity.hpp */,
 				377ECCF11C0FC80F002040D7 /* Scene.hpp */,
 			);
 			name = Messages;
@@ -501,6 +507,8 @@
 				28CE20841C2A1F480059B56F /* AssetService.cpp */,
 				28F11E5E1C3B5D4100860E5D /* RenderService.hpp */,
 				28F11E5D1C3B5D4100860E5D /* RenderService.cpp */,
+				37B8314F1C6A7FB00064D316 /* PathfinderService.hpp */,
+				37B8314E1C6A7FB00064D316 /* PathfinderService.cpp */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -653,6 +661,7 @@
 				289A4E0D1C49B3F500367E3B /* GameViewContext.cpp in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,
 				37386D3D1C698064001A3110 /* LoadSceneView.cpp in Sources */,
+				37B831501C6A7FB00064D316 /* PathfinderService.cpp in Sources */,
 				37386CFD1C62E19C001A3110 /* RecastMesh.cpp in Sources */,
 				37386CEE1C62E19C001A3110 /* DetourNavMesh.cpp in Sources */,
 				377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */,
@@ -671,6 +680,7 @@
 				28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */,
 				37386D1D1C6571A7001A3110 /* SceneDebugDrawer.cpp in Sources */,
 				37386CF71C62E19C001A3110 /* RecastArea.cpp in Sources */,
+				37B831531C6A8FB60064D316 /* Pathfinder.cpp in Sources */,
 				37420BAC1C290A21003D702B /* Sample.cpp in Sources */,
 				37386D1E1C6571A7001A3110 /* SceneFixedBodyHull.cpp in Sources */,
 				37E638211BF3FA220081E59E /* EngineTypes.cpp in Sources */,

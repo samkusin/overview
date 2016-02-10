@@ -8,7 +8,6 @@
 
 #include "EntityService.hpp"
 #include "Engine/EntityDatabase.hpp"
-#include "Engine/Messages/Entity.hpp"
 
 #include "Debug.hpp"
 
