@@ -15,6 +15,8 @@
 #include <cinek/allocator.hpp>
 #include <vector>
 
+struct duDebugDraw;
+
 namespace cinek {
     namespace ove {
     
@@ -68,9 +70,31 @@ namespace cinek {
             rcFreePolyMeshDetail(ptr);
         }
     };
+    struct recast_heighfield_deleter
+    {
+        void operator()(rcHeightfield* ptr)  {
+            rcFreeHeightField(ptr);
+        }
+    };
+    struct recast_compact_heightfield_deleter
+    {
+        void operator()(rcCompactHeightfield* ptr)  {
+            rcFreeCompactHeightfield(ptr);
+        }
+    };
+    struct recast_contour_set_deleter
+    {
+        void operator()(rcContourSet* ptr)  {
+            rcFreeContourSet(ptr);
+        }
+    };
+    
     
     using recast_poly_mesh_unique_ptr = std::unique_ptr<rcPolyMesh, recast_poly_mesh_deleter>;
     using recast_detail_mesh_unique_ptr = std::unique_ptr<rcPolyMeshDetail, recast_detail_mesh_deleter>;
+    using recast_heighfield_unique_ptr = std::unique_ptr<rcHeightfield, recast_heighfield_deleter>;
+    using recast_compact_heightfield_unique_ptr = std::unique_ptr<rcCompactHeightfield, recast_compact_heightfield_deleter>;
+    using recast_contour_set_unique_ptr = std::unique_ptr<rcContourSet, recast_contour_set_deleter>;
     
     class RecastNavMesh
     {
@@ -79,10 +103,23 @@ namespace cinek {
     public:
         RecastNavMesh() = default;
         RecastNavMesh(recast_poly_mesh_unique_ptr pmesh, recast_detail_mesh_unique_ptr dmesh);
+        RecastNavMesh
+        (
+            recast_heighfield_unique_ptr hf,
+            recast_compact_heightfield_unique_ptr chf,
+            recast_contour_set_unique_ptr cset,
+            recast_poly_mesh_unique_ptr pmesh,
+            recast_detail_mesh_unique_ptr dmesh
+        );
         RecastNavMesh(RecastNavMesh&& other);
         RecastNavMesh& operator=(RecastNavMesh&& other);
         
+        void debugDraw(::duDebugDraw& debugDraw);
+        
     private:
+        recast_heighfield_unique_ptr _hf;
+        recast_compact_heightfield_unique_ptr _chf;
+        recast_contour_set_unique_ptr _cset;
         recast_poly_mesh_unique_ptr _pmesh;
         recast_detail_mesh_unique_ptr _dmesh;
     };

@@ -17,6 +17,7 @@
 #include <cinek/debug.h>
 #include <ckm/mathtypes.hpp>
 
+#include <array>
 
 namespace cinek {
     namespace gfx {

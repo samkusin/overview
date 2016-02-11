@@ -29,6 +29,8 @@ public:
     
     //  update the pathfinding system
     void update(double dt);
+    
+    void updateDebug(PathfinderDebug& debugger);
 
 private:
     class Impl;

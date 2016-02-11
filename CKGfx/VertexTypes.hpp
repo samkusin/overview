@@ -29,6 +29,8 @@ namespace cinek {
             kVNormal_Weights,       ///< XYZ, Normals, Indices/Weights
             kVPosition,             ///< XYZ Only
             kVPositionNormal,       ///< XYZ, Normals
+            kVPositionColor,        ///< XYZ, 32-bit Color word
+            kVPositionColorTex0,    ///< XYZ, 32-bit Color word, vec2 UVs
             kPresetCount,           ///< Preset Limit
             
             kCustomPreset0 = kPresetCount,  ///< First Custom Preset index
@@ -64,6 +66,25 @@ namespace cinek {
                 
         /// Return a vertex declaration by format type
         const bgfx::VertexDecl& declaration(int tex);
+        
+        //  Convenience structs for vertices usually generated at runtime
+        struct PositionColor
+        {
+            float x;
+            float y;
+            float z;
+            uint32_t abgr;
+        };
+        
+        struct PositionColorUV
+        {
+            float x;
+            float y;
+            float z;
+            uint32_t abgr;
+            float u;
+            float v;
+        };
     };
     
     }   // namespace gfx

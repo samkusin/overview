@@ -7,6 +7,7 @@
 //
 
 #include "Pathfinder.hpp"
+#include "PathfinderDebug.hpp"
 
 #include "Engine/Tasks/GenerateRecastNavMesh.hpp"
 #include "Engine/Physics/Scene.hpp"
@@ -37,13 +38,19 @@ void pathfinderAddHullToRecastNavMeshInput
     float* bmax = output.bmax;
     
     for (int vidx = 0; vidx < hull.vertexCount(); ++vidx) {
-        btVector3 btv(vertexData[0], vertexData[1], vertexData[2]);
-        btv = transform.getBasis() * btv;
+        btVector3 btv0(vertexData[0], vertexData[1], vertexData[2]);
+        btVector3 btv = transform.getBasis() * btv0;
         btv += transform.getOrigin();
         
         output.vertexData.push_back(btv.getX());
         output.vertexData.push_back(btv.getY());
         output.vertexData.push_back(btv.getZ());
+        
+        /*
+        printf("(%5.2f,%5.2f,%5.2f) -> (%5.2f,%5.2f,%5.2f)\n",
+               btv0.getX(), btv0.getY(), btv0.getZ(),
+               btv.getX(), btv.getY(), btv.getZ());
+        */
         
         if (btv.getX() < bmin[0]) {
             bmin[0] = btv.getX();
@@ -68,11 +75,10 @@ void pathfinderAddHullToRecastNavMeshInput
     
     //  reverse winding order of vertices (recast requires clockwise vertices)
     const int* pindexend = indexData + hull.triangleCount()*3;
-    for (const int* pindex = indexData; pindex != pindexend; ++pindex) {
+    for (const int* pindex = indexData; pindex != pindexend; pindex += 3) {
         output.triangleData.push_back(pindex[2]);
         output.triangleData.push_back(pindex[1]);
         output.triangleData.push_back(pindex[0]);
-        pindex += 3;
     }
 }
 
@@ -148,7 +154,7 @@ public:
         task->setCallback([this](Task::State endState, Task& task, void*) {
             if (endState == Task::State::kEnded) {
                 auto& thisTask = reinterpret_cast<GenerateRecastNavMesh&>(task);
-                _navigationMesh = thisTask.acquireGeneratedMesh();
+                _navigationMesh = thisTask.acquireGeneratedMesh(GenerateRecastNavMesh::kOutputMesh);
                 signalGenerateComplete(true);
             }
         });
@@ -160,6 +166,11 @@ public:
     void update(double dt)
     {
         _scheduler.update((uint32_t)(dt * 1000.0));
+    }
+    
+    void updateDebug(PathfinderDebug& debugger)
+    {
+        _navigationMesh.debugDraw(debugger);
     }
 };
 
@@ -185,6 +196,11 @@ void Pathfinder::generateFromScene
 )
 {
     _impl->generateFromScene(scene, std::move(callback));
+}
+
+void Pathfinder::updateDebug(PathfinderDebug& debugger)
+{
+    _impl->updateDebug(debugger);
 }
 
     

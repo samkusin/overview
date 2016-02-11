@@ -11,6 +11,7 @@
 
 #include "Engine/EngineTypes.hpp"
 #include "Engine/Path/Pathfinder.hpp"
+#include "CKGfx/GfxTypes.hpp"
 
 
 namespace cinek {
@@ -20,6 +21,7 @@ struct PathfinderContext
 {
     Scene* scene;
     Pathfinder* pathfinder;
+    PathfinderDebug* pathfinderDebug;
 };
     
 class PathfinderService
@@ -35,9 +37,16 @@ public:
     //
     void generate(Pathfinder::GenerateCb cb);
     
+    
+    void update(double dt);
+    
+    //  debug methods
+    void renderDebug(RenderService &renderService, const gfx::Camera& camera);
+    
 private:
     Scene* scene() { return _context.scene; }
     Pathfinder* pathfinder() { return _context.pathfinder; }
+    PathfinderDebug* pathfinderDebug() { return _context.pathfinderDebug; }
 };
     
     } /* namespace ove */

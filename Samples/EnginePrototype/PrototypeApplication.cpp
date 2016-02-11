@@ -10,6 +10,7 @@
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Path/Pathfinder.hpp"
+#include "Engine/Path/PathfinderDebug.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
 
@@ -73,6 +74,7 @@ PrototypeApplication::PrototypeApplication
     _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
 
     _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
+    _pathfinderDebug = cinek::allocate_unique<ove::PathfinderDebug>(64);
     
     _componentFactory = allocate_unique<GameEntityFactory>(
         *_gfxContext,
@@ -120,6 +122,7 @@ PrototypeApplication::PrototypeApplication
     _appContext->sceneData = _sceneData.get();
     _appContext->sceneDebugDrawer = _sceneDbgDraw.get();
     _appContext->pathfinder = _pathfinder.get();
+    _appContext->pathfinderDebug = _pathfinderDebug.get();
     
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )

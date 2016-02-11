@@ -65,6 +65,7 @@
 		37804D0F1C1A2FF6002109DF /* GameTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37804D0E1C1A2FF6002109DF /* GameTypes.cpp */; };
 		37B831501C6A7FB00064D316 /* PathfinderService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8314E1C6A7FB00064D316 /* PathfinderService.cpp */; };
 		37B831531C6A8FB60064D316 /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B831511C6A8FB60064D316 /* Pathfinder.cpp */; };
+		37B831601C6BC5A30064D316 /* PathfinderDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8315E1C6BC5A30064D316 /* PathfinderDebug.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
 		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
@@ -211,6 +212,8 @@
 		37B8314F1C6A7FB00064D316 /* PathfinderService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PathfinderService.hpp; sourceTree = "<group>"; };
 		37B831511C6A8FB60064D316 /* Pathfinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pathfinder.cpp; path = Path/Pathfinder.cpp; sourceTree = "<group>"; };
 		37B831521C6A8FB60064D316 /* Pathfinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Pathfinder.hpp; path = Path/Pathfinder.hpp; sourceTree = "<group>"; };
+		37B8315E1C6BC5A30064D316 /* PathfinderDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathfinderDebug.cpp; path = Path/PathfinderDebug.cpp; sourceTree = "<group>"; };
+		37B8315F1C6BC5A30064D316 /* PathfinderDebug.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = PathfinderDebug.hpp; path = Path/PathfinderDebug.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		37E635DC1BF009B60081E59E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -351,6 +354,8 @@
 				37386D0B1C656566001A3110 /* RecastContext.hpp */,
 				37B831511C6A8FB60064D316 /* Pathfinder.cpp */,
 				37B831521C6A8FB60064D316 /* Pathfinder.hpp */,
+				37B8315E1C6BC5A30064D316 /* PathfinderDebug.cpp */,
+				37B8315F1C6BC5A30064D316 /* PathfinderDebug.hpp */,
 			);
 			name = Path;
 			sourceTree = "<group>";
@@ -636,6 +641,7 @@
 				377ECD901C18F834002040D7 /* PrototypeApplication.cpp in Sources */,
 				37386CEA1C62E19C001A3110 /* DebugDraw.cpp in Sources */,
 				37386CF81C62E19C001A3110 /* RecastContour.cpp in Sources */,
+				37B831601C6BC5A30064D316 /* PathfinderDebug.cpp in Sources */,
 				37386D0C1C656566001A3110 /* RecastContext.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
 				37386CF11C62E19C001A3110 /* DetourNode.cpp in Sources */,

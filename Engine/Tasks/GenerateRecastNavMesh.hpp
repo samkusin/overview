@@ -32,9 +32,19 @@ public:
     
     virtual const TaskClassId& classId() const override { return kUUID; }
     
-    RecastNavMesh acquireGeneratedMesh() {
-        return std::move(_navMesh);
-    }
+    enum
+    {
+        kOutputMesh             = 1,
+        kHeightfield            = 2,
+        kCompactHeightfield     = 4,
+        kContourSet             = 8,
+        kAllObjects             = kOutputMesh
+                                  + kHeightfield
+                                  + kCompactHeightfield
+                                  + kContourSet
+    };
+    
+    RecastNavMesh acquireGeneratedMesh(uint32_t options=kOutputMesh);
     
     
 protected:
@@ -67,8 +77,6 @@ private:
         kFinalizeStage
     }
     _stage;
-    
-    RecastNavMesh _navMesh;
 };
     
     }  /* namespace ove */

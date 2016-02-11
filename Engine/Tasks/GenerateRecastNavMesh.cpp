@@ -39,25 +39,25 @@ GenerateRecastNavMesh::GenerateRecastNavMesh
     
     //  TODO - configure?
     const float kAgentHeight = 2.0f;            // 2m - placeholder
-    const float kAgentRadius = 0.5f;           // radius of agent (cylinder)
-    const float kAgentMaxClimb = 0.75f;         // ledge height
+    const float kAgentRadius = 0.1f;            // radius of agent (cylinder)
+    const float kAgentMaxClimb = 0.5f;         // ledge height
     const float kWalkableSlopeAngle = 45.0f;    // walkable slope (for stairways)
     
     rcVcopy(_config.bmin, input.bmin);
     rcVcopy(_config.bmax, input.bmax);
-    _config.cs = 0.10f;
-    _config.ch = 0.50f;
+    _config.cs = 0.20f;
+    _config.ch = 0.025f;
     _config.walkableSlopeAngle = kWalkableSlopeAngle;
     _config.walkableHeight = (int)(ceilf(kAgentHeight / _config.ch));
     _config.walkableClimb = (int)(floorf(kAgentMaxClimb / _config.ch));
     _config.walkableRadius = (int)(ceilf(kAgentRadius / _config.cs));
-    _config.minRegionArea = (int)rcSqr(8);      // remove small areas (cells)
-    _config.mergeRegionArea = (int)rcSqr(20);   // merge small areas (cells) into larger when possible
+    _config.minRegionArea = (int)rcSqr(5);      // remove small areas (cells)
+    _config.mergeRegionArea = (int)rcSqr(10);   // merge small areas (cells) into larger when possible
     _config.detailSampleDist = _config.cs * 6.0f;
     _config.detailSampleMaxError = _config.ch * 1.0f;
     _config.maxEdgeLen = 12.0f/_config.cs;
     _config.maxSimplificationError = 1.0f;
-    _config.maxVertsPerPoly = 3;
+    _config.maxVertsPerPoly = 6;
     
     rcCalcGridSize(_config.bmin, _config.bmax, _config.cs,
         &_config.width, &_config.height);
@@ -252,14 +252,52 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
 
 void GenerateRecastNavMesh::onEnd()
 {
-    recast_poly_mesh_unique_ptr pmesh(_polymesh);
-    recast_detail_mesh_unique_ptr dmesh(_detailmesh);
-            
-    _navMesh = std::move(RecastNavMesh(std::move(pmesh), std::move(dmesh)));
-    _polymesh = nullptr;
-    _detailmesh = nullptr;
-    
     Task::onEnd();
+}
+
+RecastNavMesh GenerateRecastNavMesh::acquireGeneratedMesh(uint32_t options)
+{
+    RecastNavMesh navMesh;
+    
+    recast_poly_mesh_unique_ptr pmesh;
+    recast_detail_mesh_unique_ptr dmesh;
+    recast_heighfield_unique_ptr hf;
+    recast_compact_heightfield_unique_ptr chf;
+    recast_contour_set_unique_ptr cset;
+    
+    if ((options & kOutputMesh) != 0) {
+        pmesh = recast_poly_mesh_unique_ptr(_polymesh);
+        dmesh = recast_detail_mesh_unique_ptr(_detailmesh);
+        _polymesh = nullptr;
+        _detailmesh = nullptr;
+    }
+    if ((options & kHeightfield) != 0) {
+        hf = recast_heighfield_unique_ptr(_solid);
+        _solid = nullptr;
+    }
+    if ((options & kCompactHeightfield) != 0) {
+        chf = recast_compact_heightfield_unique_ptr(_chf);
+        _chf = nullptr;
+    }
+    if ((options & kContourSet) != 0) {
+        cset = recast_contour_set_unique_ptr(_cset);
+        _cset = nullptr;
+    }
+    
+    if (options == kOutputMesh) {
+        navMesh = std::move(RecastNavMesh(std::move(pmesh), std::move(dmesh)));
+    }
+    else {
+        navMesh = std::move(RecastNavMesh(
+            std::move(hf),
+            std::move(chf),
+            std::move(cset),
+            std::move(pmesh),
+            std::move(dmesh)
+        ));
+    }
+    
+    return navMesh;
 }
 
     }

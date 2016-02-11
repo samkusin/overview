@@ -38,6 +38,7 @@ struct ApplicationContext
     ove::RenderGraph* renderGraph;
     ove::RenderContext* renderContext;
     ove::Pathfinder* pathfinder;
+    ove::PathfinderDebug* pathfinderDebug;
 };
 
 class AppViewController : public ove::ViewController

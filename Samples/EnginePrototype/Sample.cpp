@@ -53,7 +53,9 @@ enum
     kShaderProgramBoneMesh      = 0x00000002,
     kShaderProgramBoneColorMesh = 0x00000003,
     kShaderProgramFlat          = 0x00000004,
-    kShaderProgramColorMesh     = 0x00000005
+    kShaderProgramColorMesh     = 0x00000005,
+    kShaderProgramColor         = 0x00000006,
+    kShaderProgramDiffuse       = 0x00000007
 };
 
 int runSample(int viewWidth, int viewHeight)
@@ -103,6 +105,16 @@ int runSample(int viewWidth, int viewHeight)
                     cinek::gfx::kNodeProgramMeshColor, kShaderProgramColorMesh,
                     "bin/vs_std_flat.bin",
                     "bin/fs_std_col.bin"
+                },
+                {
+                    cinek::gfx::kNodeProgramColor, kShaderProgramColor,
+                    "bin/vs_basic_col.bin",
+                    "bin/fs_flat_col.bin"
+                },
+                {
+                    cinek::gfx::kNodeProgramDiffuse, kShaderProgramDiffuse,
+                    "bin/vs_basic_uv.bin",
+                    "bin/fs_flat_tex.bin"
                 }
             });
 

@@ -141,7 +141,7 @@ void SceneDebugDrawer::flushLines()
         
         bgfx::setUniform((*_uniforms)[gfx::kNodeUniformColor], color);
 
-        bgfx::setViewTransform(0, _camera->viewMtx, _camera->projMtx);
+        bgfx::setViewTransform(_camera->viewIndex, _camera->viewMtx, _camera->projMtx);
         bgfx::setTransform(mainTransform);
         bgfx::setVertexBuffer(&linesTVB, 0, (uint32_t)_lineBuffer.size() * 2);
         bgfx::setIndexBuffer(&linesTIB, 0, (uint32_t)_lineBuffer.size() * 2);
@@ -154,7 +154,7 @@ void SceneDebugDrawer::flushLines()
           | BGFX_STATE_MSAA
         );
         
-        bgfx::submit(0, (*_programs)[gfx::kNodeProgramFlat]);
+        bgfx::submit(_camera->viewIndex, (*_programs)[gfx::kNodeProgramFlat]);
     }
     
     _lineBuffer.clear();

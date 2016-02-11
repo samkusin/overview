@@ -87,6 +87,19 @@ namespace VertexTypes
             .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
             .end();
         
+        //  kVPositionColor
+        s_decls[kVPositionColor].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+        
+        //  kVPositionColorTex0
+        s_decls[kVPositionColorTex0].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+            .end();
+        
         //  allow custom presets starting at the preset limit index
         for (int i = kPresetCount; i < kFormatLimit; ++i)
         {

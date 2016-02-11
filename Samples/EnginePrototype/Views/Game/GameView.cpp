@@ -86,7 +86,7 @@ void GameView::onViewStartFrame(ove::ViewStack& stateController)
 }
 
 void GameView::simulateView(ove::ViewStack& stateController, double dt)
-{
+{    
     _viewStack.simulate(dt);
 }
 
@@ -120,6 +120,8 @@ void GameView::frameUpdateView
         { pos.x, pos.y, pos.z }, 0.1f, false);
     
     sceneService().renderDebugEnd();
+    
+    pathfinderService().renderDebug(renderService(), _camera);
     
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);

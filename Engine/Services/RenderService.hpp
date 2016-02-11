@@ -45,6 +45,7 @@ public:
     
 private:
     friend class SceneService;
+    friend class PathfinderService;
     
     const RenderContext& renderContext() const { return *_context; }
     

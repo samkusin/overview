@@ -58,9 +58,12 @@ public:
     
 private:
     gfx::Context* _gfxContext;
-    TaskScheduler _taskScheduler;
     
-    ove::ViewStack _viewStack;
+    //  important - Application context must be destroyed after all objects
+    //  below are destroyed.
+    unique_ptr<ApplicationContext> _appContext;
+    
+    TaskScheduler _taskScheduler;
     
     ckmsg::Messenger _messenger;
     ove::MessageServer _server;
@@ -72,8 +75,6 @@ private:
     gfx::NodeRenderer::ProgramMap _renderPrograms;
     gfx::NodeRenderer::UniformMap _renderUniforms;
     
-    unique_ptr<ApplicationContext> _appContext;
-    
     unique_ptr<ove::RenderGraph> _renderGraph;
     
     unique_ptr<ove::SceneDataContext> _sceneData;
@@ -81,6 +82,7 @@ private:
     unique_ptr<ove::Scene> _scene;
     
     unique_ptr<ove::Pathfinder> _pathfinder;
+    unique_ptr<ove::PathfinderDebug> _pathfinderDebug;
     
     unique_ptr<GameEntityFactory> _componentFactory;
     unique_ptr<ove::EntityDatabase> _entityDb;
@@ -88,6 +90,8 @@ private:
     gfx::NodeRenderer _renderer;
     ove::RenderContext _renderContext;
     NVGcontext* _nvg;
+    
+    ove::ViewStack _viewStack;
 };
     
 }
