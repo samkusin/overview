@@ -9,7 +9,7 @@
 #ifndef Overview_Pathfinder_hpp
 #define Overview_Pathfinder_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "PathTypes.hpp"
 
 #include <cinek/allocator.hpp>
 #include <functional>

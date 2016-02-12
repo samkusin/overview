@@ -37,7 +37,7 @@
 		37386CFE1C62E19C001A3110 /* RecastMeshDetail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386CE71C62E19C001A3110 /* RecastMeshDetail.cpp */; };
 		37386CFF1C62E19C001A3110 /* RecastRasterization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386CE81C62E19C001A3110 /* RecastRasterization.cpp */; };
 		37386D001C62E19C001A3110 /* RecastRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386CE91C62E19C001A3110 /* RecastRegion.cpp */; };
-		37386D041C641099001A3110 /* GenerateRecastNavMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386D021C641099001A3110 /* GenerateRecastNavMesh.cpp */; };
+		37386D041C641099001A3110 /* GenerateRecastMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386D021C641099001A3110 /* GenerateRecastMesh.cpp */; };
 		37386D0C1C656566001A3110 /* RecastContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386D0A1C656566001A3110 /* RecastContext.cpp */; };
 		37386D1B1C6571A7001A3110 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386D0D1C6571A7001A3110 /* Scene.cpp */; };
 		37386D1C1C6571A7001A3110 /* SceneDataContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37386D0F1C6571A7001A3110 /* SceneDataContext.cpp */; };
@@ -66,6 +66,9 @@
 		37B831501C6A7FB00064D316 /* PathfinderService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8314E1C6A7FB00064D316 /* PathfinderService.cpp */; };
 		37B831531C6A8FB60064D316 /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B831511C6A8FB60064D316 /* Pathfinder.cpp */; };
 		37B831601C6BC5A30064D316 /* PathfinderDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8315E1C6BC5A30064D316 /* PathfinderDebug.cpp */; };
+		37B8319E1C6D3BB70064D316 /* RecastMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B8319C1C6D3BB70064D316 /* RecastMesh.cpp */; };
+		37B831A21C6D51D90064D316 /* NavMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B831A01C6D51D90064D316 /* NavMesh.cpp */; };
+		37B831A51C6D62BE0064D316 /* GenerateNavMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B831A31C6D62BE0064D316 /* GenerateNavMesh.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
 		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
@@ -155,8 +158,8 @@
 		37386CE81C62E19C001A3110 /* RecastRasterization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecastRasterization.cpp; path = Contrib/Recast/RecastRasterization.cpp; sourceTree = "<group>"; };
 		37386CE91C62E19C001A3110 /* RecastRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecastRegion.cpp; path = Contrib/Recast/RecastRegion.cpp; sourceTree = "<group>"; };
 		37386D011C62E1CA001A3110 /* License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = License.txt; path = Contrib/Recast/License.txt; sourceTree = "<group>"; };
-		37386D021C641099001A3110 /* GenerateRecastNavMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenerateRecastNavMesh.cpp; path = Tasks/GenerateRecastNavMesh.cpp; sourceTree = "<group>"; };
-		37386D031C641099001A3110 /* GenerateRecastNavMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GenerateRecastNavMesh.hpp; path = Tasks/GenerateRecastNavMesh.hpp; sourceTree = "<group>"; };
+		37386D021C641099001A3110 /* GenerateRecastMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenerateRecastMesh.cpp; path = Tasks/GenerateRecastMesh.cpp; sourceTree = "<group>"; };
+		37386D031C641099001A3110 /* GenerateRecastMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GenerateRecastMesh.hpp; path = Tasks/GenerateRecastMesh.hpp; sourceTree = "<group>"; };
 		37386D0A1C656566001A3110 /* RecastContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecastContext.cpp; path = Path/RecastContext.cpp; sourceTree = "<group>"; };
 		37386D0B1C656566001A3110 /* RecastContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RecastContext.hpp; path = Path/RecastContext.hpp; sourceTree = "<group>"; };
 		37386D0D1C6571A7001A3110 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = Physics/Scene.cpp; sourceTree = "<group>"; };
@@ -214,6 +217,13 @@
 		37B831521C6A8FB60064D316 /* Pathfinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Pathfinder.hpp; path = Path/Pathfinder.hpp; sourceTree = "<group>"; };
 		37B8315E1C6BC5A30064D316 /* PathfinderDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathfinderDebug.cpp; path = Path/PathfinderDebug.cpp; sourceTree = "<group>"; };
 		37B8315F1C6BC5A30064D316 /* PathfinderDebug.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = PathfinderDebug.hpp; path = Path/PathfinderDebug.hpp; sourceTree = "<group>"; };
+		37B8319C1C6D3BB70064D316 /* RecastMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecastMesh.cpp; path = Path/RecastMesh.cpp; sourceTree = "<group>"; };
+		37B8319D1C6D3BB70064D316 /* RecastMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RecastMesh.hpp; path = Path/RecastMesh.hpp; sourceTree = "<group>"; };
+		37B8319F1C6D3E860064D316 /* PathTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = PathTypes.hpp; path = Path/PathTypes.hpp; sourceTree = "<group>"; };
+		37B831A01C6D51D90064D316 /* NavMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NavMesh.cpp; path = Path/NavMesh.cpp; sourceTree = "<group>"; };
+		37B831A11C6D51D90064D316 /* NavMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NavMesh.hpp; path = Path/NavMesh.hpp; sourceTree = "<group>"; };
+		37B831A31C6D62BE0064D316 /* GenerateNavMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenerateNavMesh.cpp; path = Tasks/GenerateNavMesh.cpp; sourceTree = "<group>"; };
+		37B831A41C6D62BE0064D316 /* GenerateNavMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GenerateNavMesh.hpp; path = Tasks/GenerateNavMesh.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		37E635DC1BF009B60081E59E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -350,12 +360,17 @@
 		37386D091C65655B001A3110 /* Path */ = {
 			isa = PBXGroup;
 			children = (
-				37386D0A1C656566001A3110 /* RecastContext.cpp */,
-				37386D0B1C656566001A3110 /* RecastContext.hpp */,
+				37B8319F1C6D3E860064D316 /* PathTypes.hpp */,
 				37B831511C6A8FB60064D316 /* Pathfinder.cpp */,
 				37B831521C6A8FB60064D316 /* Pathfinder.hpp */,
 				37B8315E1C6BC5A30064D316 /* PathfinderDebug.cpp */,
 				37B8315F1C6BC5A30064D316 /* PathfinderDebug.hpp */,
+				37386D0A1C656566001A3110 /* RecastContext.cpp */,
+				37386D0B1C656566001A3110 /* RecastContext.hpp */,
+				37B8319C1C6D3BB70064D316 /* RecastMesh.cpp */,
+				37B8319D1C6D3BB70064D316 /* RecastMesh.hpp */,
+				37B831A01C6D51D90064D316 /* NavMesh.cpp */,
+				37B831A11C6D51D90064D316 /* NavMesh.hpp */,
 			);
 			name = Path;
 			sourceTree = "<group>";
@@ -412,8 +427,10 @@
 				377ECCE71C0CEB3A002040D7 /* LoadTextureAsset.cpp */,
 				377ECCEB1C0CFA55002040D7 /* LoadFile.hpp */,
 				377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */,
-				37386D031C641099001A3110 /* GenerateRecastNavMesh.hpp */,
-				37386D021C641099001A3110 /* GenerateRecastNavMesh.cpp */,
+				37386D031C641099001A3110 /* GenerateRecastMesh.hpp */,
+				37386D021C641099001A3110 /* GenerateRecastMesh.cpp */,
+				37B831A41C6D62BE0064D316 /* GenerateNavMesh.hpp */,
+				37B831A31C6D62BE0064D316 /* GenerateNavMesh.cpp */,
 			);
 			name = Tasks;
 			sourceTree = "<group>";
@@ -644,13 +661,14 @@
 				37B831601C6BC5A30064D316 /* PathfinderDebug.cpp in Sources */,
 				37386D0C1C656566001A3110 /* RecastContext.cpp in Sources */,
 				37E637F51BF2753F0081E59E /* EngineMath.cpp in Sources */,
+				37B8319E1C6D3BB70064D316 /* RecastMesh.cpp in Sources */,
 				37386CF11C62E19C001A3110 /* DetourNode.cpp in Sources */,
 				28F11E5F1C3B5D4100860E5D /* RenderService.cpp in Sources */,
 				37386CEB1C62E19C001A3110 /* DetourAlloc.cpp in Sources */,
 				37386D001C62E19C001A3110 /* RecastRegion.cpp in Sources */,
 				37386CED1C62E19C001A3110 /* DetourDebugDraw.cpp in Sources */,
 				37386D1C1C6571A7001A3110 /* SceneDataContext.cpp in Sources */,
-				37386D041C641099001A3110 /* GenerateRecastNavMesh.cpp in Sources */,
+				37386D041C641099001A3110 /* GenerateRecastMesh.cpp in Sources */,
 				37386D201C6571A7001A3110 /* SceneObjectJsonLoader.cpp in Sources */,
 				37386CF21C62E19C001A3110 /* DetourTileCache.cpp in Sources */,
 				37386CEC1C62E19C001A3110 /* DetourCommon.cpp in Sources */,
@@ -667,6 +685,7 @@
 				289A4E0D1C49B3F500367E3B /* GameViewContext.cpp in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,
 				37386D3D1C698064001A3110 /* LoadSceneView.cpp in Sources */,
+				37B831A21C6D51D90064D316 /* NavMesh.cpp in Sources */,
 				37B831501C6A7FB00064D316 /* PathfinderService.cpp in Sources */,
 				37386CFD1C62E19C001A3110 /* RecastMesh.cpp in Sources */,
 				37386CEE1C62E19C001A3110 /* DetourNavMesh.cpp in Sources */,
@@ -680,6 +699,7 @@
 				289A4E141C49D8FA00367E3B /* EditorMain.cpp in Sources */,
 				37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */,
 				37386CFA1C62E19C001A3110 /* RecastDump.cpp in Sources */,
+				37B831A51C6D62BE0064D316 /* GenerateNavMesh.cpp in Sources */,
 				37386CFC1C62E19C001A3110 /* RecastLayers.cpp in Sources */,
 				37386CF61C62E19C001A3110 /* RecastAlloc.cpp in Sources */,
 				37E637E31BF119EA0081E59E /* EngineMathGfx.cpp in Sources */,

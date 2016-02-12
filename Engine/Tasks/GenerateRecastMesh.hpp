@@ -1,34 +1,36 @@
 //
-//  GenerateRecastNavMesh.hpp
+//  GenerateRecastMesh.hpp
 //  EnginePrototype
 //
 //  Created by Samir Sinha on 2/4/16.
 //
 //
 
-#ifndef Overview_Task_GenerateRecastNavMesh_hpp
-#define Overview_Task_GenerateRecastNavMesh_hpp
+#ifndef Overview_Task_GenerateRecastMesh_hpp
+#define Overview_Task_GenerateRecastMesh_hpp
 
-
-#include <cinek/task.hpp>
 
 #include "Engine/Physics/SceneTypes.hpp"
 #include "Engine/Path/RecastContext.hpp"
+#include "Engine/Path/RecastMesh.hpp"
 #include "Engine/Contrib/Recast/Recast.h"
+
+#include <cinek/task.hpp>
+
 
 #include <vector>
 
 namespace cinek {
     namespace ove {
 
-class GenerateRecastNavMesh : public Task
+class GenerateRecastMesh : public Task
 {
 public:
     static const UUID kUUID;
     
-    GenerateRecastNavMesh(RecastNavMeshInput input);
+    GenerateRecastMesh(const RecastMeshConfig& config, RecastMeshInput input);
     
-    virtual ~GenerateRecastNavMesh();
+    virtual ~GenerateRecastMesh();
     
     virtual const TaskClassId& classId() const override { return kUUID; }
     
@@ -44,12 +46,11 @@ public:
                                   + kContourSet
     };
     
-    RecastNavMesh acquireGeneratedMesh(uint32_t options=kOutputMesh);
+    RecastMesh acquireGeneratedMesh(uint32_t options=kOutputMesh);
     
     
 protected:
     virtual void onUpdate(uint32_t deltaTimeMs) override;
-    virtual void onEnd() override;
     
 private:
     std::vector<float> _vertexData;
@@ -74,6 +75,7 @@ private:
         kFilterStage,
         kPartitionStage,
         kContourStage,
+        kMeshStage,
         kFinalizeStage
     }
     _stage;
@@ -83,4 +85,4 @@ private:
 }  /* namespace cinek */
 
 
-#endif /* Overview_Task_GenerateRecastNavMesh_hpp */
+#endif /* Overview_Task_GenerateRecastMesh_hpp */

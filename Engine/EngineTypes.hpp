@@ -33,8 +33,8 @@ namespace cinek {
         class SceneDebugDrawer;
         struct SceneObjectJsonLoader;
         
-        struct PathfinderDebug;
         class Pathfinder;
+        struct PathfinderDebug;
         
         class AssetService;
         class EntityService;

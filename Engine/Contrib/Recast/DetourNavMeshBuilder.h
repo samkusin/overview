@@ -110,7 +110,7 @@ struct dtNavMeshCreateParams
 ///  @param[out]	outData		The resulting tile data.
 ///  @param[out]	outDataSize	The size of the tile data array.
 /// @return True if the tile data was successfully created.
-bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize);
+bool dtCreateNavMeshData(const dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize);
 
 /// Swaps the endianess of the tile data's header (#dtMeshHeader).
 ///  @param[in,out]	data		The tile data array.

@@ -251,7 +251,7 @@ static unsigned char classifyOffMeshPoint(const float* pt, const float* bmin, co
 /// mesh.
 ///
 /// @see dtNavMesh, dtNavMesh::addTile()
-bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize)
+bool dtCreateNavMeshData(const dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize)
 {
 	if (params->nvp > DT_VERTS_PER_POLYGON)
 		return false;

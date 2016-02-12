@@ -8,8 +8,11 @@
 
 #include "Pathfinder.hpp"
 #include "PathfinderDebug.hpp"
+#include "RecastMesh.hpp"
+#include "NavMesh.hpp"
 
-#include "Engine/Tasks/GenerateRecastNavMesh.hpp"
+#include "Engine/Tasks/GenerateRecastMesh.hpp"
+#include "Engine/Tasks/GenerateNavMesh.hpp"
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneFixedBodyHull.hpp"
 #include "Engine/Physics/SceneMotionState.hpp"
@@ -19,11 +22,11 @@
 namespace cinek {
     namespace ove {
     
-void pathfinderAddHullToRecastNavMeshInput
+void pathfinderAddHullToRecastMeshInput
 (
     const SceneFixedBodyHull& hull,
     const btTransform& transform,
-    RecastNavMeshInput& output
+    RecastMeshInput& output
 )
 {
 
@@ -97,8 +100,11 @@ class Pathfinder::Impl
         }
         _generateTaskId = kNullHandle;
     }
-    
-    RecastNavMesh _navigationMesh;
+
+
+    RecastMeshConfig _navMeshConfig;
+    RecastMesh _recastMesh;
+    NavMesh _navMesh;
     
 public:
     Impl() :
@@ -117,7 +123,7 @@ public:
         GenerateCb callback
     )
     {
-        RecastNavMeshInput meshInput;
+       RecastMeshInput meshInput;
      
         if (_generateTaskId) {
             _scheduler.cancel(_generateTaskId);
@@ -146,16 +152,39 @@ public:
                 if (hull) {
                     btTransform worldTransform;
                     body->motionState->getWorldTransform(worldTransform);
-                    pathfinderAddHullToRecastNavMeshInput(*hull, worldTransform, meshInput);
+                    pathfinderAddHullToRecastMeshInput(*hull, worldTransform, meshInput);
                 }
             });
+        
+        _navMeshConfig.cellSize = 0.20f;
+        _navMeshConfig.cellHeight = 0.025f;
+        _navMeshConfig.walkableClimb = 0.5f;
+        _navMeshConfig.walkableRadius = 0.1f;
+        _navMeshConfig.walkableHeight = 2.0f;
   
-        auto task = allocate_unique<GenerateRecastNavMesh>(std::move(meshInput));
+        auto task = allocate_unique<GenerateRecastMesh>(_navMeshConfig, std::move(meshInput));
         task->setCallback([this](Task::State endState, Task& task, void*) {
             if (endState == Task::State::kEnded) {
-                auto& thisTask = reinterpret_cast<GenerateRecastNavMesh&>(task);
-                _navigationMesh = thisTask.acquireGeneratedMesh(GenerateRecastNavMesh::kOutputMesh);
-                signalGenerateComplete(true);
+                auto& thisTask = reinterpret_cast<GenerateRecastMesh&>(task);
+                _recastMesh = thisTask.acquireGeneratedMesh(GenerateRecastMesh::kOutputMesh);
+                
+                auto nexttask = allocate_unique<GenerateNavMesh>(
+                    _navMeshConfig,
+                    _recastMesh.acquirePolyMesh(),
+                    _recastMesh.acquireDetailMesh());
+                
+                nexttask->setCallback([this](Task::State endState, Task& task, void*) {
+                    if (endState == Task::State::kEnded) {
+                        auto& thisTask = reinterpret_cast<GenerateNavMesh&>(task);
+                        _navMesh = thisTask.acquireGeneratedMesh();
+                    }
+                    signalGenerateComplete(endState == Task::State::kEnded);
+                });
+                
+                task.setNextTask(std::move(nexttask));
+            }
+            else {
+                signalGenerateComplete(endState == Task::State::kEnded);
             }
         });
         
@@ -170,7 +199,7 @@ public:
     
     void updateDebug(PathfinderDebug& debugger)
     {
-        _navigationMesh.debugDraw(debugger);
+        _navMesh.debugDraw(debugger);
     }
 };
 

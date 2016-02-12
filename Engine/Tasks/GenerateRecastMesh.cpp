@@ -1,12 +1,12 @@
 //
-//  GenerateRecastNavMesh.cpp
+//  GenerateRecastMesh.cpp
 //  EnginePrototype
 //
 //  Created by Samir Sinha on 2/4/16.
 //
 //
 
-#include "GenerateRecastNavMesh.hpp"
+#include "GenerateRecastMesh.hpp"
 #include "Engine/Physics/SceneFixedBodyHull.hpp"
 #include "Engine/Debug.hpp"
 
@@ -15,14 +15,15 @@
 namespace cinek {
     namespace ove {
     
-const UUID GenerateRecastNavMesh::kUUID = {
+const UUID GenerateRecastMesh::kUUID = {
     0xd6, 0xc2, 0x79, 0x8c, 0x4e, 0x66, 0x47, 0x9e,
     0x9c, 0xb0, 0x94, 0x9d, 0x42, 0x5b, 0xeb, 0x35
 };
 
-GenerateRecastNavMesh::GenerateRecastNavMesh
+GenerateRecastMesh::GenerateRecastMesh
 (
-    RecastNavMeshInput input
+    const RecastMeshConfig& config,
+    RecastMeshInput input
 ) :
     Task(),     // callback defined in our constructor body
     _vertexData(std::move(input.vertexData)),
@@ -38,19 +39,16 @@ GenerateRecastNavMesh::GenerateRecastNavMesh
     CK_ASSERT_RETURN((_indexData.size() % 3) == 0);
     
     //  TODO - configure?
-    const float kAgentHeight = 2.0f;            // 2m - placeholder
-    const float kAgentRadius = 0.1f;            // radius of agent (cylinder)
-    const float kAgentMaxClimb = 0.5f;         // ledge height
     const float kWalkableSlopeAngle = 45.0f;    // walkable slope (for stairways)
     
     rcVcopy(_config.bmin, input.bmin);
     rcVcopy(_config.bmax, input.bmax);
-    _config.cs = 0.20f;
-    _config.ch = 0.025f;
+    _config.cs = config.cellSize;
+    _config.ch = config.cellHeight;
     _config.walkableSlopeAngle = kWalkableSlopeAngle;
-    _config.walkableHeight = (int)(ceilf(kAgentHeight / _config.ch));
-    _config.walkableClimb = (int)(floorf(kAgentMaxClimb / _config.ch));
-    _config.walkableRadius = (int)(ceilf(kAgentRadius / _config.cs));
+    _config.walkableHeight = (int)(ceilf(config.walkableHeight / _config.ch));
+    _config.walkableClimb = (int)(floorf(config.walkableClimb / _config.ch));
+    _config.walkableRadius = (int)(ceilf(config.walkableRadius / _config.cs));
     _config.minRegionArea = (int)rcSqr(5);      // remove small areas (cells)
     _config.mergeRegionArea = (int)rcSqr(10);   // merge small areas (cells) into larger when possible
     _config.detailSampleDist = _config.cs * 6.0f;
@@ -67,7 +65,7 @@ GenerateRecastNavMesh::GenerateRecastNavMesh
     _stage = kRasterizeStage;
 }
 
-GenerateRecastNavMesh::~GenerateRecastNavMesh()
+GenerateRecastMesh::~GenerateRecastMesh()
 {
     if (_detailmesh) {
         rcFreePolyMeshDetail(_detailmesh);
@@ -91,7 +89,7 @@ GenerateRecastNavMesh::~GenerateRecastNavMesh()
     }
 }
 
-void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
+void GenerateRecastMesh::onUpdate(uint32_t deltaTimeMs)
 {
     const float* vertices = _vertexData.data();
     const int* triangles = _indexData.data();
@@ -103,7 +101,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
         case kRasterizeStage: {
             //  rasterization step - constructs voxel map
             if (!_config.width || !_config.height || _triareas.size() != numTris) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - setup failed.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - setup failed.\n");
                 fail();
                 return;
             }
@@ -112,7 +110,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
             //  stage
             _solid = rcAllocHeightfield();
             if (!_solid) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to allocate solid.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to allocate solid.\n");
                 fail();
                 return;
             }
@@ -122,7 +120,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                     _config.bmin, _config.bmax,
                     _config.cs, _config.ch)) {
                 
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to create height field.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to create height field.\n");
                 fail();
                 return;
             }
@@ -137,7 +135,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                     triangles, _triareas.data(), numTris,
                     *_solid, _config.walkableClimb)) {
                 
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - rcRasterizeTriangles failed.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - rcRasterizeTriangles failed.\n");
                 fail();
                 return;
             }
@@ -159,7 +157,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
         case kPartitionStage: {
             _chf = rcAllocCompactHeightfield();
             if (!_chf) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to allocate compact heightfield.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to allocate compact heightfield.\n");
                 fail();
                 return;
             }
@@ -167,23 +165,23 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                 _config.walkableHeight, _config.walkableClimb,
                 *_solid, *_chf)) {
             
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build compact heightfield.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to build compact heightfield.\n");
                 fail();
                 return;
             }
             if (!rcErodeWalkableArea(&_context, _config.walkableRadius, *_chf)) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to erode walkable area.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to erode walkable area.\n");
                 fail();
                 return;
             }
             //  using watershed method until we find a use for other methods
             if (!rcBuildDistanceField(&_context, *_chf)) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build distance field.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to build distance field.\n");
                 fail();
                 return;
             }
             if (!rcBuildRegions(&_context, *_chf, 0, _config.minRegionArea, _config.mergeRegionArea)) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build regions.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to build regions.\n");
                 fail();
                 return;
             }
@@ -195,7 +193,7 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
         case kContourStage: {
             _cset = rcAllocContourSet();
             if (!_cset) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to allocate contour set.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to allocate contour set.\n");
                 fail();
                 return;
             }
@@ -203,29 +201,29 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                 _config.maxSimplificationError, _config.maxEdgeLen,
                 *_cset)) {
             
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build contour set.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to build contour set.\n");
                 fail();
                 return;
             }
-            _stage = kFinalizeStage;
+            _stage = kMeshStage;
         }
         break;
         
-        case kFinalizeStage: {
+        case kMeshStage: {
             _polymesh = rcAllocPolyMesh();
             if (!_polymesh) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to allocate poly mesh.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to allocate poly mesh.\n");
                 fail();
                 return;
             }
             if (!rcBuildPolyMesh(&_context, *_cset, _config.maxVertsPerPoly, *_polymesh)) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build poly mesh.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to build poly mesh.\n");
                 fail();
                 return;
             }
             _detailmesh = rcAllocPolyMeshDetail();
             if (!_detailmesh) {
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to allocate poly detail mesh.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to allocate poly detail mesh.\n");
                 fail();
                 return;
             }
@@ -234,30 +232,31 @@ void GenerateRecastNavMesh::onUpdate(uint32_t deltaTimeMs)
                  _config.detailSampleDist, _config.detailSampleMaxError,
                  *_detailmesh)) {
                 
-                OVENGINE_LOG_ERROR("GenerateRecastNavMesh - failed to build poly detail mesh.\n");
+                OVENGINE_LOG_ERROR("GenerateRecastMesh - failed to build poly detail mesh.\n");
                 fail();
                 return;
             }
             
-            end();
+            _stage = kFinalizeStage;
         }
         break;
         
+    case kFinalizeStage:
+        end();
+        break;
+        
     default:
-        OVENGINE_LOG_ERROR("GenerateRecastNavMesh - invalid stage %d", _stage);
+        OVENGINE_LOG_ERROR("GenerateRecastMesh - invalid stage %d", _stage);
         fail();
         break;
     }
 }
 
-void GenerateRecastNavMesh::onEnd()
+RecastMesh GenerateRecastMesh::acquireGeneratedMesh(uint32_t options)
 {
-    Task::onEnd();
-}
-
-RecastNavMesh GenerateRecastNavMesh::acquireGeneratedMesh(uint32_t options)
-{
-    RecastNavMesh navMesh;
+    RecastMesh navMesh;
+ 
+    CK_ASSERT(_stage == kFinalizeStage);
     
     recast_poly_mesh_unique_ptr pmesh;
     recast_detail_mesh_unique_ptr dmesh;
@@ -285,10 +284,10 @@ RecastNavMesh GenerateRecastNavMesh::acquireGeneratedMesh(uint32_t options)
     }
     
     if (options == kOutputMesh) {
-        navMesh = std::move(RecastNavMesh(std::move(pmesh), std::move(dmesh)));
+        navMesh = std::move(RecastMesh(std::move(pmesh), std::move(dmesh)));
     }
     else {
-        navMesh = std::move(RecastNavMesh(
+        navMesh = std::move(RecastMesh(
             std::move(hf),
             std::move(chf),
             std::move(cset),
