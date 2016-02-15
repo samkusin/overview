@@ -35,6 +35,8 @@ struct SceneBody
     }
 
     const SceneFixedBodyHull* getFixedHull() const;
+    
+    void setPosition(const btVector3& pos, btVector3 up);
 
 public:
     btCollisionObject* btBody = nullptr;

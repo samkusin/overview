@@ -152,7 +152,7 @@ static void renderListbox
                     if (data.type == DataObject::Type::string) {
                         //float width = nvgTextBounds(nvg, 0, 0, data.data.str, nullptr, nullptr);
                         
-                        if (cellHeight < ckm::epsilon<float>()) {
+                        if (cellHeight < ckm::kEpsilon) {
                             nvgTextMetrics(nvg, NULL, NULL, &cellHeight);
                         }
                         

@@ -146,7 +146,7 @@ NodeRenderer::NodeRenderer()
     _transformStack.reserve(32);
     _armatureStack.reserve(4);
     
-    Vector4 zero = ckm::zero<Vector4>();
+    Vector4 zero = Vector4::kZero;
     _lightColors.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
     _lightParams.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
     _lightDirs.resize(CKGFX_SHADERS_LIGHT_COUNT, zero);
@@ -484,7 +484,7 @@ void NodeRenderer::setupLightUniforms
         _lightOrigins.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
         
         Vector4 color;
-        _lightColors.emplace_back(color.fromABGR(l->color));
+        _lightColors.emplace_back(fromABGR(l->color));
         _lightParams.emplace_back(l->ambientComp, l->diffuseComp, 0.0f, 0.0f);
     
         if (l->type == LightType::kDirectional) {
@@ -519,7 +519,7 @@ void NodeRenderer::setupLightUniforms
         }
         
         Vector4 color;
-        _lightColors.emplace_back(color.fromABGR(l->color));
+        _lightColors.emplace_back(fromABGR(l->color));
         _lightParams.emplace_back(l->ambientComp, l->diffuseComp, dist, span);
     
         if (l->type == LightType::kSpot) {

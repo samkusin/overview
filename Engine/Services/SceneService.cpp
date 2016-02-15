@@ -9,7 +9,7 @@
 #include "SceneService.hpp"
 #include "RenderService.hpp"
 #include "Engine/Physics/Scene.hpp"
-#include "Engine/Physics/SceneMotionState.hpp"
+
 #include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/SceneJsonLoader.hpp"
@@ -20,7 +20,7 @@
 
 #include <cinek/taskscheduler.hpp>
 #include <ckmsg/client.hpp>
-#include <cmath>
+
 
 namespace cinek {
     namespace ove {
@@ -101,41 +101,8 @@ void SceneService::setEntityPosition
 {
     SceneBody* body = _context.scene->findBody(entity);
     CK_ASSERT_RETURN(body);
-    CK_ASSERT(body->btBody->isStaticOrKinematicObject());
     
-    if (up.isZero()) {
-        up.setValue(0,1,0);
-    }
-    
-    btVector3 forward(0,0,1);
-    
-    //  determine forward vector based on our world up direction
-    btScalar dirdot = std::abs(forward.dot(up));
-    if (dirdot > btScalar(0.90)) {
-        if (up.y() >=btScalar(0)) {
-            forward = btVector3(0,-1,0);
-        }
-        else {
-            forward = btVector3(0,1,0);
-        }
-    }
-
-    btVector3 side = btCross(forward, up);
-    side.normalize();
-    
-    forward = btCross(up, side);
-    forward.normalize();
-    
-    btTransform transform;
-    transform.getBasis().setValue(side.x(), side.y(), side.z(),
-                                  up.x(), up.y(), up.z(),
-                                  -forward.x(), -forward.y(), -forward.z());
-    transform.setOrigin(pos);
-    
-    body->btBody->setWorldTransform(transform);
-    if (body->motionState) {
-        body->motionState->setWorldTransform(transform);
-    }
+    body->setPosition(pos, up);
 }
 
 void SceneService::renderDebugAddRayTestHit

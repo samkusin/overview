@@ -681,7 +681,7 @@ Light loadLightFromJSON(Context& context, const JsonValue& root)
     color.r *= intensity;
     color.g *= intensity;
     color.b *= intensity;
-    light.color = color.toABGR();
+    light.color = toABGR(color);
     
     if (light.type == LightType::kPoint || light.type == LightType::kSpot) {
         light.distance = (float)root["distance"].GetDouble();

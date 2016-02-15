@@ -41,6 +41,7 @@
 		37B831991C6C081F0064D316 /* fs_flat_tex.fs in Sources */ = {isa = PBXBuildFile; fileRef = 37B831961C6C07DC0064D316 /* fs_flat_tex.fs */; };
 		37B8319A1C6C081F0064D316 /* vs_basic_col.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37B831971C6C07DC0064D316 /* vs_basic_col.vs */; };
 		37B8319B1C6C081F0064D316 /* vs_basic_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37B831981C6C07DC0064D316 /* vs_basic_uv.vs */; };
+		37B831AA1C727B510064D316 /* MathDecls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B831A91C727B510064D316 /* MathDecls.cpp */; };
 		37E636011BF00F650081E59E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E636001BF00F650081E59E /* main.mm */; };
 		37E636061BF010270081E59E /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636051BF010270081E59E /* Common.cpp */; };
 		37E636081BF010F70081E59E /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E636071BF010F70081E59E /* Common.hpp */; };
@@ -98,8 +99,7 @@
 		37E636B41BF024330081E59E /* writer.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E636681BF024330081E59E /* writer.h */; };
 		37E636B51BF024330081E59E /* aabb.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6366A1BF024330081E59E /* aabb.hpp */; };
 		37E636B61BF024330081E59E /* geometry.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6366B1BF024330081E59E /* geometry.hpp */; };
-		37E636B71BF024330081E59E /* math.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6366D1BF024330081E59E /* math.hpp */; };
-		37E636B81BF024330081E59E /* mathtypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6366F1BF024330081E59E /* mathtypes.hpp */; };
+		37E636B71BF024330081E59E /* mathtypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37E6366D1BF024330081E59E /* mathtypes.hpp */; };
 		37E636C61BF024600081E59E /* blendish.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E636BA1BF024600081E59E /* blendish.h */; };
 		37E636C71BF024600081E59E /* blendish_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E636BB1BF024600081E59E /* blendish_defines.h */; };
 		37E636C81BF024600081E59E /* oui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E636BC1BF024600081E59E /* oui.cpp */; };
@@ -233,6 +233,9 @@
 		37B831961C6C07DC0064D316 /* fs_flat_tex.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_flat_tex.fs; sourceTree = "<group>"; };
 		37B831971C6C07DC0064D316 /* vs_basic_col.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_basic_col.vs; sourceTree = "<group>"; };
 		37B831981C6C07DC0064D316 /* vs_basic_uv.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_basic_uv.vs; sourceTree = "<group>"; };
+		37B831A71C7277270064D316 /* math.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = math.hpp; sourceTree = "<group>"; };
+		37B831A81C7277540064D316 /* math.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = math.inl; sourceTree = "<group>"; };
+		37B831A91C727B510064D316 /* MathDecls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MathDecls.cpp; path = ../MathDecls.cpp; sourceTree = "<group>"; };
 		37E635F41BF00EA40081E59E /* libSampleCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSampleCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E636001BF00F650081E59E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		37E636021BF00F840081E59E /* OverviewSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OverviewSettings.xcconfig; sourceTree = "<group>"; };
@@ -295,9 +298,8 @@
 		37E6366A1BF024330081E59E /* aabb.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = aabb.hpp; sourceTree = "<group>"; };
 		37E6366B1BF024330081E59E /* geometry.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = geometry.hpp; sourceTree = "<group>"; };
 		37E6366C1BF024330081E59E /* geometry.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = geometry.inl; sourceTree = "<group>"; };
-		37E6366D1BF024330081E59E /* math.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = math.hpp; sourceTree = "<group>"; };
-		37E6366E1BF024330081E59E /* math.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = math.inl; sourceTree = "<group>"; };
-		37E6366F1BF024330081E59E /* mathtypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mathtypes.hpp; sourceTree = "<group>"; };
+		37E6366D1BF024330081E59E /* mathtypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mathtypes.hpp; sourceTree = "<group>"; };
+		37E6366E1BF024330081E59E /* mathtypes.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathtypes.inl; sourceTree = "<group>"; };
 		37E636BA1BF024600081E59E /* blendish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blendish.h; sourceTree = "<group>"; };
 		37E636BB1BF024600081E59E /* blendish_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blendish_defines.h; sourceTree = "<group>"; };
 		37E636BC1BF024600081E59E /* oui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oui.cpp; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 			children = (
 				37E636071BF010F70081E59E /* Common.hpp */,
 				37E636051BF010270081E59E /* Common.cpp */,
+				37B831A91C727B510064D316 /* MathDecls.cpp */,
 				37E6360A1BF018870081E59E /* Renderer.hpp */,
 				37E636091BF018870081E59E /* Renderer.cpp */,
 				377ECD221C1638A0002040D7 /* FreeCameraController.hpp */,
@@ -556,9 +559,10 @@
 				37E6366A1BF024330081E59E /* aabb.hpp */,
 				37E6366B1BF024330081E59E /* geometry.hpp */,
 				37E6366C1BF024330081E59E /* geometry.inl */,
-				37E6366D1BF024330081E59E /* math.hpp */,
-				37E6366E1BF024330081E59E /* math.inl */,
-				37E6366F1BF024330081E59E /* mathtypes.hpp */,
+				37E6366D1BF024330081E59E /* mathtypes.hpp */,
+				37E6366E1BF024330081E59E /* mathtypes.inl */,
+				37B831A71C7277270064D316 /* math.hpp */,
+				37B831A81C7277540064D316 /* math.inl */,
 			);
 			path = ckm;
 			sourceTree = "<group>";
@@ -703,7 +707,7 @@
 				37E636D11BF024600081E59E /* UITypes.hpp in Headers */,
 				377ECCB01C0507D6002040D7 /* file.h in Headers */,
 				37E636721BF024330081E59E /* allocator.hpp in Headers */,
-				37E636B71BF024330081E59E /* math.hpp in Headers */,
+				37E636B71BF024330081E59E /* mathtypes.hpp in Headers */,
 				37E636A01BF024330081E59E /* jsontypes.hpp in Headers */,
 				37E636A41BF024330081E59E /* encodings.h in Headers */,
 				37E636B01BF024330081E59E /* prettywriter.h in Headers */,
@@ -717,7 +721,6 @@
 				37E6367F1BF024330081E59E /* map.hpp in Headers */,
 				37E636751BF024330081E59E /* ckdefs.h in Headers */,
 				37E636A31BF024330081E59E /* encodedstream.h in Headers */,
-				37E636B81BF024330081E59E /* mathtypes.hpp in Headers */,
 				37E6369F1BF024330081E59E /* jsonstreambuf.hpp in Headers */,
 				37E637191BF0246D0081E59E /* ModelJsonSerializer.hpp in Headers */,
 				37E636731BF024330081E59E /* buffer.hpp in Headers */,
@@ -855,6 +858,7 @@
 				289A4E101C49D0BD00367E3B /* Input.cpp in Sources */,
 				37287CB41C3769F000DD380F /* ModelSet.cpp in Sources */,
 				37E636771BF024330081E59E /* cstringstack.cpp in Sources */,
+				37B831AA1C727B510064D316 /* MathDecls.cpp in Sources */,
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
 				37E637101BF0246D0081E59E /* stb.cpp in Sources */,
 				377ECCAF1C0507D6002040D7 /* file.c in Sources */,

@@ -222,7 +222,7 @@ void interpQuatRotationFromSequenceChannel
     startQ.x = kf.first->v;
     endQ.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -233,7 +233,7 @@ void interpQuatRotationFromSequenceChannel
     startQ.y = kf.first->v;
     endQ.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -244,7 +244,7 @@ void interpQuatRotationFromSequenceChannel
     startQ.z = kf.first->v;
     endQ.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -255,12 +255,12 @@ void interpQuatRotationFromSequenceChannel
     startQ.w = kf.first->v;
     endQ.w = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
     
-    float factor = dt > ckm::epsilon<float>() ? (animTime - start)/dt : 0.0f;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)
@@ -290,7 +290,7 @@ void interpEulerRotationFromSequenceChannel
     startR.x = kf.first->v;
     endR.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -299,7 +299,7 @@ void interpEulerRotationFromSequenceChannel
     startR.y = kf.first->v;
     endR.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -308,12 +308,12 @@ void interpEulerRotationFromSequenceChannel
     startR.z = kf.first->v;
     endR.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
     
-    float factor = dt > ckm::epsilon<float>() ? (animTime - start)/dt : 0.0f;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)
@@ -342,7 +342,7 @@ void interpTranslateFromSequenceChannel
     startT.x = kf.first->v;
     endT.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -353,7 +353,7 @@ void interpTranslateFromSequenceChannel
     startT.y = kf.first->v;
     endT.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -364,12 +364,12 @@ void interpTranslateFromSequenceChannel
     startT.z = kf.first->v;
     endT.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
 
-    float factor = dt > ckm::epsilon<float>() ? (animTime - start)/dt : 0.0f;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)
@@ -398,7 +398,7 @@ void interpScaleFromSequenceChannel
     startT.x = kf.first->v;
     endT.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -409,7 +409,7 @@ void interpScaleFromSequenceChannel
     startT.y = kf.first->v;
     endT.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -420,12 +420,12 @@ void interpScaleFromSequenceChannel
     startT.z = kf.first->v;
     endT.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
 
-    float factor = dt > ckm::epsilon<float>() ? (animTime - start)/dt : 0.0f;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)
