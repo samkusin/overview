@@ -1,29 +1,26 @@
 //
-//  GameView.hpp
+//  PlayMain.hpp
 //  EnginePrototype
 //
-//  Created by Samir Sinha on 11/10/15.
+//  Created by Samir Sinha on 2/18/16.
 //
 //
 
-#ifndef Sample_Engine_GameView_hpp
-#define Sample_Engine_GameView_hpp
+#ifndef Prototype_Game_PlayMain_hpp
+#define Prototype_Game_PlayMain_hpp
 
-#include "Views/AppViewController.hpp"
-#include "Engine/ViewStack.hpp"
-#include "Engine/Physics/SceneTypes.hpp"
-#include "CKGfx/Camera.hpp"
+#include "Engine/ViewController.hpp"
 
 #include "GameViewContext.hpp"
 
-#include <cinek/allocator.hpp>
-
 namespace cinek {
 
-class GameView : public AppViewController
+class PlayMain;
+
+class PlayMain : public ove::ViewController
 {
 public:
-    GameView(ApplicationContext* context);
+    PlayMain(GameViewContext* gameContext);
     
 private:
     //  ViewController
@@ -34,22 +31,19 @@ private:
     virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
                                  const cinek::uicore::InputState& inputState) override;
     virtual void onViewEndFrame(ove::ViewStack& stateController) override;
-        
+    
     virtual const char* viewId() const override;
 
 private:
-    gfx::NodeRenderer _renderer;
-    gfx::Camera _camera;
-    ove::SceneRayTestResult _viewToSceneRayTestResult;
+    GameViewContext* _gc;
     
-    ove::ViewStack _viewStack;
+    uicore::FrameState _frameState;
+    uicore::KeyEvent _frameKeyEvents[16];
     
-    GameViewContext _gameViewContext;
-    
-    std::shared_ptr<EditorView> _editorView;
-    std::shared_ptr<PlayView> _playView;
+    void layoutUI();
+    void handleUI(ove::ViewStack& stateController);
 };
 
-} /* namespace cinek */
+}
 
-#endif /* Sample_Engine_GameView_hpp */
+#endif /* Prototype_Game_PlayMain_hpp */

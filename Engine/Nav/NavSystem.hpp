@@ -21,7 +21,7 @@ class NavSystem
 public:
     struct InitParams
     {
-        uint32_t numBodies = 0;
+        uint32_t numBodies = 16;
     };
     NavSystem(const InitParams& params);
     

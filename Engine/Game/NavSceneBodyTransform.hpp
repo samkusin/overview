@@ -28,8 +28,8 @@ public:
     
     virtual void setNavBodyTransform
     (
-        const ckm::vector3f& translate,
-        const ckm::matrix3f& basis
+        ckm::vector3f translate,
+        ckm::matrix3f basis
     )
     override;
 

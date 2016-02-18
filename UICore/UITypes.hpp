@@ -16,7 +16,25 @@
 
 typedef struct NVGcontext NVGcontext;
 
-namespace cinek { namespace uicore {
+namespace cinek {
+
+struct UIContext
+{
+    int keyFocusItem;
+};
+
+class UIService
+{
+public:
+    UIService(UIContext* context);
+    
+    void setKeyboardFocusToItem(int item);
+    
+private:
+    UIContext* _context;
+};
+
+namespace uicore {
 
 struct InputState;
 
@@ -58,16 +76,29 @@ struct Box
     int t, r, b, l;
 };
 
+struct KeyEvent
+{
+    UIevent type;
+    unsigned int mod;
+    unsigned int key;
+    
+    explicit operator bool() const {
+        return type != UI_EVENT_NULL;
+    }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 //  UI State Data (for imgui-like query)
 
 struct ListboxState
 {
+    int thisItem;
     int highlightItem;          // Item currently highlighted
     int hoverItem;              // Item in the hover state (reset when laying out)
     int selectedItem;           // Item selected (reset when laying out)
     
-    void init() {
+    void init(int item) {
+        thisItem = item;
         hoverItem = -1;
         selectedItem = -1;
     }
@@ -79,12 +110,28 @@ struct ListboxState
 
 struct FrameState
 {
-    int item;
+    int thisItem;
     UIevent evtType;
     
-    void init() {
+    KeyEvent* keyEvents;
+    int keyEventStart;
+    int keyEventCount;
+    int keyEventLimit;
+    
+    FrameState() : keyEvents(nullptr), keyEventLimit(0) {}
+    
+    void init(int item) {
         evtType = UI_EVENT_NULL;
-        item = -1;
+        thisItem = item;
+        keyEventStart = 0;
+        keyEventCount = 0;
+    }
+    
+    KeyEvent popKey() {
+        if (keyEventStart < keyEventCount) {
+            return keyEvents[keyEventStart++];
+        }
+        return { UI_EVENT_NULL };
     }
 };
 

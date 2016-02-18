@@ -31,7 +31,7 @@ class EditorView : public ove::ViewController,
                    public uicore::DataProvider
 {
 public:
-    EditorView(const GameViewContext* gameContext);
+    EditorView(GameViewContext* gameContext);
 
 private:
     //  ViewController
@@ -51,7 +51,7 @@ private:
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
 private:
-    const GameViewContext* _gc;
+    GameViewContext* _gc;
     ove::ViewStack _viewStack;
     
     ove::FreeCameraController _freeCameraController;

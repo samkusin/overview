@@ -29,7 +29,21 @@ struct GameViewContext
     ove::EntityService* entityService;
     ove::RenderService* renderService;
     ove::AssetService* assetService;
+    UIService* uiService;
     NVGcontext* nvgContext;
+    
+    enum class Mode
+    {
+        kNone,
+        kPlay,
+        kEditor
+    };
+    
+    void setMode(Mode mode) { _mode = mode; }
+    Mode getMode() const { return _mode; }
+    
+private:
+    Mode _mode;
 };
 
 } /* namespace cinek */

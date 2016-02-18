@@ -176,9 +176,8 @@ int runSample(int viewWidth, int viewHeight)
             if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
                 running = false;
             
-            uiBeginLayout();
+
             controller.renderFrame(frameTime, viewRect, polledInputState);
-            uiEndLayout();
 
             cinek::uicore::render(nvg, viewRect);
         

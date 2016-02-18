@@ -28,6 +28,8 @@ struct ApplicationContext
 {
     NVGcontext* nvg;
     TaskScheduler* taskScheduler;
+    UIContext *uiContext;
+    
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;
     ove::EntityDatabase* entityDatabase;
@@ -64,6 +66,9 @@ protected:
     ove::PathfinderService& pathfinderService() {
         return _pathfinderService;
     }
+    UIService& uiService() {
+        return _uiService;
+    }
     NVGcontext* nvgContext() {
         return _appContext->nvg;
     }
@@ -75,6 +80,7 @@ private:
     ove::SceneService _sceneService;
     ove::RenderService _renderService;
     ove::PathfinderService _pathfinderService;
+    UIService _uiService;
 };
 
 }

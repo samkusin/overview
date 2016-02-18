@@ -8,6 +8,7 @@
 
 #include "EditorView.hpp"
 #include "GameView.hpp"
+#include "PlayView.hpp"
 
 #include "Engine/AssetManifest.hpp"
 #include "UICore/UIBuilder.hpp"
@@ -25,17 +26,17 @@
 namespace cinek {
 
 GameView::GameView(ApplicationContext* api) :
-    AppViewController(api),
-    _gameViewContext {
-        &_camera,
-        &_viewToSceneRayTestResult,
-        &sceneService(),
-        &entityService(),
-        &renderService(),
-        &assetService(),
-        nvgContext()
-    }
+    AppViewController(api)
 {
+    _gameViewContext.camera = &_camera;
+    _gameViewContext.screenRayTestResult = &_viewToSceneRayTestResult;
+    _gameViewContext.sceneService = &sceneService();
+    _gameViewContext.entityService = &entityService();
+    _gameViewContext.renderService = &renderService();
+    _gameViewContext.assetService = &assetService();
+    _gameViewContext.uiService = &uiService();
+    _gameViewContext.nvgContext = nvgContext();
+    _gameViewContext.setMode(GameViewContext::Mode::kNone);
 }
 
     
@@ -48,6 +49,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     
     
     _editorView = std::allocate_shared<EditorView>(std_allocator<EditorView>(), &_gameViewContext);
+    _playView = std::allocate_shared<PlayView>(std_allocator<PlayView>(), &_gameViewContext);
     
     //  initialize common objects for all substates
     _camera.near = 0.1f;
@@ -67,7 +69,9 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
             if (viewName == "EditorView") {
                 return _editorView;
             }
-            
+            else if (viewName == "PlayView") {
+                return _playView;
+            }
             return nullptr;
         });
     
@@ -125,7 +129,6 @@ void GameView::frameUpdateView
     
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);
-
 }
 
 void GameView::onViewEndFrame(ove::ViewStack& stateController)

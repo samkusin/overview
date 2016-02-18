@@ -35,6 +35,7 @@ namespace cinek {
         
         class Pathfinder;
         struct PathfinderDebug;
+        class NavMesh;
         class NavBody;
         class NavBodyTransform;
         class NavSceneBodyTransform;

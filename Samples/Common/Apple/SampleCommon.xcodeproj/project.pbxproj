@@ -23,6 +23,7 @@
 		370B59A71BFBAFC5009062FA /* buffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 370B59A61BFBAFC5009062FA /* buffer.hpp */; };
 		37287CB41C3769F000DD380F /* ModelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37287CB21C3769F000DD380F /* ModelSet.cpp */; };
 		37287CB51C3769F000DD380F /* ModelSet.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37287CB31C3769F000DD380F /* ModelSet.hpp */; };
+		372918771C767E690011770E /* UITypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918761C767E690011770E /* UITypes.cpp */; };
 		377ECCAF1C0507D6002040D7 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCAD1C0507D6002040D7 /* file.c */; };
 		377ECCB01C0507D6002040D7 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCAE1C0507D6002040D7 /* file.h */; };
 		377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCBE1C07AB75002040D7 /* taskscheduler.cpp */; };
@@ -216,6 +217,7 @@
 		370B59A61BFBAFC5009062FA /* buffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = buffer.hpp; path = ../../../CKLibs/ckmsg/buffer.hpp; sourceTree = "<group>"; };
 		37287CB21C3769F000DD380F /* ModelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelSet.cpp; sourceTree = "<group>"; };
 		37287CB31C3769F000DD380F /* ModelSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModelSet.hpp; sourceTree = "<group>"; };
+		372918761C767E690011770E /* UITypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UITypes.cpp; sourceTree = "<group>"; };
 		377ECCAD1C0507D6002040D7 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ckio/file.c; sourceTree = "<group>"; };
 		377ECCAE1C0507D6002040D7 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = ckio/file.h; sourceTree = "<group>"; };
 		377ECCBA1C06A9A0002040D7 /* managed_dictionary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = managed_dictionary.hpp; sourceTree = "<group>"; };
@@ -584,6 +586,7 @@
 				37E636C31BF024600081E59E /* UIRenderer.cpp */,
 				37E636C41BF024600081E59E /* UIRenderer.hpp */,
 				37E636C51BF024600081E59E /* UITypes.hpp */,
+				372918761C767E690011770E /* UITypes.cpp */,
 			);
 			name = UICore;
 			path = ../../../UICore;
@@ -860,6 +863,7 @@
 				37E636771BF024330081E59E /* cstringstack.cpp in Sources */,
 				37B831AA1C727B510064D316 /* MathDecls.cpp in Sources */,
 				370B59A01BFA8A96009062FA /* messenger.cpp in Sources */,
+				372918771C767E690011770E /* UITypes.cpp in Sources */,
 				37E637101BF0246D0081E59E /* stb.cpp in Sources */,
 				377ECCAF1C0507D6002040D7 /* file.c in Sources */,
 				377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */,

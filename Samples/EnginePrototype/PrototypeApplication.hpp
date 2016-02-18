@@ -77,6 +77,7 @@ private:
     
     gfx::NodeRenderer _renderer;
     NVGcontext* _nvg;
+    UIContext _uiContext;
     
     unique_ptr<ove::RenderGraph> _renderGraph;
     ove::RenderContext _renderContext;

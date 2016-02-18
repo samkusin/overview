@@ -13,13 +13,15 @@
 
 #include "GameViewContext.hpp"
 
+#include "UICore/UITypes.hpp"
+
 
 namespace cinek {
 
 class EditorMain : public ove::ViewController
 {
 public:
-    EditorMain(const GameViewContext* gameContext);
+    EditorMain(GameViewContext* gameContext);
     
 private:
     //  ViewController
@@ -34,7 +36,13 @@ private:
     virtual const char* viewId() const override;
 
 private:
-    const GameViewContext* _gc;
+    GameViewContext* _gc;
+
+    uicore::FrameState _frameState;
+    uicore::KeyEvent _frameKeyEvents[16];
+
+    void layoutUI();
+    void handleUI(ove::ViewStack& stateController);
 };
 
 } /* namespace cinek */

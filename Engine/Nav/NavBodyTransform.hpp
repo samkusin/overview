@@ -38,7 +38,7 @@ public:
      *  @param translate    The driver adjusted position
      *  @param basis        The driver adjusted basis matrix (orientation)
      */
-    virtual void setNavBodyTransform(const ckm::vector3f& translate, const ckm::matrix3f& basis) = 0;
+    virtual void setNavBodyTransform(ckm::vector3f translate, ckm::matrix3f basis) = 0;
 };
     
     } /* namespace ove */

@@ -28,8 +28,8 @@ void NavSceneBodyTransform::getNavBodyTransform
 
 void NavSceneBodyTransform::setNavBodyTransform
 (
-    const ckm::vector3f& translate,
-    const ckm::matrix3f& basis
+    ckm::vector3f translate,
+    ckm::matrix3f basis
 )
 {
     _sceneBody->setTransform(basis, translate);

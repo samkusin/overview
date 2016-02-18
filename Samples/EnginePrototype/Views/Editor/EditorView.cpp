@@ -30,7 +30,7 @@ namespace cinek {
 
 EditorView::EditorView
 (
-    const GameViewContext* gameContext
+    GameViewContext* gameContext
 ) :
     _gc(gameContext)
 {
@@ -43,6 +43,8 @@ EditorView::EditorView
     
 void EditorView::onViewAdded(ove::ViewStack& stateController)
 {
+    _gc->setMode(GameViewContext::Mode::kEditor);
+    
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
             -> std::shared_ptr<ove::ViewController> {
@@ -119,17 +121,14 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
     cinek::gfx::Matrix4 cameraRotMtx;
     bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
     _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
-    
-    test1();
-    
-    //  load scene
-    
+
     _gc->sceneService->disableSimulation();
 }
 
 void EditorView::onViewRemoved(ove::ViewStack& stateController)
 {
     _viewStack.pop();
+    _gc->setMode(GameViewContext::Mode::kNone);
 }
 
 void EditorView::onViewStartFrame(ove::ViewStack& stateController)
@@ -149,7 +148,7 @@ void EditorView::frameUpdateView
     const cinek::uicore::InputState& inputState
 )
 {
-    test2();
+    //test2();
     
     _freeCameraController.handleCameraInput(*_gc->camera, inputState, dt);
     
@@ -159,6 +158,10 @@ void EditorView::frameUpdateView
 void EditorView::onViewEndFrame(ove::ViewStack& stateController)
 {
     _viewStack.endFrame();
+    
+    if (_gc->getMode() == GameViewContext::Mode::kPlay) {
+        stateController.present("PlayView");
+    }
 }
 
 const char* EditorView::viewId() const

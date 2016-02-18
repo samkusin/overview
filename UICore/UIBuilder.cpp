@@ -84,7 +84,7 @@ Layout& Layout::beginFrame
     data->renderCb = renderCb;
     data->callbackContext = context;
     data->state = frameState;
-    data->state->init();
+    data->state->init(_topItem);
     
     return *this;
 }
@@ -142,7 +142,6 @@ Layout& Layout::setMargins(Box box)
     uiSetMargins(_topItem, box.l, box.t, box.r, box.b);
     return *this;
 }
-
 
 Layout& Layout::button
 (
@@ -203,8 +202,7 @@ Layout& Layout::listbox
     data->lbtype = lbtype;
     data->viewAnchor = { 0, 0 };
     data->state = state;
-    data->state->init();
-    
+    data->state->init(item);
     
     uiInsert(_topItem, item);
     

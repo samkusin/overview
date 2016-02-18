@@ -28,8 +28,26 @@ void OUIFrame::handler(int item, UIevent event)
     OUIFrame* frame = reinterpret_cast<OUIFrame*>(uiGetHandle(item));
     
     if (frame->state) {
-        frame->state->item = item;
-        frame->state->evtType = event;
+        frame->state->thisItem = item;
+    
+        switch (event) {
+        
+        case UI_KEY_DOWN:
+        case UI_KEY_UP:
+            if (frame->state->keyEventCount < frame->state->keyEventLimit) {
+                KeyEvent& keyevt = frame->state->keyEvents[frame->state->keyEventCount];
+                keyevt.type = event;
+                keyevt.key = uiGetKey();
+                keyevt.mod = uiGetModifier();
+                ++frame->state->keyEventCount;
+            }
+            break;
+        default:
+            frame->state->evtType = event;
+            break;
+        }
+
+        
     }
 }
 

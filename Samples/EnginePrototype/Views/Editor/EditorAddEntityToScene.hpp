@@ -23,7 +23,7 @@ class EditorAddEntityToScene : public ove::ViewController,
                                public uicore::DataProvider
 {
 public:
-    EditorAddEntityToScene(const GameViewContext* gameContext);
+    EditorAddEntityToScene(GameViewContext* gameContext);
     
 private:
     //  ViewController
@@ -43,7 +43,7 @@ private:
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
 private:
-    const GameViewContext* _gc;
+    GameViewContext* _gc;
     
     uicore::FrameState _sceneFrameState;
     uicore::ListboxState _entityTemplateListboxState;

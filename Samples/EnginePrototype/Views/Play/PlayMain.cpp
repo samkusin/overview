@@ -1,46 +1,42 @@
 //
-//  EditorMain.cpp
+//  PlayMain.cpp
 //  EnginePrototype
 //
-//  Created by Samir Sinha on 1/15/16.
+//  Created by Samir Sinha on 2/18/16.
 //
 //
 
-#include "EditorMain.hpp"
+#include "PlayMain.hpp"
 
-#include "Engine/ViewStack.hpp"
 #include "Engine/Services/RenderService.hpp"
+#include "Engine/ViewStack.hpp"
+
 #include "UICore/UIBuilder.hpp"
 
 namespace cinek {
 
-
-EditorMain::EditorMain
-(
-    GameViewContext* gameContext
-) :
+PlayMain::PlayMain(GameViewContext* gameContext) :
     _gc(gameContext)
 {
 }
-
-
-void EditorMain::onViewAdded(ove::ViewStack& stateController)
+    
+void PlayMain::onViewAdded(ove::ViewStack& stateController)
 {
 }
 
-void EditorMain::onViewRemoved(ove::ViewStack& stateController)
+void PlayMain::onViewRemoved(ove::ViewStack& stateController)
 {
 }
 
-void EditorMain::onViewStartFrame(ove::ViewStack& stateController)
+void PlayMain::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void EditorMain::simulateView(ove::ViewStack& stateController, double dt)
+void PlayMain::simulateView(ove::ViewStack& stateController, double dt)
 {
 }
 
-void EditorMain::frameUpdateView
+void PlayMain::frameUpdateView
 (
     ove::ViewStack& stateController,
     double dt,
@@ -50,17 +46,17 @@ void EditorMain::frameUpdateView
     layoutUI();
 }
 
-void EditorMain::onViewEndFrame(ove::ViewStack& stateController)
+void PlayMain::onViewEndFrame(ove::ViewStack& stateController)
 {
     handleUI(stateController);
 }
     
-const char* EditorMain::viewId() const
+const char* PlayMain::viewId() const
 {
-    return "EditorMain";
+    return "PlayMain";
 }
 
-void EditorMain::layoutUI()
+void PlayMain::layoutUI()
 {
     //  layout UI
     uicore::Layout::Style style;
@@ -82,18 +78,14 @@ void EditorMain::layoutUI()
     _gc->uiService->setKeyboardFocusToItem(_frameState.thisItem);
 }
 
-void EditorMain::handleUI(ove::ViewStack& stateController)
+void PlayMain::handleUI(ove::ViewStack& stateController)
 {
     uicore::KeyEvent keyEvt;
     while ((keyEvt = _frameState.popKey())) {
     
         if (keyEvt.mod & KMOD_SHIFT) {
-            if (keyEvt.key == SDL_SCANCODE_A) {
-                stateController.present("EditorAddEntityToScene");
-                break;
-            }
-            else if (keyEvt.key == SDL_SCANCODE_TAB) {
-                _gc->setMode(GameViewContext::Mode::kPlay);
+            if (keyEvt.key == SDL_SCANCODE_TAB) {
+                _gc->setMode(GameViewContext::Mode::kEditor);
                 break;
             }
         }
@@ -102,4 +94,4 @@ void EditorMain::handleUI(ove::ViewStack& stateController)
 }
 
 
-} /* namespace cinek */
+}

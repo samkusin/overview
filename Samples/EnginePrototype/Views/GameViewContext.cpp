@@ -7,3 +7,8 @@
 //
 
 #include "GameViewContext.hpp"
+
+namespace cinek {
+
+
+} /* namespace cinek */

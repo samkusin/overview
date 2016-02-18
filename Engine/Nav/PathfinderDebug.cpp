@@ -40,10 +40,12 @@ void PathfinderDebug::depthMask(bool state)
         _drawState |= BGFX_STATE_DEPTH_WRITE;
         _drawState |= BGFX_STATE_DEPTH_TEST_LESS;
     }
+    /*
     else {
         _drawState &= ~BGFX_STATE_DEPTH_WRITE;
         _drawState &= ~BGFX_STATE_DEPTH_TEST_MASK;
     }
+    */
 }
 
 void PathfinderDebug::texture(bool state)

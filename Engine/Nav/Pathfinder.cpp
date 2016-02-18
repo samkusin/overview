@@ -192,6 +192,12 @@ public:
         _generateTaskId = _scheduler.schedule(std::move(task), this);
     }
 
+
+    bool isLocationWalkable(ckm::vector3f pos) const
+    {
+        return false;
+    }
+
     void update(double dt)
     {
         _scheduler.update((uint32_t)(dt * 1000.0));
@@ -230,6 +236,11 @@ void Pathfinder::generateFromScene
 void Pathfinder::updateDebug(PathfinderDebug& debugger)
 {
     _impl->updateDebug(debugger);
+}
+
+bool Pathfinder::isLocationWalkable(ckm::vector3f pos) const
+{
+    return _impl->isLocationWalkable(pos);
 }
 
     

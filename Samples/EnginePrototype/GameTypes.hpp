@@ -14,6 +14,7 @@
 namespace cinek {
 
 class TaskScheduler;
+class UIService;
 
 enum
 {

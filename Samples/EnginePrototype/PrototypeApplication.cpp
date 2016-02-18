@@ -25,6 +25,8 @@
 
 #include "PrototypeApplication.hpp"
 
+#include "UICore/oui.h"
+
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
 #include <vector>
@@ -119,6 +121,7 @@ PrototypeApplication::PrototypeApplication
     _appContext->msgClientSender = &_clientSender;
     _appContext->gfxContext = _gfxContext;
     _appContext->renderContext = &_renderContext;
+    _appContext->uiContext = &_uiContext;
 
     //  TODO - These should be created and destroyed by View objects
     //       - Reason, it makes more sense to wholesale drop these objects
@@ -169,6 +172,8 @@ PrototypeApplication::~PrototypeApplication()
     
 void PrototypeApplication::beginFrame()
 {
+    _uiContext.keyFocusItem = -1;
+    
     _server.receive();
     _client.receive();
 
@@ -190,6 +195,8 @@ void PrototypeApplication::renderFrame
     const cinek::uicore::InputState& inputState
 )
 {
+    uiBeginLayout();
+    
     _taskScheduler.update(dt * 1000);
     
     _renderContext.frameRect = viewRect;
@@ -199,6 +206,12 @@ void PrototypeApplication::renderFrame
     _viewStack.frameUpdate(dt, inputState);
         
     _gfxContext->update();
+    
+    uiEndLayout();
+    
+    if (_uiContext.keyFocusItem >= 0) {
+        uiFocus(_uiContext.keyFocusItem);
+    }
 }
 
 void PrototypeApplication::endFrame()

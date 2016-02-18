@@ -27,13 +27,17 @@ public:
     using GenerateCb = std::function<void(bool)>;
     void generateFromScene(const Scene& scene, GenerateCb callback);
     
+    //  checks whether a world location is walkable.  this should be used as a
+    //  quick way to determine whether a target can be used as a destination,
+    //  though this method does not check if an entity can reach the target
+    //  position.
+    bool isLocationWalkable(ckm::vector3f pos) const;
+    
     //  update the pathfinding system
     void update(double dt);
     //  updates the debugging system for pathfinding
     void updateDebug(PathfinderDebug& debugger);
     
-    
-
 private:
     class Impl;
     unique_ptr<Impl> _impl;

@@ -25,7 +25,8 @@ AppViewController::AppViewController
                     context->renderGraph,
                     context->taskScheduler }),
     _renderService(context->gfxContext, context->renderContext),
-    _pathfinderService( { context->scene, context->pathfinder, context->pathfinderDebug } )
+    _pathfinderService( { context->scene, context->pathfinder, context->pathfinderDebug } ),
+    _uiService( context->uiContext )
 {
 }
 
