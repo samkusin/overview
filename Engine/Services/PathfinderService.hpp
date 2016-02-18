@@ -10,7 +10,7 @@
 #define Overview_PathfinderService_hpp
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/Path/Pathfinder.hpp"
+#include "Engine/Nav/Pathfinder.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 

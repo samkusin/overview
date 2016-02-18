@@ -10,7 +10,7 @@
 #include "Engine/Debug.hpp"
 #include "Engine/Services/RenderService.hpp"
 
-#include "Engine/Path/PathfinderDebug.hpp"
+#include "Engine/Nav/PathfinderDebug.hpp"
 
 namespace cinek {
     namespace ove {

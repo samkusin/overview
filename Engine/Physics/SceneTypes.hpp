@@ -21,6 +21,11 @@ class btBvhTriangleMeshShape;
 
 namespace cinek {
     namespace ove {
+    
+btMatrix3x3& btFromCkm(btMatrix3x3& btm, const ckm::matrix3f& m);
+btVector3& btFromCkm(btVector3& btv, const ckm::vector3f& v);
+ckm::matrix3f& ckmFromBt(ckm::matrix3f& m, const btMatrix3x3& btm);
+ckm::vector3f& ckmFromBt(ckm::vector3f& v, const btVector3& btv);
 
 struct SceneBody
 {
@@ -36,7 +41,16 @@ struct SceneBody
 
     const SceneFixedBodyHull* getFixedHull() const;
     
+    //  brute force setting of transform - TODO (refactor so that we conform to
+    //  our set/getTranform rules outlined below.)
     void setPosition(const btVector3& pos, btVector3 up);
+    
+    //  set transform - the final transform may be modified by the Scene during
+    //  update
+    void setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos);
+    //  returns the current world transform from the scene's perspective (i.e.
+    //  not the final transform post update.)
+    void getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const;
 
 public:
     btCollisionObject* btBody = nullptr;

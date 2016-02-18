@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_PathTypes_hpp
-#define Overview_PathTypes_hpp
+#ifndef Overview_Nav_PathTypes_hpp
+#define Overview_Nav_PathTypes_hpp
 
 #include "Engine/EngineTypes.hpp"
 

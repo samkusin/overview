@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_Pathfinder_hpp
-#define Overview_Pathfinder_hpp
+#ifndef Overview_Nav_Pathfinder_hpp
+#define Overview_Nav_Pathfinder_hpp
 
 #include "PathTypes.hpp"
 
@@ -29,8 +29,10 @@ public:
     
     //  update the pathfinding system
     void update(double dt);
-    
+    //  updates the debugging system for pathfinding
     void updateDebug(PathfinderDebug& debugger);
+    
+    
 
 private:
     class Impl;
@@ -40,4 +42,4 @@ private:
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* Overview_Pathfinder_hpp */
+#endif /* Overview_Nav_Pathfinder_hpp */

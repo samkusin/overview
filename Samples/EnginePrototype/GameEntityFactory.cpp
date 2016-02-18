@@ -7,11 +7,17 @@
 //
 
 #include "GameEntityFactory.hpp"
+
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneDataContext.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Context.hpp"
+
+#include "Game/NavDataContext.hpp"
+#include "Engine/Nav/NavBody.hpp"
+#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Game/NavSceneBodyTransform.hpp"
 
 #include <ckjson/json.hpp>
 
@@ -19,15 +25,19 @@ namespace cinek {
 
 GameEntityFactory::GameEntityFactory
 (
-    gfx::Context& gfxContext,
-    ove::SceneDataContext& sceneData,
-    ove::Scene& scene,
-    ove::RenderGraph& renderGraph
+    gfx::Context* gfxContext,
+    ove::SceneDataContext* sceneData,
+    ove::Scene* scene,
+    ove::RenderGraph* renderGraph,
+    NavDataContext* navDataContext,
+    ove::NavSystem* navSystem
 ) :
-    _gfxContext(&gfxContext),
-    _sceneDataContext(&sceneData),
-    _scene(&scene),
-    _renderGraph(&renderGraph)
+    _gfxContext(gfxContext),
+    _sceneDataContext(sceneData),
+    _scene(scene),
+    _renderGraph(renderGraph),
+    _navDataContext(navDataContext),
+    _navSystem(navSystem)
 {
 }
                       
@@ -128,21 +138,51 @@ void GameEntityFactory::onCustomComponentCreateFn
                     localShapeTransform);
         }
 
-        //  other properties
-        /*
-        it = compTemplate.FindMember("mass");
-        if (it != compTemplate.MemberEnd()) {
-            initInfo.mass = (float)it->value.GetDouble();
-        }
-        else {
-            initInfo.mass = 0.0f;
-        }
-        */
-        
         ove::SceneBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode, entity);
         if (body) {
             _scene->attachBody(body, ove::SceneBody::kIsObject);
-            //body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
+            
+            //  if navbody exists, then we still need to create the navbody transform
+            //  - this would've been done during navbody component create, if
+            //    the scenebody was previously created.  the step below takes care
+            //    of the opposite case.
+            ove::NavBody* navBody = _navSystem->findBody(entity);
+            if (navBody) {
+                navBody->setNavBodyTransform(_navDataContext->allocateTransform(body, entity));
+            }
+        }
+        else {
+            CK_LOG_WARN("OverviewSample",
+                        "Entity: %" PRIu64 ", Component %s: failed to create body\n",
+                        entity, componentName.c_str());
+        }
+    }
+    else if (componentName == "drivebody") {
+        ove::NavBody::InitProperties initProps;
+
+        if (compTemplate.HasMember("speed")) {
+            const JsonValue& speed = compTemplate["speed"];
+            
+            initProps.speedCurve.min = ckm::scalar(speed["min"].GetDouble());
+            initProps.speedCurve.max = ckm::scalar(speed["max"].GetDouble());
+            
+            if (!strcasecmp(speed["curve"].GetString(), "step")) {
+                initProps.speedCurve.type = ove::SpeedCurve::kStep;
+            }
+            else if (!strcasecmp(speed["curve"].GetString(), "linear")) {
+                initProps.speedCurve.type = ove::SpeedCurve::kLinear;
+            }
+        }
+        
+        initProps.entity = entity;
+        
+        ove::NavBody* navBody = _navDataContext->allocateBody(initProps);
+        if (navBody) {
+            ove::SceneBody* sceneBody = _scene->findBody(entity);
+            if (sceneBody) {
+                navBody->setNavBodyTransform(_navDataContext->allocateTransform(sceneBody, entity));
+            }
+            _navSystem->attachBody(navBody);
         }
         else {
             CK_LOG_WARN("OverviewSample",
@@ -158,10 +198,17 @@ void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
     //  TODO - perhaps we need to identify what components are attached to
     //         the entity for optimization
     
+    //  destroy nav
+    ove::NavBody* navBody = _navSystem->detachBody(entity);
+    if (navBody) {
+        _navDataContext->freeBody(navBody);
+        navBody = nullptr;
+    }
     //  destroy scene
     ove::SceneBody* body = _scene->detachBody(entity);
     if (body) {
         _sceneDataContext->freeBody(body);
+        body = nullptr;
     }
     //  destroy renderable
     _renderGraph->removeNode(entity);
@@ -192,10 +239,16 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
         gfxNode->setTransform(mtx);
     }
     //  scene
-    ove::SceneBody* body = _scene->findBody(origin);
-    if (body) {
-        ove::SceneBody* clonedBody = _sceneDataContext->cloneBody(body, gfxNode, target);
-        body = _scene->attachBody(clonedBody, clonedBody->categoryMask);
+    ove::SceneBody* sceneBody = _scene->findBody(origin);
+    if (sceneBody) {
+        ove::SceneBody* clonedBody = _sceneDataContext->cloneBody(sceneBody, gfxNode, target);
+        sceneBody = _scene->attachBody(clonedBody, clonedBody->categoryMask);
+    }
+    //  navbody
+    ove::NavBody* navBody = _navSystem->findBody(origin);
+    if (navBody) {
+        ove::NavBody* clonedBody = _navDataContext->cloneBody(navBody, sceneBody, target);
+        navBody = _navSystem->attachBody(clonedBody);
     }
 }
 

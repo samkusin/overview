@@ -11,8 +11,8 @@
 
 
 #include "Engine/Physics/SceneTypes.hpp"
-#include "Engine/Path/RecastContext.hpp"
-#include "Engine/Path/RecastMesh.hpp"
+#include "Engine/Nav/RecastContext.hpp"
+#include "Engine/Nav/RecastMesh.hpp"
 #include "Engine/Contrib/Recast/Recast.h"
 
 #include <cinek/task.hpp>

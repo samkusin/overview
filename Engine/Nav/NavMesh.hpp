@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_Path_NavMesh_hpp
-#define Overview_Path_NavMesh_hpp
+#ifndef Overview_NavMesh_hpp
+#define Overview_NavMesh_hpp
 
 #include "PathTypes.hpp"
 #include "Engine/Contrib/Recast/DetourNavMesh.h"
@@ -53,4 +53,4 @@ namespace cinek {
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* Overview_Path_NavMesh_hpp */
+#endif /* Overview_NavMesh_hpp */

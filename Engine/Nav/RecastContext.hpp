@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_Utils_RecastContext_hpp
-#define Overview_Utils_RecastContext_hpp
+#ifndef Overview_Nav_RecastContext_hpp
+#define Overview_Nav_RecastContext_hpp
 
 #include "PathTypes.hpp"
 #include "Engine/Contrib/Recast/Recast.h"
@@ -33,4 +33,4 @@ namespace cinek {
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* RecastContext_hpp */
+#endif /* Overview_Nav_RecastContext_hpp */

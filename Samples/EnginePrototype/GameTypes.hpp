@@ -21,6 +21,8 @@ enum
     kEntityStore_Staging
 };
 
+class NavDataContext;
+
 }
 
 #endif /* Prototype_GameTypes_hpp */

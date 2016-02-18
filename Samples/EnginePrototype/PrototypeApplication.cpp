@@ -9,16 +9,19 @@
 #include "Engine/Physics/SceneDataContext.hpp"
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneDebugDrawer.hpp"
-#include "Engine/Path/Pathfinder.hpp"
-#include "Engine/Path/PathfinderDebug.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
+#include "Engine/Nav/Pathfinder.hpp"
+
+#include "Engine/Nav/PathfinderDebug.hpp"
+#include "Engine/Nav/NavSystem.hpp"
+#include "Game/NavDataContext.hpp"
 
 #include "GameEntityFactory.hpp"
 
 #include "Views/StartupView.hpp"
 #include "Views/LoadSceneView.hpp"
-#include "Views/Game/GameView.hpp"
+#include "Views/GameView.hpp"
 
 #include "PrototypeApplication.hpp"
 
@@ -63,26 +66,6 @@ PrototypeApplication::PrototypeApplication
     _renderContext.uniforms = &_renderUniforms;
     _renderContext.frameRect = gfx::Rect { 0,0,0,0 };
     
-    ove::SceneDataContext::InitParams sceneDataInit;
-    sceneDataInit.numBodies = 256;
-    sceneDataInit.numTriMeshShapes = 32;
-    sceneDataInit.numCylinderShapes = 32;
-    sceneDataInit.numBoxShapes = 32;
-    
-    _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
-    _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
-    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
-
-    _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
-    _pathfinderDebug = cinek::allocate_unique<ove::PathfinderDebug>(64);
-    
-    _componentFactory = allocate_unique<GameEntityFactory>(
-        *_gfxContext,
-        *_sceneData,
-        *_scene,
-        *_renderGraph
-    );
-    
     std::vector<EntityStore::InitParams> entityStoreInitializers = {
         //  default
         cinek::EntityStore::InitParams {
@@ -96,7 +79,36 @@ PrototypeApplication::PrototypeApplication
 
     _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
         *_componentFactory);
+    
+    ove::SceneDataContext::InitParams sceneDataInit;
+    sceneDataInit.numBodies = 256;
+    sceneDataInit.numTriMeshShapes = 32;
+    sceneDataInit.numCylinderShapes = 32;
+    sceneDataInit.numBoxShapes = 32;
+    
+    _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
+    _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
+    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
 
+    _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
+    _pathfinderDebug = cinek::allocate_unique<ove::PathfinderDebug>(64);
+    
+    NavDataContext::InitParams navDataInitParams;
+    navDataInitParams.navBodyCount = 128;
+    _navDataContext = cinek::allocate_unique<NavDataContext>(navDataInitParams);
+    
+    ove::NavSystem::InitParams navInitParams;
+    navInitParams.numBodies = navDataInitParams.navBodyCount;
+    _navSystem = cinek::allocate_unique<ove::NavSystem>(navInitParams);
+    
+    _componentFactory = allocate_unique<GameEntityFactory>(
+        _gfxContext,
+        _sceneData.get(),
+        _scene.get(),
+        _renderGraph.get(),
+        _navDataContext.get(),
+        _navSystem.get()
+    );
     
     //  define the top-level states for this application
     _appContext = allocate_unique<ApplicationContext>();

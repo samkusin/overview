@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_Path_RecastMesh_hpp
-#define Overview_Path_RecastMesh_hpp
+#ifndef Overview_Nav_RecastMesh_hpp
+#define Overview_Nav_RecastMesh_hpp
 
 #include "PathTypes.hpp"
 #include "Engine/Contrib/Recast/Recast.h"
@@ -119,4 +119,4 @@ namespace cinek {
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* Overview_Path_RecastMesh_hpp */
+#endif /* Overview_Nav_RecastMesh_hpp */

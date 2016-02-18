@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_PathfinderDebug_hpp
-#define Overview_PathfinderDebug_hpp
+#ifndef Overview_Nav_PathfinderDebug_hpp
+#define Overview_Nav_PathfinderDebug_hpp
 
 #include "Engine/EngineTypes.hpp"
 #include "Engine/Contrib/Recast/DebugDraw.h"

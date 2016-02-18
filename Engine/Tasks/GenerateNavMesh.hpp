@@ -9,7 +9,7 @@
 #ifndef Overview_Task_GenerateNavMesh_hpp
 #define Overview_Task_GenerateNavMesh_hpp
 
-#include "Engine/Path/NavMesh.hpp"
+#include "Engine/Nav/NavMesh.hpp"
 
 #include <cinek/task.hpp>
 

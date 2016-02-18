@@ -75,7 +75,13 @@ private:
     gfx::NodeRenderer::ProgramMap _renderPrograms;
     gfx::NodeRenderer::UniformMap _renderUniforms;
     
+    gfx::NodeRenderer _renderer;
+    NVGcontext* _nvg;
+    
     unique_ptr<ove::RenderGraph> _renderGraph;
+    ove::RenderContext _renderContext;
+    
+    unique_ptr<ove::EntityDatabase> _entityDb;
     
     unique_ptr<ove::SceneDataContext> _sceneData;
     unique_ptr<ove::SceneDebugDrawer> _sceneDbgDraw;
@@ -84,12 +90,11 @@ private:
     unique_ptr<ove::Pathfinder> _pathfinder;
     unique_ptr<ove::PathfinderDebug> _pathfinderDebug;
     
-    unique_ptr<GameEntityFactory> _componentFactory;
-    unique_ptr<ove::EntityDatabase> _entityDb;
+    unique_ptr<NavDataContext> _navDataContext;
+    unique_ptr<ove::NavSystem> _navSystem;
     
-    gfx::NodeRenderer _renderer;
-    ove::RenderContext _renderContext;
-    NVGcontext* _nvg;
+    unique_ptr<GameEntityFactory> _componentFactory;
+    
     
     ove::ViewStack _viewStack;
 };
