@@ -76,9 +76,6 @@ PrototypeApplication::PrototypeApplication
                 1024
         }
     };
-
-    _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
-        *_componentFactory);
     
     ove::SceneDataContext::InitParams sceneDataInit;
     sceneDataInit.numBodies = 256;
@@ -109,6 +106,9 @@ PrototypeApplication::PrototypeApplication
         _navDataContext.get(),
         _navSystem.get()
     );
+    
+    _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
+        *_componentFactory);
     
     //  define the top-level states for this application
     _appContext = allocate_unique<ApplicationContext>();
