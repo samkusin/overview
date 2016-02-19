@@ -21,6 +21,8 @@ public:
     RenderService(gfx::Context* gfxContext, RenderContext* context);
     
     const gfx::Rect& getViewRect() const { return _context->frameRect; }
+    
+    const RenderContext& context() const { return *_context; }
 
     //  NodeGraph rendering operations
     //

@@ -38,6 +38,8 @@ private:
     uicore::FrameState _frameState;
     uicore::KeyEvent _frameKeyEvents[16];
     
+    Entity _focusedEntity;
+    
     void layoutUI();
     void handleUI(ove::ViewStack& stateController);
 };

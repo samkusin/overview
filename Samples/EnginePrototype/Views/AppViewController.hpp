@@ -20,7 +20,6 @@
 #include "Engine/Services/EntityService.hpp"
 #include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
-#include "Engine/Services/PathfinderService.hpp"
 
 namespace cinek {
 
@@ -63,8 +62,14 @@ protected:
     ove::RenderService& renderService() {
         return _renderService;
     }
-    ove::PathfinderService& pathfinderService() {
-        return _pathfinderService;
+    ove::Scene& scene() {
+        return *_scene;
+    }
+    ove::Pathfinder& pathfinder() {
+        return *_pathfinder;
+    }
+    ove::PathfinderDebug& pathfinderDebug() {
+        return *_pathfinderDebug;
     }
     UIService& uiService() {
         return _uiService;
@@ -79,7 +84,11 @@ private:
     ove::EntityService _entityService;
     ove::SceneService _sceneService;
     ove::RenderService _renderService;
-    ove::PathfinderService _pathfinderService;
+    
+    ove::Scene* _scene;
+    ove::Pathfinder* _pathfinder;
+    ove::PathfinderDebug* _pathfinderDebug;
+    
     UIService _uiService;
 };
 

@@ -10,7 +10,10 @@
 #include "GameView.hpp"
 #include "PlayView.hpp"
 
+#include "Engine/Nav/PathfinderDebug.hpp"
+#include "Engine/Nav/Pathfinder.hpp"
 #include "Engine/AssetManifest.hpp"
+
 #include "UICore/UIBuilder.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
@@ -31,7 +34,8 @@ GameView::GameView(ApplicationContext* api) :
 {
     _gameViewContext.camera = &_camera;
     _gameViewContext.screenRayTestResult = &_viewToSceneRayTestResult;
-    _gameViewContext.pathfinderService = &pathfinderService();
+    _gameViewContext.pathfinder = api->pathfinder;
+    _gameViewContext.pathfinderDebug = api->pathfinderDebug;
     _gameViewContext.sceneService = &sceneService();
     _gameViewContext.entityService = &entityService();
     _gameViewContext.renderService = &renderService();
@@ -62,7 +66,9 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh.png"));
     
     //  create player
-    
+    _focusedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
+                        "sample_male");
+    sceneService().setEntityPosition(_focusedEntity, btVector3(0,0,0), btVector3(0,1,0));
     
     //  game state machine
     _viewStack.setFactory(
@@ -87,6 +93,10 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
 void GameView::onViewRemoved(ove::ViewStack& stateController)
 {
     _viewStack.pop();
+    
+    entityService().destroyEntity(_focusedEntity);
+    _focusedEntity = 0;
+    
     _editorView = nullptr;
 }
 
@@ -131,7 +141,11 @@ void GameView::frameUpdateView
     
     sceneService().renderDebugEnd();
     
-    pathfinderService().renderDebug(renderService(), _camera);
+    pathfinderDebug().setup(renderService().context().programs,
+        renderService().context().uniforms,
+        &_camera,
+        nullptr);
+    pathfinder().updateDebug(pathfinderDebug());
     
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);
@@ -155,6 +169,11 @@ void GameView::setGameMode(GameMode mode)
 GameMode GameView::getGameMode() const
 {
     return _gameMode;
+}
+
+Entity GameView::getFocusedGameEntity() const
+{
+    return _focusedEntity;
 }
 
 } /* namespace cinek */

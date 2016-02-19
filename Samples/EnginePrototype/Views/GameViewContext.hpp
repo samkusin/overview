@@ -35,7 +35,7 @@ class GameInterface
 public:
     virtual void setGameMode(GameMode mode) = 0;
     virtual GameMode getGameMode() const = 0;
-    
+    virtual Entity getFocusedGameEntity() const = 0;
 };
 
 struct GameViewContext
@@ -47,10 +47,11 @@ struct GameViewContext
     ove::EntityService* entityService;
     ove::RenderService* renderService;
     ove::AssetService* assetService;
-    ove::PathfinderService* pathfinderService;
     
     UIService* uiService;
     NVGcontext* nvgContext;
+    ove::Pathfinder* pathfinder;
+    ove::PathfinderDebug* pathfinderDebug;
     
     GameInterface* game;
 };
@@ -68,7 +69,8 @@ protected:
     ove::EntityService& entityService() { return *_context->entityService; }
     ove::RenderService& renderService() { return *_context->renderService; }
     ove::AssetService& assetSevice() { return *_context->assetService; }
-    ove::PathfinderService& pathfinderService() { return *_context->pathfinderService; }
+    ove::Pathfinder& pathfinder() { return *_context->pathfinder; }
+    ove::PathfinderDebug& pathfinderDebug() { return *_context->pathfinderDebug; }
     
     const ove::SceneRayTestResult& sceneRayTestResult() const { return *_context->screenRayTestResult; }
     UIService& uiService() { return *_context->uiService; }

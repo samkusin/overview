@@ -28,6 +28,7 @@ public:
 private:
     virtual void setGameMode(GameMode mode) override;
     virtual GameMode getGameMode() const override;
+    virtual Entity getFocusedGameEntity() const override;
     
 private:
     //  ViewController
@@ -50,6 +51,7 @@ private:
     
     GameViewContext _gameViewContext;
     GameMode _gameMode;
+    Entity _focusedEntity;
     
     std::shared_ptr<EditorView> _editorView;
     std::shared_ptr<PlayView> _playView;

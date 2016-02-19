@@ -9,7 +9,7 @@
 #include "PlayMain.hpp"
 
 #include "Engine/Services/RenderService.hpp"
-#include "Engine/Services/PathfinderService.hpp"
+#include "Engine/Nav/Pathfinder.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -23,6 +23,7 @@ PlayMain::PlayMain(GameViewContext* gameContext) :
     
 void PlayMain::onViewAdded(ove::ViewStack& stateController)
 {
+    _focusedEntity = game().getFocusedGameEntity();
 }
 
 void PlayMain::onViewRemoved(ove::ViewStack& stateController)
@@ -103,9 +104,9 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
             ckm::vector3f pos;
             ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.00), ckm::scalar(0.1) };
             ove::ckmFromBt(pos, rayTestResult.position);
-            if (pathfinderService().isPositionWalkable(pos, extents)) {
-                //  test walk
-
+            if (pathfinder().isLocationWalkable(pos, extents)) {
+                //  test walk of focused entity - async
+                pathfinder().entityGotoPosition(_focusedEntity, pos);
             }
         }
     

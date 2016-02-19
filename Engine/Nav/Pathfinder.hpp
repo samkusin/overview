@@ -33,6 +33,12 @@ public:
     //  position.
     bool isLocationWalkable(ckm::vector3f pos, ckm::vector3f extents);
     
+    //  sends a request to an entity to move to the specified destination.  if
+    //  unreachable, then notfies any listeners about the error.  from the
+    //  caller's point of view, if it hasn't attached any listeners, this is
+    //  a fire-and-forget op
+    void entityGotoPosition(Entity entity, ckm::vector3f pos);
+    
     //  update the pathfinding system
     void update(double dt);
     //  updates the debugging system for pathfinding

@@ -45,7 +45,6 @@ namespace cinek {
         class EntityService;
         class RenderService;
         class SceneService;
-        class PathfinderService;
         
         class AssetManifest;
         class AssetManifestLoader;

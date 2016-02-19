@@ -124,6 +124,11 @@ public:
         _scheduler.cancelAll(this);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    //  Generates nav mesh from the input scene hull.
+    //  This is done mainly for in-game editing.   Production-ready missions
+    //  would load generated data.
+    //
     void generateFromScene
     (
         const Scene& scene,
@@ -200,7 +205,10 @@ public:
         _generateTaskId = _scheduler.schedule(std::move(task), this);
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////
+    //  Detect whether a position on the mesh is walkable.  This isn't entirely
+    //  accurate but works for now.
+    //
     bool isLocationWalkable
     (
         ckm::vector3f pos,
@@ -221,11 +229,17 @@ public:
         return resultRef != 0;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //  Updates main scheduler and synchronized with any path-query threads
+    //
     void update(double dt)
     {
         _scheduler.update((uint32_t)(dt * 1000.0));
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    //  Handles debugging pathfinding requests
+    //
     void updateDebug(PathfinderDebug& debugger)
     {
         _navMesh.debugDraw(debugger);
@@ -270,6 +284,9 @@ bool Pathfinder::isLocationWalkable
     return _impl->isLocationWalkable(pos, extents);
 }
 
+void Pathfinder::entityGotoPosition(Entity entity, ckm::vector3f pos)
+{
+}
     
     } /* namespace ove */
 } /* namespace cinek */

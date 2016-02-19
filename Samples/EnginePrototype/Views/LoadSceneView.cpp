@@ -9,7 +9,7 @@
 #include "LoadSceneView.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/SceneService.hpp"
-#include "Engine/Services/PathfinderService.hpp"
+#include "Engine/Nav/Pathfinder.hpp"
 #include "Engine/ViewStack.hpp"
 
 namespace cinek {
@@ -68,7 +68,7 @@ void LoadSceneView::frameUpdateView
                 break;
             case kLoadPaths:
                 //  generates pathfinding data from current scene
-                pathfinderService().generate(
+                pathfinder().generateFromScene(scene(), 
                     [this](bool success) {
                         _nextTask = success ? kLoadSuccess : kLoadError;
                     });
