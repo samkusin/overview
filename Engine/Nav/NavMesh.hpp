@@ -11,6 +11,7 @@
 
 #include "PathTypes.hpp"
 #include "Engine/Contrib/Recast/DetourNavMesh.h"
+#include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
 
 #include "RecastMesh.hpp"
 
@@ -28,7 +29,15 @@ namespace cinek {
         }
     };
     
+    struct detour_nav_query_deleter
+    {
+        void operator()(dtNavMeshQuery* ptr) {
+            dtFreeNavMeshQuery(ptr);
+        }
+    };
+    
     using detour_nav_mesh_unique_ptr = std::unique_ptr<dtNavMesh, detour_nav_mesh_deleter>;
+    using detour_nav_query_unique_ptr = std::unique_ptr<dtNavMeshQuery, detour_nav_query_deleter>;
     
     
     class NavMesh
@@ -41,6 +50,7 @@ namespace cinek {
         NavMesh(NavMesh&& other);
         NavMesh& operator=(NavMesh&& other);
         
+        detour_nav_query_unique_ptr createQuery(int maxNodes) const;
         
         void debugDraw(::duDebugDraw& debugDraw);
         

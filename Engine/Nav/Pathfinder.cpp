@@ -11,6 +11,8 @@
 #include "RecastMesh.hpp"
 #include "NavMesh.hpp"
 
+#include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
+
 #include "Engine/Tasks/GenerateRecastMesh.hpp"
 #include "Engine/Tasks/GenerateNavMesh.hpp"
 #include "Engine/Physics/Scene.hpp"
@@ -106,12 +108,17 @@ class Pathfinder::Impl
     RecastMesh _recastMesh;
     NavMesh _navMesh;
     
+    //  query filter used by the main thread owning Pathfinder
+    dtQueryFilter _mainQueryFilter;
+    detour_nav_query_unique_ptr _mainQuery;
+    
 public:
     Impl() :
         _scheduler(16),
         _generateTaskId(kNullHandle)
     {
     }
+    
     ~Impl()
     {
         _scheduler.cancelAll(this);
@@ -177,6 +184,7 @@ public:
                     if (endState == Task::State::kEnded) {
                         auto& thisTask = reinterpret_cast<GenerateNavMesh&>(task);
                         _navMesh = thisTask.acquireGeneratedMesh();
+                        _mainQuery = _navMesh.createQuery(2048);
                     }
                     signalGenerateComplete(endState == Task::State::kEnded);
                 });
@@ -184,7 +192,7 @@ public:
                 task.setNextTask(std::move(nexttask));
             }
             else {
-                signalGenerateComplete(endState == Task::State::kEnded);
+                signalGenerateComplete(false);
             }
         });
         
@@ -193,9 +201,24 @@ public:
     }
 
 
-    bool isLocationWalkable(ckm::vector3f pos) const
+    bool isLocationWalkable
+    (
+        ckm::vector3f pos,
+        ckm::vector3f extents
+    )
     {
-        return false;
+        if (!_mainQuery)
+            return false;
+        
+        _mainQueryFilter.setIncludeFlags(kNavMeshPoly_Walkable);
+        _mainQueryFilter.setExcludeFlags(0);
+        
+        dtPolyRef resultRef = 0;
+        dtStatus status = _mainQuery->findNearestPoly(pos, extents, &_mainQueryFilter, &resultRef, nullptr);
+        if (dtStatusFailed(status))
+            return false;
+        
+        return resultRef != 0;
     }
 
     void update(double dt)
@@ -238,9 +261,13 @@ void Pathfinder::updateDebug(PathfinderDebug& debugger)
     _impl->updateDebug(debugger);
 }
 
-bool Pathfinder::isLocationWalkable(ckm::vector3f pos) const
+bool Pathfinder::isLocationWalkable
+(
+    ckm::vector3f pos,
+    ckm::vector3f extents
+)
 {
-    return _impl->isLocationWalkable(pos);
+    return _impl->isLocationWalkable(pos, extents);
 }
 
     

@@ -23,14 +23,14 @@ EditorAddEntityToScene::EditorAddEntityToScene
 (
     GameViewContext* gameContext
 ) :
-    _gc(gameContext),
+    GameState(gameContext),
     _stagedEntity(0),
     _displayTemplateSelector(false)
 
 {
     _entityTemplateListboxState.highlightItem = -1;
     
-    auto templateManifest = _gc->entityService->getDefinitions("entity");
+    auto templateManifest = entityService().getDefinitions("entity");
     if (templateManifest && templateManifest->root().HasMember("entity")) {
         auto& templates = templateManifest->root()["entity"];
         
@@ -108,7 +108,7 @@ void EditorAddEntityToScene::onViewRemoved(ove::ViewStack& stateController)
 {
     _displayTemplateSelector = false;
     if (_stagedEntity) {
-        _gc->entityService->destroyEntity(_stagedEntity);
+        entityService().destroyEntity(_stagedEntity);
         _stagedEntity = 0;
     }
 }
@@ -134,8 +134,8 @@ void EditorAddEntityToScene::frameUpdateView
     style.margins = { 8, 8, 8, 8 };
     
     uicore::Layout uiLayout;
-    auto frameWidth = _gc->renderService->getViewRect().w;
-    auto frameHeight = _gc->renderService->getViewRect().h;
+    auto frameWidth = renderService().getViewRect().w;
+    auto frameHeight = renderService().getViewRect().h;
     
     uiLayout.beginFrame(UI_BUTTON0_DOWN, &_sceneFrameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);
@@ -160,14 +160,14 @@ void EditorAddEntityToScene::frameUpdateView
         return;
     }
 
-    auto& hitResult = *_gc->screenRayTestResult;
+    auto& hitResult = sceneRayTestResult();
     
     if (!_stagedEntity || !hitResult)
         return;
     
     if (hitResult.body->entity != _stagedEntity) {
         if (!hitResult.normal.fuzzyZero()) {
-            _gc->sceneService->setEntityPosition(_stagedEntity,
+            sceneService().setEntityPosition(_stagedEntity,
                 hitResult.position,
                 hitResult.normal);
         }
@@ -180,13 +180,13 @@ void EditorAddEntityToScene::onViewEndFrame(ove::ViewStack& stateController)
     if (_displayTemplateSelector) {
         if (_entityTemplateListboxState.selected()) {
             _displayTemplateSelector = false;
-            _stagedEntity = _gc->entityService->createEntity(kEntityStore_Staging, "entity",
+            _stagedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
                 _entityTemplateUIList[_entityTemplateListboxState.selectedItem].name);
         }
     }
     else if (_stagedEntity) {
         if (_sceneFrameState.evtType == UI_BUTTON0_DOWN) {
-            _gc->entityService->cloneEntity(kEntityStore_Default, _stagedEntity);
+            entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
             stateController.present("EditorMain");
         }
     }

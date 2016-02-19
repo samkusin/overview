@@ -10,5 +10,9 @@
 
 namespace cinek {
 
+GameState::GameState(GameViewContext* context) :
+    _context(context)
+{
+}
 
 } /* namespace cinek */

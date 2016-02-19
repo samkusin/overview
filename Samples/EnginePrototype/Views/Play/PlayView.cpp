@@ -12,16 +12,14 @@
 namespace cinek {
 
 PlayView::PlayView(GameViewContext* gameContext) :
-    _gc(gameContext)
+    GameState(gameContext)
 {
     _mainState = std::allocate_shared<PlayMain>(std_allocator<PlayMain>(), gameContext);
 }
     
 void PlayView::onViewAdded(ove::ViewStack& stateController)
 {
-    _gc->setMode(GameViewContext::Mode::kPlay);
-    
-
+    game().setGameMode(GameMode::kPlay);
     
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
@@ -44,7 +42,7 @@ void PlayView::onViewRemoved(ove::ViewStack& stateController)
 {
     _viewStack.pop();
 
-    _gc->setMode(GameViewContext::Mode::kNone);
+    game().setGameMode(GameMode::kNone);
 }
 
 void PlayView::onViewStartFrame(ove::ViewStack& stateController)
@@ -72,7 +70,7 @@ void PlayView::onViewEndFrame(ove::ViewStack& stateController)
 {
     _viewStack.endFrame();
     
-    if (_gc->getMode() == GameViewContext::Mode::kEditor) {
+    if (game().getGameMode() == GameMode::kEditor) {
         stateController.present("EditorView");
     }
 }

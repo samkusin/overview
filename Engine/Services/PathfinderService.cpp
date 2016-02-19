@@ -15,7 +15,7 @@
 namespace cinek {
     namespace ove {
     
-PathfinderService::PathfinderService(const PathfinderContext& context) :
+PathfinderService::PathfinderService(PathfinderContext context) :
     _context(context)
 {
 }
@@ -40,6 +40,15 @@ void PathfinderService::renderDebug
     const RenderContext& renderContext = renderService.renderContext();
     pathfinderDebug()->setup(renderContext.programs, renderContext.uniforms, &camera, nullptr);
     pathfinder()->updateDebug(*pathfinderDebug());
+}
+
+bool PathfinderService::isPositionWalkable
+(
+    ckm::vector3f pos,
+    ckm::vector3f extents
+)
+{
+    return pathfinder()->isLocationWalkable(pos, extents);
 }
 
     

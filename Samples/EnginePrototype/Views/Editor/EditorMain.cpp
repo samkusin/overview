@@ -19,7 +19,7 @@ EditorMain::EditorMain
 (
     GameViewContext* gameContext
 ) :
-    _gc(gameContext)
+    GameState(gameContext)
 {
 }
 
@@ -72,14 +72,14 @@ void EditorMain::layoutUI()
     _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
     _frameState.keyEvents = _frameKeyEvents;
     
-    auto frameWidth = _gc->renderService->getViewRect().w;
-    auto frameHeight = _gc->renderService->getViewRect().h;
+    auto frameWidth = renderService().getViewRect().w;
+    auto frameHeight = renderService().getViewRect().h;
     
     uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);
     uiLayout.end();
     
-    _gc->uiService->setKeyboardFocusToItem(_frameState.thisItem);
+    uiService().setKeyboardFocusToItem(_frameState.thisItem);
 }
 
 void EditorMain::handleUI(ove::ViewStack& stateController)
@@ -87,15 +87,20 @@ void EditorMain::handleUI(ove::ViewStack& stateController)
     uicore::KeyEvent keyEvt;
     while ((keyEvt = _frameState.popKey())) {
     
+        //  Modifier Commands
         if (keyEvt.mod & KMOD_SHIFT) {
+            
+            //  Add Entity Mode
             if (keyEvt.key == SDL_SCANCODE_A) {
                 stateController.present("EditorAddEntityToScene");
                 break;
             }
+            //  Switch to Play Mode
             else if (keyEvt.key == SDL_SCANCODE_TAB) {
-                _gc->setMode(GameViewContext::Mode::kPlay);
+                game().setGameMode(GameMode::kPlay);
                 break;
             }
+            
         }
         
     }

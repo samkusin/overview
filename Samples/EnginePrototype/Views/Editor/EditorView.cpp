@@ -32,18 +32,18 @@ EditorView::EditorView
 (
     GameViewContext* gameContext
 ) :
-    _gc(gameContext)
+    GameState(gameContext)
 {
     _mainState = std::allocate_shared<EditorMain>(std_allocator<EditorMain>(), gameContext);
     _addEntityToSceneState = std::allocate_shared<EditorAddEntityToScene>(
         std_allocator<EditorAddEntityToScene>(),
-        _gc);
+        gameContext);
 }
 
     
 void EditorView::onViewAdded(ove::ViewStack& stateController)
 {
-    _gc->setMode(GameViewContext::Mode::kEditor);
+    game().setGameMode(GameMode::kEditor);
     
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
@@ -122,13 +122,13 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
     bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
     _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
 
-    _gc->sceneService->disableSimulation();
+    sceneService().disableSimulation();
 }
 
 void EditorView::onViewRemoved(ove::ViewStack& stateController)
 {
     _viewStack.pop();
-    _gc->setMode(GameViewContext::Mode::kNone);
+    game().setGameMode(GameMode::kNone);
 }
 
 void EditorView::onViewStartFrame(ove::ViewStack& stateController)
@@ -150,7 +150,7 @@ void EditorView::frameUpdateView
 {
     //test2();
     
-    _freeCameraController.handleCameraInput(*_gc->camera, inputState, dt);
+    _freeCameraController.handleCameraInput(camera(), inputState, dt);
     
     _viewStack.frameUpdate(dt, inputState);
 }
@@ -159,7 +159,7 @@ void EditorView::onViewEndFrame(ove::ViewStack& stateController)
 {
     _viewStack.endFrame();
     
-    if (_gc->getMode() == GameViewContext::Mode::kPlay) {
+    if (game().getGameMode() == GameMode::kPlay) {
         stateController.present("PlayView");
     }
 }
@@ -224,8 +224,8 @@ void EditorView::test1()
 
 void EditorView::test2()
 {
-    auto& camera = *_gc->camera;
-    auto& renderService = *_gc->renderService;
+    auto& camera = this->camera();
+    auto& renderService = this->renderService();
     
     bgfx::setViewRect(0, camera.viewportRect.x, camera.viewportRect.y,
         camera.viewportRect.w, camera.viewportRect.h);

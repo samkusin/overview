@@ -20,10 +20,14 @@
 
 namespace cinek {
 
-class GameView : public AppViewController
+class GameView : public AppViewController, GameInterface
 {
 public:
     GameView(ApplicationContext* context);
+    
+private:
+    virtual void setGameMode(GameMode mode) override;
+    virtual GameMode getGameMode() const override;
     
 private:
     //  ViewController
@@ -45,6 +49,7 @@ private:
     ove::ViewStack _viewStack;
     
     GameViewContext _gameViewContext;
+    GameMode _gameMode;
     
     std::shared_ptr<EditorView> _editorView;
     std::shared_ptr<PlayView> _playView;

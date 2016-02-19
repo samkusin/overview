@@ -18,7 +18,7 @@ namespace cinek {
 
 class PlayMain;
 
-class PlayView : public ove::ViewController
+class PlayView : public GameState
 {
 public:
     PlayView(GameViewContext* gameContext);
@@ -36,7 +36,6 @@ private:
     virtual const char* viewId() const override;
 
 private:
-    GameViewContext* _gc;
     ove::ViewStack _viewStack;
     
     std::shared_ptr<PlayMain> _mainState;

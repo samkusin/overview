@@ -22,6 +22,7 @@ struct PathfinderContext
     Scene* scene;
     Pathfinder* pathfinder;
     PathfinderDebug* pathfinderDebug;
+    
 };
     
 class PathfinderService
@@ -29,7 +30,7 @@ class PathfinderService
     PathfinderContext _context;
     
 public:
-    PathfinderService(const PathfinderContext& context);
+    PathfinderService(PathfinderContext context);
     ~PathfinderService();
     
     //  generates data for the pathfinder from existing scene data using the
@@ -37,8 +38,9 @@ public:
     //
     void generate(Pathfinder::GenerateCb cb);
     
-    
-    void update(double dt);
+    //  determines if a region is 'walkable', meaning if that point in isolation
+    //  is walkable.  this does not check if an entity can walk *to* the target
+    bool isPositionWalkable(ckm::vector3f pos, ckm::vector3f extents);
     
     //  debug methods
     void renderDebug(RenderService &renderService, const gfx::Camera& camera);
@@ -46,6 +48,7 @@ public:
 private:
     Scene* scene() { return _context.scene; }
     Pathfinder* pathfinder() { return _context.pathfinder; }
+    const Pathfinder* pathfinder() const { return _context.pathfinder; }
     PathfinderDebug* pathfinderDebug() { return _context.pathfinderDebug; }
 };
     

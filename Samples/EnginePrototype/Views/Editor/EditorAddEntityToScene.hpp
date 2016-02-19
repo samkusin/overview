@@ -19,7 +19,7 @@
 
 namespace cinek {
 
-class EditorAddEntityToScene : public ove::ViewController,
+class EditorAddEntityToScene : public GameState,
                                public uicore::DataProvider
 {
 public:
@@ -42,9 +42,7 @@ private:
         uicore::DataObject& data) override;
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
-private:
-    GameViewContext* _gc;
-    
+private:    
     uicore::FrameState _sceneFrameState;
     uicore::ListboxState _entityTemplateListboxState;
     Entity _stagedEntity;

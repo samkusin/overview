@@ -31,7 +31,7 @@ public:
     //  quick way to determine whether a target can be used as a destination,
     //  though this method does not check if an entity can reach the target
     //  position.
-    bool isLocationWalkable(ckm::vector3f pos) const;
+    bool isLocationWalkable(ckm::vector3f pos, ckm::vector3f extents);
     
     //  update the pathfinding system
     void update(double dt);

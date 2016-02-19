@@ -26,17 +26,19 @@
 namespace cinek {
 
 GameView::GameView(ApplicationContext* api) :
-    AppViewController(api)
+    AppViewController(api),
+    _gameMode(GameMode::kNone)
 {
     _gameViewContext.camera = &_camera;
     _gameViewContext.screenRayTestResult = &_viewToSceneRayTestResult;
+    _gameViewContext.pathfinderService = &pathfinderService();
     _gameViewContext.sceneService = &sceneService();
     _gameViewContext.entityService = &entityService();
     _gameViewContext.renderService = &renderService();
     _gameViewContext.assetService = &assetService();
     _gameViewContext.uiService = &uiService();
     _gameViewContext.nvgContext = nvgContext();
-    _gameViewContext.setMode(GameViewContext::Mode::kNone);
+    _gameViewContext.game = this;
 }
 
     
@@ -59,6 +61,10 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     
     _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh.png"));
     
+    //  create player
+    
+    
+    //  game state machine
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
             -> std::shared_ptr<ove::ViewController> {
@@ -139,6 +145,16 @@ void GameView::onViewEndFrame(ove::ViewStack& stateController)
 const char* GameView::viewId() const
 {
     return "GameView";
+}
+
+void GameView::setGameMode(GameMode mode)
+{
+    _gameMode = mode;
+}
+
+GameMode GameView::getGameMode() const
+{
+    return _gameMode;
 }
 
 } /* namespace cinek */

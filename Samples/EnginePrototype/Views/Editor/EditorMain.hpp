@@ -18,7 +18,7 @@
 
 namespace cinek {
 
-class EditorMain : public ove::ViewController
+class EditorMain : public GameState
 {
 public:
     EditorMain(GameViewContext* gameContext);
@@ -36,8 +36,6 @@ private:
     virtual const char* viewId() const override;
 
 private:
-    GameViewContext* _gc;
-
     uicore::FrameState _frameState;
     uicore::KeyEvent _frameKeyEvents[16];
 

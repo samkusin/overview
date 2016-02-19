@@ -56,6 +56,12 @@ void GenerateNavMesh::onUpdate(uint32_t deltaTimeMs)
     
     case kInitialStage:
         {
+            for (int i = 0; i < _pmesh->npolys; ++i) {
+                if (_pmesh->areas[i] == RC_WALKABLE_AREA) {
+                    _pmesh->flags[i] = kNavMeshPoly_Walkable;
+                }
+            }
+        
             dtNavMeshCreateParams params;
             
             memset(&params, 0, sizeof(params));

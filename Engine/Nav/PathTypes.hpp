@@ -27,6 +27,11 @@ struct RecastMeshConfig
     float cellHeight;
 };
 
+enum
+{
+    kNavMeshPoly_Walkable   = 0x0001
+};
+
     } /* namespace ove */
 } /* namespace cinek */
 

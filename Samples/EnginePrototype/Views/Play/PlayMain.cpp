@@ -9,6 +9,7 @@
 #include "PlayMain.hpp"
 
 #include "Engine/Services/RenderService.hpp"
+#include "Engine/Services/PathfinderService.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -16,7 +17,7 @@
 namespace cinek {
 
 PlayMain::PlayMain(GameViewContext* gameContext) :
-    _gc(gameContext)
+    GameState(gameContext)
 {
 }
     
@@ -68,14 +69,14 @@ void PlayMain::layoutUI()
     _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
     _frameState.keyEvents = _frameKeyEvents;
     
-    auto frameWidth = _gc->renderService->getViewRect().w;
-    auto frameHeight = _gc->renderService->getViewRect().h;
+    auto frameWidth = renderService().getViewRect().w;
+    auto frameHeight = renderService().getViewRect().h;
     
     uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);
     uiLayout.end();
     
-    _gc->uiService->setKeyboardFocusToItem(_frameState.thisItem);
+    uiService().setKeyboardFocusToItem(_frameState.thisItem);
 }
 
 void PlayMain::handleUI(ove::ViewStack& stateController)
@@ -84,14 +85,31 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
     while ((keyEvt = _frameState.popKey())) {
     
         if (keyEvt.mod & KMOD_SHIFT) {
+        
+            //  switch mode to editor
             if (keyEvt.key == SDL_SCANCODE_TAB) {
-                _gc->setMode(GameViewContext::Mode::kEditor);
+                game().setGameMode(GameMode::kEditor);
                 break;
             }
-        }
         
+        }
+    }
+    
+    //  main frame selections
+    if (_frameState.evtType == UI_BUTTON0_DOWN) {
+    
+        auto& rayTestResult = sceneRayTestResult();
+        if (rayTestResult) {
+            ckm::vector3f pos;
+            ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.00), ckm::scalar(0.1) };
+            ove::ckmFromBt(pos, rayTestResult.position);
+            if (pathfinderService().isPositionWalkable(pos, extents)) {
+                //  test walk
+
+            }
+        }
+    
     }
 }
-
 
 }

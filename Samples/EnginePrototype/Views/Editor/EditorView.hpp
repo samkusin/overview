@@ -27,7 +27,7 @@ namespace cinek {
 class EditorMain;
 class EditorAddEntityToScene;
 
-class EditorView : public ove::ViewController,
+class EditorView : public GameState,
                    public uicore::DataProvider
 {
 public:
@@ -51,7 +51,6 @@ private:
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
 private:
-    GameViewContext* _gc;
     ove::ViewStack _viewStack;
     
     ove::FreeCameraController _freeCameraController;

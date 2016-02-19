@@ -17,7 +17,7 @@ namespace cinek {
 
 class PlayMain;
 
-class PlayMain : public ove::ViewController
+class PlayMain : public GameState
 {
 public:
     PlayMain(GameViewContext* gameContext);
@@ -34,9 +34,7 @@ private:
     
     virtual const char* viewId() const override;
 
-private:
-    GameViewContext* _gc;
-    
+private:    
     uicore::FrameState _frameState;
     uicore::KeyEvent _frameKeyEvents[16];
     
