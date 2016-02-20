@@ -35,11 +35,15 @@ namespace cinek {
         
         class Pathfinder;
         struct PathfinderDebug;
+        class PathfinderListener;
         class NavMesh;
         class NavBody;
         class NavBodyTransform;
         class NavSceneBodyTransform;
         class NavSystem;
+        class NavPath;
+        class NavPathQueryPool;
+        class NavPathQuery;
         
         class AssetService;
         class EntityService;

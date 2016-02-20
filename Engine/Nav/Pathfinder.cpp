@@ -8,13 +8,17 @@
 
 #include "Pathfinder.hpp"
 #include "PathfinderDebug.hpp"
+#include "PathfinderListener.hpp"
+#include "NavPathQueryPool.hpp"
+#include "NavPathQuery.hpp"
 #include "RecastMesh.hpp"
 #include "NavMesh.hpp"
+#include "NavPath.hpp"
 
 #include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
 
-#include "Engine/Tasks/GenerateRecastMesh.hpp"
-#include "Engine/Tasks/GenerateNavMesh.hpp"
+#include "Engine/Nav/Tasks/GenerateRecastMesh.hpp"
+#include "Engine/Nav/Tasks/GenerateNavMesh.hpp"
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneFixedBodyHull.hpp"
 #include "Engine/Physics/SceneMotionState.hpp"
@@ -109,19 +113,38 @@ class Pathfinder::Impl
     NavMesh _navMesh;
     
     //  query filter used by the main thread owning Pathfinder
-    dtQueryFilter _mainQueryFilter;
-    detour_nav_query_unique_ptr _mainQuery;
+    unique_ptr<NavPathQueryPool> _queryPool;
+    
+    std::vector<PathfinderListener*> _listeners;
     
 public:
     Impl() :
         _scheduler(16),
         _generateTaskId(kNullHandle)
     {
+        _listeners.reserve(8);
     }
     
     ~Impl()
     {
         _scheduler.cancelAll(this);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //  listener management
+    //
+    void addListener(PathfinderListener* listener)
+    {
+        auto it = std::find(_listeners.begin(), _listeners.end(), listener);
+        CK_ASSERT(it == _listeners.end());
+        _listeners.emplace(it, listener);
+    }
+    
+    void removeListener(PathfinderListener* listener)
+    {
+        auto it = std::find(_listeners.begin(), _listeners.end(), listener);
+        CK_ASSERT_RETURN(it != _listeners.end());
+        _listeners.erase(it);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -189,7 +212,11 @@ public:
                     if (endState == Task::State::kEnded) {
                         auto& thisTask = reinterpret_cast<GenerateNavMesh&>(task);
                         _navMesh = thisTask.acquireGeneratedMesh();
-                        _mainQuery = _navMesh.createQuery(2048);
+                        
+                        NavPathQueryPool::InitParams initParams;
+                        initParams.navMesh = &_navMesh;
+                        initParams.numQueries = 32;
+                        _queryPool = allocate_unique<NavPathQueryPool>(initParams);
                     }
                     signalGenerateComplete(endState == Task::State::kEnded);
                 });
@@ -215,19 +242,28 @@ public:
         ckm::vector3f extents
     )
     {
-        if (!_mainQuery)
+        if (!_queryPool)
             return false;
-        
-        _mainQueryFilter.setIncludeFlags(kNavMeshPoly_Walkable);
-        _mainQueryFilter.setExcludeFlags(0);
-        
-        dtPolyRef resultRef = 0;
-        dtStatus status = _mainQuery->findNearestPoly(pos, extents, &_mainQueryFilter, &resultRef, nullptr);
-        if (dtStatusFailed(status))
+    
+        auto query = _queryPool->acquire();
+        if (!query)
             return false;
-        
-        return resultRef != 0;
+        query->setupFilters(kNavMeshPoly_Walkable);
+        return query->isWalkable(pos, extents);
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //  instantiate a path query task
+    //
+    void generatePath
+    (
+        Entity entity,
+        ckm::vector3f startPos,
+        ckm::vector3f endPos
+    )
+    {
+    }
+    
 
     ////////////////////////////////////////////////////////////////////////////
     //  Updates main scheduler and synchronized with any path-query threads
@@ -254,6 +290,16 @@ Pathfinder::Pathfinder() :
 
 Pathfinder::~Pathfinder()
 {
+}
+
+void Pathfinder::addListener(PathfinderListener* listener)
+{
+    _impl->addListener(listener);
+}
+
+void Pathfinder::removeListener(PathfinderListener* listener)
+{
+    _impl->removeListener(listener);
 }
 
 void Pathfinder::update(double dt)
@@ -284,8 +330,14 @@ bool Pathfinder::isLocationWalkable
     return _impl->isLocationWalkable(pos, extents);
 }
 
-void Pathfinder::entityGotoPosition(Entity entity, ckm::vector3f pos)
+void Pathfinder::generatePath
+(
+    Entity entity,
+    ckm::vector3f startPos,
+    ckm::vector3f endPos
+)
 {
+    _impl->generatePath(entity, startPos, endPos);
 }
     
     } /* namespace ove */

@@ -30,15 +30,6 @@ NavMesh& NavMesh::operator=(NavMesh&& other)
     return *this;
 }
 
-detour_nav_query_unique_ptr NavMesh::createQuery(int maxNodes) const
-{
-    detour_nav_query_unique_ptr ptr(dtAllocNavMeshQuery());
-    
-    ptr->init(_mesh.get(), maxNodes);
-    
-    return ptr;
-}
-
 void NavMesh::debugDraw(::duDebugDraw& debugDraw)
 {
     if (_mesh) {

@@ -106,7 +106,7 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
             ove::ckmFromBt(pos, rayTestResult.position);
             if (pathfinder().isLocationWalkable(pos, extents)) {
                 //  test walk of focused entity - async
-                pathfinder().entityGotoPosition(_focusedEntity, pos);
+                pathfinder().generatePath(_focusedEntity, pos, pos);
             }
         }
     
