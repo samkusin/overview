@@ -28,8 +28,7 @@ public:
     void generateFromScene(const Scene& scene, GenerateCb callback);
     
     //  Manages listeners for Pathfinder events
-    void addListener(PathfinderListener* listener);
-    void removeListener(PathfinderListener* listener);
+    void setListener(PathfinderListener* listener);
     
     //  checks whether a world location is walkable.  this should be used as a
     //  quick way to determine whether a target can be used as a destination,
@@ -45,8 +44,6 @@ public:
     void update(double dt);
     //  updates the debugging system for pathfinding
     void updateDebug(PathfinderDebug& debugger);
-    
-    
     
 private:
     class Impl;

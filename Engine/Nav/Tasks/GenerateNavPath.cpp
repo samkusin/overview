@@ -40,6 +40,11 @@ std::vector<float> GenerateNavPath::acquirePoints()
 {
     return std::move(_path);
 }
+
+void GenerateNavPath::onUpdate(uint32_t /* deltaTimeMs */)
+{
+
+}
     
     
     } /* namespace ove */

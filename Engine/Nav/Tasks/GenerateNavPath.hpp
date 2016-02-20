@@ -36,6 +36,9 @@ public:
     std::vector<float> acquirePoints();
     
 private:
+    virtual void onUpdate(uint32_t /* deltaTimeMs */) override;
+    
+private:
     NavPathQueryPtr _query;
     Entity _entity;
     ckm::vector3f _startPos;

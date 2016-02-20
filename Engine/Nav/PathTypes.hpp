@@ -34,6 +34,14 @@ enum
     kNavMeshPoly_Walkable   = 0x0001
 };
 
+enum class PathfinderError
+{
+    kNone,
+    kFailure,
+    kTaskFailure,
+    kOutOfResources
+};
+
 struct detour_nav_mesh_deleter { void operator()(dtNavMesh* ptr); };
 using detour_nav_mesh_unique_ptr = std::unique_ptr<dtNavMesh, detour_nav_mesh_deleter>;
 

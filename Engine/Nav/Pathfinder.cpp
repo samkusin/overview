@@ -15,6 +15,8 @@
 #include "NavMesh.hpp"
 #include "NavPath.hpp"
 
+#include "Tasks/GenerateNavPath.hpp"
+
 #include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
 
 #include "Engine/Nav/Tasks/GenerateRecastMesh.hpp"
@@ -24,6 +26,7 @@
 #include "Engine/Physics/SceneMotionState.hpp"
 
 #include <cinek/taskscheduler.hpp>
+#include <vector>
 
 namespace cinek {
     namespace ove {
@@ -98,6 +101,33 @@ class Pathfinder::Impl
     TaskId _generateTaskId;
     GenerateCb _generateCb;
     
+    std::vector<std::pair<Entity, TaskId>> _tasks;
+    
+    RecastMeshConfig _navMeshConfig;
+    RecastMesh _recastMesh;
+    NavMesh _navMesh;
+    
+    //  query filter used by the main thread owning Pathfinder
+    unique_ptr<NavPathQueryPool> _queryPool;
+    
+    //  report listeners
+    PathfinderListener* _listener;
+    
+    struct Command
+    {
+        enum Type
+        {
+            kGeneratePath
+        };
+        Type type;
+        Entity entity;
+        ckm::vector3f startPos;
+        ckm::vector3f endPos;
+    };
+    
+    std::vector<Command> _commandQueue;
+    
+private:
     void signalGenerateComplete(bool result)
     {
         if (_generateCb) {
@@ -106,23 +136,99 @@ class Pathfinder::Impl
         }
         _generateTaskId = kNullHandle;
     }
-
-
-    RecastMeshConfig _navMeshConfig;
-    RecastMesh _recastMesh;
-    NavMesh _navMesh;
     
-    //  query filter used by the main thread owning Pathfinder
-    unique_ptr<NavPathQueryPool> _queryPool;
+    void completeGeneratePath(Task::State state, GenerateNavPath& task)
+    {
+        if (state == Task::State::kEnded) {
+            auto points = task.acquirePoints();
+            NavPath path(std::move(points));
+            signalListeners(&PathfinderListener::onPathfinderPathUpdate, task.entity(), std::move(path));
+        }
+        else if (state == Task::State::kFailed) {
+            signalListeners(&PathfinderListener::onPathfinderError, task.entity(), PathfinderError::kTaskFailure);
+        }
+    }
     
-    std::vector<PathfinderListener*> _listeners;
+    void registerTask(Entity entity, TaskId task)
+    {
+        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity,
+            [](const decltype(_tasks)::value_type& data, Entity e) -> bool {
+                return data.first < e;
+            });
+        
+        CK_ASSERT_RETURN(it == _tasks.end() || (*it).first != entity);
+        
+        _tasks.emplace(it, entity, task);
+    }
+    
+    void cleanupTask(Entity entity, TaskId task, bool kill)
+    {
+        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity,
+            [](const decltype(_tasks)::value_type& data, Entity e) -> bool {
+                return data.first < e;
+            });
+        
+        for (;it != _tasks.end(); ) {
+            auto& entry = *it;
+            if (entry.first != entity)
+                break;
+            
+            if (!task || task == entry.second) {
+                if (kill) {
+                    _scheduler.cancel(entry.second);
+                }
+                it = _tasks.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+    
+    bool taskActive(Entity entity)
+    {
+        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity,
+            [](const decltype(_tasks)::value_type& data, Entity e) -> bool {
+                return data.first < e;
+            });
+        
+        for (;it != _tasks.end(); ++it) {
+            auto& entry = *it;
+            if (entry.first != entity)
+                break;
+            
+            if (_scheduler.isActive(entry.second))
+                return true;
+        }
+        
+        return false;
+    }
+    
+    template<typename Fn>
+    void signalListeners(Fn fn)
+    {
+        if (_listener) {
+            (_listener->*fn)();
+        }
+    }
+    
+    template<typename Fn, typename... P>
+    void signalListeners(Fn fn, P&&... params)
+    {
+        if (_listener) {
+            (_listener->*fn)(std::forward<P>(params)...);
+        }
+    }
     
 public:
     Impl() :
         _scheduler(16),
-        _generateTaskId(kNullHandle)
+        _generateTaskId(kNullHandle),
+        _listener(nullptr)
     {
-        _listeners.reserve(8);
+        //  TODO - magic numbers! consolidate into an InitParams
+        _tasks.reserve(32);
+        _commandQueue.reserve(256);
     }
     
     ~Impl()
@@ -133,18 +239,9 @@ public:
     ////////////////////////////////////////////////////////////////////////////
     //  listener management
     //
-    void addListener(PathfinderListener* listener)
+    void setListener(PathfinderListener* listener)
     {
-        auto it = std::find(_listeners.begin(), _listeners.end(), listener);
-        CK_ASSERT(it == _listeners.end());
-        _listeners.emplace(it, listener);
-    }
-    
-    void removeListener(PathfinderListener* listener)
-    {
-        auto it = std::find(_listeners.begin(), _listeners.end(), listener);
-        CK_ASSERT_RETURN(it != _listeners.end());
-        _listeners.erase(it);
+        _listener = listener;
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -262,6 +359,13 @@ public:
         ckm::vector3f endPos
     )
     {
+        Command cmd = {
+            Command::kGeneratePath,
+            entity,
+            startPos,
+            endPos
+        };
+        _commandQueue.emplace_back(cmd);
     }
     
 
@@ -270,6 +374,68 @@ public:
     //
     void update(double dt)
     {
+        auto cmdIt = _commandQueue.begin();
+        auto cmdItEnd = _commandQueue.end();
+        
+        //  process commands
+        //  not all commmands are processed this frame based on available
+        //  resources like available queries, tasks, etc.
+        bool consumeCommand = true;
+        while (consumeCommand && cmdIt != cmdItEnd) {
+            auto& cmd = *cmdIt;
+            PathfinderError err = PathfinderError::kNone;
+            
+            consumeCommand = false;
+    
+            switch (cmd.type) {
+            
+            case Command::kGeneratePath:
+                if (_queryPool) {
+                    if (!taskActive(cmd.entity)) {
+                        auto query = _queryPool->acquire();
+                        if (query) {
+                            auto task = allocate_unique<GenerateNavPath>(std::move(query),
+                                            cmd.entity,
+                                            cmd.startPos,
+                                            cmd.endPos);
+                           
+                            task->setCallback([this](Task::State state, Task& t, void*) {
+                                auto& genTask = static_cast<GenerateNavPath&>(t);
+                                completeGeneratePath(state, genTask);
+                                cleanupTask(genTask.entity(), genTask.id(), false);
+                            });
+                            
+                            auto taskId = _scheduler.schedule(std::move(task), this);
+                            if (taskId) {
+                                registerTask(cmd.entity, taskId);
+                                consumeCommand = true;
+                            }
+                            else {
+                                err = PathfinderError::kOutOfResources;
+                            }
+                        }
+                        //  no query available, don't execute now
+                    }
+                }
+                else {
+                    err = PathfinderError::kFailure;
+                }
+                break;
+            
+            default:
+                CK_ASSERT(false);
+                break;
+            }
+            
+            if (err != PathfinderError::kNone) {
+                signalListeners(&PathfinderListener::onPathfinderError, cmd.entity, err);
+            }
+        }
+        
+        // remove used commands from queue
+        _commandQueue.erase(_commandQueue.begin(), cmdIt);
+    
+        //  update tasks
         _scheduler.update((uint32_t)(dt * 1000.0));
     }
     
@@ -292,14 +458,9 @@ Pathfinder::~Pathfinder()
 {
 }
 
-void Pathfinder::addListener(PathfinderListener* listener)
+void Pathfinder::setListener(PathfinderListener* listener)
 {
-    _impl->addListener(listener);
-}
-
-void Pathfinder::removeListener(PathfinderListener* listener)
-{
-    _impl->removeListener(listener);
+    _impl->setListener(listener);
 }
 
 void Pathfinder::update(double dt)

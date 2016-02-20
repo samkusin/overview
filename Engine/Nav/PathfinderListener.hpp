@@ -20,6 +20,8 @@ public:
     virtual ~PathfinderListener() {}
     
     virtual void onPathfinderPathUpdate(Entity entity, NavPath&& path) = 0;
+    
+    virtual void onPathfinderError(Entity entity, PathfinderError error) = 0;
 };
 
     
