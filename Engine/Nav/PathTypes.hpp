@@ -38,7 +38,6 @@ enum class PathfinderError
 {
     kNone,
     kFailure,
-    kTaskFailure,
     kOutOfResources
 };
 

@@ -23,12 +23,20 @@ namespace cinek {
         //  the total number of nodes created by this query
         int nodeLimit() const;
         
+        //  returns the resident query filter object
+        const dtQueryFilter& filter() const { return _filter; }
+        
         //  set's up node filters used during the next query
         void setupFilters(uint16_t includeNodeMask);
         
         //  is the point 'walkable' - i.e. on the walk mesh
         bool isWalkable(ckm::vector3f pos, ckm::vector3f extents) const;
-                
+        
+        //  used for fine-tuning the query (i.e. a direct interface to the
+        //  low-level query system.
+        dtNavMeshQuery& interface() { return *_query; }
+        const dtNavMeshQuery& interface() const { return *_query; }
+        
     private:
         detour_nav_query_unique_ptr _query;
         dtQueryFilter _filter;

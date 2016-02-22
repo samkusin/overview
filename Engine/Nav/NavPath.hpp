@@ -10,6 +10,7 @@
 #define Overview_NavPath_hpp
 
 #include "PathTypes.hpp"
+#include "Engine/Contrib/Recast/DetourNavMesh.h"
 
 #include <vector>
 
@@ -20,11 +21,13 @@ class NavPath
 {
 public:
     NavPath();
-    NavPath(std::vector<float>&& points);
+    NavPath(std::vector<dtPolyRef>&& polys);
+    
+    int size() const { return (int)_polys.size(); }
     
 private:
-    //  contains x,y,z tuples
-    std::vector<float> _points;
+    //  contains poly references
+    std::vector<dtPolyRef> _polys;
 };
     
     } /* namespace ove */

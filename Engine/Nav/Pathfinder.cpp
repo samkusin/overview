@@ -101,17 +101,25 @@ class Pathfinder::Impl
     TaskId _generateTaskId;
     GenerateCb _generateCb;
     
-    std::vector<std::pair<Entity, TaskId>> _tasks;
+    struct EntityTaskInfo
+    {
+        Entity entity;
+        TaskId task;
+        PathfinderListener* listener;
+        bool operator<(Entity e) const {
+            return entity < e;
+        }
+    };
+    
+    std::vector<EntityTaskInfo> _tasks;
     
     RecastMeshConfig _navMeshConfig;
     RecastMesh _recastMesh;
     NavMesh _navMesh;
     
     //  query filter used by the main thread owning Pathfinder
+    dtQueryFilter _dtDefaultQueryFilter;
     unique_ptr<NavPathQueryPool> _queryPool;
-    
-    //  report listeners
-    PathfinderListener* _listener;
     
     struct Command
     {
@@ -120,6 +128,7 @@ class Pathfinder::Impl
             kGeneratePath
         };
         Type type;
+        PathfinderListener* listener;
         Entity entity;
         ckm::vector3f startPos;
         ckm::vector3f endPos;
@@ -128,6 +137,53 @@ class Pathfinder::Impl
     std::vector<Command> _commandQueue;
     
 private:
+    void registerTask(EntityTaskInfo info)
+    {
+        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), info.entity);
+        CK_ASSERT_RETURN(it == _tasks.end() || it->entity != info.entity);
+        
+        _tasks.emplace(it, std::move(info));
+    }
+    
+    PathfinderListener* finishTask(Entity entity, TaskId task)
+    {
+        PathfinderListener* listener = nullptr;
+        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity);
+        
+        for (;it != _tasks.end(); ) {
+            auto& entry = *it;
+            if (entry.entity != entity)
+                break;
+            
+            if (task == entry.task) {
+                listener = entry.listener;
+                it = _tasks.erase(it);
+                break;
+            }
+            else {
+                ++it;
+            }
+        }
+        
+        return listener;
+    }
+    
+    bool taskActive(Entity entity)
+    {
+        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity);
+        
+        for (;it != _tasks.end(); ++it) {
+            auto& entry = *it;
+            if (entry.entity != entity)
+                break;
+            
+            if (_scheduler.isActive(entry.task))
+                return true;
+        }
+        
+        return false;
+    }
+    
     void signalGenerateComplete(bool result)
     {
         if (_generateCb) {
@@ -137,94 +193,71 @@ private:
         _generateTaskId = kNullHandle;
     }
     
-    void completeGeneratePath(Task::State state, GenerateNavPath& task)
+    auto runCommand(Command& cmd) -> std::pair<PathfinderError, bool>
     {
-        if (state == Task::State::kEnded) {
-            auto points = task.acquirePoints();
-            NavPath path(std::move(points));
-            signalListeners(&PathfinderListener::onPathfinderPathUpdate, task.entity(), std::move(path));
-        }
-        else if (state == Task::State::kFailed) {
-            signalListeners(&PathfinderListener::onPathfinderError, task.entity(), PathfinderError::kTaskFailure);
-        }
-    }
-    
-    void registerTask(Entity entity, TaskId task)
-    {
-        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity,
-            [](const decltype(_tasks)::value_type& data, Entity e) -> bool {
-                return data.first < e;
-            });
+        PathfinderError err = PathfinderError::kNone;
+        bool consumeCommand = false;
         
-        CK_ASSERT_RETURN(it == _tasks.end() || (*it).first != entity);
-        
-        _tasks.emplace(it, entity, task);
-    }
-    
-    void cleanupTask(Entity entity, TaskId task, bool kill)
-    {
-        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity,
-            [](const decltype(_tasks)::value_type& data, Entity e) -> bool {
-                return data.first < e;
-            });
-        
-        for (;it != _tasks.end(); ) {
-            auto& entry = *it;
-            if (entry.first != entity)
-                break;
+        switch (cmd.type) {
             
-            if (!task || task == entry.second) {
-                if (kill) {
-                    _scheduler.cancel(entry.second);
+        case Command::kGeneratePath:
+            if (_queryPool && !taskActive(cmd.entity)) {
+                auto query = _queryPool->acquire();
+                if (query) {
+                    ckm::vector3f extents(ckm::scalar(0.1), ckm::scalar(0.1), ckm::scalar(0.1));
+                    auto task = allocate_unique<GenerateNavPath>(std::move(query),
+                                    cmd.entity,
+                                    cmd.startPos,
+                                    cmd.endPos,
+                                    extents,
+                                    Allocator());
+                   
+                    task->setCallback([this](Task::State state, Task& t, void*) {
+                        auto& genTask = static_cast<GenerateNavPath&>(t);
+                        Entity entity = genTask.entity();
+                        auto listener = finishTask(entity, genTask.id());
+                        if (listener) {
+                            if (state == Task::State::kEnded) {
+                                auto points = genTask.acquirePoints();
+                                NavPath path(std::move(points));
+                                listener->onPathfinderPathUpdate(entity, std::move(path));
+                            }
+                            else {
+                                listener->onPathfinderError(entity, PathfinderError::kFailure);
+                            }
+                        }
+                    });
+                    
+                    EntityTaskInfo taskInfo;
+                    taskInfo.task = _scheduler.schedule(std::move(task), this);
+                    taskInfo.listener = cmd.listener;
+                    taskInfo.entity = cmd.entity;
+                    if (taskInfo.task) {
+                        registerTask(std::move(taskInfo));
+                        consumeCommand = true;
+                    }
+                    else {
+                        err = PathfinderError::kOutOfResources;
+                    }
                 }
-                it = _tasks.erase(it);
+                //  no query available, don't execute now
             }
-            else {
-                ++it;
-            }
-        }
-    }
-    
-    bool taskActive(Entity entity)
-    {
-        auto it = std::lower_bound(_tasks.begin(), _tasks.end(), entity,
-            [](const decltype(_tasks)::value_type& data, Entity e) -> bool {
-                return data.first < e;
-            });
+            break;
         
-        for (;it != _tasks.end(); ++it) {
-            auto& entry = *it;
-            if (entry.first != entity)
-                break;
+        default:
+            CK_ASSERT(false);
+            break;
             
-            if (_scheduler.isActive(entry.second))
-                return true;
         }
         
-        return false;
+        return std::make_pair(err, consumeCommand);
     }
-    
-    template<typename Fn>
-    void signalListeners(Fn fn)
-    {
-        if (_listener) {
-            (_listener->*fn)();
-        }
-    }
-    
-    template<typename Fn, typename... P>
-    void signalListeners(Fn fn, P&&... params)
-    {
-        if (_listener) {
-            (_listener->*fn)(std::forward<P>(params)...);
-        }
-    }
+
     
 public:
     Impl() :
         _scheduler(16),
-        _generateTaskId(kNullHandle),
-        _listener(nullptr)
+        _generateTaskId(kNullHandle)
     {
         //  TODO - magic numbers! consolidate into an InitParams
         _tasks.reserve(32);
@@ -236,12 +269,32 @@ public:
         _scheduler.cancelAll(this);
     }
     
-    ////////////////////////////////////////////////////////////////////////////
-    //  listener management
-    //
-    void setListener(PathfinderListener* listener)
+    //  cancels commands by listener
+    void cancelByListener(PathfinderListener* listener)
     {
-        _listener = listener;
+        if (!listener)
+            return;
+        
+        //  clear pending and active commands
+        for (auto it = _commandQueue.begin(); it != _commandQueue.end(); ) {
+            if (it->listener == listener) {
+                it = _commandQueue.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+        
+        for (auto it = _tasks.begin(); it != _tasks.end(); ) {
+            auto& taskInfo = *it;
+            if (taskInfo.listener == listener) {
+                _scheduler.cancel(taskInfo.task);
+                it = _tasks.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -354,6 +407,7 @@ public:
     //
     void generatePath
     (
+        PathfinderListener* listener,
         Entity entity,
         ckm::vector3f startPos,
         ckm::vector3f endPos
@@ -361,6 +415,7 @@ public:
     {
         Command cmd = {
             Command::kGeneratePath,
+            listener,
             entity,
             startPos,
             endPos
@@ -372,7 +427,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////
     //  Updates main scheduler and synchronized with any path-query threads
     //
-    void update(double dt)
+    void simulate(double dt)
     {
         auto cmdIt = _commandQueue.begin();
         auto cmdItEnd = _commandQueue.end();
@@ -381,57 +436,22 @@ public:
         //  not all commmands are processed this frame based on available
         //  resources like available queries, tasks, etc.
         bool consumeCommand = true;
-        while (consumeCommand && cmdIt != cmdItEnd) {
+        while (cmdIt != cmdItEnd) {
             auto& cmd = *cmdIt;
-            PathfinderError err = PathfinderError::kNone;
-            
-            consumeCommand = false;
-    
-            switch (cmd.type) {
-            
-            case Command::kGeneratePath:
-                if (_queryPool) {
-                    if (!taskActive(cmd.entity)) {
-                        auto query = _queryPool->acquire();
-                        if (query) {
-                            auto task = allocate_unique<GenerateNavPath>(std::move(query),
-                                            cmd.entity,
-                                            cmd.startPos,
-                                            cmd.endPos);
-                           
-                            task->setCallback([this](Task::State state, Task& t, void*) {
-                                auto& genTask = static_cast<GenerateNavPath&>(t);
-                                completeGeneratePath(state, genTask);
-                                cleanupTask(genTask.entity(), genTask.id(), false);
-                            });
-                            
-                            auto taskId = _scheduler.schedule(std::move(task), this);
-                            if (taskId) {
-                                registerTask(cmd.entity, taskId);
-                                consumeCommand = true;
-                            }
-                            else {
-                                err = PathfinderError::kOutOfResources;
-                            }
-                        }
-                        //  no query available, don't execute now
-                    }
-                }
-                else {
-                    err = PathfinderError::kFailure;
-                }
-                break;
-            
-            default:
-                CK_ASSERT(false);
-                break;
+            auto result = runCommand(cmd);
+
+            if (result.first != PathfinderError::kNone && cmd.listener) {
+                cmd.listener->onPathfinderError(cmd.entity, result.first);
             }
-            
-            if (err != PathfinderError::kNone) {
-                signalListeners(&PathfinderListener::onPathfinderError, cmd.entity, err);
+
+            consumeCommand = result.second;
+            if (consumeCommand) {
+                ++cmdIt;
+            }
+            else {
+                break;
             }
         }
-        
         // remove used commands from queue
         _commandQueue.erase(_commandQueue.begin(), cmdIt);
     
@@ -458,14 +478,14 @@ Pathfinder::~Pathfinder()
 {
 }
 
-void Pathfinder::setListener(PathfinderListener* listener)
+void Pathfinder::cancelByListener(PathfinderListener* listener)
 {
-    _impl->setListener(listener);
+    _impl->cancelByListener(listener);
 }
 
-void Pathfinder::update(double dt)
+void Pathfinder::simulate(double dt)
 {
-    _impl->update(dt);
+    _impl->simulate(dt);
 }
 
 void Pathfinder::generateFromScene
@@ -477,7 +497,7 @@ void Pathfinder::generateFromScene
     _impl->generateFromScene(scene, std::move(callback));
 }
 
-void Pathfinder::updateDebug(PathfinderDebug& debugger)
+void Pathfinder::simulateDebug(PathfinderDebug& debugger)
 {
     _impl->updateDebug(debugger);
 }
@@ -493,12 +513,13 @@ bool Pathfinder::isLocationWalkable
 
 void Pathfinder::generatePath
 (
+    PathfinderListener* listener,
     Entity entity,
     ckm::vector3f startPos,
     ckm::vector3f endPos
 )
 {
-    _impl->generatePath(entity, startPos, endPos);
+    _impl->generatePath(listener, entity, startPos, endPos);
 }
     
     } /* namespace ove */

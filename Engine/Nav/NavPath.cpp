@@ -15,8 +15,8 @@ NavPath::NavPath()
 {
 }
 
-NavPath::NavPath(std::vector<float>&& points) :
-    _points(std::move(points))
+NavPath::NavPath(std::vector<dtPolyRef>&& polys) :
+    _polys(std::move(polys))
 {
 }
     

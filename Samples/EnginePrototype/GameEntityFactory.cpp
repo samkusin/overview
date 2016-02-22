@@ -148,7 +148,7 @@ void GameEntityFactory::onCustomComponentCreateFn
             //    of the opposite case.
             ove::NavBody* navBody = _navSystem->findBody(entity);
             if (navBody) {
-                navBody->setNavBodyTransform(_navDataContext->allocateTransform(body, entity));
+                navBody->setTransform(_navDataContext->allocateTransform(body, entity));
             }
         }
         else {
@@ -180,7 +180,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         if (navBody) {
             ove::SceneBody* sceneBody = _scene->findBody(entity);
             if (sceneBody) {
-                navBody->setNavBodyTransform(_navDataContext->allocateTransform(sceneBody, entity));
+                navBody->setTransform(_navDataContext->allocateTransform(sceneBody, entity));
             }
             _navSystem->attachBody(navBody);
         }

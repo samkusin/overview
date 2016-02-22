@@ -40,6 +40,7 @@ struct ApplicationContext
     ove::RenderContext* renderContext;
     ove::Pathfinder* pathfinder;
     ove::PathfinderDebug* pathfinderDebug;
+    ove::NavSystem* navSystem;
 };
 
 class AppViewController : public ove::ViewController
@@ -71,6 +72,9 @@ protected:
     ove::PathfinderDebug& pathfinderDebug() {
         return *_pathfinderDebug;
     }
+    ove::NavSystem& navSystem() {
+        return *_navSystem;
+    }
     UIService& uiService() {
         return _uiService;
     }
@@ -88,6 +92,7 @@ private:
     ove::Scene* _scene;
     ove::Pathfinder* _pathfinder;
     ove::PathfinderDebug* _pathfinderDebug;
+    ove::NavSystem* _navSystem;
     
     UIService _uiService;
 };

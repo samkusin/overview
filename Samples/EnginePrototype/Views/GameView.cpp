@@ -36,6 +36,7 @@ GameView::GameView(ApplicationContext* api) :
     _gameViewContext.screenRayTestResult = &_viewToSceneRayTestResult;
     _gameViewContext.pathfinder = api->pathfinder;
     _gameViewContext.pathfinderDebug = api->pathfinderDebug;
+    _gameViewContext.navSystem = api->navSystem;
     _gameViewContext.sceneService = &sceneService();
     _gameViewContext.entityService = &entityService();
     _gameViewContext.renderService = &renderService();
@@ -145,7 +146,7 @@ void GameView::frameUpdateView
         renderService().context().uniforms,
         &_camera,
         nullptr);
-    pathfinder().updateDebug(pathfinderDebug());
+    pathfinder().simulateDebug(pathfinderDebug());
     
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);

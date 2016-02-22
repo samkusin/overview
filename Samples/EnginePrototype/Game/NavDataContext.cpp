@@ -53,7 +53,7 @@ ove::NavBody* NavDataContext::cloneBody
     ove::NavBody* body = _navBodyPool.construct(*source, entity);
     if (body) {
         ove::NavSceneBodyTransform* transform = allocateTransform(sceneBody, entity);
-        body->setNavBodyTransform(transform);
+        body->setTransform(transform);
     }
     return body;
 }

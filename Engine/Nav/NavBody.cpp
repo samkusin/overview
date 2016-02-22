@@ -7,6 +7,7 @@
 //
 
 #include "NavBody.hpp"
+#include "NavBodyTransform.hpp"
 
 namespace cinek {
     namespace ove {
@@ -29,9 +30,14 @@ NavBody::NavBody
 {
 }
 
-void NavBody::setNavBodyTransform(NavBodyTransform* transform)
+void NavBody::setTransform(NavBodyTransform* transform)
 {
     _transform = transform;
+}
+
+void NavBody::updateTransform()
+{
+    _transform->getNavBodyTransform(_position, _basis);
 }
     
     } /* namespace ove */

@@ -52,6 +52,7 @@ struct GameViewContext
     NVGcontext* nvgContext;
     ove::Pathfinder* pathfinder;
     ove::PathfinderDebug* pathfinderDebug;
+    ove::NavSystem* navSystem;
     
     GameInterface* game;
 };
@@ -71,6 +72,7 @@ protected:
     ove::AssetService& assetSevice() { return *_context->assetService; }
     ove::Pathfinder& pathfinder() { return *_context->pathfinder; }
     ove::PathfinderDebug& pathfinderDebug() { return *_context->pathfinderDebug; }
+    ove::NavSystem& navSystem() { return *_context->navSystem; }
     
     const ove::SceneRayTestResult& sceneRayTestResult() const { return *_context->screenRayTestResult; }
     UIService& uiService() { return *_context->uiService; }

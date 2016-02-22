@@ -10,6 +10,7 @@
 
 #include "Engine/Services/RenderService.hpp"
 #include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Nav/NavSystem.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -106,7 +107,7 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
             ove::ckmFromBt(pos, rayTestResult.position);
             if (pathfinder().isLocationWalkable(pos, extents)) {
                 //  test walk of focused entity - async
-                pathfinder().generatePath(_focusedEntity, pos, pos);
+                navSystem().moveBodyToPosition(_focusedEntity, pos);
             }
         }
     

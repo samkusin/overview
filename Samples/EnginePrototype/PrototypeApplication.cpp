@@ -97,6 +97,7 @@ PrototypeApplication::PrototypeApplication
     _navDataContext = cinek::allocate_unique<NavDataContext>(navDataInitParams);
     
     ove::NavSystem::InitParams navInitParams;
+    navInitParams.pathfinder = _pathfinder.get();
     navInitParams.numBodies = navDataInitParams.navBodyCount;
     _navSystem = cinek::allocate_unique<ove::NavSystem>(navInitParams);
     
@@ -138,6 +139,7 @@ PrototypeApplication::PrototypeApplication
     _appContext->sceneDebugDrawer = _sceneDbgDraw.get();
     _appContext->pathfinder = _pathfinder.get();
     _appContext->pathfinderDebug = _pathfinderDebug.get();
+    _appContext->navSystem = _navSystem.get();
     
     _viewStack.setFactory(
         [this](const std::string& viewName, ove::ViewController* )
@@ -176,14 +178,17 @@ void PrototypeApplication::beginFrame()
     
     _server.receive();
     _client.receive();
+    
+    _navSystem->startFrame();
 
     _viewStack.startFrame();
 }
 
 void PrototypeApplication::simulateFrame(double dt)
 {
+    _pathfinder->simulate(dt);
+    _navSystem->simulate(dt);
     _scene->simulate(dt);
-    _pathfinder->update(dt);
     
     _viewStack.simulate(dt);
 }

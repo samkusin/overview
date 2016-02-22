@@ -49,6 +49,20 @@ const
         return false;
     return resultRef != 0;
 }
+
+/*
+std::vector<float> NavPathQuery::generatePath
+(
+    ckm::vector3f start,
+    ckm::vector3f end
+)
+const
+{
+//m_navQuery->findPath(m_startRef, m_endRef, m_spos, m_epos, &m_filter, m_polys, &m_npolys, MAX_POLYS);
+
+
+}
+*/
   
     } /* namespace ove */
 } /* namespace cinek */

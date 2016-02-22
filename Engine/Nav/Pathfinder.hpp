@@ -22,13 +22,13 @@ class Pathfinder
 public:
     Pathfinder();
     ~Pathfinder();
+    
+    //  cancels commands by listener
+    void cancelByListener(PathfinderListener* listener);
 
     //  generates pathfinding data from an input scene
     using GenerateCb = std::function<void(bool)>;
     void generateFromScene(const Scene& scene, GenerateCb callback);
-    
-    //  Manages listeners for Pathfinder events
-    void setListener(PathfinderListener* listener);
     
     //  checks whether a world location is walkable.  this should be used as a
     //  quick way to determine whether a target can be used as a destination,
@@ -38,12 +38,18 @@ public:
     
     //  sends a request to generate a path between two points.
     //  paths are sent to listeners
-    void generatePath(Entity entity, ckm::vector3f startPos, ckm::vector3f endPos);
+    void generatePath
+    (
+        PathfinderListener* target,
+        Entity entity,
+        ckm::vector3f startPos,
+        ckm::vector3f endPos
+    );
 
     //  update the pathfinding system
-    void update(double dt);
+    void simulate(double dt);
     //  updates the debugging system for pathfinding
-    void updateDebug(PathfinderDebug& debugger);
+    void simulateDebug(PathfinderDebug& debugger);
     
 private:
     class Impl;

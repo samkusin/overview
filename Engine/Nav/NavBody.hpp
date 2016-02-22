@@ -46,12 +46,17 @@ public:
     NavBody(InitProperties initProperties=InitProperties());
     NavBody(const NavBody& source, Entity entity);
     
-    void setNavBodyTransform(NavBodyTransform* transform);
+    void setTransform(NavBodyTransform* transform);
+    void updateTransform();
     
     Entity entity() const { return _entity; }
+    const ckm::vector3f& position() const { return _position; }
+    const ckm::matrix3f& basis() const { return _basis; }
     
 private:
     Entity _entity;
+    ckm::vector3f _position;
+    ckm::matrix3f _basis;
     NavBodyTransform* _transform;
     std::vector<ckm::vector3f> _path;
     SpeedCurve _speedCurve;
