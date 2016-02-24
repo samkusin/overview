@@ -15,9 +15,26 @@ NavPath::NavPath()
 {
 }
 
-NavPath::NavPath(std::vector<dtPolyRef>&& polys) :
-    _polys(std::move(polys))
+NavPath::NavPath
+(
+    std::vector<dtPolyRef>&& polys,
+    ckm::vector3f startPos,
+    ckm::vector3f targetPos
+) :
+    _polys(std::move(polys)),
+    _startPos(startPos),
+    _targetPos(targetPos)
 {
+}
+
+const dtPolyRef* NavPath::polys() const
+{
+    return _polys.data();
+}
+
+int NavPath::numPolys() const
+{
+    return (int)_polys.size();
 }
     
     } /* namespace ove */

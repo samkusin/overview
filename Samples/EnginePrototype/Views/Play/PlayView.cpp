@@ -9,6 +9,9 @@
 #include "PlayView.hpp"
 #include "PlayMain.hpp"
 
+#include "Engine/Services/SceneService.hpp"
+#include "Engine/Nav/NavSystem.hpp"
+
 namespace cinek {
 
 PlayView::PlayView(GameViewContext* gameContext) :
@@ -36,6 +39,9 @@ void PlayView::onViewAdded(ove::ViewStack& stateController)
         });
     
     _viewStack.present("PlayMain");
+    
+    sceneService().enableSimulation();
+    navSystem().activate();
 }
 
 void PlayView::onViewRemoved(ove::ViewStack& stateController)

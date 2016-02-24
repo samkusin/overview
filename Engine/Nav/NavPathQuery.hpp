@@ -32,6 +32,22 @@ namespace cinek {
         //  is the point 'walkable' - i.e. on the walk mesh
         bool isWalkable(ckm::vector3f pos, ckm::vector3f extents) const;
         
+        struct PointList
+        {
+            float *points;
+            unsigned char *flags;
+            dtPolyRef *polys;
+            int size;
+            
+            float* getPoint(int index);
+        };
+        
+        int plotPath(PointList& outPointList,
+                     const NavPath& path,
+                     const ckm::vector3f& pos,
+                     ckm::scalar dist) const;
+
+        
         //  used for fine-tuning the query (i.e. a direct interface to the
         //  low-level query system.
         dtNavMeshQuery& interface() { return *_query; }

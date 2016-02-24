@@ -130,6 +130,16 @@ void SceneBody::setTransform(const ckm::matrix3f& basis, const ckm::vector3f& po
     
     //  updates the revision number, copy is trivial
     this->btBody->setWorldTransform(t);
+    
+    transformChanged = true;
+}
+
+void SceneBody::setVelocity(const ckm::vector3f &linear, const ckm::vector3f &angular)
+{
+    btFromCkm(linearVelocity, linear);
+    btFromCkm(angularVelocity, angular);
+    
+    velocityChanged = true;
 }
 
 void SceneBody::getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const

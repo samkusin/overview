@@ -52,13 +52,13 @@ public:
      *  Useful for freezing the simulation.  Collision detection is still
      *  active.
      */
-    void deactivateSimulation();
+    void deactivate();
     /**
      *  Activates dynamic physics simulation if inactive
      *
      *  Useful for continuing the dynamic simulation.
      */
-    void activateSimulation();
+    void activate();
     
     /**
      *  @return Simulation activation status

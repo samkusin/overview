@@ -31,12 +31,12 @@ struct SceneBody
 {
     enum Category
     {
-        kSection            = 0x01,
-        kObject             = 0x02
+        kSection            = 0x00,
+        kObject             = 0x01
     };
 
     bool isInCategory(Category c) const {
-        return (categoryMask & c) != 0;
+        return (categoryMask & (1<<c)) != 0;
     }
 
     const SceneFixedBodyHull* getFixedHull() const;
@@ -48,13 +48,19 @@ struct SceneBody
     //  set transform - the final transform may be modified by the Scene during
     //  update
     void setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos);
+    
     //  returns the current world transform from the scene's perspective (i.e.
     //  not the final transform post update.)
     void getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const;
 
+    void setVelocity(const ckm::vector3f& linear, const ckm::vector3f& angular);
+
 public:
     btCollisionObject* btBody = nullptr;
     SceneMotionState* motionState = nullptr;
+    btVector3 linearVelocity;
+    btVector3 angularVelocity;
+    
     Entity entity = 0;
     
     enum
@@ -65,6 +71,8 @@ public:
     };
     
     uint32_t categoryMask = 0;
+    bool transformChanged = false;
+    bool velocityChanged = false;
 };
    
 struct SceneRayTestResult

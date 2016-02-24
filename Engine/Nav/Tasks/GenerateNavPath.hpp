@@ -34,6 +34,8 @@ public:
     virtual ~GenerateNavPath();
     
     Entity entity() const { return _entity; }
+    ckm::vector3f startPos() const { return _startPos; }
+    ckm::vector3f endPos() const { return _endPos; }
     
     //  caller will acquire the list of points, and the task's list is cleared.
     std::vector<dtPolyRef> acquirePoints();

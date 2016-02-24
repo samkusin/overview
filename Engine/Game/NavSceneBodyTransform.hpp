@@ -32,6 +32,13 @@ public:
         ckm::matrix3f basis
     )
     override;
+    
+    virtual void setNavBodyVelocity
+    (
+        ckm::vector3f linear,
+        ckm::vector3f angular
+    )
+    override;
 
 private:
     SceneBody* _sceneBody;

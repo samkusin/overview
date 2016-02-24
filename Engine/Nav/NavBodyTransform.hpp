@@ -35,10 +35,17 @@ public:
     /**
      *  Sets transform information modified by the Driver system.
      *
-     *  @param translate    The driver adjusted position
-     *  @param basis        The driver adjusted basis matrix (orientation)
+     *  @param linear    The linear velocity (translate)
+     *  @param angular   The angular velocity (orientation)
      */
     virtual void setNavBodyTransform(ckm::vector3f translate, ckm::matrix3f basis) = 0;
+    /**
+     *  Sets transform information modified by the Driver system.
+     *
+     *  @param linear    The linear velocity (translate)
+     *  @param angular   The angular velocity (orientation)
+     */
+    virtual void setNavBodyVelocity(ckm::vector3f linear, ckm::vector3f angular) = 0;
 };
     
     } /* namespace ove */

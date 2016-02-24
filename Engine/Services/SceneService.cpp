@@ -78,12 +78,12 @@ void SceneService::load
 
 void SceneService::disableSimulation()
 {
-    return _context.scene->deactivateSimulation();
+    return _context.scene->deactivate();
 }
 
 void SceneService::enableSimulation()
 {
-    return _context.scene->activateSimulation();
+    return _context.scene->activate();
 }
 
 bool SceneService::isSimulationRunning() const

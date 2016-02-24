@@ -11,6 +11,7 @@
 #include "Engine/Services/RenderService.hpp"
 #include "Engine/Nav/Pathfinder.hpp"
 #include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Nav/NavPathQuery.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -105,12 +106,15 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
             ckm::vector3f pos;
             ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.00), ckm::scalar(0.1) };
             ove::ckmFromBt(pos, rayTestResult.position);
-            if (pathfinder().isLocationWalkable(pos, extents)) {
-                //  test walk of focused entity - async
-                navSystem().moveBodyToPosition(_focusedEntity, pos);
+            
+            auto query = pathfinder().acquireQuery();
+            if (query) {
+                query->setupFilters(ove::kNavMeshPoly_Walkable);
+                if (query->isWalkable(pos, extents)) {
+                    navSystem().moveBodyToPosition(_focusedEntity, pos);
+                }
             }
         }
-    
     }
 }
 

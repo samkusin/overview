@@ -13,6 +13,7 @@
 #include "Engine/AssetManifest.hpp"
 #include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
+#include "Engine/Nav/NavSystem.hpp"
 
 #include "UICore/UIBuilder.hpp"
 #include "CKGfx/Light.hpp"
@@ -123,6 +124,7 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
     _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
 
     sceneService().disableSimulation();
+    navSystem().deactivate();
 }
 
 void EditorView::onViewRemoved(ove::ViewStack& stateController)

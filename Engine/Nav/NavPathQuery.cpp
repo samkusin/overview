@@ -8,9 +8,12 @@
 
 #include "NavPathQuery.hpp"
 #include "NavMesh.hpp"
+#include "NavPath.hpp"
 
 #include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
 #include "Engine/Contrib/Recast/DetourNode.h"
+
+#include <ckm/math.hpp>
 
 namespace cinek {
     namespace ove {
@@ -50,19 +53,45 @@ const
     return resultRef != 0;
 }
 
-/*
-std::vector<float> NavPathQuery::generatePath
+float* NavPathQuery::PointList::getPoint(int index)
+{
+    return &points[index*3];
+}
+
+int NavPathQuery::plotPath
 (
-    ckm::vector3f start,
-    ckm::vector3f end
+    PointList& outPointList,
+    const NavPath& path,
+    const ckm::vector3f& pos,
+    ckm::scalar dist
 )
 const
 {
-//m_navQuery->findPath(m_startRef, m_endRef, m_spos, m_epos, &m_filter, m_polys, &m_npolys, MAX_POLYS);
-
-
+    int resultCount = 0;
+    interface().findStraightPath(pos.comp, path.targetPos().comp,
+        path.polys(), path.numPolys(),
+        outPointList.points, outPointList.flags, outPointList.polys,
+        &resultCount, outPointList.size);
+    
+    if (!resultCount)
+        return -1;
+        
+    int resultIndex = 0;
+    while (resultIndex < resultCount) {
+        auto points = &outPointList.points[resultIndex*3];
+        auto flags = &outPointList.flags[resultIndex];
+        
+        ckm::vector3f delta(points[0], points[1], points[2]);
+        ckm::sub(delta, delta, pos);
+        auto testDist = ckm::vectorLength(delta);
+        if ((*flags & DT_STRAIGHTPATH_OFFMESH_CONNECTION) || testDist >= dist)
+            break;
+    
+        ++resultIndex;
+    }
+    return resultIndex;
 }
-*/
+
   
     } /* namespace ove */
 } /* namespace cinek */

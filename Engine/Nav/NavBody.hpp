@@ -10,25 +10,12 @@
 #define Overview_NavBody_hpp
 
 #include "PathTypes.hpp"
+#include "NavPath.hpp"
 
 #include <vector>
 
 namespace cinek {
     namespace ove {
-    
-struct SpeedCurve
-{
-    enum Type
-    {
-        kStep,
-        kLinear
-    };
-    
-    ckm::scalar min = ckm::scalar(0);
-    ckm::scalar max = ckm::scalar(0);
-    Type type = kStep;
-};
-
     
 class NavBody
 {
@@ -37,7 +24,7 @@ class NavBody
 public:
     struct InitProperties
     {
-        SpeedCurve speedCurve;
+        ckm::scalar speedLimit;
         Entity entity;
         
         InitProperties() : entity(0) {}
@@ -47,19 +34,48 @@ public:
     NavBody(const NavBody& source, Entity entity);
     
     void setTransform(NavBodyTransform* transform);
-    void updateTransform();
+    void pullTransform();
+    void pushTransformPosOrient(ckm::vector3f position, ckm::matrix3f orient);
+    void pushTransformVelocity(ckm::vector3f linear, ckm::vector3f angular);
     
+    //  general properties
     Entity entity() const { return _entity; }
     const ckm::vector3f& position() const { return _position; }
     const ckm::matrix3f& basis() const { return _basis; }
+   
+    enum class State
+    {
+        kIdle,
+        kPathStart,
+        kPathRun
+    };
+    State state() const { return _state; }
+    
+    //  pathfinding
+    void setPath(NavPath&& path);
+    void runPath();
+    const NavPath& currentPath() const { return _path; }
+    
+    //  steering
+    void setSpeedScalar(ckm::scalar speed);
+    ckm::scalar speedScalar() const { return _speed; }
+    ckm::scalar calcAbsoluteSpeed() const;
+    
+    
+    
     
 private:
+    //  Framework properties
     Entity _entity;
     ckm::vector3f _position;
     ckm::matrix3f _basis;
     NavBodyTransform* _transform;
-    std::vector<ckm::vector3f> _path;
-    SpeedCurve _speedCurve;
+    State _state;
+
+    //  Steering properties
+    NavPath _path;
+    ckm::scalar _speedLimit;
+    ckm::scalar _speed;
 };
     
     } /* namespace ove */

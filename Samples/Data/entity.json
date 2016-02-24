@@ -247,7 +247,7 @@
                 "mass" : 70.0
             },
             "drivebody" : {
-                "speed" : { "min": 1.0, "max": 2.0, "curve": "step" }
+                "speed" : [ 1.0 ]
             }
         }
     }

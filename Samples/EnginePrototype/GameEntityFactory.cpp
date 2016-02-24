@@ -160,18 +160,10 @@ void GameEntityFactory::onCustomComponentCreateFn
     else if (componentName == "drivebody") {
         ove::NavBody::InitProperties initProps;
 
-        if (compTemplate.HasMember("speed")) {
+        if (compTemplate.HasMember("speed") && compTemplate["speed"].IsArray()) {
             const JsonValue& speed = compTemplate["speed"];
             
-            initProps.speedCurve.min = ckm::scalar(speed["min"].GetDouble());
-            initProps.speedCurve.max = ckm::scalar(speed["max"].GetDouble());
-            
-            if (!strcasecmp(speed["curve"].GetString(), "step")) {
-                initProps.speedCurve.type = ove::SpeedCurve::kStep;
-            }
-            else if (!strcasecmp(speed["curve"].GetString(), "linear")) {
-                initProps.speedCurve.type = ove::SpeedCurve::kLinear;
-            }
+            initProps.speedLimit = ckm::scalar(speed[0U].GetDouble());
         }
         
         initProps.entity = entity;

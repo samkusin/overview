@@ -35,5 +35,14 @@ void NavSceneBodyTransform::setNavBodyTransform
     _sceneBody->setTransform(basis, translate);
 }
 
+void NavSceneBodyTransform::setNavBodyVelocity
+(
+    ckm::vector3f linear,
+    ckm::vector3f angular
+)
+{
+    _sceneBody->setVelocity(linear, angular);
+}
+
     } /* namespace ove */
 } /* namespace cinek */

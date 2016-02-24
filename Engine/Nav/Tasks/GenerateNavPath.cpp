@@ -81,6 +81,11 @@ void GenerateNavPath::onBegin()
 void GenerateNavPath::onUpdate(uint32_t /* deltaTimeMs */)
 {
     if (_polyPathIndex >= _polyPathSize) {
+        ckm::vector3f tempPos;
+        _query->interface().closestPointOnPoly(_polyPath[0], _startPos.comp, tempPos.comp, nullptr);
+        _startPos = tempPos;
+        _query->interface().closestPointOnPoly(_polyPath[_polyPathSize-1], _endPos.comp, tempPos.comp, nullptr);
+        _endPos = tempPos;
         end();
         return;
     }

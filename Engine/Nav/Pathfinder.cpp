@@ -219,7 +219,7 @@ private:
                         if (listener) {
                             if (state == Task::State::kEnded) {
                                 auto points = genTask.acquirePoints();
-                                NavPath path(std::move(points));
+                                NavPath path(std::move(points), genTask.startPos(), genTask.endPos());
                                 listener->onPathfinderPathUpdate(entity, std::move(path));
                             }
                             else {
@@ -383,26 +383,6 @@ public:
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    //  Detect whether a position on the mesh is walkable.  This isn't entirely
-    //  accurate but works for now.
-    //
-    bool isLocationWalkable
-    (
-        ckm::vector3f pos,
-        ckm::vector3f extents
-    )
-    {
-        if (!_queryPool)
-            return false;
-    
-        auto query = _queryPool->acquire();
-        if (!query)
-            return false;
-        query->setupFilters(kNavMeshPoly_Walkable);
-        return query->isWalkable(pos, extents);
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////
     //  instantiate a path query task
     //
     void generatePath
@@ -423,6 +403,13 @@ public:
         _commandQueue.emplace_back(cmd);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    //  obtain a query object for use
+    //
+    NavPathQueryPtr acquireQuery()
+    {
+        return _queryPool->acquire();
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     //  Updates main scheduler and synchronized with any path-query threads
@@ -502,13 +489,9 @@ void Pathfinder::simulateDebug(PathfinderDebug& debugger)
     _impl->updateDebug(debugger);
 }
 
-bool Pathfinder::isLocationWalkable
-(
-    ckm::vector3f pos,
-    ckm::vector3f extents
-)
+NavPathQueryPtr Pathfinder::acquireQuery()
 {
-    return _impl->isLocationWalkable(pos, extents);
+    return _impl->acquireQuery();
 }
 
 void Pathfinder::generatePath

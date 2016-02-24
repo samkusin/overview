@@ -62,25 +62,46 @@ Scene::~Scene()
 void Scene::simulate(double dt)
 {
     _btWorld.performDiscreteCollisionDetection();
-    //_btWorld.stepSimulation(dt);
+
+    if (_simulateDynamics) {
+    
+        for (auto& body : _bodies) {
+            if (body->isInCategory(SceneBody::kObject)) {
+                if (body->transformChanged || body->velocityChanged) {
+                    btTransform& transform = body->btBody->getWorldTransform();
+                    
+                    // set btBody transform
+                    btVector3 nextPos = transform.getOrigin() + body->linearVelocity;
+                    transform.setOrigin(nextPos);
+                    
+                    //  updates revision
+                    body->btBody->setWorldTransform(transform);
+                    
+                    // update motion state?
+                    body->motionState->setWorldTransform(transform);
+                }
+            }
+        }
+    
+    }
 }
 
-void Scene::deactivateSimulation()
+void Scene::deactivate()
 {
     if (_simulateDynamics) {
         for (auto& obj : _bodies) {
-            deactivate(*obj);
+            ove::deactivate(*obj);
         }
         
         _simulateDynamics = false;
     }
 }
 
-void Scene::activateSimulation()
+void Scene::activate()
 {
     if (!_simulateDynamics) {
         for (auto& obj : _bodies) {
-            activate(*obj);
+            ove::activate(*obj);
         }
     
         _simulateDynamics = true;
@@ -109,7 +130,7 @@ SceneBody* Scene::attachBody
     if (it == _bodies.end() || (*it)->entity != body->entity) {
         //  reflect current simulation state
         if (!_simulateDynamics) {
-            deactivate(*body);
+            ove::deactivate(*body);
         }
 
         body->btBody->setUserPointer(body);

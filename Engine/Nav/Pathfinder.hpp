@@ -30,11 +30,7 @@ public:
     using GenerateCb = std::function<void(bool)>;
     void generateFromScene(const Scene& scene, GenerateCb callback);
     
-    //  checks whether a world location is walkable.  this should be used as a
-    //  quick way to determine whether a target can be used as a destination,
-    //  though this method does not check if an entity can reach the target
-    //  position.
-    bool isLocationWalkable(ckm::vector3f pos, ckm::vector3f extents);
+    NavPathQueryPtr acquireQuery();
     
     //  sends a request to generate a path between two points.
     //  paths are sent to listeners
