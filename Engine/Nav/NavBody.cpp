@@ -63,6 +63,25 @@ void NavBody::runPath()
     }
 }
 
+auto NavBody::updatePath(dtPolyRef currentPoly) -> State
+{
+    if (_state == State::kPathRun) {
+        if (!_path) {
+            _state = State::kPathEnd;
+        }
+        else if (!_path.updatePath(currentPoly)) {
+            _state = State::kPathBreak;
+        }
+    }
+    return _state;
+}
+
+void NavBody::setToIdle()
+{
+    _state = State::kIdle;
+    _path.clear();
+}
+
 void NavBody::setSpeedScalar(ckm::scalar speed)
 {
     if (speed < 0)

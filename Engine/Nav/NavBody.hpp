@@ -47,7 +47,9 @@ public:
     {
         kIdle,
         kPathStart,
-        kPathRun
+        kPathRun,
+        kPathBreak,
+        kPathEnd
     };
     State state() const { return _state; }
     
@@ -55,7 +57,9 @@ public:
     void setPath(NavPath&& path);
     void runPath();
     const NavPath& currentPath() const { return _path; }
-    
+    State updatePath(dtPolyRef currentPoly);
+    void setToIdle();
+
     //  steering
     void setSpeedScalar(ckm::scalar speed);
     ckm::scalar speedScalar() const { return _speed; }

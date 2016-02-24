@@ -154,12 +154,13 @@ void NavSystem::simulate(double dt)
             ckm::vector3f direction;
             ckm::vector3f angularVelocity;
             
-            if (body->state() == NavBody::State::kIdle) {
-                velocity.from(0,0,0);
-                angularVelocity.from(0,0,0);
-                direction.from(0,0,0);
-            }
-            else if (body->state() == NavBody::State::kPathRun) {
+            //  update path progress from the current transform
+            ckm::vector3f extents { ckm::scalar(0), ckm::scalar(0.075), ckm::scalar(0) };
+            dtPolyRef thisPoly = _query->findNearestWalkable(body->position(), extents);
+            
+            auto pathState = body->updatePath(thisPoly);
+            
+            if (body->state() == NavBody::State::kPathRun) {
                 //  run path based on current body position and speed
                 //  reorient if needed
                 velocity = steer(path, body->position(), body->calcAbsoluteSpeed() * dt);
@@ -167,6 +168,18 @@ void NavSystem::simulate(double dt)
                 ckm::normalize(direction, velocity);
 
                 angularVelocity = turn(body->basis(), direction, dt);
+            }
+            else {
+                velocity.from(0,0,0);
+                angularVelocity.from(0,0,0);
+                direction.from(0,0,0);
+                
+                if (pathState == NavBody::State::kPathBreak) {
+                    body->setToIdle();
+                }
+                else if (pathState == NavBody::State::kPathEnd) {
+                    body->setToIdle();
+                }
             }
             
             body->pushTransformVelocity(velocity, angularVelocity);

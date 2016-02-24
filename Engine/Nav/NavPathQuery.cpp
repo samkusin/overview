@@ -53,6 +53,20 @@ const
     return resultRef != 0;
 }
 
+dtPolyRef NavPathQuery::findNearestWalkable
+(
+    ckm::vector3f pos,
+    ckm::vector3f extents
+)
+const
+{
+    dtPolyRef resultRef;
+    dtStatus status = _query->findNearestPoly(pos, extents, &_filter, &resultRef, nullptr);
+    if (dtStatusFailed(status))
+        return 0;
+    return resultRef;
+}
+
 float* NavPathQuery::PointList::getPoint(int index)
 {
     return &points[index*3];

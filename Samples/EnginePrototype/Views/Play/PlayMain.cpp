@@ -104,7 +104,7 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
         auto& rayTestResult = sceneRayTestResult();
         if (rayTestResult) {
             ckm::vector3f pos;
-            ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.00), ckm::scalar(0.1) };
+            ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.05), ckm::scalar(0.0) };
             ove::ckmFromBt(pos, rayTestResult.position);
             
             auto query = pathfinder().acquireQuery();

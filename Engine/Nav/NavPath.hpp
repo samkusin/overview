@@ -37,6 +37,9 @@ public:
     const dtPolyRef* polys() const;
     int numPolys() const;
     
+    bool updatePath(dtPolyRef poly);
+    void clear();
+    
 private:
     //  contains poly references
     std::vector<dtPolyRef> _polys;

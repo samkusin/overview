@@ -32,6 +32,9 @@ namespace cinek {
         //  is the point 'walkable' - i.e. on the walk mesh
         bool isWalkable(ckm::vector3f pos, ckm::vector3f extents) const;
         
+        //  find nearest walkable poly
+        dtPolyRef findNearestWalkable(ckm::vector3f pos, ckm::vector3f extents) const;
+        
         struct PointList
         {
             float *points;
