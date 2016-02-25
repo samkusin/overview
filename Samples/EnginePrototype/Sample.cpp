@@ -153,6 +153,10 @@ int runSample(int viewWidth, int viewHeight)
             controller.beginFrame();
             
             //  TODO: Lag should not be incremented while Sim is Paused
+            if (frameTimeMs > 100) {
+                frameTimeMs = 100;
+            }
+            
             double frameTime = frameTimeMs*0.001;
             lagSecsSim += frameTime;
         

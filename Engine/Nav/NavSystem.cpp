@@ -167,7 +167,7 @@ void NavSystem::simulate(double dt)
             
                 ckm::normalize(direction, velocity);
 
-                angularVelocity = turn(body->basis(), direction, dt);
+                angularVelocity = turn(body->basis(), direction, ckm::kPi * dt);
             }
             else {
                 velocity.from(0,0,0);
@@ -240,7 +240,27 @@ ckm::vector3f NavSystem::turn
 const
 {
     ckm::vector3f velocity;
-    velocity.from(0,0,0);
+    ckm::vector3f forward(orient.comp[6], orient.comp[7], orient.comp[8]);
+    
+    //  we should fine tune this for a more 2d approach
+    //  this approach is a simple cross product to determine the angular
+    //  vector, and some simple constraint checking
+    
+    auto angle = ckm::dot(forward, direction);
+    if (angle > ckm::scalar(0.98)) {
+        velocity.from(0,0,0);
+    }
+    else if (angle < ckm::scalar(-0.98)) {
+        // this is making an assumption that any significant turns are
+        // around the body's up vector
+        velocity.from(orient.comp[3],orient.comp[4],orient.comp[5]);
+    }
+    else {
+        ckm::cross(velocity, forward, direction);
+    }
+    
+    ckm::scale(velocity, velocity, rotation);
+ 
     return velocity;
 }
 

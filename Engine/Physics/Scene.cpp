@@ -70,9 +70,21 @@ void Scene::simulate(double dt)
                 if (body->transformChanged || body->velocityChanged) {
                     btTransform& transform = body->btBody->getWorldTransform();
                     
-                    // set btBody transform
+                    // set btBody translate
                     btVector3 nextPos = transform.getOrigin() + body->linearVelocity;
                     transform.setOrigin(nextPos);
+                    
+                    // set btBody basis (TODO: optimize)
+                    if (!body->angularVelocity.fuzzyZero()) {
+                        btVector3 rotAxis = body->angularVelocity.normalized();
+                        btScalar rotAngle = body->angularVelocity.length();
+                        
+                        btQuaternion rotQ(rotAxis, rotAngle);
+                        //rotQ.normalize();
+                        
+                        btMatrix3x3 rotMtx(rotQ);
+                        transform.setBasis(rotMtx * transform.getBasis());
+                    }
                     
                     //  updates revision
                     body->btBody->setWorldTransform(transform);

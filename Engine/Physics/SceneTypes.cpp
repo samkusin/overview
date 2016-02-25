@@ -95,7 +95,7 @@ void SceneBody::setPosition
     //  determine forward vector based on our world up direction
     btScalar dirdot = std::abs(forward.dot(up));
     if (dirdot > btScalar(0.90)) {
-        if (up.y() >=btScalar(0)) {
+        if (up.z() >=btScalar(0)) {
             forward = btVector3(0,-1,0);
         }
         else {
@@ -106,14 +106,21 @@ void SceneBody::setPosition
     btVector3 side = btCross(forward, up);
     side.normalize();
     
-    forward = btCross(up, side);
+    forward = btCross(side, up);
     forward.normalize();
     
     btTransform transform;
     transform.getBasis().setValue(side.x(), side.y(), side.z(),
                                   up.x(), up.y(), up.z(),
-                                  -forward.x(), -forward.y(), -forward.z());
+                                  forward.x(), forward.y(), forward.z());
     transform.setOrigin(pos);
+    
+    /*
+    printf("s(%.2f,%.2f,%.2f)\nu(%.2f,%.2f,%.2f)\nf(%.2f,%.2f,%.2f)\n\n",
+    side.x(),side.y(), side.z(),
+    up.x(), up.y(), up.z(),
+    forward.x(),forward.y(),forward.z());
+    */
     
     this->btBody->setWorldTransform(transform);
     if (this->motionState) {
