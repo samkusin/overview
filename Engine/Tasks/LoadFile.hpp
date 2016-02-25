@@ -30,7 +30,8 @@ public:
     
     void setName(std::string name) { _name = name; }
     
-    std::vector<uint8_t> acquireBuffer();
+    const uint8_t* buffer() const { return _buffer; }
+    uint32_t size() const { return _size; }
     const std::string& name() const { return _name; }
     
     virtual const TaskClassId& classId() const override { return kUUID; }
@@ -42,14 +43,15 @@ protected:
     virtual void onUpdate(uint32_t deltaTimeMs) override;
     virtual void onCancel() override;
     
-    std::vector<uint8_t>& buffer() { return _buffer; }
-    const std::vector<uint8_t>& buffer() const { return _buffer; }
+    virtual uint8_t* acquireBuffer(uint32_t size) = 0;
     
 private:
     void close();
     
     std::string _name;
-    std::vector<uint8_t> _buffer;
+    uint8_t* _buffer;
+    uint32_t _size;
+    
     ckio_handle *_file;
 };
     

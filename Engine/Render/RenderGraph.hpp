@@ -88,6 +88,11 @@ public:
     gfx::NodeGraph& nodeGraph() {
         return _nodeGraph;
     }
+    /**
+     *  @param  e   The entity to retrieve
+     *  @return The controller attached to the specified entity.
+     */
+    gfx::AnimationControllerHandle findAnimationController(Entity e) const;
 
 private:
     //  controller objects are referenced by the nodegraph and our own animation

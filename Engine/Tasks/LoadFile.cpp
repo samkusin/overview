@@ -24,6 +24,8 @@ LoadFile::LoadFile
 ) :
     Task(cb),
     _name(std::move(name)),
+    _buffer(nullptr),
+    _size(0),
     _file(nullptr)
 {
 
@@ -32,11 +34,6 @@ LoadFile::LoadFile
 LoadFile::~LoadFile()
 {
     close();
-}
-    
-std::vector<uint8_t>  LoadFile::acquireBuffer()
-{
-    return std::move(_buffer);
 }
 
 void LoadFile::close()
@@ -51,10 +48,11 @@ void LoadFile::onBegin()
 {
     _file = ckio_open(_name.c_str(), kCKIO_Async | kCKIO_ReadFlag);
     if (_file) {
-        auto cnt = ckio_get_info(_file, nullptr);
+        uint32_t cnt = (uint32_t)ckio_get_info(_file, nullptr);
         if (cnt) {
-            _buffer.resize(cnt+1, 0);
-            ckio_read(_file, _buffer.data(), cnt);
+            _buffer = acquireBuffer(cnt);
+            _size = cnt;
+            ckio_read(_file, _buffer, _size);
         }
     }
     else {

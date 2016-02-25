@@ -38,11 +38,14 @@ private:
     
     virtual void onUpdate(uint32_t deltaTimeMs) override;
     virtual void onCancel() override;
+    
+    virtual uint8_t* acquireBuffer(uint32_t size) override;
         
 private:
     std::shared_ptr<AssetManifest> _manifest;
     AssetManfiestFactory* _factory;
     AssetManifestLoader _loader;
+    std::vector<uint8_t> _buffer;
 };
     
     }  /* namespace ove */

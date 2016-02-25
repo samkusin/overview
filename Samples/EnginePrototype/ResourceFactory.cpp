@@ -53,7 +53,7 @@ auto ResourceFactory::onAssetManifestRequest
                 [this](Task::State state, Task& t, void*) {
                     auto& task = static_cast<LoadTextureAsset&>(t);
                     if (state == Task::State::kEnded) {
-                        _gfxContext->registerTexture(task.acquireTexture(), task.name().c_str());
+                        _gfxContext->registerTexture(task.acquireTexture(), task.acquireTextureName().c_str());
                     }
                     requestFinished(t.id(), task.name(), state);
                 })

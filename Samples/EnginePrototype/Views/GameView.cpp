@@ -64,7 +64,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     _camera.fovDegrees = 60.0f;
     _camera.worldMtx = gfx::Matrix4::kIdentity;
     
-    _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh.png"));
+    _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh"));
     
     //  create player
     _focusedEntity = entityService().createEntity(kEntityStore_Staging, "entity",

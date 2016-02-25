@@ -23,8 +23,12 @@ namespace cinek {
         CK_CLASS_NON_COPYABLE(Texture);
     
     public:
+        //  source format is derived from the path file extension
         static Texture loadTextureFromFile(const char* pathname);
+        //  source format is passed by caller
         static Texture loadTextureFromMemory(const uint8_t* data, size_t len);
+        //  loads texture directly from graphics memory, without any pre-processing
+        static Texture loadTextureRaw(const bgfx::Memory* memory);
     
     public:
         Texture(bgfx::TextureHandle handle, bgfx::TextureFormat::Enum format);

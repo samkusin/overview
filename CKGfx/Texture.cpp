@@ -59,7 +59,7 @@ Texture Texture::loadTextureFromFile(const char* pathname)
                               (
                                 width, height, 1,
                                 bgfx::TextureFormat::RGBA8,
-                                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+                                0,
                                 bgfx::copy(data, width*height*4)
                               );
         texture._bgfxFormat = bgfx::TextureFormat::RGBA8;
@@ -85,7 +85,7 @@ Texture Texture::loadTextureFromMemory(const uint8_t* data, size_t len)
                               (
                                 width, height, 1,
                                 bgfx::TextureFormat::RGBA8,
-                                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+                                0,
                                 bgfx::copy(bmpMemory, width*height*4)
                               );
         texture._bgfxFormat = bgfx::TextureFormat::RGBA8;
@@ -93,7 +93,21 @@ Texture Texture::loadTextureFromMemory(const uint8_t* data, size_t len)
     }
     
     return texture;
+}
 
+Texture Texture::loadTextureRaw(const bgfx::Memory* memory)
+{
+    Texture texture;
+    
+    bgfx::TextureInfo info;
+    uint32_t flags = BGFX_TEXTURE_NONE;
+    texture._bgfxHandle = bgfx::createTexture(memory, flags, 0, &info);
+    if (!bgfx::isValid(texture._bgfxHandle)) {
+        return texture;
+    }
+    
+    texture._bgfxFormat = info.format;
+    return texture;
 }
 
 Texture::Texture

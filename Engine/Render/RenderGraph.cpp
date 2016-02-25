@@ -64,7 +64,7 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
             node->armature()->animController = animController;
             
             vc.self->addAnimNode(vc.e, animController);
-            animController->transitionToState("Walk");
+            animController->transitionToState("Idle");
         }
         return true;
     });
@@ -109,6 +109,18 @@ gfx::NodeHandle RenderGraph::findNode(Entity entity) const
             });
     }
     return it != _renderNodes.end() ? it->gfxNode : nullptr;
+}
+
+gfx::AnimationControllerHandle RenderGraph::findAnimationController(Entity e) const
+{
+    auto it = std::lower_bound(_animNodes.begin(), _animNodes.end(), e,
+        [](const AnimNode& animNode, Entity e) -> bool {
+            return animNode.entity < e;
+        });
+    if (it == _animNodes.end() || (*it).entity != e)
+        return nullptr;
+    
+    return (*it).animController;
 }
 
 void RenderGraph::clear()

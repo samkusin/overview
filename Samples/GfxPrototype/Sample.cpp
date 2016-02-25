@@ -71,12 +71,12 @@ int runSample(int viewWidth, int viewHeight)
     registerShaders(
         shaderLibrary, shaderPrograms, shaderUniforms, {
             {
-                cinek::gfx::kNodeProgramMesh, kShaderProgramStdMesh,
+                cinek::gfx::kNodeProgramMeshUV, kShaderProgramStdMesh,
                 "bin/vs_std_uv.bin",
                 "bin/fs_std_tex.bin"
             },
             {
-                cinek::gfx::kNodeProgramBoneMesh,kShaderProgramBoneMesh,
+                cinek::gfx::kNodeProgramBoneMeshUV,kShaderProgramBoneMesh,
                 "bin/vs_bone_uv.bin",
                 "bin/fs_std_tex.bin"
             }
