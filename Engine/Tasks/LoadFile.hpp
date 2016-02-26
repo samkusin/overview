@@ -44,6 +44,7 @@ protected:
     virtual void onCancel() override;
     
     virtual uint8_t* acquireBuffer(uint32_t size) = 0;
+    virtual bool retry(std::string& path) { return false; }
     
 private:
     void close();

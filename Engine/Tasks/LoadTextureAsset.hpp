@@ -38,8 +38,11 @@ protected:
     virtual void onFileLoaded() override;
     
     virtual uint8_t* acquireBuffer(uint32_t size) override;
+    virtual bool retry(std::string& path) override;
     
 private:
+    bool isSupportedCompressedTextureType(const std::string& path) const;
+
     Allocator _allocator;
     gfx::Texture _texture;
     std::string _name;

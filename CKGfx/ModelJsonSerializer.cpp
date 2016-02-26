@@ -471,7 +471,10 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
         auto& textures = diffuse["textures"];
         if (textures.IsArray() && textures.Size() > 0) {
             const char* texname = textures.Begin()->GetString();
-            auto texhandle = context.findTexture(texname);
+            std::string texid(texname);
+            texid.erase(texid.find_last_of('.'));
+            
+            auto texhandle = context.findTexture(texid.c_str());
             if (!texhandle) {
                 texhandle = context.loadTexture(texname);
             }

@@ -26,24 +26,9 @@ LoadTextureAsset::LoadTextureAsset
     _name(name),
     _memoryType(kNoMemory)
 {
+    //  remove extension for texture name
     auto extpos = _name.find_last_of('.');
-    if (extpos != std::string::npos) {
-        if (!_name.compare(extpos, std::string::npos, ".dds") ||
-            !_name.compare(extpos, std::string::npos, ".pvr") ||
-            !_name.compare(extpos, std::string::npos, ".ktx")) {
-        
-            _memoryType = kGfxMemory;
-            _memory = nullptr;
-        }
-    }
-    
     _name.erase(extpos);
-    
-    if (_memoryType == kNoMemory) {
-        _memoryType = kBufferMemory;
-        _buffer.data = nullptr;
-        _buffer.size = 0;
-    }
 }
 
 LoadTextureAsset::~LoadTextureAsset()
@@ -75,6 +60,30 @@ std::string LoadTextureAsset::acquireTextureName()
 }
 
 
+bool LoadTextureAsset::isSupportedCompressedTextureType(const std::string& path) const
+{
+    auto extpos = path.find_last_of('.');
+    return (extpos != std::string::npos) &&
+           (!path.compare(extpos, std::string::npos, ".dds") ||
+            !path.compare(extpos, std::string::npos, ".pvr") ||
+            !path.compare(extpos, std::string::npos, ".ktx"));
+}
+
+bool LoadTextureAsset::retry(std::string &path)
+{
+    if (!isSupportedCompressedTextureType(path)) {
+        //  try compressed texture fallbacks
+        auto extpos = path.find_last_of('.');
+        if (extpos != std::string::npos) {
+            path.erase(extpos);
+        }
+        //  todo, try more types as fallbacks (meaning multiple retries)
+        path.append(".dds");
+        return true;
+    }
+    return false;
+}
+
 void LoadTextureAsset::onFileLoaded()
 {
     switch (_memoryType) {
@@ -99,6 +108,22 @@ void LoadTextureAsset::onFileLoaded()
 
 uint8_t* LoadTextureAsset::acquireBuffer(uint32_t size)
 {
+    auto& path = LoadFile::name();
+
+    //  acquire should only be called once - we determine the buffer type
+    //  based on the filename (which has been successfully opened.)
+    CK_ASSERT(_memoryType == kNoMemory);
+
+    if (isSupportedCompressedTextureType(path)) {
+        _memoryType = kGfxMemory;
+        _memory = nullptr;
+    }
+    if (_memoryType == kNoMemory) {
+        _memoryType = kBufferMemory;
+        _buffer.data = nullptr;
+        _buffer.size = 0;
+    }
+
     switch (_memoryType) {
     
     case kBufferMemory:
