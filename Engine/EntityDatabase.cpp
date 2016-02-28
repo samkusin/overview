@@ -113,34 +113,67 @@ Entity EntityDatabase::createEntity
     }
     
     return entity;
-    
+}
+
+bool EntityDatabase::isValid(Entity entity) const
+{
+    return getStore(cinek_entity_context(entity)).valid(entity);
+}
+
+Entity EntityDatabase::cloneEntity
+(
+    EntityContextType context,
+    Entity source
+)
+{
+    Entity cloned = getStore(context).create(context);
+    _factory->onCustomComponentEntityCloneFn(cloned, source);
+    return cloned;
 }
 
 void EntityDatabase::destroyEntity(Entity entity)
 {
     getStore(cinek_entity_context(entity)).destroy(entity);
+    
+    //  TODO - consider delaying this until the gc() phase
+    //  need a way to flag an entity as dead and group them together so
+    //  that the gc() phase only acts on destroyed entities for that timeslice
+    //
+    _factory->onCustomComponentEntityDestroyFn(entity);
 }
 
 void EntityDatabase::gc()
 {
     for (auto& store : _stores) {
-        store.gc([this](EntityDataTable& table, ComponentRowIndex compRowIndex) {
-            _factory->onCustomComponentDestroyFn(table, compRowIndex);
-        });
+        store.gc();
     }
 }
 
 void EntityDatabase::setManifest
 (
-    unique_ptr<AssetManifest>&& manifest
+    std::string name,
+    std::shared_ptr<AssetManifest> manifest
 )
 {
-    _manifests.emplace(manifest->name(), std::move(manifest));
+    _manifests.emplace(std::move(name), std::move(manifest));
 }
 
 void EntityDatabase::clearManifest(const std::string& name)
 {
     _manifests.erase(name);
+}
+
+const AssetManifest* EntityDatabase::getManifest
+(
+    const std::string& name
+)
+const
+{
+    auto it = _manifests.find(name);
+    if (it == _manifests.end())
+        return nullptr;
+    
+    return it->second.get();
 }
 
 

@@ -16,7 +16,27 @@
 
 typedef struct NVGcontext NVGcontext;
 
-namespace cinek { namespace uicore {
+namespace cinek {
+
+struct UIContext
+{
+    int keyFocusItem;
+};
+
+class UIService
+{
+public:
+    UIService(UIContext* context);
+    
+    void setKeyboardFocusToItem(int item);
+    
+private:
+    UIContext* _context;
+};
+
+namespace uicore {
+
+struct InputState;
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Generalized Theme defines
@@ -44,27 +64,149 @@ enum
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-//  UI Subscriber class
-struct UIeventdata
+//  UI Types
+
+enum class ListboxType
 {
-    int item;
-    unsigned int keymod;
-    union
-    {
-        UIvec2 cursor;
-        UIvec2 scroll;
-    };
-    unsigned int keycode;
-};
-class UISubscriber
-{
-public:
-    virtual ~UISubscriber() {}
-    
-    virtual void onUIEvent(int evtId, UIevent evtType, const UIeventdata& data) {}
+    kList
 };
 
-typedef void (*UIRenderCallback)(void* context, NVGcontext* nvg);
+struct Box
+{
+    int t, r, b, l;
+};
+
+struct KeyEvent
+{
+    UIevent type;
+    unsigned int mod;
+    unsigned int key;
+    
+    explicit operator bool() const {
+        return type != UI_EVENT_NULL;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//  UI State Data (for imgui-like query)
+
+struct ListboxState
+{
+    int thisItem;
+    int highlightItem;          // Item currently highlighted
+    int hoverItem;              // Item in the hover state (reset when laying out)
+    int selectedItem;           // Item selected (reset when laying out)
+    
+    void init(int item) {
+        thisItem = item;
+        hoverItem = -1;
+        selectedItem = -1;
+    }
+    
+    bool selected() const {
+        return selectedItem != -1 && highlightItem == selectedItem;
+    }
+};
+
+struct FrameState
+{
+    int thisItem;
+    UIevent evtType;
+    
+    KeyEvent* keyEvents;
+    int keyEventStart;
+    int keyEventCount;
+    int keyEventLimit;
+    
+    FrameState() : keyEvents(nullptr), keyEventLimit(0) {}
+    
+    void init(int item) {
+        evtType = UI_EVENT_NULL;
+        thisItem = item;
+        keyEventStart = 0;
+        keyEventCount = 0;
+    }
+    
+    KeyEvent popKey() {
+        if (keyEventStart < keyEventCount) {
+            return keyEvents[keyEventStart++];
+        }
+        return { UI_EVENT_NULL };
+    }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  UI Subscriber class
+
+
+//  Used for UI items that require data from the application (i.e. lists )
+struct DataObject
+{
+    enum class Type
+    {
+        undefined,
+        string,
+        custom
+    };
+    
+    enum class ImageType
+    {
+        undefined,
+        icon,                   // themed icon
+        image                   // nvg image
+    };
+    
+    Type type;
+    ImageType imageType;
+    
+    
+    //  data depending on object Type
+    union
+    {
+        const char* str;        // static C String object
+        void* custom;           // custom data
+    }
+    data;
+    
+    union
+    {
+        int iconId;
+        int imageId;            // image handle
+    }
+    image;
+    
+    DataObject() : type(Type::undefined), imageType(ImageType::undefined) {}
+};
+
+class DataProvider
+{
+public:
+    virtual ~DataProvider() {}
+    
+    //  Issued when the UI system needs data for rendering or lookup.  Typically
+    //  used by UI items for lists or other UI items that need object data.
+    virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col, DataObject& data) {
+        data.type = DataObject::Type::undefined;
+        data.imageType = DataObject::ImageType::undefined;
+        return false;
+    }
+    //  Issued when a UI needs to retrieve an item count for the specified data
+    //  index
+    virtual uint32_t onUIDataItemRowCountRequest(int id) {
+        return 0;
+    }
+};
+
+class ButtonHandler
+{
+public:
+    virtual ~ButtonHandler() {}
+    
+    virtual void onUIButtonHit(int id) = 0;
+};
+
+typedef void (*RenderCallback)(void* context, NVGcontext* nvg);
 
 } /* namespace uicore */ } /* namespace cinek */
 

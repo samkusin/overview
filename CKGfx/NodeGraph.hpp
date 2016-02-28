@@ -45,14 +45,17 @@ public:
     
     void setRoot(NodeHandle node);
     void clearRoot();
-    
-    NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
-    NodeHandle removeNode(NodeHandle node);
-    
+
     //  a way to clone the contents of a Node and its children that belong to
     //  another node graph, into this graph
     NodeHandle clone(NodeHandle handle);
-  
+    //  attaches an owned node to graph
+    NodeHandle addChildNodeToNode(NodeHandle child, NodeHandle node);
+    //  detaches node from the graph
+    NodeHandle detachNode(NodeHandle node);
+    //  detaches node from its neighbors and detaches descendents recursively
+    NodeHandle detachNodeTree(NodeHandle node);
+   
 private:
     //  Invoked when Nodes are beling released.
     void onReleaseManagedObject(Node& node);

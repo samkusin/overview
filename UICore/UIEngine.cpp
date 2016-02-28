@@ -18,38 +18,63 @@ void OUIHandler(int item, UIevent event)
     if (!header)
         return;
     
-    switch (header->itemType)
-    {
-    default:
-        break;
-    }
-    
-    if (header->subscriber)
-    {
-        UIeventdata data;
-        data.item = item;
-        data.keymod = uiGetModifier();
-        if (event == UI_KEY_DOWN || event == UI_KEY_UP || event == UI_CHAR)
-        {
-            data.keycode = uiGetKey();
-        }
-        if (event == UI_SCROLL)
-        {
-            data.scroll = uiGetScroll();
-        }
-        else
-        {
-            data.cursor = uiGetCursor();
-        }
-        header->subscriber->onUIEvent(header->itemId, event, data);
+    if (header->handler) {
+        header->handler(item, event);
     }
 }
 
-void OUIHeader::init(OUIItemType type)
+void OUIFrame::handler(int item, UIevent event)
 {
-    itemType = type;
-    itemId = -1;
-    subscriber = nullptr;
+    OUIFrame* frame = reinterpret_cast<OUIFrame*>(uiGetHandle(item));
+    
+    if (frame->state) {
+        frame->state->thisItem = item;
+    
+        switch (event) {
+        
+        case UI_KEY_DOWN:
+        case UI_KEY_UP:
+            if (frame->state->keyEventCount < frame->state->keyEventLimit) {
+                KeyEvent& keyevt = frame->state->keyEvents[frame->state->keyEventCount];
+                keyevt.type = event;
+                keyevt.key = uiGetKey();
+                keyevt.mod = uiGetModifier();
+                ++frame->state->keyEventCount;
+            }
+            break;
+        default:
+            frame->state->evtType = event;
+            break;
+        }
+
+        
+    }
+}
+
+void OUIButtonData::handler(int item, UIevent event)
+{
+    OUIButtonData* button = reinterpret_cast<OUIButtonData*>(uiGetHandle(item));
+    if (button && button->fireHandler) {
+        if (event == UI_BUTTON0_HOT_UP) {
+            button->fireHandler->onUIButtonHit(button->id);
+        }
+    }
+}
+
+void OUIListBoxData::handler(int item, UIevent event)
+{
+    OUIListBoxData* lb = reinterpret_cast<OUIListBoxData*>(uiGetHandle(item));
+    if (lb && lb->state) {
+        ListboxState* state = lb->state;
+        if (event == UI_BUTTON0_DOWN) {
+            if (state->hoverItem >= 0) {
+                state->highlightItem = state->hoverItem;
+            }
+            if (uiGetClicks() > 1 && state->highlightItem == state->hoverItem) {
+                state->selectedItem = state->highlightItem;
+            }
+        }
+    }
 }
 
 } /* namespace uicore */ } /* namespace cinek */

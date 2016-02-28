@@ -28,6 +28,9 @@ namespace cinek {
             kQuaternionX,
             kQuaternionY,
             kQuaternionZ,
+            kRotationX,
+            kRotationY,
+            kRotationZ,
             kScaleX,
             kScaleY,
             kScaleZ,
@@ -52,6 +55,13 @@ namespace cinek {
         
         auto keyframePairFromTime(Keyframe::Type kfType, float t) const ->
             std::pair<const Keyframe*, const Keyframe*>;
+        
+        bool hasQuaternions() const {
+            return !sequences[Keyframe::kQuaternionW].empty();
+        }
+        bool hasEulers() const {
+            return !sequences[Keyframe::kRotationX].empty();
+        }
     };
     
     struct Animation
@@ -62,8 +72,8 @@ namespace cinek {
     
     struct Bone
     {
-        Matrix4 mtx;        // armature space matrix
-        Matrix4 invMtx;     // inverse (armature to bone space)
+        Matrix4 mtx;        // bone-relative (to parent) matrix
+        Matrix4 offset;     // precalculated offset from mesh to bone
         
         std::string name;
         int parent = -1;
@@ -94,9 +104,16 @@ namespace cinek {
     };
     
     
-    void interpRotationFromSequenceChannel
+    void interpQuatRotationFromSequenceChannel
     (
         Vector4& boneRotQuat,
+        const SequenceChannel& channel,
+        float animTime
+    );
+    
+    void interpEulerRotationFromSequenceChannel
+    (
+        Vector3& boneEulers,
         const SequenceChannel& channel,
         float animTime
     );

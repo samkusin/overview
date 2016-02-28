@@ -10,15 +10,23 @@
 #define Controller_hpp
 
 #include "Common.hpp"
+#include "CKGfx/GfxTypes.hpp"
+
+#include <SDL2/SDL_keycode.h>
+
 
 namespace cinek {
+
+namespace uicore {
+    struct InputState;
+}
 
 class AppController
 {
 public:
     AppController();
     
-    void handleCameraInput(gfx::Camera& camera, const cinek::ove::InputState& state,
+    void handleCameraInput(gfx::Camera& camera, const uicore::InputState& state,
                            float frameDelta);
 
 private:

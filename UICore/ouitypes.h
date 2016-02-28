@@ -182,6 +182,8 @@ typedef enum UIlayoutFlags {
 
 // event flags
 typedef enum UIevent {
+    // added null event
+    UI_EVENT_NULL = 0x0000,
     // on button 0 down
     UI_BUTTON0_DOWN = 0x0400,
     // on button 0 up

@@ -9,38 +9,36 @@
 #ifndef Sample_Engine_StartupView_hpp
 #define Sample_Engine_StartupView_hpp
 
-#include "GameTypes.hpp"
-#include "Engine/ViewController.hpp"
+#include "AppViewController.hpp"
 
 namespace cinek {
-    namespace ove {
 
-
-class StartupView : public ViewController
+class StartupView : public AppViewController
 {
 public:
-    StartupView(ViewAPI& viewAPI);
+    StartupView(ApplicationContext* context);
     
-    virtual void onViewLoad();
-    virtual void onViewUnload();
-    virtual void onViewAdded();
-    virtual void onViewRemoved();
-    virtual void onViewForeground();
-    virtual void onViewBackground();
-    virtual void simulateView(double time, double dt);
-    virtual void layoutView();
-    virtual void frameUpdateView(double dt);
+    virtual void onViewAdded(ove::ViewStack& stateController);
+    virtual void onViewRemoved(ove::ViewStack& stateController);
+    virtual void onViewForeground(ove::ViewStack& stateController);
+    virtual void onViewBackground(ove::ViewStack& stateController);
+ 
+    virtual void onViewStartFrame(ove::ViewStack& stateController);
+    virtual void simulateView(ove::ViewStack& stateController, double dt);
+    virtual void onViewEndFrame(ove::ViewStack& stateController);
+    
     virtual const char* viewId() const;
     
 private:
-    ViewAPI* _viewAPI;
+    //  AppViewController
+    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
+                         const cinek::uicore::InputState& inputState);
+private:
+    bool _templatesLoaded;
+    bool _globalsLoaded;
     
-    void loadScene();
-    void endView();
 };
 
-
-    } /* namespace ove */
 } /* namespace cinek */
 
 #endif /* Sample_Engine_StartupView_hpp */

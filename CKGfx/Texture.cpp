@@ -59,9 +59,10 @@ Texture Texture::loadTextureFromFile(const char* pathname)
                               (
                                 width, height, 1,
                                 bgfx::TextureFormat::RGBA8,
-                                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+                                0,
                                 bgfx::copy(data, width*height*4)
                               );
+        texture._bgfxFormat = bgfx::TextureFormat::RGBA8;
         stbi_image_free(data);
     }
     
@@ -84,18 +85,43 @@ Texture Texture::loadTextureFromMemory(const uint8_t* data, size_t len)
                               (
                                 width, height, 1,
                                 bgfx::TextureFormat::RGBA8,
-                                BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+                                0,
                                 bgfx::copy(bmpMemory, width*height*4)
                               );
+        texture._bgfxFormat = bgfx::TextureFormat::RGBA8;
         stbi_image_free(bmpMemory);
     }
     
     return texture;
+}
 
+Texture Texture::loadTextureRaw(const bgfx::Memory* memory)
+{
+    Texture texture;
+    
+    bgfx::TextureInfo info;
+    uint32_t flags = BGFX_TEXTURE_NONE;
+    texture._bgfxHandle = bgfx::createTexture(memory, flags, 0, &info);
+    if (!bgfx::isValid(texture._bgfxHandle)) {
+        return texture;
+    }
+    
+    texture._bgfxFormat = info.format;
+    return texture;
+}
+
+Texture::Texture
+(
+    bgfx::TextureHandle handle,
+    bgfx::TextureFormat::Enum format
+) :
+    _bgfxHandle(handle),
+    _bgfxFormat(format)
+{
 }
 
 Texture::Texture() :
-    _bgfxHandle(BGFX_INVALID_HANDLE)
+    Texture(BGFX_INVALID_HANDLE, bgfx::TextureFormat::Unknown)
 {
 }
 
@@ -108,17 +134,28 @@ Texture::~Texture()
 }
 
 Texture::Texture(Texture&& other) :
-    _bgfxHandle(other._bgfxHandle)
+    _bgfxHandle(other._bgfxHandle),
+    _bgfxFormat(other._bgfxFormat)
 {
     other._bgfxHandle = BGFX_INVALID_HANDLE;
+    other._bgfxFormat = bgfx::TextureFormat::Unknown;
 }
 
 Texture& Texture::operator=(Texture&& other)
 {
     _bgfxHandle = other._bgfxHandle;
+    _bgfxFormat = other._bgfxFormat;
     other._bgfxHandle = BGFX_INVALID_HANDLE;
-    
+    other._bgfxFormat = bgfx::TextureFormat::Unknown;
     return *this;
+}
+
+bgfx::TextureHandle Texture::release()
+{
+    bgfx::TextureHandle h = _bgfxHandle;
+    _bgfxHandle = BGFX_INVALID_HANDLE;
+    _bgfxFormat = bgfx::TextureFormat::Unknown;
+    return h;
 }
     
     }   // namespace gfx

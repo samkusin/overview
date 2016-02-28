@@ -10,18 +10,15 @@
 #define Overview_Services_Entity_hpp
 
 #include "Engine/EngineTypes.hpp"
-#include "Engine/EntityTypes.hpp"
-#include "Engine/Messages/Entity.hpp"
 
-#include <ckentity/entitygroupmap.hpp>
-#include <ckentity/entitydatatable.hpp>
+#include <string>
 
 namespace cinek { namespace ove {
 
 class EntityService
 {
 public:
-    EntityService(EntityDatabase& context, MessageClientSender& sender);
+    EntityService(EntityDatabase* context);
     EntityService() = default;
 
     /**
@@ -41,6 +38,14 @@ public:
      */
     void destroyEntity(Entity entity);
     /**
+     *  Clones the selected entity.
+     *
+     *  @param  context     The cloned entity context
+     *  @param  entity      The entity to clone
+     *  @return The cloned enity
+     */
+    Entity cloneEntity(EntityContextType context, Entity entity);
+    /**
      *  @param  entity      The entity to check
      *  @return True if the entity has not been destroyed
      */
@@ -49,29 +54,28 @@ public:
      *  Loads template defintions from a file path.  Typically done during
      *  level load or initialization.
      *
-     *  @param name Where to load the definitions from
-     *  @param cb   The callback executed on completion with result 
+     *  @param name         Where to load the definitions from
+     *  @param manifest     The manifest object
      */
-    void loadDefinitions(const std::string& name,
-                         std::function<void(const EntityLoadDefinitionsResponse&)> cb);
+    void addDefintions(std::string name, std::shared_ptr<AssetManifest> manifest);
     /**
      *  Clears the specified definitions
      */
     void clearDefinitions(const std::string& name);
     
+    
+    const AssetManifest* getDefinitions(const std::string& ns) const;
+    
 private:
     EntityDatabase* _context = nullptr;
-    MessageClientSender* _sender = nullptr;
 };
 
 
 inline EntityService::EntityService
 (
-    EntityDatabase& context,
-    MessageClientSender& sender
+    EntityDatabase* context
 ) :
-    _context(&context),
-    _sender(&sender)
+    _context(context)
 {
 }
     

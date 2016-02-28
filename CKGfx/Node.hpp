@@ -96,6 +96,7 @@ struct Node
     const ckm::AABB<Vector3>& obb() const { return _obb; }
     ckm::AABB<Vector3>& obb() { return _obb; }
     void setOBB(const ckm::AABB<Vector3>& obb) { _obb = obb; }
+    ckm::AABB<Vector3> calculateAABB() const;
     
     const MeshElement* mesh() const;
     MeshElement* mesh();

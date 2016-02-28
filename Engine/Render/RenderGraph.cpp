@@ -7,7 +7,10 @@
 //
 
 #include "RenderGraph.hpp"
+#include "Engine/EntityDatabase.hpp"
+#include "Engine/Debug.hpp"
 #include "CKGfx/NodeRenderer.hpp"
+#include "CKGfx/Node.hpp"
 #include "CKGfx/AnimationController.hpp"
 
 #include <algorithm>
@@ -21,13 +24,13 @@ RenderGraph::RenderGraph
     uint32_t entityCount,
     uint32_t animCount
 ) :
+    _animControllerPool(animCount),
     _nodeGraph(counts),
-    _animControllerPool(animCount)
+    _renderTime(0)
 {
+    _pendingRenderNodes.reserve(entityCount);
+    _removedRenderNodes.reserve(entityCount);
     _renderNodes.reserve(entityCount);
-    _nodeEndIndex = 0;
-    _removedNodeCount = 0;
-    
     _animNodes.reserve(animCount);
 }
 
@@ -42,96 +45,82 @@ gfx::NodeHandle RenderGraph::cloneAndAddNode
     if (!rootNode)
         return nullptr;
         
+    auto clonedNode = _nodeGraph.clone(sourceNode);
+    
+    struct VisitContext
+    {
+        RenderGraph* self;
+        Entity e;
+    };
+    
+    VisitContext vc { this, e };
+    
+    //  initialize any rendering subsystems needed by the attached node
+    cinek::gfx::visit(clonedNode, [&vc](cinek::gfx::NodeHandle node) -> bool {
+        if (node->elementType() == cinek::gfx::Node::kElementTypeArmature) {
+            cinek::gfx::AnimationController controller(node->armature()->animSet);
+            
+            auto animController = vc.self->_animControllerPool.add(std::move(controller));
+            node->armature()->animController = animController;
+            
+            vc.self->addAnimNode(vc.e, animController);
+            animController->transitionToState("Idle");
+        }
+        return true;
+    });
+    
+    //  our pending node will be added during the update() call
     auto parentNode = _nodeGraph.createObjectNode(e);
     parentNode->setTransform(gfx::Matrix4::kIdentity);
-    
-    _nodeGraph.addChildNodeToNode(_nodeGraph.clone(sourceNode), parentNode);
+    _nodeGraph.addChildNodeToNode(clonedNode, parentNode);
     _nodeGraph.addChildNodeToNode(parentNode, rootNode);
     
-    //  add to end of render nodes list for sort during prepare()
-    //  note, this may leads to duplicates
-    _renderNodes.emplace_back(Node{ e, parentNode, context });
+    _pendingRenderNodes.emplace_back(Node{ e, parentNode, context });
+    
     return parentNode;
 }
 
 gfx::NodeHandle RenderGraph::setNodeEntity(Entity e, gfx::NodeHandle h)
 {
-    _renderNodes.emplace_back(Node{ e, h, nullptr });
+    _pendingRenderNodes.emplace_back(Node{ e, h, nullptr });
     return h;
 }
 
 void RenderGraph::removeNode(Entity e)
 {
-    //  search within our sorted region first
-    struct comparator
-    {
-        bool operator()(const Node& n, Entity e) const {
-            return n.entity < e;
-        }
-        bool operator()(Entity e, const Node& n) const {
-            return e < n.entity;
-        }
-    };
-    auto itRange = std::equal_range(_renderNodes.begin(),
-                        _renderNodes.begin() + _nodeEndIndex, e, comparator());
-    if (itRange.first == itRange.second) {
-        // not inside the sorted region, check the added node region, which is
-        // just a vector of added, not sorted, nodes
-        for (auto it = _renderNodes.begin() + _nodeEndIndex; it != _renderNodes.end(); ) {
-            auto& node = *it;
-            
-            if (node.entity == e) {
-                _nodeGraph.removeNode(node.gfxNode);
-                it = _renderNodes.erase(it);
-            }
-            else {
-                ++it;
-            }
-        }
-        return;
-    }
-    
-    //  do not clear entity in the sorted list - we'll clear during prepare()
-    for (auto it = itRange.first; it != itRange.second; ++it) {
-        _nodeGraph.removeNode(it->gfxNode);
-        it->gfxNode = nullptr;
-        it->context = nullptr;
-        ++_removedNodeCount;
-    }
+    _removedRenderNodes.emplace_back(e);
 }
 
-gfx::NodeHandle RenderGraph::findNode(Entity e) const
+gfx::NodeHandle RenderGraph::findNode(Entity entity) const
 {
- //  search within our sorted region first
-    struct comparator
-    {
-        bool operator()(const Node& n, Entity e) const {
-            return n.entity < e;
-        }
-        bool operator()(Entity e, const Node& n) const {
-            return e < n.entity;
-        }
-    };
-    auto itRange = std::equal_range(_renderNodes.begin(),
-                        _renderNodes.begin() + _nodeEndIndex, e, comparator());
-    if (itRange.first == itRange.second) {
-        // not inside the sorted region, check the added node region, which is
-        // just a vector of added, not sorted, nodes
-        for (auto it = _renderNodes.begin() + _nodeEndIndex; it != _renderNodes.end(); ) {
-            auto& node = *it;
-            
-            if (node.entity == e) {
-                return node.gfxNode;
-            }
-            else {
-                ++it;
-            }
-        }
-        return nullptr;
-    }
+    //  search sorted active list first
+    //  then check the pending list
+    //  otherwise bail (removed nodes are not included)
     
-    //  return the first found node
-    return itRange.first->gfxNode;
+    auto it = std::lower_bound(_renderNodes.begin(), _renderNodes.end(), entity,
+        [](const Node& node, Entity e) -> bool {
+            return (node.entity < e);
+        });
+    if (it == _renderNodes.end() || it->entity != entity) {
+        //  pending list is not sorted
+        it = std::find_if(_pendingRenderNodes.begin(), _pendingRenderNodes.end(),
+            [entity](const Node& node) -> bool {
+                return node.entity == entity;
+            });
+    }
+    return it != _renderNodes.end() ? it->gfxNode : nullptr;
+}
+
+gfx::AnimationControllerHandle RenderGraph::findAnimationController(Entity e) const
+{
+    auto it = std::lower_bound(_animNodes.begin(), _animNodes.end(), e,
+        [](const AnimNode& animNode, Entity e) -> bool {
+            return animNode.entity < e;
+        });
+    if (it == _animNodes.end() || (*it).entity != e)
+        return nullptr;
+    
+    return (*it).animController;
 }
 
 void RenderGraph::clear()
@@ -158,37 +147,83 @@ void RenderGraph::clear()
     // Again, our current approach *might* be inefficient.  We'll get back to
     // this after profiling.
     //
+    _pendingRenderNodes.clear();
     _animNodes.clear();
     _renderNodes.clear();
+    _removedRenderNodes.clear();
     _nodeGraph.clearRoot();
 }
 
-void RenderGraph::update(double dt)
+void RenderGraph::update
+(
+    double dt
+)
 {
-    //  resort vector to include any added nodes (at end of list)
-    //  sort removed nodes to the end of the vector and remove them
-    //  note - this can be optimized (sort added vectors only, then merge them
-    //  with the existing sorted active vector.)
-    //
-    if (_renderNodes.size() >= _nodeEndIndex || _removedNodeCount >=_nodeEndIndex/kRemoveNodeSortFactor) {
+    //  sort added nodes into active list first
+    if (!_pendingRenderNodes.empty()) {
+        _renderNodes.insert(_renderNodes.end(), _pendingRenderNodes.begin(), _pendingRenderNodes.end());
+        
         std::sort(_renderNodes.begin(), _renderNodes.end(),
                 [](const Node& n0, const Node& n1) -> bool {
-                    return ((n0.entity < n1.entity) && n0.gfxNode) ||
-                           ((n1.entity >= n0.entity) && !n1.gfxNode);
+                    return (n0.entity < n1.entity);
                 });
         
-        auto it = std::find_if(_renderNodes.begin(), _renderNodes.end(),
-                [](const Node& n) -> bool { return !n.gfxNode; });
+        _pendingRenderNodes.clear();
+    }
+
+    //  remove nodes using our remove list
+    if (!_removedRenderNodes.empty()) {
+        //  sort our remove list so we can iterate through both active and remove
+        //  linearly
+        std::sort(_removedRenderNodes.begin(), _removedRenderNodes.end(),
+                [](Entity e0, Entity e1) -> bool {
+                    return e0 < e1;
+                });
         
-        _renderNodes.erase(it, _renderNodes.end());
-        _nodeEndIndex = (uint32_t)_renderNodes.size();
-        _removedNodeCount = 0;
+        auto toRemoveIt = _removedRenderNodes.begin();
+        auto activeIt = _renderNodes.begin();
+        while (toRemoveIt != _removedRenderNodes.end() && activeIt != _renderNodes.end()) {
+            Entity entityToRemove = *toRemoveIt;
+            activeIt = std::lower_bound(activeIt, _renderNodes.end(), entityToRemove,
+                [](const Node& n0, Entity e) -> bool {
+                    return n0.entity < e;
+                });
+            
+            if (activeIt != _renderNodes.end()) {
+                if (activeIt->entity == entityToRemove) {
+                    _nodeGraph.detachNodeTree(activeIt->gfxNode);
+                    activeIt = _renderNodes.erase(activeIt);
+                }
+                else {
+                    OVENGINE_LOG_WARN("Attempt to remove a non-active entity %" PRIu64 ".", entityToRemove);
+                    ++activeIt;
+                }
+            }
+            ++toRemoveIt;
+        }
     }
-    
-    //  animate controllers
-    for (auto& animNode : _animNodes) {
-        animNode.animController->update(_renderTime);
+
+    //  animate controllers, removing dead controllers as needed
+    //  we can use a similar approach to the one above since the animations
+    //  vector is also sorted by entity
+    auto toRemoveIt = _removedRenderNodes.begin();
+    for (auto it = _animNodes.begin(); it != _animNodes.end();) {
+        Entity thisEntity = it->entity;
+        
+        while (toRemoveIt != _removedRenderNodes.end() && *toRemoveIt < thisEntity) {
+            ++toRemoveIt;
+        }
+        
+        if (toRemoveIt == _removedRenderNodes.end() || *toRemoveIt != thisEntity) {
+            it->animController->update(_renderTime);
+            ++it;
+        }
+        else {
+            it = _animNodes.erase(it);
+        }
     }
+
+    _removedRenderNodes.clear();
 
     _renderTime += dt;
 }
@@ -197,6 +232,26 @@ gfx::NodeHandle RenderGraph::root() const
 {
     return _nodeGraph.root();
 }
+
+
+auto RenderGraph::addAnimNode
+(
+    Entity e,
+    gfx::AnimationControllerHandle h
+) -> AnimNode*
+{
+    auto it = std::lower_bound(_animNodes.begin(), _animNodes.end(), e,
+        [](const AnimNode& animNode, Entity e) -> bool {
+            return animNode.entity < e;
+        });
+    CK_ASSERT_RETURN_VALUE(it == _animNodes.end() || it->entity != e, &(*it));
+    
+    AnimNode node { e, h };
+    it = _animNodes.emplace(it, std::move(node));
+    
+    return &(*it);
+}
+
 
     
     }   /* namesapce ove */

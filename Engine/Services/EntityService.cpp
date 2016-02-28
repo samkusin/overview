@@ -8,7 +8,6 @@
 
 #include "EntityService.hpp"
 #include "Engine/EntityDatabase.hpp"
-#include "Engine/Messages/Entity.hpp"
 
 #include "Debug.hpp"
 
@@ -33,26 +32,23 @@ void EntityService::destroyEntity(Entity entity)
     _context->destroyEntity(entity);
 }
 
+Entity EntityService::cloneEntity(EntityContextType context, Entity entity)
+{
+    return _context->cloneEntity(context, entity);
+}
+
 bool EntityService::isEntityValid(Entity e) const
 {
     return _context->getStore(cinek_entity_context(e)).valid(e);
 }
 
-void EntityService::loadDefinitions
+void EntityService::addDefintions
 (
-    const std::string& name,
-    std::function<void(const EntityLoadDefinitionsResponse&)> cb
+    std::string name,
+    std::shared_ptr<AssetManifest> manifest
 )
 {
-    EntityLoadDefinitionsRequest req;
-    strncpy(req.name, name.c_str(), sizeof(req.name));
-    _sender->client->send(_sender->server,
-        kMsgEntityLoadDefinitions,
-        makePayloadFromData(req),
-        [cb](uint32_t, ckmsg::ClassId cid, const ckmsg::Payload* payload) {
-            CK_ASSERT(cid==kMsgEntityLoadDefinitions);
-            cb(*reinterpret_cast<const EntityLoadDefinitionsResponse*>(payload->data()));
-        });
+    _context->setManifest(std::move(name), std::move(manifest));
 }
 
 void EntityService::clearDefinitions(const std::string& path)
@@ -60,6 +56,10 @@ void EntityService::clearDefinitions(const std::string& path)
     _context->clearManifest(path);
 }
 
+const AssetManifest* EntityService::getDefinitions(const std::string& name) const
+{
+    return _context->getManifest(name);
+}
 
 
     } /* namespace ove */

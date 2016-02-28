@@ -222,9 +222,9 @@ void AssetManifestLoader::update()
                     _stack.emplace_back(AssetType::kTexture,
                             member->value.Begin(), member->value.End());
                 }
-                else if (!strcmp(field, "model") &&
+                else if (!strcmp(field, "modelset") &&
                           valueType == rapidjson::kStringType) {
-                    requestAssetLoad(AssetType::kModel, member->value.GetString());
+                    requestAssetLoad(AssetType::kModelSet, member->value.GetString());
                 }
                 else if (valueType == rapidjson::kObjectType) {
                     _stack.emplace_back(AssetType::kNone,

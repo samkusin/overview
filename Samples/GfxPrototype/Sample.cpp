@@ -29,10 +29,12 @@
 
 #include <SDL2/SDL_timer.h>
 #include <bgfx/bgfx.h>
+#include <bx/fpumath.h>
 
 #include "UICore/UITypes.hpp"
 #include "UICore/UIEngine.hpp"
 #include "UICore/UIRenderer.hpp"
+#include "UICore/Input.hpp"
 
 #include "UICore/oui.h"
 
@@ -69,12 +71,12 @@ int runSample(int viewWidth, int viewHeight)
     registerShaders(
         shaderLibrary, shaderPrograms, shaderUniforms, {
             {
-                cinek::gfx::kNodeProgramMesh, kShaderProgramStdMesh,
+                cinek::gfx::kNodeProgramMeshUV, kShaderProgramStdMesh,
                 "bin/vs_std_uv.bin",
                 "bin/fs_std_tex.bin"
             },
             {
-                cinek::gfx::kNodeProgramBoneMesh,kShaderProgramBoneMesh,
+                cinek::gfx::kNodeProgramBoneMeshUV,kShaderProgramBoneMesh,
                 "bin/vs_bone_uv.bin",
                 "bin/fs_std_tex.bin"
             }
@@ -291,11 +293,13 @@ int runSample(int viewWidth, int viewHeight)
     });
 
     //  Renderer initialization
-    cinek::gfx::NodeRenderer nodeRenderer(shaderPrograms, shaderUniforms);
+    cinek::gfx::NodeRenderer nodeRenderer;
     cinek::gfx::Camera mainCamera;
-    mainCamera.viewFrustrum = cinek::gfx::Frustrum(0.1, 100.0, M_PI * 60/180.0f,
-        (float)viewWidth/viewHeight);
-    
+    mainCamera.fovDegrees = 60.0f;
+    mainCamera.near = 0.1f;
+    mainCamera.far = 100.0f;
+    mainCamera.viewportRect = viewRect;
+
     uint32_t systemTimeMs = SDL_GetTicks();
     //uint32_t testTimeMs = 0;
     bool running = true;
@@ -314,9 +318,9 @@ int runSample(int viewWidth, int viewHeight)
         }
         */
 
-        cinek::ove::InputState polledInputState;
+        cinek::uicore::InputState polledInputState;
         
-        if (pollSDLEvents(polledInputState) & kPollSDLEvent_Quit)
+        if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
             running = false;
 
         {
@@ -326,10 +330,11 @@ int runSample(int viewWidth, int viewHeight)
         
             gfxContext.update();
             
-            bgfx::setViewRect(0, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
+            bgfx::setViewRect(0, mainCamera.viewportRect.x, mainCamera.viewportRect.y,
+                mainCamera.viewportRect.w, mainCamera.viewportRect.h);
             
-            nodeRenderer.setCamera(mainCamera);
-            nodeRenderer(scene.root());
+            mainCamera.update();
+            nodeRenderer(shaderPrograms, shaderUniforms, mainCamera, scene.root());
 
             cinek::uicore::render(nvg, viewRect);
         }

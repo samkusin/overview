@@ -14,6 +14,20 @@
 #include <cfloat>
 
 namespace bx {
+    inline void quatNorm(float* __restrict _result, const float* __restrict _q)
+    {
+        const float cx = _q[0];
+        const float cy = _q[1];
+        const float cz = _q[2];
+        const float cw = _q[3];
+        
+        const float qcinvlen = 1.0f/fsqrt(cx * cx + cy * cy + cz * cz + cw * cw);
+        _result[0] = cx * qcinvlen;
+        _result[1] = cy * qcinvlen;
+        _result[2] = cz * qcinvlen;
+        _result[3] = cw * qcinvlen;
+    }
+    
     inline void slerp(float* __restrict _result, const float* __restrict _qa, const float* __restrict _qb, float _factor)
     {
         float cx,cy,cz,cw;
@@ -49,8 +63,8 @@ namespace bx {
         }
         else {
             float angle = acosf(theta);
-            float a = sin((1.0f - _factor) * angle);
-            float c = sin(_factor*angle);
+            float a = sinf((1.0f - _factor) * angle);
+            float c = sinf(_factor*angle);
             float invsina = 1.0f/sinf(angle);
             cx = (a * ax + c * cx) * invsina;
             cy = (a * ay + c * cy) * invsina;
@@ -58,13 +72,40 @@ namespace bx {
             cw = (a * aw + c * cw) * invsina;
         }
         
+
         //  normalize
+        /*
         const float qcinvlen = 1.0f/fsqrt(cx * cx + cy * cy + cz * cz + cw * cw);
         _result[0] = cx * qcinvlen;
         _result[1] = cy * qcinvlen;
         _result[2] = cz * qcinvlen;
         _result[3] = cw * qcinvlen;
+        */
+
+        _result[0] = cx;
+        _result[1] = cy;
+        _result[2] = cz;
+        _result[3] = cw;
     }
+    
+    inline void eulerToQuat(float* _result, const float *_euler) {
+        const float ex_2 = _euler[0]*0.5f;
+        const float ey_2 = _euler[1]*0.5f;
+        const float ez_2 = _euler[2]*0.5f;
+        const float cx = cosf(ex_2);
+        const float cy = cosf(ey_2);
+        const float cz = cosf(ez_2);
+        const float sx = sinf(ex_2);
+        const float sy = sinf(ey_2);
+        const float sz = sinf(ez_2);
+        _result[0] = cy*cz*sx - sy*sz*cx;
+        _result[1] = cx*cz*sy + sx*sz*cy;
+        _result[2] = cx*cy*sz - sx*sy*cz;
+        _result[3] = cx*cy*cz + sx*sy*sz;
+        
+        quatNorm(_result, _result);
+    }
+    
 }
 
 namespace cinek {
@@ -86,6 +127,7 @@ const -> std::pair<const Keyframe*, const Keyframe*>
     
     if (it == sequences[kfType].end()) {
         prevIt = --it;
+        it = prevIt;
     }
     else if (it == sequences[kfType].begin()) {
         prevIt = it;
@@ -123,7 +165,7 @@ int AnimationSet::findBoneIndex(const char* name) const
 
 const Bone* AnimationSet::boneFromIndex(int index) const
 {
-    CK_ASSERT_RETURN_VALUE(index >= 0 && index < _bones.size(), nullptr);
+    CK_ASSERT_RETURN_VALUE(index >= 0 && index < (int)_bones.size(), nullptr);
     return &_bones[index];
 }
         
@@ -157,7 +199,7 @@ AnimationSet::AnimationSet
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void interpRotationFromSequenceChannel
+void interpQuatRotationFromSequenceChannel
 (
     Vector4& boneRotQuat,
     const SequenceChannel& channel,
@@ -175,63 +217,112 @@ void interpRotationFromSequenceChannel
     //  animation time on this channel.
     //
     auto kf = channel.keyframePairFromTime(Keyframe::kQuaternionX, animTime);
-    if (!kf.first) return;
+    //if (!kf.first) return;
     //printf("qx[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
     startQ.x = kf.first->v;
     endQ.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
 
     kf = channel.keyframePairFromTime(Keyframe::kQuaternionY, animTime);
-    if (!kf.first) return;
+    //if (!kf.first) return;
     //printf("qy[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
     startQ.y = kf.first->v;
     endQ.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
-    
+
     kf = channel.keyframePairFromTime(Keyframe::kQuaternionZ, animTime);
-    if (!kf.first) return;
-    
+    //if (!kf.first) return;
     //printf("qz[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
-    
     startQ.z = kf.first->v;
     endQ.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
 
     kf = channel.keyframePairFromTime(Keyframe::kQuaternionW, animTime);
-    if (!kf.first) return;
+    //if (!kf.first) return;
     //printf("qw[%.4f]: <%.4f,%.4f>\n", animTime, kf.first->v, kf.second->v);
     startQ.w = kf.first->v;
     endQ.w = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
     
-    if (dt < ckm::epsilon<float>())
-        return;
-    
-    float factor = (animTime - start)/dt;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)
         factor = 1.0f;
-        
+    
     bx::slerp(boneRotQuat, startQ, endQ, factor);
 }
 
+void interpEulerRotationFromSequenceChannel
+(
+    Vector3& boneEulers,
+    const SequenceChannel& channel,
+    float animTime
+)
+{
+    Vector3 startR;
+    Vector3 endR;
+    float dt = 0.0f;
+    float start = 0.0f;
+    
+    //  keyframe pairs for each sequence are not guaranteed to be aligned by
+    //  time.  this means that we must calculate the delta time between two
+    //  quaternions using the qx,qy,qz,qw keyframe pairs matching the given
+    //  animation time on this channel.
+    //
+    auto kf = channel.keyframePairFromTime(Keyframe::kRotationX, animTime);
+    startR.x = kf.first->v;
+    endR.x = kf.second->v;
+    float kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+
+    kf = channel.keyframePairFromTime(Keyframe::kRotationY, animTime);
+    startR.y = kf.first->v;
+    endR.y = kf.second->v;
+    kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+
+    kf = channel.keyframePairFromTime(Keyframe::kRotationZ, animTime);
+    startR.z = kf.first->v;
+    endR.z = kf.second->v;
+    kfDt = kf.second->t - kf.first->t;
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
+        dt = kfDt;
+    if (kf.first->t > start)
+        start = kf.first->t;
+    
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
+    if (factor < 0.0f)
+        factor = 0.0f;
+    else if (factor > 1.0f)
+        factor = 1.0f;
+
+    boneEulers.x = bx::flerp(startR.x, endR.x, factor);
+    boneEulers.y = bx::flerp(startR.y, endR.y, factor);
+    boneEulers.z = bx::flerp(startR.z, endR.z, factor);
+}
 
 void interpTranslateFromSequenceChannel
 (
@@ -251,7 +342,7 @@ void interpTranslateFromSequenceChannel
     startT.x = kf.first->v;
     endT.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -262,7 +353,7 @@ void interpTranslateFromSequenceChannel
     startT.y = kf.first->v;
     endT.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -273,15 +364,12 @@ void interpTranslateFromSequenceChannel
     startT.z = kf.first->v;
     endT.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
 
-    if (dt < ckm::epsilon<float>())
-        return;
-    
-    float factor = (animTime - start)/dt;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)
@@ -310,7 +398,7 @@ void interpScaleFromSequenceChannel
     startT.x = kf.first->v;
     endT.x = kf.second->v;
     float kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -321,7 +409,7 @@ void interpScaleFromSequenceChannel
     startT.y = kf.first->v;
     endT.y = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
@@ -332,15 +420,12 @@ void interpScaleFromSequenceChannel
     startT.z = kf.first->v;
     endT.z = kf.second->v;
     kfDt = kf.second->t - kf.first->t;
-    if (kfDt >= ckm::epsilon<float>() && (kfDt < dt || dt < ckm::epsilon<float>()))
+    if (kfDt >= ckm::kEpsilon && (kfDt < dt || dt < ckm::kEpsilon))
         dt = kfDt;
     if (kf.first->t > start)
         start = kf.first->t;
 
-    if (dt < ckm::epsilon<float>())
-        return;
-    
-    float factor = (animTime - start)/dt;
+    float factor = dt > ckm::kEpsilon ? (animTime - start)/dt : 0.0f;
     if (factor < 0.0f)
         factor = 0.0f;
     else if (factor > 1.0f)

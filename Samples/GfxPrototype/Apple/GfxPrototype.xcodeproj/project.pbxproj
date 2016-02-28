@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		28C055E31C20DA1600C1E3B5 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28C055E21C20DA1600C1E3B5 /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		372035E01BC583CF001B99E2 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372035DE1BC583CF001B99E2 /* Controller.cpp */; };
 		3720364F1BC6FC89001B99E2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3720364E1BC6FC89001B99E2 /* QuartzCore.framework */; };
+		373740251BD8840900729919 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 373740241BD8840900729919 /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		379429821BB31BBF00C5FAF6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429811BB31BBF00C5FAF6 /* IOKit.framework */; };
 		379429841BB31BC500C5FAF6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429831BB31BC500C5FAF6 /* Cocoa.framework */; };
 		379429861BB31BCB00C5FAF6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379429851BB31BCB00C5FAF6 /* Carbon.framework */; };
@@ -80,10 +80,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		28C055E21C20DA1600C1E3B5 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		372035DE1BC583CF001B99E2 /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Controller.cpp; path = ../Controller.cpp; sourceTree = "<group>"; };
 		372035DF1BC583CF001B99E2 /* Controller.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Controller.hpp; path = ../Controller.hpp; sourceTree = "<group>"; };
 		3720364E1BC6FC89001B99E2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		373740241BD8840900729919 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		379428D91BB312EC00C5FAF6 /* gfxsample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = gfxsample; sourceTree = BUILT_PRODUCTS_DIR; };
 		379429811BB31BBF00C5FAF6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		379429831BB31BC500C5FAF6 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -112,7 +112,7 @@
 				379429841BB31BC500C5FAF6 /* Cocoa.framework in Frameworks */,
 				379429821BB31BBF00C5FAF6 /* IOKit.framework in Frameworks */,
 				3720364F1BC6FC89001B99E2 /* QuartzCore.framework in Frameworks */,
-				28C055E31C20DA1600C1E3B5 /* Metal.framework in Frameworks */,
+				373740251BD8840900729919 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,11 +150,11 @@
 		3794298D1BB31F4400C5FAF6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				28C055E21C20DA1600C1E3B5 /* Metal.framework */,
 				37E636031BF00FC70081E59E /* libSampleCommon.a */,
 				37942A381BB3256F00C5FAF6 /* libiconv.dylib */,
 				379429891BB31BE400C5FAF6 /* libbz2.dylib */,
 				379429871BB31BDE00C5FAF6 /* libz.dylib */,
+				373740241BD8840900729919 /* Metal.framework */,
 				3720364E1BC6FC89001B99E2 /* QuartzCore.framework */,
 				379429851BB31BCB00C5FAF6 /* Carbon.framework */,
 				379429831BB31BC500C5FAF6 /* Cocoa.framework */,

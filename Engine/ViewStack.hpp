@@ -9,45 +9,48 @@
 #ifndef Overview_View_Manager_hpp
 #define Overview_View_Manager_hpp
 
-#include <cinek/allocator.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 #include <functional>
 #include <thread>
 #include <mutex>
 
-namespace cinek { namespace ove {
+namespace cinek {
+
+namespace uicore {
+    struct InputState;
+}
+
+namespace ove {
 
 class ViewController;
+struct InputState;
 
 class ViewStack
 {
 public:
-    using FactoryCallback = std::function<unique_ptr<ViewController>(const std::string&)>;
+    using FactoryCallback =
+        std::function<std::shared_ptr<ViewController>(
+                            const std::string&,
+                            ViewController*)>;
     
     ViewStack();
     ~ViewStack();
     
     void setFactory(FactoryCallback callback);
     
+    //  executes start frame logic for each view
+    void startFrame();
     //  processes view state changes (load, unload, etc.)
-    void process();
-    
-    //  executes layout of view controllers
-    void layout();
+    void endFrame();
     
     //  updates the view controllers on the stack
-    void simulate(double time, double dt);
+    void simulate(double dt);
     
     //  render the stack
-    void frameUpdate(double dt);
+    void frameUpdate(double dt, const cinek::uicore::InputState& inputState);
     
-    //  loads a view (or ups the reference count if already loaded)
-    void load(const std::string& id);
-    //  unloads a view (or decrements the ref count.)  if this is the last
-    //  reference, and the view is on the stack, the view and its successors on
-    //  the stack are also unloaded
-    void unload(const std::string&  id);
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,
     //  all views are popped above the presented view.
@@ -73,15 +76,13 @@ public:
 private:
     FactoryCallback _factoryCb;
     std::mutex _runMutex;
-    std::vector<std::pair<unique_ptr<ViewController>, int>> _views;
+    std::vector<std::pair<std::shared_ptr<ViewController>, int>> _views;
     std::vector<ViewController*> _stack;
     
     struct Command
     {
         enum
         {
-            kLoad,
-            kUnload,
             kPresent,
             kPush,
             kPop

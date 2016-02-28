@@ -9,8 +9,14 @@
 #include "NodeGraph.hpp"
 
 #include <cinek/debug.h>
+#include <cinek/objectpool.inl>
 
 namespace cinek {
+
+    template class ObjectPool<gfx::MeshElement>;
+    template class ObjectPool<gfx::ArmatureElement>;
+    template class ObjectPool<gfx::LightElement>;
+
     namespace gfx {
  
 NodeGraph::NodeGraph(const NodeElementCounts& params) :
@@ -102,7 +108,7 @@ NodeHandle NodeGraph::createObjectNode(NodeId id)
 {
     NodeHandle handle;
     Node node(Node::kElementTypeObject);
-    node.setObjectNodeId(id);    
+    node.setObjectNodeId(id);
     handle = _nodes.add(std::move(node));
     return handle;
 }
@@ -165,11 +171,14 @@ NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
         child->_prevSibling = child;
     }
     child->_nextSibling = nullptr;
+    
+    //  update the parent's obb to reflect the new child
+    node->obb().merge(child->calculateAABB());
 
     return child;
 }
 
-NodeHandle NodeGraph::removeNode(NodeHandle child)
+NodeHandle NodeGraph::detachNode(NodeHandle child)
 {
     //  detach from next sibling or fixup firstChild links child was the tail
     //  remember: head prev points to tail, but not vice-versa
@@ -191,12 +200,22 @@ NodeHandle NodeGraph::removeNode(NodeHandle child)
     if (child == _root) {
         _root = child->_nextSibling;
     }
+
+    //  TODO - flag to recalculate parent's obb on next renderer pass
     
     child->_parent = nullptr;
     child->_prevSibling = nullptr;
     child->_nextSibling = nullptr;
     
     return child;
+}
+
+NodeHandle NodeGraph::detachNodeTree(NodeHandle node)
+{
+    while (node->_firstChild) {
+        detachNodeTree(node->_firstChild);
+    }
+    return detachNode(node);
 }
 
 
@@ -207,6 +226,7 @@ NodeHandle NodeGraph::clone(NodeHandle source)
     //  select node type to clone
     switch (source->elementType()) {
     case Node::kElementTypeNone:
+    case Node::kElementTypeObject:
         cloned = createObjectNode(source->objectNodeId());
         break;
     case Node::kElementTypeMesh: {

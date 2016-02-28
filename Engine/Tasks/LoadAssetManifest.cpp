@@ -31,7 +31,7 @@ LoadAssetManifest::LoadAssetManifest
 
 }
     
-unique_ptr<AssetManifest>  LoadAssetManifest::acquireManifest()
+std::shared_ptr<AssetManifest> LoadAssetManifest::acquireManifest()
 {
     return std::move(_manifest);
 }
@@ -43,9 +43,10 @@ void LoadAssetManifest::onFileLoaded()
     if (idx != std::string::npos) {
         manifestName.erase(idx);
     }
-    _manifest = allocate_unique<AssetManifest>(
+    _manifest = std::allocate_shared<AssetManifest>(
+                    std_allocator<AssetManifest>(),
                     std::move(manifestName),
-                    std::move(acquireBuffer())
+                    std::move(_buffer)
                 );
     
     _loader = std::move(AssetManifestLoader(*_manifest.get(), *_factory));
@@ -70,6 +71,13 @@ void LoadAssetManifest::onCancel()
     }
 
     LoadFile::onCancel();
+}
+
+
+uint8_t* LoadAssetManifest::acquireBuffer(uint32_t size)
+{
+    _buffer.resize(size+1, 0); // null terminator
+    return _buffer.data();
 }
  
     }  /* namespace ove */

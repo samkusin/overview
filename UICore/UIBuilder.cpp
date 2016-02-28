@@ -13,6 +13,16 @@
 
 namespace cinek { namespace uicore {
 
+static const Layout::Style kDefaultButtonStyle = {
+    Layout::Style::has_layout,
+    UI_HFILL,
+};
+
+static const Layout::Style kDefaultListboxStyle = {
+    Layout::Style::has_layout,
+    UI_FILL,
+};
+
 /*
     layout.frame(layout_flags).events(UI_BUTTON0_DOWN).size(w,h).
         end();
@@ -36,7 +46,7 @@ namespace cinek { namespace uicore {
 Layout::Layout() :
     _size(0),
     _topItem(-1),
-    _mode(kFreeLayout)
+    _topLayout(0)
 {
 }
 
@@ -50,6 +60,212 @@ Layout::~Layout()
     }
 }
 
+Layout& Layout::beginFrame
+(
+    unsigned int eventFlags,
+    FrameState* frameState,
+    RenderCallback renderCb,
+    void* context
+)
+{
+    pushTop();
+    
+    _topItem = uiItem();
+    _topLayout = UI_FILL;   // to be set or altered upon end()
+    
+    uiSetBox(_topItem, UI_LAYOUT);
+    uiSetEvents(_topItem, eventFlags);
+    
+    OUIFrame* data = reinterpret_cast<OUIFrame*>(
+        uiAllocHandle(_topItem, sizeof(OUIFrame))
+    );
+    data->header.itemType = OUIItemType::frame;
+    data->header.handler = OUIFrame::handler;
+    data->renderCb = renderCb;
+    data->callbackContext = context;
+    data->state = frameState;
+    data->state->init(_topItem);
+    
+    return *this;
+}
+
+Layout& Layout::beginWindow()
+{
+    pushTop();
+     
+    _topItem = uiItem();
+    _topLayout = UI_FILL;  // to be set or altered upon end()
+    
+    uiSetBox(_topItem, UI_COLUMN);
+    
+    OUIHeader* header = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    );
+    header->itemType = OUIItemType::window;
+    header->handler = nullptr;
+    
+    return *this;
+}
+
+Layout& Layout::beginColumn()
+{
+    pushTop();
+    
+    _topItem = uiItem();
+    _topLayout = UI_VFILL;  // to be set or altered upon end()
+    
+    uiSetBox(_topItem, UI_COLUMN);
+    
+    OUIHeader* header = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    );
+    header->itemType = OUIItemType::column;
+    header->handler = nullptr;
+
+    return *this;
+}
+
+Layout& Layout::setSize(int w, int h)
+{
+    uiSetSize(_topItem, w, h);
+    return *this;
+}
+
+Layout& Layout::setLayout(unsigned int layout)
+{
+    _topLayout = layout;
+    return *this;
+}
+
+Layout& Layout::setMargins(Box box)
+{
+    uiSetMargins(_topItem, box.l, box.t, box.r, box.b);
+    return *this;
+}
+
+Layout& Layout::button
+(
+    int id,
+    ButtonHandler* btnHandler,
+    int iconId,
+    const char* label,
+    const Style* style
+)
+{
+    int item = uiItem();
+
+    applyStyleToItem(item, style, &kDefaultButtonStyle);
+
+    uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT);
+    
+    //  for firing callback
+    uiSetEvents(item, UI_BUTTON0_HOT_UP);
+
+    OUIButtonData* data = reinterpret_cast<OUIButtonData*>(
+        uiAllocHandle(item, sizeof(OUIButtonData))
+    );
+    data->header.itemType = OUIItemType::button;
+    data->header.handler = OUIButtonData::handler;
+    data->id = id;
+    data->fireHandler = btnHandler;
+    data->iconId = iconId;
+    data->label = label;
+ 
+    uiInsert(_topItem, item);
+    
+    return *this;
+}
+
+Layout& Layout::listbox
+(
+    DataProvider* dataProvider,
+    int id,
+    ListboxType lbtype,
+    ListboxState* state,
+    const Style* style
+)
+{
+    int item = uiItem();
+    
+    applyStyleToItem(item, style, &kDefaultListboxStyle);
+    
+    // for selection and scroll
+    uiSetEvents(item, UI_BUTTON0_DOWN | UI_BUTTON0_CAPTURE);
+
+    OUIListBoxData* data = reinterpret_cast<OUIListBoxData*>(
+        uiAllocHandle(item, sizeof(OUIListBoxData))
+    );
+    data->header.itemType = OUIItemType::listbox;
+    data->header.handler = OUIListBoxData::handler;
+    data->provider = dataProvider;
+    data->providerId = id;
+    data->lbtype = lbtype;
+    data->viewAnchor = { 0, 0 };
+    data->state = state;
+    data->state->init(item);
+    
+    uiInsert(_topItem, item);
+    
+    return *this;
+}
+
+Layout& Layout::end()
+{
+    CK_ASSERT(_topItem >= 0);
+    
+    int child = _topItem;
+    
+    uiSetLayout(_topItem, _topLayout);
+    
+    popItem();
+    
+    if (_topItem >= 0)
+    {
+        /*
+        const OUIHeader* hdr = reinterpret_cast<const OUIHeader*>(uiGetHandle(_topItem));
+        switch (hdr->itemType)
+        {
+        case OUIItemType::frame:
+            break;
+        case OUIItemType::column:
+            break;
+        default:
+            break;
+        }
+        */
+        uiInsert(_topItem, child);
+    }
+    return *this;
+}
+
+void Layout::applyStyleToItem
+(
+    int item,
+    const Style* style,
+    const Style* defaultStyle
+)
+{
+    if (!style || !(style->mask & Style::has_layout)) {
+        if (defaultStyle) {
+            applyStyleToItem(item, defaultStyle, nullptr);
+        }
+    }
+    else {
+        uiSetLayout(item, style->layout);
+    }
+    
+    if (!style || !(style->mask & Style::has_margins)) {
+        if (defaultStyle) {
+            applyStyleToItem(item, defaultStyle, nullptr);
+        }
+    }
+    else {
+        uiSetMargins(item,
+            style->margins.l, style->margins.t,
+            style->margins.r, style->margins.b);
+    }
+}
+
 void Layout::pushTop()
 {
     if (_topItem < 0)
@@ -57,8 +273,8 @@ void Layout::pushTop()
     
     if (!(_size & 0x80000000) && _size >= kMaxItemsInData)
     {
-        int32_t* src = reinterpret_cast<int32_t*>(_data);
-        vector<int> items;
+        State* src = reinterpret_cast<State*>(_data);
+        vector<State> items;
         items.reserve(kMaxItemsInData*2);
 
         for (int i = 0; i < _size; ++i)
@@ -66,29 +282,30 @@ void Layout::pushTop()
             items.push_back(src[i]);
         }
     
-        vector<int>& target = *::new(_data) vector<int>();
+        vector<State>& target = *::new(_data) vector<State>();
         target = std::move(items);
         _size |= 0x80000000;
     }
     
     if ((_size & 0x80000000))
     {
-        vector<int>& vec = *reinterpret_cast<vector<int>*>(_data);
-        vec.push_back(_topItem);
+        vector<State>& vec = *reinterpret_cast<vector<State>*>(_data);
+        vec.push_back({ _topItem, _topLayout });
     }
     else
     {
-        int32_t* items = reinterpret_cast<int32_t*>(_data);
-        items[_size++] = _topItem;
+        State* items = reinterpret_cast<State*>(_data);
+        items[_size++] = { _topItem, _topLayout };
     }
 }
 
-int32_t Layout::popItem()
+void Layout::popItem()
 {
-    int32_t item = -1;
+    State item { -1, 0 };
+    
     if ((_size & 0x80000000))
     {
-        vector<int>& vec = *reinterpret_cast<vector<int>*>(_data);
+        vector<State>& vec = *reinterpret_cast<vector<State>*>(_data);
         if (!vec.empty())
         {
             item = vec.back();
@@ -97,154 +314,12 @@ int32_t Layout::popItem()
     }
     else if (_size > 0)
     {
-        int32_t* items = reinterpret_cast<int32_t*>(_data);
+        State* items = reinterpret_cast<State*>(_data);
         item = items[--_size];
     }
     
-    return item;
-}
-
-void Layout::insertItem(int32_t item, int32_t parent)
-{
-    uiInsert(parent, item);
-
-    uint32_t flags = uiGetLayout(item);
-    
-    switch (_mode)
-    {
-    case kColumnLayout:
-        {
-            flags &= ~(UI_VFILL);
-            flags |= UI_HFILL;
-        }
-        break;
-    default:
-        break;
-    }
-    
-    uiSetLayout(item, flags);
-}
-
-Layout& Layout::frame
-(
-    UIRenderCallback renderCb,
-    void* context,
-    uint32_t layoutFlags
-)
-{
-    pushTop();
-    
-    _topItem = uiItem();
-    _mode = kFreeLayout;
-    
-    OUIFrame* data = reinterpret_cast<OUIFrame*>(
-        uiAllocHandle(_topItem, sizeof(OUIFrame))
-    );
-    data->header.init(OUIItemType::frame);
-    data->renderCb = renderCb;
-    data->callbackContext = context;
-    
-    if (layoutFlags)
-    {
-        uiSetLayout(_topItem, layoutFlags);
-    }
-    uiSetBox(_topItem, UI_COLUMN);
-    
-    return *this;
-}
-
-Layout& Layout::column(uint32_t layoutFlags)
-{
-    pushTop();
-    
-    _topItem = uiItem();
-    _mode = kColumnLayout;
-    
-    OUIHeader* header = reinterpret_cast<OUIHeader*>(
-        uiAllocHandle(_topItem, sizeof(OUIHeader))
-    );
-    header->init(OUIItemType::column);
-    
-    uiSetBox(_topItem, UI_COLUMN);
-    if (layoutFlags)
-    {
-        uiSetLayout(_topItem, layoutFlags);
-    }
-    
-    return *this;
-}
-
-Layout& Layout::setEvents
-(
-    uint32_t flags,
-    UISubscriber* subscriber,
-    int32_t evtId
-)
-{
-    OUIHeader* header = reinterpret_cast<OUIHeader*>(uiGetHandle(_topItem));
-    header->subscriber = subscriber;
-    header->itemId = evtId;
-    
-    uiSetEvents(_topItem, flags);
-    
-    return *this;
-}
-
-Layout& Layout::setSize(int32_t w, int32_t h)
-{
-    uiSetSize(_topItem, w, h);
-    return *this;
-}
-
-Layout& Layout::buttonItem
-(
-    int32_t iconId,
-    const char* label,
-    UISubscriber* subscriber,
-    int32_t evtId
-)
-{
-    int item = uiItem();
-    OUIButtonData* data = reinterpret_cast<OUIButtonData*>(
-        uiAllocHandle(item, sizeof(OUIButtonData))
-    );
-    data->header.init(OUIItemType::button);
-    if (subscriber)
-    {
-        data->header.subscriber = subscriber;
-        data->header.itemId = evtId;
-    }
-    data->iconId = iconId;
-    data->label = label;
- 
-    uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT);
-    uiSetEvents(item, UI_BUTTON0_HOT_UP);
-    
-    insertItem(item, _topItem);
-    
-    return *this;
-}
-
-Layout& Layout::end()
-{
-    int32_t parent = popItem();
-    if (parent >= 0)
-    {
-        const OUIHeader* hdr = reinterpret_cast<const OUIHeader*>(uiGetHandle(parent));
-        switch (hdr->itemType)
-        {
-        case OUIItemType::frame:        _mode = kFreeLayout;            break;
-        case OUIItemType::column:       _mode = kColumnLayout;          break;
-        default:
-            break;
-        }
-
-        insertItem(_topItem, parent);
-    
-        _topItem = parent;
-        
-    }
-    return *this;
+    _topItem = item.item;
+    _topLayout = item.layout;
 }
 
 } /* namespace uicore */ } /* namespace cinek */

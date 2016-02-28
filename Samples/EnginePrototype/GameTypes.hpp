@@ -6,16 +6,24 @@
 //
 //
 
-#ifndef Overview_GameTypes_hpp
-#define Overview_GameTypes_hpp
+#ifndef Prototype_GameTypes_hpp
+#define Prototype_GameTypes_hpp
 
 #include "Engine/EngineTypes.hpp"
 
 namespace cinek {
-    namespace ove {
 
-    }
+class TaskScheduler;
+class UIService;
+
+enum
+{
+    kEntityStore_Default,
+    kEntityStore_Staging
+};
+
+class NavDataContext;
+
 }
 
-
-#endif /* Overview_GameTypes_hpp */
+#endif /* Prototype_GameTypes_hpp */

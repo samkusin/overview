@@ -8,6 +8,7 @@
 
 #include "Controller.hpp"
 #include "CKGfx/Camera.hpp"
+#include "UICore/Input.hpp"
 
 #include <bx/fpumath.h>
 
@@ -29,7 +30,7 @@ AppController::AppController() :
 void AppController::handleCameraInput
 (
     gfx::Camera &camera,
-    const cinek::ove::InputState &state,
+    const uicore::InputState &state,
     float frameDelta
 )
 {
@@ -127,7 +128,7 @@ void AppController::handleCameraInput
     
     gfx::Vector3 worldTranslate;
     bx::vec3MulMtx(worldTranslate, viewTranslate, _cameraTransform.rotMtx);
-    _cameraTransform.pos += worldTranslate;
+    ckm::add(_cameraTransform.pos, _cameraTransform.pos, worldTranslate);
     
     gfx::Matrix4 translate;
     bx::mtxTranslate(translate, _cameraTransform.pos.x,

@@ -9,7 +9,8 @@
 #ifndef Overview_entityDatabase_hpp
 #define Overview_entityDatabase_hpp
 
-#include "EntityTypes.hpp"
+#include "EngineTypes.hpp"
+#include "AssetManifest.hpp"
 
 #include <ckentity/entitystore.hpp>
 #include <cinek/allocator.hpp>
@@ -30,8 +31,10 @@ public:
                         const std::string& componentName,
                         const cinek::JsonValue& definitions,
                         const cinek::JsonValue& compTemplate) = 0;
-    virtual void onCustomComponentDestroyFn(EntityDataTable& table,
-                        ComponentRowIndex compRowIndex) = 0;
+    
+    virtual void onCustomComponentEntityDestroyFn(Entity entity) = 0;
+    
+    virtual void onCustomComponentEntityCloneFn(Entity target, Entity origin) = 0;
 };
 
 
@@ -110,6 +113,19 @@ public:
     Entity createEntity(EntityContextType context, const std::string& ns,
                         const std::string& templateName);
     /**
+     *  @param  entity  The entity to check
+     *  @return Whether the entity is still valid
+     */
+    bool isValid(Entity entity) const;
+    /**
+     *  Duplicates an entity
+     *  
+     *  @param  context The cloned entity's context
+     *  @param  entity  The source entity
+     *  @return The cloned entity
+     */
+    Entity cloneEntity(EntityContextType context, Entity source);
+    /**
      *  Components are destroyed during the garbage collection phase.   This
      *  method flags the entity for destruction.
      *
@@ -123,17 +139,25 @@ public:
     /**
      *  Adds the supplied manifest, mapping it to a namespace.
      *
+     *  @param  name        The manifest name
      *  @param  manifest    The manifest object
      */
-    void setManifest(unique_ptr<AssetManifest>&& manifest);
+    void setManifest(std::string name, std::shared_ptr<AssetManifest> manifest);
     /**
      *  @param  name        The manifest to clear
      */
     void clearManifest(const std::string& name);
+    /**
+     *  Obtains a handle to the manifest identified by name.
+     *
+     *  @param  name        The name of the manifest to obtain
+     *  @return A handle to the manifest
+     */
+    const AssetManifest* getManifest(const std::string& name) const;
     
 private:
     std::vector<EntityStore> _stores;
-    std::unordered_map<std::string, unique_ptr<AssetManifest>> _manifests;
+    std::unordered_map<std::string, std::shared_ptr<AssetManifest>> _manifests;
     EntityComponentFactory* _factory;
 };
 

@@ -333,6 +333,10 @@ void nvgImageSize(NVGcontext* ctx, int image, int* w, int* h);
 // Deletes created image.
 void nvgDeleteImage(NVGcontext* ctx, int image);
 
+// Added by Samir Sinha (1/11/2016) - obtain backend information for a created image
+int nvgCreateImageFromBackendTexture(NVGcontext* ctx, int w, int h, int type, void* handle);
+
+
 //
 // Paints
 //
@@ -596,12 +600,18 @@ struct NVGparams {
 	void (*renderStroke)(void* uptr, NVGpaint* paint, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths);
 	void (*renderTriangles)(void* uptr, NVGpaint* paint, NVGscissor* scissor, const NVGvertex* verts, int nverts);
 	void (*renderDelete)(void* uptr);
+    
+    // Added by Samir Sinha (1/11/2016) - bind backend-compatible texture to an nvgImage context
+    int (*renderBindTexture)(void* uptr, int type, int w, int h, void* handle);
 };
 typedef struct NVGparams NVGparams;
 
 NVGcontext* nvgCreate(int edgeaa, unsigned char viewid);
 void nvgViewId(struct NVGcontext* ctx, unsigned char viewid);
 void nvgDelete(struct NVGcontext* ctx);
+
+// Added by Samir Sinha (1/11/2016) - retrieves the view ID for the context
+unsigned char nvgGetViewId(struct NVGcontext* ctx);
 
 // Contructor and destructor, called by the render back-end.
 NVGcontext* nvgCreateInternal(NVGparams* params);

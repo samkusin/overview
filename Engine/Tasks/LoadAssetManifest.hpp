@@ -29,7 +29,7 @@ public:
     LoadAssetManifest(std::string name, AssetManfiestFactory& factory,
                       EndCallback cb=0);
 
-    unique_ptr<AssetManifest> acquireManifest();
+    std::shared_ptr<AssetManifest> acquireManifest();
     
     virtual const TaskClassId& classId() const override { return kUUID; }
     
@@ -38,11 +38,14 @@ private:
     
     virtual void onUpdate(uint32_t deltaTimeMs) override;
     virtual void onCancel() override;
+    
+    virtual uint8_t* acquireBuffer(uint32_t size) override;
         
 private:
-    unique_ptr<AssetManifest> _manifest;
+    std::shared_ptr<AssetManifest> _manifest;
     AssetManfiestFactory* _factory;
     AssetManifestLoader _loader;
+    std::vector<uint8_t> _buffer;
 };
     
     }  /* namespace ove */

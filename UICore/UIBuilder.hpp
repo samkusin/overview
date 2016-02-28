@@ -13,6 +13,8 @@
 
 #include <cinek/vector.hpp>
 
+#include <functional>
+
 namespace cinek { namespace uicore {
 
 
@@ -42,28 +44,65 @@ public:
     Layout();
     ~Layout();
     
+    struct Box
+    {
+        int l, t, r, b;
+    };
+    
+    struct Style
+    {
+        enum
+        {
+            has_layout = 0x0001,
+            has_margins = 0x0002
+        };
+        unsigned int mask;
+        unsigned int layout;
+        Box margins;
+    };
+    
     ///
     /// Starts a frame - which is an encompassing region designed to act as an
     /// Event subscriber for views, or as a container for other ui items.
     ///
-    Layout& frame(UIRenderCallback renderCb, void* cbContext, uint32_t layoutFlags=0);
+    Layout& beginFrame(unsigned int eventFlags, FrameState* frameState,
+                       RenderCallback renderCb=nullptr, void* cbContext=nullptr);
     ///
-    /// Starts a vertical group of ui widgets - used for positioning.
+    /// Starts a horizontal group of ui widgets - used for grouping.
     ///
-    Layout& column(uint32_t layoutFlags=0);
+    Layout& beginRow();
     ///
-    /// Subscribe the current UI group to one or more events.
+    /// Starts a vertical group of ui widgets - used for grouping.
     ///
-    Layout& setEvents(uint32_t flags, UISubscriber* subscriber, int32_t evtId);
+    Layout& beginColumn();
+    ///
+    /// Starts a vertical group of ui widgets - used for grouping.
+    ///
+    Layout& beginWindow();
     ///
     /// Sets the size of the current UI region.
     ///
-    Layout& setSize(int32_t w, int32_t h);
+    Layout& setSize(int w, int h);
+    ///
+    /// Sets the margins of the current UI region.
+    ///
+    Layout& setMargins(Box box);
+    ///
+    /// Overrides the current item's layout
+    ///
+    Layout& setLayout(unsigned int layout);
     ///
     /// An individual button widget within the encompassing UI group.
     ///
-    Layout& buttonItem(int32_t iconId, const char* label,
-                         UISubscriber* subscriber, int32_t evtId);
+    Layout& button(int id, ButtonHandler* btnHandler, int iconId, const char* label,
+                   const Style* style=nullptr);
+    ///
+    /// A list box whose data is updated by events sent to the subscriber
+    ///
+    Layout& listbox(DataProvider* dataProvider, int providerId,
+                    ListboxType lbtype,
+                    ListboxState* state,
+                    const Style* style=nullptr);
     ///
     /// Completes a layout group (frame, column)
     ///
@@ -77,23 +116,24 @@ public:
     int currentGroupItem() const { return _topItem; }
     
 private:
-    static constexpr size_t kDataSize = sizeof(vector<int32_t>);
-    static constexpr size_t kMaxItemsInData = kDataSize / sizeof(int32_t);
+    struct State
+    {
+        int item;
+        unsigned int layout;
+    };
+
+    static constexpr size_t kDataSize = sizeof(vector<State>) * 4;
+    static constexpr size_t kMaxItemsInData = kDataSize / sizeof(State);
     
     uint8_t _data[kDataSize];
     uint32_t _size;             // high bit, then _data contains a vector
-    int32_t _topItem;
     
-    enum
-    {
-        kFreeLayout,
-        kColumnLayout
-    }
-    _mode;
+    int _topItem;
+    unsigned int _topLayout;
     
-    void insertItem(int32_t item, int32_t parent);
     void pushTop();
-    int32_t popItem();
+    void popItem();
+    void applyStyleToItem(int item, const Style* style, const Style* defaultStyle);
 };
 
 

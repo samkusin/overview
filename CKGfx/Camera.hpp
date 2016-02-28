@@ -18,10 +18,28 @@ namespace cinek {
 
 struct Camera
 {
-    //  world transform matrix (with 'world' as defined for the rendered graph.)
+    Camera() : viewIndex(0) {}
+    
+    void update();
+
+    const Frustrum& viewFrustrum() const { return _viewFrustrum; }
+    Vector3 worldPosition() const;
+    Vector3 rayFromViewportCoordinate(const int32_t x, const int32_t y) const;
+    
     Matrix4 worldMtx;
-    //  view frustrum relative to the current view matrix
-    Frustrum viewFrustrum;
+    Matrix4 viewMtx;
+    Matrix4 projMtx;
+    Matrix4 invProjMtx;
+    
+    gfx::Rect viewportRect;
+    float near;
+    float far;
+    float fovDegrees;
+    
+    int viewIndex;
+
+private:
+    Frustrum _viewFrustrum;
 };
 
     }   // namespace gfx

@@ -13,81 +13,25 @@
 #include "Camera.hpp"
 #include "NodeGraph.hpp"
 
+#include "NodeRendererTypes.hpp"
+
 #include <ckm/geometry.hpp>
 #include <vector>
-#include <array>
 
-#include <bgfx/bgfx.h>
+
 
 namespace cinek {
     namespace gfx {
-
-enum NodeProgramSlot
-{
-    kNodeProgramMesh,
-    kNodeProgramBoneMesh,
-    kNodeProgramFlat,
-    kNodeProgramLimit       = 16,
-    
-    kNodeProgramNone        = -1
-};
-
-enum NodeUniformSlot
-{
-    //  Matrices
-    kNodeUniformWorldMtx,
-    kNodeUniformWorldViewProjMtx,
-    
-    //  Color Texture 
-    kNodeUniformTexDiffuse,
-
-    //      x = intensity, y = power
-    //
-    kNodeUniformMatSpecular,
-
-    //  For the basic lighting model, light param is an amalgam of:
-    //      x = ambient, y = diffuse, z = distance, w = cutoff
-    //      if z == 0, then directional
-    //      else
-    //          if w == 0, then point (omnidirectional)
-    //          else angle between light and extent of light on surface (spot)
-    //
-    kNodeUniformLightParam,
-    //  For the basic lighting model, light coefficients for spot and point
-    //
-    kNodeUniformLightCoeffs,
-    //  For the basic lighting model, light color is the base lamp color
-    //
-    kNodeUniformLightColor,
-    //  For the basic lighting model, the light direction
-    //
-    kNodeUniformLightDir,
-    //  For the basic lighting model, the origin used in spot or point lights
-    //
-    kNodeUniformLightOrigin,
-    //  For flat shading (color)
-    //
-    kNodeUniformColor,
-    
-    kNodeUniformLimit,
-    
-    kNodeUniformNone = -1
-};
 
 class NodeRenderer
 {
     CK_CLASS_NON_COPYABLE(NodeRenderer);
     
 public:
-    using ProgramMap = std::array<bgfx::ProgramHandle, kNodeProgramLimit>;
-    using UniformMap = std::array<bgfx::UniformHandle, kNodeUniformLimit>;
+    using ProgramMap = RenderProgramMap;
+    using UniformMap = RenderUniformMap;
     
     NodeRenderer();
-    NodeRenderer(const ProgramMap& programs,
-                 const UniformMap& uniforms);
-
-    void setCamera(const Camera& camera);
-    const Camera& camera() const { return _camera; }
     
     enum
     {
@@ -100,7 +44,16 @@ public:
                                         | kStageFlagRender
     };
     
-    void operator()(NodeHandle root, uint32_t stages=kStageAll);
+    void setPlaceholderDiffuseTexture(TextureHandle diffuseTexHandle);
+    
+    void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    const Camera& camera,
+                    NodeHandle root, uint32_t stages=kStageAll);
+    
+    void operator()(const ProgramMap& programs, const UniformMap& uniforms,
+                    const RenderTarget& renderTarget,
+                    const Camera& camera,
+                    NodeHandle root, uint32_t stages=kStageAll);
     
 private:
     struct ArmatureState;
@@ -109,23 +62,26 @@ private:
     void popTransform();
     
 
-    void renderMeshElement(const Matrix4& localTransform,
-            const MeshElement& element);
+    void renderMeshElement
+    (
+        const ProgramMap& programs,
+        const UniformMap& uniforms,
+        const Matrix4& localTransform,
+        const MeshElement& element
+    );
     
     void buildBoneTransforms(const ArmatureState& armatureState,
                              int boneIndex,
-                             const Matrix4& worldTransform,
                              const Matrix4& parentBoneTransform,
                              float* outTransforms);
     
-    void setupLightUniforms(const Matrix4& objWorldMtx);
+    void setupLightUniforms(const UniformMap& uniforms, const Matrix4& objWorldMtx);
     
 private:
     struct ArmatureState
     {
         const ArmatureElement* armature;
         Matrix4 armatureToWorldMtx;
-        Matrix4 worldToArmatureMtx;
     };
     struct LightState
     {
@@ -133,15 +89,13 @@ private:
         LightHandle light;
     };
     
-    //  Global State
-    ProgramMap _programs;
-    UniformMap _uniforms;
-    
     //  Local State
-    Camera _camera;
+    const Camera* _camera;
     Matrix4 _viewMtx;
     Matrix4 _projMtx;
     Matrix4 _viewProjMtx;
+    
+    TextureHandle _placeholderDiffuseTex;
         
     //  Calculated State during Lighting Object Pass
     using Lights = std::vector<LightState, std_allocator<LightState>>;
