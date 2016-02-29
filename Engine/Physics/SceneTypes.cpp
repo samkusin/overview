@@ -64,6 +64,11 @@ ckm::vector3f& ckmFromBt(ckm::vector3f& v, const btVector3& btv)
     return v;
 }
 
+btVector3 btFromGfx(const gfx::Vector3& v)
+{
+    return btVector3(v.x, v.y, v.z);
+}
+
 const SceneFixedBodyHull* SceneBody::getFixedHull() const
 {
     const SceneFixedBodyHull* hull = nullptr;

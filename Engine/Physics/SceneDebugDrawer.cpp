@@ -86,6 +86,33 @@ void SceneDebugDrawer::setup
     _camera = &camera;
 }
 
+void SceneDebugDrawer::drawRayTestHit
+(
+    const SceneRayTestResult& rayTestResult,
+    const btVector3& origin,
+    btScalar radius,
+    bool drawray
+)
+{
+    if (!rayTestResult)
+        return;
+        
+    btTransform transform;
+    transform.setIdentity();
+    transform.setOrigin(rayTestResult.position);
+        
+    drawSphere(radius, transform, btVector3(0,0.5,1.0f));
+    drawLine(rayTestResult.position,
+        rayTestResult.position + rayTestResult.normal,
+        btVector3(0,0.5,1.0f));
+    
+    if (drawray) {
+        drawLine(origin,
+            rayTestResult.position,
+            btVector3(0,0,1.0f));
+    }
+}
+
 void SceneDebugDrawer::flushLines()
 {
     CK_ASSERT_RETURN(_camera);
@@ -159,6 +186,8 @@ void SceneDebugDrawer::flushLines()
     
     _lineBuffer.clear();
 }
+
+
 
     } /* namespace ove */
 } /* namespace cinek */

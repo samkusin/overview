@@ -10,6 +10,7 @@
 #define Overview_SceneTypes_hpp
 
 #include "Engine/EngineTypes.hpp"
+#include "CKGfx/GfxTypes.hpp"
 
 #include <bullet/LinearMath/btVector3.h>
 #include <bullet/LinearMath/btMatrix3x3.h>
@@ -26,6 +27,8 @@ btMatrix3x3& btFromCkm(btMatrix3x3& btm, const ckm::matrix3f& m);
 btVector3& btFromCkm(btVector3& btv, const ckm::vector3f& v);
 ckm::matrix3f& ckmFromBt(ckm::matrix3f& m, const btMatrix3x3& btm);
 ckm::vector3f& ckmFromBt(ckm::vector3f& v, const btVector3& btv);
+
+btVector3 btFromGfx(const gfx::Vector3& v);
 
 struct SceneBody
 {

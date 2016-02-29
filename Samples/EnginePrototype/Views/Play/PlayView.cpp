@@ -9,7 +9,7 @@
 #include "PlayView.hpp"
 #include "PlayMain.hpp"
 
-#include "Engine/Services/SceneService.hpp"
+#include "Engine/Physics/Scene.hpp"
 #include "Engine/Nav/NavSystem.hpp"
 
 namespace cinek {
@@ -40,7 +40,9 @@ void PlayView::onViewAdded(ove::ViewStack& stateController)
     
     _viewStack.present("PlayMain");
     
-    sceneService().enableSimulation();
+    
+    
+    scene().activate();
     navSystem().activate();
 }
 

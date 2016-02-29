@@ -43,7 +43,7 @@ struct GameViewContext
     gfx::Camera* camera;
     
     ove::SceneRayTestResult* screenRayTestResult;
-    ove::SceneService* sceneService;
+    ove::Scene* scene;
     ove::EntityService* entityService;
     ove::RenderService* renderService;
     ove::AssetService* assetService;
@@ -66,7 +66,7 @@ protected:
     GameInterface& game() { return *_context->game; }
     const GameInterface& game() const { return *_context->game; }
     gfx::Camera& camera() { return *_context->camera; };
-    ove::SceneService& sceneService()  { return *_context->sceneService; }
+    ove::Scene& scene() { return *_context->scene; }
     ove::EntityService& entityService() { return *_context->entityService; }
     ove::RenderService& renderService() { return *_context->renderService; }
     ove::AssetService& assetSevice() { return *_context->assetService; }

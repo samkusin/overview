@@ -9,8 +9,8 @@
 #include "EditorAddEntityToScene.hpp"
 
 #include "Engine/Services/EntityService.hpp"
-#include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
+#include "Engine/Physics/Scene.hpp"
 #include "Engine/AssetManifest.hpp"
 #include "Engine/ViewStack.hpp"
 
@@ -167,9 +167,10 @@ void EditorAddEntityToScene::frameUpdateView
     
     if (hitResult.body->entity != _stagedEntity) {
         if (!hitResult.normal.fuzzyZero()) {
-            sceneService().setEntityPosition(_stagedEntity,
-                hitResult.position,
-                hitResult.normal);
+            auto stagedBody = scene().findBody(_stagedEntity);
+            if (stagedBody) {
+                stagedBody->setPosition(hitResult.position, hitResult.normal);
+            }
         }
     }
 

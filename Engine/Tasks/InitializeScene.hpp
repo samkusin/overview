@@ -22,6 +22,13 @@ class InitializeScene : public Task
 {
 public:
     static const UUID kUUID;
+ 
+    static unique_ptr<InitializeScene> create
+    (
+        std::shared_ptr<AssetManifest> inputManifest,
+        SceneJsonLoader loader,
+        EndCallback cb
+    );
     
     InitializeScene
     (

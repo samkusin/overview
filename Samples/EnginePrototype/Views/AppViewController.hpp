@@ -18,7 +18,6 @@
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"
-#include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
 
 namespace cinek {
@@ -57,14 +56,14 @@ protected:
     ove::EntityService& entityService() {
         return _entityService;
     }
-    ove::SceneService& sceneService() {
-        return _sceneService;
-    }
     ove::RenderService& renderService() {
         return _renderService;
     }
     ove::Scene& scene() {
-        return *_scene;
+        return *_appContext->scene;
+    }
+    ove::SceneDebugDrawer& sceneDebug() {
+        return *_appContext->sceneDebugDrawer;
     }
     ove::Pathfinder& pathfinder() {
         return *_pathfinder;
@@ -81,15 +80,22 @@ protected:
     NVGcontext* nvgContext() {
         return _appContext->nvg;
     }
-    
+    TaskScheduler& scheduler() {
+        return *_appContext->taskScheduler;
+    }
+    ove::RenderGraph& renderGraph() {
+        return *_appContext->renderGraph;
+    }
+    gfx::Context& gfxContext() {
+        return *_appContext->gfxContext;
+    }
+
 private:
     ApplicationContext* _appContext;
     ove::AssetService _assetService;
     ove::EntityService _entityService;
-    ove::SceneService _sceneService;
     ove::RenderService _renderService;
     
-    ove::Scene* _scene;
     ove::Pathfinder* _pathfinder;
     ove::PathfinderDebug* _pathfinderDebug;
     ove::NavSystem* _navSystem;

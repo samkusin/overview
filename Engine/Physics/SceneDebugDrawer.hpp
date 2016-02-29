@@ -9,6 +9,8 @@
 #ifndef Overview_SceneDebugDrawer_hpp
 #define Overview_SceneDebugDrawer_hpp
 
+#include "SceneTypes.hpp"
+
 #include "CKGfx/NodeRenderer.hpp"
 
 #include <bullet/LinearMath/btIDebugDraw.h>
@@ -82,6 +84,14 @@ public:
         const cinek::gfx::NodeRenderer::ProgramMap& programs,
         const cinek::gfx::NodeRenderer::UniformMap& uniforms,
         const cinek::gfx::Camera& camera
+    );
+    
+    void drawRayTestHit
+    (
+        const SceneRayTestResult& rayTestResult,
+        const btVector3& origin,
+        btScalar radius,
+        bool drawray
     );
 };
     

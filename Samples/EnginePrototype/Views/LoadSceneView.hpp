@@ -49,6 +49,7 @@ private:
     State _nextTask;
     
     std::shared_ptr<ove::AssetManifest> _manifest;
+    ove::SceneJsonLoader _loader;
 };
 
 }   /* namespace cinek */

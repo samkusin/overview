@@ -61,7 +61,6 @@
 		377ECCE11C0BB028002040D7 /* LoadAssetManifest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCDF1C0BB028002040D7 /* LoadAssetManifest.cpp */; };
 		377ECCE91C0CEB3A002040D7 /* LoadTextureAsset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCE71C0CEB3A002040D7 /* LoadTextureAsset.cpp */; };
 		377ECCEC1C0CFA55002040D7 /* LoadFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */; };
-		377ECCF41C0FCB30002040D7 /* SceneService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCF21C0FCB30002040D7 /* SceneService.cpp */; };
 		377ECD051C12596F002040D7 /* SceneJsonLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD031C12596F002040D7 /* SceneJsonLoader.cpp */; };
 		377ECD901C18F834002040D7 /* PrototypeApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD8E1C18F834002040D7 /* PrototypeApplication.cpp */; };
 		37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37804D0B1C1A1DD2002109DF /* GameEntityFactory.cpp */; };
@@ -214,8 +213,6 @@
 		377ECCEA1C0CFA55002040D7 /* LoadFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadFile.cpp; path = Tasks/LoadFile.cpp; sourceTree = "<group>"; };
 		377ECCEB1C0CFA55002040D7 /* LoadFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LoadFile.hpp; path = Tasks/LoadFile.hpp; sourceTree = "<group>"; };
 		377ECCF11C0FC80F002040D7 /* Scene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Scene.hpp; path = Messages/Scene.hpp; sourceTree = "<group>"; };
-		377ECCF21C0FCB30002040D7 /* SceneService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneService.cpp; sourceTree = "<group>"; };
-		377ECCF31C0FCB30002040D7 /* SceneService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SceneService.hpp; sourceTree = "<group>"; };
 		377ECCF51C0FD4E7002040D7 /* GameTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameTypes.hpp; sourceTree = "<group>"; };
 		377ECD031C12596F002040D7 /* SceneJsonLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SceneJsonLoader.cpp; sourceTree = "<group>"; };
 		377ECD041C12596F002040D7 /* SceneJsonLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SceneJsonLoader.hpp; sourceTree = "<group>"; };
@@ -589,8 +586,6 @@
 		37E637F91BF2ACD90081E59E /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				377ECCF31C0FCB30002040D7 /* SceneService.hpp */,
-				377ECCF21C0FCB30002040D7 /* SceneService.cpp */,
 				37E6382F1BF416920081E59E /* EntityService.hpp */,
 				37E638301BF416A40081E59E /* EntityService.cpp */,
 				28CE20851C2A1F480059B56F /* AssetService.hpp */,
@@ -754,7 +749,6 @@
 				37386CF31C62E19C001A3110 /* DetourTileCacheBuilder.cpp in Sources */,
 				372918601C7445F70011770E /* GameView.cpp in Sources */,
 				37386CF91C62E19C001A3110 /* RecastDebugDraw.cpp in Sources */,
-				377ECCF41C0FCB30002040D7 /* SceneService.cpp in Sources */,
 				37386CEF1C62E19C001A3110 /* DetourNavMeshBuilder.cpp in Sources */,
 				37B831C11C73F2B90064D316 /* NavBody.cpp in Sources */,
 				377ECCDD1C0AA0A9002040D7 /* Core.cpp in Sources */,

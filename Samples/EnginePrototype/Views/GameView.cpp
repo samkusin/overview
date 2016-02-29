@@ -10,8 +10,11 @@
 #include "GameView.hpp"
 #include "PlayView.hpp"
 
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Nav/PathfinderDebug.hpp"
 #include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Render/RenderGraph.hpp"
 #include "Engine/AssetManifest.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -37,7 +40,7 @@ GameView::GameView(ApplicationContext* api) :
     _gameViewContext.pathfinder = api->pathfinder;
     _gameViewContext.pathfinderDebug = api->pathfinderDebug;
     _gameViewContext.navSystem = api->navSystem;
-    _gameViewContext.sceneService = &sceneService();
+    _gameViewContext.scene = api->scene;
     _gameViewContext.entityService = &entityService();
     _gameViewContext.renderService = &renderService();
     _gameViewContext.assetService = &assetService();
@@ -69,7 +72,11 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     //  create player
     _focusedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
                         "sample_male");
-    sceneService().setEntityPosition(_focusedEntity, btVector3(0,0,0), btVector3(0,1,0));
+    
+    auto body = scene().findBody(_focusedEntity);
+    if (body) {
+        body->setPosition(btVector3(0,0,0), btVector3(0,1,0));
+    }
     
     //  game state machine
     _viewStack.setFactory(
@@ -128,19 +135,17 @@ void GameView::frameUpdateView
     gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
     gfx::Vector3 pos = _camera.worldPosition();
     
-    _viewToSceneRayTestResult = sceneService().rayTestClosest(
-        { pos.x, pos.y, pos.z },
-        { dir.x , dir.y, dir.z },
-        100.0f);
-
-    sceneService().renderDebugStart(renderService(), _camera);
+    _viewToSceneRayTestResult = scene().rayTestClosest(ove::btFromGfx(pos), ove::btFromGfx(dir), 100.0f);
     
-    renderService().renderNode(_renderer, sceneService().getGfxRootNode(), _camera);
+    const ove::RenderContext& rc = renderService().context();
     
-    sceneService().renderDebugAddRayTestHit(_viewToSceneRayTestResult,
-        { pos.x, pos.y, pos.z }, 0.1f, false);
+    sceneDebug().setup(*rc.programs, *rc.uniforms, _camera);
     
-    sceneService().renderDebugEnd();
+    renderService().renderNode(_renderer, renderGraph().root(), _camera);
+    
+    sceneDebug().drawRayTestHit(_viewToSceneRayTestResult, { pos.x, pos.y, pos.z }, btScalar(0.1), false);
+    
+    scene().debugRender();
     
     pathfinderDebug().setup(renderService().context().programs,
         renderService().context().uniforms,

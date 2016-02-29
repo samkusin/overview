@@ -11,8 +11,8 @@
 #include "EditorAddEntityToScene.hpp"
 
 #include "Engine/AssetManifest.hpp"
-#include "Engine/Services/SceneService.hpp"
 #include "Engine/Services/RenderService.hpp"
+#include "Engine/Physics/Scene.hpp"
 #include "Engine/Nav/NavSystem.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -123,7 +123,7 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
     bx::mtxRotateXYZ(cameraRotMtx, 0, 0, 0);
     _freeCameraController.setTransform({ 0,2,-12}, cameraRotMtx);
 
-    sceneService().disableSimulation();
+    scene().deactivate();
     navSystem().deactivate();
 }
 
