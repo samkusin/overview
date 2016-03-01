@@ -8,10 +8,10 @@
 
 #include "NavSystem.hpp"
 #include "NavBody.hpp"
-#include "NavPath.hpp"
-#include "NavPathQuery.hpp"
-#include "Pathfinder.hpp"
 
+#include "Engine/Path/NavPath.hpp"
+#include "Engine/Path/NavPathQuery.hpp"
+#include "Engine/Path/Pathfinder.hpp"
 #include "Engine/Debug.hpp"
 
 #include <ckm/math.hpp>

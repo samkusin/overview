@@ -11,7 +11,7 @@
 
 #include "Engine/Tasks/InitializeScene.hpp"
 #include "Engine/Physics/Scene.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Path/Pathfinder.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include <cinek/taskscheduler.hpp>

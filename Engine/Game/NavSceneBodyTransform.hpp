@@ -9,7 +9,7 @@
 #ifndef Game_NavSceneBodyTransform_hpp
 #define Game_NavSceneBodyTransform_hpp
 
-#include "Engine/Nav/NavBodyTransform.hpp"
+#include "Engine/Controller/NavBodyTransform.hpp"
 
 namespace cinek {
     namespace ove {

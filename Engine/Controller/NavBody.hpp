@@ -9,8 +9,9 @@
 #ifndef Overview_NavBody_hpp
 #define Overview_NavBody_hpp
 
-#include "PathTypes.hpp"
-#include "NavPath.hpp"
+#include "ControllerTypes.hpp"
+
+#include "Engine/Path/NavPath.hpp"
 
 #include <vector>
 
@@ -64,9 +65,6 @@ public:
     void setSpeedScalar(ckm::scalar speed);
     ckm::scalar speedScalar() const { return _speed; }
     ckm::scalar calcAbsoluteSpeed() const;
-    
-    
-    
     
 private:
     //  Framework properties

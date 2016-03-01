@@ -9,7 +9,8 @@
 #ifndef Overview_Nav_PathfinderDebug_hpp
 #define Overview_Nav_PathfinderDebug_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "PathTypes.hpp"
+
 #include "Engine/Contrib/Recast/DebugDraw.h"
 #include "CKGfx/NodeRendererTypes.hpp"
 

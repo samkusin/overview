@@ -13,7 +13,7 @@
 #include "Engine/AssetManifest.hpp"
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Render/RenderContext.hpp"
-#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Controller/NavSystem.hpp"
 
 #include "UICore/UIBuilder.hpp"
 #include "CKGfx/Light.hpp"

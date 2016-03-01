@@ -234,6 +234,19 @@
                 "mass" : 10.0
             }
         },
+        "sample_door" : {
+            "editor" : {
+                "name" : "Sample Door"
+            },
+            "renderable" : {
+                "modelset" : "models/doors.json",
+                "model" : "Door"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 90.0
+            }
+        },
         "sample_male" : {
            "editor" : {
                 "name" : "Sample Male"

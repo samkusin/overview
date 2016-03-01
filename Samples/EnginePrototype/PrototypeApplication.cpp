@@ -11,10 +11,10 @@
 #include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Path/Pathfinder.hpp"
 
-#include "Engine/Nav/PathfinderDebug.hpp"
-#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Path/PathfinderDebug.hpp"
+#include "Engine/Controller/NavSystem.hpp"
 #include "Game/NavDataContext.hpp"
 
 #include "GameEntityFactory.hpp"

@@ -9,7 +9,7 @@
 #ifndef Overview_Task_GenerateNavPath_hpp
 #define Overview_Task_GenerateNavPath_hpp
 
-#include "Engine/Nav/PathTypes.hpp"
+#include "Engine/Path/PathTypes.hpp"
 #include "Engine/Contrib/Recast/DetourNavMesh.h"
 
 #include <cinek/task.hpp>

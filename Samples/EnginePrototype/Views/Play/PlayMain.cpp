@@ -9,9 +9,9 @@
 #include "PlayMain.hpp"
 
 #include "Engine/Render/RenderContext.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
-#include "Engine/Nav/NavSystem.hpp"
-#include "Engine/Nav/NavPathQuery.hpp"
+#include "Engine/Path/Pathfinder.hpp"
+#include "Engine/Controller/NavSystem.hpp"
+#include "Engine/Path/NavPathQuery.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "UICore/UIBuilder.hpp"

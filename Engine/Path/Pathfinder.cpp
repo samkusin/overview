@@ -19,8 +19,8 @@
 
 #include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
 
-#include "Engine/Nav/Tasks/GenerateRecastMesh.hpp"
-#include "Engine/Nav/Tasks/GenerateNavMesh.hpp"
+#include "Engine/Path/Tasks/GenerateRecastMesh.hpp"
+#include "Engine/Path/Tasks/GenerateNavMesh.hpp"
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneFixedBodyHull.hpp"
 #include "Engine/Physics/SceneMotionState.hpp"

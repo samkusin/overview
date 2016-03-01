@@ -9,8 +9,9 @@
 #ifndef Overview_NavSystem_hpp
 #define Overview_NavSystem_hpp
 
-#include "PathTypes.hpp"
-#include "PathfinderListener.hpp"
+#include "ControllerTypes.hpp"
+
+#include "Engine/Path/PathfinderListener.hpp"
 
 #include <vector>
 

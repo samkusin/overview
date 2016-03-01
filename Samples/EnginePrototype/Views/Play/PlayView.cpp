@@ -10,7 +10,7 @@
 #include "PlayMain.hpp"
 
 #include "Engine/Physics/Scene.hpp"
-#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Controller/NavSystem.hpp"
 
 namespace cinek {
 

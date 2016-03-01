@@ -15,8 +15,8 @@
 #include "CKGfx/Context.hpp"
 
 #include "Game/NavDataContext.hpp"
-#include "Engine/Nav/NavBody.hpp"
-#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Controller/NavBody.hpp"
+#include "Engine/Controller/NavSystem.hpp"
 #include "Engine/Game/NavSceneBodyTransform.hpp"
 
 #include <ckjson/json.hpp>

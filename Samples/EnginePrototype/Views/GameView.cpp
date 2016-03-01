@@ -12,8 +12,8 @@
 
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Physics/SceneDebugDrawer.hpp"
-#include "Engine/Nav/PathfinderDebug.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Path/PathfinderDebug.hpp"
+#include "Engine/Path/Pathfinder.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/AssetManifest.hpp"

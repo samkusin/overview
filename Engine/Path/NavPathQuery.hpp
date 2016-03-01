@@ -9,7 +9,7 @@
 #ifndef Overview_NavQuery_hpp
 #define Overview_NavQuery_hpp
 
-#include "Engine/Nav/PathTypes.hpp"
+#include "Engine/Path/PathTypes.hpp"
 #include "Engine/Contrib/Recast/DetourNavMeshQuery.h"
 
 namespace cinek {

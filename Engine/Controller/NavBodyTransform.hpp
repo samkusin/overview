@@ -9,9 +9,7 @@
 #ifndef Overview_NavBodyTransform_hpp
 #define Overview_NavBodyTransform_hpp
 
-#include "PathTypes.hpp"
-
-#include <ckm/mathtypes.hpp>
+#include "ControllerTypes.hpp"
 
 namespace cinek {
     namespace ove {

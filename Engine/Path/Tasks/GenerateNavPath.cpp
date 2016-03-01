@@ -8,8 +8,8 @@
 
 #include "GenerateNavPath.hpp"
 
-#include "Engine/Nav/NavPathQueryPool.hpp"
-#include "Engine/Nav/NavPathQuery.hpp"
+#include "Engine/Path/NavPathQueryPool.hpp"
+#include "Engine/Path/NavPathQuery.hpp"
 
 namespace cinek {
     namespace ove {
