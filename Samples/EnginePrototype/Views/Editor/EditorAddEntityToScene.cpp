@@ -9,8 +9,8 @@
 #include "EditorAddEntityToScene.hpp"
 
 #include "Engine/Services/EntityService.hpp"
-#include "Engine/Services/RenderService.hpp"
 #include "Engine/Physics/Scene.hpp"
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/AssetManifest.hpp"
 #include "Engine/ViewStack.hpp"
 
@@ -134,8 +134,8 @@ void EditorAddEntityToScene::frameUpdateView
     style.margins = { 8, 8, 8, 8 };
     
     uicore::Layout uiLayout;
-    auto frameWidth = renderService().getViewRect().w;
-    auto frameHeight = renderService().getViewRect().h;
+    auto frameWidth = renderContext().frameRect.w;
+    auto frameHeight = renderContext().frameRect.h;
     
     uiLayout.beginFrame(UI_BUTTON0_DOWN, &_sceneFrameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);

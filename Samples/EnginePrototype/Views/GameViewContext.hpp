@@ -45,9 +45,8 @@ struct GameViewContext
     ove::SceneRayTestResult* screenRayTestResult;
     ove::Scene* scene;
     ove::EntityService* entityService;
-    ove::RenderService* renderService;
     ove::AssetService* assetService;
-    
+    ove::RenderContext* renderContext;
     UIService* uiService;
     NVGcontext* nvgContext;
     ove::Pathfinder* pathfinder;
@@ -68,12 +67,11 @@ protected:
     gfx::Camera& camera() { return *_context->camera; };
     ove::Scene& scene() { return *_context->scene; }
     ove::EntityService& entityService() { return *_context->entityService; }
-    ove::RenderService& renderService() { return *_context->renderService; }
     ove::AssetService& assetSevice() { return *_context->assetService; }
     ove::Pathfinder& pathfinder() { return *_context->pathfinder; }
     ove::PathfinderDebug& pathfinderDebug() { return *_context->pathfinderDebug; }
     ove::NavSystem& navSystem() { return *_context->navSystem; }
-    
+    ove::RenderContext& renderContext() { return *_context->renderContext; }
     const ove::SceneRayTestResult& sceneRayTestResult() const { return *_context->screenRayTestResult; }
     UIService& uiService() { return *_context->uiService; }
     

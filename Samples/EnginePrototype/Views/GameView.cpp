@@ -15,9 +15,11 @@
 #include "Engine/Nav/PathfinderDebug.hpp"
 #include "Engine/Nav/Pathfinder.hpp"
 #include "Engine/Render/RenderGraph.hpp"
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/AssetManifest.hpp"
 
 #include "UICore/UIBuilder.hpp"
+#include "CKGfx/Context.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Geometry.hpp"
@@ -42,8 +44,8 @@ GameView::GameView(ApplicationContext* api) :
     _gameViewContext.navSystem = api->navSystem;
     _gameViewContext.scene = api->scene;
     _gameViewContext.entityService = &entityService();
-    _gameViewContext.renderService = &renderService();
     _gameViewContext.assetService = &assetService();
+    _gameViewContext.renderContext = api->renderContext;
     _gameViewContext.uiService = &uiService();
     _gameViewContext.nvgContext = nvgContext();
     _gameViewContext.game = this;
@@ -67,7 +69,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     _camera.fovDegrees = 60.0f;
     _camera.worldMtx = gfx::Matrix4::kIdentity;
     
-    _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh"));
+    _renderer.setPlaceholderDiffuseTexture(gfxContext().findTexture("textures/df_plh"));
     
     //  create player
     _focusedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
@@ -126,7 +128,7 @@ void GameView::frameUpdateView
 )
 {
     //  RENDERING
-    _camera.viewportRect = renderService().getViewRect();
+    _camera.viewportRect = renderContext().frameRect;
     _camera.update();
     
     int32_t vx = inputState.mx - _camera.viewportRect.x;
@@ -137,18 +139,23 @@ void GameView::frameUpdateView
     
     _viewToSceneRayTestResult = scene().rayTestClosest(ove::btFromGfx(pos), ove::btFromGfx(dir), 100.0f);
     
-    const ove::RenderContext& rc = renderService().context();
+    const ove::RenderContext& rc = renderContext();
     
     sceneDebug().setup(*rc.programs, *rc.uniforms, _camera);
     
-    renderService().renderNode(_renderer, renderGraph().root(), _camera);
+    _renderer(*renderContext().programs, *renderContext().uniforms,
+        _camera,
+        renderGraph().root());
     
-    sceneDebug().drawRayTestHit(_viewToSceneRayTestResult, { pos.x, pos.y, pos.z }, btScalar(0.1), false);
+    sceneDebug().drawRayTestHit(_viewToSceneRayTestResult,
+        { pos.x, pos.y, pos.z },
+        btScalar(0.1),
+        false);
     
     scene().debugRender();
     
-    pathfinderDebug().setup(renderService().context().programs,
-        renderService().context().uniforms,
+    pathfinderDebug().setup(renderContext().programs,
+        renderContext().uniforms,
         &_camera,
         nullptr);
     pathfinder().simulateDebug(pathfinderDebug());

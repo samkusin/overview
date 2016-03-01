@@ -8,8 +8,8 @@
 
 #include "EditorMain.hpp"
 
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/ViewStack.hpp"
-#include "Engine/Services/RenderService.hpp"
 #include "UICore/UIBuilder.hpp"
 
 namespace cinek {
@@ -72,8 +72,8 @@ void EditorMain::layoutUI()
     _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
     _frameState.keyEvents = _frameKeyEvents;
     
-    auto frameWidth = renderService().getViewRect().w;
-    auto frameHeight = renderService().getViewRect().h;
+    auto frameWidth = renderContext().frameRect.w;
+    auto frameHeight = renderContext().frameRect.h;
     
     uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);

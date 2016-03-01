@@ -24,6 +24,7 @@ namespace cinek {
         class ViewController;
         
         class RenderGraph;
+        struct RenderContext;
         
         class Scene;
         struct SceneBody;
@@ -47,7 +48,6 @@ namespace cinek {
         
         class AssetService;
         class EntityService;
-        class RenderService;
         
         class AssetManifest;
         class AssetManifestLoader;

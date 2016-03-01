@@ -11,8 +11,8 @@
 #include "EditorAddEntityToScene.hpp"
 
 #include "Engine/AssetManifest.hpp"
-#include "Engine/Services/RenderService.hpp"
 #include "Engine/Physics/Scene.hpp"
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/Nav/NavSystem.hpp"
 
 #include "UICore/UIBuilder.hpp"
@@ -227,7 +227,7 @@ void EditorView::test1()
 void EditorView::test2()
 {
     auto& camera = this->camera();
-    auto& renderService = this->renderService();
+    auto& uniforms = *this->renderContext().uniforms;
     
     bgfx::setViewRect(0, camera.viewportRect.x, camera.viewportRect.y,
         camera.viewportRect.w, camera.viewportRect.h);
@@ -250,24 +250,24 @@ void EditorView::test2()
             { 0.0f, 0.0f, 0.0f, 0.0f }
         };
 
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformColor), color);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformColor), color);
         
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformMatSpecular), param);
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightColor), color, 2);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformMatSpecular), param);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightColor), color, 2);
 
         param[0] = { 0.10f, 0, 0, 0 };
         param[1] = { 0.0f, 1.0f, 0, 0 };
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightParam), param, 2);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightParam), param, 2);
 
         param[0] = { 0,0,0,0 };
         param[1] = { -1, -1, 0, 0 };
         bx::vec3Norm(param[1], param[1]);
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightDir), param, 2);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightDir), param, 2);
         
         param[0] = { 0,0,0,0 };
         param[1] = { 0,0,0,0 };
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightOrigin), param, 2);
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformLightCoeffs), param, 2);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightOrigin), param, 2);
+        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightCoeffs), param, 2);
 
         bgfx::setTransform(mainTransform);
     
@@ -300,11 +300,11 @@ void EditorView::test2()
           | BGFX_STATE_CULL_CW
         );
         
-        bgfx::submit(0, renderService.bgfxProgramHandle(gfx::kNodeProgramMeshColor));
+        bgfx::submit(0, renderContext().programs->at(gfx::kNodeProgramMeshColor));
     }
     else if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kLines) {
         gfx::Color4 color { 1,1,1,1 };
-        bgfx::setUniform(renderService.bgfxUniformHandle(gfx::kNodeUniformColor), color);
+        bgfx::setUniform(renderContext().uniforms->at(gfx::kNodeUniformColor), color);
         
         bgfx::setTransform(mainTransform);
         
@@ -320,7 +320,7 @@ void EditorView::test2()
           | BGFX_STATE_PT_LINES
         );
         
-        bgfx::submit(0, renderService.bgfxProgramHandle(gfx::kNodeProgramFlat));
+        bgfx::submit(0, renderContext().programs->at(gfx::kNodeProgramFlat));
     }
 }
 

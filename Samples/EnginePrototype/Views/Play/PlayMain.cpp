@@ -8,7 +8,7 @@
 
 #include "PlayMain.hpp"
 
-#include "Engine/Services/RenderService.hpp"
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/Nav/Pathfinder.hpp"
 #include "Engine/Nav/NavSystem.hpp"
 #include "Engine/Nav/NavPathQuery.hpp"
@@ -72,8 +72,8 @@ void PlayMain::layoutUI()
     _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
     _frameState.keyEvents = _frameKeyEvents;
     
-    auto frameWidth = renderService().getViewRect().w;
-    auto frameHeight = renderService().getViewRect().h;
+    auto frameWidth = renderContext().frameRect.w;
+    auto frameHeight = renderContext().frameRect.h;
     
     uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
         .setSize(frameWidth, frameHeight);

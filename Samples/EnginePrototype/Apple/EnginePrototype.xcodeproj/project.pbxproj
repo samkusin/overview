@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20841C2A1F480059B56F /* AssetService.cpp */; };
 		28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20871C2A210D0059B56F /* AppViewController.cpp */; };
-		28F11E5F1C3B5D4100860E5D /* RenderService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F11E5D1C3B5D4100860E5D /* RenderService.cpp */; };
 		372918591C7445AE0011770E /* EditorAddEntityToScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918531C7445AE0011770E /* EditorAddEntityToScene.cpp */; };
 		3729185A1C7445AE0011770E /* EditorMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918551C7445AE0011770E /* EditorMain.cpp */; };
 		3729185B1C7445AE0011770E /* EditorView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918571C7445AE0011770E /* EditorView.cpp */; };
@@ -111,8 +110,6 @@
 		28CE20841C2A1F480059B56F /* AssetService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssetService.cpp; sourceTree = "<group>"; };
 		28CE20851C2A1F480059B56F /* AssetService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AssetService.hpp; sourceTree = "<group>"; };
 		28CE20871C2A210D0059B56F /* AppViewController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppViewController.cpp; sourceTree = "<group>"; };
-		28F11E5D1C3B5D4100860E5D /* RenderService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderService.cpp; sourceTree = "<group>"; };
-		28F11E5E1C3B5D4100860E5D /* RenderService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RenderService.hpp; sourceTree = "<group>"; };
 		28F11E601C3B5EDA00860E5D /* RenderContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderContext.hpp; path = Render/RenderContext.hpp; sourceTree = "<group>"; };
 		372918531C7445AE0011770E /* EditorAddEntityToScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorAddEntityToScene.cpp; path = ../Views/Editor/EditorAddEntityToScene.cpp; sourceTree = "<group>"; };
 		372918541C7445AE0011770E /* EditorAddEntityToScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorAddEntityToScene.hpp; path = ../Views/Editor/EditorAddEntityToScene.hpp; sourceTree = "<group>"; };
@@ -590,8 +587,6 @@
 				37E638301BF416A40081E59E /* EntityService.cpp */,
 				28CE20851C2A1F480059B56F /* AssetService.hpp */,
 				28CE20841C2A1F480059B56F /* AssetService.cpp */,
-				28F11E5E1C3B5D4100860E5D /* RenderService.hpp */,
-				28F11E5D1C3B5D4100860E5D /* RenderService.cpp */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -729,7 +724,6 @@
 				37386CF11C62E19C001A3110 /* DetourNode.cpp in Sources */,
 				37B831B81C73C9FF0064D316 /* Pathfinder.cpp in Sources */,
 				37B24F981C77BC18005C6DC0 /* GenerateRecastMesh.cpp in Sources */,
-				28F11E5F1C3B5D4100860E5D /* RenderService.cpp in Sources */,
 				3729186E1C754AD60011770E /* NavSystem.cpp in Sources */,
 				37386CEB1C62E19C001A3110 /* DetourAlloc.cpp in Sources */,
 				37386D001C62E19C001A3110 /* RecastRegion.cpp in Sources */,
