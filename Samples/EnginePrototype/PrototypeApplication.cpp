@@ -16,6 +16,7 @@
 #include "Engine/Path/PathfinderDebug.hpp"
 #include "Engine/Controller/NavSystem.hpp"
 #include "Game/NavDataContext.hpp"
+#include "Game/TransformDataContext.hpp"
 
 #include "GameEntityFactory.hpp"
 
@@ -101,13 +102,20 @@ PrototypeApplication::PrototypeApplication
     navInitParams.numBodies = navDataInitParams.navBodyCount;
     _navSystem = cinek::allocate_unique<ove::NavSystem>(navInitParams);
     
+    TransformDataContext::InitParams transformInitParams;
+    transformInitParams.setCount = 128;
+    transformInitParams.containerCount = transformInitParams.setCount * 2;
+    transformInitParams.sequenceCount = transformInitParams.containerCount * 8;
+    _transformDataContext = cinek::allocate_unique<TransformDataContext>(transformInitParams);
+    
     _componentFactory = allocate_unique<GameEntityFactory>(
         _gfxContext,
         _sceneData.get(),
         _scene.get(),
         _renderGraph.get(),
         _navDataContext.get(),
-        _navSystem.get()
+        _navSystem.get(),
+        _transformDataContext.get()
     );
     
     _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,

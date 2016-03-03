@@ -10,7 +10,9 @@
 #define Prototype_EntityFactory_hpp
 
 #include "GameTypes.hpp"
+
 #include "Engine/EntityDatabase.hpp"
+
 #include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {
@@ -26,11 +28,13 @@ public:
         ove::Scene* scene,
         ove::RenderGraph* renderGraph,
         NavDataContext* navDataContext,
-        ove::NavSystem* navSystem
+        ove::NavSystem* navSystem,
+        TransformDataContext* transformDataContext
     );
                       
     virtual void onCustomComponentCreateFn(Entity entity,
                         EntityStore& store,
+                        const std::string& templateName,
                         const std::string& componentName,
                         const cinek::JsonValue& definitions,
                         const cinek::JsonValue& compTemplate);
@@ -46,6 +50,7 @@ private:
     ove::RenderGraph* _renderGraph;
     NavDataContext* _navDataContext;
     ove::NavSystem* _navSystem;
+    TransformDataContext* _transformDataContext;
 };
 
 }

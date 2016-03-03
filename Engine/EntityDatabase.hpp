@@ -28,6 +28,7 @@ public:
     
     virtual void onCustomComponentCreateFn(Entity entity,
                         EntityStore& store,
+                        const std::string& templateName,
                         const std::string& componentName,
                         const cinek::JsonValue& definitions,
                         const cinek::JsonValue& compTemplate) = 0;

@@ -23,6 +23,7 @@ enum
 };
 
 class NavDataContext;
+class TransformDataContext;
 
 }
 

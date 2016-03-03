@@ -88,7 +88,7 @@ Entity EntityDatabase::createEntity
             cinek::JsonValue::ConstMemberIterator it = templ.FindMember("renderable");
             if (it != templ.MemberEnd()) {
                  _factory->onCustomComponentCreateFn(entity,
-                        store, it->name.GetString(),
+                        store, templateName, it->name.GetString(),
                         root,
                         it->value);
             }
@@ -105,7 +105,8 @@ Entity EntityDatabase::createEntity
                 
                 const cinek::JsonValue& componentData = it->value;
                 _factory->onCustomComponentCreateFn(entity,
-                        store, componentName,
+                        store, templateName,
+                        componentName,
                         root,
                         componentData);
             }

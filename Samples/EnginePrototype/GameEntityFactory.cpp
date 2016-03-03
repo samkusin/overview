@@ -30,15 +30,16 @@ GameEntityFactory::GameEntityFactory
     ove::Scene* scene,
     ove::RenderGraph* renderGraph,
     NavDataContext* navDataContext,
-    ove::NavSystem* navSystem
+    ove::NavSystem* navSystem,
+    TransformDataContext* transformDataContext
 ) :
     _gfxContext(gfxContext),
     _sceneDataContext(sceneData),
     _scene(scene),
     _renderGraph(renderGraph),
     _navDataContext(navDataContext),
-    _navSystem(navSystem)
-{
+    _navSystem(navSystem),
+    _transformDataContext(transformDataContext){
 }
                       
 
@@ -46,6 +47,7 @@ void GameEntityFactory::onCustomComponentCreateFn
 (
     Entity entity,
     EntityStore& store,
+    const std::string& templateName,
     const std::string& componentName,
     const JsonValue& definitions,
     const JsonValue& compTemplate
@@ -180,6 +182,15 @@ void GameEntityFactory::onCustomComponentCreateFn
             CK_LOG_WARN("OverviewSample",
                         "Entity: %" PRIu64 ", Component %s: failed to create body\n",
                         entity, componentName.c_str());
+        }
+    }
+    else if (componentName == "animation") {
+        if (compTemplate.HasMember("set")) {
+            const JsonValue& setDefinitions = compTemplate["set"];
+        
+            //  create a new transform set using the template name as id
+            
+            //  every set
         }
     }
 }

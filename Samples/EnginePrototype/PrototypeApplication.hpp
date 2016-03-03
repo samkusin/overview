@@ -18,6 +18,7 @@
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Render/RenderContext.hpp"
+#include "Engine/Controller/ControllerTypes.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "CKGfx/GfxTypes.hpp"
@@ -93,6 +94,8 @@ private:
     
     unique_ptr<NavDataContext> _navDataContext;
     unique_ptr<ove::NavSystem> _navSystem;
+    
+    unique_ptr<TransformDataContext> _transformDataContext;
     
     unique_ptr<GameEntityFactory> _componentFactory;
     

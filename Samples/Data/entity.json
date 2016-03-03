@@ -238,28 +238,30 @@
             "editor" : {
                 "name" : "Sample Door"
             },
-            "children" : [
-                {
-                    "renderable" : {
-                        "modelset" : "models/doors.json",
-                        "model" : "Door"
+            "scenebody" : {
+                "mass" : 90.0,
+                "shape" : "box"
+            },
+            "renderable" : {
+                "modelset" : "models/doors.json",
+                "model" : "Door"
+            },
+            "animation" : {
+                "set": {
+                    "open" : {
+                        "qx" : [ { "t": 0, "v": 0 }, { "t": 1.0, "v": 0 } ],
+                        "qy" : [ { "t": 0, "v": 0 }, { "t": 1.0, "v": 0.70710678 } ],
+                        "qz" : [ { "t": 0, "v": 0 }, { "t": 1.0, "v": 0 } ],
+                        "qw" : [ { "t": 0, "v": 0 }, { "t": 1.0, "v": -0.70710678 } ]
                     },
-                    "scenebody" : {
-                        "shape" : "box",
-                        "mass" : 90.0
-                    },
-                    "animation" : {
-                        "states": {
-                            "open" : {
-                                "qx" : [],
-                                "qy" : [],
-                                "qz" : [],
-                                "qw" : []
-                           }
-                        }
+                    "close" : {
+                        "qx" : [ { "t": 0, "v": 0 }, { "t": 1.0, "v": 0 } ],
+                        "qy" : [ { "t": 0, "v": 0.70710678 }, { "t": 1.0, "v": 0 } ],
+                        "qz" : [ { "t": 0, "v": 0 }, { "t": 1.0, "v": 0 } ],
+                        "qw" : [ { "t": 0, "v": -0.70710678 }, { "t": 1.0, "v": 0 } ]
                     }
                 }
-            ]
+            }
         },
         "sample_male" : {
            "editor" : {
