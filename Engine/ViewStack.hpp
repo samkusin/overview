@@ -9,6 +9,7 @@
 #ifndef Overview_View_Manager_hpp
 #define Overview_View_Manager_hpp
 
+#include <cinek/types.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -46,10 +47,10 @@ public:
     void endFrame();
     
     //  updates the view controllers on the stack
-    void simulate(double dt);
+    void simulate(CKTimeDelta dt);
     
     //  render the stack
-    void frameUpdate(double dt, const cinek::uicore::InputState& inputState);
+    void frameUpdate(CKTimeDelta dt, const cinek::uicore::InputState& inputState);
     
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,

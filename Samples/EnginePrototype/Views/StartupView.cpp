@@ -49,14 +49,14 @@ void StartupView::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void StartupView::simulateView(ove::ViewStack& stateController, double dt)
+void StartupView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void StartupView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double /* dt */,
+    CKTimeDelta /* dt */,
     const cinek::uicore::InputState& /* inputState */
 )
 {

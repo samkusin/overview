@@ -36,14 +36,14 @@ void PlayMain::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void PlayMain::simulateView(ove::ViewStack& stateController, double dt)
+void PlayMain::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void PlayMain::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

@@ -39,6 +39,8 @@
 		377ECD231C1638A0002040D7 /* FreeCameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD211C1638A0002040D7 /* FreeCameraController.cpp */; };
 		377ECD241C1638A0002040D7 /* FreeCameraController.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 377ECD221C1638A0002040D7 /* FreeCameraController.hpp */; };
 		379EE6221C5A9B5900EA9A3F /* vs_bone_col.vs in Sources */ = {isa = PBXBuildFile; fileRef = 379EE6211C5A9AE300EA9A3F /* vs_bone_col.vs */; };
+		37B250271C86AD8E005C6DC0 /* equation.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37B250211C86AD8E005C6DC0 /* equation.hpp */; };
+		37B250281C86AD8E005C6DC0 /* sequence.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37B250231C86AD8E005C6DC0 /* sequence.hpp */; };
 		37B831991C6C081F0064D316 /* fs_flat_tex.fs in Sources */ = {isa = PBXBuildFile; fileRef = 37B831961C6C07DC0064D316 /* fs_flat_tex.fs */; };
 		37B8319A1C6C081F0064D316 /* vs_basic_col.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37B831971C6C07DC0064D316 /* vs_basic_col.vs */; };
 		37B8319B1C6C081F0064D316 /* vs_basic_uv.vs in Sources */ = {isa = PBXBuildFile; fileRef = 37B831981C6C07DC0064D316 /* vs_basic_uv.vs */; };
@@ -231,6 +233,11 @@
 		377ECD211C1638A0002040D7 /* FreeCameraController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FreeCameraController.cpp; path = ../FreeCameraController.cpp; sourceTree = "<group>"; };
 		377ECD221C1638A0002040D7 /* FreeCameraController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FreeCameraController.hpp; path = ../FreeCameraController.hpp; sourceTree = "<group>"; };
 		379EE6211C5A9AE300EA9A3F /* vs_bone_col.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_bone_col.vs; sourceTree = "<group>"; };
+		37B250201C86AC60005C6DC0 /* keyframe.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = keyframe.hpp; sourceTree = "<group>"; };
+		37B250211C86AD8E005C6DC0 /* equation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = equation.hpp; sourceTree = "<group>"; };
+		37B250221C86AD8E005C6DC0 /* equation.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equation.inl; sourceTree = "<group>"; };
+		37B250231C86AD8E005C6DC0 /* sequence.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sequence.hpp; sourceTree = "<group>"; };
+		37B250241C86AD8E005C6DC0 /* sequence.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sequence.inl; sourceTree = "<group>"; };
 		37B831951C6C00200064D316 /* NodeRendererTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NodeRendererTypes.hpp; sourceTree = "<group>"; };
 		37B831961C6C07DC0064D316 /* fs_flat_tex.fs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fs_flat_tex.fs; sourceTree = "<group>"; };
 		37B831971C6C07DC0064D316 /* vs_basic_col.vs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vs_basic_col.vs; sourceTree = "<group>"; };
@@ -565,6 +572,11 @@
 				37E6366E1BF024330081E59E /* mathtypes.inl */,
 				37B831A71C7277270064D316 /* math.hpp */,
 				37B831A81C7277540064D316 /* math.inl */,
+				37B250201C86AC60005C6DC0 /* keyframe.hpp */,
+				37B250211C86AD8E005C6DC0 /* equation.hpp */,
+				37B250221C86AD8E005C6DC0 /* equation.inl */,
+				37B250231C86AD8E005C6DC0 /* sequence.hpp */,
+				37B250241C86AD8E005C6DC0 /* sequence.inl */,
 			);
 			path = ckm;
 			sourceTree = "<group>";
@@ -710,11 +722,13 @@
 				37E636D11BF024600081E59E /* UITypes.hpp in Headers */,
 				377ECCB01C0507D6002040D7 /* file.h in Headers */,
 				37E636721BF024330081E59E /* allocator.hpp in Headers */,
+				37B250271C86AD8E005C6DC0 /* equation.hpp in Headers */,
 				37E636B71BF024330081E59E /* mathtypes.hpp in Headers */,
 				37E636A01BF024330081E59E /* jsontypes.hpp in Headers */,
 				37E636A41BF024330081E59E /* encodings.h in Headers */,
 				37E636B01BF024330081E59E /* prettywriter.h in Headers */,
 				37E637111BF0246D0081E59E /* stb_image.h in Headers */,
+				37B250281C86AD8E005C6DC0 /* sequence.hpp in Headers */,
 				377ECCE31C0BBC28002040D7 /* task.hpp in Headers */,
 				37E636B31BF024330081E59E /* stringbuffer.h in Headers */,
 				37E636A91BF024330081E59E /* filewritestream.h in Headers */,

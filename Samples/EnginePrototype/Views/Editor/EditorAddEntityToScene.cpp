@@ -117,14 +117,14 @@ void EditorAddEntityToScene::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void EditorAddEntityToScene::simulateView(ove::ViewStack& stateController, double dt)
+void EditorAddEntityToScene::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void EditorAddEntityToScene::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

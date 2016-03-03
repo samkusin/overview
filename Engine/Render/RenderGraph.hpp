@@ -77,7 +77,7 @@ public:
     /**
      *  Updates the render graph
      */
-    void update(double dt);
+    void update(CKTimeDelta dt);
     /**
      *  @return The root of the generated gfx::NodeGraph.
      */
@@ -106,7 +106,7 @@ private:
     };
 
     cinek::gfx::NodeGraph _nodeGraph;
-    double _renderTime;
+    CKTimeDelta _renderTime;
 
     struct Node
     {

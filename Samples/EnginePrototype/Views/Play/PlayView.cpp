@@ -58,15 +58,27 @@ void PlayView::onViewStartFrame(ove::ViewStack& stateController)
     _viewStack.startFrame();
 }
 
-void PlayView::simulateView(ove::ViewStack& stateController, double dt)
+void PlayView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
+    auto entity = game().getFocusedGameEntity();
+    if (entity) {
+        auto body = scene().findBody(entity);
+        if (body) {
+            ckm::vector3f avel(0,1,0);
+            
+            ckm::scale(avel, avel, dt);
+        
+            body->setVelocity(ckm::vector3f::kZero, avel);
+        }
+    }
+
     _viewStack.simulate(dt);
 }
 
 void PlayView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

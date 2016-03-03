@@ -78,6 +78,8 @@
 		37B250181C865268005C6DC0 /* GenerateNavPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B2500A1C865268005C6DC0 /* GenerateNavPath.cpp */; };
 		37B250191C865268005C6DC0 /* GenerateRecastMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B2500C1C865268005C6DC0 /* GenerateRecastMesh.cpp */; };
 		37B2501C1C86530E005C6DC0 /* ControllerTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B2501A1C86530E005C6DC0 /* ControllerTypes.cpp */; };
+		37B2501F1C867559005C6DC0 /* TransformBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B2501D1C867559005C6DC0 /* TransformBody.cpp */; };
+		37B2502C1C876E53005C6DC0 /* TransformSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B2502A1C876E53005C6DC0 /* TransformSet.cpp */; };
 		37E635D91BF0099C0081E59E /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635D81BF0099C0081E59E /* Metal.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		37E635DB1BF009B00081E59E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DA1BF009B00081E59E /* Carbon.framework */; };
 		37E635DD1BF009B60081E59E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E635DC1BF009B60081E59E /* Cocoa.framework */; };
@@ -250,6 +252,10 @@
 		37B2500D1C865268005C6DC0 /* GenerateRecastMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GenerateRecastMesh.hpp; sourceTree = "<group>"; };
 		37B2501A1C86530E005C6DC0 /* ControllerTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControllerTypes.cpp; path = Controller/ControllerTypes.cpp; sourceTree = "<group>"; };
 		37B2501B1C86530E005C6DC0 /* ControllerTypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ControllerTypes.hpp; path = Controller/ControllerTypes.hpp; sourceTree = "<group>"; };
+		37B2501D1C867559005C6DC0 /* TransformBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformBody.cpp; path = Controller/TransformBody.cpp; sourceTree = "<group>"; };
+		37B2501E1C867559005C6DC0 /* TransformBody.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TransformBody.hpp; path = Controller/TransformBody.hpp; sourceTree = "<group>"; };
+		37B2502A1C876E53005C6DC0 /* TransformSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformSet.cpp; path = Controller/TransformSet.cpp; sourceTree = "<group>"; };
+		37B2502B1C876E53005C6DC0 /* TransformSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TransformSet.hpp; path = Controller/TransformSet.hpp; sourceTree = "<group>"; };
 		37E635D81BF0099C0081E59E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		37E635DA1BF009B00081E59E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		37E635DC1BF009B60081E59E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -498,6 +504,10 @@
 			children = (
 				37B2501A1C86530E005C6DC0 /* ControllerTypes.cpp */,
 				37B2501B1C86530E005C6DC0 /* ControllerTypes.hpp */,
+				37B2502A1C876E53005C6DC0 /* TransformSet.cpp */,
+				37B2502B1C876E53005C6DC0 /* TransformSet.hpp */,
+				37B2501D1C867559005C6DC0 /* TransformBody.cpp */,
+				37B2501E1C867559005C6DC0 /* TransformBody.hpp */,
 				37B24FED1C865229005C6DC0 /* NavBody.cpp */,
 				37B24FEE1C865229005C6DC0 /* NavBody.hpp */,
 				37B24FEF1C865229005C6DC0 /* NavBodyTransform.hpp */,
@@ -769,12 +779,14 @@
 				377ECCCD1C0934E9002040D7 /* ResourceFactory.cpp in Sources */,
 				37B24FF21C865229005C6DC0 /* NavBody.cpp in Sources */,
 				377ECD051C12596F002040D7 /* SceneJsonLoader.cpp in Sources */,
+				37B2501F1C867559005C6DC0 /* TransformBody.cpp in Sources */,
 				37804D0F1C1A2FF6002109DF /* GameTypes.cpp in Sources */,
 				37386CF01C62E19C001A3110 /* DetourNavMeshQuery.cpp in Sources */,
 				37B250111C865268005C6DC0 /* NavPathQueryPool.cpp in Sources */,
 				37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */,
 				37386CFA1C62E19C001A3110 /* RecastDump.cpp in Sources */,
 				372918591C7445AE0011770E /* EditorAddEntityToScene.cpp in Sources */,
+				37B2502C1C876E53005C6DC0 /* TransformSet.cpp in Sources */,
 				3729185A1C7445AE0011770E /* EditorMain.cpp in Sources */,
 				37386CFC1C62E19C001A3110 /* RecastLayers.cpp in Sources */,
 				37386CF61C62E19C001A3110 /* RecastAlloc.cpp in Sources */,

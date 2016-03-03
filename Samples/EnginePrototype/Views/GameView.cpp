@@ -115,7 +115,7 @@ void GameView::onViewStartFrame(ove::ViewStack& stateController)
     _viewStack.startFrame();
 }
 
-void GameView::simulateView(ove::ViewStack& stateController, double dt)
+void GameView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {    
     _viewStack.simulate(dt);
 }
@@ -123,7 +123,7 @@ void GameView::simulateView(ove::ViewStack& stateController, double dt)
 void GameView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

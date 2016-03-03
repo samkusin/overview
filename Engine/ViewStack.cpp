@@ -151,7 +151,7 @@ void ViewStack::endFrame()
     }
 }
 
-void ViewStack::simulate(double dt)
+void ViewStack::simulate(CKTimeDelta dt)
 {
     if (_activeThread == std::thread::id())
     {
@@ -170,7 +170,7 @@ void ViewStack::simulate(double dt)
 
 void ViewStack::frameUpdate
 (
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

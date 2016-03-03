@@ -43,7 +43,7 @@ public:
     );
 
     //  update the pathfinding system
-    void simulate(double dt);
+    void simulate(CKTimeDelta dt);
     //  updates the debugging system for pathfinding
     void simulateDebug(PathfinderDebug& debugger);
     

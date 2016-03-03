@@ -179,23 +179,23 @@ void PrototypeApplication::beginFrame()
     _server.receive();
     _client.receive();
     
-    _navSystem->startFrame();
-
     _viewStack.startFrame();
+    
+    _navSystem->startFrame();
 }
 
-void PrototypeApplication::simulateFrame(double dt)
+void PrototypeApplication::simulateFrame(CKTimeDelta dt)
 {
+    _viewStack.simulate(dt);
+ 
     _pathfinder->simulate(dt);
     _navSystem->simulate(dt);
     _scene->simulate(dt);
-    
-    _viewStack.simulate(dt);
 }
 
 void PrototypeApplication::renderFrame
 (
-    double dt,
+    CKTimeDelta dt,
     const gfx::Rect& viewRect,
     const cinek::uicore::InputState& inputState
 )

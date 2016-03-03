@@ -45,7 +45,7 @@ public:
      *
      *  @param  dt      Time step in seconds
      */
-    void simulate(double dt);
+    void simulate(CKTimeDelta dt);
     /**
      *  Deactivates dynamic physics simulation
      *

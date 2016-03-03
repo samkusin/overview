@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_NavSystem_hpp
-#define Overview_NavSystem_hpp
+#ifndef Overview_Controller_NavSystem_hpp
+#define Overview_Controller_NavSystem_hpp
 
 #include "ControllerTypes.hpp"
 
@@ -43,7 +43,7 @@ public:
     //  framework
     void activate();
     void startFrame();
-    void simulate(double dt);
+    void simulate(CKTimeDelta dt);
     void endFrame();
     void deactivate();
     
@@ -78,4 +78,4 @@ private:
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* Overview_NavSystem_hpp */
+#endif /* Overview_Controller_NavSystem_hpp */

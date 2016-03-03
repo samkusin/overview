@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef Overview_NavBodyTransform_hpp
-#define Overview_NavBodyTransform_hpp
+#ifndef Overview_Controller_NavBodyTransform_hpp
+#define Overview_Controller_NavBodyTransform_hpp
 
 #include "ControllerTypes.hpp"
 
@@ -49,4 +49,4 @@ public:
     } /* namespace ove */
 } /* namespace cinek */
 
-#endif /* Overview_NavBodyTransform_hpp */
+#endif /* Overview_Controller_NavBodyTransform_hpp */

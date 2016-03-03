@@ -135,10 +135,10 @@ int runSample(int viewWidth, int viewHeight)
                                                nvg);
 
         const double kSimFPS = 60.0;
-        const double kSecsPerSimFrame = 1/kSimFPS;
+        const CKTimeDelta kSecsPerSimFrame = 1/kSimFPS;
         
-        double simTime = 0.0;
-        double lagSecsSim = 0.0;
+        CKTime simTime = 0.0;
+        CKTime lagSecsSim = 0.0;
         
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
@@ -157,7 +157,7 @@ int runSample(int viewWidth, int viewHeight)
                 frameTimeMs = 100;
             }
             
-            double frameTime = frameTimeMs*0.001;
+            CKTimeDelta frameTime = frameTimeMs*0.001;
             lagSecsSim += frameTime;
         
             ////////////////////////////////////////////////////////////////////////

@@ -238,14 +238,28 @@
             "editor" : {
                 "name" : "Sample Door"
             },
-            "renderable" : {
-                "modelset" : "models/doors.json",
-                "model" : "Door"
-            },
-            "scenebody" : {
-                "shape" : "box",
-                "mass" : 90.0
-            }
+            "children" : [
+                {
+                    "renderable" : {
+                        "modelset" : "models/doors.json",
+                        "model" : "Door"
+                    },
+                    "scenebody" : {
+                        "shape" : "box",
+                        "mass" : 90.0
+                    },
+                    "animation" : {
+                        "states": {
+                            "open" : {
+                                "qx" : [],
+                                "qy" : [],
+                                "qz" : [],
+                                "qw" : []
+                           }
+                        }
+                    }
+                }
+            ]
         },
         "sample_male" : {
            "editor" : {

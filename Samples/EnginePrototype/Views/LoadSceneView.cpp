@@ -45,14 +45,14 @@ void LoadSceneView::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void LoadSceneView::simulateView(ove::ViewStack& stateController, double dt)
+void LoadSceneView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void LoadSceneView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

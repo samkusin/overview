@@ -30,7 +30,7 @@ public:
     float animationTime() const;
     const Animation* animation() const;
     
-    void update(double t);
+    void update(CKTime t);
     
 private:
     AnimationSetHandle _animSet;

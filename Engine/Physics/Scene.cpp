@@ -59,7 +59,7 @@ Scene::~Scene()
 {
 }
     
-void Scene::simulate(double dt)
+void Scene::simulate(CKTimeDelta dt)
 {
     _btWorld.performDiscreteCollisionDetection();
 

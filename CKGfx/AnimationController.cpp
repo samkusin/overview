@@ -52,7 +52,7 @@ void AnimationController::transitionToState(const char* stateName)
     _time = 0.0f;
 }
 
-void AnimationController::update(double t)
+void AnimationController::update(CKTime t)
 {
     if (_thisAnim) {
         _time = fmod((float)t, _thisAnim->duration);

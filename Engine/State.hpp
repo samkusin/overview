@@ -19,8 +19,8 @@ class State
 {
 public:
     virtual void onBegin(Controller& controller) = 0;
-    virtual void onUpdate(Controller& controller, double dt) = 0;
-    virtual void onFrameUpdate(Controller& controller, double dt) = 0;
+    virtual void onUpdate(Controller& controller, CKTimeDelta dt) = 0;
+    virtual void onFrameUpdate(Controller& controller, CKTimeDelta dt) = 0;
     virtual void onEnd(Controller& controller) = 0;
 };
 

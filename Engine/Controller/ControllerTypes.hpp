@@ -11,10 +11,15 @@
 
 #include "Engine/EngineTypes.hpp"
 
+#include <cinek/objectpool.hpp>
+
 namespace cinek {
     namespace ove {
+
+using TransformIndex = int;
     
-    
+using TransformSetPool = ManagedObjectPool<TransformSet, void>;
+using TransformSetHandle = ManagedHandle<TransformSet, TransformSetPool>;
     
     } /* namespace ove */
 } /* namespace cinek */

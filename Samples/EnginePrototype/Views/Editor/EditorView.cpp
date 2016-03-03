@@ -138,7 +138,7 @@ void EditorView::onViewStartFrame(ove::ViewStack& stateController)
     _viewStack.startFrame();
 }
 
-void EditorView::simulateView(ove::ViewStack& stateController, double dt)
+void EditorView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
     _viewStack.simulate(dt);
 }
@@ -146,7 +146,7 @@ void EditorView::simulateView(ove::ViewStack& stateController, double dt)
 void EditorView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

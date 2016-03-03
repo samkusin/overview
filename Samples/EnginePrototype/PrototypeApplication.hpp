@@ -51,8 +51,8 @@ public:
     
     void beginFrame();
     
-    void simulateFrame(double dt);
-    void renderFrame(double dt, const gfx::Rect& viewRect,
+    void simulateFrame(CKTimeDelta dt);
+    void renderFrame(CKTimeDelta dt, const gfx::Rect& viewRect,
         const cinek::uicore::InputState& inputState);
     void endFrame();
     

@@ -414,7 +414,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////
     //  Updates main scheduler and synchronized with any path-query threads
     //
-    void simulate(double dt)
+    void simulate(CKTimeDelta dt)
     {
         auto cmdIt = _commandQueue.begin();
         auto cmdItEnd = _commandQueue.end();
@@ -470,7 +470,7 @@ void Pathfinder::cancelByListener(PathfinderListener* listener)
     _impl->cancelByListener(listener);
 }
 
-void Pathfinder::simulate(double dt)
+void Pathfinder::simulate(CKTimeDelta dt)
 {
     _impl->simulate(dt);
 }

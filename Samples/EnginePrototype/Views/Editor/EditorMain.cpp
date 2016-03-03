@@ -36,14 +36,14 @@ void EditorMain::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void EditorMain::simulateView(ove::ViewStack& stateController, double dt)
+void EditorMain::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void EditorMain::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
+    CKTimeDelta dt,
     const cinek::uicore::InputState& inputState
 )
 {

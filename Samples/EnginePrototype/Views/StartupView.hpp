@@ -24,14 +24,14 @@ public:
     virtual void onViewBackground(ove::ViewStack& stateController);
  
     virtual void onViewStartFrame(ove::ViewStack& stateController);
-    virtual void simulateView(ove::ViewStack& stateController, double dt);
+    virtual void simulateView(ove::ViewStack& stateController, CKTimeDelta dt);
     virtual void onViewEndFrame(ove::ViewStack& stateController);
     
     virtual const char* viewId() const;
     
 private:
     //  AppViewController
-    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
+    virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
                          const cinek::uicore::InputState& inputState);
 private:
     bool _templatesLoaded;

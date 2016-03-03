@@ -129,7 +129,7 @@ void NavSystem::startFrame()
     }
 }
 
-void NavSystem::simulate(double dt)
+void NavSystem::simulate(CKTimeDelta dt)
 {
     if (!_active || _bodies.empty())
         return;
