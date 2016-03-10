@@ -15,6 +15,9 @@
 #include "CKGfx/Context.hpp"
 
 #include "Game/NavDataContext.hpp"
+#include "Game/TransformDataContext.hpp"
+#include "Game/TransformSetJsonLoader.hpp"
+
 #include "Engine/Controller/NavBody.hpp"
 #include "Engine/Controller/NavSystem.hpp"
 #include "Engine/Game/NavSceneBodyTransform.hpp"
@@ -39,7 +42,8 @@ GameEntityFactory::GameEntityFactory
     _renderGraph(renderGraph),
     _navDataContext(navDataContext),
     _navSystem(navSystem),
-    _transformDataContext(transformDataContext){
+    _transformDataContext(transformDataContext)
+{
 }
                       
 
@@ -189,8 +193,10 @@ void GameEntityFactory::onCustomComponentCreateFn
             const JsonValue& setDefinitions = compTemplate["set"];
         
             //  create a new transform set using the template name as id
-            
-            //  every set
+            ove::TransformSet transformSet = loadTranformSetFromJSON(
+                *_transformDataContext,
+                setDefinitions);
+            _transformDataContext->registerSet(std::move(transformSet), templateName);
         }
     }
 }

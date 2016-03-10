@@ -20,13 +20,31 @@ namespace ckm {
 
 namespace cinek {
     namespace ove {
-
     
-const TransformSequence* TransformContainer::sequence(TransformProperty prop) const
+TransformSequence::TransformSequence() :
+    __prevListNode(nullptr),
+    __nextListNode(nullptr)
 {
-    int index = static_cast<int>(prop);
-    CK_ASSERT_RETURN_VALUE(index >= static_cast<int>(TransformProperty::kCount), nullptr);
-    return &sequences[index];
+}
+
+TransformSequence::TransformSequence(TransformProperty prop, int kfcount) :
+    data(prop, kfcount),
+    __prevListNode(nullptr),
+    __nextListNode(nullptr)
+{
+}
+
+TransformContainer::TransformContainer() :
+    __prevListNode(nullptr),
+    __nextListNode(nullptr)
+{
+}
+
+TransformContainer::TransformContainer(std::string n) :
+    name(std::move(n)),
+    __prevListNode(nullptr),
+    __nextListNode(nullptr)
+{
 }
     
     } /* namespace ove */

@@ -11,6 +11,7 @@
 
 #include "ControllerTypes.hpp"
 
+#include <cinek/intrusive_list.hpp>
 #include <ckm/keyframe.hpp>
 #include <ckm/sequence.hpp>
 
@@ -28,11 +29,22 @@ enum class TransformProperty : int
     kQY,
     kQZ,
     kQW,
-    kCount
+    kUnknown,
+    kCount = kUnknown
 };
     
 using TransformKeyframe = ckm::keyframe<ckm::scalar>;
-using TransformSequence = ckm::sequence<TransformProperty, TransformKeyframe>;
+
+struct TransformSequence
+{
+    TransformSequence();
+    TransformSequence(TransformProperty prop, int kfcount);
+    
+    ckm::sequence<TransformProperty, TransformKeyframe> data;
+    
+    TransformSequence* __prevListNode;
+    TransformSequence* __nextListNode;
+};
 
 /**
  *  @struct TransformContainer
@@ -42,17 +54,20 @@ using TransformSequence = ckm::sequence<TransformProperty, TransformKeyframe>;
  */
 struct TransformContainer
 {
-    const TransformSequence* sequences;
-    int sequenceCount;
+    TransformContainer();
+    TransformContainer(std::string n);
     
-    const TransformSequence* sequence(TransformProperty prop) const;
+    std::string name;
+    intrusive_list<TransformSequence> sequenceList;
+    
+    TransformContainer* __prevListNode;
+    TransformContainer* __nextListNode;
 };
 
 struct TransformSet
 {
     std::string name;
-    TransformContainer* containers;
-    int containerCount;
+    intrusive_list<TransformContainer> containerList;
 };
     
     } /* namespace ove */

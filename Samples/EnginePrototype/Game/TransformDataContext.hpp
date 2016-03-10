@@ -27,6 +27,16 @@ public:
     
     TransformDataContext(InitParams params);
     
+    ove::TransformSequence* createSequence();
+    void destroySequence(ove::TransformSequence* seq);
+    
+    ove::TransformContainer* createContainer();
+    void destroyContainer(ove::TransformContainer* container);
+    
+    ove::TransformSetHandle registerSet(ove::TransformSet&& set, std::string name);
+    ove::TransformSetHandle findSet(const std::string& name) const;
+    
+    
 private:
     ObjectPool<ove::TransformSequence> _sequencePool;
     ObjectPool<ove::TransformContainer> _containerPool;
