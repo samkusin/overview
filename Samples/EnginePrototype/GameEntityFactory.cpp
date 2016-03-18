@@ -20,6 +20,7 @@
 
 #include "Engine/Controller/NavBody.hpp"
 #include "Engine/Controller/NavSystem.hpp"
+#include "Engine/Controller/TransformSystem.hpp"
 #include "Engine/Game/NavSceneBodyTransform.hpp"
 
 #include <ckjson/json.hpp>
@@ -34,7 +35,8 @@ GameEntityFactory::GameEntityFactory
     ove::RenderGraph* renderGraph,
     NavDataContext* navDataContext,
     ove::NavSystem* navSystem,
-    TransformDataContext* transformDataContext
+    TransformDataContext* transformDataContext,
+    ove::TransformSystem* transformSystem
 ) :
     _gfxContext(gfxContext),
     _sceneDataContext(sceneData),
@@ -42,7 +44,8 @@ GameEntityFactory::GameEntityFactory
     _renderGraph(renderGraph),
     _navDataContext(navDataContext),
     _navSystem(navSystem),
-    _transformDataContext(transformDataContext)
+    _transformDataContext(transformDataContext),
+    _transformSystem(transformSystem)
 {
 }
                       
@@ -73,9 +76,9 @@ void GameEntityFactory::onCustomComponentCreateFn
                 modelHandle, nullptr);
         }
         else {
-                CK_LOG_WARN("OverviewSample",
-                        "Entity: %" PRIu64 ", Component %s: %s/%s not found\n",
-                        entity, componentName.c_str(), modelSetName, modelName);
+            CK_LOG_WARN("OverviewSample",
+                    "Entity: %" PRIu64 ", Component %s: %s/%s not found\n",
+                    entity, componentName.c_str(), modelSetName, modelName);
         }
     }
     else if (componentName == "scenebody") {
@@ -143,10 +146,22 @@ void GameEntityFactory::onCustomComponentCreateFn
                     btVector3(dims.x*0.5f, dims.y*0.5f, dims.z*0.5f),
                     localShapeTransform);
         }
-
+        
         ove::SceneBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode, entity);
         if (body) {
-            _scene->attachBody(body, ove::SceneBody::kIsObject);
+            it = compTemplate.FindMember("mass");
+            if (it != compTemplate.MemberEnd()) {
+                body->mass = ckm::scalar(it->value.GetDouble());
+            }
+            
+            uint32_t bodyCategories = 0;
+            if (cinek_entity_context(entity) == kEntityStore_Staging) {
+                bodyCategories |= ove::SceneBody::kIsStaging;
+            }
+            if (!ckm::nearZero(body->mass)) {
+                bodyCategories |= ove::SceneBody::kIsDynamic;
+            }
+            _scene->attachBody(body, bodyCategories);
             
             //  if navbody exists, then we still need to create the navbody transform
             //  - this would've been done during navbody component create, if
@@ -189,6 +204,7 @@ void GameEntityFactory::onCustomComponentCreateFn
         }
     }
     else if (componentName == "animation") {
+        ove::TransformSetHandle setHandle;
         if (compTemplate.HasMember("set")) {
             const JsonValue& setDefinitions = compTemplate["set"];
         
@@ -196,7 +212,13 @@ void GameEntityFactory::onCustomComponentCreateFn
             ove::TransformSet transformSet = loadTranformSetFromJSON(
                 *_transformDataContext,
                 setDefinitions);
-            _transformDataContext->registerSet(std::move(transformSet), templateName);
+            setHandle = _transformDataContext->registerSet(
+                std::move(transformSet),
+                templateName);
+        }
+        ove::TransformBody* body = _transformDataContext->allocateBody(entity, setHandle);
+        if (body) {
+            _transformSystem->attachBody(body);
         }
     }
 }
@@ -251,7 +273,7 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
     ove::SceneBody* sceneBody = _scene->findBody(origin);
     if (sceneBody) {
         ove::SceneBody* clonedBody = _sceneDataContext->cloneBody(sceneBody, gfxNode, target);
-        sceneBody = _scene->attachBody(clonedBody, clonedBody->categoryMask);
+        sceneBody = _scene->attachBody(clonedBody, clonedBody->getCategoryMask());
     }
     //  navbody
     ove::NavBody* navBody = _navSystem->findBody(origin);

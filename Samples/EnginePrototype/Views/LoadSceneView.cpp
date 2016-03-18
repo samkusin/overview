@@ -75,7 +75,7 @@ void LoadSceneView::frameUpdateView
                             auto bodies = reinterpret_cast<ove::InitializeScene&>(thisTask).acquireBodyList();
                             
                             for (auto& body : bodies) {
-                                scene().attachBody(body, body->categoryMask);
+                                scene().attachBody(body.first, body.second);
                             }
                             _nextTask = kLoadPaths;
                         }

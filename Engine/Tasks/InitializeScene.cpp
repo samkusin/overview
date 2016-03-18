@@ -42,7 +42,7 @@ InitializeScene::InitializeScene
 {
 }
 
-std::vector<SceneBody*> InitializeScene::acquireBodyList()
+SceneJsonLoader::SceneBodyList InitializeScene::acquireBodyList()
 {
     return std::move(_bodyList);
 }

@@ -72,7 +72,7 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     _renderer.setPlaceholderDiffuseTexture(gfxContext().findTexture("textures/df_plh"));
     
     //  create player
-    _focusedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
+    _focusedEntity = entityService().createEntity(kEntityStore_Default, "entity",
                         "sample_male");
     
     auto body = scene().findBody(_focusedEntity);
@@ -137,7 +137,10 @@ void GameView::frameUpdateView
     gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
     gfx::Vector3 pos = _camera.worldPosition();
     
-    _viewToSceneRayTestResult = scene().rayTestClosest(ove::btFromGfx(pos), ove::btFromGfx(dir), 100.0f);
+    _viewToSceneRayTestResult = scene().rayTestClosest(
+        ove::btFromGfx(pos), ove::btFromGfx(dir), 100.0f,
+        ove::SceneBody::kAllFilter,
+        ove::SceneBody::kStagingFilter);
     
     const ove::RenderContext& rc = renderContext();
     

@@ -17,10 +17,15 @@
 #include <ckm/math.hpp>
 #include <algorithm>
 
+#include "Engine/System.inl"
+
 namespace cinek {
     namespace ove {
     
+template class System<NavBody, NavSystem>;
+    
 NavSystem::NavSystem(const InitParams& params) :
+    System<NavBody, NavSystem>(params.numBodies),
     _pathfinder(params.pathfinder),
     _query(nullptr),
     _active(true)
@@ -31,74 +36,6 @@ NavSystem::NavSystem(const InitParams& params) :
 NavSystem::~NavSystem()
 {
     _pathfinder->cancelByListener(this);
-}
-    
-NavBody* NavSystem::attachBody(NavBody* body)
-{
-    auto it = containerLowerBound(_bodies, body->entity());
-    if (it == _bodies.end() || (*it)->entity() != body->entity()) {
-        it = _bodies.emplace(it, body);
-    }
-    
-    CK_ASSERT(body == *it);
-    
-    return *it;
-}
-
-NavBody* NavSystem::detachBody(Entity entity)
-{
-    auto it = containerLowerBound(_bodies, entity);
-    if (it == _bodies.end() || (*it)->entity() != entity) {
-        return nullptr;
-    }
-    
-    NavBody* body = *it;
-    _bodies.erase(it);
-    return body;
-}
-
-NavBody* NavSystem::findBody(Entity entity)
-{
-    return const_cast<NavBody*>(static_cast<const NavSystem*>(this)->findBody(entity));
-}
-
-const NavBody* NavSystem::findBody(Entity entity) const
-{
-    auto it = containerLowerBound(_bodies, entity);
-    if (it == _bodies.end() || (*it)->entity() != entity) {
-        return nullptr;
-    }
-    NavBody* body = *it;
-    return body;
-}
-
-auto NavSystem::containerLowerBound
-(
-    NavBodyContainer& container,
-    Entity entity
-)
-->
-NavBodyContainer::iterator
-{
-    auto it = std::lower_bound(container.begin(), container.end(), entity,
-                    [](const NavBody* body, Entity e) -> bool {
-                        return body->entity() < e;
-                    });
-    return it;
-}
-
-auto NavSystem::containerLowerBound
-(
-    const NavBodyContainer& container,
-    Entity entity
-)
-const -> NavBodyContainer::const_iterator
-{
-    auto it = std::lower_bound(container.cbegin(), container.cend(), entity,
-                    [](const NavBody* body, Entity e) -> bool {
-                        return body->entity() < e;
-                    });
-    return it;
 }
 
 void NavSystem::moveBodyToPosition(Entity entity, ckm::vector3f pos)

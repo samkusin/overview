@@ -56,12 +56,12 @@ SceneJsonLoader::SceneJsonLoader
 
 SceneJsonLoader::~SceneJsonLoader() = default;
     
-std::vector<SceneBody*> SceneJsonLoader::operator()
+SceneJsonLoader::SceneBodyList SceneJsonLoader::operator()
 (
     const JsonValue& jsonRoot
 )
 {
-    std::vector<SceneBody*>  bodyList;
+    SceneBodyList  bodyList;
     JsonValue::ConstMemberIterator jsonNodesIt = jsonRoot.FindMember("nodes");
     
     if (jsonNodesIt != jsonRoot.MemberEnd()) {
@@ -196,10 +196,8 @@ auto SceneJsonLoader::parseJsonNode
 
             SceneBody* body = _sceneContext->allocateBody(initParams,
                 node.gfxNodeHandle, context.entity);
-                
-            body->categoryMask |= SceneBody::kIsSection;
             
-            context.bodyList->push_back(body);
+            context.bodyList->emplace_back(body, SceneBody::kIsSection);
         }
     }
         

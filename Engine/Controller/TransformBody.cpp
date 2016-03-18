@@ -7,3 +7,17 @@
 //
 
 #include "TransformBody.hpp"
+
+namespace cinek {
+    namespace ove {
+    
+TransformBody::TransformBody(Entity entity, TransformSetHandle handle) :
+    _entity(entity),
+    _transformAnim(nullptr),
+    _transformSet(handle)
+{
+}
+    
+    
+    } /* namespace ove */
+} /* namespace cinek */

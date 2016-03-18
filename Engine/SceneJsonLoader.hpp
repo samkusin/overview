@@ -36,13 +36,15 @@ public:
                     EntityDatabase* entityDb);
     ~SceneJsonLoader();
     
-    std::vector<SceneBody*> operator()(const JsonValue& jsonRoot);
+    using SceneBodyList = std::vector<std::pair<SceneBody*, uint32_t>>;
+    
+    SceneBodyList operator()(const JsonValue& jsonRoot);
     
 private:
     struct Node;
     struct Context
     {
-        std::vector<SceneBody*>* bodyList;
+        SceneBodyList* bodyList;
         gfx::NodeJsonLoader* gfxJsonLoader;
         SceneObjectJsonLoader* sceneObjectJsonLoader;
         Entity entity;

@@ -42,9 +42,10 @@ namespace cinek {
         class NavPathQueryPool;
         class NavPathQuery;
         
-        struct TransformContainer;
+        struct TransformAction;
         struct TransformSet;
         class TransformBody;
+        class TransformSystem;
         class NavBody;
         class NavBodyTransform;
         class NavSceneBodyTransform;

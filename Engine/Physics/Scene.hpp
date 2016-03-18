@@ -35,7 +35,13 @@ namespace cinek {
 class Scene
 {
 public:
-    Scene(btIDebugDraw* debugDrawer=nullptr);
+    struct InitParams
+    {
+        int staticLimit;
+        std::array<int, SceneBody::kNumCategories> limits;
+    };
+        
+    Scene(const InitParams& initParams, btIDebugDraw* debugDrawer=nullptr);
     ~Scene();
 
     /**
@@ -71,7 +77,7 @@ public:
     /**
      *  Removes the body from the Scene.
      */
-    SceneBody* detachBody(Entity entity, uint32_t categories=SceneBody::kAllCategories);
+    SceneBody* detachBody(Entity entity);
     /**
      *  @param  entity  What entity to find a body for
      */
@@ -85,7 +91,9 @@ public:
      */
     SceneRayTestResult rayTestClosest(const btVector3& origin,
         const btVector3& dir,
-        btScalar dist) const;
+        btScalar dist,
+        uint16_t includeFilters = SceneBody::kAllFilter,
+        uint16_t excludeFilters = 0) const;
     
     /**
      *  Retrieve body objects using a filter and category mask.
@@ -105,7 +113,7 @@ private:
     
     SceneBodyContainer _bodies;
 
-    std::array<SceneBodyContainer, 32> _containers;
+    std::array<SceneBodyContainer, SceneBody::kNumCategories> _containers;
     
     SceneBodyContainer::iterator sceneContainerLowerBound
     (

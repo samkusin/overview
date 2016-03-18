@@ -17,6 +17,7 @@
 #include "Engine/Controller/NavSystem.hpp"
 #include "Game/NavDataContext.hpp"
 #include "Game/TransformDataContext.hpp"
+#include "Engine/Controller/TransformSystem.hpp"
 
 #include "GameEntityFactory.hpp"
 
@@ -88,7 +89,13 @@ PrototypeApplication::PrototypeApplication
     
     _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
     _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
-    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
+    
+    ove::Scene::InitParams sceneInitParams;
+    sceneInitParams.staticLimit = 1024;
+    sceneInitParams.limits[ove::SceneBody::kSection] = 64;
+    sceneInitParams.limits[ove::SceneBody::kDynamic] = 1024;
+    
+    _scene = cinek::allocate_unique<ove::Scene>(sceneInitParams, _sceneDbgDraw.get());
 
     _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
     _pathfinderDebug = cinek::allocate_unique<ove::PathfinderDebug>(64);
@@ -104,9 +111,13 @@ PrototypeApplication::PrototypeApplication
     
     TransformDataContext::InitParams transformInitParams;
     transformInitParams.setCount = 128;
-    transformInitParams.containerCount = transformInitParams.setCount * 2;
-    transformInitParams.sequenceCount = transformInitParams.containerCount * 8;
+    transformInitParams.actionCount = transformInitParams.setCount * 2;
+    transformInitParams.sequenceCount = transformInitParams.actionCount * 8;
     _transformDataContext = cinek::allocate_unique<TransformDataContext>(transformInitParams);
+    
+    ove::TransformSystem::InitParams transformSystemParams;
+    transformSystemParams.numBodies = 128;
+    _transformSystem = cinek::allocate_unique<ove::TransformSystem>(transformSystemParams);
     
     _componentFactory = allocate_unique<GameEntityFactory>(
         _gfxContext,
@@ -115,7 +126,8 @@ PrototypeApplication::PrototypeApplication
         _renderGraph.get(),
         _navDataContext.get(),
         _navSystem.get(),
-        _transformDataContext.get()
+        _transformDataContext.get(),
+        _transformSystem.get()
     );
     
     _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,

@@ -15,6 +15,7 @@
 #include <bullet/LinearMath/btVector3.h>
 #include <bullet/LinearMath/btMatrix3x3.h>
 #include <bullet/LinearMath/btQuaternion.h>
+#include <bullet/BulletCollision/BroadphaseCollision/btBroadphaseProxy.h>
 
 class btTransform;
 class btCollisionObject;
@@ -34,13 +35,35 @@ struct SceneBody
 {
     enum Category
     {
-        kSection            = 0x00,
-        kObject             = 0x01
+        kSection,
+        kDynamic,
+        kStaging,
+        kNumCategories
     };
 
-    bool isInCategory(Category c) const {
-        return (categoryMask & (1<<c)) != 0;
-    }
+    enum Flags
+    {
+        kIsSection          = 1 << kSection,
+        kIsDynamic          = 1 << kDynamic,
+        kIsStaging          = 1 << kStaging,
+        kAllCategories      = 0xffffffff
+    };
+        
+    enum Filters
+    {
+        //  bullet filters
+        kDefaultFilter      = btBroadphaseProxy::DefaultFilter,
+        kStaticFilter       = btBroadphaseProxy::StaticFilter,
+        
+        //  custom filters
+        kStagingFilter      = 256,
+        
+        //  all filters
+        kAllFilter          = -1
+    };
+
+    bool checkFlags(uint32_t flags) const;
+    uint32_t getCategoryMask() const { return categoryMask; }
 
     const SceneFixedBodyHull* getFixedHull() const;
     
@@ -65,17 +88,14 @@ public:
     btVector3 angularVelocity;
     
     Entity entity = 0;
+    ckm::scalar mass = 0;
     
-    enum
-    {
-        kIsSection          = 1 << kSection,
-        kIsObject           = 1 << kObject,
-        kAllCategories      = 0xffffffff
-    };
-    
-    uint32_t categoryMask = 0;
     bool transformChanged = false;
     bool velocityChanged = false;
+    
+private:
+    friend class Scene;
+    uint32_t categoryMask = 0;
 };
    
 struct SceneRayTestResult

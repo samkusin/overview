@@ -34,13 +34,13 @@ TransformSequence::TransformSequence(TransformProperty prop, int kfcount) :
 {
 }
 
-TransformContainer::TransformContainer() :
+TransformAction::TransformAction() :
     __prevListNode(nullptr),
     __nextListNode(nullptr)
 {
 }
 
-TransformContainer::TransformContainer(std::string n) :
+TransformAction::TransformAction(std::string n) :
     name(std::move(n)),
     __prevListNode(nullptr),
     __nextListNode(nullptr)

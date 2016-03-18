@@ -7,42 +7,45 @@
 //
 
 #include "TransformDataContext.hpp"
+#include "TransformBody.hpp"
 
 #include <cinek/objectpool.inl>
 
 namespace cinek {
 
-template class ObjectPool<ove::TransformContainer>;
+template class ObjectPool<ove::TransformAction>;
 template class ObjectPool<ove::TransformSequence>;
-    
+template class ObjectPool<ove::TransformBody>;
+
 TransformDataContext::TransformDataContext(InitParams params) :
     _sequencePool(params.sequenceCount),
-    _containerPool(params.containerCount),
+    _actionPool(params.actionCount),
     _setPool(params.setCount),
-    _setDict()
+    _setDict(),
+    _bodyPool(params.bodyCount)
 {
 }
 
-ove::TransformSequence* TransformDataContext::createSequence()
+ove::TransformSequence* TransformDataContext::allocateSequence()
 {
     ove::TransformSequence* seq = _sequencePool.construct();
     return seq;
 }
 
-void TransformDataContext::destroySequence(ove::TransformSequence* seq)
+void TransformDataContext::freeSequence(ove::TransformSequence* seq)
 {
     _sequencePool.destruct(seq);
 }
 
-ove::TransformContainer* TransformDataContext::createContainer()
+ove::TransformAction* TransformDataContext::allocateAction()
 {
-    ove::TransformContainer* container = _containerPool.construct();
+    ove::TransformAction* container = _actionPool.construct();
     return container;
 }
 
-void TransformDataContext::destroyContainer(ove::TransformContainer* container)
+void TransformDataContext::freeAction(ove::TransformAction* container)
 {
-    _containerPool.destruct(container);
+    _actionPool.destruct(container);
 }
 
 ove::TransformSetHandle TransformDataContext::registerSet
@@ -61,6 +64,20 @@ ove::TransformSetHandle TransformDataContext::findSet(const std::string& name) c
         return nullptr;
     
     return it->second;
+}
+
+ove::TransformBody* TransformDataContext::allocateBody
+(
+    Entity entity,
+    ove::TransformSetHandle setHandle
+)
+{
+    return _bodyPool.construct(entity, setHandle);
+}
+
+void TransformDataContext::freeBody(ove::TransformBody* body)
+{
+    _bodyPool.destruct(body);
 }
     
     

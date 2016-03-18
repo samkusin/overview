@@ -47,27 +47,27 @@ struct TransformSequence
 };
 
 /**
- *  @struct TransformContainer
+ *  @struct TransformAction
  *  @brief  Represents a single transform action
  *  @detail This is a convenience container representing all sequences in
  *          an action.  They can be indexed
  */
-struct TransformContainer
+struct TransformAction
 {
-    TransformContainer();
-    TransformContainer(std::string n);
+    TransformAction();
+    TransformAction(std::string n);
     
     std::string name;
     intrusive_list<TransformSequence> sequenceList;
     
-    TransformContainer* __prevListNode;
-    TransformContainer* __nextListNode;
+    TransformAction* __prevListNode;
+    TransformAction* __nextListNode;
 };
 
 struct TransformSet
 {
     std::string name;
-    intrusive_list<TransformContainer> containerList;
+    intrusive_list<TransformAction> containerList;
 };
     
     } /* namespace ove */

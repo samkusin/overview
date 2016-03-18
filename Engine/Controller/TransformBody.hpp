@@ -29,9 +29,17 @@ namespace cinek {
  
  class TransformBody
  {
+ public:
+    TransformBody(Entity entity, TransformSetHandle setHandle);
+    
+    Entity entity() const {
+        return _entity;
+    }
+    
  private:
+    Entity _entity;
     CKTime _startTime;
-    TransformIndex _transformIndex;
+    TransformAction* _transformAnim;
     TransformSetHandle _transformSet;
  };
     

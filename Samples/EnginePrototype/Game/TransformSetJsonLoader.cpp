@@ -69,9 +69,9 @@ ove::TransformSet loadTranformSetFromJSON
          memberIt != json.MemberEnd();
          ++memberIt) {
         
-        auto container = context.createContainer();
+        auto container = context.allocateAction();
         container->name = memberIt->name.GetString();
-        *container = std::move(loadTransformContainerFromJSON(context, memberIt->value));
+        *container = std::move(loadTransformActionFromJSON(context, memberIt->value));
         
         set.containerList.push_back(container);
     }
@@ -79,20 +79,20 @@ ove::TransformSet loadTranformSetFromJSON
     return set;
 }
 
-ove::TransformContainer loadTransformContainerFromJSON
+ove::TransformAction loadTransformActionFromJSON
 (
     TransformDataContext& context,
     const JsonValue& json
 )
 {
-    ove::TransformContainer container;
+    ove::TransformAction container;
     
     for (auto memberIt = json.MemberBegin();
          memberIt != json.MemberEnd();
          ++memberIt) {
         auto& value = memberIt->value;
         if (value.IsArray()) {
-            auto sequence = context.createSequence();
+            auto sequence = context.allocateSequence();
             
             *sequence = loadTransformSequenceFromJSON(
                 context,

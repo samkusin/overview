@@ -39,7 +39,7 @@ GenerateRecastMesh::GenerateRecastMesh
     CK_ASSERT_RETURN((_indexData.size() % 3) == 0);
     
     //  TODO - configure?
-    const float kWalkableSlopeAngle = 45.0f;    // walkable slope (for stairways)
+    const float kWalkableSlopeAngle = 30.0f;    // walkable slope (for stairways)
     
     rcVcopy(_config.bmin, input.bmin);
     rcVcopy(_config.bmax, input.bmax);
@@ -49,11 +49,11 @@ GenerateRecastMesh::GenerateRecastMesh
     _config.walkableHeight = (int)(ceilf(config.walkableHeight / _config.ch));
     _config.walkableClimb = (int)(floorf(config.walkableClimb / _config.ch));
     _config.walkableRadius = (int)(ceilf(config.walkableRadius / _config.cs));
-    _config.minRegionArea = (int)rcSqr(5);      // remove small areas (cells)
-    _config.mergeRegionArea = (int)rcSqr(10);   // merge small areas (cells) into larger when possible
+    _config.minRegionArea = (int)rcSqr(4);      // remove small areas (cells)
+    _config.mergeRegionArea = (int)rcSqr(8);   // merge small areas (cells) into larger when possible
     _config.detailSampleDist = _config.cs * 6.0f;
     _config.detailSampleMaxError = _config.ch * 1.0f;
-    _config.maxEdgeLen = 12.0f/_config.cs;
+    _config.maxEdgeLen = 10.0f/_config.cs;
     _config.maxSimplificationError = 1.0f;
     _config.maxVertsPerPoly = 6;
     

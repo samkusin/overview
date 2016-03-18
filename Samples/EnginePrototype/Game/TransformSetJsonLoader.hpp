@@ -23,7 +23,7 @@ ove::TransformSet loadTranformSetFromJSON
     const JsonValue& json
 );
 
-ove::TransformContainer loadTransformContainerFromJSON
+ove::TransformAction loadTransformActionFromJSON
 (
     TransformDataContext& context,
     const JsonValue& json

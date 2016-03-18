@@ -161,6 +161,10 @@ void SceneBody::getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const
     ckmFromBt(pos, t.getOrigin());
 }
 
+bool SceneBody::checkFlags(uint32_t flags) const
+{
+    return (categoryMask & flags) != 0;
+}
   
   
     } /* namespace ove */

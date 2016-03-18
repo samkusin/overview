@@ -29,7 +29,8 @@ public:
         ove::RenderGraph* renderGraph,
         NavDataContext* navDataContext,
         ove::NavSystem* navSystem,
-        TransformDataContext* transformDataContext
+        TransformDataContext* transformDataContext,
+        ove::TransformSystem* transformSystem
     );
                       
     virtual void onCustomComponentCreateFn(Entity entity,
@@ -51,6 +52,7 @@ private:
     NavDataContext* _navDataContext;
     ove::NavSystem* _navSystem;
     TransformDataContext* _transformDataContext;
+    ove::TransformSystem* _transformSystem;
 };
 
 }

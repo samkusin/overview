@@ -43,14 +43,26 @@ auto Scene::sceneContainerLowerBound
     return it;
 }
 
-Scene::Scene(btIDebugDraw* debugDrawer) :
+Scene::Scene
+(
+    const InitParams& initParams, 
+    btIDebugDraw* debugDrawer
+) :
     _simulateDynamics(true),
     _btCollisionDispatcher(&_btCollisionConfig),
     _btWorld(&_btCollisionDispatcher,
              &_btBroadphase,
              &_btCollisionConfig)
 {
-    _bodies.reserve(256);
+    int count = initParams.staticLimit;
+    
+    CK_ASSERT(initParams.limits.size() == _containers.size());
+    
+    for (int i = 0; i < initParams.limits.size(); ++i) {
+        _containers[i].reserve(initParams.limits[i]);
+        count += initParams.limits[i];
+    }
+    _bodies.reserve(count);
     
     _btWorld.setDebugDrawer(debugDrawer);
 }
@@ -66,7 +78,7 @@ void Scene::simulate(CKTimeDelta dt)
     if (_simulateDynamics) {
     
         for (auto& body : _bodies) {
-            if (body->isInCategory(SceneBody::kObject)) {
+            if (body->checkFlags(SceneBody::kIsDynamic)) {
                 if (body->transformChanged || body->velocityChanged) {
                     btTransform& transform = body->btBody->getWorldTransform();
                     
@@ -146,8 +158,35 @@ SceneBody* Scene::attachBody
         }
 
         body->btBody->setUserPointer(body);
+        
+        if ((categories & SceneBody::kIsDynamic) != 0) {
+            body->btBody->setCollisionFlags(0);
+        }
+        else {
+            body->btBody->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        }
+        
+        short btGroup = 0, btMask = 0;
+        
+        if ((categories & SceneBody::kIsStaging) != 0) {
+            //  staged bodies collide with everything
+            btGroup = SceneBody::kStagingFilter;
+            btMask = SceneBody::kAllFilter;
+        }
+        else if ((categories & SceneBody::kIsDynamic) != 0) {
+            //  bodies collide with everything
+            /// note, this could be a bit more granular as needed
+            btGroup = SceneBody::kDefaultFilter;
+            btMask = SceneBody::kAllFilter;
+        }
+        else {
+            //  statics do not collide with each other
+            btGroup = SceneBody::kStaticFilter;
+            btMask = SceneBody::kAllFilter ^ SceneBody::kStaticFilter;
+        }
+        
         it = _bodies.emplace(it, body);
-        _btWorld.addCollisionObject(body->btBody);
+        _btWorld.addCollisionObject(body->btBody, btGroup, btMask);
         
         if (body->motionState) {
             btTransform btTransform;
@@ -179,16 +218,15 @@ SceneBody* Scene::attachBody
 
 SceneBody* Scene::detachBody
 (
-    Entity entity,
-    uint32_t categories
+    Entity entity
 )
 {
     SceneBody* body = nullptr;
     uint32_t index = 0;
 
     //  remove from all categories
-    uint32_t categoryMask = categories;
-    while (categoryMask && (body && body->categoryMask)) {
+    uint32_t categoryMask = SceneBody::kAllCategories;
+    while (categoryMask && (body && body->getCategoryMask())) {
         if ((categoryMask & 1) != 0) {
             auto& container = _containers[index];
             auto it = sceneContainerLowerBound(container, entity);
@@ -203,22 +241,20 @@ SceneBody* Scene::detachBody
     }
     
     //  remove from the global list
-    if ((body && !body->categoryMask) || categories == SceneBody::kAllCategories) {
-        auto it = std::lower_bound(_bodies.begin(), _bodies.end(), entity,
-            [](const SceneBody* obj0, Entity e) -> bool {
-                return obj0->entity < e;
-            });
-        
-        CK_ASSERT_RETURN_VALUE(it != _bodies.end() && (*it)->entity == entity, nullptr);
-        CK_ASSERT(!body || body == *it);
-        
-        body = *it;
+    auto it = std::lower_bound(_bodies.begin(), _bodies.end(), entity,
+        [](const SceneBody* obj0, Entity e) -> bool {
+            return obj0->entity < e;
+        });
     
-        auto obj = body->btBody;
+    CK_ASSERT_RETURN_VALUE(it != _bodies.end() && (*it)->entity == entity, nullptr);
+    CK_ASSERT(!body || body == *it);
     
-        _btWorld.removeCollisionObject(obj);
-        _bodies.erase(it);
-    }
+    body = *it;
+
+    auto obj = body->btBody;
+
+    _btWorld.removeCollisionObject(obj);
+    _bodies.erase(it);
     
     return body;
 }
@@ -270,7 +306,9 @@ SceneRayTestResult Scene::rayTestClosest
 (
     const btVector3& origin,
     const btVector3& dir,
-    float dist
+    float dist,
+    uint16_t includeFilters,
+    uint16_t excludeFilters
 )
 const
 {
@@ -282,6 +320,7 @@ const
     
     btCollisionWorld::ClosestRayResultCallback cb(origin, to);
     cb.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+    cb.m_collisionFilterMask = includeFilters ^ excludeFilters;
     
     _btWorld.rayTest(origin, to, cb);
     

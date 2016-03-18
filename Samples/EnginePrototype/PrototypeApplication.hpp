@@ -96,6 +96,7 @@ private:
     unique_ptr<ove::NavSystem> _navSystem;
     
     unique_ptr<TransformDataContext> _transformDataContext;
+    unique_ptr<ove::TransformSystem> _transformSystem;
     
     unique_ptr<GameEntityFactory> _componentFactory;
     

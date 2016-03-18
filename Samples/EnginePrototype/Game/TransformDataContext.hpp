@@ -21,27 +21,32 @@ public:
     struct InitParams
     {
         int setCount;
-        int containerCount;
+        int actionCount;
         int sequenceCount;
+        int bodyCount;
     };
     
     TransformDataContext(InitParams params);
     
-    ove::TransformSequence* createSequence();
-    void destroySequence(ove::TransformSequence* seq);
+    ove::TransformSequence* allocateSequence();
+    void freeSequence(ove::TransformSequence* seq);
     
-    ove::TransformContainer* createContainer();
-    void destroyContainer(ove::TransformContainer* container);
+    ove::TransformAction* allocateAction();
+    void freeAction(ove::TransformAction* container);
     
     ove::TransformSetHandle registerSet(ove::TransformSet&& set, std::string name);
     ove::TransformSetHandle findSet(const std::string& name) const;
     
+    ove::TransformBody* allocateBody(Entity entity, ove::TransformSetHandle setHandle);
+    void freeBody(ove::TransformBody* body);
     
 private:
     ObjectPool<ove::TransformSequence> _sequencePool;
-    ObjectPool<ove::TransformContainer> _containerPool;
+    ObjectPool<ove::TransformAction> _actionPool;
     ove::TransformSetPool _setPool;
     ove::TransformSetDictionary _setDict;
+    
+    ObjectPool<ove::TransformBody> _bodyPool;
 };
     
 } /* namespace cinek */
