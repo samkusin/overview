@@ -89,7 +89,7 @@ void SceneBody::setPosition
     btVector3 up
 )
 {
-    CK_ASSERT(this->btBody->isStaticOrKinematicObject());
+    //CK_ASSERT(this->btBody->isStaticOrKinematicObject());
 
     btVector3 forward(0,0,1);
     

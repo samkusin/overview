@@ -72,6 +72,14 @@ struct OUIListBoxData
     static void handler(int item, UIevent event);
 };
 
+void initLayout(int w, int h, UIContext* context);
+int getLayoutRootItem();
+void finalizeLayout(UIContext* context);
+
+int createFrameLayout(unsigned int eventFlags, FrameState* frameState,
+    RenderCallback renderCb,
+    void* context);
+
 } /* namespace uicore */ } /* namespace cinek */
 
 #endif /* defined(Overview_UI_Engine_hpp) */

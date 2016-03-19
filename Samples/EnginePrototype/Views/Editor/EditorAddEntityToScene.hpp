@@ -43,7 +43,6 @@ private:
     virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
 private:    
-    uicore::FrameState _sceneFrameState;
     uicore::ListboxState _entityTemplateListboxState;
     Entity _stagedEntity;
 

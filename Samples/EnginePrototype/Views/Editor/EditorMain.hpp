@@ -36,9 +36,6 @@ private:
     virtual const char* viewId() const override;
 
 private:
-    uicore::FrameState _frameState;
-    uicore::KeyEvent _frameKeyEvents[16];
-
     void layoutUI();
     void handleUI(ove::ViewStack& stateController);
 };

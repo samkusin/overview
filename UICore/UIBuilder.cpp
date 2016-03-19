@@ -69,22 +69,9 @@ Layout& Layout::beginFrame
 )
 {
     pushTop();
-    
-    _topItem = uiItem();
+ 
+    _topItem = createFrameLayout(eventFlags, frameState, renderCb, context);
     _topLayout = UI_FILL;   // to be set or altered upon end()
-    
-    uiSetBox(_topItem, UI_LAYOUT);
-    uiSetEvents(_topItem, eventFlags);
-    
-    OUIFrame* data = reinterpret_cast<OUIFrame*>(
-        uiAllocHandle(_topItem, sizeof(OUIFrame))
-    );
-    data->header.itemType = OUIItemType::frame;
-    data->header.handler = OUIFrame::handler;
-    data->renderCb = renderCb;
-    data->callbackContext = context;
-    data->state = frameState;
-    data->state->init(_topItem);
     
     return *this;
 }
@@ -115,6 +102,24 @@ Layout& Layout::beginColumn()
     _topLayout = UI_VFILL;  // to be set or altered upon end()
     
     uiSetBox(_topItem, UI_COLUMN);
+    
+    OUIHeader* header = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    );
+    header->itemType = OUIItemType::column;
+    header->handler = nullptr;
+
+    return *this;
+}
+
+Layout& Layout::beginRow()
+{
+    pushTop();
+    
+    _topItem = uiItem();
+    _topLayout = UI_HFILL;  // to be set or altered upon end()
+    
+    uiSetBox(_topItem, UI_ROW);
     
     OUIHeader* header = reinterpret_cast<OUIHeader*>(
         uiAllocHandle(_topItem, sizeof(OUIHeader))
@@ -234,6 +239,9 @@ Layout& Layout::end()
         }
         */
         uiInsert(_topItem, child);
+    }
+    else {
+        uiInsert(uicore::getLayoutRootItem(), child);
     }
     return *this;
 }

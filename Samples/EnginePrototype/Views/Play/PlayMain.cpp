@@ -62,6 +62,7 @@ const char* PlayMain::viewId() const
 
 void PlayMain::layoutUI()
 {
+    /*
     //  layout UI
     uicore::Layout::Style style;
     style.mask = uicore::Layout::Style::has_margins;
@@ -69,23 +70,16 @@ void PlayMain::layoutUI()
     
     uicore::Layout uiLayout;
     
-    _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
-    _frameState.keyEvents = _frameKeyEvents;
     
-    auto frameWidth = renderContext().frameRect.w;
-    auto frameHeight = renderContext().frameRect.h;
-    
-    uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
-        .setSize(frameWidth, frameHeight);
-    uiLayout.end();
-    
-    uiService().setKeyboardFocusToItem(_frameState.thisItem);
+    auto frameWidth = uiService().frame().width();
+    auto frameHeight = uiService().frame().height();
+    */
 }
 
 void PlayMain::handleUI(ove::ViewStack& stateController)
 {
     uicore::KeyEvent keyEvt;
-    while ((keyEvt = _frameState.popKey())) {
+    while ((keyEvt = uiService().frame().popKey())) {
     
         if (keyEvt.mod & KMOD_SHIFT) {
         
@@ -99,7 +93,7 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
     }
     
     //  main frame selections
-    if (_frameState.evtType == UI_BUTTON0_DOWN) {
+    if (uiService().frame().eventType() == UI_BUTTON0_DOWN) {
     
         auto& rayTestResult = sceneRayTestResult();
         if (rayTestResult) {

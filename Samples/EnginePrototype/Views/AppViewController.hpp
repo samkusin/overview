@@ -25,7 +25,7 @@ struct ApplicationContext
 {
     NVGcontext* nvg;
     TaskScheduler* taskScheduler;
-    UIContext *uiContext;
+    uicore::UIContext *uiContext;
     
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;

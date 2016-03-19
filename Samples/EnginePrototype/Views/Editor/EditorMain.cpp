@@ -62,30 +62,20 @@ const char* EditorMain::viewId() const
 
 void EditorMain::layoutUI()
 {
+    /*
     //  layout UI
     uicore::Layout::Style style;
     style.mask = uicore::Layout::Style::has_margins;
     style.margins = { 8, 8, 8, 8 };
     
     uicore::Layout uiLayout;
-    
-    _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
-    _frameState.keyEvents = _frameKeyEvents;
-    
-    auto frameWidth = renderContext().frameRect.w;
-    auto frameHeight = renderContext().frameRect.h;
-    
-    uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
-        .setSize(frameWidth, frameHeight);
-    uiLayout.end();
-    
-    uiService().setKeyboardFocusToItem(_frameState.thisItem);
+    */
 }
 
 void EditorMain::handleUI(ove::ViewStack& stateController)
 {
     uicore::KeyEvent keyEvt;
-    while ((keyEvt = _frameState.popKey())) {
+    while ((keyEvt = uiService().frame().popKey())) {
     
         //  Modifier Commands
         if (keyEvt.mod & KMOD_SHIFT) {

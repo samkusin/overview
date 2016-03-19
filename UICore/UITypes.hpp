@@ -18,22 +18,6 @@ typedef struct NVGcontext NVGcontext;
 
 namespace cinek {
 
-struct UIContext
-{
-    int keyFocusItem;
-};
-
-class UIService
-{
-public:
-    UIService(UIContext* context);
-    
-    void setKeyboardFocusToItem(int item);
-    
-private:
-    UIContext* _context;
-};
-
 namespace uicore {
 
 struct InputState;
@@ -136,6 +120,13 @@ struct FrameState
 };
 
 
+struct UIContext
+{
+    FrameState frameState;
+    KeyEvent frameKeyEvents[16];
+    int keyFocusItem;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 //  UI Subscriber class
 
@@ -209,5 +200,37 @@ public:
 typedef void (*RenderCallback)(void* context, NVGcontext* nvg);
 
 } /* namespace uicore */ } /* namespace cinek */
+
+namespace cinek {
+
+class UIService
+{
+public:
+    UIService(uicore::UIContext* context);
+    
+    class Frame
+    {
+    public:
+        Frame(uicore::FrameState* frameState);
+        int width() const;
+        int height() const;
+        int item() const;
+        
+        UIevent eventType() const;
+        uicore::KeyEvent popKey();
+
+    private:
+        uicore::FrameState* _frameState;
+    };
+    
+    Frame frame() { return Frame(&_context->frameState); }
+    
+    void setKeyboardFocusToItem(int item);
+    
+private:
+    uicore::UIContext* _context;
+};
+
+}
 
 #endif

@@ -134,12 +134,10 @@ void EditorAddEntityToScene::frameUpdateView
     style.margins = { 8, 8, 8, 8 };
     
     uicore::Layout uiLayout;
-    auto frameWidth = renderContext().frameRect.w;
-    auto frameHeight = renderContext().frameRect.h;
     
-    uiLayout.beginFrame(UI_BUTTON0_DOWN, &_sceneFrameState, nullptr, nullptr)
-        .setSize(frameWidth, frameHeight);
-    
+    auto frameWidth = uiService().frame().width();
+    auto frameHeight = uiService().frame().height();
+  
     if (_displayTemplateSelector) {
         uiLayout.beginColumn()
             .setLayout(UI_RIGHT | UI_VCENTER)
@@ -152,8 +150,6 @@ void EditorAddEntityToScene::frameUpdateView
             .end()
         .end();
     }
-    
-    uiLayout.end();
     
     if (inputState.testKey(SDL_SCANCODE_ESCAPE)) {
         stateController.present("EditorMain");
@@ -186,7 +182,7 @@ void EditorAddEntityToScene::onViewEndFrame(ove::ViewStack& stateController)
         }
     }
     else if (_stagedEntity) {
-        if (_sceneFrameState.evtType == UI_BUTTON0_DOWN) {
+        if (uiService().frame().eventType() == UI_BUTTON0_DOWN) {
             entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
             stateController.present("EditorMain");
         }

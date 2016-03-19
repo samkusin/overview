@@ -27,6 +27,7 @@
 
 #include "PrototypeApplication.hpp"
 
+#include "UICore/UIEngine.hpp"
 #include "UICore/oui.h"
 
 #include <bgfx/bgfx.h>
@@ -220,7 +221,7 @@ void PrototypeApplication::renderFrame
     const cinek::uicore::InputState& inputState
 )
 {
-    uiBeginLayout();
+    uicore::initLayout(viewRect.w, viewRect.h, &_uiContext);
     
     _taskScheduler.update(dt * 1000);
     
@@ -232,11 +233,7 @@ void PrototypeApplication::renderFrame
         
     _gfxContext->update();
     
-    uiEndLayout();
-    
-    if (_uiContext.keyFocusItem >= 0) {
-        uiFocus(_uiContext.keyFocusItem);
-    }
+    uicore::finalizeLayout(&_uiContext);
 }
 
 void PrototypeApplication::endFrame()

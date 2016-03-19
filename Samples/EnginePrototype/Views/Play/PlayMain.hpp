@@ -34,10 +34,7 @@ private:
     
     virtual const char* viewId() const override;
 
-private:    
-    uicore::FrameState _frameState;
-    uicore::KeyEvent _frameKeyEvents[16];
-    
+private:
     Entity _focusedEntity;
     
     void layoutUI();
