@@ -20,7 +20,11 @@ namespace cinek {
 
 namespace uicore {
 
+struct System;
 struct InputState;
+struct Context;
+
+class Layout;
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Generalized Theme defines
@@ -47,6 +51,7 @@ enum
     UITHEME_CORNER_ALL      = BND_CORNER_ALL
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //  UI Types
 
@@ -58,6 +63,11 @@ enum class ListboxType
 struct Box
 {
     int t, r, b, l;
+};
+
+struct Color
+{
+    
 };
 
 struct KeyEvent
@@ -119,13 +129,6 @@ struct FrameState
     }
 };
 
-
-struct UIContext
-{
-    FrameState frameState;
-    KeyEvent frameKeyEvents[16];
-    int keyFocusItem;
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 //  UI Subscriber class
@@ -201,36 +204,5 @@ typedef void (*RenderCallback)(void* context, NVGcontext* nvg);
 
 } /* namespace uicore */ } /* namespace cinek */
 
-namespace cinek {
-
-class UIService
-{
-public:
-    UIService(uicore::UIContext* context);
-    
-    class Frame
-    {
-    public:
-        Frame(uicore::FrameState* frameState);
-        int width() const;
-        int height() const;
-        int item() const;
-        
-        UIevent eventType() const;
-        uicore::KeyEvent popKey();
-
-    private:
-        uicore::FrameState* _frameState;
-    };
-    
-    Frame frame() { return Frame(&_context->frameState); }
-    
-    void setKeyboardFocusToItem(int item);
-    
-private:
-    uicore::UIContext* _context;
-};
-
-}
 
 #endif

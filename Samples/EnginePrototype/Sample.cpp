@@ -132,7 +132,7 @@ int runSample(int viewWidth, int viewHeight)
         //  Application
         //
         cinek::PrototypeApplication controller(gfxContext, shaderPrograms, shaderUniforms,
-                                               nvg);
+                                               nvg, uiContext);
 
         const double kSimFPS = 60.0;
         const CKTimeDelta kSecsPerSimFrame = 1/kSimFPS;

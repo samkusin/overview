@@ -15,7 +15,7 @@
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/Controller/NavSystem.hpp"
 
-#include "UICore/UIBuilder.hpp"
+#include "UICore/UIService.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Geometry.hpp"
@@ -150,31 +150,25 @@ void EditorView::frameUpdateView
     const cinek::uicore::InputState& inputState
 )
 {
-    //  layout UI
-    uicore::Layout::Style style;
-    style.mask = uicore::Layout::Style::has_margins;
-    style.margins = { 8, 8, 8, 8 };
-    
+    //  layout UI    
     auto frameWidth = renderContext().frameRect.w;
     auto frameHeight = renderContext().frameRect.h;
     
-    uicore::Layout uiLayout;
-    
-    uiLayout.beginRow();
-    
-    uiLayout.beginWindow()
-        .setSize(frameWidth/5, frameHeight)
-        .button(1, nullptr, BND_ICON_QUESTION, "Foo!", &style)
-        .button(2, nullptr, BND_ICON_ANIM, "Anim", &style)
+    uicore::Layout uiLayout = uiService().createLayout();
+
+    uiLayout.beginWindow("Left")
+        .setMargins(20,20,0,0)
+        .setSize(frameWidth * 0.25, frameHeight * 0.75)
+        .button(1, nullptr, BND_ICON_QUESTION, "Foo!")
+        .button(2, nullptr, BND_ICON_ANIM, "Anim")
     .end();
 
-    uiLayout.beginWindow()
-        .setSize(frameWidth/5, frameHeight)
+    /*
+    uiLayout.beginWindow("Right")
         .button(1, nullptr, BND_ICON_QUESTION, "Fee!", &style)
         .button(2, nullptr, BND_ICON_ANIM, "Crap", &style)
     .end();
-
-    uiLayout.end();
+    */
     
     
     _freeCameraController.handleCameraInput(camera(), inputState, dt);

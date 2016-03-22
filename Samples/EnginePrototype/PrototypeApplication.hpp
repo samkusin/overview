@@ -13,7 +13,7 @@
 #include "Common.hpp"
 #include "ResourceFactory.hpp"
 
-#include "UICore/UITypes.hpp"
+#include "UICore/UIEngine.hpp"
 
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
@@ -46,7 +46,8 @@ public:
         gfx::Context& gfxContext,
         const gfx::NodeRenderer::ProgramMap& programs,
         const gfx::NodeRenderer::UniformMap& uniforms,
-        NVGcontext* nvg
+        NVGcontext* nvg,
+        UIcontext* ouiContext
     );
     ~PrototypeApplication();
     
@@ -78,7 +79,7 @@ private:
     
     gfx::NodeRenderer _renderer;
     NVGcontext* _nvg;
-    uicore::UIContext _uiContext;
+    uicore::Context _uiContext;
     
     unique_ptr<ove::RenderGraph> _renderGraph;
     ove::RenderContext _renderContext;

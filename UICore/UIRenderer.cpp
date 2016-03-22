@@ -48,11 +48,6 @@ void destroyRenderingContext(NVGcontext* nvg)
     nvgDelete(nvg);
 }
 
-
-static void renderItems(NVGcontext* context, int parent);
-static void renderItemsVertical(NVGcontext* context, int parent);
-
-
 static void renderListbox
 (
     OUIListBoxData* lbcontext,
@@ -205,7 +200,7 @@ static void renderListbox
 
 static void renderWindow
 (
-    OUIHeader* header,
+    OUIWindow* data,
     NVGcontext* nvg,
     const UIrect& rect,
     int item
@@ -217,14 +212,14 @@ static void renderWindow
 	
 	nvgSave(nvg);
 	//	nvgClearState(vg);
-
-	// Window
+    
+    // Window
 	nvgBeginPath(nvg);
 	nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
 	nvgFillColor(nvg, nvgRGBA(28,30,34,192) );
 	//	nvgFillColor(vg, nvgRGBA(0,0,0,128) );
 	nvgFill(nvg);
-
+    
 	// Drop shadow
 	shadowPaint = nvgBoxGradient(nvg, rect.x, rect.y+2, rect.w, rect.h,
         kCornerRadius*2, 10, nvgRGBA(0,0,0,128), nvgRGBA(0,0,0,0) );
@@ -235,8 +230,26 @@ static void renderWindow
 	nvgFillPaint(nvg, shadowPaint);
 	nvgFill(nvg);
 
+    // Title Bar
+    if (data->title && *data->title) {
+        nvgBeginPath(nvg);
+        nvgRoundedRect(nvg, rect.x, rect.y, rect.w, UITHEME_WIDGET_HEIGHT, kCornerRadius);
+        nvgFillColor(nvg, nvgRGBA(0,0,0,192) );
+        nvgFill(nvg);
+        
+        // Title
+         
+        nvgFillColor(nvg, BND_COLOR_TEXT);
+        nvgText(nvg, 1, 1, data->title, nullptr);
+    }
+
 	nvgRestore(nvg);
 }
+
+
+static void renderItems(NVGcontext* context, int parent);
+static void renderItemsVertical(NVGcontext* context, int parent);
+static void renderItemsHorizontal(NVGcontext* context, int parent);
 
 static void renderItem
 (
@@ -261,12 +274,18 @@ static void renderItem
                 renderItems(context, item);
             }
             break;
+        case OUIItemType::group:
+            renderItems(context, item);
+            break;
         case OUIItemType::column:
             renderItemsVertical(context, item);
             break;
+        case OUIItemType::row:
+            renderItemsHorizontal(context, item);
+            break;
         case OUIItemType::window:
             {
-                renderWindow(header, context, rect, item);
+                renderWindow(reinterpret_cast<OUIWindow*>(header), context, rect, item);
                 renderItems(context, item);
             }
             break;
@@ -329,6 +348,37 @@ static void renderItemsVertical
     }
     
     renderItem(context, id, UITHEME_CORNER_BOTTOM);
+}
+
+static void renderItemsHorizontal
+(
+    NVGcontext* context,
+    int parent
+)
+{
+    auto id = uiFirstChild(parent);
+    if (id < 0)
+        return;
+
+    auto nextid = uiNextSibling(id);
+    if (nextid < 0)
+    {
+        renderItem(context, id, UITHEME_CORNER_NONE);
+        return;
+    }
+    else
+    {
+        renderItem(context, id, UITHEME_CORNER_LEFT);
+    }
+    
+    id = nextid;
+    while ((nextid = uiNextSibling(id)) > 0)
+    {
+        renderItem(context, id, UITHEME_CORNER_ALL);
+        id = nextid;
+    }
+    
+    renderItem(context, id, UITHEME_CORNER_RIGHT);
 }
 /*
 void drawLines(struct NVGcontext* vg, float x, float y, float w, float h, float t)

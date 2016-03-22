@@ -12,10 +12,17 @@
 
 namespace cinek { namespace uicore {
 
-static int sUIRootItem = -1;
-
-void initLayout(int w, int h, UIContext* context)
+Context::Context(const InitParams& params) :
+    ouiContext(params.ouiContext),
+    rootItem(-1),
+    keyFocusItem(-1),
+    stringStack(params.stringStackSize)
 {
+}
+
+void initContext(int w, int h, Context* context)
+{
+    uiMakeCurrent(context->ouiContext);
     uiBeginLayout();
 
     context->frameState.keyEventLimit =
@@ -23,7 +30,7 @@ void initLayout(int w, int h, UIContext* context)
     context->frameState.keyEvents = context->frameKeyEvents;
         
     //  item 0 is our root UI item in which all UI is based
-    int rootItem = createFrameLayout(UI_BUTTON0_DOWN | UI_KEY_DOWN,
+    int rootItem = createFrame(context, UI_BUTTON0_DOWN | UI_KEY_DOWN,
         &context->frameState,
         nullptr,
         nullptr);
@@ -33,18 +40,14 @@ void initLayout(int w, int h, UIContext* context)
     //  sets the key focus to the master frame by default
     //  child layouts may override this item
     context->keyFocusItem = rootItem;
-    
-    sUIRootItem = rootItem;
+    context->rootItem = rootItem;
+
+    context->stringStack.reset();
 }
 
-int getLayoutRootItem()
+void finalizeContext(Context* context)
 {
-    return sUIRootItem;
-}
-
-void finalizeLayout(UIContext* context)
-{
-    uiSetLayout(sUIRootItem, UI_FILL);
+    uiSetLayout(context->rootItem, UI_FILL);
     
     uiEndLayout();
     
@@ -53,12 +56,13 @@ void finalizeLayout(UIContext* context)
     }
 }
 
-int createFrameLayout
+int createFrame
 (
+    Context*, 
     unsigned int eventFlags,
     FrameState* frameState,
     RenderCallback renderCb,
-    void* context
+    void* cbcontext
 )
 {
     int item = uiItem();
@@ -72,7 +76,7 @@ int createFrameLayout
     data->header.itemType = OUIItemType::frame;
     data->header.handler = OUIFrame::handler;
     data->renderCb = renderCb;
-    data->callbackContext = context;
+    data->callbackContext = cbcontext;
     data->state = frameState;
     data->state->init(item);
     

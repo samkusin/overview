@@ -14,7 +14,7 @@
 #include "Engine/AssetManifest.hpp"
 #include "Engine/ViewStack.hpp"
 
-#include "UICore/UIBuilder.hpp"
+#include "UICore/UIService.hpp"
 
 namespace cinek {
 
@@ -129,11 +129,7 @@ void EditorAddEntityToScene::frameUpdateView
 )
 {
     //  layout UI
-    uicore::Layout::Style style;
-    style.mask = uicore::Layout::Style::has_margins;
-    style.margins = { 8, 8, 8, 8 };
-    
-    uicore::Layout uiLayout;
+    uicore::Layout uiLayout = uiService().createLayout();
     
     auto frameWidth = uiService().frame().width();
     auto frameHeight = uiService().frame().height();
@@ -141,12 +137,11 @@ void EditorAddEntityToScene::frameUpdateView
     if (_displayTemplateSelector) {
         uiLayout.beginColumn()
             .setLayout(UI_RIGHT | UI_VCENTER)
-            .setSize(frameWidth/5, frameHeight*3/4)
-            .beginWindow()
+            .beginWindow("Templates")
+                .setSize(frameWidth * 0.2, frameHeight * 0.75)
                 .listbox(this, kUIProviderId_EntityTemplates,
                     uicore::ListboxType::kList,
-                    &_entityTemplateListboxState,
-                    &style)
+                    &_entityTemplateListboxState)
             .end()
         .end();
     }

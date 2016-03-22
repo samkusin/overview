@@ -41,24 +41,12 @@ namespace cinek { namespace uicore {
 class Layout
 {
 public:
-    Layout();
+    Layout(Context* context);
     ~Layout();
     
     struct Box
     {
         int l, t, r, b;
-    };
-    
-    struct Style
-    {
-        enum
-        {
-            has_layout = 0x0001,
-            has_margins = 0x0002
-        };
-        unsigned int mask;
-        unsigned int layout;
-        Box margins;
     };
     
     ///
@@ -78,7 +66,7 @@ public:
     ///
     /// Starts a vertical group of ui widgets - used for grouping.
     ///
-    Layout& beginWindow();
+    Layout& beginWindow(const char* title);
     ///
     /// Sets the size of the current UI region.
     ///
@@ -86,7 +74,7 @@ public:
     ///
     /// Sets the margins of the current UI region.
     ///
-    Layout& setMargins(Box box);
+    Layout& setMargins(int l, int t, int r, int b);
     ///
     /// Overrides the current item's layout
     ///
@@ -94,15 +82,13 @@ public:
     ///
     /// An individual button widget within the encompassing UI group.
     ///
-    Layout& button(int id, ButtonHandler* btnHandler, int iconId, const char* label,
-                   const Style* style=nullptr);
+    Layout& button(int id, ButtonHandler* btnHandler, int iconId, const char* label);
     ///
     /// A list box whose data is updated by events sent to the subscriber
     ///
     Layout& listbox(DataProvider* dataProvider, int providerId,
                     ListboxType lbtype,
-                    ListboxState* state,
-                    const Style* style=nullptr);
+                    ListboxState* state);
     ///
     /// Completes a layout group (frame, column)
     ///
@@ -116,9 +102,11 @@ public:
     int currentGroupItem() const { return _topItem; }
     
 private:
+    Context* _context;
     struct State
     {
         int item;
+        int innerItem;
         unsigned int layout;
     };
 
@@ -129,11 +117,11 @@ private:
     uint32_t _size;             // high bit, then _data contains a vector
     
     int _topItem;
+    int _innerItem;
     unsigned int _topLayout;
     
     void pushTop();
     void popItem();
-    void applyStyleToItem(int item, const Style* style, const Style* defaultStyle);
 };
 
 

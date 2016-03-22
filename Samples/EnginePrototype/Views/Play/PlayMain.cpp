@@ -14,7 +14,7 @@
 #include "Engine/Path/NavPathQuery.hpp"
 #include "Engine/ViewStack.hpp"
 
-#include "UICore/UIBuilder.hpp"
+#include "UICore/UIService.hpp"
 
 namespace cinek {
 

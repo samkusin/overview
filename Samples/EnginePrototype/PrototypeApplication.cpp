@@ -41,7 +41,8 @@ PrototypeApplication::PrototypeApplication
     gfx::Context& gfxContext,
     const gfx::NodeRenderer::ProgramMap& programs,
     const gfx::NodeRenderer::UniformMap& uniforms,
-    NVGcontext* nvg
+    NVGcontext* nvg,
+    UIcontext* ouiContext
 ) :
     _gfxContext(&gfxContext),
     _taskScheduler(64),
@@ -52,7 +53,8 @@ PrototypeApplication::PrototypeApplication
     _renderPrograms(programs),
     _renderUniforms(uniforms),
     _renderer(),
-    _nvg(nvg)
+    _nvg(nvg),
+    _uiContext({ ouiContext, 32*1024 })
 {
     gfx::NodeElementCounts sceneElementCounts;
     sceneElementCounts.meshNodeCount = 128;
@@ -221,7 +223,7 @@ void PrototypeApplication::renderFrame
     const cinek::uicore::InputState& inputState
 )
 {
-    uicore::initLayout(viewRect.w, viewRect.h, &_uiContext);
+    uicore::initContext(viewRect.w, viewRect.h, &_uiContext);
     
     _taskScheduler.update(dt * 1000);
     
@@ -233,7 +235,7 @@ void PrototypeApplication::renderFrame
         
     _gfxContext->update();
     
-    uicore::finalizeLayout(&_uiContext);
+    uicore::finalizeContext(&_uiContext);
 }
 
 void PrototypeApplication::endFrame()

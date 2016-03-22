@@ -11,7 +11,7 @@
 
 #include "UITypes.hpp"
 
-#include <cinek/vector.hpp>
+#include <cinek/cstringstack.hpp>
 
 namespace cinek { namespace uicore {
 
@@ -20,17 +20,27 @@ extern void OUIHandler(int item, UIevent evt);
 enum class OUIItemType
 {
     frame,
+    group,
     column,
+    row,
     window,
     button,
     listbox,
-    combobox
+    combobox,
+    titlebar
 };
+
 
 struct OUIHeader
 {
     OUIItemType itemType;
     UIhandler handler;
+};
+
+struct OUIWindow
+{
+    OUIHeader header;
+    const char* title;
 };
 
 struct OUIFrame
@@ -72,13 +82,31 @@ struct OUIListBoxData
     static void handler(int item, UIevent event);
 };
 
-void initLayout(int w, int h, UIContext* context);
-int getLayoutRootItem();
-void finalizeLayout(UIContext* context);
+struct Context
+{
+    struct InitParams
+    {
+        UIcontext* ouiContext;
+        size_t stringStackSize;
+    };
+    Context(const InitParams& params);
+    
+    UIcontext* ouiContext;
+    int rootItem;
+    int keyFocusItem;
+    FrameState frameState;
+    KeyEvent frameKeyEvents[16];
+    CStringStack stringStack;
+};
 
-int createFrameLayout(unsigned int eventFlags, FrameState* frameState,
+
+void initContext(int w, int h, Context* context);
+void finalizeContext(Context* context);
+
+int createFrame(Context* context, unsigned int eventFlags, FrameState* frameState,
     RenderCallback renderCb,
-    void* context);
+    void* cbcontext);
+    
 
 } /* namespace uicore */ } /* namespace cinek */
 

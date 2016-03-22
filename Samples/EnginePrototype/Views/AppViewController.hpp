@@ -11,7 +11,7 @@
 
 #include "GameTypes.hpp"
 #include "Common.hpp"
-#include "UICore/UITypes.hpp"
+#include "UICore/UIService.hpp"
 #include "CKGfx/NodeRenderer.hpp"
 #include "UICore/Input.hpp"
 #include "Engine/ViewController.hpp"
@@ -25,7 +25,7 @@ struct ApplicationContext
 {
     NVGcontext* nvg;
     TaskScheduler* taskScheduler;
-    uicore::UIContext *uiContext;
+    uicore::Context *uiContext;
     
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;

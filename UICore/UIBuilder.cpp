@@ -13,16 +13,6 @@
 
 namespace cinek { namespace uicore {
 
-static const Layout::Style kDefaultButtonStyle = {
-    Layout::Style::has_layout,
-    UI_HFILL,
-};
-
-static const Layout::Style kDefaultListboxStyle = {
-    Layout::Style::has_layout,
-    UI_FILL,
-};
-
 /*
     layout.frame(layout_flags).events(UI_BUTTON0_DOWN).size(w,h).
         end();
@@ -43,9 +33,11 @@ static const Layout::Style kDefaultListboxStyle = {
  
 */
 
-Layout::Layout() :
+Layout::Layout(Context* context) :
+    _context(context),
     _size(0),
     _topItem(-1),
+    _innerItem(-1),
     _topLayout(0)
 {
 }
@@ -70,26 +62,48 @@ Layout& Layout::beginFrame
 {
     pushTop();
  
-    _topItem = createFrameLayout(eventFlags, frameState, renderCb, context);
+    _topItem = createFrame(_context, eventFlags, frameState, renderCb, context);
     _topLayout = UI_FILL;   // to be set or altered upon end()
+    
+    _innerItem = _topItem;
     
     return *this;
 }
 
-Layout& Layout::beginWindow()
+Layout& Layout::beginWindow(const char* title)
 {
     pushTop();
-     
+    
+    //  frame
     _topItem = uiItem();
-    _topLayout = UI_FILL;  // to be set or altered upon end()
+    _topLayout = UI_LEFT | UI_TOP;
     
-    uiSetBox(_topItem, UI_COLUMN);
+    uiSetBox(_topItem, UI_LAYOUT);
     
-    OUIHeader* header = reinterpret_cast<OUIHeader*>(
-        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    OUIWindow* window = reinterpret_cast<OUIWindow*>(
+        uiAllocHandle(_topItem, sizeof(OUIWindow))
     );
-    header->itemType = OUIItemType::window;
-    header->handler = nullptr;
+    window->header.itemType = OUIItemType::window;
+    window->header.handler = nullptr;
+    if (title && *title) {
+        window->title = _context->stringStack.create(title);
+    }
+    else {
+        window->title = nullptr;
+    }
+    //  inner contents of the window excluding the title bar
+    _innerItem = uiItem();
+    uiSetBox(_innerItem, UI_COLUMN);
+    uiSetLayout(_innerItem, UI_FILL);
+    uiSetMargins(_innerItem, 0, UITHEME_WIDGET_HEIGHT, 0, 0);
+    
+    OUIHeader* inner = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_innerItem, sizeof(OUIHeader))
+    );
+    inner->itemType = OUIItemType::group;
+    inner->handler = nullptr;
+    
+    uiInsert(_topItem, _innerItem);
     
     return *this;
 }
@@ -109,6 +123,8 @@ Layout& Layout::beginColumn()
     header->itemType = OUIItemType::column;
     header->handler = nullptr;
 
+    _innerItem = _topItem;
+
     return *this;
 }
 
@@ -127,6 +143,8 @@ Layout& Layout::beginRow()
     header->itemType = OUIItemType::column;
     header->handler = nullptr;
 
+    _innerItem = _topItem;
+
     return *this;
 }
 
@@ -142,9 +160,9 @@ Layout& Layout::setLayout(unsigned int layout)
     return *this;
 }
 
-Layout& Layout::setMargins(Box box)
+Layout& Layout::setMargins(int l, int t, int r, int b)
 {
-    uiSetMargins(_topItem, box.l, box.t, box.r, box.b);
+    uiSetMargins(_topItem, l, t, r, b);
     return *this;
 }
 
@@ -153,14 +171,12 @@ Layout& Layout::button
     int id,
     ButtonHandler* btnHandler,
     int iconId,
-    const char* label,
-    const Style* style
+    const char* label
 )
 {
     int item = uiItem();
 
-    applyStyleToItem(item, style, &kDefaultButtonStyle);
-
+    uiSetLayout(item, UI_HFILL);
     uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT);
     
     //  for firing callback
@@ -174,9 +190,9 @@ Layout& Layout::button
     data->id = id;
     data->fireHandler = btnHandler;
     data->iconId = iconId;
-    data->label = label;
+    data->label = _context->stringStack.create(label);
  
-    uiInsert(_topItem, item);
+    uiInsert(_innerItem, item);
     
     return *this;
 }
@@ -186,13 +202,12 @@ Layout& Layout::listbox
     DataProvider* dataProvider,
     int id,
     ListboxType lbtype,
-    ListboxState* state,
-    const Style* style
+    ListboxState* state
 )
 {
     int item = uiItem();
-    
-    applyStyleToItem(item, style, &kDefaultListboxStyle);
+ 
+    uiSetLayout(item, UI_FILL);
     
     // for selection and scroll
     uiSetEvents(item, UI_BUTTON0_DOWN | UI_BUTTON0_CAPTURE);
@@ -209,7 +224,7 @@ Layout& Layout::listbox
     data->state = state;
     data->state->init(item);
     
-    uiInsert(_topItem, item);
+    uiInsert(_innerItem, item);
     
     return *this;
 }
@@ -241,37 +256,10 @@ Layout& Layout::end()
         uiInsert(_topItem, child);
     }
     else {
-        uiInsert(uicore::getLayoutRootItem(), child);
-    }
-    return *this;
-}
-
-void Layout::applyStyleToItem
-(
-    int item,
-    const Style* style,
-    const Style* defaultStyle
-)
-{
-    if (!style || !(style->mask & Style::has_layout)) {
-        if (defaultStyle) {
-            applyStyleToItem(item, defaultStyle, nullptr);
-        }
-    }
-    else {
-        uiSetLayout(item, style->layout);
+        uiInsert(_context->rootItem, child);
     }
     
-    if (!style || !(style->mask & Style::has_margins)) {
-        if (defaultStyle) {
-            applyStyleToItem(item, defaultStyle, nullptr);
-        }
-    }
-    else {
-        uiSetMargins(item,
-            style->margins.l, style->margins.t,
-            style->margins.r, style->margins.b);
-    }
+    return *this;
 }
 
 void Layout::pushTop()
@@ -298,12 +286,12 @@ void Layout::pushTop()
     if ((_size & 0x80000000))
     {
         vector<State>& vec = *reinterpret_cast<vector<State>*>(_data);
-        vec.push_back({ _topItem, _topLayout });
+        vec.push_back({ _topItem, _innerItem, _topLayout });
     }
     else
     {
         State* items = reinterpret_cast<State*>(_data);
-        items[_size++] = { _topItem, _topLayout };
+        items[_size++] = { _topItem, _innerItem, _topLayout };
     }
 }
 
@@ -327,6 +315,7 @@ void Layout::popItem()
     }
     
     _topItem = item.item;
+    _innerItem = item.innerItem;
     _topLayout = item.layout;
 }
 

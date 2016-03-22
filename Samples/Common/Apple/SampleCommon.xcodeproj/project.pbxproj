@@ -24,6 +24,8 @@
 		37287CB41C3769F000DD380F /* ModelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37287CB21C3769F000DD380F /* ModelSet.cpp */; };
 		37287CB51C3769F000DD380F /* ModelSet.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 37287CB31C3769F000DD380F /* ModelSet.hpp */; };
 		372918771C767E690011770E /* UITypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918761C767E690011770E /* UITypes.cpp */; };
+		373C2CD81CA085CA0032C124 /* UIService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 373C2CD61CA085CA0032C124 /* UIService.cpp */; };
+		373C2CD91CA085CA0032C124 /* UIService.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 373C2CD71CA085CA0032C124 /* UIService.hpp */; };
 		377ECCAF1C0507D6002040D7 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCAD1C0507D6002040D7 /* file.c */; };
 		377ECCB01C0507D6002040D7 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 377ECCAE1C0507D6002040D7 /* file.h */; };
 		377ECCC01C07AB75002040D7 /* taskscheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECCBE1C07AB75002040D7 /* taskscheduler.cpp */; };
@@ -220,6 +222,8 @@
 		37287CB21C3769F000DD380F /* ModelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelSet.cpp; sourceTree = "<group>"; };
 		37287CB31C3769F000DD380F /* ModelSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModelSet.hpp; sourceTree = "<group>"; };
 		372918761C767E690011770E /* UITypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UITypes.cpp; sourceTree = "<group>"; };
+		373C2CD61CA085CA0032C124 /* UIService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIService.cpp; sourceTree = "<group>"; };
+		373C2CD71CA085CA0032C124 /* UIService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = UIService.hpp; sourceTree = "<group>"; };
 		377ECCAD1C0507D6002040D7 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ckio/file.c; sourceTree = "<group>"; };
 		377ECCAE1C0507D6002040D7 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file.h; path = ckio/file.h; sourceTree = "<group>"; };
 		377ECCBA1C06A9A0002040D7 /* managed_dictionary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = managed_dictionary.hpp; sourceTree = "<group>"; };
@@ -599,6 +603,8 @@
 				37E636C41BF024600081E59E /* UIRenderer.hpp */,
 				37E636C51BF024600081E59E /* UITypes.hpp */,
 				372918761C767E690011770E /* UITypes.cpp */,
+				373C2CD71CA085CA0032C124 /* UIService.hpp */,
+				373C2CD61CA085CA0032C124 /* UIService.cpp */,
 			);
 			name = UICore;
 			path = ../../../UICore;
@@ -728,6 +734,7 @@
 				37E636A41BF024330081E59E /* encodings.h in Headers */,
 				37E636B01BF024330081E59E /* prettywriter.h in Headers */,
 				37E637111BF0246D0081E59E /* stb_image.h in Headers */,
+				373C2CD91CA085CA0032C124 /* UIService.hpp in Headers */,
 				37B250281C86AD8E005C6DC0 /* sequence.hpp in Headers */,
 				377ECCE31C0BBC28002040D7 /* task.hpp in Headers */,
 				37E636B31BF024330081E59E /* stringbuffer.h in Headers */,
@@ -909,6 +916,7 @@
 				37E637121BF0246D0081E59E /* GfxTypes.cpp in Sources */,
 				37E636011BF00F650081E59E /* main.mm in Sources */,
 				28BCF4901C3F1A300040BAA8 /* RenderTarget.cpp in Sources */,
+				373C2CD81CA085CA0032C124 /* UIService.cpp in Sources */,
 				37E636CB1BF024600081E59E /* UIBuilder.cpp in Sources */,
 				37E636881BF024330081E59E /* types.cpp in Sources */,
 				37E6371E1BF0246D0081E59E /* NodeRenderer.cpp in Sources */,
