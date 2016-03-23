@@ -29,6 +29,8 @@
 
 #include "UICore/UIEngine.hpp"
 #include "UICore/oui.h"
+#include "UICore/blendish_defines.h"
+#include "CKGfx/External/nanovg/nanovg.h"
 
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
@@ -42,7 +44,7 @@ PrototypeApplication::PrototypeApplication
     const gfx::NodeRenderer::ProgramMap& programs,
     const gfx::NodeRenderer::UniformMap& uniforms,
     NVGcontext* nvg,
-    UIcontext* ouiContext
+    uicore::Context* uiContext
 ) :
     _gfxContext(&gfxContext),
     _taskScheduler(64),
@@ -54,8 +56,30 @@ PrototypeApplication::PrototypeApplication
     _renderUniforms(uniforms),
     _renderer(),
     _nvg(nvg),
-    _uiContext({ ouiContext, 32*1024 })
+    _uiContext(uiContext)
 {
+    auto& uiTheme = _uiContext->theme;
+    
+    uiTheme.font = nvgFindFont(nvg, "system");
+    uiTheme.textSize = 13;
+    uiTheme.textColor = { 0,0,0,1 };
+    
+    uiTheme.cornerRadius = 3.0f;
+    uiTheme.widgetHeight = BND_WIDGET_HEIGHT;
+    uiTheme.widgetMargins = { 2,4,2,4 };
+    
+    uiTheme.windowColor.fromRGBA8(28,30,34,192);
+    uiTheme.windowTitleBarColor = { 0,0,0,1 };
+    uiTheme.windowTitleColor = { 1,1,1,1 };
+    uiTheme.windowTitleBarHeight = BND_WIDGET_HEIGHT;
+
+    uiTheme.listboxTextColor = { 1,1,1,1 };
+    uiTheme.listboxBackgroundColor.fromRGBA8(76, 76, 76, 255);
+    uiTheme.listboxHoverColor.fromRGBA8(96, 96, 96, 255);
+    uiTheme.listboxSelectColor.fromRGBA8(191, 116, 40, 255);
+    
+    ////////////////////////////////////////////////////////////////////////
+    
     gfx::NodeElementCounts sceneElementCounts;
     sceneElementCounts.meshNodeCount = 128;
     sceneElementCounts.armatureNodeCount = 32;
@@ -145,7 +169,7 @@ PrototypeApplication::PrototypeApplication
     _appContext->msgClientSender = &_clientSender;
     _appContext->gfxContext = _gfxContext;
     _appContext->renderContext = &_renderContext;
-    _appContext->uiContext = &_uiContext;
+    _appContext->uiContext = _uiContext;
 
     //  TODO - These should be created and destroyed by View objects
     //       - Reason, it makes more sense to wholesale drop these objects
@@ -197,7 +221,7 @@ PrototypeApplication::~PrototypeApplication()
     
 void PrototypeApplication::beginFrame()
 {
-    _uiContext.keyFocusItem = -1;
+    _uiContext->keyFocusItem = -1;
     
     _server.receive();
     _client.receive();
@@ -223,7 +247,7 @@ void PrototypeApplication::renderFrame
     const cinek::uicore::InputState& inputState
 )
 {
-    uicore::initContext(viewRect.w, viewRect.h, &_uiContext);
+    uicore::initContext(viewRect.w, viewRect.h, _uiContext);
     
     _taskScheduler.update(dt * 1000);
     
@@ -235,7 +259,7 @@ void PrototypeApplication::renderFrame
         
     _gfxContext->update();
     
-    uicore::finalizeContext(&_uiContext);
+    uicore::finalizeContext(_uiContext);
 }
 
 void PrototypeApplication::endFrame()

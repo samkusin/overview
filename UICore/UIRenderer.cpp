@@ -21,6 +21,10 @@
 
 namespace cinek { namespace uicore {
 
+inline NVGcolor toNVGcolor(const Color& color) {
+    return {{{ color.r, color.g, color.b, color.a }}};
+}
+
 NVGcontext* createRenderingContext(int viewId)
 {
     NVGcontext* nvg = nvgCreate(1, viewId);
@@ -50,6 +54,7 @@ void destroyRenderingContext(NVGcontext* nvg)
 
 static void renderListbox
 (
+    const Theme& theme,
     OUIListBoxData* lbcontext,
     NVGcontext* nvg,
     const UIrect& rect,
@@ -57,7 +62,8 @@ static void renderListbox
     int corners
 )
 {
-    const float kCornerRadius = 3.0f;
+    const NVGcolor kTextColor { toNVGcolor(theme.listboxTextColor) };
+    const float kCornerRadius = theme.cornerRadius;
     const int kBoxMarginLR = 5;
     const int kBoxMarginTB = 10;
     
@@ -81,7 +87,7 @@ static void renderListbox
     //  draw the box window
     nvgBeginPath(nvg);
     nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
-    nvgFillColor(nvg, nvgRGBA(76, 76, 76, 255));
+    nvgFillColor(nvg, toNVGcolor(theme.listboxBackgroundColor));
     nvgFill(nvg);
     
     //  content
@@ -99,8 +105,8 @@ static void renderListbox
         
         if (numItems > 0 && lmargin < rmargin) {
             nvgSave(nvg);
-            nvgFontSize(nvg, BND_LABEL_FONT_SIZE);
-            nvgFontFaceId(nvg, bnd_font);
+            nvgFontSize(nvg, theme.textSize);
+            nvgFontFaceId(nvg, theme.font);
             nvgTextAlign(nvg, NVG_ALIGN_LEFT|NVG_ALIGN_TOP);
             
             nvgScissor(nvg, rect.x, rect.y, rect.w, rect.h);
@@ -156,7 +162,7 @@ static void renderListbox
                         
                         if (row == lbcontext->state->highlightItem) {
                             nvgBeginPath(nvg);
-                            nvgFillColor(nvg, nvgRGBA(191, 116, 40, 255));
+                            nvgFillColor(nvg, toNVGcolor(theme.listboxSelectColor));
                             nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
                                 rmargin-lmargin, cellMargins.t + cellHeight + cellMargins.b,
                                 kCornerRadius);
@@ -167,7 +173,7 @@ static void renderListbox
                             mouse.x < cellOrigin.x + rowDim.x && mouse.x >= cellOrigin.x) {
                             if (row != lbcontext->state->highlightItem) {
                                 nvgBeginPath(nvg);
-                                nvgFillColor(nvg, nvgRGBA(96, 96, 96, 255));
+                                nvgFillColor(nvg, toNVGcolor(theme.listboxHoverColor));
                                 nvgRoundedRect(nvg, cellOrigin.x, cellOrigin.y,
                                     rmargin-lmargin, cellMargins.t + cellHeight + cellMargins.b,
                                     kCornerRadius);
@@ -178,7 +184,7 @@ static void renderListbox
                         
                         //printf("%d,%d\n", mouse.x, mouse.y);
                         
-                        nvgFillColor(nvg, BND_COLOR_TEXT_SELECTED);
+                        nvgFillColor(nvg, kTextColor);
                         nvgText(nvg, offsetX, offsetY, data.data.str, nullptr);
                     }
 
@@ -200,15 +206,15 @@ static void renderListbox
 
 static void renderWindow
 (
+    const Theme& theme,
     OUIWindow* data,
     NVGcontext* nvg,
     const UIrect& rect,
     int item
 )
 {
-    const float kCornerRadius = 3.0f;
-    
-	struct NVGpaint shadowPaint;
+    const float kCornerRadius = theme.cornerRadius;
+    struct NVGpaint shadowPaint;
 	
 	nvgSave(nvg);
 	//	nvgClearState(vg);
@@ -216,8 +222,7 @@ static void renderWindow
     // Window
 	nvgBeginPath(nvg);
 	nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
-	nvgFillColor(nvg, nvgRGBA(28,30,34,192) );
-	//	nvgFillColor(vg, nvgRGBA(0,0,0,128) );
+	nvgFillColor(nvg, toNVGcolor(theme.windowColor));
 	nvgFill(nvg);
     
 	// Drop shadow
@@ -233,26 +238,29 @@ static void renderWindow
     // Title Bar
     if (data->title && *data->title) {
         nvgBeginPath(nvg);
-        nvgRoundedRect(nvg, rect.x, rect.y, rect.w, UITHEME_WIDGET_HEIGHT, kCornerRadius);
-        nvgFillColor(nvg, nvgRGBA(0,0,0,192) );
+        nvgRoundedRect(nvg, rect.x, rect.y, rect.w, theme.windowTitleBarHeight, kCornerRadius);
+        nvgFillColor(nvg, toNVGcolor(theme.windowTitleBarColor) );
         nvgFill(nvg);
         
         // Title
-         
-        nvgFillColor(nvg, BND_COLOR_TEXT);
-        nvgText(nvg, 1, 1, data->title, nullptr);
+        nvgFontSize(nvg, theme.textSize);
+        nvgFontFaceId(nvg, theme.font);
+        nvgTextAlign(nvg, NVG_ALIGN_LEFT|NVG_ALIGN_TOP);
+        nvgFillColor(nvg, toNVGcolor(theme.windowTitleColor));
+        nvgText(nvg, rect.x+1, rect.y+1, data->title, nullptr);
     }
 
 	nvgRestore(nvg);
 }
 
 
-static void renderItems(NVGcontext* context, int parent);
-static void renderItemsVertical(NVGcontext* context, int parent);
-static void renderItemsHorizontal(NVGcontext* context, int parent);
+static void renderItems(const Theme&, NVGcontext* context, int parent);
+static void renderItemsVertical(const Theme&, NVGcontext* context, int parent);
+static void renderItemsHorizontal(const Theme&, NVGcontext* context, int parent);
 
 static void renderItem
 (
+    const Theme& theme,
     NVGcontext* context,
     int32_t item,
     int corners
@@ -271,22 +279,22 @@ static void renderItem
                 {
                     data->renderCb(data->callbackContext, context);
                 }
-                renderItems(context, item);
+                renderItems(theme, context, item);
             }
             break;
         case OUIItemType::group:
-            renderItems(context, item);
+            renderItems(theme, context, item);
             break;
         case OUIItemType::column:
-            renderItemsVertical(context, item);
+            renderItemsVertical(theme, context, item);
             break;
         case OUIItemType::row:
-            renderItemsHorizontal(context, item);
+            renderItemsHorizontal(theme, context, item);
             break;
         case OUIItemType::window:
             {
-                renderWindow(reinterpret_cast<OUIWindow*>(header), context, rect, item);
-                renderItems(context, item);
+                renderWindow(theme, reinterpret_cast<OUIWindow*>(header), context, rect, item);
+                renderItems(theme, context, item);
             }
             break;
         case OUIItemType::button:
@@ -297,7 +305,7 @@ static void renderItem
             }
             break;
         case OUIItemType::listbox:
-            renderListbox(reinterpret_cast<OUIListBoxData*>(header),
+            renderListbox(theme, reinterpret_cast<OUIListBoxData*>(header),
                 context, rect, item, corners);
             break;
         default:
@@ -309,18 +317,20 @@ static void renderItem
 
 static void renderItems
 (
+    const Theme& theme,
     NVGcontext* context,
     int parent
 )
 {
     for (auto id = uiFirstChild(parent); id > 0; id = uiNextSibling(id))
     {
-        renderItem(context, id, UITHEME_CORNER_NONE);
+        renderItem(theme, context, id, UITHEME_CORNER_NONE);
     }
 }
 
 static void renderItemsVertical
 (
+    const Theme& theme,
     NVGcontext* context,
     int parent
 )
@@ -332,26 +342,27 @@ static void renderItemsVertical
     auto nextid = uiNextSibling(id);
     if (nextid < 0)
     {
-        renderItem(context, id, UITHEME_CORNER_NONE);
+        renderItem(theme, context, id, UITHEME_CORNER_NONE);
         return;
     }
     else
     {
-        renderItem(context, id, UITHEME_CORNER_TOP);
+        renderItem(theme, context, id, UITHEME_CORNER_TOP);
     }
     
     id = nextid;
     while ((nextid = uiNextSibling(id)) > 0)
     {
-        renderItem(context, id, UITHEME_CORNER_ALL);
+        renderItem(theme, context, id, UITHEME_CORNER_ALL);
         id = nextid;
     }
     
-    renderItem(context, id, UITHEME_CORNER_BOTTOM);
+    renderItem(theme, context, id, UITHEME_CORNER_BOTTOM);
 }
 
 static void renderItemsHorizontal
 (
+    const Theme& theme,
     NVGcontext* context,
     int parent
 )
@@ -363,22 +374,22 @@ static void renderItemsHorizontal
     auto nextid = uiNextSibling(id);
     if (nextid < 0)
     {
-        renderItem(context, id, UITHEME_CORNER_NONE);
+        renderItem(theme, context, id, UITHEME_CORNER_NONE);
         return;
     }
     else
     {
-        renderItem(context, id, UITHEME_CORNER_LEFT);
+        renderItem(theme, context, id, UITHEME_CORNER_LEFT);
     }
     
     id = nextid;
     while ((nextid = uiNextSibling(id)) > 0)
     {
-        renderItem(context, id, UITHEME_CORNER_ALL);
+        renderItem(theme, context, id, UITHEME_CORNER_ALL);
         id = nextid;
     }
     
-    renderItem(context, id, UITHEME_CORNER_RIGHT);
+    renderItem(theme, context, id, UITHEME_CORNER_RIGHT);
 }
 /*
 void drawLines(struct NVGcontext* vg, float x, float y, float w, float h, float t)
@@ -438,11 +449,11 @@ void drawLines(struct NVGcontext* vg, float x, float y, float w, float h, float 
 */
 
     
-void render(NVGcontext* context, const gfx::Rect& viewRect)
-{
+void render(const Theme& theme, NVGcontext* nvg, const gfx::Rect& viewRect)
+{    
     //  pixel ratio may change if for some reason we have different framebuffer
     //  sizes from our window (i.e. fullscreen?)
-    nvgBeginFrame(context, viewRect.w, viewRect.h, 1.0f);
+    nvgBeginFrame(nvg, viewRect.w, viewRect.h, 1.0f);
     
     //drawLines(context, 50, viewRect.h-100, 600, 40, 0);
     
@@ -450,11 +461,11 @@ void render(NVGcontext* context, const gfx::Rect& viewRect)
     
     if (uiGetItemCount() > 0)
     {
-        bndSetFont(nvgFindFont(context, "system"));
-        renderItem(context, 0, UITHEME_CORNER_NONE);
+        bndSetFont(theme.font);
+        renderItem(theme, nvg, 0, UITHEME_CORNER_NONE);
     }
     
-    nvgEndFrame(context);
+    nvgEndFrame(nvg);
 }
 
 } /* namespace uicore */ } /* namespace cinek */

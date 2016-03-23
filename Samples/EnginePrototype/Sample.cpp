@@ -61,8 +61,11 @@ enum
 int runSample(int viewWidth, int viewHeight)
 {
     //  UI
-    UIcontext* uiContext = uiCreateContext(4096, 1<<20);
-    uiMakeCurrent(uiContext);
+    cinek::uicore::Context uiContext( {
+        uiCreateContext(4096, 1<<20),
+        32* 1024
+    } );
+    uiMakeCurrent(uiContext.ouiContext);
     uiSetHandler(cinek::uicore::OUIHandler);
     
     NVGcontext* nvg = cinek::uicore::createRenderingContext(1);
@@ -132,7 +135,7 @@ int runSample(int viewWidth, int viewHeight)
         //  Application
         //
         cinek::PrototypeApplication controller(gfxContext, shaderPrograms, shaderUniforms,
-                                               nvg, uiContext);
+                                               nvg, &uiContext);
 
         const double kSimFPS = 60.0;
         const CKTimeDelta kSecsPerSimFrame = 1/kSimFPS;
@@ -183,7 +186,7 @@ int runSample(int viewWidth, int viewHeight)
 
             controller.renderFrame(frameTime, viewRect, polledInputState);
 
-            cinek::uicore::render(nvg, viewRect);
+            cinek::uicore::render(uiContext.theme, nvg, viewRect);
         
             uiProcess(systemTimeMs);
             

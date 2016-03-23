@@ -23,16 +23,12 @@ namespace uicore {
 struct System;
 struct InputState;
 struct Context;
+struct Theme;
 
 class Layout;
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Generalized Theme defines
-
-enum
-{
-    UITHEME_WIDGET_HEIGHT   = BND_WIDGET_HEIGHT
-};
 
 enum
 {
@@ -67,7 +63,20 @@ struct Box
 
 struct Color
 {
+    float r,g,b,a;
     
+    Color& fromRGBA8(unsigned char r_,
+                     unsigned char g_,
+                     unsigned char b_,
+                     unsigned char a_)
+    {
+        r = r_/255.0f;
+        g = g_/255.0f;
+        b = b_/255.0f;
+        a = a_/255.0f;
+        
+        return *this;
+    }
 };
 
 struct KeyEvent

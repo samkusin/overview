@@ -82,6 +82,32 @@ struct OUIListBoxData
     static void handler(int item, UIevent event);
 };
 
+////////////////////////////////////////////////////////////////////////////
+
+struct Theme
+{
+    int font;
+    int textSize;
+    Color textColor;
+    
+    int widgetHeight;
+    Box widgetMargins;
+    float cornerRadius;
+    
+    Color windowColor;
+    int windowTitleBarHeight;
+    Color windowTitleBarColor;
+    Color windowTitleColor;
+    
+    Color listboxTextColor;
+    Color listboxBackgroundColor;
+    Color listboxHoverColor;
+    Color listboxSelectColor;
+};
+
+
+////////////////////////////////////////////////////////////////////////////
+
 struct Context
 {
     struct InitParams
@@ -92,6 +118,7 @@ struct Context
     Context(const InitParams& params);
     
     UIcontext* ouiContext;
+    Theme theme;
     int rootItem;
     int keyFocusItem;
     FrameState frameState;

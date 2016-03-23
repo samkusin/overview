@@ -95,7 +95,7 @@ Layout& Layout::beginWindow(const char* title)
     _innerItem = uiItem();
     uiSetBox(_innerItem, UI_COLUMN);
     uiSetLayout(_innerItem, UI_FILL);
-    uiSetMargins(_innerItem, 0, UITHEME_WIDGET_HEIGHT, 0, 0);
+    uiSetMargins(_innerItem, 0, _context->theme.windowTitleBarHeight, 0, 0);
     
     OUIHeader* inner = reinterpret_cast<OUIHeader*>(
         uiAllocHandle(_innerItem, sizeof(OUIHeader))
@@ -177,7 +177,11 @@ Layout& Layout::button
     int item = uiItem();
 
     uiSetLayout(item, UI_HFILL);
-    uiSetSize(item, 0, UITHEME_WIDGET_HEIGHT);
+    uiSetSize(item, 0, _context->theme.widgetHeight);
+    uiSetMargins(item, _context->theme.widgetMargins.l,
+        _context->theme.widgetMargins.t,
+        _context->theme.widgetMargins.r,
+        _context->theme.widgetMargins.b);
     
     //  for firing callback
     uiSetEvents(item, UI_BUTTON0_HOT_UP);
@@ -208,6 +212,10 @@ Layout& Layout::listbox
     int item = uiItem();
  
     uiSetLayout(item, UI_FILL);
+    uiSetMargins(item, _context->theme.widgetMargins.l,
+        _context->theme.widgetMargins.t,
+        _context->theme.widgetMargins.r,
+        _context->theme.widgetMargins.b);
     
     // for selection and scroll
     uiSetEvents(item, UI_BUTTON0_DOWN | UI_BUTTON0_CAPTURE);

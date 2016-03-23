@@ -47,7 +47,7 @@ public:
         const gfx::NodeRenderer::ProgramMap& programs,
         const gfx::NodeRenderer::UniformMap& uniforms,
         NVGcontext* nvg,
-        UIcontext* ouiContext
+        uicore::Context* uiContext
     );
     ~PrototypeApplication();
     
@@ -79,7 +79,8 @@ private:
     
     gfx::NodeRenderer _renderer;
     NVGcontext* _nvg;
-    uicore::Context _uiContext;
+    uicore::Theme _uiTheme;
+    uicore::Context* _uiContext;
     
     unique_ptr<ove::RenderGraph> _renderGraph;
     ove::RenderContext _renderContext;

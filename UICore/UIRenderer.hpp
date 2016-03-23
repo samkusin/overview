@@ -19,7 +19,7 @@ NVGcontext* createRenderingContext(int viewId);
 
 void destroyRenderingContext(NVGcontext* nvg);
 
-void render(NVGcontext* context, const gfx::Rect& viewRect);
+void render(const Theme& theme, NVGcontext* nvg, const gfx::Rect& viewRect);
 
     } /* namespace uicore */
 
