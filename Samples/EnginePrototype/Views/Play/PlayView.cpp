@@ -79,7 +79,7 @@ void PlayView::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
 

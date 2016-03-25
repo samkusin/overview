@@ -14,8 +14,6 @@
 #include "Engine/AssetManifest.hpp"
 #include "Engine/ViewStack.hpp"
 
-#include "UICore/UIService.hpp"
-
 namespace cinek {
 
 
@@ -28,7 +26,6 @@ EditorAddEntityToScene::EditorAddEntityToScene
     _displayTemplateSelector(false)
 
 {
-    _entityTemplateListboxState.highlightItem = -1;
     
     auto templateManifest = entityService().getDefinitions("entity");
     if (templateManifest && templateManifest->root().HasMember("entity")) {
@@ -61,11 +58,15 @@ void EditorAddEntityToScene::addEntityTemplateUIData
     }
     
     _entityTemplateUIList.emplace_back(std::move(data));
+    
+    /*
     if (_entityTemplateListboxState.highlightItem < 0) {
         _entityTemplateListboxState.highlightItem = 0;
     }
+    */
 }
 
+/*
 bool EditorAddEntityToScene::onUIDataItemRequest
 (
     int id,
@@ -97,6 +98,7 @@ uint32_t EditorAddEntityToScene::onUIDataItemRowCountRequest(int id)
     }
     return 0;
 }
+*/
 
 
 void EditorAddEntityToScene::onViewAdded(ove::ViewStack& stateController)
@@ -125,9 +127,10 @@ void EditorAddEntityToScene::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
+    /*
     //  layout UI
     uicore::Layout uiLayout = uiService().createLayout();
     
@@ -145,7 +148,7 @@ void EditorAddEntityToScene::frameUpdateView
             .end()
         .end();
     }
-    
+    */
     if (inputState.testKey(SDL_SCANCODE_ESCAPE)) {
         stateController.present("EditorMain");
         return;
@@ -169,6 +172,7 @@ void EditorAddEntityToScene::frameUpdateView
 
 void EditorAddEntityToScene::onViewEndFrame(ove::ViewStack& stateController)
 {
+    /*
     if (_displayTemplateSelector) {
         if (_entityTemplateListboxState.selected()) {
             _displayTemplateSelector = false;
@@ -182,7 +186,7 @@ void EditorAddEntityToScene::onViewEndFrame(ove::ViewStack& stateController)
             stateController.present("EditorMain");
         }
     }
-
+    */
 }
     
 const char* EditorAddEntityToScene::viewId() const

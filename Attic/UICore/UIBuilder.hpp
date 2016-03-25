@@ -68,6 +68,11 @@ public:
     ///
     Layout& beginWindow(const char* title);
     ///
+    /// A collapsable group - children are visible when the stack is open,
+    /// and invisible when closed.
+    ///
+    Layout& beginStack(const char* title, bool* state);
+    ///
     /// Sets the size of the current UI region.
     ///
     Layout& setSize(int w, int h);

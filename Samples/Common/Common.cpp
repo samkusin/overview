@@ -7,7 +7,6 @@
 //
 
 #include "Common.hpp"
-#include "UICore/Input.hpp"
 
 #include <cinek/file.hpp>
 

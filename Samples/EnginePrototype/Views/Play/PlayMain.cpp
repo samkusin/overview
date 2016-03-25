@@ -14,7 +14,6 @@
 #include "Engine/Path/NavPathQuery.hpp"
 #include "Engine/ViewStack.hpp"
 
-#include "UICore/UIService.hpp"
 
 namespace cinek {
 
@@ -44,7 +43,7 @@ void PlayMain::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
     layoutUI();
@@ -78,6 +77,7 @@ void PlayMain::layoutUI()
 
 void PlayMain::handleUI(ove::ViewStack& stateController)
 {
+    /*
     uicore::KeyEvent keyEvt;
     while ((keyEvt = uiService().frame().popKey())) {
     
@@ -110,6 +110,7 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
             }
         }
     }
+    */
 }
 
 }

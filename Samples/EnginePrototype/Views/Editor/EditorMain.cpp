@@ -10,7 +10,6 @@
 
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/ViewStack.hpp"
-#include "UICore/UIService.hpp"
 
 namespace cinek {
 
@@ -44,7 +43,7 @@ void EditorMain::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
     layoutUI();
@@ -74,6 +73,7 @@ void EditorMain::layoutUI()
 
 void EditorMain::handleUI(ove::ViewStack& stateController)
 {
+    /*
     uicore::KeyEvent keyEvt;
     while ((keyEvt = uiService().frame().popKey())) {
     
@@ -94,6 +94,7 @@ void EditorMain::handleUI(ove::ViewStack& stateController)
         }
         
     }
+    */
 }
 
 

@@ -37,7 +37,7 @@ private:
     virtual void onViewStartFrame(ove::ViewStack& stateController) override;
     virtual void simulateView(ove::ViewStack& stateController, CKTimeDelta dt) override;
     virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
-                                 const cinek::uicore::InputState& inputState) override;
+                                 const cinek::input::InputState& inputState) override;
     virtual void onViewEndFrame(ove::ViewStack& stateController) override;
         
     virtual const char* viewId() const override;

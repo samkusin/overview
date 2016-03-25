@@ -12,8 +12,6 @@
 #include "GameTypes.hpp"
 #include "Engine/Physics/SceneTypes.hpp"
 #include "Engine/ViewController.hpp"
-#include "UICore/Input.hpp"
-#include "UICore/UITypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {

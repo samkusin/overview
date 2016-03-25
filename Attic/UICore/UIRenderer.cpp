@@ -87,7 +87,7 @@ static void renderListbox
     //  draw the box window
     nvgBeginPath(nvg);
     nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
-    nvgFillColor(nvg, toNVGcolor(theme.listboxBackgroundColor));
+    nvgFillColor(nvg, toNVGcolor(theme.groupColor));
     nvgFill(nvg);
     
     //  content
@@ -253,6 +253,56 @@ static void renderWindow
 	nvgRestore(nvg);
 }
 
+static void renderStack
+(
+    const Theme& theme,
+    OUIStack* data,
+    NVGcontext* nvg,
+    const UIrect& rect,
+    int item
+)
+{
+    const float kCornerRadius = theme.cornerRadius;
+    struct NVGpaint shadowPaint;
+	
+	nvgSave(nvg);
+	//	nvgClearState(vg);
+    
+    // Window
+	nvgBeginPath(nvg);
+	nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
+	nvgFillColor(nvg, toNVGcolor(theme.groupColor));
+	nvgFill(nvg);
+    
+	// Drop shadow
+	shadowPaint = nvgBoxGradient(nvg, rect.x, rect.y+2, rect.w, rect.h,
+        kCornerRadius*2, 10, nvgRGBA(0,0,0,128), nvgRGBA(0,0,0,0) );
+	nvgBeginPath(nvg);
+	nvgRect(nvg, rect.x-10, rect.y-10, rect.w+20, rect.h+30);
+	nvgRoundedRect(nvg, rect.x, rect.y, rect.w, rect.h, kCornerRadius);
+	nvgPathWinding(nvg, NVG_HOLE);
+	nvgFillPaint(nvg, shadowPaint);
+	nvgFill(nvg);
+
+    // Title Bar
+    if (data->title && *data->title) {
+        /*
+        nvgBeginPath(nvg);
+        nvgRoundedRect(nvg, rect.x, rect.y, rect.w, theme.stackTitleBarHeight, kCornerRadius);
+        nvgFillColor(nvg, toNVGcolor(theme.stackTitleBarColor) );
+        nvgFill(nvg);
+        */
+        // Title
+        nvgFontSize(nvg, theme.textSize);
+        nvgFontFaceId(nvg, theme.font);
+        nvgTextAlign(nvg, NVG_ALIGN_LEFT|NVG_ALIGN_TOP);
+        nvgFillColor(nvg, toNVGcolor(theme.textColor));
+        nvgText(nvg, rect.x+1, rect.y+1, data->title, nullptr);
+    }
+
+	nvgRestore(nvg);
+}
+
 
 static void renderItems(const Theme&, NVGcontext* context, int parent);
 static void renderItemsVertical(const Theme&, NVGcontext* context, int parent);
@@ -295,6 +345,15 @@ static void renderItem
             {
                 renderWindow(theme, reinterpret_cast<OUIWindow*>(header), context, rect, item);
                 renderItems(theme, context, item);
+            }
+            break;
+        case OUIItemType::stack:
+            {
+                auto data = reinterpret_cast<OUIStack*>(header);
+                renderStack(theme, data, context, rect, item);
+                if (*data->state) {
+                    renderItems(theme, context, item);
+                }
             }
             break;
         case OUIItemType::button:

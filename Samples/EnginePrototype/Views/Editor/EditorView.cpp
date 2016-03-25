@@ -15,7 +15,6 @@
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/Controller/NavSystem.hpp"
 
-#include "UICore/UIService.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Geometry.hpp"
@@ -65,6 +64,7 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
     
     _viewStack.present("EditorMain");
 
+    _sceneStackState = false;
 
     /*
     //  create our offscreen node graph for rendering models
@@ -147,9 +147,10 @@ void EditorView::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
+    /*
     //  layout UI    
     auto frameWidth = renderContext().frameRect.w;
     auto frameHeight = renderContext().frameRect.h;
@@ -159,11 +160,12 @@ void EditorView::frameUpdateView
     uiLayout.beginWindow("Left")
         .setMargins(20,20,0,0)
         .setSize(frameWidth * 0.25, frameHeight * 0.75)
+        .beginStack("Scene", &_sceneStackState)
+        .end()
         .button(1, nullptr, BND_ICON_QUESTION, "Foo!")
         .button(2, nullptr, BND_ICON_ANIM, "Anim")
     .end();
 
-    /*
     uiLayout.beginWindow("Right")
         .button(1, nullptr, BND_ICON_QUESTION, "Fee!", &style)
         .button(2, nullptr, BND_ICON_ANIM, "Crap", &style)
@@ -193,6 +195,7 @@ const char* EditorView::viewId() const
 
 ////////////////////////////////////////////////////////////////////////
 
+/*
 bool EditorView::onUIDataItemRequest
 (
     int id,
@@ -208,6 +211,7 @@ uint32_t EditorView::onUIDataItemRowCountRequest(int id)
 {
     return 0;
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////
 

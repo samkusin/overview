@@ -27,8 +27,7 @@ namespace cinek {
 class EditorMain;
 class EditorAddEntityToScene;
 
-class EditorView : public GameState,
-                   public uicore::DataProvider
+class EditorView : public GameState
 {
 public:
     EditorView(GameViewContext* gameContext);
@@ -40,15 +39,11 @@ private:
     virtual void onViewStartFrame(ove::ViewStack& stateController) override;
     virtual void simulateView(ove::ViewStack& stateController, CKTimeDelta dt) override;
     virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
-                                 const cinek::uicore::InputState& inputState) override;
+                                 const cinek::input::InputState& inputState) override;
     virtual void onViewEndFrame(ove::ViewStack& stateController) override;
     
     virtual const char* viewId() const override;
     
-    //  DataProvider
-    virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col,
-        uicore::DataObject& data) override;
-    virtual uint32_t onUIDataItemRowCountRequest(int id) override;
 
 private:
     ove::ViewStack _viewStack;
@@ -57,6 +52,8 @@ private:
     
     std::shared_ptr<EditorMain> _mainState;
     std::shared_ptr<EditorAddEntityToScene> _addEntityToSceneState;
+    
+    bool _sceneStackState;
     
     /*
     //  Node graph to render to our dedicated

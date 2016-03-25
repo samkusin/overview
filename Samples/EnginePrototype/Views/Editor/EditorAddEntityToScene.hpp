@@ -19,8 +19,7 @@
 
 namespace cinek {
 
-class EditorAddEntityToScene : public GameState,
-                               public uicore::DataProvider
+class EditorAddEntityToScene : public GameState
 {
 public:
     EditorAddEntityToScene(GameViewContext* gameContext);
@@ -32,28 +31,17 @@ private:
     virtual void onViewStartFrame(ove::ViewStack& stateController) override;
     virtual void simulateView(ove::ViewStack& stateController, CKTimeDelta dt) override;
     virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
-                                 const cinek::uicore::InputState& inputState) override;
+                                 const cinek::input::InputState& inputState) override;
     virtual void onViewEndFrame(ove::ViewStack& stateController) override;
         
     virtual const char* viewId() const override;
 
-    //  DataProvider
-    virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col,
-        uicore::DataObject& data) override;
-    virtual uint32_t onUIDataItemRowCountRequest(int id) override;
-
-private:    
-    uicore::ListboxState _entityTemplateListboxState;
+private:
     Entity _stagedEntity;
 
     bool _displayTemplateSelector;
 
 private:
-    enum
-    {
-        kUIProviderId_EntityTemplates
-    };
-    
     struct EntityTemplateUIData
     {
         std::string name;

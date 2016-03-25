@@ -57,7 +57,7 @@ void StartupView::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta /* dt */,
-    const cinek::uicore::InputState& /* inputState */
+    const cinek::input::InputState& /* inputState */
 )
 {
     if (_templatesLoaded && _globalsLoaded) {

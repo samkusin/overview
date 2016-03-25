@@ -19,7 +19,7 @@
 
 namespace cinek {
 
-namespace uicore {
+namespace input {
     struct InputState;
 }
 
@@ -50,7 +50,7 @@ public:
     void simulate(CKTimeDelta dt);
     
     //  render the stack
-    void frameUpdate(CKTimeDelta dt, const cinek::uicore::InputState& inputState);
+    void frameUpdate(CKTimeDelta dt, const cinek::input::InputState& inputState);
     
     //  presents a view (executes load and open.), removing the topmost view
     //  and presenting it in place.  if this view is already on the stack,

@@ -18,7 +18,6 @@
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/AssetManifest.hpp"
 
-#include "UICore/UIBuilder.hpp"
 #include "CKGfx/Context.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
@@ -46,7 +45,6 @@ GameView::GameView(ApplicationContext* api) :
     _gameViewContext.entityService = &entityService();
     _gameViewContext.assetService = &assetService();
     _gameViewContext.renderContext = api->renderContext;
-    _gameViewContext.uiService = &uiService();
     _gameViewContext.nvgContext = nvgContext();
     _gameViewContext.game = this;
 }
@@ -124,7 +122,7 @@ void GameView::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
     //  RENDERING

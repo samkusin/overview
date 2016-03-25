@@ -8,8 +8,9 @@
 
 #include "UIBuilder.hpp"
 #include "UIEngine.hpp"
-
 #include "oui.h"
+
+#include <cinek/debug.h>
 
 namespace cinek { namespace uicore {
 
@@ -108,12 +109,32 @@ Layout& Layout::beginWindow(const char* title)
     return *this;
 }
 
+Layout& Layout::beginRow()
+{
+    pushTop();
+    
+    _topItem = uiItem();
+    _topLayout = UI_FILL;  // to be set or altered upon end()
+    
+    uiSetBox(_topItem, UI_ROW);
+    
+    OUIHeader* header = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    );
+    header->itemType = OUIItemType::column;
+    header->handler = nullptr;
+
+    _innerItem = _topItem;
+
+    return *this;
+}
+
 Layout& Layout::beginColumn()
 {
     pushTop();
     
     _topItem = uiItem();
-    _topLayout = UI_VFILL;  // to be set or altered upon end()
+    _topLayout = UI_FILL;  // to be set or altered upon end()
     
     uiSetBox(_topItem, UI_COLUMN);
     
@@ -128,25 +149,54 @@ Layout& Layout::beginColumn()
     return *this;
 }
 
-Layout& Layout::beginRow()
+Layout& Layout::beginStack
+(
+    const char* title,
+    bool* state
+)
 {
     pushTop();
     
+    //  frame
     _topItem = uiItem();
-    _topLayout = UI_HFILL;  // to be set or altered upon end()
+    _topLayout = UI_HFILL;
     
-    uiSetBox(_topItem, UI_ROW);
+    uiSetBox(_topItem, UI_COLUMN);
+    uiSetMargins(_topItem, _context->theme.widgetMargins.l,
+        _context->theme.widgetMargins.t,
+        _context->theme.widgetMargins.r,
+        _context->theme.widgetMargins.b);
     
-    OUIHeader* header = reinterpret_cast<OUIHeader*>(
-        uiAllocHandle(_topItem, sizeof(OUIHeader))
+    OUIStack* stack = reinterpret_cast<OUIStack*>(
+        uiAllocHandle(_topItem, sizeof(OUIStack))
     );
-    header->itemType = OUIItemType::column;
-    header->handler = nullptr;
-
-    _innerItem = _topItem;
-
+    stack->header.itemType = OUIItemType::stack;
+    stack->header.handler = nullptr;
+    if (title && *title) {
+        stack->title = _context->stringStack.create(title);
+    }
+    else {
+        stack->title = nullptr;
+    }
+    stack->state = state;
+    
+    //  inner contents of the window excluding the title bar
+    _innerItem = uiItem();
+    uiSetBox(_innerItem, UI_COLUMN);
+    uiSetLayout(_innerItem, UI_TOP | UI_HFILL);
+    uiSetMargins(_innerItem, 0, _context->theme.widgetHeight, 0, 0);
+    
+    OUIHeader* inner = reinterpret_cast<OUIHeader*>(
+        uiAllocHandle(_innerItem, sizeof(OUIHeader))
+    );
+    inner->itemType = OUIItemType::group;
+    inner->handler = nullptr;
+    
+    uiInsert(_topItem, _innerItem);
+    
     return *this;
 }
+
 
 Layout& Layout::setSize(int w, int h)
 {

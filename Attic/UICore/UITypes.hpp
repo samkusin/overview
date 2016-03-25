@@ -9,10 +9,11 @@
 #ifndef Overview_UI_Types_hpp
 #define Overview_UI_Types_hpp
 
-#include "CKGfx/GfxTypes.hpp"
-
 #include "blendish_defines.h"
 #include "ouitypes.h"
+
+#include <cinek/types.hpp>
+
 
 typedef struct NVGcontext NVGcontext;
 
@@ -79,6 +80,34 @@ struct Color
     }
 };
 
+
+////////////////////////////////////////////////////////////////////////////
+
+struct Theme
+{
+    int font;
+    int textSize;
+    Color textColor;
+    
+    int widgetHeight;
+    Box widgetMargins;
+    float cornerRadius;
+    Color groupColor;
+    
+    Color windowColor;
+    int windowTitleBarHeight;
+    Color windowTitleBarColor;
+    Color windowTitleColor;
+    
+    Color listboxTextColor;
+    Color listboxHoverColor;
+    Color listboxSelectColor;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  UI State Data (for imgui-like query)
+
 struct KeyEvent
 {
     UIevent type;
@@ -89,9 +118,6 @@ struct KeyEvent
         return type != UI_EVENT_NULL;
     }
 };
-
-////////////////////////////////////////////////////////////////////////////////
-//  UI State Data (for imgui-like query)
 
 struct ListboxState
 {
@@ -108,6 +134,16 @@ struct ListboxState
     
     bool selected() const {
         return selectedItem != -1 && highlightItem == selectedItem;
+    }
+};
+
+struct StackState
+{
+    int thisItem;
+    bool openStatus;             // 0 = closed, 1 = open
+    
+    void init(int item) {
+        thisItem = item;
     }
 };
 
@@ -142,7 +178,6 @@ struct FrameState
 ////////////////////////////////////////////////////////////////////////////////
 //  UI Subscriber class
 
-
 //  Used for UI items that require data from the application (i.e. lists )
 struct DataObject
 {
@@ -153,18 +188,8 @@ struct DataObject
         custom
     };
     
-    enum class ImageType
-    {
-        undefined,
-        icon,                   // themed icon
-        image                   // nvg image
-    };
-    
     Type type;
-    ImageType imageType;
-    
-    
-    //  data depending on object Type
+
     union
     {
         const char* str;        // static C String object
@@ -172,14 +197,7 @@ struct DataObject
     }
     data;
     
-    union
-    {
-        int iconId;
-        int imageId;            // image handle
-    }
-    image;
-    
-    DataObject() : type(Type::undefined), imageType(ImageType::undefined) {}
+    DataObject() : type(Type::undefined) {}
 };
 
 class DataProvider
@@ -191,7 +209,6 @@ public:
     //  used by UI items for lists or other UI items that need object data.
     virtual bool onUIDataItemRequest(int id, uint32_t row, uint32_t col, DataObject& data) {
         data.type = DataObject::Type::undefined;
-        data.imageType = DataObject::ImageType::undefined;
         return false;
     }
     //  Issued when a UI needs to retrieve an item count for the specified data

@@ -46,8 +46,7 @@ public:
         gfx::Context& gfxContext,
         const gfx::NodeRenderer::ProgramMap& programs,
         const gfx::NodeRenderer::UniformMap& uniforms,
-        NVGcontext* nvg,
-        uicore::Context* uiContext
+        NVGcontext* nvg
     );
     ~PrototypeApplication();
     
@@ -55,7 +54,7 @@ public:
     
     void simulateFrame(CKTimeDelta dt);
     void renderFrame(CKTimeDelta dt, const gfx::Rect& viewRect,
-        const cinek::uicore::InputState& inputState);
+        const cinek::input::InputState& inputState);
     void endFrame();
     
 private:
@@ -79,8 +78,6 @@ private:
     
     gfx::NodeRenderer _renderer;
     NVGcontext* _nvg;
-    uicore::Theme _uiTheme;
-    uicore::Context* _uiContext;
     
     unique_ptr<ove::RenderGraph> _renderGraph;
     ove::RenderContext _renderContext;

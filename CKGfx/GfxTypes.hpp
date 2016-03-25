@@ -19,6 +19,8 @@
 
 #include <array>
 
+typedef struct NVGcontext NVGcontext;
+
 namespace cinek {
     namespace gfx {
     

@@ -11,9 +11,7 @@
 
 #include "GameTypes.hpp"
 #include "Common.hpp"
-#include "UICore/UIService.hpp"
 #include "CKGfx/NodeRenderer.hpp"
-#include "UICore/Input.hpp"
 #include "Engine/ViewController.hpp"
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Services/AssetService.hpp"
@@ -25,7 +23,6 @@ struct ApplicationContext
 {
     NVGcontext* nvg;
     TaskScheduler* taskScheduler;
-    uicore::Context *uiContext;
     
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;
@@ -70,9 +67,6 @@ protected:
     ove::NavSystem& navSystem() {
         return *_navSystem;
     }
-    UIService& uiService() {
-        return _uiService;
-    }
     NVGcontext* nvgContext() {
         return _appContext->nvg;
     }
@@ -97,8 +91,6 @@ private:
     ove::Pathfinder* _pathfinder;
     ove::PathfinderDebug* _pathfinderDebug;
     ove::NavSystem* _navSystem;
-    
-    UIService _uiService;
 };
 
 }

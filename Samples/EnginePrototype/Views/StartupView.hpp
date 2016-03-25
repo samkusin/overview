@@ -32,7 +32,7 @@ public:
 private:
     //  AppViewController
     virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
-                         const cinek::uicore::InputState& inputState);
+                         const cinek::input::InputState& inputState);
 private:
     bool _templatesLoaded;
     bool _globalsLoaded;

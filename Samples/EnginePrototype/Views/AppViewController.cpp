@@ -20,8 +20,7 @@ AppViewController::AppViewController
     _assetService({ context->taskScheduler, context->resourceFactory }),
     _entityService( context->entityDatabase ),
     _pathfinder( context->pathfinder ),
-    _pathfinderDebug( context->pathfinderDebug ),
-    _uiService( context->uiContext )
+    _pathfinderDebug( context->pathfinderDebug )
 {
 }
 

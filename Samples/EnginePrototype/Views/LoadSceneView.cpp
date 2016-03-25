@@ -53,7 +53,7 @@ void LoadSceneView::frameUpdateView
 (
     ove::ViewStack& stateController,
     CKTimeDelta dt,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
     if (_currentTask != _nextTask) {

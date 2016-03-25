@@ -9,6 +9,7 @@
 #include "Common.hpp"
 #include "Renderer.hpp"
 #include "Controller.hpp"
+#include "Input.hp"
 
 #include "CKGfx/VertexTypes.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
@@ -31,12 +32,7 @@
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
 
-#include "UICore/UITypes.hpp"
 #include "UICore/UIEngine.hpp"
-#include "UICore/UIRenderer.hpp"
-#include "UICore/Input.hpp"
-
-#include "UICore/oui.h"
 
 #include <unordered_map>
 
@@ -318,10 +314,30 @@ int runSample(int viewWidth, int viewHeight)
         }
         */
 
-        cinek::uicore::InputState polledInputState;
+        cinek::input::InputState polledInputState;
         
-        if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
-            running = false;
+        {
+            int mx, my;
+
+            //  handle Mouse UI, which is polled per frame instead of set per event.
+            uint32_t mbtn = SDL_GetMouseState(&mx, &my);
+            SDL_GetRelativeMouseState(&polledInputState.mdx, &polledInputState.mdy);
+
+            polledInputState.mx = mx;
+            polledInputState.my = my;
+            polledInputState.mbtn = mbtn;
+            polledInputState.mxWheel = 0;
+            polledInputState.myWheel = 0;
+
+            //  poll system and key events
+            uint32_t flags = 0;
+            SDL_Event event;
+            while (SDL_PollEvent(&event)) {
+                flags |= cinek::input::processSDLEvent(polledInputState, event);
+            }
+            if (flags & cinek::input::kPollSDLEvent_Quit)
+                running = false;
+        }
 
         {
             for (auto& animController : animControllers) {

@@ -11,6 +11,8 @@
 
 #include "UITypes.hpp"
 
+#include "CKGfx/GfxTypes.hpp"
+
 namespace cinek {
 
     namespace uicore {
