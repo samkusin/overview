@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition="'$(BGFXShaderCBeforeTargets)' == '' and '$(BGFXShaderCAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <BGFXShaderCBeforeTargets>Midl</BGFXShaderCBeforeTargets>
+    <BGFXShaderCAfterTargets>CustomBuild</BGFXShaderCAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BGFXShaderCDependsOn Condition="'$(ConfigurationType)' != 'Makefile'">_SelectedFiles;$(BGFXShaderCDependsOn)</BGFXShaderCDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <BGFXShaderC>
+      <CommandLineTemplate Condition="'%(BGFXShaderC.ShaderType)' == 'ShaderVertex'">start /B /WAIT /D "%(CKGfxShaderCompiler) [AllOptions] [AdditionalOptions] --platform windows -p vs_4_0" exit /b %errorlevel%</CommandLineTemplate>
+      <CommandLineTemplate Condition="'%(BGFXShaderC.ShaderType)' == 'ShaderFragment'">start /B /WAIT /D "%(CKGfxShaderCompiler) [AllOptions] [AdditionalOptions] --platform windows -p ps_4_0" exit /b %errorlevel%</CommandLineTemplate>
+      <CommandLineTemplate Condition="'%(BGFXShaderC.ShaderType)' == 'ShaderCompute'">start /B /WAIT /D "%(CKGfxShaderCompiler) [AllOptions] [AdditionalOptions] --platform windows -p cs_5_0" exit /b %errorlevel%</CommandLineTemplate>
+      <ExecutionDescription>BGFX Shader Compile %(Identity)...</ExecutionDescription>
+    </BGFXShaderC>
+  </ItemDefinitionGroup>
+</Project>

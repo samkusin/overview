@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+
+  <!--ContentType Name="EventProvider" DisplayName="Event Provider Custom" ItemType="EventProvider" />
+  <ItemType Name="EventProvider" DisplayName="Event Provider Custom" />
+  <FileExtension Name=".vs" ContentType="EventProvider" /-->
+  
+  <ContentType Name="BGFXShaderC" DisplayName="BGFX Shader File 2" ItemType="BGFXShaderC"/>
+  <ItemType Name="BGFXShaderC" DisplayName="BGFX Shader File 2" />
+  <FileExtension Name="*.vs" ContentType="BGFXShaderC" />
+  
+</ProjectSchemaDefinitions>
