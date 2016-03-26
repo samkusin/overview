@@ -29,6 +29,7 @@ bool imGuiInit(SDL_Window *window, int viewId);
 void imGuiShutdown();
 void imGuiNewFrame();
 bool imGuiProcessEvent(SDL_Event* event);
+void imGuiRender();
 
 // Use if you want to reset your rendering device without losing ImGui state.
 void imGuiInvalidateDeviceObjects();

@@ -21,8 +21,6 @@
 // Changes: Modified ImGui Sample to support BGFX
 //
 
-#include "UIEngine.hpp"
-
 #include "External/imgui/imgui.h"
 
 #include <SDL2/SDL.h>
@@ -160,6 +158,7 @@ bool imGuiInit(SDL_Window *window, int viewId)
     //bgfx::sdlSetWindow(window);
 
     ImGuiIO& io = ImGui::GetIO();
+    
     io.KeyMap[ImGuiKey_Tab] = SDLK_TAB;                     // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
     io.KeyMap[ImGuiKey_LeftArrow] = SDL_SCANCODE_LEFT;
     io.KeyMap[ImGuiKey_RightArrow] = SDL_SCANCODE_RIGHT;
@@ -179,6 +178,8 @@ bool imGuiInit(SDL_Window *window, int viewId)
     io.KeyMap[ImGuiKey_X] = SDLK_x;
     io.KeyMap[ImGuiKey_Y] = SDLK_y;
     io.KeyMap[ImGuiKey_Z] = SDLK_z;
+    
+    io.IniFilename = NULL;
 
     io.RenderDrawListsFn = imGuiRenderDrawLists;   // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
     io.SetClipboardTextFn = imGuiSetClipboardText;
@@ -348,6 +349,13 @@ void imGuiInvalidateDeviceObjects()
         bgfx::destroyTexture(g_FontTexture);
         g_FontTexture.idx = bgfx::invalidHandle;
     }
+}
+
+void imGuiRender()
+{
+    //bgfx::setViewClear(g_ViewId, BGFX_CLEAR_COLOR, 0x000000ff, 1.0f, 0);
+    bgfx::setViewRect(g_ViewId, 0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+    ImGui::Render();
 }
 
 

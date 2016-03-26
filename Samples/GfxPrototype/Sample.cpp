@@ -45,17 +45,8 @@ enum
 };
 
 
-int runSample(int viewWidth, int viewHeight)
+int runSample(int viewWidth, int viewHeight, int firstFreeViewId)
 {
-    //  UI
-    UIcontext* uiContext = uiCreateContext(4096, 1<<20);
-    uiMakeCurrent(uiContext);
-    uiSetHandler(cinek::uicore::OUIHandler);
-    
-    NVGcontext* nvg = cinek::uicore::createRenderingContext(1);
-    if (!nvg)
-        return 1;
-    
     //  GFX
     cinek::Allocator allocator;
     cinek::gfx::Rect viewRect = { 0, 0, viewWidth, viewHeight };
@@ -351,18 +342,13 @@ int runSample(int viewWidth, int viewHeight)
             
             mainCamera.update();
             nodeRenderer(shaderPrograms, shaderUniforms, mainCamera, scene.root());
-
-            cinek::uicore::render(nvg, viewRect);
         }
         {
-            appController.handleCameraInput(mainCamera, polledInputState, frameTimeMs*.001f);
-            uiProcess(systemTimeMs);
+            appController.handleCameraInput(mainCamera, poledInputState, frameTimeMs*.001f);
         }
 
         bgfx::frame();
     }
-
-    cinek::uicore::destroyRenderingContext(nvg);
     
     return 0;
 }

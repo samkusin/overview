@@ -27,9 +27,6 @@
 
 #include "PrototypeApplication.hpp"
 
-#include "UICore/UIEngine.hpp"
-#include "CKGfx/External/nanovg/nanovg.h"
-
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
 #include <vector>

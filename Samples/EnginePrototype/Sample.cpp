@@ -33,6 +33,7 @@
 #include <bgfx/bgfx.h>
 
 #include "UICore/UIEngine.hpp"
+#include "UICore/UI.hpp"
 
 #include <unordered_map>
 
@@ -68,10 +69,11 @@ NVGcontext* createNVGcontext(int viewId)
 }
 
 
-int runSample(int viewWidth, int viewHeight)
+int runSample(int viewWidth, int viewHeight, int firstFreeViewId)
 {
-    NVGcontext* nvg = nvgCreate(1, 1);
+    NVGcontext* nvg = nvgCreate(1, firstFreeViewId);
     bgfx::setViewSeq(1, true);
+    ++firstFreeViewId;
     
     //  nvg destruction should occur after the below scope's objects have been
     //  lost
@@ -199,6 +201,7 @@ int runSample(int viewWidth, int viewHeight)
                 SDL_Event event;
                 while (SDL_PollEvent(&event)) {
                     flags |= cinek::input::processSDLEvent(polledInputState, event);
+                    imGuiProcessEvent(&event);
                 }
                 if (flags & cinek::input::kPollSDLEvent_Quit)
                     running = false;
@@ -211,7 +214,13 @@ int runSample(int viewWidth, int viewHeight)
             //  sizes from our window (i.e. fullscreen?)
             nvgBeginFrame(nvg, viewRect.w, viewRect.h, 1.0f);
             
+            imGuiNewFrame();
+            
             controller.renderFrame(frameTime, viewRect, polledInputState);
+            
+            ImGui::ShowTestWindow();
+            
+            imGuiRender();
         
             nvgEndFrame(nvg);
         

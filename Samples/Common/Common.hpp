@@ -11,6 +11,6 @@
 
 #include "Engine/EngineTypes.hpp"
 
-extern int runSample(int viewWidth, int viewHeight);
+extern int runSample(int viewWidth, int viewHeight, int firstFreeViewId);
 
 #endif /* Common_hpp */
