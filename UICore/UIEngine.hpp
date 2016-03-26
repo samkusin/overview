@@ -6,72 +6,34 @@
 //  Copyright (c) 2015 Cinekine. All rights reserved.
 //
 
+//
+// ImGui Framework
+// https://github.com/ocornut/imgui
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2014-2015 Omar Cornut and ImGui contributors
+//
+// License: https://github.com/ocornut/imgui/blob/master/LICENSE
+//
+// Changes: Modified ImGui Sample to support BGFX
+//
+
 #ifndef Overview_UI_Engine_hpp
 #define Overview_UI_Engine_hpp
 
-#include "UITypes.hpp"
+struct SDL_Window;
+typedef union SDL_Event SDL_Event;
 
-#include <cinek/vector.hpp>
+bool imGuiInit(SDL_Window *window, int viewId);
+void imGuiShutdown();
+void imGuiNewFrame();
+bool imGuiProcessEvent(SDL_Event* event);
+void imGuiRender();
 
-namespace cinek { namespace uicore {
+// Use if you want to reset your rendering device without losing ImGui state.
+void imGuiInvalidateDeviceObjects();
+bool imGuiCreateDeviceObjects();
 
-extern void OUIHandler(int item, UIevent evt);
-
-enum class OUIItemType
-{
-    frame,
-    column,
-    window,
-    button,
-    listbox,
-    combobox
-};
-
-struct OUIHeader
-{
-    OUIItemType itemType;
-    UIhandler handler;
-};
-
-struct OUIFrame
-{
-    OUIHeader header;
-    FrameState* state;          /* reported back to controller */
-    RenderCallback renderCb;    /* custom rendering callback */
-    void* callbackContext;      /* custom rendering callback context */
-    
-    static void handler(int item, UIevent event);
-};
-
-struct OUIButtonData
-{
-    OUIHeader header;
-    int id;
-    ButtonHandler* fireHandler;
-    int iconId;
-    const char* label;
-    
-    static void handler(int item, UIevent event);
-};
-
-/*
- *  OUIListBox uses a UISubscriber data request to lookup what items to render 
- *  by index.
- *  
- *  Upon selection, a subscriber can lookup what item has been selected from .
- */
-struct OUIListBoxData
-{
-    OUIHeader header;
-    ListboxType lbtype;     /* layout of items */
-    DataProvider* provider;
-    int32_t providerId;     /* Data provider object and ID */
-    UIvec2 viewAnchor;      /* Used for scrolling */
-    ListboxState* state;    /* State accessible by the controller */
-    
-    static void handler(int item, UIevent event);
-};
-
-} /* namespace uicore */ } /* namespace cinek */
 
 #endif /* defined(Overview_UI_Engine_hpp) */

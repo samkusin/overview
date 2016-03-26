@@ -16,7 +16,7 @@ namespace cinek {
 class StartupView : public AppViewController
 {
 public:
-    StartupView(const ApplicationContext& context);
+    StartupView(ApplicationContext* context);
     
     virtual void onViewAdded(ove::ViewStack& stateController);
     virtual void onViewRemoved(ove::ViewStack& stateController);
@@ -24,17 +24,18 @@ public:
     virtual void onViewBackground(ove::ViewStack& stateController);
  
     virtual void onViewStartFrame(ove::ViewStack& stateController);
-    virtual void simulateView(ove::ViewStack& stateController, double dt);
+    virtual void simulateView(ove::ViewStack& stateController, CKTimeDelta dt);
     virtual void onViewEndFrame(ove::ViewStack& stateController);
     
     virtual const char* viewId() const;
     
 private:
     //  AppViewController
-    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                         const cinek::uicore::InputState& inputState);
+    virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
+                         const cinek::input::InputState& inputState);
 private:
-    bool _loadCompleted;
+    bool _templatesLoaded;
+    bool _globalsLoaded;
     
 };
 

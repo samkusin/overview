@@ -11,14 +11,11 @@
 
 #include "GameTypes.hpp"
 #include "Common.hpp"
-#include "UICore/UITypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
-#include "UICore/Input.hpp"
 #include "Engine/ViewController.hpp"
+#include "Engine/Messages/Core.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"
-#include "Engine/Services/SceneService.hpp"
-#include "Engine/Services/RenderService.hpp"
 
 namespace cinek {
 
@@ -26,6 +23,7 @@ struct ApplicationContext
 {
     NVGcontext* nvg;
     TaskScheduler* taskScheduler;
+    
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;
     ove::EntityDatabase* entityDatabase;
@@ -35,12 +33,15 @@ struct ApplicationContext
     ove::Scene* scene;
     ove::RenderGraph* renderGraph;
     ove::RenderContext* renderContext;
+    ove::Pathfinder* pathfinder;
+    ove::PathfinderDebug* pathfinderDebug;
+    ove::NavSystem* navSystem;
 };
 
 class AppViewController : public ove::ViewController
 {
 public:
-    AppViewController(const ApplicationContext& context);
+    AppViewController(ApplicationContext* context);
     
     virtual ~AppViewController();
     
@@ -51,22 +52,45 @@ protected:
     ove::EntityService& entityService() {
         return _entityService;
     }
-    ove::SceneService& sceneService() {
-        return _sceneService;
+    ove::Scene& scene() {
+        return *_appContext->scene;
     }
-    ove::RenderService& renderService() {
-        return _renderService;
+    ove::SceneDebugDrawer& sceneDebug() {
+        return *_appContext->sceneDebugDrawer;
+    }
+    ove::Pathfinder& pathfinder() {
+        return *_pathfinder;
+    }
+    ove::PathfinderDebug& pathfinderDebug() {
+        return *_pathfinderDebug;
+    }
+    ove::NavSystem& navSystem() {
+        return *_navSystem;
     }
     NVGcontext* nvgContext() {
         return _appContext->nvg;
     }
-    
+    TaskScheduler& scheduler() {
+        return *_appContext->taskScheduler;
+    }
+    ove::RenderContext& renderContext() {
+        return *_appContext->renderContext;
+    }
+    ove::RenderGraph& renderGraph() {
+        return *_appContext->renderGraph;
+    }
+    gfx::Context& gfxContext() {
+        return *_appContext->gfxContext;
+    }
+
 private:
-    const ApplicationContext* _appContext;
+    ApplicationContext* _appContext;
     ove::AssetService _assetService;
     ove::EntityService _entityService;
-    ove::SceneService _sceneService;
-    ove::RenderService _renderService;
+    
+    ove::Pathfinder* _pathfinder;
+    ove::PathfinderDebug* _pathfinderDebug;
+    ove::NavSystem* _navSystem;
 };
 
 }

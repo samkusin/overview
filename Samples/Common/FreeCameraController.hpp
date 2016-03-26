@@ -9,9 +9,10 @@
 #ifndef Controller_hpp
 #define Controller_hpp
 
+#include "Input.hpp"
+
 #include "Engine/EngineTypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
-#include "UICore/UITypes.hpp"
 
 
 namespace cinek {
@@ -24,7 +25,7 @@ public:
     
     void setTransform(const gfx::Vector3& pos, const gfx::Matrix4& rotMtx);
     
-    void handleCameraInput(gfx::Camera& camera, const cinek::uicore::InputState& state,
+    void handleCameraInput(gfx::Camera& camera, const cinek::input::InputState& state,
                            float frameDelta);
 
 private:

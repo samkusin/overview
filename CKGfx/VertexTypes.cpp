@@ -68,6 +68,14 @@ namespace VertexTypes
             .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
             .end();
         
+        // kVNormal_Tex0_Weights
+        s_decls[kVNormal_Weights].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Indices, 4, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Weight, 4, bgfx::AttribType::Float)
+            .end();
+        
         //  kVPosition
         s_decls[kVPosition].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
@@ -77,6 +85,19 @@ namespace VertexTypes
         s_decls[kVPositionNormal].begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+            .end();
+        
+        //  kVPositionColor
+        s_decls[kVPositionColor].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+        
+        //  kVPositionColorTex0
+        s_decls[kVPositionColorTex0].begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .end();
         
         //  allow custom presets starting at the preset limit index

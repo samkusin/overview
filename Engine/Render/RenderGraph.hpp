@@ -77,7 +77,7 @@ public:
     /**
      *  Updates the render graph
      */
-    void update(double dt);
+    void update(CKTimeDelta dt);
     /**
      *  @return The root of the generated gfx::NodeGraph.
      */
@@ -88,34 +88,15 @@ public:
     gfx::NodeGraph& nodeGraph() {
         return _nodeGraph;
     }
+    /**
+     *  @param  e   The entity to retrieve
+     *  @return The controller attached to the specified entity.
+     */
+    gfx::AnimationControllerHandle findAnimationController(Entity e) const;
 
 private:
-    cinek::gfx::NodeGraph _nodeGraph;
-    double _renderTime;
-    
-    struct Node
-    {
-        Entity entity;
-        gfx::NodeHandle gfxNode;
-        void* context;
-    };
-    
-    //  nodes ordered by Entity
-    std::vector<Node> _renderNodes;
-    //
-    //  index of last active & pending destroyed nodes in the nodelist
-    //  new nodes are placed after _nodeEndIndex to the end of the rendernode
-    //  list.  this is an optimization so that we can differentiate new vs
-    //  active nodes in the list - and allows us to sort the list once per frame
-    uint32_t _nodeEndIndex;
-    //  used to trigger resort of node vector during prepare
-    uint32_t _removedNodeCount;
-    //  smaller values mean that it takes more removed entities to trigger
-    //  a resort
-    static constexpr uint32_t kRemoveNodeSortFactor = 10;
-    
-    //  Animations
-    //
+    //  controller objects are referenced by the nodegraph and our own animation
+    //  controller update pass
     gfx::AnimationControllerPool _animControllerPool;
     
     struct AnimNode
@@ -123,7 +104,26 @@ private:
         Entity entity;
         gfx::AnimationControllerHandle animController;
     };
+
+    cinek::gfx::NodeGraph _nodeGraph;
+    CKTimeDelta _renderTime;
+
+    struct Node
+    {
+        Entity entity;
+        gfx::NodeHandle gfxNode;
+        void* context;
+    };
+    
+    //  pending node lists
+    std::vector<Node> _pendingRenderNodes;
+    std::vector<Entity> _removedRenderNodes;
+    
+    //  nodes ordered by Entity
+    std::vector<Node> _renderNodes;
     std::vector<AnimNode> _animNodes;
+
+    AnimNode* addAnimNode(Entity e, gfx::AnimationControllerHandle h);
 };
     
     }   /* namesapce ove */

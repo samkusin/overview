@@ -1,7 +1,7 @@
 bl_info = {
     "name" : "Export OVEngine Objects (.json)",
     "author" : "Samir Sinha",
-    "version" : (0,0,3),
+    "version" : (0,0,4),
     "blender" : (2,7,5),
     "category" : "Import-Export"
 }
@@ -52,7 +52,7 @@ def generate_mesh_elements(obj, mesh, resources):
     our_materials = resources['materials']
     our_mesh_elements = []
     has_ovobject_props = hasattr(obj, 'ovobject_type_property')
-    is_viewable = not has_ovobject_props or obj.ovobject_type_property == 'View'
+    is_viewable = not has_ovobject_props or obj.ovobject_type_property != 'Hull'
     face_has_uvs = face_has_uvs and is_viewable
 
     while mesh_faces:
@@ -294,6 +294,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
     kf_fields = {
         'location': ['tx','ty','tz'],
         'rotation_quaternion' : ['qw','qx','qy','qz'],
+        'rotation_euler' : ['rx', 'ry', 'rz'],
         'scale' : ['sx','sy','sz']
     }
 
@@ -390,6 +391,24 @@ class ExportOVObjectJSON(bpy.types.Operator):
         return mesh_indices
 
 
+    def exportObjectAsArmature(self, scene, obj, resources):
+        # generate the bone list, indices are used as bone IDs for bone ID:weight
+        # pairing.  we'll deal with the hierarchy after we've traversed the mesh
+        # during the exportNode flow
+        bone_names = []
+
+        def add_bone(bone):
+            bone_names.append(bone.name)
+            for b in bone.children:
+                add_bone(b)
+
+        for bone in obj.data.bones:
+            if not bone.parent:
+                add_bone(bone)
+
+        return { 'bone_names': bone_names }
+
+
     def exportArmatureAction(self, obj, action, resources):
         # print(" Name ", action.name)
 
@@ -418,6 +437,7 @@ class ExportOVObjectJSON(bpy.types.Operator):
         """
         animation = OrderedDict()
         sample_rate = self.anim_fps / self.anim_sample_fps
+
         for fcurve in action.fcurves:
             start,end = fcurve.range()
             kfpoints = fcurve.keyframe_points
@@ -444,19 +464,22 @@ class ExportOVObjectJSON(bpy.types.Operator):
                 if kf_props[prop_field] not in bone_animation:
                     bone_animation[kf_props[prop_field]] = []
             else:
-                self.report({'WARN'}, "Action '"+action.name+"' fcurve has an unused property '"+prop_name+"'")
+                self.report({'WARNING'}, "Action '"+action.name+"' fcurve has an unused property '"+prop_name+"'")
 
             if kf_props:
                 kf_sequence = bone_animation[kf_props[prop_field]]
+                v_scalar = 1.0
+                # adjust rotations to a left-handed system
+                if kf_props[prop_field] in ['qx','qy','qz']:
+                    v_scalar = -1.0
+                if kf_props[prop_field] in ['rx','ry', 'rz']:
+                    v_scalar = -1.0
+
                 last_kf = None
                 for kf in kfpoints:
                     if last_kf is not None and last_kf.co[1] != kf.co[1]:
                         # interpolation pass for keyframes with different values only
                         # this is to reduce the number of animation samples generated
-                        v_scalar = 1.0
-                        if kf_props[prop_field] in ['qx','qy','qz']:
-                            v_scalar = -1.0
-
                         t = last_kf.co[0]
                         while t < kf.co[0]:
                             kf_sequence.append(OrderedDict([
@@ -472,39 +495,48 @@ class ExportOVObjectJSON(bpy.types.Operator):
                 if not kf_sequence:
                     kf_sequence.append(OrderedDict([
                         ('t',kfpoints[0].co[0]/self.anim_fps),
-                        ('v',kfpoints[0].co[1])
+                        ('v',v_scalar * kfpoints[0].co[1])
                     ]))
 
         return animation
 
+    def exportArmatureAnimations(self, scene, obj, resources):
+        bone_names = resources['_armature']['bone_names']
+        root_bones = []
 
-    def exportObjectAsArmature(self, scene, obj, resources):
-        # each bone requires its own offset matrix based on a common space
-        # (relative to the root so we can store every bone in a list
-        # instead of a hierarchy)
-        # generate the bone list, indices are used as bone IDs for bone ID:weight
-        # pairing
-        bones = []
-        bone_names = []
+        # used for offset calc offset <- bone.matrix_local * mesh_matrix_local
+        mesh_to_armature_matrix = resources['_armature']['mesh_matrix_local']
 
-        def add_bone(bone, adj_matrix=mathutils.Matrix.Identity(4)):
-            offset = adj_matrix * bone.matrix_local
+        # skeleton uses the armature bones (object mode)
+        def add_bone_to_skel(pose_bone):
+            local_matrix = pose_bone.bone.matrix_local
+            #basis_matrix = pose_bone.matrix_basis
+            offset_matrix = local_matrix.inverted() * mesh_to_armature_matrix
+            parent_pose_bone = pose_bone.parent
+
+            if parent_pose_bone:
+                parent_local_matrix = parent_pose_bone.bone.matrix_local
+                matrix = parent_local_matrix.inverted() * local_matrix
+            else:
+                matrix = local_matrix
+
             node = OrderedDict([
-                ('name', bone.name),
-                ('matrix', matrix_to_list(offset)),
-                ('bone_index', len(bone_names)),
+                ('name', pose_bone.name),
+                ('matrix', matrix_to_list(matrix)),
+                ('offset', matrix_to_list(offset_matrix)),
+                ('bone_index', bone_names.index(pose_bone.name)),
                 ('children', [])
             ])
-            bone_names.append(bone.name)
-            for b in bone.children:
-                node['children'].append(add_bone(b))
 
+            for b in pose_bone.children:
+                node['children'].append(add_bone_to_skel(b))
             return node
 
-        for bone in obj.data.bones:
+        for bone in obj.pose.bones:
             if not bone.parent:
-                bones.append(add_bone(bone))
+                root_bones.append(add_bone_to_skel(bone))
 
+        # generate keyframes from fcurves, which act on the pose
         animations = {}
 
         if not obj.animation_data.use_nla:
@@ -525,7 +557,8 @@ class ExportOVObjectJSON(bpy.types.Operator):
             obj.animation_data.action = init_action
             scene.frame_set(current_frame)
 
-        return { 'skeleton': bones, 'bone_names': bone_names, 'animations': animations }
+        return animations, root_bones
+
 
     def createNode(self, obj, matrix):
         node = OrderedDict()
@@ -547,12 +580,14 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
     def exportNode(self, scene, obj, resources, matrix):
         skip_object = obj.hide_render
-        if obj.type == 'CAMERA':
+        if obj.type == 'CAMERA' or obj.type == 'EMPTY':
             skip_object = True
 
         if skip_object:
             print("Skipping [",obj.name,"] of type ",obj.type)
             return None
+        else:
+            print("Exporting [", obj.name,"] of type ",obj.type)
 
         node = self.createNode(obj, matrix)
 
@@ -578,21 +613,27 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
         if obj.type == 'LAMP':
             node['light'] = self.exportObjectAsLight(scene, obj, resources)
+
         elif obj.type == 'ARMATURE':
             # persist bone list, which may be used when generating vertex weights from the
             # underlying meshes.  we free this context after processing the armature's
             # hierarchy
             resources['_armature'] = self.exportObjectAsArmature(scene, obj, resources)
-            resources['animations'][obj.name] = {
-                'states': resources['_armature']['animations'],
-                'skeleton' : resources['_armature']['skeleton']
-            }
+
+            resources['_armature']['old_pose_position'] = obj.data.pose_position
+            obj.data.pose_position = 'REST'
+            scene.update()
+
             node['animation'] = obj.name
+
         elif obj.type == 'MESH':
             if node['type'] == 'Hull' or node['type'] == 'Entity':
                 node['hulls'] = self.exportObjectAsMesh(scene, obj, resources, node['type'])
             else:
                 node['meshes'] = self.exportObjectAsMesh(scene, obj, resources, node['type'])
+
+            if '_armature' in resources:
+                resources['_armature']['mesh_matrix_local'] = obj.matrix_local
 
         # Seems hacky.  But the only way I found to determine if an object has custom
         # props is to check for the _RNA_UI key
@@ -613,7 +654,17 @@ class ExportOVObjectJSON(bpy.types.Operator):
 
         # cleanup
         if obj.type == 'ARMATURE':
-            del resources["_armature"]
+            animations, root_bones = self.exportArmatureAnimations(scene, obj, resources)
+            resources['animations'][obj.name] = {
+                'states': animations,
+                'skeleton' : root_bones
+            }
+
+            if resources['_armature']['old_pose_position'] != obj.data.pose_position:
+                obj.data.pose_position = resources['_armature']['old_pose_position']
+                scene.update()
+
+            del resources['_armature']
 
         return node
 
@@ -712,10 +763,12 @@ def menu_func(self, context):
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
+    print("OVEngine Objects loaded")
 
 def unregister():
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.utils.unregister_module(__name__)
+    print("OVEngine Objects unloaded")
 
 
 #if __name__ == "__main__":

@@ -33,7 +33,7 @@ void AssetService::loadManifest
     std::function<void(std::shared_ptr<AssetManifest>)> resultCb
 )
 {
-    auto taskCb = [resultCb](Task::State state, Task& task) {
+    auto taskCb = [resultCb](Task::State state, Task& task, void* context) {
         if (state == Task::State::kEnded) {
             auto manifest = reinterpret_cast<LoadAssetManifest&>(task).acquireManifest();
             resultCb(manifest);

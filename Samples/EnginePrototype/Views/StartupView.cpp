@@ -11,19 +11,25 @@
 
 namespace cinek {
 
-StartupView::StartupView(const ApplicationContext& api) :
+StartupView::StartupView(ApplicationContext* api) :
     AppViewController(api),
-    _loadCompleted(false)
+    _templatesLoaded(false),
+    _globalsLoaded(false)
 {
     
 }
     
 void StartupView::onViewAdded(ove::ViewStack& stateController)
 {
+    assetService().loadManifest("global.json",
+        [this](std::shared_ptr<ove::AssetManifest> manifest) {
+            //entityService().addDefintions("entity", manifest);
+            _globalsLoaded = true;
+        });
     assetService().loadManifest("entity.json",
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
             entityService().addDefintions("entity", manifest);
-            _loadCompleted = true;
+            _templatesLoaded = true;
         });
 }
 
@@ -43,19 +49,19 @@ void StartupView::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void StartupView::simulateView(ove::ViewStack& stateController, double dt)
+void StartupView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void StartupView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double /* dt */,
-    const cinek::uicore::InputState& /* inputState */
+    CKTimeDelta /* dt */,
+    const cinek::input::InputState& /* inputState */
 )
 {
-    if (_loadCompleted) {
-        stateController.present("GameView");
+    if (_templatesLoaded && _globalsLoaded) {
+        stateController.present("LoadSceneView");
     }
 }
 

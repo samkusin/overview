@@ -178,7 +178,7 @@ NodeHandle NodeGraph::addChildNodeToNode(NodeHandle child, NodeHandle node)
     return child;
 }
 
-NodeHandle NodeGraph::removeNode(NodeHandle child)
+NodeHandle NodeGraph::detachNode(NodeHandle child)
 {
     //  detach from next sibling or fixup firstChild links child was the tail
     //  remember: head prev points to tail, but not vice-versa
@@ -208,6 +208,14 @@ NodeHandle NodeGraph::removeNode(NodeHandle child)
     child->_nextSibling = nullptr;
     
     return child;
+}
+
+NodeHandle NodeGraph::detachNodeTree(NodeHandle node)
+{
+    while (node->_firstChild) {
+        detachNodeTree(node->_firstChild);
+    }
+    return detachNode(node);
 }
 
 

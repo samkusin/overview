@@ -7,7 +7,6 @@
 //
 
 #include "FreeCameraController.hpp"
-#include "UICore/Input.hpp"
 
 #include "CKGfx/Camera.hpp"
 
@@ -41,7 +40,7 @@ void FreeCameraController::setTransform
 void FreeCameraController::handleCameraInput
 (
     gfx::Camera &camera,
-    const cinek::uicore::InputState &state,
+    const cinek::input::InputState &state,
     float frameDelta
 )
 {
@@ -139,7 +138,7 @@ void FreeCameraController::handleCameraInput
     
     gfx::Vector3 worldTranslate;
     bx::vec3MulMtx(worldTranslate, viewTranslate, _cameraTransform.rotMtx);
-    _cameraTransform.pos += worldTranslate;
+    ckm::add(_cameraTransform.pos, _cameraTransform.pos, worldTranslate);
     
     gfx::Matrix4 translate;
     bx::mtxTranslate(translate, _cameraTransform.pos.x,

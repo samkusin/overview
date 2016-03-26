@@ -6,19 +6,26 @@
 //
 //
 
-#include "Engine/Scenes/SceneDataContext.hpp"
-#include "Engine/Scenes/Scene.hpp"
-#include "Engine/Scenes/SceneDebugDrawer.hpp"
+#include "Engine/Physics/SceneDataContext.hpp"
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
+#include "Engine/Path/Pathfinder.hpp"
+
+#include "Engine/Path/PathfinderDebug.hpp"
+#include "Engine/Controller/NavSystem.hpp"
+#include "Game/NavDataContext.hpp"
+#include "Game/TransformDataContext.hpp"
+#include "Engine/Controller/TransformSystem.hpp"
 
 #include "GameEntityFactory.hpp"
 
-#include "PrototypeApplication.hpp"
-
 #include "Views/StartupView.hpp"
-#include "Views/Game/GameView.hpp"
+#include "Views/LoadSceneView.hpp"
+#include "Views/GameView.hpp"
 
+#include "PrototypeApplication.hpp"
 
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
@@ -38,7 +45,7 @@ PrototypeApplication::PrototypeApplication
     _server(_messenger, { 64*1024, 64*1024 }),
     _client(_messenger, { 32*1024, 32*1024 }),
     _clientSender { &_client, _server.address() } ,
-    _resourceFactory(*_gfxContext, _taskScheduler),
+    _resourceFactory(_gfxContext, &_taskScheduler),
     _renderPrograms(programs),
     _renderUniforms(uniforms),
     _renderer(),
@@ -61,24 +68,6 @@ PrototypeApplication::PrototypeApplication
     _renderContext.uniforms = &_renderUniforms;
     _renderContext.frameRect = gfx::Rect { 0,0,0,0 };
     
-    ove::SceneDataContext::InitParams sceneDataInit;
-    sceneDataInit.numRigidBodies = 256;
-    sceneDataInit.numTriMeshShapes = 32;
-    sceneDataInit.numCylinderShapes = 32;
-    sceneDataInit.numBoxShapes = 32;
-    
-    _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
-    _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
-    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
-
-    
-    _componentFactory = allocate_unique<GameEntityFactory>(
-        *_gfxContext,
-        *_sceneData,
-        *_scene,
-        *_renderGraph
-    );
-    
     std::vector<EntityStore::InitParams> entityStoreInitializers = {
         //  default
         cinek::EntityStore::InitParams {
@@ -89,28 +78,88 @@ PrototypeApplication::PrototypeApplication
                 1024
         }
     };
+    
+    ove::SceneDataContext::InitParams sceneDataInit;
+    sceneDataInit.numBodies = 256;
+    sceneDataInit.numTriMeshShapes = 32;
+    sceneDataInit.numCylinderShapes = 32;
+    sceneDataInit.numBoxShapes = 32;
+    
+    _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
+    _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
+    
+    ove::Scene::InitParams sceneInitParams;
+    sceneInitParams.staticLimit = 1024;
+    sceneInitParams.limits[ove::SceneBody::kSection] = 64;
+    sceneInitParams.limits[ove::SceneBody::kDynamic] = 1024;
+    
+    _scene = cinek::allocate_unique<ove::Scene>(sceneInitParams, _sceneDbgDraw.get());
 
+    _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
+    _pathfinderDebug = cinek::allocate_unique<ove::PathfinderDebug>(64);
+    
+    NavDataContext::InitParams navDataInitParams;
+    navDataInitParams.navBodyCount = 128;
+    _navDataContext = cinek::allocate_unique<NavDataContext>(navDataInitParams);
+    
+    ove::NavSystem::InitParams navInitParams;
+    navInitParams.pathfinder = _pathfinder.get();
+    navInitParams.numBodies = navDataInitParams.navBodyCount;
+    _navSystem = cinek::allocate_unique<ove::NavSystem>(navInitParams);
+    
+    TransformDataContext::InitParams transformInitParams;
+    transformInitParams.setCount = 128;
+    transformInitParams.actionCount = transformInitParams.setCount * 2;
+    transformInitParams.sequenceCount = transformInitParams.actionCount * 8;
+    _transformDataContext = cinek::allocate_unique<TransformDataContext>(transformInitParams);
+    
+    ove::TransformSystem::InitParams transformSystemParams;
+    transformSystemParams.numBodies = 128;
+    _transformSystem = cinek::allocate_unique<ove::TransformSystem>(transformSystemParams);
+    
+    _componentFactory = allocate_unique<GameEntityFactory>(
+        _gfxContext,
+        _sceneData.get(),
+        _scene.get(),
+        _renderGraph.get(),
+        _navDataContext.get(),
+        _navSystem.get(),
+        _transformDataContext.get(),
+        _transformSystem.get()
+    );
+    
     _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
         *_componentFactory);
-
     
     //  define the top-level states for this application
-    ApplicationContext context;
-    
-    context.nvg = _nvg;
-    context.entityDatabase = _entityDb.get();
-    context.taskScheduler = &_taskScheduler;
-    context.resourceFactory = &_resourceFactory;
-    context.msgClientSender = &_clientSender;
-    context.scene = _scene.get();
-    context.sceneData = _sceneData.get();
-    context.sceneDebugDrawer = _sceneDbgDraw.get();
-    context.gfxContext = _gfxContext;
-    context.renderGraph = _renderGraph.get();
-    context.renderContext = &_renderContext;
+    _appContext = allocate_unique<ApplicationContext>();
+    _appContext->nvg = _nvg;
+    _appContext->entityDatabase = _entityDb.get();
+    _appContext->taskScheduler = &_taskScheduler;
+    _appContext->resourceFactory = &_resourceFactory;
+    _appContext->msgClientSender = &_clientSender;
+    _appContext->gfxContext = _gfxContext;
+    _appContext->renderContext = &_renderContext;
+
+    //  TODO - These should be created and destroyed by View objects
+    //       - Reason, it makes more sense to wholesale drop these objects
+    //          when completing a scenario
+    //       - Problem, our factory objects (resource and entity component)
+    //          need references to the current version of the below objects.
+    //       - Solution, We need to have our factories to share the context
+    //          containing these scene/render/ai system objects and respective
+    //          data contexts.
+    //
+    _appContext->renderGraph = _renderGraph.get();
+    _appContext->scene = _scene.get();
+    _appContext->sceneData = _sceneData.get();
+    _appContext->sceneDebugDrawer = _sceneDbgDraw.get();
+    _appContext->pathfinder = _pathfinder.get();
+    _appContext->pathfinderDebug = _pathfinderDebug.get();
+    _appContext->navSystem = _navSystem.get();
     
     _viewStack.setFactory(
-        [context](const std::string& viewName, ove::ViewController* )
+        [this](const std::string& viewName, ove::ViewController* )
             -> std::shared_ptr<ove::ViewController> {
             //  Startup View initialzes common data for the application
             //  Game View encompasses the whole game simulation
@@ -118,11 +167,16 @@ PrototypeApplication::PrototypeApplication
             //  Ship Bridge View encompasses the in-game ship bridge mode
             if (viewName == "StartupView") {
                 return std::allocate_shared<StartupView>(
-                    std_allocator<StartupView>(), context);
+                    std_allocator<StartupView>(), _appContext.get());
             }
             else if (viewName == "GameView") {
                 return std::allocate_shared<GameView>(
-                    std_allocator<GameView>(), context);
+                    std_allocator<GameView>(), _appContext.get());
+            }
+            else if (viewName == "LoadSceneView") {
+                return std::allocate_shared<LoadSceneView>(
+                std_allocator<LoadSceneView>(), _appContext.get());
+
             }
             
             return nullptr;
@@ -139,22 +193,26 @@ void PrototypeApplication::beginFrame()
 {
     _server.receive();
     _client.receive();
-
+    
     _viewStack.startFrame();
+    
+    _navSystem->startFrame();
 }
 
-void PrototypeApplication::simulateFrame(double dt)
+void PrototypeApplication::simulateFrame(CKTimeDelta dt)
 {
-    _scene->simulate(dt);
-    
     _viewStack.simulate(dt);
+ 
+    _pathfinder->simulate(dt);
+    _navSystem->simulate(dt);
+    _scene->simulate(dt);
 }
 
 void PrototypeApplication::renderFrame
 (
-    double dt,
+    CKTimeDelta dt,
     const gfx::Rect& viewRect,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
     _taskScheduler.update(dt * 1000);
@@ -166,6 +224,7 @@ void PrototypeApplication::renderFrame
     _viewStack.frameUpdate(dt, inputState);
         
     _gfxContext->update();
+    
 }
 
 void PrototypeApplication::endFrame()

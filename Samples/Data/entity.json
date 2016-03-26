@@ -13,30 +13,254 @@
                 "mass" : 70.0
             }
         },
-        "empty1" : {
+        "coffee_table" : {
             "editor" : {
-                "name" : "Placeholder 1"
+                "name" : "Coffee Table (Mid)"
             },
             "renderable" : {
-                "modelset" : "models/simple.json",
-                "model" : "DumbSlinky"
+                "modelset" : "models/furnature-tables-0.json",
+                "model" : "CoffeeTable-Mid"
             },
             "scenebody" : {
-                "shape" : "cylinder",
-                "mass" : 70.0
+                "shape" : "box",
+                "mass" : 10.0
             }
         },
-        "empty2" : {
+        "coffee_table_sm1" : {
             "editor" : {
-                "name" : "Placeholder 2"
+                "name" : "Coffee Table (Small)"
             },
             "renderable" : {
-                "modelset" : "models/simple.json",
-                "model" : "DumbSlinky"
+                "modelset" : "models/furnature-tables-0.json",
+                "model" : "CoffeeTable-Small1"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "coffee_table_sm2" : {
+            "editor" : {
+                "name" : "Coffee Table (Small Alt)"
+            },
+            "renderable" : {
+                "modelset" : "models/furnature-tables-0.json",
+                "model" : "CoffeeTable-Small2"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "library_table" : {
+            "editor" : {
+                "name" : "Library Table"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Desk"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 20.0
+            }
+        },
+        "library_chair" : {
+            "editor" : {
+                "name" : "Library Table Chair"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Chair"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 3.0
+            }
+        },
+        "library_vase" : {
+            "editor" : {
+                "name" : "Library Vase"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Vase"
+            },
+            "scenebody" : {
+                "shape" : "cylinder",
+                "mass" : 2.0
+            }
+        },
+        "library_trashcan" : {
+            "editor" : {
+                "name" : "Library Trash Can"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Trash"
+            },
+            "scenebody" : {
+                "shape" : "cylinder",
+                "mass" : 1.0
+            }
+        },
+        "library_shelves" : {
+            "editor" : {
+                "name" : "Library Shelves"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Shelf 3"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 30.0
+            }
+        },
+        "library_shelves_broken" : {
+            "editor" : {
+                "name" : "Library Shelves (Disheveled)"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Empty Shelf"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 30.0
+            }
+        },
+        "library_shelves_books" : {
+            "editor" : {
+                "name" : "Library Books on Shelf"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Books 1"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 0.0
+            }
+        },
+        "library_shelves_books_2" : {
+            "editor" : {
+                "name" : "Library Books on Shelf 2"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Books 2"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 0.0
+            }
+        },
+        "library_shelves_books_3" : {
+            "editor" : {
+                "name" : "Library Books on Shelf 3"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Books 3"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 0.0
+            }
+        },
+        "wood_crate" : {
+            "editor" : {
+                "name" : "Wooden Crate"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Simple Box"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "wood_crate_labeled_1" : {
+            "editor" : {
+                "name" : "Wooden Crate Labeled"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Box 1"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "wood_crate_labeled_2" : {
+            "editor" : {
+                "name" : "Wooden Crate Labeled 2"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Box 2"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "wood_crate_labeled_3" : {
+            "editor" : {
+                "name" : "Wooden Crate Labeled 3"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Box 3"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "wood_crate_labeled_4" : {
+            "editor" : {
+                "name" : "Wooden Crate Labeled 4"
+            },
+            "renderable" : {
+                "modelset" : "models/library-items.json",
+                "model" : "Box 4"
+            },
+            "scenebody" : {
+                "shape" : "box",
+                "mass" : 10.0
+            }
+        },
+        "sample_door" : {
+            "editor" : {
+                "name" : "Sample Door"
+            },
+            "scenebody" : {
+                "mass" : 90.0,
+                "shape" : "box"
+            },
+            "renderable" : {
+                "modelset" : "models/doors.json",
+                "model" : "Door"
+            }
+        },
+        "sample_male" : {
+           "editor" : {
+                "name" : "Sample Male"
+            },
+            "renderable" : {
+                "modelset" : "models/male-mhm-anim.json",
+                "model" : "Sampgame_male"
             },
             "scenebody" : {
                 "shape" : "cylinder",
                 "mass" : 70.0
+            },
+            "drivebody" : {
+                "speed" : [ 1.0 ]
             }
         }
     }

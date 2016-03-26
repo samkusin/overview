@@ -362,15 +362,15 @@ namespace MeshBuilder
         const float kSliceFraction = 1.0f/(sliceCnt-1);
         
         for (int32_t stack = 0; stack < stackCnt; ++stack) {
-            const float kStackAngle = ckm::pi<float>() * stack * kStackFraction;
+            const float kStackAngle = ckm::kPi * stack * kStackFraction;
             const float kSinStack = ckm::sin(kStackAngle);
             
             for (int32_t slice = 0; slice < sliceCnt; ++slice) {
-                const float kSliceAngle = ckm::pi<float>() * slice * kSliceFraction;
+                const float kSliceAngle = ckm::kPi * slice * kSliceFraction;
                 Vector3 norm;
                 norm.x = ckm::cos(2*kSliceAngle) * kSinStack;
                 norm.z = ckm::sin(2*kSliceAngle) * kSinStack;
-                norm.y = ckm::sin(-ckm::pi<float>()*0.5f + kStackAngle);
+                norm.y = ckm::sin(-ckm::kPi*0.5f + kStackAngle);
             
                 Vector3 pos = norm * radius;
                 state.position(pos);

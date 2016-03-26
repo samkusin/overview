@@ -12,6 +12,7 @@
 
 #include <ckentity/entity.h>
 #include <cinek/types.hpp>
+#include <ckm/mathtypes.hpp>
 
 namespace cinek {
     namespace ove {
@@ -19,23 +20,39 @@ namespace cinek {
         class EntityDatabase;
         class EntityComponentFactory;
 
-        
         class ViewStack;
         class ViewController;
         
         class RenderGraph;
+        struct RenderContext;
         
         class Scene;
+        struct SceneBody;
         class SceneFixedBodyHull;
         class SceneDataContext;
         class SceneMotionState;
         class SceneDebugDrawer;
         struct SceneObjectJsonLoader;
         
+        class Pathfinder;
+        struct PathfinderDebug;
+        class PathfinderListener;
+        class NavMesh;
+        class NavPath;
+        class NavPathQueryPool;
+        class NavPathQuery;
+        
+        struct TransformAction;
+        struct TransformSet;
+        class TransformBody;
+        class TransformSystem;
+        class NavBody;
+        class NavBodyTransform;
+        class NavSceneBodyTransform;
+        class NavSystem;
+        
         class AssetService;
         class EntityService;
-        class RenderService;
-        class SceneService;
         
         class AssetManifest;
         class AssetManifestLoader;

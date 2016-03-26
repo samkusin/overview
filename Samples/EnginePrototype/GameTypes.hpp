@@ -14,12 +14,16 @@
 namespace cinek {
 
 class TaskScheduler;
+class UIService;
 
 enum
 {
     kEntityStore_Default,
     kEntityStore_Staging
 };
+
+class NavDataContext;
+class TransformDataContext;
 
 }
 

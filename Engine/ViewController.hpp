@@ -10,11 +10,12 @@
 #define Overview_View_Controller_hpp
 
 #include "EngineTypes.hpp"
+#include "Input.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {
 
-namespace uicore {
+namespace input {
     struct InputState;
 }
 
@@ -41,11 +42,11 @@ public:
     //  Updates simulation of the current view controller.  Execution occurs
     //  within an interval, but not necessary every frame (or more than once a
     //  frame depending on the owning loop.)
-    virtual void simulateView(ViewStack& stateController, double dt) = 0;
+    virtual void simulateView(ViewStack& stateController, CKTimeDelta dt) = 0;
     //  Executed once per render frame.  Useful for polling input, rendering,
     //  and any other per-frame operation that isn't deterministic
-    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                                 const cinek::uicore::InputState& inputState) = 0;
+    virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
+                                 const cinek::input::InputState& inputState) = 0;
     //  Executed upon the the end of a frame
     virtual void onViewEndFrame(ViewStack& stateController) = 0;
     //  the name of the view

@@ -7,7 +7,8 @@
 //
 
 #include "Common.hpp"
-#include "UICore/Input.hpp"
+
+#include "UICore/UIEngine.hpp"
 
 #include <cinek/file.hpp>
 
@@ -41,8 +42,12 @@ int OverviewMain(SDL_Window* window, int argc, char* argv[])
         0x001122ff,
         1.0f,
         0);
+    
+    imGuiInit(window, 1);
 
-    int result = runSample(viewWidth, viewHeight);
+    int result = runSample(viewWidth, viewHeight, 2);
+    
+    imGuiShutdown();
     
     //  subsystem termination
     //

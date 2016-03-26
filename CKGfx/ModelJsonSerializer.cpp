@@ -21,6 +21,7 @@ namespace cinek {
 static const char* sKeyframeTypes[Keyframe::kTypeCount] = {
     "tx", "ty", "tz",
     "qw", "qx", "qy", "qz",
+    "rx", "ry", "rz",
     "sx", "sy", "sz"
 };
 
@@ -306,6 +307,14 @@ ModelSet loadModelSetFromJSON
     
     NodeGraph nodeGraph = loadNodeGraphFromJSON(loader, root);
     
+    //  retranslate all model nodes to X,Z = (0,0) Y is maintained
+    for (auto& modelNode : loader.modelNodes) {
+        gfx::Matrix4& nodeTransform = modelNode.second->transform();
+        nodeTransform.comp[12] = 0.0f;
+        nodeTransform.comp[14] = 0.0f;
+    }
+    
+    
     modelSet = std::move(ModelSet(std::move(nodeGraph), std::move(loader.modelNodes)));
     
     return std::move(modelSet);
@@ -362,7 +371,12 @@ Mesh loadMeshFromJSON
             }
         }
         else {
-            vertexType = VertexTypes::kVPositionNormal;
+            if (hasWeights) {
+                vertexType = VertexTypes::kVNormal_Weights;
+            }
+            else {
+                vertexType = VertexTypes::kVPositionNormal;
+            }
         }
     }
     else {
@@ -457,7 +471,10 @@ Material loadMaterialFromJSON(Context& context, const JsonValue& root)
         auto& textures = diffuse["textures"];
         if (textures.IsArray() && textures.Size() > 0) {
             const char* texname = textures.Begin()->GetString();
-            auto texhandle = context.findTexture(texname);
+            std::string texid(texname);
+            texid.erase(texid.find_last_of('.'));
+            
+            auto texhandle = context.findTexture(texid.c_str());
             if (!texhandle) {
                 texhandle = context.loadTexture(texname);
             }
@@ -486,9 +503,17 @@ int loadAnimationSkeletonFromJSON
         bones.resize(index);
 
     bones[index].name = node["name"].GetString();
+    
+    //  generate the transformation hierarchy -
+    //  bones are exported with matrices local to armature space.
+    //  here we generate bone-relative matrices used to apply animations from
+    //  parent bones
+    //
     loadMatrixFromJSON(bones[index].mtx, node["matrix"]);
     
-    bx::mtxInverse(bones[index].invMtx, bones[index].mtx);
+    //  retain inverse for offseting vertices in mesh space to bone-local space
+    //  used also for generating bone-relative matrices
+    loadMatrixFromJSON(bones[index].offset, node["offset"]);
     
     auto& children = node["children"];
     int lastChildIndex = -1;
@@ -542,7 +567,7 @@ SequenceChannel loadSequenceChannelFromJSON
                 if (t > *duration)
                     *duration = t;
             }
-            if (seq.size() > 1) {
+            if (seq.size() >= 1) {
                 //  more than one keyframe indicates animation
                 sequenceChannel.animatedSeqMask |= (1 << kfType);
             }
@@ -659,7 +684,7 @@ Light loadLightFromJSON(Context& context, const JsonValue& root)
     color.r *= intensity;
     color.g *= intensity;
     color.b *= intensity;
-    light.color = color.toABGR();
+    light.color = toABGR(color);
     
     if (light.type == LightType::kPoint || light.type == LightType::kSpot) {
         light.distance = (float)root["distance"].GetDouble();

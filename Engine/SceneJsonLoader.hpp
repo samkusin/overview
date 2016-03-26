@@ -13,6 +13,7 @@
 #include "CKGfx/GfxTypes.hpp"
 
 #include <ckjson/jsontypes.hpp>
+#include <vector>
 
 namespace cinek {
     namespace ove {
@@ -29,19 +30,21 @@ namespace cinek {
 class SceneJsonLoader
 {
 public:
-    SceneJsonLoader(SceneDataContext& context, gfx::Context& gfxContext,
-                    EntityDatabase& entityDb);
+    SceneJsonLoader(SceneDataContext* context,
+                    gfx::Context* gfxContext,
+                    RenderGraph* renderGraph,
+                    EntityDatabase* entityDb);
     ~SceneJsonLoader();
     
-    Scene& operator()(Scene& scene, RenderGraph& renderGraph,
-                      const JsonValue& jsonRoot);
+    using SceneBodyList = std::vector<std::pair<SceneBody*, uint32_t>>;
+    
+    SceneBodyList operator()(const JsonValue& jsonRoot);
     
 private:
     struct Node;
     struct Context
     {
-        Scene* scene;
-        RenderGraph* renderGraph;
+        SceneBodyList* bodyList;
         gfx::NodeJsonLoader* gfxJsonLoader;
         SceneObjectJsonLoader* sceneObjectJsonLoader;
         Entity entity;
@@ -51,6 +54,7 @@ private:
 
     SceneDataContext* _sceneContext;
     gfx::Context* _gfxContext;
+    RenderGraph* _renderGraph;
     EntityDatabase* _entityDb;
 };
     

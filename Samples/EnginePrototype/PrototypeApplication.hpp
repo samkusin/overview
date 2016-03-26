@@ -13,11 +13,12 @@
 #include "Common.hpp"
 #include "ResourceFactory.hpp"
 
-#include "UICore/UITypes.hpp"
+#include "UICore/UIEngine.hpp"
 
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Render/RenderContext.hpp"
+#include "Engine/Controller/ControllerTypes.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "CKGfx/GfxTypes.hpp"
@@ -35,6 +36,7 @@
 namespace cinek {
 
 class GameEntityFactory;
+struct ApplicationContext;
     
 class PrototypeApplication
 {
@@ -50,16 +52,19 @@ public:
     
     void beginFrame();
     
-    void simulateFrame(double dt);
-    void renderFrame(double dt, const gfx::Rect& viewRect,
-        const cinek::uicore::InputState& inputState);
+    void simulateFrame(CKTimeDelta dt);
+    void renderFrame(CKTimeDelta dt, const gfx::Rect& viewRect,
+        const cinek::input::InputState& inputState);
     void endFrame();
     
 private:
     gfx::Context* _gfxContext;
-    TaskScheduler _taskScheduler;
     
-    ove::ViewStack _viewStack;
+    //  important - Application context must be destroyed after all objects
+    //  below are destroyed.
+    unique_ptr<ApplicationContext> _appContext;
+    
+    TaskScheduler _taskScheduler;
     
     ckmsg::Messenger _messenger;
     ove::MessageServer _server;
@@ -71,18 +76,31 @@ private:
     gfx::NodeRenderer::ProgramMap _renderPrograms;
     gfx::NodeRenderer::UniformMap _renderUniforms;
     
+    gfx::NodeRenderer _renderer;
+    NVGcontext* _nvg;
+    
     unique_ptr<ove::RenderGraph> _renderGraph;
+    ove::RenderContext _renderContext;
+    
+    unique_ptr<ove::EntityDatabase> _entityDb;
     
     unique_ptr<ove::SceneDataContext> _sceneData;
     unique_ptr<ove::SceneDebugDrawer> _sceneDbgDraw;
     unique_ptr<ove::Scene> _scene;
     
-    unique_ptr<GameEntityFactory> _componentFactory;
-    unique_ptr<ove::EntityDatabase> _entityDb;
+    unique_ptr<ove::Pathfinder> _pathfinder;
+    unique_ptr<ove::PathfinderDebug> _pathfinderDebug;
     
-    gfx::NodeRenderer _renderer;
-    ove::RenderContext _renderContext;
-    NVGcontext* _nvg;
+    unique_ptr<NavDataContext> _navDataContext;
+    unique_ptr<ove::NavSystem> _navSystem;
+    
+    unique_ptr<TransformDataContext> _transformDataContext;
+    unique_ptr<ove::TransformSystem> _transformSystem;
+    
+    unique_ptr<GameEntityFactory> _componentFactory;
+    
+    
+    ove::ViewStack _viewStack;
 };
     
 }

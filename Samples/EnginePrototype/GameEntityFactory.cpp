@@ -7,11 +7,21 @@
 //
 
 #include "GameEntityFactory.hpp"
-#include "Engine/Scenes/Scene.hpp"
-#include "Engine/Scenes/SceneDataContext.hpp"
+
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneDataContext.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Context.hpp"
+
+#include "Game/NavDataContext.hpp"
+#include "Game/TransformDataContext.hpp"
+#include "Game/TransformSetJsonLoader.hpp"
+
+#include "Engine/Controller/NavBody.hpp"
+#include "Engine/Controller/NavSystem.hpp"
+#include "Engine/Controller/TransformSystem.hpp"
+#include "Engine/Game/NavSceneBodyTransform.hpp"
 
 #include <ckjson/json.hpp>
 
@@ -19,15 +29,23 @@ namespace cinek {
 
 GameEntityFactory::GameEntityFactory
 (
-    gfx::Context& gfxContext,
-    ove::SceneDataContext& sceneData,
-    ove::Scene& scene,
-    ove::RenderGraph& renderGraph
+    gfx::Context* gfxContext,
+    ove::SceneDataContext* sceneData,
+    ove::Scene* scene,
+    ove::RenderGraph* renderGraph,
+    NavDataContext* navDataContext,
+    ove::NavSystem* navSystem,
+    TransformDataContext* transformDataContext,
+    ove::TransformSystem* transformSystem
 ) :
-    _gfxContext(&gfxContext),
-    _sceneDataContext(&sceneData),
-    _scene(&scene),
-    _renderGraph(&renderGraph)
+    _gfxContext(gfxContext),
+    _sceneDataContext(sceneData),
+    _scene(scene),
+    _renderGraph(renderGraph),
+    _navDataContext(navDataContext),
+    _navSystem(navSystem),
+    _transformDataContext(transformDataContext),
+    _transformSystem(transformSystem)
 {
 }
                       
@@ -36,6 +54,7 @@ void GameEntityFactory::onCustomComponentCreateFn
 (
     Entity entity,
     EntityStore& store,
+    const std::string& templateName,
     const std::string& componentName,
     const JsonValue& definitions,
     const JsonValue& compTemplate
@@ -57,9 +76,9 @@ void GameEntityFactory::onCustomComponentCreateFn
                 modelHandle, nullptr);
         }
         else {
-                CK_LOG_WARN("OverviewSample",
-                        "Entity: %" PRIu64 ", Component %s: %s/%s not found\n",
-                        entity, componentName.c_str(), modelSetName, modelName);
+            CK_LOG_WARN("OverviewSample",
+                    "Entity: %" PRIu64 ", Component %s: %s/%s not found\n",
+                    entity, componentName.c_str(), modelSetName, modelName);
         }
     }
     else if (componentName == "scenebody") {
@@ -127,25 +146,79 @@ void GameEntityFactory::onCustomComponentCreateFn
                     btVector3(dims.x*0.5f, dims.y*0.5f, dims.z*0.5f),
                     localShapeTransform);
         }
-
-        //  other properties
-        it = compTemplate.FindMember("mass");
-        if (it != compTemplate.MemberEnd()) {
-            initInfo.mass = (float)it->value.GetDouble();
-        }
-        else {
-            initInfo.mass = 0.0f;
-        }
         
-        btRigidBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode);
+        ove::SceneBody* body = _sceneDataContext->allocateBody(initInfo, gfxNode, entity);
         if (body) {
-            _scene->attachBody(body, entity);
-            //body->setLinearVelocity(btVector3(1.0f, 3.0f, -3.0f));
+            it = compTemplate.FindMember("mass");
+            if (it != compTemplate.MemberEnd()) {
+                body->mass = ckm::scalar(it->value.GetDouble());
+            }
+            
+            uint32_t bodyCategories = 0;
+            if (cinek_entity_context(entity) == kEntityStore_Staging) {
+                bodyCategories |= ove::SceneBody::kIsStaging;
+            }
+            if (!ckm::nearZero(body->mass)) {
+                bodyCategories |= ove::SceneBody::kIsDynamic;
+            }
+            _scene->attachBody(body, bodyCategories);
+            
+            //  if navbody exists, then we still need to create the navbody transform
+            //  - this would've been done during navbody component create, if
+            //    the scenebody was previously created.  the step below takes care
+            //    of the opposite case.
+            ove::NavBody* navBody = _navSystem->findBody(entity);
+            if (navBody) {
+                navBody->setTransform(_navDataContext->allocateTransform(body, entity));
+            }
         }
         else {
             CK_LOG_WARN("OverviewSample",
                         "Entity: %" PRIu64 ", Component %s: failed to create body\n",
                         entity, componentName.c_str());
+        }
+    }
+    else if (componentName == "drivebody") {
+        ove::NavBody::InitProperties initProps;
+
+        if (compTemplate.HasMember("speed") && compTemplate["speed"].IsArray()) {
+            const JsonValue& speed = compTemplate["speed"];
+            
+            initProps.speedLimit = ckm::scalar(speed[0U].GetDouble());
+        }
+        
+        initProps.entity = entity;
+        
+        ove::NavBody* navBody = _navDataContext->allocateBody(initProps);
+        if (navBody) {
+            ove::SceneBody* sceneBody = _scene->findBody(entity);
+            if (sceneBody) {
+                navBody->setTransform(_navDataContext->allocateTransform(sceneBody, entity));
+            }
+            _navSystem->attachBody(navBody);
+        }
+        else {
+            CK_LOG_WARN("OverviewSample",
+                        "Entity: %" PRIu64 ", Component %s: failed to create body\n",
+                        entity, componentName.c_str());
+        }
+    }
+    else if (componentName == "animation") {
+        ove::TransformSetHandle setHandle;
+        if (compTemplate.HasMember("set")) {
+            const JsonValue& setDefinitions = compTemplate["set"];
+        
+            //  create a new transform set using the template name as id
+            ove::TransformSet transformSet = loadTranformSetFromJSON(
+                *_transformDataContext,
+                setDefinitions);
+            setHandle = _transformDataContext->registerSet(
+                std::move(transformSet),
+                templateName);
+        }
+        ove::TransformBody* body = _transformDataContext->allocateBody(entity, setHandle);
+        if (body) {
+            _transformSystem->attachBody(body);
         }
     }
 }
@@ -156,10 +229,17 @@ void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
     //  TODO - perhaps we need to identify what components are attached to
     //         the entity for optimization
     
+    //  destroy nav
+    ove::NavBody* navBody = _navSystem->detachBody(entity);
+    if (navBody) {
+        _navDataContext->freeBody(navBody);
+        navBody = nullptr;
+    }
     //  destroy scene
-    btRigidBody* body = _scene->detachBody(entity);
+    ove::SceneBody* body = _scene->detachBody(entity);
     if (body) {
         _sceneDataContext->freeBody(body);
+        body = nullptr;
     }
     //  destroy renderable
     _renderGraph->removeNode(entity);
@@ -190,14 +270,16 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
         gfxNode->setTransform(mtx);
     }
     //  scene
-    ove::SceneBody* body = _scene->findBody(origin);
-    if (body) {
-        btRigidBody* btBody = _sceneDataContext->cloneBody(body->btBody, gfxNode);
-        ove::SceneBody* clonedBody = _scene->attachBody(btBody, target);
-        if (clonedBody) {
-            clonedBody->savedState = body->savedState;
-        }
-        body = clonedBody;
+    ove::SceneBody* sceneBody = _scene->findBody(origin);
+    if (sceneBody) {
+        ove::SceneBody* clonedBody = _sceneDataContext->cloneBody(sceneBody, gfxNode, target);
+        sceneBody = _scene->attachBody(clonedBody, clonedBody->getCategoryMask());
+    }
+    //  navbody
+    ove::NavBody* navBody = _navSystem->findBody(origin);
+    if (navBody) {
+        ove::NavBody* clonedBody = _navDataContext->cloneBody(navBody, sceneBody, target);
+        navBody = _navSystem->attachBody(clonedBody);
     }
 }
 
