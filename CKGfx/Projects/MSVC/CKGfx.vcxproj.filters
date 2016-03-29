@@ -13,6 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{4a0e38d5-d39c-4b6e-82ae-fdf75ea07e6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\External">
+      <UniqueIdentifier>{89b1e8bd-b5d4-4092-ae94-11220c9d5e01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\External\nanovg">
+      <UniqueIdentifier>{382e9fdd-c821-4a23-9931-f71fb81efcec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\External">
+      <UniqueIdentifier>{2cfb3efc-4688-46d2-861e-86102551964b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\External\nanovg">
+      <UniqueIdentifier>{bd421572-9e51-485f-a87d-7260ba214e6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\External\stb">
+      <UniqueIdentifier>{21ee02a6-ff0a-4565-b727-64035c80c330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\External\stb">
+      <UniqueIdentifier>{3161d9c9-324a-498e-9899-d5e4dd0f9d2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Animation.hpp">
@@ -60,6 +81,15 @@
     <ClInclude Include="..\..\VertexTypes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\External\nanovg\nanovg.h">
+      <Filter>Header Files\External\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External\nanovg\fontstash.h">
+      <Filter>Header Files\External\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External\stb\stb_image.h">
+      <Filter>Header Files\External\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Animation.cpp">
@@ -98,5 +128,45 @@
     <ClCompile Include="..\..\VertexTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\External\nanovg\nanovg.cpp">
+      <Filter>Source Files\External\nanovg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External\nanovg\nanovg_bgfx.cpp">
+      <Filter>Source Files\External\nanovg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External\stb\stb.cpp">
+      <Filter>Source Files\External\stb</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Shaders\fs_std_col.fs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\Shaders\fs_std_tex.fs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\Shaders\vs_bone_uv.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\Shaders\vs_flat_pos.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\External\nanovg\fs_nanovg_fill.hfs">
+      <Filter>Source Files\External\nanovg</Filter>
+    </None>
+    <None Include="..\..\External\nanovg\vs_nanovg_fill.hvs">
+      <Filter>Source Files\External\nanovg</Filter>
+    </None>
+    <None Include="..\..\Shaders\fs_flat_col.fs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\Shaders\vs_std_flat.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BGFXShaderC Include="..\..\Shaders\vs_std_uv.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </BGFXShaderC>
   </ItemGroup>
 </Project>

@@ -4,10 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleCommon", "SampleCommon.vcxproj", "{0B00D575-EF44-4ED4-83F5-FD1DF527EF15}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3155D419-B677-4AFD-91DB-3645E4BF20FE} = {3155D419-B677-4AFD-91DB-3645E4BF20FE}
+		{8C1DC389-B836-4190-ACBD-D20117F29D5D} = {8C1DC389-B836-4190-ACBD-D20117F29D5D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CKLibs", "..\..\..\..\CKLibs\proj\msvc\cklibs.vcxproj", "{8C1DC389-B836-4190-ACBD-D20117F29D5D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CKGfx", "..\..\..\..\CKGfx\Projects\MSVC\CKGfx.vcxproj", "{3155D419-B677-4AFD-91DB-3645E4BF20FE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C1DC389-B836-4190-ACBD-D20117F29D5D} = {8C1DC389-B836-4190-ACBD-D20117F29D5D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

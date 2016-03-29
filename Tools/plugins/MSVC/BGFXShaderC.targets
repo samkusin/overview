@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName Include="BGFXShaderC">
+      <Targets>BGFXShaderCTarget</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  
+  <UsingTask  TaskName="BGFXShaderC"
+              TaskFactory="XamlTaskFactory"
+              AssemblyName="Microsoft.Build.Tasks.v4.0">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
+  </UsingTask>
+  
+  <Target Name="BGFXShaderCTarget"
+          BeforeTargets="$(BGFXShaderCBeforeTargets)"
+          AfterTargets="$(BGFXShaderCAfterTargets)"
+          Condition="'@(BGFXShaderC)' != ''"
+          DependsOnTargets="$(BGFXShaderCDependsOn);ComputeBGFXShaderCOutput"
+          Outputs="%(BGFXShaderC.Outputs)"
+          Inputs="%(BGFXShaderC.Identity);%(BGFXShaderC.AdditionalDependencies);$(MSBuildProjectFile)">
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <BGFXShaderC Remove="@(BGFXShaderC)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <Message Importance="High"
+             Text="%(BGFXShaderC.ExecutionDescription)" />
+    <BGFXShaderC  Condition="'@(BGFXShaderC)' != '' and '%(BGFXShaderC.ExcludedFromBuild)'!='true'"
+                  CommandLineTemplate="%(BGFXShaderC.CommandLineTemplate)"
+                  ShaderType="%(BGFXShaderC.ShaderType)"
+                  OptimizationLevel="%(BGFXShaderC.OptimizationLevel)"
+                  IncludePath="%(BGFXShaderC.IncludePath)"
+                  Bin2C="%(BGFXShaderC.Bin2C)"
+                  OutputFilePath="%(BGFXShaderC.OutputFilePath)"
+                  AdditionalOptions="%(BGFXShaderC.AdditionalOptions)" />
+  </Target>
+  <Target Name="ComputeBGFXShaderCOutput"
+          Condition="'@(BGFXShaderC)' != ''">
+    <ItemGroup>
+      <BGFXShaderCDirsToMake
+        Condition="'@(BGFXShaderC)' != '' and '%(BGFXShaderC.ExcludedFromBuild)' != 'true'"
+        Include="%(BGFXShaderC.Outputs)" />
+    </ItemGroup>
+    <MakeDir Directories="@(BGFXShaderCDirsToMake-&gt;'%(RootDir)%(Directory)')" />
+  </Target>
+          
+</Project>
