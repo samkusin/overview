@@ -14,11 +14,14 @@
 #include "Engine/Physics/Scene.hpp"
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/Controller/NavSystem.hpp"
+#include "Engine/Services/EntityService.hpp"
 
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Geometry.hpp"
 #include "CKGfx/External/nanovg/nanovg.h"
+
+#include "UICore/UI.hpp"
 
 #include <ckjson/json.hpp>
 #include <ckm/math.hpp>
@@ -62,9 +65,9 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
             return nullptr;
         });
     
+    initUIData();
+    
     _viewStack.present("EditorMain");
-
-    _sceneStackState = false;
 
     /*
     //  create our offscreen node graph for rendering models
@@ -150,28 +153,8 @@ void EditorView::frameUpdateView
     const cinek::input::InputState& inputState
 )
 {
-    /*
-    //  layout UI    
-    auto frameWidth = renderContext().frameRect.w;
-    auto frameHeight = renderContext().frameRect.h;
-    
-    uicore::Layout uiLayout = uiService().createLayout();
-
-    uiLayout.beginWindow("Left")
-        .setMargins(20,20,0,0)
-        .setSize(frameWidth * 0.25, frameHeight * 0.75)
-        .beginStack("Scene", &_sceneStackState)
-        .end()
-        .button(1, nullptr, BND_ICON_QUESTION, "Foo!")
-        .button(2, nullptr, BND_ICON_ANIM, "Anim")
-    .end();
-
-    uiLayout.beginWindow("Right")
-        .button(1, nullptr, BND_ICON_QUESTION, "Fee!", &style)
-        .button(2, nullptr, BND_ICON_ANIM, "Crap", &style)
-    .end();
-    */
-    
+    auto displaySize = ImGui::GetIO().DisplaySize;
+    layoutUI(displaySize.x, displaySize.y);
     
     _freeCameraController.handleCameraInput(camera(), inputState, dt);
     
@@ -195,23 +178,92 @@ const char* EditorView::viewId() const
 
 ////////////////////////////////////////////////////////////////////////
 
-/*
-bool EditorView::onUIDataItemRequest
-(
-    int id,
-    uint32_t row,
-    uint32_t col,
-    uicore::DataObject& data
-)
+EditorView::EntityCategory::EntityCategory(int cnt, int maxstrlen) :
+    strstack(cnt*maxstrlen)
 {
-     return false;
+    names.reserve(cnt);
 }
 
-uint32_t EditorView::onUIDataItemRowCountRequest(int id)
+void EditorView::initUIData()
 {
-    return 0;
+    _entityCategories.clear();
+    _entityCategories.reserve(32);
+    
+    entityService().enumerateDefinitions(
+        [this](const std::string& ns, const ove::AssetManifest& manifest) {
+            auto it = std::lower_bound(_entityCategories.begin(), _entityCategories.end(), ns,
+                [](const decltype(_entityCategories)::value_type& category, const std::string& ns) {
+                    return category.first < ns;
+                });
+            auto& manifestRoot = manifest.root();
+            if (manifestRoot.HasMember("entity")) {
+                auto& templates = manifestRoot["entity"];
+                int cnt = (int)(templates.MemberEnd() - templates.MemberBegin());
+                EntityCategory category(cnt, 32);
+                
+                for (auto templateIt = templates.MemberBegin();
+                          templateIt != templates.MemberEnd();
+                          ++templateIt) {
+            
+                    category.names.emplace_back(category.strstack.create(templateIt->name.GetString()));
+                }
+                
+                _entityCategories.emplace(it, ns, std::move(category));
+            }
+        }
+    );
 }
-*/
+
+void EditorView::layoutUI(float width, float height)
+{
+    const ImVec2 kDesktopPad { 20, 20 };
+    const ImVec2 kToolboxDims { 120, height - kDesktopPad.y*2 };
+    const ImVec2 kToolboxPos { kDesktopPad.x, kDesktopPad.y };
+    const ImVec2 kSceneTreeDims { 240, 240 };
+    const ImVec2 kSceneTreePos {
+        width - kDesktopPad.x - kSceneTreeDims.x,
+        kDesktopPad.y
+    };
+    const ImVec2 kPropsDims { 240, 400 };
+    const ImVec2 kPropsPos {
+        kSceneTreePos.x,
+        kSceneTreePos.y + kSceneTreeDims.y + 10
+    };
+        
+    //  toolbox UI
+    ImGui::SetNextWindowPos(kToolboxPos, ImGuiSetCond_FirstUseEver);
+    if (ImGui::Begin("Toolbox", nullptr, kToolboxDims, 0.3f,
+                     ImGuiWindowFlags_NoTitleBar |
+                     ImGuiWindowFlags_NoResize |
+                     ImGuiWindowFlags_NoMove |
+                     ImGuiWindowFlags_NoSavedSettings)) {
+        
+        if (ImGui::CollapsingHeader("Create", nullptr, false, true))
+        {
+            ImGui::Indent();
+            ImGui::Button("Body");
+            ImGui::Button("Area");
+            ImGui::Unindent();
+        }
+      
+    }
+    ImGui::End();
+    
+    //  scene graph UI
+    ImGui::SetNextWindowPos(kSceneTreePos, ImGuiSetCond_FirstUseEver);
+    if (ImGui::Begin("Scene", nullptr, kSceneTreeDims, 0.3f)) {
+    
+    }
+    ImGui::End();
+    
+    //  properties UI
+    ImGui::SetNextWindowPos(kPropsPos, ImGuiSetCond_FirstUseEver);
+    if (ImGui::Begin("Properties", nullptr, kPropsDims, 0.3f)) {
+    
+    }
+    ImGui::End();
+    
+}
 
 ////////////////////////////////////////////////////////////////////////
 

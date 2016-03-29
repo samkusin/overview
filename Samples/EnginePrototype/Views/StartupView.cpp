@@ -28,7 +28,7 @@ void StartupView::onViewAdded(ove::ViewStack& stateController)
         });
     assetService().loadManifest("entity.json",
         [this](std::shared_ptr<ove::AssetManifest> manifest) {
-            entityService().addDefintions("entity", manifest);
+            entityService().addDefinitions("entity", manifest);
             _templatesLoaded = true;
         });
 }

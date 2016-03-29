@@ -14,7 +14,9 @@
 namespace cinek {
     namespace uicore {
 
-
+class UIService
+{
+};
 
     } /* namespace uicore */
 } /* namespace cinek */

@@ -155,6 +155,16 @@ public:
      *  @return A handle to the manifest
      */
     const AssetManifest* getManifest(const std::string& name) const;
+    /**
+     *  Enumerates the added manifests.  The supplied delegate is called for
+     *  every manifest.
+     *
+     *  @param fn   A delegate invoked for every registered manifest.  Its 
+     *              signature should match the declaration:
+     *              
+     *              void fn(const std::string& ns, AssetManifest& manifest)
+     */
+    void enumerateManifests(const std::function<void(const std::string&, const AssetManifest&)>& cb);
     
 private:
     std::vector<EntityStore> _stores;

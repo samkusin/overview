@@ -42,7 +42,7 @@ bool EntityService::isEntityValid(Entity e) const
     return _context->getStore(cinek_entity_context(e)).valid(e);
 }
 
-void EntityService::addDefintions
+void EntityService::addDefinitions
 (
     std::string name,
     std::shared_ptr<AssetManifest> manifest
@@ -60,6 +60,15 @@ const AssetManifest* EntityService::getDefinitions(const std::string& name) cons
 {
     return _context->getManifest(name);
 }
+
+void EntityService::enumerateDefinitions
+(
+    const std::function<void(const std::string&, const AssetManifest&)>& cb
+)
+{
+    _context->enumerateManifests(cb);
+}
+    
 
 
     } /* namespace ove */

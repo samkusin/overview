@@ -33,7 +33,6 @@
 #include <bgfx/bgfx.h>
 
 #include "UICore/UIEngine.hpp"
-#include "UICore/UI.hpp"
 
 #include <unordered_map>
 
@@ -217,8 +216,6 @@ int runSample(int viewWidth, int viewHeight, int firstFreeViewId)
             imGuiNewFrame();
             
             controller.renderFrame(frameTime, viewRect, polledInputState);
-            
-            ImGui::ShowTestWindow();
             
             imGuiRender();
         

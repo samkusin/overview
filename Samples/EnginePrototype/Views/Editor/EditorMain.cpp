@@ -11,6 +11,8 @@
 #include "Engine/Render/RenderContext.hpp"
 #include "Engine/ViewStack.hpp"
 
+#include "UICore/UI.hpp"
+
 namespace cinek {
 
 

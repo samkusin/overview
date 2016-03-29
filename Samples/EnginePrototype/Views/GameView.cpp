@@ -24,6 +24,8 @@
 #include "CKGfx/Geometry.hpp"
 #include "CKGfx/External/nanovg/nanovg.h"
 
+#include "UICore/UI.hpp"
+
 #include <ckjson/json.hpp>
 #include <ckm/math.hpp>
 
@@ -125,42 +127,45 @@ void GameView::frameUpdateView
     const cinek::input::InputState& inputState
 )
 {
-    //  RENDERING
+    //  CAMERA-VIEW related non-rendering methods
     _camera.viewportRect = renderContext().frameRect;
     _camera.update();
     
-    int32_t vx = inputState.mx - _camera.viewportRect.x;
-    int32_t vy = inputState.my - _camera.viewportRect.y;
+    gfx::Vector3 cameraPos = _camera.worldPosition();
 
-    gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
-    gfx::Vector3 pos = _camera.worldPosition();
+    if (!ImGui::IsMouseHoveringAnyWindow()) {
+        int32_t vx = inputState.mx - _camera.viewportRect.x;
+        int32_t vy = inputState.my - _camera.viewportRect.y;
+
+        gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
+        
+        _viewToSceneRayTestResult = scene().rayTestClosest(
+            ove::btFromGfx(cameraPos), ove::btFromGfx(dir), 100.0f,
+            ove::SceneBody::kAllFilter,
+            ove::SceneBody::kStagingFilter);
+    }
+    else {
+        _viewToSceneRayTestResult.clear();
+    }
     
-    _viewToSceneRayTestResult = scene().rayTestClosest(
-        ove::btFromGfx(pos), ove::btFromGfx(dir), 100.0f,
-        ove::SceneBody::kAllFilter,
-        ove::SceneBody::kStagingFilter);
-    
+    //  RENDER SCENE
     const ove::RenderContext& rc = renderContext();
+    _renderer(*rc.programs, *rc.uniforms,
+            _camera,
+            renderGraph().root());
     
     sceneDebug().setup(*rc.programs, *rc.uniforms, _camera);
     
-    _renderer(*renderContext().programs, *renderContext().uniforms,
-        _camera,
-        renderGraph().root());
-    
     sceneDebug().drawRayTestHit(_viewToSceneRayTestResult,
-        { pos.x, pos.y, pos.z },
+        { cameraPos.x, cameraPos.y, cameraPos.z },
         btScalar(0.1),
         false);
     
     scene().debugRender();
-    
-    pathfinderDebug().setup(renderContext().programs,
-        renderContext().uniforms,
-        &_camera,
-        nullptr);
+   
+    pathfinderDebug().setup(rc.programs,rc.uniforms, &_camera, nullptr);
     pathfinder().simulateDebug(pathfinderDebug());
-    
+   
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);
 }

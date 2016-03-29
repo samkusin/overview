@@ -177,6 +177,18 @@ const
     return it->second.get();
 }
 
+void EntityDatabase::enumerateManifests
+(
+    const std::function<void(const std::string&, const AssetManifest&)>& cb
+)
+{
+    for (auto it = _manifests.begin(); it != _manifests.end(); ++it) {
+        cb(it->first, *it->second);
+    }
+}
+  
+
+
 
     }   /* namespace ove */
 }   /* namespace cinek */

@@ -20,7 +20,9 @@
 #include "FreeCameraController.hpp"
 
 #include <cinek/allocator.hpp>
+#include <cinek/cstringstack.hpp>
 #include <vector>
+#include <string>
 
 namespace cinek {
 
@@ -53,7 +55,21 @@ private:
     std::shared_ptr<EditorMain> _mainState;
     std::shared_ptr<EditorAddEntityToScene> _addEntityToSceneState;
     
-    bool _sceneStackState;
+private:
+    void initUIData();
+    void layoutUI(float width, float height);
+
+    
+    struct EntityCategory
+    {
+        std::vector<const char*> names;
+        CStringStack strstack;
+        
+        EntityCategory();
+        EntityCategory(int cnt, int maxstrlen);
+    };
+    
+    std::vector<std::pair<std::string, EntityCategory>> _entityCategories;
     
     /*
     //  Node graph to render to our dedicated

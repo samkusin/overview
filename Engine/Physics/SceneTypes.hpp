@@ -101,6 +101,7 @@ private:
 struct SceneRayTestResult
 {
     explicit operator bool() const { return body != nullptr; }
+    void clear() { body = nullptr; }
     
     SceneBody* body = nullptr;
     btVector3 normal;
