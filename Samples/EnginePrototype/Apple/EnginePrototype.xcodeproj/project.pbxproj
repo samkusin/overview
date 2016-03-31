@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		28CE20861C2A1F480059B56F /* AssetService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20841C2A1F480059B56F /* AssetService.cpp */; };
 		28CE20881C2A210D0059B56F /* AppViewController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28CE20871C2A210D0059B56F /* AppViewController.cpp */; };
-		372918591C7445AE0011770E /* EditorAddEntityToScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918531C7445AE0011770E /* EditorAddEntityToScene.cpp */; };
 		3729185A1C7445AE0011770E /* EditorMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918551C7445AE0011770E /* EditorMain.cpp */; };
 		3729185B1C7445AE0011770E /* EditorView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372918571C7445AE0011770E /* EditorView.cpp */; };
 		372918601C7445F70011770E /* GameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3729185C1C7445F70011770E /* GameView.cpp */; };
@@ -117,8 +116,6 @@
 		28CE20851C2A1F480059B56F /* AssetService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AssetService.hpp; sourceTree = "<group>"; };
 		28CE20871C2A210D0059B56F /* AppViewController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppViewController.cpp; sourceTree = "<group>"; };
 		28F11E601C3B5EDA00860E5D /* RenderContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderContext.hpp; path = Render/RenderContext.hpp; sourceTree = "<group>"; };
-		372918531C7445AE0011770E /* EditorAddEntityToScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorAddEntityToScene.cpp; path = ../Views/Editor/EditorAddEntityToScene.cpp; sourceTree = "<group>"; };
-		372918541C7445AE0011770E /* EditorAddEntityToScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorAddEntityToScene.hpp; path = ../Views/Editor/EditorAddEntityToScene.hpp; sourceTree = "<group>"; };
 		372918551C7445AE0011770E /* EditorMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorMain.cpp; path = ../Views/Editor/EditorMain.cpp; sourceTree = "<group>"; };
 		372918561C7445AE0011770E /* EditorMain.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorMain.hpp; path = ../Views/Editor/EditorMain.hpp; sourceTree = "<group>"; };
 		372918571C7445AE0011770E /* EditorView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorView.cpp; path = ../Views/Editor/EditorView.cpp; sourceTree = "<group>"; };
@@ -223,6 +220,7 @@
 		37804D0B1C1A1DD2002109DF /* GameEntityFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameEntityFactory.cpp; sourceTree = "<group>"; };
 		37804D0C1C1A1DD2002109DF /* GameEntityFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameEntityFactory.hpp; sourceTree = "<group>"; };
 		37804D0E1C1A2FF6002109DF /* GameTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameTypes.cpp; sourceTree = "<group>"; };
+		37A8EB401CACAFB300A2E84C /* ViewStateMachine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = ViewStateMachine.hpp; path = ../Views/ViewStateMachine.hpp; sourceTree = "<group>"; };
 		37B24FED1C865229005C6DC0 /* NavBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NavBody.cpp; path = Controller/NavBody.cpp; sourceTree = "<group>"; };
 		37B24FEE1C865229005C6DC0 /* NavBody.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NavBody.hpp; path = Controller/NavBody.hpp; sourceTree = "<group>"; };
 		37B24FEF1C865229005C6DC0 /* NavBodyTransform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NavBodyTransform.hpp; path = Controller/NavBodyTransform.hpp; sourceTree = "<group>"; };
@@ -338,8 +336,6 @@
 		372918521C7445840011770E /* Editor */ = {
 			isa = PBXGroup;
 			children = (
-				372918531C7445AE0011770E /* EditorAddEntityToScene.cpp */,
-				372918541C7445AE0011770E /* EditorAddEntityToScene.hpp */,
 				372918551C7445AE0011770E /* EditorMain.cpp */,
 				372918561C7445AE0011770E /* EditorMain.hpp */,
 				372918571C7445AE0011770E /* EditorView.cpp */,
@@ -649,6 +645,7 @@
 				377ECCCF1C093F64002040D7 /* StartupView.hpp */,
 				37386D3B1C698064001A3110 /* LoadSceneView.cpp */,
 				37386D3C1C698064001A3110 /* LoadSceneView.hpp */,
+				37A8EB401CACAFB300A2E84C /* ViewStateMachine.hpp */,
 			);
 			name = Views;
 			path = VIews;
@@ -807,7 +804,6 @@
 				37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */,
 				37B250381C921A7E005C6DC0 /* TransformSystem.cpp in Sources */,
 				37386CFA1C62E19C001A3110 /* RecastDump.cpp in Sources */,
-				372918591C7445AE0011770E /* EditorAddEntityToScene.cpp in Sources */,
 				37B2502C1C876E53005C6DC0 /* TransformSet.cpp in Sources */,
 				3729185A1C7445AE0011770E /* EditorMain.cpp in Sources */,
 				37386CFC1C62E19C001A3110 /* RecastLayers.cpp in Sources */,

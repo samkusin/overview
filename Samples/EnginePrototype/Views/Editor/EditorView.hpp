@@ -24,15 +24,15 @@
 #include <vector>
 #include <string>
 
-namespace cinek {
+#include "Views/ViewStateMachine.hpp"
 
-class EditorMain;
-class EditorAddEntityToScene;
+namespace cinek {
 
 class EditorView : public GameState
 {
 public:
     EditorView(GameViewContext* gameContext);
+    virtual ~EditorView();
 
 private:
     //  ViewController
@@ -48,42 +48,68 @@ private:
     
 
 private:
-    ove::ViewStack _viewStack;
-    
+    Allocator _allocator;
     ove::FreeCameraController _freeCameraController;
-    
-    std::shared_ptr<EditorMain> _mainState;
-    std::shared_ptr<EditorAddEntityToScene> _addEntityToSceneState;
     
 private:
     void initUIData();
-    void layoutUI(float width, float height);
-
+    
+    std::vector<std::string> _entityNamespaces;
+    
+    struct EntityTemplate
+    {
+        int nsIndex;
+        const char* name;
+        const char* longName;
+        
+        explicit operator bool() const {
+            return name != nullptr;
+        }
+        void reset() {
+            nsIndex = -1;
+            name = nullptr;
+            longName = nullptr;
+        }
+    };
     
     struct EntityCategory
     {
-        std::vector<const char*> names;
+        std::vector<EntityTemplate> names;
         CStringStack strstack;
+        int size = 0;
         
-        EntityCategory();
+        EntityCategory() = default;
         EntityCategory(int cnt, int maxstrlen);
     };
     
     std::vector<std::pair<std::string, EntityCategory>> _entityCategories;
     
-    /*
-    //  Node graph to render to our dedicated
-    unique_ptr<gfx::NodeGraph> _modelStageGraph;
-    gfx::Camera _modelStageCamera;
-    gfx::MultiTextureRenderTarget _defaultEntityTemplateRT;
-    */
+    //  state based data
+    Entity _stagedEntity;
     
 private:
-    gfx::Mesh _testQuadMesh;
-    gfx::Mesh _testSphereMesh;
+    //  states
+    enum
+    {
+        kStateId_Idle,
+        kStateId_AddEntityToScene
+    };
 
-    void test1();
-    void test2();
+    ove::ViewStateMachine _vsm;
+
+    void setAddEntityToSceneState();
+    void setIdleState();
+    
+    struct UIStatus
+    {
+        EntityTemplate addEntityTemplate;
+    
+        bool displayMainUI;
+    };
+    
+    UIStatus _uiStatus;
+    
+    void updateUI(UIStatus& status, float width, float height);
 };
 
 }   /* namespace cinek */

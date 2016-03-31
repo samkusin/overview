@@ -8,7 +8,6 @@
 
 #include "EditorView.hpp"
 #include "EditorMain.hpp"
-#include "EditorAddEntityToScene.hpp"
 
 #include "Engine/AssetManifest.hpp"
 #include "Engine/Physics/Scene.hpp"
@@ -31,95 +30,35 @@
 
 namespace cinek {
 
+EditorView::EntityCategory::EntityCategory(int cnt, int maxstrlen) :
+    strstack(cnt*maxstrlen*2),
+    size(cnt)
+{
+    names.reserve(cnt);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 EditorView::EditorView
 (
     GameViewContext* gameContext
 ) :
     GameState(gameContext)
 {
-    _mainState = std::allocate_shared<EditorMain>(std_allocator<EditorMain>(), gameContext);
-    _addEntityToSceneState = std::allocate_shared<EditorAddEntityToScene>(
-        std_allocator<EditorAddEntityToScene>(),
-        gameContext);
 }
 
+EditorView::~EditorView()
+{
+
+}
     
 void EditorView::onViewAdded(ove::ViewStack& stateController)
 {
     game().setGameMode(GameMode::kEditor);
     
-    _viewStack.setFactory(
-        [this](const std::string& viewName, ove::ViewController* )
-            -> std::shared_ptr<ove::ViewController> {
-            //  Startup View initialzes common data for the application
-            //  Game View encompasses the whole game simulation
-            //  Ship View encompasses the in-game ship mode
-            //  Ship Bridge View encompasses the in-game ship bridge mode
-            if (viewName == "EditorMain") {
-                return _mainState;
-            }
-            else if (viewName == "EditorAddEntityToScene") {
-                return _addEntityToSceneState;
-            }
-            
-            return nullptr;
-        });
-    
     initUIData();
     
-    _viewStack.present("EditorMain");
-
-    /*
-    //  create our offscreen node graph for rendering models
-    //  uses a simple ambient light - might add another light
-    //
-    gfx::NodeElementCounts counts;
-    counts.meshNodeCount = 32;
-    counts.lightNodeCount = 2;
-    counts.transformNodeCount = 16;
-    counts.armatureNodeCount = 1;
-    counts.objectNodeCount = 1;
-    
-    _modelStageGraph = allocate_unique<gfx::NodeGraph>(counts);
-    auto root = _modelStageGraph->createObjectNode(0);
-    bx::mtxIdentity(root->transform());
-    _modelStageGraph->setRoot(root);
-    
-    gfx::Light light;
-    light.type = gfx::LightType::kAmbient;
-    light.ambientComp = 0.50f;
-    light.color = gfx::Color4(1.0f,1.0f,1.0f,1.0f).toABGR();
-    auto lightNode = _modelStageGraph->createLightNode();
-    lightNode->light()->light = renderService().createLight(light);
-    _modelStageGraph->addChildNodeToNode(lightNode, _modelStageGraph->root());
-    
-    light.type = gfx::LightType::kPoint;
-    light.ambientComp = 0.0f;
-    light.diffuseComp = 1.0f;
-    light.distance = 8.0f;
-    light.coeff = { 1.0f, 0.25f, 0.75f };
-    light.color = gfx::Color4(1.0f,1.0f,1.0f,1.0f).toABGR();
-    lightNode = _modelStageGraph->createLightNode();
-    bx::mtxTranslate(lightNode->transform(), 4.0f, 4.0f, 0.0f);
-    lightNode->light()->light = renderService().createLight(light);
-    _modelStageGraph->addChildNodeToNode(lightNode, _modelStageGraph->root());
-    
-    _modelStageCamera.viewIndex = 2;
-    _modelStageCamera.near = 0.1f;
-    _modelStageCamera.far = 100.f;
-    _modelStageCamera.fovDegrees = 60.0f;
-    _modelStageCamera.viewportRect = gfx::Rect { 0, 0, 128, 128 };
-    _modelStageCamera.worldMtx = gfx::Matrix4::kIdentity;
-    _modelStageCamera.update();
-    
-    bgfx::setViewClear(_modelStageCamera.viewIndex
-				, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
-				, 0x303030ff
-				, 1.0f
-				, 0
-				);
-    */
-    
+    setIdleState();
     
     //  reset camera
     cinek::gfx::Matrix4 cameraRotMtx;
@@ -132,18 +71,16 @@ void EditorView::onViewAdded(ove::ViewStack& stateController)
 
 void EditorView::onViewRemoved(ove::ViewStack& stateController)
 {
-    _viewStack.pop();
     game().setGameMode(GameMode::kNone);
 }
 
 void EditorView::onViewStartFrame(ove::ViewStack& stateController)
 {
-    _viewStack.startFrame();
+    _vsm.startFrame();
 }
 
 void EditorView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
-    _viewStack.simulate(dt);
 }
 
 void EditorView::frameUpdateView
@@ -154,16 +91,17 @@ void EditorView::frameUpdateView
 )
 {
     auto displaySize = ImGui::GetIO().DisplaySize;
-    layoutUI(displaySize.x, displaySize.y);
+    
+    updateUI(_uiStatus, displaySize.x, displaySize.y);
     
     _freeCameraController.handleCameraInput(camera(), inputState, dt);
     
-    _viewStack.frameUpdate(dt, inputState);
+    _vsm.runFrameUpdate(dt);
 }
 
 void EditorView::onViewEndFrame(ove::ViewStack& stateController)
 {
-    _viewStack.endFrame();
+    _vsm.endFrame();
     
     if (game().getGameMode() == GameMode::kPlay) {
         stateController.present("PlayView");
@@ -178,281 +116,266 @@ const char* EditorView::viewId() const
 
 ////////////////////////////////////////////////////////////////////////
 
-EditorView::EntityCategory::EntityCategory(int cnt, int maxstrlen) :
-    strstack(cnt*maxstrlen)
-{
-    names.reserve(cnt);
-}
-
 void EditorView::initUIData()
 {
+    _entityNamespaces.clear();
+    _entityNamespaces.reserve(16);
     _entityCategories.clear();
     _entityCategories.reserve(32);
     
+    //  first pass, enumerate categories
     entityService().enumerateDefinitions(
         [this](const std::string& ns, const ove::AssetManifest& manifest) {
-            auto it = std::lower_bound(_entityCategories.begin(), _entityCategories.end(), ns,
-                [](const decltype(_entityCategories)::value_type& category, const std::string& ns) {
-                    return category.first < ns;
-                });
             auto& manifestRoot = manifest.root();
             if (manifestRoot.HasMember("entity")) {
                 auto& templates = manifestRoot["entity"];
-                int cnt = (int)(templates.MemberEnd() - templates.MemberBegin());
-                EntityCategory category(cnt, 32);
                 
                 for (auto templateIt = templates.MemberBegin();
                           templateIt != templates.MemberEnd();
                           ++templateIt) {
-            
-                    category.names.emplace_back(category.strstack.create(templateIt->name.GetString()));
+                    auto& templateBody = templateIt->value;
+                    auto it = templateBody.FindMember("editor");
+                    if (it != templateBody.MemberEnd()) {
+                        if (it->value.HasMember("category")) {
+                            const char* categoryName = it->value["category"].GetString();
+                            auto categoryIt = std::lower_bound(
+                                _entityCategories.begin(), _entityCategories.end(), categoryName,
+                                [](const decltype(_entityCategories)::value_type& v, const char* name) -> bool {
+                                    return v.first < name;
+                                });
+                            
+                            if (categoryIt == _entityCategories.end() || categoryIt->first != categoryName) {
+                                categoryIt = _entityCategories.emplace(categoryIt);
+                                categoryIt->first = categoryName;
+                            }
+                            ++categoryIt->second.size;
+                        }
+                    }
+                }
+            }
+        }
+    );
+    
+    for (auto& entityCategory : _entityCategories) {
+        entityCategory.second = std::move(EntityCategory(entityCategory.second.size, 32));
+    }
+    
+    //  second pass, fill category template lists
+    entityService().enumerateDefinitions(
+        [this](const std::string& ns, const ove::AssetManifest& manifest) {
+            auto& manifestRoot = manifest.root();
+            if (manifestRoot.HasMember("entity")) {
+                auto& templates = manifestRoot["entity"];
+                
+                auto nsIt = std::find(_entityNamespaces.begin(), _entityNamespaces.end(), ns);
+                if (nsIt == _entityNamespaces.end()) {
+                    nsIt = _entityNamespaces.emplace(nsIt, ns);
                 }
                 
-                _entityCategories.emplace(it, ns, std::move(category));
+                int nsIndex = (int)(nsIt - _entityNamespaces.begin());
+                
+                for (auto templateIt = templates.MemberBegin();
+                          templateIt != templates.MemberEnd();
+                          ++templateIt) {
+                    auto& templateBody = templateIt->value;
+                    auto it = templateBody.FindMember("editor");
+                    if (it != templateBody.MemberEnd()) {
+                        if (it->value.HasMember("category")) {
+                            const char* categoryName = it->value["category"].GetString();
+                            const char* longName = it->value["name"].GetString();
+                            auto categoryIt = std::lower_bound(
+                                _entityCategories.begin(), _entityCategories.end(), categoryName,
+                                [](const decltype(_entityCategories)::value_type& v, const char* name) -> bool {
+                                    return v.first < name;
+                                });
+                            
+                            auto& category = categoryIt->second;
+                            EntityTemplate tmp = {
+                                nsIndex,
+                                category.strstack.create(templateIt->name.GetString()),
+                                category.strstack.create(longName)
+                            };
+                            category.names.emplace_back(tmp);
+                        }
+                    }
+                }
             }
         }
     );
 }
 
-void EditorView::layoutUI(float width, float height)
+void EditorView::updateUI(UIStatus& status, float width, float height)
 {
     const ImVec2 kDesktopPad { 20, 20 };
-    const ImVec2 kToolboxDims { 120, height - kDesktopPad.y*2 };
-    const ImVec2 kToolboxPos { kDesktopPad.x, kDesktopPad.y };
-    const ImVec2 kSceneTreeDims { 240, 240 };
-    const ImVec2 kSceneTreePos {
-        width - kDesktopPad.x - kSceneTreeDims.x,
-        kDesktopPad.y
-    };
-    const ImVec2 kPropsDims { 240, 400 };
-    const ImVec2 kPropsPos {
-        kSceneTreePos.x,
-        kSceneTreePos.y + kSceneTreeDims.y + 10
-    };
-        
-    //  toolbox UI
-    ImGui::SetNextWindowPos(kToolboxPos, ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Toolbox", nullptr, kToolboxDims, 0.3f,
-                     ImGuiWindowFlags_NoTitleBar |
-                     ImGuiWindowFlags_NoResize |
-                     ImGuiWindowFlags_NoMove |
-                     ImGuiWindowFlags_NoSavedSettings)) {
-        
-        if (ImGui::CollapsingHeader("Create", nullptr, false, true))
-        {
-            ImGui::Indent();
-            ImGui::Button("Body");
-            ImGui::Button("Area");
-            ImGui::Unindent();
+    
+    if (status.displayMainUI) {
+        const ImVec2 kToolboxDims { 120, height - kDesktopPad.y*2 };
+        const ImVec2 kToolboxPos { kDesktopPad.x, kDesktopPad.y };
+        const ImVec2 kSceneTreeDims { 240, 240 };
+        const ImVec2 kSceneTreePos {
+            width - kDesktopPad.x - kSceneTreeDims.x,
+            kDesktopPad.y
+        };
+        const ImVec2 kPropsDims { 240, 400 };
+        const ImVec2 kPropsPos {
+            kSceneTreePos.x,
+            kSceneTreePos.y + kSceneTreeDims.y + 10
+        };
+            
+        //  TOOLBOX UI
+        ImGui::SetNextWindowPos(kToolboxPos, ImGuiSetCond_FirstUseEver);
+        if (ImGui::Begin("Toolbox", nullptr, kToolboxDims, 0.3f,
+                         ImGuiWindowFlags_NoTitleBar |
+                         ImGuiWindowFlags_NoResize |
+                         ImGuiWindowFlags_NoMove |
+                         ImGuiWindowFlags_NoSavedSettings)) {
+            
+            //  create scene entities UI
+            if (ImGui::CollapsingHeader("Create", nullptr, false, true))
+            {
+                const ImGuiStyle& style = ImGui::GetStyle();
+                
+                //  create bodies popup UI
+                for (auto& entityCategory : _entityCategories) {
+                    char name[32];
+                    strncpy(name, entityCategory.first.c_str(), sizeof(name));
+                    name[sizeof(name)-1] = '\0';
+                    
+                    if (ImGui::Button(name, ImVec2(kToolboxDims.x - style.WindowPadding.x*2,0))) {
+                        ImGui::OpenPopup(name);
+                    }
+                    if (ImGui::BeginPopup(name)) {
+                        //  templates
+                        for (auto& item : entityCategory.second.names) {
+                            if (ImGui::Selectable(item.longName)) {
+                                status.addEntityTemplate = item;
+                            }
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+                
+                ImGui::Dummy(ImVec2(0, ImGui::GetTextLineHeight()));
+                
+                //  create specialized entity UI
+                if (ImGui::Button("Area", ImVec2(kToolboxDims.x - style.WindowPadding.x*2,0))) {
+                
+                }
+                ImGui::Unindent();
+            }
+          
         }
-      
+        ImGui::End();
+        
+        //  SCENE GRAPH UI
+        ImGui::SetNextWindowPos(kSceneTreePos, ImGuiSetCond_FirstUseEver);
+        if (ImGui::Begin("Scene", nullptr, kSceneTreeDims, 0.3f)) {
+        
+        }
+        ImGui::End();
+        
+        //  PROPERTIES UI
+        ImGui::SetNextWindowPos(kPropsPos, ImGuiSetCond_FirstUseEver);
+        if (ImGui::Begin("Properties", nullptr, kPropsDims, 0.3f)) {
+        
+        }
+        ImGui::End();
     }
-    ImGui::End();
-    
-    //  scene graph UI
-    ImGui::SetNextWindowPos(kSceneTreePos, ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Scene", nullptr, kSceneTreeDims, 0.3f)) {
-    
-    }
-    ImGui::End();
-    
-    //  properties UI
-    ImGui::SetNextWindowPos(kPropsPos, ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Properties", nullptr, kPropsDims, 0.3f)) {
-    
-    }
-    ImGui::End();
-    
 }
 
-////////////////////////////////////////////////////////////////////////
-
-void EditorView::test1()
+void EditorView::setIdleState()
 {
-    _testQuadMesh = gfx::createQuad(2.0f, gfx::VertexTypes::kVNormal_Tex0,
-        gfx::PrimitiveType::kTriangles);
+    ove::ViewStateLogic state;
     
-    gfx::MeshBuilder::BuilderState cursorBuilder;
-    cursorBuilder.vertexDecl = &gfx::VertexTypes::declaration(gfx::VertexTypes::kVPosition);
-    cursorBuilder.indexType = gfx::VertexTypes::Index::kIndex16;
+    state.id = kStateId_Idle;
+    state.beginFn =
+        [this]() {
+            _uiStatus.displayMainUI = true;
+            _uiStatus.addEntityTemplate.reset();
+        };
     
-    gfx::MeshBuilder::Counts counts =
-        gfx::MeshBuilder::calculateUVSphereCounts(7, 14, gfx::PrimitiveType::kLines);
-    counts.vertexCount += 2;
-    counts.indexCount += 2;
+    state.frameUpdateFn =
+        [this](CKTimeDelta dt) {
+            if (_uiStatus.addEntityTemplate) {
+                setAddEntityToSceneState();
+            }
+        };
     
-    gfx::MeshBuilder::create(cursorBuilder, counts);
-    gfx::MeshBuilder::buildUVSphere(cursorBuilder, 0.1f, 7, 14, gfx::PrimitiveType::kLines);
+    state.endFn =
+        [this]() {
+        };
     
-    uint16_t i0 = cursorBuilder.vertexCount;
-    cursorBuilder.position({ 0,0,0 });
-    cursorBuilder.next();
-    cursorBuilder.position({ 0,0.5,0 });
-    cursorBuilder.next();
-    cursorBuilder.line<uint16_t>(i0, i0+1);
-    
-    _testSphereMesh = std::move(
-        gfx::Mesh(gfx::VertexTypes::kVPosition, cursorBuilder.indexType,
-            cursorBuilder.vertexMemory,
-            cursorBuilder.indexMemory,
-            gfx::PrimitiveType::kLines)
-    );
+    _vsm.setNextState(std::move(state));
 }
 
-void EditorView::test2()
+void EditorView::setAddEntityToSceneState()
 {
-    auto& camera = this->camera();
-    auto& uniforms = *this->renderContext().uniforms;
+    ove::ViewStateLogic state;
     
-    bgfx::setViewRect(0, camera.viewportRect.x, camera.viewportRect.y,
-        camera.viewportRect.w, camera.viewportRect.h);
-    bgfx::setViewTransform(0, camera.viewMtx, camera.projMtx);
-    
-    gfx::Matrix4 mainTransform;
-    bx::mtxTranslate(mainTransform, 0.0f, 4.0f, 0.0f);
-    
-    if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kTriangles) {
-        /*
-        bgfx::setTexture(0, renderService().bgfxUniformHandle(gfx::kNodeUniformTexDiffuse),
-            _testTarget.texture()->bgfxHandle());
-        */
-        gfx::Color4 color[2] {
-            { 1.0f, 1.0f, 1.0f, 1.0f },
-            { 1.0f, 1.0f, 1.0f, 1.0f }
+    state.id = kStateId_AddEntityToScene;
+    state.beginFn =
+        [this]() {
+            _uiStatus.displayMainUI = false;
+           auto& ns = _entityNamespaces[_uiStatus.addEntityTemplate.nsIndex];
+            _stagedEntity = entityService().createEntity(kEntityStore_Staging, ns, _uiStatus.addEntityTemplate.name);
         };
-        gfx::Vector4 param[2] {
-            { 0.0f, 0.0f, 0.0f, 0.0f },
-            { 0.0f, 0.0f, 0.0f, 0.0f }
-        };
-
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformColor), color);
-        
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformMatSpecular), param);
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightColor), color, 2);
-
-        param[0] = { 0.10f, 0, 0, 0 };
-        param[1] = { 0.0f, 1.0f, 0, 0 };
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightParam), param, 2);
-
-        param[0] = { 0,0,0,0 };
-        param[1] = { -1, -1, 0, 0 };
-        bx::vec3Norm(param[1], param[1]);
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightDir), param, 2);
-        
-        param[0] = { 0,0,0,0 };
-        param[1] = { 0,0,0,0 };
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightOrigin), param, 2);
-        bgfx::setUniform(uniforms.at(gfx::kNodeUniformLightCoeffs), param, 2);
-
-        bgfx::setTransform(mainTransform);
     
-        /*
-        bgfx::setVertexBuffer(_testQuadMesh.vertexBuffer());
-        bgfx::setIndexBuffer(_testQuadMesh.indexBuffer());
-        
-        
-        bgfx::setState(0
-                        | BGFX_STATE_RGB_WRITE
-                        | BGFX_STATE_ALPHA_WRITE
-                        | BGFX_STATE_DEPTH_WRITE
-                        | BGFX_STATE_DEPTH_TEST_LESS
-                        | BGFX_STATE_MSAA
-                        | BGFX_STATE_CULL_CW
-                        );
+    state.frameUpdateFn =
+        [this](CKTimeDelta dt) {
+            auto& hitResult = sceneRayTestResult();
+            if (hitResult) {
+                if (hitResult.body->entity != _stagedEntity) {
+                    if (!hitResult.normal.fuzzyZero()) {
+                        auto stagedBody = scene().findBody(_stagedEntity);
+                        if (stagedBody) {
+                            stagedBody->setPosition(hitResult.position, hitResult.normal);
+                        }
+                    }
+                }
+                
+                if (ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) {
+                    entityService().destroyEntity(_stagedEntity);
+                    setIdleState();
+                }
+                else if (ImGui::IsKeyPressed(SDL_SCANCODE_RETURN) || ImGui::IsMouseClicked(0)) {
+                    entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
+                    setIdleState();
+                }
+            }
+        };
+    
+    state.endFn =
+        [this]() {
+            _uiStatus.displayMainUI = true;
+        };
+    
+    _vsm.setNextState(std::move(state));
+/*
 
-        bgfx::submit(0, renderService().bgfxProgramHandle(gfx::kNodeProgramMesh));
-        */
-        
-        bgfx::setVertexBuffer(_testSphereMesh.vertexBuffer());
-        bgfx::setIndexBuffer(_testSphereMesh.indexBuffer());
-        
-        bgfx::setState(
-            BGFX_STATE_RGB_WRITE
-          | BGFX_STATE_ALPHA_WRITE
-          | BGFX_STATE_DEPTH_WRITE
-          | BGFX_STATE_DEPTH_TEST_LESS
-          | BGFX_STATE_MSAA
-          | BGFX_STATE_CULL_CW
-        );
-        
-        bgfx::submit(0, renderContext().programs->at(gfx::kNodeProgramMeshColor));
-    }
-    else if (_testSphereMesh.primitiveType() == gfx::PrimitiveType::kLines) {
-        gfx::Color4 color { 1,1,1,1 };
-        bgfx::setUniform(renderContext().uniforms->at(gfx::kNodeUniformColor), color);
-        
-        bgfx::setTransform(mainTransform);
-        
-        bgfx::setVertexBuffer(_testSphereMesh.vertexBuffer());
-        bgfx::setIndexBuffer(_testSphereMesh.indexBuffer());
-        
-        bgfx::setState(
-            BGFX_STATE_RGB_WRITE
-          | BGFX_STATE_ALPHA_WRITE
-          | BGFX_STATE_DEPTH_WRITE
-          | BGFX_STATE_DEPTH_TEST_LESS
-          | BGFX_STATE_MSAA
-          | BGFX_STATE_PT_LINES
-        );
-        
-        bgfx::submit(0, renderContext().programs->at(gfx::kNodeProgramFlat));
-    }
-}
-
-  /*
-    auto renderable = entityTemplate.FindMember("renderable");
-    if (renderable == entityTemplate.MemberEnd()) {
-        //  TODO - how about editor only displays for non-renderable entities?
+if (inputState.testKey(SDL_SCANCODE_ESCAPE)) {
+        stateController.present("EditorMain");
         return;
     }
-    
-    auto modelset = renderService().findModelSet(renderable->value["modelset"].GetString());
-    if (!modelset) {
-        //  TODO - use a default model
-        return;
-    }
-    
-    auto renderTarget = gfx::MultiTextureRenderTarget::createWithDepthTarget(
-        _modelStageCamera.viewportRect.w,
-        _modelStageCamera.viewportRect.h,
-        bgfx::TextureFormat::BGRA8, bgfx::TextureFormat::D16);
-    
-    CK_ASSERT_RETURN(renderTarget);
-    
-    auto modelBase = modelset->find(renderable->value["model"].GetString());
-    auto modelNode = _modelStageGraph->addChildNodeToNode(_modelStageGraph->clone(modelBase),
-                                    _modelStageGraph->root());
-    
-    //  calculate camera coordinates given the model's aabb
-    //  (the model is rendered at world 0,0,0)
-    //  (viewport is a square)
-    auto modelAABB = modelNode->calculateAABB();
-    auto modelDims = modelAABB.dimensions();
-    float side = std::max(modelDims.x, modelDims.y) * 0.5f;
-    float zdist = side / ckm::tan(_modelStageCamera.fovDegrees*0.5f/180.0f);
-    zdist = std::max(zdist, (float)fabs(modelAABB.min.z));
-    bx::mtxTranslate(_modelStageCamera.worldMtx,
-        modelAABB.min.x + modelDims.x*0.5f,
-        modelAABB.min.y + modelDims.y*0.5f,
-        -zdist);
-    _modelStageCamera.update();
-    
-    //  take a snapshot of the model, rendered to our target
-    renderService().renderNodeToTarget(_renderer,
-        (const gfx::RenderTarget&)renderTarget,
-        _modelStageGraph->root(),
-        _modelStageCamera);
-    
-    _modelStageGraph->removeNode(modelNode);
-    
-    //bgfx::TextureFormat::Enum renderTextureFormat = renderTarget.texture()->bgfxFormat();
-    bgfx::TextureHandle renderTexture = renderTarget.texture()->release();
-    
-    int nvImage = nvgCreateImageFromBackendTexture(nvgContext(),
-        renderTarget.target().width(), renderTarget.target().height(),
-        NVG_TEXTURE_RGBA,
-        &renderTexture);
-    */
 
+    auto& hitResult = sceneRayTestResult();
+    
+    if (!_stagedEntity || !hitResult)
+        return;
+    
+    if (hitResult.body->entity != _stagedEntity) {
+        if (!hitResult.normal.fuzzyZero()) {
+            auto stagedBody = scene().findBody(_stagedEntity);
+            if (stagedBody) {
+                stagedBody->setPosition(hitResult.position, hitResult.normal);
+            }
+        }
+    }
+
+        if (uiService().frame().eventType() == UI_BUTTON0_DOWN) {
+            entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
+            stateController.present("EditorMain");
+        }
+*/
+}
 
 } /* namespace cinek */

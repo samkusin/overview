@@ -45,7 +45,6 @@ struct GameViewContext
     ove::EntityService* entityService;
     ove::AssetService* assetService;
     ove::RenderContext* renderContext;
-    UIService* uiService;
     NVGcontext* nvgContext;
     ove::Pathfinder* pathfinder;
     ove::PathfinderDebug* pathfinderDebug;
@@ -59,7 +58,6 @@ class GameState : public ove::ViewController
 public:
     GameState(GameViewContext* context);
     
-protected:
     GameInterface& game() { return *_context->game; }
     const GameInterface& game() const { return *_context->game; }
     gfx::Camera& camera() { return *_context->camera; };
@@ -71,7 +69,6 @@ protected:
     ove::NavSystem& navSystem() { return *_context->navSystem; }
     ove::RenderContext& renderContext() { return *_context->renderContext; }
     const ove::SceneRayTestResult& sceneRayTestResult() const { return *_context->screenRayTestResult; }
-    UIService& uiService() { return *_context->uiService; }
     
 private:
     GameViewContext* _context;
