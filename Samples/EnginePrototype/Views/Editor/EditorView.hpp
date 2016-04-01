@@ -84,6 +84,11 @@ private:
     
     std::vector<std::pair<std::string, EntityCategory>> _entityCategories;
     
+    class SceneTree;
+    struct SceneTreeNode;
+    unique_ptr<SceneTree> _sceneTree;
+    void rebuildSceneTree(SceneTree& tree);
+   
     //  state based data
     Entity _stagedEntity;
     
@@ -110,6 +115,7 @@ private:
     UIStatus _uiStatus;
     
     void updateUI(UIStatus& status, float width, float height);
+    void updateSceneTreeUI(const SceneTreeNode* node);
 };
 
 }   /* namespace cinek */

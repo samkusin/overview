@@ -22,6 +22,7 @@
 
 #include "UICore/UI.hpp"
 
+#include <cinek/memorystack.hpp>
 #include <ckjson/json.hpp>
 #include <ckm/math.hpp>
 
@@ -30,12 +31,106 @@
 
 namespace cinek {
 
+struct EditorView::SceneTreeNode
+{
+    enum class Type
+    {
+        kEntity,
+        kGroup
+    };
+    const char* name;
+    Type type;
+    Entity entity;
+    
+    SceneTreeNode* parent;
+    SceneTreeNode* nextSibling;
+    SceneTreeNode* prevSibling;
+    SceneTreeNode* firstChild;
+};
+
+class EditorView::SceneTree
+{
+public:
+    using Node = SceneTreeNode;
+    
+    SceneTree(int nodeCount, const Allocator& allocator) :
+        _nodeStack(nodeCount * sizeof(Node), allocator),
+        _stringStack(nodeCount * 32),
+        _root(nullptr)
+    {
+    }
+    
+    Node* root() { return _root; }
+    const Node* root() const { return _root; }
+    
+    void reset()
+    {
+        _nodeStack.reset();
+        _stringStack.reset();
+        
+        _root = allocateNode("Root", Node::Type::kGroup);
+    }
+    
+    void addScene(const ove::Scene& scene)
+    {
+        Node* node = appendChild(_root, "Bodies", Node::Type::kGroup);
+        if (node) {
+            scene.iterateBodies(ove::SceneBody::kAllCategories,
+                [this, node](ove::SceneBody* body, uint32_t mask) {
+                    if (!body->checkFlags(ove::SceneBody::kIsStaging)) {
+                        Node* child = appendChild(node, "Entity", Node::Type::kEntity);
+                        if (child) {
+                            child->entity = body->entity;
+                        }
+                    }
+                });
+        }
+    }
+    
+private:
+    MemoryStack _nodeStack;
+    CStringStack _stringStack;
+    Node* _root;
+    
+    Node* allocateNode(const char* name, Node::Type type)
+    {
+        Node* node = reinterpret_cast<Node*>(_nodeStack.allocate(sizeof(Node)));
+        if (node) {
+            memset(node, 0, sizeof(*node));
+            
+            node->name = _stringStack.create(name);
+            node->type = type;
+        }
+        return node;
+    }
+    
+    Node* appendChild(Node* parent, const char* name, Node::Type type)
+    {
+        Node* node = allocateNode(name, type);
+        if (node) {
+            if (parent->firstChild) {
+                Node* oldTail = parent->firstChild->prevSibling;
+                parent->firstChild->prevSibling = node;
+                oldTail->nextSibling = node;
+                node->prevSibling = oldTail;
+            }
+            else {
+                parent->firstChild = node;
+                node->prevSibling = node;   //  tail as our head's prev sibling
+            }
+            node->parent = parent;
+        }
+        return node;
+    }
+};
+
 EditorView::EntityCategory::EntityCategory(int cnt, int maxstrlen) :
     strstack(cnt*maxstrlen*2),
     size(cnt)
 {
     names.reserve(cnt);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -202,6 +297,16 @@ void EditorView::initUIData()
             }
         }
     );
+    
+    //  scene tree building
+    _sceneTree = allocate_unique<SceneTree>(_allocator, 1024, _allocator);
+    rebuildSceneTree(*_sceneTree);
+}
+
+void EditorView::rebuildSceneTree(cinek::EditorView::SceneTree &tree)
+{
+    _sceneTree->reset();
+    _sceneTree->addScene(scene());
 }
 
 void EditorView::updateUI(UIStatus& status, float width, float height)
@@ -270,7 +375,7 @@ void EditorView::updateUI(UIStatus& status, float width, float height)
         //  SCENE GRAPH UI
         ImGui::SetNextWindowPos(kSceneTreePos, ImGuiSetCond_FirstUseEver);
         if (ImGui::Begin("Scene", nullptr, kSceneTreeDims, 0.3f)) {
-        
+            updateSceneTreeUI(_sceneTree->root());
         }
         ImGui::End();
         
@@ -283,6 +388,33 @@ void EditorView::updateUI(UIStatus& status, float width, float height)
     }
 }
 
+void EditorView::updateSceneTreeUI(const SceneTreeNode *node)
+{
+    if (!node)
+        return;
+    
+    bool open = false;
+    
+    if (node->type == SceneTreeNode::Type::kGroup) {
+        open = ImGui::TreeNode(node->name);
+    }
+    else if (node->type == SceneTreeNode::Type::kEntity) {
+        open = ImGui::TreeNode(node, "Entity %" PRIu64 , node->entity);
+    }
+    
+    if (open) {
+
+        for (const SceneTreeNode* child = node->firstChild;
+                                  child;
+                                  child = child->nextSibling) {
+        
+        
+            updateSceneTreeUI(child);
+        }
+        ImGui::TreePop();
+    }
+}
+
 void EditorView::setIdleState()
 {
     ove::ViewStateLogic state;
@@ -292,6 +424,8 @@ void EditorView::setIdleState()
         [this]() {
             _uiStatus.displayMainUI = true;
             _uiStatus.addEntityTemplate.reset();
+            
+            rebuildSceneTree(*_sceneTree);
         };
     
     state.frameUpdateFn =
@@ -333,11 +467,11 @@ void EditorView::setAddEntityToSceneState()
                     }
                 }
                 
-                if (ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) {
+                if (ImGui::IsKeyPressed(SDLK_ESCAPE)) {
                     entityService().destroyEntity(_stagedEntity);
                     setIdleState();
                 }
-                else if (ImGui::IsKeyPressed(SDL_SCANCODE_RETURN) || ImGui::IsMouseClicked(0)) {
+                else if (ImGui::IsKeyPressed(SDLK_RETURN) || ImGui::IsMouseClicked(0)) {
                     entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
                     setIdleState();
                 }
@@ -350,32 +484,6 @@ void EditorView::setAddEntityToSceneState()
         };
     
     _vsm.setNextState(std::move(state));
-/*
-
-if (inputState.testKey(SDL_SCANCODE_ESCAPE)) {
-        stateController.present("EditorMain");
-        return;
-    }
-
-    auto& hitResult = sceneRayTestResult();
-    
-    if (!_stagedEntity || !hitResult)
-        return;
-    
-    if (hitResult.body->entity != _stagedEntity) {
-        if (!hitResult.normal.fuzzyZero()) {
-            auto stagedBody = scene().findBody(_stagedEntity);
-            if (stagedBody) {
-                stagedBody->setPosition(hitResult.position, hitResult.normal);
-            }
-        }
-    }
-
-        if (uiService().frame().eventType() == UI_BUTTON0_DOWN) {
-            entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
-            stateController.present("EditorMain");
-        }
-*/
 }
 
 } /* namespace cinek */
