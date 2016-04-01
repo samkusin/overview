@@ -68,7 +68,16 @@ void EntityService::enumerateDefinitions
 {
     _context->enumerateManifests(cb);
 }
-    
+
+void EntityService::linkIdentityToEntity(Entity e, std::string identity)
+{
+    _context->linkIdentityToEntity(e, std::move(identity));
+}
+
+const std::string& EntityService::identityFromEntity(Entity e) const
+{
+    return _context->identityFromEntity(e);
+}
 
 
     } /* namespace ove */

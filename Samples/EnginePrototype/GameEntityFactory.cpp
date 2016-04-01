@@ -29,6 +29,7 @@ namespace cinek {
 
 GameEntityFactory::GameEntityFactory
 (
+    ove::EntityDatabase* entityDb,
     gfx::Context* gfxContext,
     ove::SceneDataContext* sceneData,
     ove::Scene* scene,
@@ -38,6 +39,7 @@ GameEntityFactory::GameEntityFactory
     TransformDataContext* transformDataContext,
     ove::TransformSystem* transformSystem
 ) :
+    _entityDb(entityDb),
     _gfxContext(gfxContext),
     _sceneDataContext(sceneData),
     _scene(scene),
@@ -48,8 +50,7 @@ GameEntityFactory::GameEntityFactory
     _transformSystem(transformSystem)
 {
 }
-                      
-
+    
 void GameEntityFactory::onCustomComponentCreateFn
 (
     Entity entity,
@@ -221,6 +222,12 @@ void GameEntityFactory::onCustomComponentCreateFn
             _transformSystem->attachBody(body);
         }
     }
+    else if (componentName == "editor") {
+        auto it = compTemplate.FindMember("name");
+        if (it != compTemplate.MemberEnd()) {
+            _entityDb->linkIdentityToEntity(entity, it->value.GetString());
+        }
+    }
 }
 
 void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
@@ -228,6 +235,9 @@ void GameEntityFactory::onCustomComponentEntityDestroyFn(Entity entity)
     //  iterate through all components
     //  TODO - perhaps we need to identify what components are attached to
     //         the entity for optimization
+    
+    //  destroy editor
+    _entityDb->unlinkIdentityFromEntity(entity);
     
     //  destroy nav
     ove::NavBody* navBody = _navSystem->detachBody(entity);
@@ -280,6 +290,11 @@ void GameEntityFactory::onCustomComponentEntityCloneFn
     if (navBody) {
         ove::NavBody* clonedBody = _navDataContext->cloneBody(navBody, sceneBody, target);
         navBody = _navSystem->attachBody(clonedBody);
+    }
+    //  editor
+    auto& identity = _entityDb->identityFromEntity(origin);
+    if (!identity.empty()) {
+        _entityDb->linkIdentityToEntity(target, identity);
     }
 }
 

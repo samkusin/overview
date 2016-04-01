@@ -80,7 +80,18 @@ public:
      *              void fn(const std::string& ns, AssetManifest& manifest)
      */
     void enumerateDefinitions(const std::function<void(const std::string&, const AssetManifest&)>& cb);
-    
+    /**
+     *  Add identity information to an entity.
+     *  
+     *  @param  entity  The entity to store identity information for
+     *  @param  name    Long unique name for the entity
+     */
+    void linkIdentityToEntity(Entity e, std::string identity);
+    /** 
+     *  @param  entity  The entity to retieve identity info for
+     *  @return The identity information
+     */
+    const std::string& identityFromEntity(Entity e) const;
     
 private:
     EntityDatabase* _context = nullptr;

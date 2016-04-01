@@ -399,7 +399,12 @@ void EditorView::updateSceneTreeUI(const SceneTreeNode *node)
         open = ImGui::TreeNode(node->name);
     }
     else if (node->type == SceneTreeNode::Type::kEntity) {
-        open = ImGui::TreeNode(node, "Entity %" PRIu64 , node->entity);
+        auto& name = entityService().identityFromEntity(node->entity);
+        const char* nameptr = "<Entity>";
+        if (!name.empty()) {
+            nameptr = name.c_str();
+        }
+        open = ImGui::TreeNode(node, "%s %" PRIx64 , nameptr, node->entity);
     }
     
     if (open) {

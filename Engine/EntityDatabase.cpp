@@ -15,10 +15,9 @@ namespace cinek {
 
 EntityDatabase::EntityDatabase
 (
-    const std::vector<EntityStore::InitParams>& stores,
-    EntityComponentFactory& factory
+    const std::vector<EntityStore::InitParams>& stores
 ) :
-    _factory(&factory)
+    _factory(nullptr)
 {
     auto dictSz = std::min((uint32_t)stores.size(), 1U << kCKEntityContextBits);
     dictSz = std::min(dictSz, 256U);
@@ -46,6 +45,11 @@ EntityDatabase& EntityDatabase::operator=(EntityDatabase&& other)
     _factory = other._factory;
     other._factory = nullptr;
     return *this;
+}
+
+void EntityDatabase::setFactory(EntityComponentFactory *factory)
+{
+    _factory = factory;
 }
 
 const EntityStore& EntityDatabase::getStore(EntityContextType index) const
@@ -129,6 +133,7 @@ Entity EntityDatabase::cloneEntity
 {
     Entity cloned = getStore(context).create(context);
     _factory->onCustomComponentEntityCloneFn(cloned, source);
+    
     return cloned;
 }
 
@@ -187,7 +192,24 @@ void EntityDatabase::enumerateManifests
     }
 }
   
+void EntityDatabase::linkIdentityToEntity(Entity e, std::string identity)
+{
+    _entityToIdentityMap.emplace(e, std::move(identity));
+}
 
+void EntityDatabase::unlinkIdentityFromEntity(Entity e)
+{
+    _entityToIdentityMap.erase(e);
+}
+
+const std::string& EntityDatabase::identityFromEntity(Entity e) const
+{
+    auto it = _entityToIdentityMap.find(e);
+    if (it == _entityToIdentityMap.end()) {
+        return _empty;
+    }
+    return it->second;
+}
 
 
     }   /* namespace ove */

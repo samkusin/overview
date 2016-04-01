@@ -23,6 +23,7 @@ class GameEntityFactory : public ove::EntityComponentFactory
 public:
     GameEntityFactory
     (
+        ove::EntityDatabase* entityDb,
         gfx::Context* gfxContext,
         ove::SceneDataContext* sceneData,
         ove::Scene* scene,
@@ -45,6 +46,7 @@ public:
     virtual void onCustomComponentEntityCloneFn(Entity target, Entity origin);
 
 private:
+    ove::EntityDatabase* _entityDb;
     gfx::Context* _gfxContext;
     ove::SceneDataContext* _sceneDataContext;
     ove::Scene* _scene;

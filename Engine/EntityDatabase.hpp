@@ -79,12 +79,13 @@ public:
      *                  are more initializers than this limit, then initializers
      *                  beyond the limit are ignored.
      */
-    EntityDatabase(const std::vector<EntityStore::InitParams>& stores,
-        EntityComponentFactory& provider);
+    EntityDatabase(const std::vector<EntityStore::InitParams>& stores);
     
     EntityDatabase() = default;
     EntityDatabase(EntityDatabase&& other);
     EntityDatabase& operator=(EntityDatabase&& other);
+    
+    void setFactory(EntityComponentFactory* factory);
     /** 
      *  @return The number of stores in the dictionary 
      */
@@ -165,11 +166,31 @@ public:
      *              void fn(const std::string& ns, AssetManifest& manifest)
      */
     void enumerateManifests(const std::function<void(const std::string&, const AssetManifest&)>& cb);
+    /**
+     *  Add identity information to an entity.
+     *  
+     *  @param  entity  The entity to store identity information for
+     *  @param  name    Long unique name for the entity
+     */
+    void linkIdentityToEntity(Entity entity, std::string identity);
+    /** 
+     *  @param  entity  The entity to retieve identity info for
+     *  @return The identity information
+     */
+    const std::string& identityFromEntity(Entity e) const;
+    /**
+     *  Remove identity information from an entity.
+     *  
+     *  @param  entity  The entity to store identity information for
+     */
+    void unlinkIdentityFromEntity(Entity entity);
     
 private:
     std::vector<EntityStore> _stores;
     std::unordered_map<std::string, std::shared_ptr<AssetManifest>> _manifests;
+    std::unordered_map<Entity, std::string> _entityToIdentityMap;
     EntityComponentFactory* _factory;
+    std::string _empty;
 };
 
     } /* namespace ove */

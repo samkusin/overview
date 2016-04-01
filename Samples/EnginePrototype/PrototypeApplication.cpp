@@ -116,8 +116,10 @@ PrototypeApplication::PrototypeApplication
     ove::TransformSystem::InitParams transformSystemParams;
     transformSystemParams.numBodies = 128;
     _transformSystem = cinek::allocate_unique<ove::TransformSystem>(transformSystemParams);
+    _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers);
     
     _componentFactory = allocate_unique<GameEntityFactory>(
+        _entityDb.get(),
         _gfxContext,
         _sceneData.get(),
         _scene.get(),
@@ -127,9 +129,8 @@ PrototypeApplication::PrototypeApplication
         _transformDataContext.get(),
         _transformSystem.get()
     );
-    
-    _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
-        *_componentFactory);
+    _entityDb->setFactory(_componentFactory.get());
+
     
     //  define the top-level states for this application
     _appContext = allocate_unique<ApplicationContext>();
