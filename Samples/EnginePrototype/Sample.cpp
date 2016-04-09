@@ -211,16 +211,15 @@ int runSample(int viewWidth, int viewHeight, int firstFreeViewId)
             
             //  pixel ratio may change if for some reason we have different framebuffer
             //  sizes from our window (i.e. fullscreen?)
-            nvgBeginFrame(nvg, viewRect.w, viewRect.h, 1.0f);
             
             imGuiNewFrame();
+            nvgBeginFrame(nvg, viewRect.w, viewRect.h, 1.0f);
             
             controller.renderFrame(frameTime, viewRect, polledInputState);
             
-            imGuiRender();
-        
             nvgEndFrame(nvg);
-        
+            imGuiRender();
+            
             controller.endFrame();
             
             bgfx::frame();

@@ -70,6 +70,8 @@ public:
     ove::RenderContext& renderContext() { return *_context->renderContext; }
     const ove::SceneRayTestResult& sceneRayTestResult() const { return *_context->screenRayTestResult; }
     
+    NVGcontext* nvgContext() { return _context->nvgContext; }
+    
 private:
     GameViewContext* _context;
 };

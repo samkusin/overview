@@ -92,6 +92,7 @@ PrototypeApplication::PrototypeApplication
     sceneInitParams.staticLimit = 1024;
     sceneInitParams.limits[ove::SceneBody::kSection] = 64;
     sceneInitParams.limits[ove::SceneBody::kDynamic] = 1024;
+    sceneInitParams.limits[ove::SceneBody::kStaging] = 16;
     
     _scene = cinek::allocate_unique<ove::Scene>(sceneInitParams, _sceneDbgDraw.get());
 

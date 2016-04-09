@@ -164,7 +164,7 @@ void SceneDebugDrawer::flushLines()
         color.r = _currentLineColor.getX();
         color.g = _currentLineColor.getY();
         color.b = _currentLineColor.getZ();
-        color.a = 1.0f;
+        color.a = 0.50f;
         
         bgfx::setUniform((*_uniforms)[gfx::kNodeUniformColor], color);
 
@@ -175,6 +175,8 @@ void SceneDebugDrawer::flushLines()
 
         bgfx::setState(
             BGFX_STATE_RGB_WRITE
+          | BGFX_STATE_ALPHA_WRITE
+          | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
           | BGFX_STATE_DEPTH_WRITE
           | BGFX_STATE_DEPTH_TEST_LESS
           | BGFX_STATE_PT_LINES

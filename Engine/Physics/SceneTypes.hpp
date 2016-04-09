@@ -35,9 +35,9 @@ struct SceneBody
 {
     enum Category
     {
-        kSection,
-        kDynamic,
-        kStaging,
+        kSection        = 0,
+        kDynamic        = 1,
+        kStaging        = 2,
         kNumCategories
     };
 
@@ -73,12 +73,13 @@ struct SceneBody
     
     //  set transform - the final transform may be modified by the Scene during
     //  update
-    void setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos);
+    void setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos, bool simulate=true);
     
     //  returns the current world transform from the scene's perspective (i.e.
     //  not the final transform post update.)
     void getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const;
-
+    ckm::vector3f getPosition() const;
+    
     void setVelocity(const ckm::vector3f& linear, const ckm::vector3f& angular);
 
 public:

@@ -39,6 +39,11 @@ public:
     {
         int staticLimit;
         std::array<int, SceneBody::kNumCategories> limits;
+        
+        InitParams() {
+            staticLimit = 0;
+            limits.fill(0);
+        }
     };
         
     Scene(const InitParams& initParams, btIDebugDraw* debugDrawer=nullptr);
@@ -73,7 +78,7 @@ public:
     /**
      *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
      */
-    SceneBody* attachBody(SceneBody* body, uint32_t categories);
+    SceneBody* attachBody(SceneBody* body, uint32_t categoryMask);
     /**
      *  Removes the body from the Scene.
      */
@@ -81,7 +86,15 @@ public:
     /**
      *  @param  entity  What entity to find a body for
      */
-    SceneBody* findBody(Entity entity, uint32_t categories=SceneBody::kAllCategories) const;
+    SceneBody* findBody(Entity entity, uint32_t categoryMask=SceneBody::kAllCategories) const;
+    /**
+     *  Add categories to a body
+     */
+    SceneBody* addCategoryToBody(Entity entity, uint32_t category);
+    /**
+     *  Remove categories from a body
+     */
+    SceneBody* removeCategoryFromBody(Entity entity, uint32_t category);
     /**
      *  Retrieve the closest hit point with a given ray.
      *  
@@ -120,6 +133,12 @@ private:
         SceneBodyContainer& container,
         Entity entity
     );
+    
+    SceneBody* addCategoryToBody(SceneBody* body, uint32_t category);
+    SceneBody* removeCategoryFromBody(SceneBody* body, uint32_t category);
+    
+    void addBodyToBtWorld(SceneBody* body);
+    void removeBodyFromBtWorld(SceneBody* body);
     
     bool _simulateDynamics;
     

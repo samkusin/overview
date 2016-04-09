@@ -133,7 +133,7 @@ void SceneBody::setPosition
     }
 }
 
-void SceneBody::setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos)
+void SceneBody::setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos, bool simulate)
 {
     btTransform& t = this->btBody->getWorldTransform();
     // transpose to row major from column
@@ -143,7 +143,12 @@ void SceneBody::setTransform(const ckm::matrix3f& basis, const ckm::vector3f& po
     //  updates the revision number, copy is trivial
     this->btBody->setWorldTransform(t);
     
-    transformChanged = true;
+    transformChanged = simulate;
+    if (!simulate) {
+        if (this->motionState) {
+            this->motionState->setWorldTransform(t);
+        }
+    }
 }
 
 void SceneBody::setVelocity(const ckm::vector3f &linear, const ckm::vector3f &angular)
@@ -161,6 +166,14 @@ void SceneBody::getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const
     ckmFromBt(pos, t.getOrigin());
 }
 
+ckm::vector3f SceneBody::getPosition() const
+{
+    ckm::vector3f pos;
+    const btTransform& t = this->btBody->getWorldTransform();
+    ckmFromBt(pos, t.getOrigin());
+    return pos;
+}
+    
 bool SceneBody::checkFlags(uint32_t flags) const
 {
     return (categoryMask & flags) != 0;

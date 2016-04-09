@@ -49,11 +49,10 @@ private:
 
 private:
     Allocator _allocator;
+    gfx::Matrix4 _savedCameraMtx;
     ove::FreeCameraController _freeCameraController;
     
 private:
-    void initUIData();
-    
     std::vector<std::string> _entityNamespaces;
     
     struct EntityTemplate
@@ -71,7 +70,6 @@ private:
             longName = nullptr;
         }
     };
-    
     struct EntityCategory
     {
         std::vector<EntityTemplate> names;
@@ -81,41 +79,88 @@ private:
         EntityCategory() = default;
         EntityCategory(int cnt, int maxstrlen);
     };
-    
     std::vector<std::pair<std::string, EntityCategory>> _entityCategories;
     
     class SceneTree;
     struct SceneTreeNode;
     unique_ptr<SceneTree> _sceneTree;
     void rebuildSceneTree(SceneTree& tree);
-   
-    //  state based data
-    Entity _stagedEntity;
+    
+    Entity _activeEntity;       // the currently active entity (ui props, etc.)
+    Entity _stagedEntity;       // a pending entity used for adding to scenes
+    
+    void createUIData();
+    void renderOverlay();
+    void destroyUIData();
     
 private:
     //  states
     enum
     {
         kStateId_Idle,
-        kStateId_AddEntityToScene
+        kStateId_AddEntityToScene,
+        kStateId_TransformEntity
     };
 
     ove::ViewStateMachine _vsm;
 
-    void setAddEntityToSceneState();
     void setIdleState();
+    void setAddEntityToSceneState();
+    void setTransformEntityState();
     
     struct UIStatus
     {
         EntityTemplate addEntityTemplate;
     
         bool displayMainUI;
+        
+        enum
+        {
+            kCamera_Perspective,
+            kCamera_Orthogonal
+        };
+        int cameraOption;
+        
+        enum
+        {
+            kCameraDirection_Current,
+            kCameraDirection_XYZPos,
+            kCameraDirection_XYZNeg,
+            kCameraDirection_XZYPos,
+            kCameraDirection_XZYNeg,
+            kCameraDirection_YZXPos,
+            kCameraDirection_YZXNeg
+        };
+        int cameraDirection;
     };
     
-    UIStatus _uiStatus;
+    UIStatus _uiStatus;\
     
-    void updateUI(UIStatus& status, float width, float height);
+    void updateMainUI(UIStatus& status, float width, float height);
     void updateSceneTreeUI(const SceneTreeNode* node);
+    void endFrameMainUI(UIStatus& status);
+
+    struct UITransformStatus
+    {
+        enum
+        {
+            kTransform_Snap,
+            kTransform_Free,
+            kTransform_X,
+            kTransform_Y,
+            kTransform_Z
+        };
+        
+        int option;
+    };
+    
+    UITransformStatus _uiTransformStatus;
+    
+    void updateTranslateUI(UITransformStatus& status);
+    void handleTranslateUI(UITransformStatus& status);
+    
+    void updateRotateUI(UITransformStatus& status);
+    void handleRotateUI(UITransformStatus& status);
 };
 
 }   /* namespace cinek */

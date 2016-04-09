@@ -107,9 +107,9 @@ void NavSystem::simulate(CKTimeDelta dt)
                 angularVelocity = turn(body->basis(), direction, ckm::kPi * dt);
             }
             else {
-                velocity.from(0,0,0);
-                angularVelocity.from(0,0,0);
-                direction.from(0,0,0);
+                velocity.set(0,0,0);
+                angularVelocity.set(0,0,0);
+                direction.set(0,0,0);
                 
                 if (pathState == NavBody::State::kPathBreak) {
                     body->setToIdle();
@@ -162,7 +162,7 @@ const
         ckm::scale(velocity, velocity, dist);
     }
     else {
-        velocity.from(0, 0, 0);
+        velocity.set(0, 0, 0);
     }
     
     return velocity;
@@ -185,12 +185,12 @@ const
     
     auto angle = ckm::dot(forward, direction);
     if (angle > ckm::scalar(0.98)) {
-        velocity.from(0,0,0);
+        velocity.set(0,0,0);
     }
     else if (angle < ckm::scalar(-0.98)) {
         // this is making an assumption that any significant turns are
         // around the body's up vector
-        velocity.from(orient.comp[3],orient.comp[4],orient.comp[5]);
+        velocity.set(orient.comp[3],orient.comp[4],orient.comp[5]);
     }
     else {
         ckm::cross(velocity, forward, direction);

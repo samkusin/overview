@@ -22,9 +22,7 @@ class FreeCameraController
 {
 public:
     FreeCameraController();
-    
-    void setTransform(const gfx::Vector3& pos, const gfx::Matrix4& rotMtx);
-    
+
     void handleCameraInput(gfx::Camera& camera, const cinek::input::InputState& state,
                            float frameDelta);
 
@@ -42,14 +40,6 @@ private:
     uint32_t _moveFlags;
     float _moveYaw;
     float _movePitch;
-    
-    struct LocalTransform
-    {
-        gfx::Vector3 pos;
-        gfx::Matrix4 rotMtx;
-    };
-    
-    LocalTransform _cameraTransform;
 };
     } /* namespace ove */
 } /* namespace cinek */
