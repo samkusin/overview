@@ -645,14 +645,16 @@ void EditorView::handleTranslateUI(UITransformStatus& status)
             gfx::Vector4 entityWorldTranslate(entityWorldPosition, 1.0f);
             gfx::Vector4 entityViewTranslate;
             ckm::mul(entityViewTranslate, entityWorldTranslate, camera().viewMtx);
+            /*
             float dx = io.DisplaySize.x * 0.5f;
             float dy = io.DisplaySize.y * 0.5f;
-            gfx::Vector4 origin = camera().translateFromViewportCoordinate(entityViewTranslate.z, dx, dy);
-            gfx::Vector4 offset = camera().translateFromViewportCoordinate(entityViewTranslate.z, dx - io.MouseDelta.x, dy - io.MouseDelta.y);
+            gfx::Vector4 origin = camera().translateFromViewportCoordinate(dx, dy, entityViewTranslate.z);
+            gfx::Vector4 offset = camera().translateFromViewportCoordinate(dx - io.MouseDelta.x, dy - io.MouseDelta.y, entityViewTranslate.z);
             ckm::sub(offset, origin, offset);
             ckm::add(entityViewTranslate, offset, entityViewTranslate);
             ckm::mul(entityWorldTranslate, entityViewTranslate, camera().worldMtx);
-            entityWorldPosition.set(entityWorldTranslate.x, entityWorldTranslate.y, entityWorldTranslate.z);
+            */
+            entityWorldPosition = camera().worldPositionFromScreenCoordinate(io.MousePos.x, io.MousePos.y, entityViewTranslate.z);
             body->setTransform(entityWorldBasis, entityWorldPosition, false);
     
             //printf("offset=(%.2f,%.2f), (%.2f,%.2f)\n", io.MouseDelta.x, io.MouseDelta.y, offset.x, offset.y);
@@ -840,14 +842,14 @@ void EditorView::setAddEntityToSceneState()
                         }
                     }
                 }
-                
-                if (ImGui::IsKeyPressed(SDLK_ESCAPE)) {
-                    setIdleState();
-                }
-                else if (ImGui::IsKeyPressed(SDLK_RETURN) || ImGui::IsMouseClicked(0)) {
-                    entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
-                    setIdleState();
-                }
+            }
+            
+            if (ImGui::IsKeyPressed(SDLK_ESCAPE)) {
+                setIdleState();
+            }
+            else if (ImGui::IsKeyPressed(SDLK_RETURN) || ImGui::IsMouseClicked(0)) {
+                entityService().cloneEntity(kEntityStore_Default, _stagedEntity);
+                setIdleState();
             }
         };
     

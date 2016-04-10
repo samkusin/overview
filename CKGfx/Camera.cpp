@@ -47,44 +47,62 @@ Vector3 Camera::worldPosition() const
     return { worldMtx[12], worldMtx[13], worldMtx[14] };
 }
 
-Vector4 Camera::translateFromViewportCoordinate
+Vector4 Camera::viewTranslateFromScreenCoordinate
 (
-    float z,
-    const int32_t x,
-    const int32_t y
+    const int32_t vx,
+    const int32_t vy
 )
 const
 {
-    gfx::Vector4 pt = {
-        (2.0f * x) / viewportRect.w - 1.0f,
-        1.0f - (2.0f*y)/viewportRect.h,
-        z,
+    Vector4 projectedTranslate = {
+        (2.0f * vx) / viewportRect.w - 1.0f,
+        1.0f - (2.0f * vy)/viewportRect.h,
+        1.0f,
         1.0f
     };
-    
-    pt.x *= z;
-    pt.y *= z;
-    
-    return pt;
+    Vector4 viewTranslate;
+    bx::vec4MulMtx(viewTranslate, projectedTranslate, invProjMtx);
+    return viewTranslate;
 }
 
-Vector3 Camera::rayFromViewportCoordinate
+
+Vector3 Camera::worldRayFromScreenCoordinate
 (
-    const int32_t x,
-    const int32_t y
+    const int32_t vx,
+    const int32_t vy
 )
 const
 {
-    gfx::Vector3 dir;
-    gfx::Vector4 pt = translateFromViewportCoordinate(1.0f, x, y);
-    gfx::Vector4 eyePt;
+    Vector3 worldRay;
+    Vector4 viewTranslate = viewTranslateFromScreenCoordinate(vx, vy);
+    Vector4 worldTranslate;
+    bx::vec4MulMtx(worldTranslate, viewTranslate, worldMtx);
+    bx::vec3Norm(worldRay, worldTranslate);
     
-    bx::vec4MulMtx(eyePt, pt, invProjMtx);
-    
-    bx::vec4MulMtx(pt, eyePt, worldMtx);
-    bx::vec3Norm(dir, pt);
+    return worldRay;
+}
 
-    return dir;
+Vector3 Camera::worldPositionFromScreenCoordinate
+(
+    const int32_t vx, const int32_t vy,
+    const float z
+)
+const
+{
+    Vector3 hitpt(0,0,0);
+    Vector3 viewRay;
+    
+    bx::vec3Norm(viewRay, viewTranslateFromScreenCoordinate(vx,vy));
+    
+    //  view ray intersecting with view z plane at 0,0,z
+    ckm::plane3f zplane;
+    zplane.normal.set(0,0,-1);
+    zplane.pt.set(0,0,z);
+    ckm::raytest<float>::planeIntersection(&hitpt, Vector3::kZero, viewRay, zplane);
+    
+    bx::vec3MulMtx(viewRay, hitpt, worldMtx);
+    
+    return viewRay;
 }
 
 Vector2 Camera::worldToScreenCoordinates(const Vector4& worldPos, bool* onscreen) const

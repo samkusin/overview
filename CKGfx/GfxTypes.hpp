@@ -125,7 +125,7 @@ inline uint32_t toBGR(const Color3& v)  {
            ((uint32_t)(v.comp[0]*255.0f));
 }
 
-using Frustrum = ckm::Frustrum<Vector3>;
+using Frustrum = ckm::frustrum<Vector3>;
 using AABB = ckm::AABB<Vector3>;
 
 AABB transformAABB(const AABB& aabb, const Matrix4& mtx);

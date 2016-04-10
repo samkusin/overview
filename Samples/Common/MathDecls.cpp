@@ -181,8 +181,9 @@ template<> vector4f& mul(vector4f& r, vector4f const& v, matrix4f const& v2)
     return r;
 }
 
-template struct Plane3<vector3f>;
-template class Frustrum<vector3f>;
+template struct plane3<vector3f>;
+template class frustrum<vector3f>;
 template struct AABB<vector3f>;
+template struct raytest<float>;
 
 }

@@ -33,8 +33,9 @@ struct Camera
 
     const Frustrum& viewFrustrum() const { return _viewFrustrum; }
     Vector3 worldPosition() const;
-    Vector4 translateFromViewportCoordinate(float z, const int32_t x, const int32_t y) const;
-    Vector3 rayFromViewportCoordinate(const int32_t x, const int32_t y) const;
+    Vector4 viewTranslateFromScreenCoordinate(const int32_t vx, const int32_t vy) const;
+    Vector3 worldRayFromScreenCoordinate(const int32_t x, const int32_t y) const;
+    Vector3 worldPositionFromScreenCoordinate(const int32_t vx, const int32_t vy, const float z) const;
     Vector2 worldToScreenCoordinates(const Vector4& worldPos, bool* onscreen=nullptr) const;
     
     Matrix4 worldMtx;

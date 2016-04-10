@@ -137,7 +137,7 @@ void GameView::frameUpdateView
         int32_t vx = inputState.mx - _camera.viewportRect.x;
         int32_t vy = inputState.my - _camera.viewportRect.y;
 
-        gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
+        gfx::Vector3 dir = _camera.worldRayFromScreenCoordinate(vx, vy);
         
         _viewToSceneRayTestResult = scene().rayTestClosest(
             ove::btFromGfx(cameraPos), ove::btFromGfx(dir), 100.0f,
