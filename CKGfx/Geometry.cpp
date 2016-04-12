@@ -163,8 +163,6 @@ namespace MeshBuilder
 
     BuilderState& create(BuilderState& state, Counts counts)
     {
-        CK_ASSERT_RETURN_VALUE(state.indexType != VertexTypes::kIndex0, state);
-        
         state.vertexLimit = counts.vertexCount;
         state.indexLimit = counts.indexCount;;
         
@@ -180,12 +178,13 @@ namespace MeshBuilder
             sz = sizeof(uint32_t)*state.indexLimit;
         }
         else {
-            CK_ASSERT(false);
-            sz = sizeof(uint16_t)*state.indexLimit;
+            sz = 0;
         }
         
-        state.indexMemory = bgfx::alloc(sz);
-        state.indexCount = 0;
+        if (sz) {
+            state.indexMemory = bgfx::alloc(sz);
+            state.indexCount = 0;
+        }
         
         state.type = BuilderState::kMemory;
         
@@ -203,8 +202,6 @@ namespace MeshBuilder
         int32_t indexLimit
     )
     {
-        CK_ASSERT_RETURN_VALUE(state.indexType != VertexTypes::kIndex0, state);
-        
         state.vertexLimit = vertexLimit;
 
         state.vertexBuffer = vertexBuffer;
@@ -341,7 +338,7 @@ namespace MeshBuilder
 
     }
     
-    BuilderState& buildUVSphere
+    BuilderState& UVSphere
     (
         BuilderState& state,
         float radius,

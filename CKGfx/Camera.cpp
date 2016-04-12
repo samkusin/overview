@@ -65,6 +65,18 @@ const
     return viewTranslate;
 }
 
+Vector3 Camera::viewRayFromScreenCoordinate
+(
+    const int32_t vx,
+    const int32_t vy
+)
+const
+{
+    Vector3 ray;
+    Vector4 translate = viewTranslateFromScreenCoordinate(vx, vy);
+    bx::vec3Norm(ray, translate);
+    return ray;
+}
 
 Vector3 Camera::worldRayFromScreenCoordinate
 (
@@ -82,7 +94,7 @@ const
     return worldRay;
 }
 
-Vector3 Camera::worldPositionFromScreenCoordinate
+Vector3 Camera::viewPositionFromScreenCoordinate
 (
     const int32_t vx, const int32_t vy,
     const float z
@@ -90,9 +102,7 @@ Vector3 Camera::worldPositionFromScreenCoordinate
 const
 {
     Vector3 hitpt(0,0,0);
-    Vector3 viewRay;
-    
-    bx::vec3Norm(viewRay, viewTranslateFromScreenCoordinate(vx,vy));
+    Vector3 viewRay = viewRayFromScreenCoordinate(vx, vy);
     
     //  view ray intersecting with view z plane at 0,0,z
     ckm::plane3f zplane;
@@ -100,9 +110,7 @@ const
     zplane.pt.set(0,0,z);
     ckm::raytest<float>::planeIntersection(&hitpt, Vector3::kZero, viewRay, zplane);
     
-    bx::vec3MulMtx(viewRay, hitpt, worldMtx);
-    
-    return viewRay;
+    return hitpt;
 }
 
 Vector2 Camera::worldToScreenCoordinates(const Vector4& worldPos, bool* onscreen) const

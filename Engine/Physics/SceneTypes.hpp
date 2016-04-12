@@ -81,6 +81,8 @@ struct SceneBody
     ckm::vector3f getPosition() const;
     
     void setVelocity(const ckm::vector3f& linear, const ckm::vector3f& angular);
+    
+    ckm::AABB<ckm::vector3f> calcAABB() const;
 
 public:
     btCollisionObject* btBody = nullptr;

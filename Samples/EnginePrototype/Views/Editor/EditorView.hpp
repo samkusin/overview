@@ -158,6 +158,7 @@ private:
     
     void updateTranslateUI(UITransformStatus& status);
     void handleTranslateUI(UITransformStatus& status);
+    void renderTransformUI(UITransformStatus& status);
     
     void updateRotateUI(UITransformStatus& status);
     void handleRotateUI(UITransformStatus& status);

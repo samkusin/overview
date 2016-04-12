@@ -181,6 +181,12 @@ template<> vector4f& mul(vector4f& r, vector4f const& v, matrix4f const& v2)
     return r;
 }
 
+template<> vector3f& mul(vector3f& r, vector3f const& v, matrix4f const& v2)
+{
+    bx::vec3MulMtx(r.comp, v.comp, v2.comp);
+    return r;
+}
+
 template struct plane3<vector3f>;
 template class frustrum<vector3f>;
 template struct AABB<vector3f>;

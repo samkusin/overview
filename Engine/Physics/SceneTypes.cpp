@@ -16,6 +16,7 @@
 #include <bullet/BulletCollision/CollisionShapes/btCollisionShape.h>
 #include <bullet/BulletCollision/CollisionShapes/btTriangleMeshShape.h>
 
+#include <ckm/aabb.hpp>
 #include <cmath>
 
 namespace cinek {
@@ -179,6 +180,19 @@ bool SceneBody::checkFlags(uint32_t flags) const
     return (categoryMask & flags) != 0;
 }
   
+ckm::AABB<ckm::vector3f> SceneBody::calcAABB() const
+{
+    ckm::AABB<ckm::vector3f> aabb;
+    
+    btVector3 min;
+    btVector3 max;
+    btBody->getCollisionShape()->getAabb(this->btBody->getWorldTransform(), min, max);
+    ckmFromBt(aabb.min, min);
+    ckmFromBt(aabb.max, max);
+    
+    return aabb;
+}
+
   
     } /* namespace ove */
 } /* namespace cinek */
