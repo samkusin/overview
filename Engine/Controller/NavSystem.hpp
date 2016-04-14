@@ -33,7 +33,7 @@ public:
     ~NavSystem();
     
     //  generates and executes a path to the target
-    void moveBodyToPosition(Entity body, ckm::vector3f pos);
+    void moveBodyToPosition(Entity body, ckm::vector3 pos);
     
     //  framework
     void activate();
@@ -47,10 +47,10 @@ protected:
     virtual void onPathfinderError(Entity entity, PathfinderError error) override;
     
 private:
-    ckm::vector3f steer(const NavPath& path, const ckm::vector3f& position,
+    ckm::vector3 steer(const NavPath& path, const ckm::vector3& position,
         ckm::scalar dist) const;
     
-    ckm::vector3f turn(const ckm::matrix3f& orient, const ckm::vector3f& direction,
+    ckm::vector3 turn(const ckm::quat& orient, const ckm::vector3& direction,
         ckm::scalar rotation) const;
     
 private:

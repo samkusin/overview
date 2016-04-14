@@ -88,10 +88,10 @@ struct Rect
     int w, h;
 };
 
-using Matrix4 = ::ckm::matrix4f;
-using Vector4 = ::ckm::vector4f;
-using Vector3 = ::ckm::vector3f;
-using Vector2 = ::ckm::vector2f;
+using Matrix4 = ::ckm::matrix4_type<float>;
+using Vector4 = ::ckm::vector4_type<float>;
+using Vector3 = ::ckm::vector3_type<float>;
+using Vector2 = ::ckm::vector2_type<float>;
 using Color4 = Vector4;
 using Color3 = Vector3;
 

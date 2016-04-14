@@ -18,9 +18,9 @@ GenerateNavPath::GenerateNavPath
 (
     NavPathQueryPtr&& queryPtr,
     Entity entity,
-    ckm::vector3f startPos,
-    ckm::vector3f endPos,
-    ckm::vector3f extents,
+    ckm::vector3 startPos,
+    ckm::vector3 endPos,
+    ckm::vector3 extents,
     const Allocator& allocator
 ) :
     _allocator(allocator),
@@ -81,7 +81,7 @@ void GenerateNavPath::onBegin()
 void GenerateNavPath::onUpdate(uint32_t /* deltaTimeMs */)
 {
     if (_polyPathIndex >= _polyPathSize) {
-        ckm::vector3f tempPos;
+        ckm::vector3 tempPos;
         _query->interface().closestPointOnPoly(_polyPath[0], _startPos.comp, tempPos.comp, nullptr);
         _startPos = tempPos;
         _query->interface().closestPointOnPoly(_polyPath[_polyPathSize-1], _endPos.comp, tempPos.comp, nullptr);

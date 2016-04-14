@@ -26,24 +26,24 @@ public:
     /**
      *  Retrieves transform information from an external provider
      *
-     *  @param translate    The position on the object
      *  @param basis        Provides orientation for the object
+     *  @param translate    The position on the object
      */
-    virtual void getNavBodyTransform(ckm::vector3f& translate, ckm::matrix3f& basis) = 0;
+    virtual void getNavBodyTransform(ckm::quat& basis, ckm::vector3& translate) = 0;
+    /**
+     *  Sets transform information modified by the Driver system.
+     *
+     *  @param basis        Provides orientation for the object
+     *  @param translate    The position on the object
+     */
+    virtual void setNavBodyTransform(ckm::quat basis, ckm::vector3 translate) = 0;
     /**
      *  Sets transform information modified by the Driver system.
      *
      *  @param linear    The linear velocity (translate)
      *  @param angular   The angular velocity (orientation)
      */
-    virtual void setNavBodyTransform(ckm::vector3f translate, ckm::matrix3f basis) = 0;
-    /**
-     *  Sets transform information modified by the Driver system.
-     *
-     *  @param linear    The linear velocity (translate)
-     *  @param angular   The angular velocity (orientation)
-     */
-    virtual void setNavBodyVelocity(ckm::vector3f linear, ckm::vector3f angular) = 0;
+    virtual void setNavBodyVelocity(ckm::vector3 linear, ckm::vector3 angular) = 0;
 };
     
     } /* namespace ove */

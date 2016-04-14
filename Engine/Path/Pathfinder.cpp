@@ -130,8 +130,8 @@ class Pathfinder::Impl
         Type type;
         PathfinderListener* listener;
         Entity entity;
-        ckm::vector3f startPos;
-        ckm::vector3f endPos;
+        ckm::vector3 startPos;
+        ckm::vector3 endPos;
     };
     
     std::vector<Command> _commandQueue;
@@ -204,7 +204,7 @@ private:
             if (_queryPool && !taskActive(cmd.entity)) {
                 auto query = _queryPool->acquire();
                 if (query) {
-                    ckm::vector3f extents(ckm::scalar(0.1), ckm::scalar(0.1), ckm::scalar(0.1));
+                    ckm::vector3 extents(ckm::scalar(0.1), ckm::scalar(0.1), ckm::scalar(0.1));
                     auto task = allocate_unique<GenerateNavPath>(std::move(query),
                                     cmd.entity,
                                     cmd.startPos,
@@ -389,8 +389,8 @@ public:
     (
         PathfinderListener* listener,
         Entity entity,
-        ckm::vector3f startPos,
-        ckm::vector3f endPos
+        ckm::vector3 startPos,
+        ckm::vector3 endPos
     )
     {
         Command cmd = {
@@ -498,8 +498,8 @@ void Pathfinder::generatePath
 (
     PathfinderListener* listener,
     Entity entity,
-    ckm::vector3f startPos,
-    ckm::vector3f endPos
+    ckm::vector3 startPos,
+    ckm::vector3 endPos
 )
 {
     _impl->generatePath(listener, entity, startPos, endPos);

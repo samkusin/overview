@@ -20,8 +20,8 @@ NavPath::NavPath()
 NavPath::NavPath
 (
     std::vector<dtPolyRef>&& polys,
-    ckm::vector3f startPos,
-    ckm::vector3f targetPos
+    ckm::vector3 startPos,
+    ckm::vector3 targetPos
 ) :
     _polys(std::move(polys)),
     _startPos(startPos),

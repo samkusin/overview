@@ -94,20 +94,6 @@ private:
     void destroyUIData();
     
 private:
-    //  states
-    enum
-    {
-        kStateId_Idle,
-        kStateId_AddEntityToScene,
-        kStateId_TransformEntity
-    };
-
-    ove::ViewStateMachine _vsm;
-
-    void setIdleState();
-    void setAddEntityToSceneState();
-    void setTransformEntityState();
-    
     struct UIStatus
     {
         EntityTemplate addEntityTemplate;
@@ -152,16 +138,51 @@ private:
         };
         
         int option;
+
+        enum
+        {
+            kSystem_Global,
+            kSystem_Local
+        };
+        
+        int system;
+        
+        enum class Mode
+        {
+            kTransform_Location,
+            kTransform_Orientation
+        };
+        
+        Mode mode;
     };
     
     UITransformStatus _uiTransformStatus;
     
-    void updateTranslateUI(UITransformStatus& status);
-    void handleTranslateUI(UITransformStatus& status);
-    void renderTransformUI(UITransformStatus& status);
+    ckm::vector3 calcMouseDelta(const ckm::matrix4& transform,
+        float z,
+        float halfw, float halfh,
+        float dx, float dy);
     
-    void updateRotateUI(UITransformStatus& status);
-    void handleRotateUI(UITransformStatus& status);
+    
+    void updateTransformUI(UITransformStatus& status);
+    void handleTransformUI(UITransformStatus& status);
+    void renderTransformUI(UITransformStatus& status);
+
+
+    
+     //  states
+    enum
+    {
+        kStateId_Idle,
+        kStateId_AddEntityToScene,
+        kStateId_TransformEntity
+    };
+
+    ove::ViewStateMachine _vsm;
+
+    void setIdleState();
+    void setAddEntityToSceneState();
+    void setTransformEntityState(UITransformStatus::Mode mode);
 };
 
 }   /* namespace cinek */

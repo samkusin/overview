@@ -46,7 +46,8 @@ void PlayMain::frameUpdateView
     const cinek::input::InputState& inputState
 )
 {
-    layoutUI();
+    updateUI(inputState);
+    handleUI(stateController);
 }
 
 void PlayMain::onViewEndFrame(ove::ViewStack& stateController)
@@ -59,8 +60,13 @@ const char* PlayMain::viewId() const
     return "PlayMain";
 }
 
-void PlayMain::layoutUI()
+void PlayMain::updateUI(const cinek::input::InputState &inputState)
 {
+    if (inputState.testKeyMod(KMOD_SHIFT)) {
+        if (inputState.testKey(SDL_SCANCODE_TAB)) {
+            game().setGameMode(GameMode::kEditor);
+        }
+    }
     /*
     //  layout UI
     uicore::Layout::Style style;
@@ -97,8 +103,8 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
     
         auto& rayTestResult = sceneRayTestResult();
         if (rayTestResult) {
-            ckm::vector3f pos;
-            ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.05), ckm::scalar(0.0) };
+            ckm::vector3 pos;
+            ckm::vector3 extents { ckm::scalar(0.00), ckm::scalar(0.05), ckm::scalar(0.0) };
             ove::ckmFromBt(pos, rayTestResult.position);
             
             auto query = pathfinder().acquireQuery();

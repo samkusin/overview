@@ -44,7 +44,7 @@ void NavBody::setTransform(NavBodyTransform* transform)
 
 void NavBody::pullTransform()
 {
-    _transform->getNavBodyTransform(_position, _basis);
+    _transform->getNavBodyTransform(_rotation, _position);
 }
 
 void NavBody::setPath(NavPath&& path)
@@ -99,17 +99,17 @@ ckm::scalar NavBody::calcAbsoluteSpeed() const
     
 void NavBody::pushTransformPosOrient
 (
-    ckm::vector3f position,
-    ckm::matrix3f orient
+    ckm::quat orient,
+    ckm::vector3 position
 )
 {
-    _transform->setNavBodyTransform(std::move(position), std::move(orient));
+    _transform->setNavBodyTransform(std::move(orient), std::move(position));
 }
 
 void NavBody::pushTransformVelocity
 (
-    ckm::vector3f linear,
-    ckm::vector3f angular
+    ckm::vector3 linear,
+    ckm::vector3 angular
 )
 {
     _transform->setNavBodyVelocity(std::move(linear), std::move(angular));

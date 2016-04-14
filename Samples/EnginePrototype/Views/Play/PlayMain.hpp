@@ -36,8 +36,8 @@ private:
 
 private:
     Entity _focusedEntity;
-    
-    void layoutUI();
+        
+    void updateUI(const cinek::input::InputState& inputState);
     void handleUI(ove::ViewStack& stateController);
 };
 

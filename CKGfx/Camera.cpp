@@ -105,7 +105,7 @@ const
     Vector3 viewRay = viewRayFromScreenCoordinate(vx, vy);
     
     //  view ray intersecting with view z plane at 0,0,z
-    ckm::plane3f zplane;
+    ckm::plane3 zplane;
     zplane.normal.set(0,0,-1);
     zplane.pt.set(0,0,z);
     ckm::raytest<float>::planeIntersection(&hitpt, Vector3::kZero, viewRay, zplane);

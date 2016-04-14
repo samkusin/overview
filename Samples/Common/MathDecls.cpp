@@ -10,26 +10,51 @@
 #include <ckm/geometry.hpp>
 #include <ckm/aabb.hpp>
 
-#include <ckm/mathtypes.inl>
-#include <ckm/math.inl>
-#include <ckm/geometry.inl>
-
 #include <bx/fpumath.h>
 
 namespace ckm {
 
-template struct vector2<float>;
-template struct vector3<float>;
-template struct vector4<float>;
-template struct matrix4<float>;
+template struct vector2_type<scalar>;
+template struct vector3_type<scalar>;
+template struct vector4_type<scalar>;
+template struct matrix4_type<scalar>;
+template struct quat_type<scalar>;
 
+
+template<> float abs<float>(float v) {
+    return std::fabs(v);
+}
+template<> float cos<float>(float r) {
+    return std::cosf(r);
+}
+template<> float acos(float a) {
+    return std::acosf(a);
+}
+template<> float sin<float>(float r) {
+    return std::sinf(r);
+}
+template<> float asin<float>(float a) {
+    return std::asinf(a);
+}
+template<> float tan<float>(float r) {
+    return std::tanf(r);
+}
+template<> float atan<float>(float a) {
+    return std::atanf(a);
+}
+template<> float radians<float>(float degrees) {
+    return kPi * degrees / 180.0f;
+}
+template<> float degrees<float>(float radians) {
+    return 180.0f * radians / kPi;
+}
 
 //  operations
-template<> vector4f& add
+template<> vector4& add
 (
-    vector4f& r,
-    vector4f const& a,
-    vector4f const& b
+    vector4& r,
+    vector4 const& a,
+    vector4 const& b
 )
 {
     r.comp[0] = a.comp[0] + b.comp[0];
@@ -40,22 +65,22 @@ template<> vector4f& add
     return r;
 }
 
-template<> vector3f& add
+template<> vector3_type<float>& add
 (
-    vector3f& r,
-    vector3f const& a,
-    vector3f const& b
+    vector3_type<float>& r,
+    vector3_type<float> const& a,
+    vector3_type<float> const& b
 )
 {
     bx::vec3Add(r.comp, a.comp, b.comp);
     return r;
 }
 
-template<> vector2f& add
+template<> vector2& add
 (
-    vector2f& r,
-    vector2f const& a,
-    vector2f const& b
+    vector2& r,
+    vector2 const& a,
+    vector2 const& b
 )
 {
     r.comp[0] = a.comp[0] + b.comp[0];
@@ -63,11 +88,11 @@ template<> vector2f& add
     return r;
 }
 
-template<> vector4f& sub
+template<> vector4& sub
 (
-    vector4f& r,
-    vector4f const& a,
-    vector4f const& b
+    vector4& r,
+    vector4 const& a,
+    vector4 const& b
 )
 {
     r.comp[0] = a.comp[0] - b.comp[0];
@@ -78,22 +103,22 @@ template<> vector4f& sub
     return r;
 }
 
-template<> vector3f& sub
+template<> vector3_type<float>& sub
 (
-    vector3f& r,
-    vector3f const& a,
-    vector3f const& b
+    vector3_type<float>& r,
+    vector3_type<float> const& a,
+    vector3_type<float> const& b
 )
 {
     bx::vec3Sub(r.comp, a.comp, b.comp);
     return r;
 }
 
-template<> vector2f& sub
+template<> vector2& sub
 (
-    vector2f& r,
-    vector2f const& a,
-    vector2f const& b
+    vector2& r,
+    vector2 const& a,
+    vector2 const& b
 )
 {
     r.comp[0] = a.comp[0] - b.comp[0];
@@ -101,22 +126,22 @@ template<> vector2f& sub
     return r;
 }
 
-template<> vector3f& scale
+template<> vector3_type<float>& scale
 (
-    vector3f& r,
-    vector3f const& v,
-    typename vector3f::value_type s
+    vector3_type<float>& r,
+    vector3_type<float> const& v,
+    typename vector3_type<float>::value_type s
 )
 {
     bx::vec3Mul(r.comp, v.comp, s);
     return r;
 }
 
-template<> vector2f& scale
+template<> vector2& scale
 (
-    vector2f& r,
-    vector2f const& v,
-    typename vector2f::value_type s
+    vector2& r,
+    vector2 const& v,
+    typename vector2::value_type s
 )
 {
     r.comp[0] = v.comp[0] * s;
@@ -124,50 +149,50 @@ template<> vector2f& scale
     return r;
 }
 
-template<> vector3f& cross
+template<> vector3_type<float>& cross
 (
-    vector3f& r,
-    vector3f const& x,
-    vector3f const& y
+    vector3_type<float>& r,
+    vector3_type<float> const& x,
+    vector3_type<float> const& y
 )
 {
     bx::vec3Cross(r.comp, x.comp, y.comp);
     return r;
 }
 
-template<> typename vector3f::value_type dot
+template<> typename vector3_type<float>::value_type dot
 (
-    vector3f const& v0,
-    vector3f const& v1
+    vector3_type<float> const& v0,
+    vector3_type<float> const& v1
 )
 {
     return bx::vec3Dot(v0.comp, v1.comp);
 }
 
-template<> typename vector3f::value_type vectorLength(vector3f const& v)
+template<> typename vector3_type<float>::value_type vectorLength(vector3_type<float> const& v)
 {
     return bx::vec3Length(v.comp);
 }
 
-template<> typename vector2f::value_type vectorLength(vector2f const& v)
+template<> typename vector2_type<float>::value_type vectorLength(vector2_type<float> const& v)
 {
     return sqrtf(v.x*v.x + v.y*v.y);
 }
 
 //  val_type can either be vector or matrix
-template<> matrix4f& inverse(matrix4f& o, matrix4f const& m)
+template<> matrix4_type<float>& inverse(matrix4_type<float>& o, matrix4_type<float> const& m)
 {
     bx::mtxInverse(o.comp, m.comp);
     return o;
 }
 
-template<> vector3f& normalize(vector3f& o, vector3f const& v)
+template<> vector3_type<float>& normalize(vector3_type<float>& o, vector3_type<float> const& v)
 {
     bx::vec3Norm(o.comp, v.comp);
     return o;
 }
 
-template<> vector2f& normalize(vector2f& o, vector2f const& v)
+template<> vector2& normalize(vector2& o, vector2 const& v)
 {
     auto idist = 1.0f/vectorLength(v);
     o[0] = v[0] * idist;
@@ -175,21 +200,35 @@ template<> vector2f& normalize(vector2f& o, vector2f const& v)
     return o;
 }
 
-template<> vector4f& mul(vector4f& r, vector4f const& v, matrix4f const& v2)
+template<> vector4& mul(vector4_type<float>& r, vector4_type<float> const& v, matrix4_type<float> const& v2)
 {
     bx::vec4MulMtx(r.comp, v.comp, v2.comp);
     return r;
 }
 
-template<> vector3f& mul(vector3f& r, vector3f const& v, matrix4f const& v2)
+template<> vector3_type<float>& mul(vector3_type<float>& r, vector3_type<float> const& v, matrix4_type<float> const& v2)
 {
     bx::vec3MulMtx(r.comp, v.comp, v2.comp);
     return r;
 }
 
-template struct plane3<vector3f>;
-template class frustrum<vector3f>;
-template struct AABB<vector3f>;
-template struct raytest<float>;
+template<> matrix4_type<float>& mul(matrix4_type<float>& r, matrix4_type<float> const& m0, matrix4_type<float> const& m1)
+{
+    bx::mtxMul(r.comp, m0.comp, m1.comp);
+    return r;
+}
+
+template<> matrix4_type<float>& eulerToMatrix(matrix4_type<float>& m, float ax, float ay, float az)
+{
+    bx::mtxRotateXYZ(m.comp, ax, ay, az);
+    return m;
+}
+
+
+
+template struct plane<vector3>;
+template class frustrum<vector3>;
+template struct AABB<vector3>;
+template struct raytest<scalar>;
 
 }

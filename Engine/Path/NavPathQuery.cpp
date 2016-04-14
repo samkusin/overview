@@ -41,8 +41,8 @@ void NavPathQuery::setupFilters(uint16_t includeNodeMask)
 //  is the point 'walkable' - i.e. on the walk mesh
 bool NavPathQuery::isWalkable
 (
-    ckm::vector3f pos,
-    ckm::vector3f extents
+    ckm::vector3 pos,
+    ckm::vector3 extents
 )
 const
 {
@@ -55,8 +55,8 @@ const
 
 dtPolyRef NavPathQuery::findNearestWalkable
 (
-    ckm::vector3f pos,
-    ckm::vector3f extents
+    ckm::vector3 pos,
+    ckm::vector3 extents
 )
 const
 {
@@ -76,7 +76,7 @@ int NavPathQuery::plotPath
 (
     PointList& outPointList,
     const NavPath& path,
-    const ckm::vector3f& pos,
+    const ckm::vector3& pos,
     ckm::scalar dist
 )
 const
@@ -95,7 +95,7 @@ const
         auto points = &outPointList.points[resultIndex*3];
         auto flags = &outPointList.flags[resultIndex];
         
-        ckm::vector3f delta(points[0], points[1], points[2]);
+        ckm::vector3 delta(points[0], points[1], points[2]);
         ckm::sub(delta, delta, pos);
         auto testDist = ckm::vectorLength(delta);
         if ((*flags & DT_STRAIGHTPATH_OFFMESH_CONNECTION) || testDist >= dist)

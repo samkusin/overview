@@ -30,10 +30,10 @@ namespace cinek {
         void setupFilters(uint16_t includeNodeMask);
         
         //  is the point 'walkable' - i.e. on the walk mesh
-        bool isWalkable(ckm::vector3f pos, ckm::vector3f extents) const;
+        bool isWalkable(ckm::vector3 pos, ckm::vector3 extents) const;
         
         //  find nearest walkable poly
-        dtPolyRef findNearestWalkable(ckm::vector3f pos, ckm::vector3f extents) const;
+        dtPolyRef findNearestWalkable(ckm::vector3 pos, ckm::vector3 extents) const;
         
         struct PointList
         {
@@ -47,7 +47,7 @@ namespace cinek {
         
         int plotPath(PointList& outPointList,
                      const NavPath& path,
-                     const ckm::vector3f& pos,
+                     const ckm::vector3& pos,
                      ckm::scalar dist) const;
 
         

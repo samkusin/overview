@@ -24,10 +24,10 @@ class btBvhTriangleMeshShape;
 namespace cinek {
     namespace ove {
     
-btMatrix3x3& btFromCkm(btMatrix3x3& btm, const ckm::matrix3f& m);
-btVector3& btFromCkm(btVector3& btv, const ckm::vector3f& v);
-ckm::matrix3f& ckmFromBt(ckm::matrix3f& m, const btMatrix3x3& btm);
-ckm::vector3f& ckmFromBt(ckm::vector3f& v, const btVector3& btv);
+btMatrix3x3& btFromCkm(btMatrix3x3& btm, const ckm::matrix3& m);
+btVector3& btFromCkm(btVector3& btv, const ckm::vector3& v);
+ckm::matrix3& ckmFromBt(ckm::matrix3& m, const btMatrix3x3& btm);
+ckm::vector3& ckmFromBt(ckm::vector3& v, const btVector3& btv);
 
 btVector3 btFromGfx(const gfx::Vector3& v);
 
@@ -72,17 +72,19 @@ struct SceneBody
     void setPosition(const btVector3& pos, btVector3 up);
     
     //  set transform - the final transform may be modified by the Scene during
-    //  update
-    void setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos, bool simulate=true);
+    void setTransform(const ckm::quat& basis, const ckm::vector3& pos);
+    //  brute force set of transform, bypassing simulation
+    void setTransformMatrix(const ckm::matrix4& mtx);
     
     //  returns the current world transform from the scene's perspective (i.e.
     //  not the final transform post update.)
-    void getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const;
-    ckm::vector3f getPosition() const;
+    void getTransform(ckm::quat& basis, ckm::vector3& pos) const;
+    void getTransformMatrix(ckm::matrix4& mtx);
+    ckm::vector3 getPosition() const;
     
-    void setVelocity(const ckm::vector3f& linear, const ckm::vector3f& angular);
+    void setVelocity(const ckm::vector3& linear, const ckm::vector3& angular);
     
-    ckm::AABB<ckm::vector3f> calcAABB() const;
+    ckm::AABB<ckm::vector3> calcAABB() const;
 
 public:
     btCollisionObject* btBody = nullptr;

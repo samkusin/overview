@@ -38,7 +38,7 @@ NavSystem::~NavSystem()
     _pathfinder->cancelByListener(this);
 }
 
-void NavSystem::moveBodyToPosition(Entity entity, ckm::vector3f pos)
+void NavSystem::moveBodyToPosition(Entity entity, ckm::vector3 pos)
 {
     const NavBody* body = findBody(entity);
     if (body) {
@@ -83,16 +83,16 @@ void NavSystem::simulate(CKTimeDelta dt)
         const NavPath& path = body->currentPath();
         if (path) {
             if (body->state() == NavBody::State::kPathStart) {
-                body->pushTransformPosOrient(path.startPos(), body->basis());
+                body->pushTransformPosOrient(body->rotation(), path.startPos());
                 body->runPath();
             }
             
-            ckm::vector3f velocity;
-            ckm::vector3f direction;
-            ckm::vector3f angularVelocity;
+            ckm::vector3 velocity;
+            ckm::vector3 direction;
+            ckm::vector3 angularVelocity;
             
             //  update path progress from the current transform
-            ckm::vector3f extents { ckm::scalar(0), ckm::scalar(0.075), ckm::scalar(0) };
+            ckm::vector3 extents { ckm::scalar(0), ckm::scalar(0.075), ckm::scalar(0) };
             dtPolyRef thisPoly = _query->findNearestWalkable(body->position(), extents);
             
             auto pathState = body->updatePath(thisPoly);
@@ -104,7 +104,7 @@ void NavSystem::simulate(CKTimeDelta dt)
             
                 ckm::normalize(direction, velocity);
 
-                angularVelocity = turn(body->basis(), direction, ckm::kPi * dt);
+                angularVelocity = turn(body->rotation(), direction, ckm::kPi * dt);
             }
             else {
                 velocity.set(0,0,0);
@@ -131,15 +131,15 @@ void NavSystem::endFrame()
 }
 
 
-ckm::vector3f NavSystem::steer
+ckm::vector3 NavSystem::steer
 (
     const NavPath& path,
-    const ckm::vector3f& position,
+    const ckm::vector3& position,
     ckm::scalar dist
 )
 const
 {
-    ckm::vector3f velocity;
+    ckm::vector3 velocity;
     
     constexpr int kNumSteerPoints = 3;
     float pathPoints[kNumSteerPoints * 3];
@@ -156,7 +156,7 @@ const
     
     if (pointIndex >= 0 && pointIndex < kNumSteerPoints) {
         auto point = points.getPoint(pointIndex);
-        ckm::vector3f target(point[0], point[1], point[2]);
+        ckm::vector3 target(point[0], point[1], point[2]);
         ckm::sub(velocity, target, position);
         ckm::normalize(velocity, velocity);
         ckm::scale(velocity, velocity, dist);
@@ -168,16 +168,17 @@ const
     return velocity;
 }
 
-ckm::vector3f NavSystem::turn
+ckm::vector3 NavSystem::turn
 (
-    const ckm::matrix3f& orient,
-    const ckm::vector3f& direction,
+    const ckm::quat& orient,
+    const ckm::vector3& direction,
     ckm::scalar rotation
 )
 const
 {
-    ckm::vector3f velocity;
-    ckm::vector3f forward(orient.comp[6], orient.comp[7], orient.comp[8]);
+    ckm::vector3 velocity;
+    ckm::vector3 forward;
+    ckm::forwardFromQuat(forward, orient);
     
     //  we should fine tune this for a more 2d approach
     //  this approach is a simple cross product to determine the angular
@@ -188,9 +189,10 @@ const
         velocity.set(0,0,0);
     }
     else if (angle < ckm::scalar(-0.98)) {
+        
         // this is making an assumption that any significant turns are
         // around the body's up vector
-        velocity.set(orient.comp[3],orient.comp[4],orient.comp[5]);
+        ckm::upFromQuat(velocity, orient);
     }
     else {
         ckm::cross(velocity, forward, direction);

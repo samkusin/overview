@@ -19,8 +19,8 @@ NavSceneBodyTransform::NavSceneBodyTransform(SceneBody* body) :
     
 void NavSceneBodyTransform::getNavBodyTransform
 (
-    ckm::vector3f& translate,
-    ckm::matrix3f& basis
+    ckm::quat& basis,
+    ckm::vector3& translate
 )
 {
     _sceneBody->getTransform(basis, translate);
@@ -28,8 +28,8 @@ void NavSceneBodyTransform::getNavBodyTransform
 
 void NavSceneBodyTransform::setNavBodyTransform
 (
-    ckm::vector3f translate,
-    ckm::matrix3f basis
+    ckm::quat basis,
+    ckm::vector3 translate
 )
 {
     _sceneBody->setTransform(basis, translate);
@@ -37,8 +37,8 @@ void NavSceneBodyTransform::setNavBodyTransform
 
 void NavSceneBodyTransform::setNavBodyVelocity
 (
-    ckm::vector3f linear,
-    ckm::vector3f angular
+    ckm::vector3 linear,
+    ckm::vector3 angular
 )
 {
     _sceneBody->setVelocity(linear, angular);

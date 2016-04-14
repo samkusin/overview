@@ -36,13 +36,13 @@ public:
     
     void setTransform(NavBodyTransform* transform);
     void pullTransform();
-    void pushTransformPosOrient(ckm::vector3f position, ckm::matrix3f orient);
-    void pushTransformVelocity(ckm::vector3f linear, ckm::vector3f angular);
+    void pushTransformPosOrient(ckm::quat orient, ckm::vector3 position);
+    void pushTransformVelocity(ckm::vector3 linear, ckm::vector3 angular);
     
     //  general properties
     Entity entity() const { return _entity; }
-    const ckm::vector3f& position() const { return _position; }
-    const ckm::matrix3f& basis() const { return _basis; }
+    const ckm::vector3& position() const { return _position; }
+    const ckm::quat& rotation() const { return _rotation; }
    
     enum class State
     {
@@ -69,8 +69,8 @@ public:
 private:
     //  Framework properties
     Entity _entity;
-    ckm::vector3f _position;
-    ckm::matrix3f _basis;
+    ckm::vector3 _position;
+    ckm::quat _rotation;
     NavBodyTransform* _transform;
     State _state;
 

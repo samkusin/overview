@@ -25,17 +25,17 @@ public:
     (
         NavPathQueryPtr&& queryPtr,
         Entity entity,
-        ckm::vector3f startPos,
-        ckm::vector3f endPos,
-        ckm::vector3f extents,
+        ckm::vector3 startPos,
+        ckm::vector3 endPos,
+        ckm::vector3 extents,
         const Allocator& allocator
     );
     
     virtual ~GenerateNavPath();
     
     Entity entity() const { return _entity; }
-    ckm::vector3f startPos() const { return _startPos; }
-    ckm::vector3f endPos() const { return _endPos; }
+    ckm::vector3 startPos() const { return _startPos; }
+    ckm::vector3 endPos() const { return _endPos; }
     
     //  caller will acquire the list of points, and the task's list is cleared.
     std::vector<dtPolyRef> acquirePoints();
@@ -48,9 +48,9 @@ private:
     Allocator _allocator;
     NavPathQueryPtr _query;
     Entity _entity;
-    ckm::vector3f _startPos;
-    ckm::vector3f _endPos;
-    ckm::vector3f _extents;
+    ckm::vector3 _startPos;
+    ckm::vector3 _endPos;
+    ckm::vector3 _extents;
     dtPolyRef* _polyPath;
     int _polyPathIndex;
     int _polyPathSize;

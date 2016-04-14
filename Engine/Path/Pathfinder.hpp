@@ -38,8 +38,8 @@ public:
     (
         PathfinderListener* target,
         Entity entity,
-        ckm::vector3f startPos,
-        ckm::vector3f endPos
+        ckm::vector3 startPos,
+        ckm::vector3 endPos
     );
 
     //  update the pathfinding system

@@ -7,7 +7,6 @@
 //
 
 #include "EditorView.hpp"
-#include "EditorMain.hpp"
 
 #include "Engine/AssetManifest.hpp"
 #include "Engine/Physics/Scene.hpp"
@@ -316,6 +315,9 @@ void EditorView::createUIData()
     //  default UI status
     _uiStatus.cameraOption = UIStatus::kCamera_Perspective;
     _uiStatus.cameraDirection = UIStatus::kCameraDirection_Current;
+    _uiTransformStatus.system = UITransformStatus::kSystem_Global;
+    _uiTransformStatus.mode = UITransformStatus::Mode::kTransform_Location;
+    _uiTransformStatus.option = UITransformStatus::kTransform_Free;
 }
 
 void EditorView::destroyUIData()
@@ -472,12 +474,17 @@ void EditorView::updateMainUI(UIStatus& status, float width, float height)
     
     //  handle shortcuts
     if (io.KeyShift) {
+        if (ImGui::IsKeyPressed(SDLK_TAB)) {
+            game().setGameMode(GameMode::kPlay);
+        }
+    }
+    else {
         if (_activeEntity) {
             if (ImGui::IsKeyPressed(SDLK_t)) {
-                setTransformEntityState();
+                setTransformEntityState(UITransformStatus::Mode::kTransform_Location);
             }
             else if (ImGui::IsKeyPressed(SDLK_r)) {
-            
+                setTransformEntityState(UITransformStatus::Mode::kTransform_Orientation);
             }
         }
     }
@@ -529,7 +536,7 @@ void EditorView::renderOverlay()
         const float kHandleLength = 75.0f;
         const float kCircleRadius = 10.0f;
         
-        ckm::vector3f ckpos = body->getPosition();
+        ckm::vector3 ckpos = body->getPosition();
         gfx::Vector4 pos { ckpos.x, ckpos.y, ckpos.z, 1.0f };
         bool isPosOnscreen;
         gfx::Vector2 activeEntityScreenPos = camera.worldToScreenCoordinates(pos, &isPosOnscreen);
@@ -620,9 +627,9 @@ void EditorView::endFrameMainUI(UIStatus &status)
     if (status.cameraDirection != UIStatus::kCameraDirection_Current) {
         const ove::SceneBody* body = scene().findBody(_activeEntity);
         if (body) {
-            ckm::vector3f fwd;
-            ckm::vector3f up;
-            ckm::vector3f side;
+            ckm::vector3 fwd;
+            ckm::vector3 up;
+            ckm::vector3 side;
             
             float* mtx = camera().worldMtx.comp;
             
@@ -663,8 +670,8 @@ void EditorView::endFrameMainUI(UIStatus &status)
             
             const float kDist = 3.0f;
             auto aabb = body->calcAABB();
-            ckm::vector3f bodyPos = aabb.center();
-            ckm::vector3f cameraPos;
+            ckm::vector3 bodyPos = aabb.center();
+            ckm::vector3 cameraPos;
             ckm::scale(cameraPos, fwd, -kDist);
             ckm::add(cameraPos, cameraPos, bodyPos);
             
@@ -678,32 +685,50 @@ void EditorView::endFrameMainUI(UIStatus &status)
     }
 }
 
-void EditorView::updateTranslateUI
+void EditorView::updateTransformUI
 (
     UITransformStatus& status
 )
 {
     const ImVec2 kDesktopPad { 10, 10 };
-    const ImVec2 kBoxDims { 120, 150 };
+    const ImVec2 kBoxDims { 120, 180 };
     
     ImVec2 anchor { 0,0 };
     
     ImGui::SetNextWindowPos({ kDesktopPad.x+anchor.x, kDesktopPad.y+anchor.y },
         ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Translate", nullptr, kBoxDims, 0.3f,
+    
+    if (ImGui::Begin(status.mode == UITransformStatus::Mode::kTransform_Location ? "Translate" : "Rotate",
+                     nullptr, kBoxDims, 0.3f,
                      ImGuiWindowFlags_NoResize |
                      ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_NoSavedSettings)) {
         
-        ImGui::RadioButton("Grab", &status.option, UITransformStatus::kTransform_Free);
-        ImGui::RadioButton("Snap", &status.option, UITransformStatus::kTransform_Snap);
+        ImGui::RadioButton("View", &status.option, UITransformStatus::kTransform_Free);
+        if (status.mode == UITransformStatus::Mode::kTransform_Location) {
+            ImGui::RadioButton("Snap", &status.option, UITransformStatus::kTransform_Snap);
+        }
         ImGui::RadioButton("X", &status.option, UITransformStatus::kTransform_X);
         ImGui::RadioButton("Y", &status.option, UITransformStatus::kTransform_Y);
         ImGui::RadioButton("Z", &status.option, UITransformStatus::kTransform_Z);
     }
     ImGui::End();
     
-    if (ImGui::IsKeyPressed(SDLK_g)) {
+    auto& io = ImGui::GetIO();
+    if (io.KeyShift) {
+        status.system = UITransformStatus::kSystem_Local;
+    }
+    else {
+        status.system = UITransformStatus::kSystem_Global;
+    }
+    
+    //  used for combining transform modes
+    if (ImGui::IsKeyPressed(SDLK_n)) {
+        if (status.mode == UITransformStatus::Mode::kTransform_Location) {
+            status.option = UITransformStatus::kTransform_Snap;
+        }
+    }
+    else if (ImGui::IsKeyPressed(SDLK_v)) {
         status.option = UITransformStatus::kTransform_Free;
     }
     else if (ImGui::IsKeyPressed(SDLK_x)) {
@@ -715,84 +740,162 @@ void EditorView::updateTranslateUI
     else if (ImGui::IsKeyPressed(SDLK_z)) {
         status.option = UITransformStatus::kTransform_Z;
     }
-    else if (ImGui::IsKeyPressed(SDLK_n)) {
-        status.option = UITransformStatus::kTransform_Snap;
-    }
 }
 
-void EditorView::handleTranslateUI(UITransformStatus& status)
+void EditorView::handleTransformUI(UITransformStatus& status)
 {
     if (!_activeEntity)
         return;
     
+    auto body = scene().findBody(_activeEntity, ove::SceneBody::kIsStaging);
+    if (!body)
+        return;
+    
     if (status.option == UITransformStatus::kTransform_Snap) {
         auto& hitResult = sceneRayTestResult();
-        if (hitResult) {
-            if (hitResult.body->entity != _activeEntity) {
-                if (!hitResult.normal.fuzzyZero()) {
-                    auto body = scene().findBody(_activeEntity);
-                    if (body) {
-                        body->setPosition(hitResult.position, hitResult.normal);
-                    }
+        if (hitResult && hitResult.body->entity != _activeEntity) {
+            if (!hitResult.normal.fuzzyZero()) {
+                if (status.mode == UITransformStatus::Mode::kTransform_Location) {
+                    body->setPosition(hitResult.position, hitResult.normal);
                 }
             }
         }
     }
     else {
         const ImGuiIO& io = ImGui::GetIO();
-        ove::SceneBody* body = scene().findBody(_activeEntity, ove::SceneBody::kIsStaging);
-        if (body) {
-            ckm::vector3f entityWorldPosition;
-            ckm::matrix3f entityWorldBasis;
-            body->getTransform(entityWorldBasis, entityWorldPosition);
-            ckm::vector3f entityViewPosition;
-            ckm::mul(entityViewPosition, entityWorldPosition, camera().viewMtx);
-            
-            //  cast two rays to calculate the view coordinates delta (XY)
-            float dx = io.DisplaySize.x * 0.5f;
-            float dy = io.DisplaySize.y * 0.5f;
-            gfx::Vector3 worldOrigin;
-            gfx::Vector3 worldDelta;
-            gfx::Vector3 origin = camera().viewPositionFromScreenCoordinate(
-                dx, dy,
-                entityViewPosition.z);
-            ckm::mul(worldOrigin, origin, camera().worldMtx);
-            
-            gfx::Vector3 delta = camera().viewPositionFromScreenCoordinate(
-                dx + io.MouseDelta.x, dy + io.MouseDelta.y,
-                entityViewPosition.z);
-            ckm::mul(worldDelta, delta, camera().worldMtx);
-            
-            ckm::sub(delta, delta, origin);
-            ckm::sub(worldDelta, worldDelta, worldOrigin);
-            
-            // ray pointing into view frustrum, scaled by Z
-            // objects that are farther away are moved proportionally to
-            
-            //  free movement
-            switch (status.option) {
-            case UITransformStatus::kTransform_Free:
-                entityViewPosition.x += delta.x;
-                entityViewPosition.y += delta.y;
-                ckm::mul(entityWorldPosition, entityViewPosition, camera().worldMtx);
-                break;
-            case UITransformStatus::kTransform_X:
-                entityWorldPosition.x += worldDelta.x;
-                break;
-            case UITransformStatus::kTransform_Y:
-                entityWorldPosition.y += worldDelta.y;
-                break;
-            case UITransformStatus::kTransform_Z:
-                entityWorldPosition.z += worldDelta.z;
-                break;
-            default:
-                break;
+
+        //  obtain separate position and basis elements used for manipulation
+        ckm::matrix4 bodyWorldMtx;
+        body->getTransformMatrix(bodyWorldMtx);
+        
+        ckm::vector3 bodyWorldPos;
+        ckm::translateFromMatrix(bodyWorldPos, bodyWorldMtx);
+        
+        ckm::vector3 bodyViewPos;
+        ckm::mul(bodyViewPos, bodyWorldPos, camera().viewMtx);
+        
+        ckm::matrix4 viewToSpaceMtx;
+        ckm::matrix4 workingSpaceMtx;
+        ckm::matrix4 interMatrix;           // scratch
+
+        switch (status.option) {
+        case UITransformStatus::kTransform_Free:
+            viewToSpaceMtx.makeIdentity();
+            ckm::mul(workingSpaceMtx, bodyWorldMtx, camera().viewMtx);
+            break;
+        case UITransformStatus::kTransform_X:
+        case UITransformStatus::kTransform_Y:
+        case UITransformStatus::kTransform_Z:
+            if (status.system == UITransformStatus::kSystem_Global) {
+                viewToSpaceMtx = camera().worldMtx;
+                workingSpaceMtx = bodyWorldMtx;
             }
-            
-            body->setTransform(entityWorldBasis, entityWorldPosition, false);
+            else if (status.system == UITransformStatus::kSystem_Local) {
+                ckm::inverse(interMatrix, bodyWorldMtx);
+                ckm::mul(viewToSpaceMtx, camera().worldMtx, interMatrix);
+                workingSpaceMtx.makeIdentity();
+            }
+            break;
+        default:
+            CK_ASSERT(false);   // unhandled?
         }
+     
+        ckm::vector3 workingPos;
+        ckm::translateFromMatrix(workingPos, workingSpaceMtx);
+        workingSpaceMtx[12] = workingSpaceMtx[13] = workingSpaceMtx[14] = 0;
+     
+        ckm::vector3 mouseDelta = calcMouseDelta(viewToSpaceMtx, bodyViewPos.z,
+                io.DisplaySize.x*0.5f, io.DisplaySize.y*0.5f,
+                io.MouseDelta.x, io.MouseDelta.y);
+        
+        switch (status.mode) {
+        case UITransformStatus::Mode::kTransform_Location:
+            if (status.option == UITransformStatus::kTransform_X) {
+                mouseDelta.y = mouseDelta.z = 0;
+            }
+            else if (status.option == UITransformStatus::kTransform_Y) {
+                mouseDelta.x = mouseDelta.z = 0;
+            }
+            else if (status.option == UITransformStatus::kTransform_Z) {
+                mouseDelta.x = mouseDelta.y = 0;
+            }
+            ckm::add(workingPos, workingPos, mouseDelta);
+            break;
+        case UITransformStatus::Mode::kTransform_Orientation: {
+                float yaw = 1.0f, pitch = 1.0f, roll = 1.0f;
+                if (status.option == UITransformStatus::kTransform_X) {
+                    yaw = 0.0f;
+                    roll = 0.0f;
+                }
+                else if (status.option == UITransformStatus::kTransform_Y) {
+                    pitch = 0.0f;
+                    roll = 0.0f;
+                }
+                else if (status.option == UITransformStatus::kTransform_Z) {
+                    pitch = 0.0f;
+                    yaw = 0.0f;
+                }
+                ckm::matrix4 rotMatrix;
+                ckm::eulerToMatrix(rotMatrix,
+                    (mouseDelta.z + mouseDelta.y) * pitch * ckm::kPi,
+                    (mouseDelta.x - mouseDelta.z) * yaw * ckm::kPi,
+                    (mouseDelta.x - mouseDelta.y) * roll * ckm::kPi
+                );
+                ckm::mul(interMatrix, workingSpaceMtx, rotMatrix);
+                workingSpaceMtx = interMatrix;
+            }
+            break;
+        }
+        
+        workingSpaceMtx[12] = workingPos[0];
+        workingSpaceMtx[13] = workingPos[1];
+        workingSpaceMtx[14] = workingPos[2];
+        
+        
+        
+        switch (status.option) {
+        case UITransformStatus::kTransform_Free:
+            ckm::mul(bodyWorldMtx, workingSpaceMtx, camera().worldMtx);
+            break;
+        case UITransformStatus::kTransform_X:
+        case UITransformStatus::kTransform_Y:
+        case UITransformStatus::kTransform_Z:
+            if (status.system == UITransformStatus::kSystem_Local) {
+                ckm::mul(interMatrix, workingSpaceMtx, bodyWorldMtx);
+                bodyWorldMtx = interMatrix;
+            }
+            else if (status.system == UITransformStatus::kSystem_Global) {
+                bodyWorldMtx = workingSpaceMtx;
+            }
+            break;
+        default:
+            CK_ASSERT(false);   // unhandled?
+        }
+            
+        //  apply new transformation to body
+        body->setTransformMatrix(bodyWorldMtx);
     }
 }
+
+ckm::vector3 EditorView::calcMouseDelta
+(
+    const ckm::matrix4& transform,
+    float z,
+    float halfw, float halfh,
+    float dx, float dy
+)
+{
+    ckm::vector3 delta;
+    ckm::vector3 origin;
+    ckm::vector3 temp;
+    temp = camera().viewPositionFromScreenCoordinate(halfw, halfw, z);
+    ckm::mul(origin, temp, transform);
+    temp = camera().viewPositionFromScreenCoordinate(halfw+dx, halfw+dy, z);
+    ckm::mul(delta, temp, transform);
+    
+    return ckm::sub(delta, delta, origin);;
+}
+    
 
 void EditorView::renderTransformUI(UITransformStatus& status)
 {
@@ -806,7 +909,7 @@ void EditorView::renderTransformUI(UITransformStatus& status)
         return;
     }
     
-    ckm::vector3f bodyPos = body->getPosition();
+    ckm::vector3 bodyPos = body->getPosition();
     
     auto& decl = gfx::VertexTypes::declaration(gfx::VertexTypes::kVPositionColor);
     if (!bgfx::checkAvailTransientVertexBuffer(32, decl))
@@ -867,30 +970,6 @@ void EditorView::renderTransformUI(UITransformStatus& status)
     bgfx::submit(camera().viewIndex, programs[gfx::kNodeProgramColor]);
 }
 
-void EditorView::updateRotateUI(UITransformStatus& status)
-{
-    const ImVec2 kDesktopPad { 10, 10 };
-    const ImVec2 kBoxDims { 120, 150 };
-    
-    ImVec2 anchor { 0,0 };
-    
-    ImGui::SetNextWindowPos({ kDesktopPad.x+anchor.x, kDesktopPad.y+anchor.y },
-        ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Rotate", nullptr, kBoxDims, 0.3f,
-                     ImGuiWindowFlags_NoResize |
-                     ImGuiWindowFlags_NoMove |
-                     ImGuiWindowFlags_NoSavedSettings)) {
-        ImGui::RadioButton("Grab", &status.option, UITransformStatus::kTransform_Free);
-        ImGui::RadioButton("X", &status.option, UITransformStatus::kTransform_X);
-        ImGui::RadioButton("Y", &status.option, UITransformStatus::kTransform_Y);
-        ImGui::RadioButton("Z", &status.option, UITransformStatus::kTransform_Z);
-    }
-    ImGui::End();
-}
-
-void EditorView::handleRotateUI(UITransformStatus &status)
-{
-}
 
 void EditorView::setIdleState()
 {
@@ -963,9 +1042,11 @@ void EditorView::setAddEntityToSceneState()
     _vsm.setNextState(std::move(state));
 }
 
-void EditorView::setTransformEntityState()
+void EditorView::setTransformEntityState(UITransformStatus::Mode mode)
 {
     ove::ViewStateLogic state;
+    
+    _uiTransformStatus.mode = mode;
     
     state.id = kStateId_TransformEntity;
     state.beginFn =
@@ -977,8 +1058,8 @@ void EditorView::setTransformEntityState()
     
     state.frameUpdateFn =
         [this](CKTimeDelta dt) {
-            updateTranslateUI(_uiTransformStatus);
-            handleTranslateUI(_uiTransformStatus);
+            updateTransformUI(_uiTransformStatus);
+            handleTransformUI(_uiTransformStatus);
             renderTransformUI(_uiTransformStatus);
             
             if (ImGui::IsKeyPressed(SDLK_ESCAPE) || ImGui::IsMouseClicked(0)) {
