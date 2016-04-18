@@ -134,7 +134,8 @@ private:
             kTransform_Free,
             kTransform_X,
             kTransform_Y,
-            kTransform_Z
+            kTransform_Z,
+            kTransform_Count
         };
         
         int option;
@@ -154,6 +155,8 @@ private:
         };
         
         Mode mode;
+        
+        ckm::vector3 lastMouseDir;
     };
     
     UITransformStatus _uiTransformStatus;
@@ -163,6 +166,9 @@ private:
         float halfw, float halfh,
         float dx, float dy);
     
+    ckm::scalar calcMouseRotation(ckm::vector3& direction,
+        const ckm::matrix4& viewMtx,
+        float mx, float my);
     
     void updateTransformUI(UITransformStatus& status);
     void handleTransformUI(UITransformStatus& status);

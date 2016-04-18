@@ -50,6 +50,16 @@ template<> float degrees<float>(float radians) {
 }
 
 //  operations
+template<> matrix4_type<float>& scaleMatrix
+(
+    matrix4_type<float>& m,
+    typename matrix4_type<float>::value_type scalar
+)
+{
+    bx::mtxScale(m.comp, scalar, scalar, scalar);
+    return m;
+}
+
 template<> vector4& add
 (
     vector4& r,

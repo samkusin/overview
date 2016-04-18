@@ -79,7 +79,7 @@ struct SceneBody
     //  returns the current world transform from the scene's perspective (i.e.
     //  not the final transform post update.)
     void getTransform(ckm::quat& basis, ckm::vector3& pos) const;
-    void getTransformMatrix(ckm::matrix4& mtx);
+    void getTransformMatrix(ckm::matrix4& mtx) const;
     ckm::vector3 getPosition() const;
     
     void setVelocity(const ckm::vector3& linear, const ckm::vector3& angular);

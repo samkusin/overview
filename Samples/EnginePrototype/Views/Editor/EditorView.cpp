@@ -715,7 +715,7 @@ void EditorView::updateTransformUI
     ImGui::End();
     
     auto& io = ImGui::GetIO();
-    if (io.KeyShift) {
+    if (io.KeyShift && status.mode == UITransformStatus::Mode::kTransform_Location) {
         status.system = UITransformStatus::kSystem_Local;
     }
     else {
@@ -771,8 +771,8 @@ void EditorView::handleTransformUI(UITransformStatus& status)
         ckm::vector3 bodyWorldPos;
         ckm::translateFromMatrix(bodyWorldPos, bodyWorldMtx);
         
-        ckm::vector3 bodyViewPos;
-        ckm::mul(bodyViewPos, bodyWorldPos, camera().viewMtx);
+        ckm::matrix4 bodyViewMtx;
+        ckm::mul(bodyViewMtx, bodyWorldMtx, camera().viewMtx);
         
         ckm::matrix4 viewToSpaceMtx;
         ckm::matrix4 workingSpaceMtx;
@@ -780,7 +780,7 @@ void EditorView::handleTransformUI(UITransformStatus& status)
 
         switch (status.option) {
         case UITransformStatus::kTransform_Free:
-            viewToSpaceMtx.makeIdentity();
+            ckm::identityMatrix(viewToSpaceMtx);
             ckm::mul(workingSpaceMtx, bodyWorldMtx, camera().viewMtx);
             break;
         case UITransformStatus::kTransform_X:
@@ -793,7 +793,7 @@ void EditorView::handleTransformUI(UITransformStatus& status)
             else if (status.system == UITransformStatus::kSystem_Local) {
                 ckm::inverse(interMatrix, bodyWorldMtx);
                 ckm::mul(viewToSpaceMtx, camera().worldMtx, interMatrix);
-                workingSpaceMtx.makeIdentity();
+                ckm::identityMatrix(workingSpaceMtx);
             }
             break;
         default:
@@ -803,46 +803,84 @@ void EditorView::handleTransformUI(UITransformStatus& status)
         ckm::vector3 workingPos;
         ckm::translateFromMatrix(workingPos, workingSpaceMtx);
         workingSpaceMtx[12] = workingSpaceMtx[13] = workingSpaceMtx[14] = 0;
-     
-        ckm::vector3 mouseDelta = calcMouseDelta(viewToSpaceMtx, bodyViewPos.z,
-                io.DisplaySize.x*0.5f, io.DisplaySize.y*0.5f,
-                io.MouseDelta.x, io.MouseDelta.y);
-        
+    
         switch (status.mode) {
-        case UITransformStatus::Mode::kTransform_Location:
-            if (status.option == UITransformStatus::kTransform_X) {
-                mouseDelta.y = mouseDelta.z = 0;
-            }
-            else if (status.option == UITransformStatus::kTransform_Y) {
-                mouseDelta.x = mouseDelta.z = 0;
-            }
-            else if (status.option == UITransformStatus::kTransform_Z) {
-                mouseDelta.x = mouseDelta.y = 0;
-            }
-            ckm::add(workingPos, workingPos, mouseDelta);
-            break;
-        case UITransformStatus::Mode::kTransform_Orientation: {
-                float yaw = 1.0f, pitch = 1.0f, roll = 1.0f;
+        case UITransformStatus::Mode::kTransform_Location: {
+                ckm::vector3 mouseDelta = calcMouseDelta(viewToSpaceMtx,
+                    bodyViewMtx[14],
+                    io.DisplaySize.x*0.5f, io.DisplaySize.y*0.5f,
+                    io.MouseDelta.x, io.MouseDelta.y);
+        
                 if (status.option == UITransformStatus::kTransform_X) {
-                    yaw = 0.0f;
-                    roll = 0.0f;
+                    mouseDelta.y = mouseDelta.z = 0;
                 }
                 else if (status.option == UITransformStatus::kTransform_Y) {
-                    pitch = 0.0f;
-                    roll = 0.0f;
+                    mouseDelta.x = mouseDelta.z = 0;
                 }
                 else if (status.option == UITransformStatus::kTransform_Z) {
-                    pitch = 0.0f;
-                    yaw = 0.0f;
+                    mouseDelta.x = mouseDelta.y = 0;
                 }
+                ckm::add(workingPos, workingPos, mouseDelta);
+            }
+            break;
+        case UITransformStatus::Mode::kTransform_Orientation: {
+                const ckm::vector3 spins[UITransformStatus::kTransform_Count] = {
+                    {   0,  0,  0 },    /* snap unused */
+                    {   0,  0, -1 },    /* free transform around view z axis */
+                    {   1,  0,  0 },    /* x transform */
+                    {   0,  1,  0 },    /* y transform */
+                    {   0,  0,  1 }     /* z transform */
+                };
+
+            
+
+                float yaw = 0.0f, pitch = 0.0f, roll = 0.0f;
+                float rotation = calcMouseRotation(status.lastMouseDir,
+                    bodyViewMtx,
+                    io.MousePos.x, io.MousePos.y);
+            
+                if (status.option != UITransformStatus::kTransform_Free) {
+                    //  global transformations to spin axis
+                    //  roll based on view
+                    auto& cameraViewMtx = camera().viewMtx;
+                    ckm::vector3 viewRollAxis;
+                    ckm::mul(viewRollAxis, spins[status.option], cameraViewMtx);
+                    viewRollAxis[0] -= cameraViewMtx[12];
+                    viewRollAxis[1] -= cameraViewMtx[13];
+                    viewRollAxis[2] -= cameraViewMtx[14];
+                    if (ckm::dot(viewRollAxis, { 0, 0, -1}) > 0) {
+                        rotation = -rotation;
+                    }
+                }
+            
                 ckm::matrix4 rotMatrix;
-                ckm::eulerToMatrix(rotMatrix,
-                    (mouseDelta.z + mouseDelta.y) * pitch * ckm::kPi,
-                    (mouseDelta.x - mouseDelta.z) * yaw * ckm::kPi,
-                    (mouseDelta.x - mouseDelta.y) * roll * ckm::kPi
-                );
-                ckm::mul(interMatrix, workingSpaceMtx, rotMatrix);
-                workingSpaceMtx = interMatrix;
+
+                if (status.option == UITransformStatus::kTransform_X) {
+                    pitch = rotation;
+                }
+                else if (status.option == UITransformStatus::kTransform_Y) {
+                    yaw = rotation;
+                }
+                else if (status.option == UITransformStatus::kTransform_Z) {
+                    roll = rotation;
+                }
+                else if (status.option == UITransformStatus::kTransform_Free) {
+                    roll = rotation;
+                }
+
+                ckm::eulerToMatrix(rotMatrix, pitch, yaw, roll);
+                if (status.option == UITransformStatus::kTransform_Free) {
+                    //  transformation occurs within view space
+                    ckm::mul(interMatrix, bodyViewMtx, rotMatrix);
+                    ckm::mul(rotMatrix, interMatrix, viewToSpaceMtx);
+                    workingSpaceMtx = rotMatrix;
+                }
+                else {
+                    //  transformation occurs within world space
+                    ckm::mul(interMatrix, bodyWorldMtx, rotMatrix);
+                    workingSpaceMtx = interMatrix;
+                }
+
             }
             break;
         }
@@ -850,8 +888,6 @@ void EditorView::handleTransformUI(UITransformStatus& status)
         workingSpaceMtx[12] = workingPos[0];
         workingSpaceMtx[13] = workingPos[1];
         workingSpaceMtx[14] = workingPos[2];
-        
-        
         
         switch (status.option) {
         case UITransformStatus::kTransform_Free:
@@ -893,9 +929,49 @@ ckm::vector3 EditorView::calcMouseDelta
     temp = camera().viewPositionFromScreenCoordinate(halfw+dx, halfw+dy, z);
     ckm::mul(delta, temp, transform);
     
-    return ckm::sub(delta, delta, origin);;
+    return ckm::sub(delta, delta, origin);
 }
+
+ckm::scalar EditorView::calcMouseRotation
+(
+    ckm::vector3& direction,
+    const ckm::matrix4& viewMatrix,
+    float mx, float my
+)
+{
+    ckm::vector3 basisDir = direction;
+    ckm::vector3 viewOrigin;
+    ckm::translateFromMatrix(viewOrigin, viewMatrix);
     
+    ckm::vector3 viewPos = camera().viewPositionFromScreenCoordinate(mx, my, viewOrigin.z);
+    ckm::sub(direction, viewPos, viewOrigin);
+    if (direction.isZero())
+        return ckm::scalar(0);
+    
+    ckm::normalize(direction, direction);
+    
+    if (basisDir.isZero())
+        return ckm::scalar(0);
+    
+    ckm::scalar delta = ckm::dot(direction, basisDir);
+    if (delta < ckm::scalar(-1))
+        delta = ckm::scalar(-1);
+    else if (delta > ckm::scalar(1))
+        delta = ckm::scalar(1);
+    ckm::scalar rotation = ckm::acos(delta);
+   
+    CK_ASSERT(!std::isnan(rotation));
+    
+    if (rotation < ckm::kPi - ckm::kEpsilon) {
+        ckm::vector3 spin;
+        ckm::cross(spin, basisDir, direction);
+        ckm::normalize(spin, spin);
+        if (ckm::dot(spin, { 0, 0, -1 }) < 0)
+            rotation = -rotation;
+    }
+    
+    return rotation;
+}
 
 void EditorView::renderTransformUI(UITransformStatus& status)
 {
@@ -909,7 +985,7 @@ void EditorView::renderTransformUI(UITransformStatus& status)
         return;
     }
     
-    ckm::vector3 bodyPos = body->getPosition();
+    ckm::vector3 bodyWorldPos = body->getPosition();
     
     auto& decl = gfx::VertexTypes::declaration(gfx::VertexTypes::kVPositionColor);
     if (!bgfx::checkAvailTransientVertexBuffer(32, decl))
@@ -924,12 +1000,27 @@ void EditorView::renderTransformUI(UITransformStatus& status)
     auto vert0 = reinterpret_cast<gfx::VertexTypes::PositionColor*>(linesTVB.data);
     auto vert1 = reinterpret_cast<gfx::VertexTypes::PositionColor*>(linesTVB.data)+1;
     
+    ckm::matrix4 baseTransform = gfx::Matrix4::kIdentity;
+    ckm::vector3 bodyPos;
+    
+    if (status.system == UITransformStatus::kSystem_Local) {
+        ckm::matrix4 localTransform;
+        body->getTransformMatrix(baseTransform);
+        ckm::inverse(localTransform, baseTransform);
+        ckm::mul(bodyPos, bodyWorldPos, localTransform);
+    }
+    else {
+        ckm::identityMatrix(baseTransform);
+        bodyPos = bodyWorldPos;
+    }
+    
     vert0->x = bodyPos.x;
     vert0->y = bodyPos.y;
     vert0->z = bodyPos.z;
-    vert1->x = bodyPos.x;
-    vert1->y = bodyPos.y;
-    vert1->z = bodyPos.z;
+    
+    vert1->x = vert0->x;
+    vert1->y = vert0->y;
+    vert1->z = vert0->z;
     
     if (status.option == UITransformStatus::kTransform_X) {
         vert0->x -= 1000.0f;
@@ -952,7 +1043,6 @@ void EditorView::renderTransformUI(UITransformStatus& status)
     
     vertCnt += 2;
     
-    gfx::Matrix4 baseTransform = gfx::Matrix4::kIdentity;
     
     bgfx::setViewTransform(camera().viewIndex, camera().viewMtx, camera().projMtx);
     bgfx::setTransform(baseTransform);
@@ -1053,12 +1143,18 @@ void EditorView::setTransformEntityState(UITransformStatus::Mode mode)
         [this]() {
             _uiStatus.displayMainUI = false;
             _uiTransformStatus.option = UITransformStatus::kTransform_Free;
+            _uiTransformStatus.system = UITransformStatus::kSystem_Global;
+            _uiTransformStatus.lastMouseDir = ckm::vector3::kZero;
             scene().addCategoryToBody(_activeEntity, ove::SceneBody::kStaging);
         };
     
     state.frameUpdateFn =
         [this](CKTimeDelta dt) {
+            auto system = _uiTransformStatus.system;
             updateTransformUI(_uiTransformStatus);
+            if (system != _uiTransformStatus.system) {
+                _uiTransformStatus.lastMouseDir = ckm::vector3::kZero;
+            }
             handleTransformUI(_uiTransformStatus);
             renderTransformUI(_uiTransformStatus);
             

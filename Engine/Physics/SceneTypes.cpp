@@ -162,7 +162,7 @@ void SceneBody::getTransform(ckm::quat& basis, ckm::vector3& pos) const
     ckmFromBt(pos, t.getOrigin());
 }
 
-void SceneBody::getTransformMatrix(ckm::matrix4 &mtx)
+void SceneBody::getTransformMatrix(ckm::matrix4 &mtx) const
 {
     const btTransform& t = this->btBody->getWorldTransform();
     const btMatrix3x3& basis = t.getBasis();
