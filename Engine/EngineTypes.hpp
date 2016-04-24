@@ -26,6 +26,9 @@ namespace cinek {
         class RenderGraph;
         struct RenderContext;
         
+        template<typename Object> class Component;
+        template<typename Body, typename Derived> class System;
+        
         class Scene;
         struct SceneBody;
         class SceneFixedBodyHull;

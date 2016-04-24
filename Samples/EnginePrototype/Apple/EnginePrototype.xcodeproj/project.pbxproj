@@ -61,6 +61,8 @@
 		377ECD901C18F834002040D7 /* PrototypeApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377ECD8E1C18F834002040D7 /* PrototypeApplication.cpp */; };
 		37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37804D0B1C1A1DD2002109DF /* GameEntityFactory.cpp */; };
 		37804D0F1C1A2FF6002109DF /* GameTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37804D0E1C1A2FF6002109DF /* GameTypes.cpp */; };
+		37A8EB461CC7180900A2E84C /* ComponentData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A8EB441CC7180900A2E84C /* ComponentData.cpp */; };
+		37A8EB601CC9987500A2E84C /* SceneComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37A8EB5F1CC9987500A2E84C /* SceneComponent.cpp */; };
 		37B24FF21C865229005C6DC0 /* NavBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B24FED1C865229005C6DC0 /* NavBody.cpp */; };
 		37B24FF31C865229005C6DC0 /* NavSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B24FF01C865229005C6DC0 /* NavSystem.cpp */; };
 		37B2500E1C865268005C6DC0 /* NavMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B24FF41C865268005C6DC0 /* NavMesh.cpp */; };
@@ -218,6 +220,13 @@
 		37804D0C1C1A1DD2002109DF /* GameEntityFactory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameEntityFactory.hpp; sourceTree = "<group>"; };
 		37804D0E1C1A2FF6002109DF /* GameTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameTypes.cpp; sourceTree = "<group>"; };
 		37A8EB401CACAFB300A2E84C /* ViewStateMachine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = ViewStateMachine.hpp; path = ../Views/ViewStateMachine.hpp; sourceTree = "<group>"; };
+		37A8EB431CC6EA3A00A2E84C /* Component.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Component.hpp; sourceTree = "<group>"; };
+		37A8EB441CC7180900A2E84C /* ComponentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentData.cpp; sourceTree = "<group>"; };
+		37A8EB451CC7180900A2E84C /* ComponentData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ComponentData.hpp; sourceTree = "<group>"; };
+		37A8EB5D1CC94EF500A2E84C /* ComponentData.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ComponentData.inl; sourceTree = "<group>"; };
+		37A8EB5E1CC9876200A2E84C /* Component.inl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Component.inl; sourceTree = "<group>"; };
+		37A8EB5F1CC9987500A2E84C /* SceneComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneComponent.cpp; path = Physics/SceneComponent.cpp; sourceTree = "<group>"; };
+		37A8EB611CC9ABDC00A2E84C /* EditorComponents.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EditorComponents.inl; path = ../Views/Editor/EditorComponents.inl; sourceTree = "<group>"; };
 		37B24FED1C865229005C6DC0 /* NavBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NavBody.cpp; path = Controller/NavBody.cpp; sourceTree = "<group>"; };
 		37B24FEE1C865229005C6DC0 /* NavBody.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NavBody.hpp; path = Controller/NavBody.hpp; sourceTree = "<group>"; };
 		37B24FEF1C865229005C6DC0 /* NavBodyTransform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NavBodyTransform.hpp; path = Controller/NavBodyTransform.hpp; sourceTree = "<group>"; };
@@ -335,6 +344,7 @@
 			children = (
 				372918571C7445AE0011770E /* EditorView.cpp */,
 				372918581C7445AE0011770E /* EditorView.hpp */,
+				37A8EB611CC9ABDC00A2E84C /* EditorComponents.inl */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -459,6 +469,7 @@
 				37386D181C6571A7001A3110 /* SceneObjectJsonLoader.hpp */,
 				37386D191C6571A7001A3110 /* SceneTypes.cpp */,
 				37386D1A1C6571A7001A3110 /* SceneTypes.hpp */,
+				37A8EB5F1CC9987500A2E84C /* SceneComponent.cpp */,
 			);
 			name = Physics;
 			sourceTree = "<group>";
@@ -596,6 +607,11 @@
 				377ECCC81C08FEFD002040D7 /* AssetManifest.cpp */,
 				37B250391C922332005C6DC0 /* System.hpp */,
 				37B2503A1C922610005C6DC0 /* System.inl */,
+				37A8EB431CC6EA3A00A2E84C /* Component.hpp */,
+				37A8EB5E1CC9876200A2E84C /* Component.inl */,
+				37A8EB451CC7180900A2E84C /* ComponentData.hpp */,
+				37A8EB5D1CC94EF500A2E84C /* ComponentData.inl */,
+				37A8EB441CC7180900A2E84C /* ComponentData.cpp */,
 			);
 			name = Engine;
 			path = ../../../Engine;
@@ -757,6 +773,7 @@
 				37386CEA1C62E19C001A3110 /* DebugDraw.cpp in Sources */,
 				37386CF81C62E19C001A3110 /* RecastContour.cpp in Sources */,
 				37386CF11C62E19C001A3110 /* DetourNode.cpp in Sources */,
+				37A8EB601CC9987500A2E84C /* SceneComponent.cpp in Sources */,
 				37386CEB1C62E19C001A3110 /* DetourAlloc.cpp in Sources */,
 				37386D001C62E19C001A3110 /* RecastRegion.cpp in Sources */,
 				37386CED1C62E19C001A3110 /* DetourDebugDraw.cpp in Sources */,
@@ -799,6 +816,7 @@
 				37804D0D1C1A1DD2002109DF /* GameEntityFactory.cpp in Sources */,
 				37B250381C921A7E005C6DC0 /* TransformSystem.cpp in Sources */,
 				37386CFA1C62E19C001A3110 /* RecastDump.cpp in Sources */,
+				37A8EB461CC7180900A2E84C /* ComponentData.cpp in Sources */,
 				37B2502C1C876E53005C6DC0 /* TransformSet.cpp in Sources */,
 				37386CFC1C62E19C001A3110 /* RecastLayers.cpp in Sources */,
 				37386CF61C62E19C001A3110 /* RecastAlloc.cpp in Sources */,

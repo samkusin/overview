@@ -23,10 +23,60 @@
 #include <cinek/cstringstack.hpp>
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 #include "Views/ViewStateMachine.hpp"
 
 namespace cinek {
+
+struct EditorUIVariant
+{
+    enum
+    {
+        kNull,
+        kString,
+        kFloats
+    };
+    
+    
+    EditorUIVariant();
+    EditorUIVariant(const char* str, int sz);
+    EditorUIVariant(const float* f, int sz=1);
+    ~EditorUIVariant();
+    EditorUIVariant(const EditorUIVariant& v) = delete;
+    EditorUIVariant& operator=(const EditorUIVariant& v) = delete;
+    
+    EditorUIVariant(EditorUIVariant&& v);
+    EditorUIVariant& operator=(EditorUIVariant&& v);
+    
+    int getSize() const;
+    template<typename T> T* getData() {
+        return const_cast<T*>(static_cast<const T*>(this)->template getData<T>());
+    }
+    template<typename T> const T* getData() const;
+
+private:
+    enum
+    {
+        kBufSize = 32,
+        kFloatLimit = kBufSize / sizeof(float)
+    };
+    uint32_t _type = kNull;
+    union Data
+    {
+        float floatbuf[kFloatLimit];
+        char strbuf[kBufSize];
+    };
+    Data _data;
+    void* _ptr;
+    
+    uint32_t makeTypeWord(uint16_t type, int16_t cnt, bool dynamic) const;
+    uint16_t getType() const;
+    bool isAllocated() const;
+};
+
+using EditorUIVariantMap = std::unordered_map<std::string, EditorUIVariant>;
+
 
 class EditorView : public GameState
 {
@@ -93,9 +143,21 @@ private:
     void renderOverlay();
     void destroyUIData();
     
+    void setActiveEntity(Entity entity);
+    
 private:
+    EditorUIVariantMap _uiVariantMap;
+    
+    struct UIEntityStatus
+    {
+        Entity entity;
+        char name[32];
+        char id[32];
+    };
+
     struct UIStatus
     {
+        UIEntityStatus entityStatus;
         EntityTemplate addEntityTemplate;
     
         bool displayMainUI;
@@ -120,10 +182,11 @@ private:
         int cameraDirection;
     };
     
-    UIStatus _uiStatus;\
+    UIStatus _uiStatus;
     
     void updateMainUI(UIStatus& status, float width, float height);
     void updateSceneTreeUI(const SceneTreeNode* node);
+    void updatePropertiesUI(UIEntityStatus& status, float width, float height);
     void endFrameMainUI(UIStatus& status);
 
     struct UITransformStatus
@@ -173,10 +236,8 @@ private:
     void updateTransformUI(UITransformStatus& status);
     void handleTransformUI(UITransformStatus& status);
     void renderTransformUI(UITransformStatus& status);
-
-
     
-     //  states
+    //  states
     enum
     {
         kStateId_Idle,

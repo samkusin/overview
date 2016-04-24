@@ -42,6 +42,9 @@ template<> float tan<float>(float r) {
 template<> float atan<float>(float a) {
     return std::atanf(a);
 }
+template<> float atan2(float y, float x) {
+    return std::atan2(y, x);
+}
 template<> float radians<float>(float degrees) {
     return kPi * degrees / 180.0f;
 }
@@ -234,7 +237,20 @@ template<> matrix4_type<float>& eulerToMatrix(matrix4_type<float>& m, float ax, 
     return m;
 }
 
-
+template<> quat_type<float>& normalize(quat_type<float>& o, quat_type<float> const& v)
+{
+    const float cx = v[0];
+    const float cy = v[1];
+    const float cz = v[2];
+    const float cw = v[3];
+    
+    const float qcinvlen = 1.0f/sqrtf(cx * cx + cy * cy + cz * cz + cw * cw);
+    o[0] = cx * qcinvlen;
+    o[1] = cy * qcinvlen;
+    o[2] = cz * qcinvlen;
+    o[3] = cw * qcinvlen;
+    return o;
+}
 
 template struct plane<vector3>;
 template class frustrum<vector3>;

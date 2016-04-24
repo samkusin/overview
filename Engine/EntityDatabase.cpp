@@ -194,7 +194,9 @@ void EntityDatabase::enumerateManifests
   
 void EntityDatabase::linkIdentityToEntity(Entity e, std::string identity)
 {
-    _entityToIdentityMap.emplace(e, std::move(identity));
+    auto emplacer = _entityToIdentityMap.emplace(e, std::string());
+    CK_ASSERT_RETURN(emplacer.first != _entityToIdentityMap.end());
+    emplacer.first->second = std::move(identity);
 }
 
 void EntityDatabase::unlinkIdentityFromEntity(Entity e)

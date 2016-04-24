@@ -29,7 +29,96 @@
 #include <bx/fpumath.h>
 #include <bgfx/bgfx.h>
 
+#include "EditorComponents.inl"
+
 namespace cinek {
+
+EditorUIVariant::EditorUIVariant() : _type(kNull)
+{
+}
+
+
+EditorUIVariant::EditorUIVariant(const char* str, int sz)
+{
+    sz = std::max((int)strnlen(str, 255), sz-1);
+    
+    if (sz >= kBufSize) {
+        char* strptr = reinterpret_cast<char*>(cinek_alloc(0, sz+1));
+        strncpy(strptr, str, sz);
+        strptr[sz] = '\0';
+        _ptr = strptr;
+    }
+    else {
+        strncpy(_data.strbuf, str, sz);
+        _data.strbuf[sz] = '\0';
+        _ptr = &_data.strbuf[0];
+    }
+    makeTypeWord(kString, sz, sz >= kBufSize);
+}
+
+EditorUIVariant::EditorUIVariant(const float* f, int num)
+{
+    if (num > kFloatLimit) {
+        float* fptr = reinterpret_cast<float*>(cinek_alloc(0, num*sizeof(float)));
+        _ptr = fptr;
+        memcpy(fptr, f, num*sizeof(float));
+    }
+    else {
+        _ptr = &_data.floatbuf[0];
+    }
+    makeTypeWord(kFloats, num, num > kFloatLimit);
+}
+
+EditorUIVariant::~EditorUIVariant()
+{
+    if (isAllocated()) {
+        cinek_free(0, _ptr);
+    }
+}
+
+
+EditorUIVariant::EditorUIVariant(EditorUIVariant&& v) : _type(v._type), _ptr(v._ptr)
+{
+    _type = kNull;
+    memmove(&_data, &v._data, sizeof(Data));
+}
+
+EditorUIVariant& EditorUIVariant::operator=(EditorUIVariant&& v)
+{
+    if (&v != this) {
+        _type = kNull;
+        memmove(&_data, &v._data, sizeof(Data));
+    }
+    return *this;
+}
+
+int EditorUIVariant::getSize() const
+{
+    return (_type & 0x7fff0000) >> 16;
+}
+
+template<> const float* EditorUIVariant::getData<float>() const
+{
+    CK_ASSERT_RETURN_VALUE(getType() == kFloats, nullptr);
+    return reinterpret_cast<const float*>(_ptr);
+}
+
+uint32_t EditorUIVariant::makeTypeWord(uint16_t type, int16_t cnt, bool dynamic) const
+{
+    uint32_t val = (cnt << 16) | type;
+    if (dynamic) val |= 0x80000000;
+    return val;
+}
+
+uint16_t EditorUIVariant::getType() const
+{
+    return (uint16_t)(_type & 0x0000ffff);
+}
+
+bool EditorUIVariant::isAllocated() const
+{
+    return (_type & 0x80000000) != 0;
+}
 
 struct EditorView::SceneTreeNode
 {
@@ -331,6 +420,16 @@ void EditorView::rebuildSceneTree(cinek::EditorView::SceneTree &tree)
     _sceneTree->addScene(scene());
 }
 
+void EditorView::setActiveEntity(Entity entity)
+{
+    _activeEntity = entity;
+    _uiStatus.entityStatus.entity = entity;
+    
+    auto& name = entityService().identityFromEntity(entity);
+    strncpy(_uiStatus.entityStatus.name, name.c_str(), sizeof(_uiStatus.entityStatus.name));
+    snprintf(_uiStatus.entityStatus.id, sizeof(_uiStatus.entityStatus.id), "%" PRIu64, entity);
+}
+
 void EditorView::updateMainUI(UIStatus& status, float width, float height)
 {
     const ImVec2 kDesktopPad { 10, 10 };
@@ -387,12 +486,12 @@ void EditorView::updateMainUI(UIStatus& status, float width, float height)
     if (!status.displayMainUI) {
         return;
     }
-    const ImVec2 kSceneTreeDims { 240, 240 };
+    const ImVec2 kSceneTreeDims { 300, 240 };
     const ImVec2 kSceneTreePos {
         width - kDesktopPad.x - kSceneTreeDims.x,
         kDesktopPad.y
     };
-    const ImVec2 kPropsDims { 240, height - kSceneTreeDims.y - kDesktopPad.y*4 };
+    const ImVec2 kPropsDims { 300, height - kSceneTreeDims.y - kDesktopPad.y*4 };
     const ImVec2 kPropsPos {
         kSceneTreePos.x,
         kSceneTreePos.y + kSceneTreeDims.y + kDesktopPad.y
@@ -452,10 +551,7 @@ void EditorView::updateMainUI(UIStatus& status, float width, float height)
     
     //  PROPERTIES UI
     ImGui::SetNextWindowPos(kPropsPos, ImGuiSetCond_FirstUseEver);
-    if (ImGui::Begin("Properties", nullptr, kPropsDims, 0.3f)) {
-    
-    }
-    ImGui::End();
+    updatePropertiesUI(status.entityStatus, kPropsDims.x, kPropsDims.y);
     
     //  handle events from the frame window
     if (!ImGui::IsMouseHoveringAnyWindow()) {
@@ -465,7 +561,7 @@ void EditorView::updateMainUI(UIStatus& status, float width, float height)
             if (sceneHitResult) {
                 //  set the active entity (entity must be selectable)
                 if (!sceneHitResult.body->checkFlags(ove::SceneBody::kIsSection)) {
-                    _activeEntity = sceneHitResult.body->entity;
+                    setActiveEntity(sceneHitResult.body->entity);
                 }
             }
         }
@@ -520,6 +616,47 @@ void EditorView::updateSceneTreeUI(const SceneTreeNode *node)
         }
         ImGui::TreePop();
     }
+}
+
+void EditorView::updatePropertiesUI(UIEntityStatus& status, float w, float h)
+{
+    char title[64];
+    
+    if (status.entity) {
+        snprintf(title, sizeof(title), "Properties : %s", status.name);
+    }
+    else {
+        strncpy(title, "Properties", sizeof(title));
+    }
+    title[sizeof(title)-1] = '\0';
+    
+    if (ImGui::Begin("Properties", nullptr, { w, h }, 0.3f)) {
+        if (status.entity) {
+            if (ImGui::CollapsingHeader("Entity", nullptr, true, true)) {
+                ImGui::Columns(2);
+                ImGui::SetColumnOffset(0, 0);
+                ImGui::SetColumnOffset(1, w * 0.30f);
+                ImGui::Text("ID");
+                ImGui::NextColumn();
+                ImGui::InputText("##ID", status.id, sizeof(status.id), ImGuiInputTextFlags_ReadOnly);
+                ImGui::NextColumn();
+                
+                ImGui::Text("Name");
+                ImGui::NextColumn();
+                if (ImGui::InputText("##Name", status.name, sizeof(status.name))) {
+                    entityService().linkIdentityToEntity(status.entity, status.name);
+                }
+                ImGui::NextColumn();
+                ImGui::Columns(1);
+            }
+            ove::SceneBody* sceneBody = scene().findBody(_activeEntity);
+            if (sceneBody) {
+                float offsets[2] = { 0, w*0.30f };
+                updateComponentUI(_uiVariantMap, offsets, "Scene", sceneBody);
+            }
+        }
+    }
+    ImGui::End();
 }
 
 void EditorView::renderOverlay()
@@ -985,6 +1122,9 @@ void EditorView::renderTransformUI(UITransformStatus& status)
         return;
     }
     
+    //  draw axis lines based on either the global world coordinate system or
+    //  the entity's local coordinate system
+    //
     ckm::vector3 bodyWorldPos = body->getPosition();
     
     auto& decl = gfx::VertexTypes::declaration(gfx::VertexTypes::kVPositionColor);

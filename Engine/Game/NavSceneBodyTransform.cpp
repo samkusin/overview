@@ -41,7 +41,8 @@ void NavSceneBodyTransform::setNavBodyVelocity
     ckm::vector3 angular
 )
 {
-    _sceneBody->setVelocity(linear, angular);
+    _sceneBody->setVelocity(linear);
+    _sceneBody->setAngularVelocity(angular);
 }
 
     } /* namespace ove */

@@ -9,7 +9,7 @@
 #ifndef Overview_SceneTypes_hpp
 #define Overview_SceneTypes_hpp
 
-#include "Engine/EngineTypes.hpp"
+#include "Engine/Component.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 #include <bullet/LinearMath/btVector3.h>
@@ -33,6 +33,14 @@ btVector3 btFromGfx(const gfx::Vector3& v);
 
 struct SceneBody
 {
+public:
+    //  Component Properties
+    OVERVIEW_COMPONENT_PROPERTY_POINT3(Position, "Position")
+    OVERVIEW_COMPONENT_PROPERTY_QUATERNION(Rotation, "Rotation")
+    OVERVIEW_COMPONENT_PROPERTY_POINT3(Velocity, "Velocity")
+    OVERVIEW_COMPONENT_PROPERTY_POINT3(AngularVelocity, "Ang. Vel")
+    
+public:
     enum Category
     {
         kSection        = 0,
@@ -67,10 +75,9 @@ struct SceneBody
 
     const SceneFixedBodyHull* getFixedHull() const;
     
-    //  brute force setting of transform - TODO (refactor so that we conform to
-    //  our set/getTranform rules outlined below.)
+    //  TODO - figure out a way to eliminate this method, using one the methods
+    //  below instead.
     void setPosition(const btVector3& pos, btVector3 up);
-    
     //  set transform - the final transform may be modified by the Scene during
     void setTransform(const ckm::quat& basis, const ckm::vector3& pos);
     //  brute force set of transform, bypassing simulation
@@ -80,9 +87,6 @@ struct SceneBody
     //  not the final transform post update.)
     void getTransform(ckm::quat& basis, ckm::vector3& pos) const;
     void getTransformMatrix(ckm::matrix4& mtx) const;
-    ckm::vector3 getPosition() const;
-    
-    void setVelocity(const ckm::vector3& linear, const ckm::vector3& angular);
     
     ckm::AABB<ckm::vector3> calcAABB() const;
 
