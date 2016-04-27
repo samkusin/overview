@@ -12,6 +12,7 @@
 #include "Engine/EngineTypes.hpp"
 
 #include <string>
+#include <functional>
 
 namespace cinek { namespace ove {
 
@@ -57,14 +58,40 @@ public:
      *  @param name         Where to load the definitions from
      *  @param manifest     The manifest object
      */
-    void addDefintions(std::string name, std::shared_ptr<AssetManifest> manifest);
+    void addDefinitions(std::string name, std::shared_ptr<AssetManifest> manifest);
     /**
      *  Clears the specified definitions
      */
     void clearDefinitions(const std::string& name);
-    
-    
+    /**
+     *  Retrieves the manifest for the given namespace.
+     *
+     *  @param  ns  The namespace
+     *  @return The AssetManifest or null if not found
+     */
     const AssetManifest* getDefinitions(const std::string& ns) const;
+    /**
+     *  Enumerates the added definitions by manifest.  The supplied delegate
+     *  is called for every manifest.
+     *
+     *  @param fn   A delegate invoked for every registered manifest.  Its 
+     *              signature should match the declaration:
+     *              
+     *              void fn(const std::string& ns, AssetManifest& manifest)
+     */
+    void enumerateDefinitions(const std::function<void(const std::string&, const AssetManifest&)>& cb);
+    /**
+     *  Add identity information to an entity.
+     *  
+     *  @param  entity  The entity to store identity information for
+     *  @param  name    Long unique name for the entity
+     */
+    void linkIdentityToEntity(Entity e, std::string identity);
+    /** 
+     *  @param  entity  The entity to retieve identity info for
+     *  @return The identity information
+     */
+    const std::string& identityFromEntity(Entity e) const;
     
 private:
     EntityDatabase* _context = nullptr;

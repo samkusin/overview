@@ -16,52 +16,42 @@
 #include <bullet/BulletCollision/CollisionShapes/btCollisionShape.h>
 #include <bullet/BulletCollision/CollisionShapes/btTriangleMeshShape.h>
 
+#include <ckm/aabb.hpp>
 #include <cmath>
 
 namespace cinek {
     namespace ove {
   
-btMatrix3x3& btFromCkm(btMatrix3x3& btm, const ckm::matrix3f& m)
+btQuaternion& btFromCkm(btQuaternion& btq, const ckm::quat& q)
 {
-    //  to row major from column major
-    const float* comp= m.comp;
-    btm.setValue(comp[0], comp[3], comp[6],
-                 comp[1], comp[4], comp[7],
-                 comp[2], comp[5], comp[8]);
-    return btm;
+    btq.setValue(q.x, q.y, q.z, q.w);
+    return btq;
 }
 
-btVector3& btFromCkm(btVector3& btv, const ckm::vector3f& v)
+btVector3& btFromCkm(btVector3& btv, const ckm::vector3& v)
 {
     btv.setValue(v.comp[0], v.comp[1], v.comp[2]);
     return btv;
 }
 
-ckm::matrix3f& ckmFromBt(ckm::matrix3f& m, const btMatrix3x3& btm)
+ckm::quat& ckmFromBt(ckm::quat& q, const btQuaternion& btq)
 {
-    float* comp = m.comp;
-    const btVector3& v0 = btm.getRow(0);
-    const btVector3& v1 = btm.getRow(1);
-    const btVector3& v2 = btm.getRow(2);
-    comp[0] = v0.x();
-    comp[1] = v1.x();
-    comp[2] = v2.x();
-    comp[3] = v0.y();
-    comp[4] = v1.y();
-    comp[5] = v2.y();
-    comp[6] = v0.z();
-    comp[7] = v1.z();
-    comp[8] = v2.z();
+    q.set(btq.getX(), btq.getY(), btq.getZ(), btq.getW());
     
-    return m;
+    return q;
 }
 
-ckm::vector3f& ckmFromBt(ckm::vector3f& v, const btVector3& btv)
+ckm::vector3& ckmFromBt(ckm::vector3& v, const btVector3& btv)
 {
     v.comp[0] = btv.x();
     v.comp[1] = btv.y();
     v.comp[2] = btv.z();
     return v;
+}
+
+btVector3 btFromGfx(const gfx::Vector3& v)
+{
+    return btVector3(v.x, v.y, v.z);
 }
 
 const SceneFixedBodyHull* SceneBody::getFixedHull() const
@@ -84,7 +74,7 @@ void SceneBody::setPosition
     btVector3 up
 )
 {
-    CK_ASSERT(this->btBody->isStaticOrKinematicObject());
+    //CK_ASSERT(this->btBody->isStaticOrKinematicObject());
 
     btVector3 forward(0,0,1);
     
@@ -109,18 +99,11 @@ void SceneBody::setPosition
     forward = btCross(side, up);
     forward.normalize();
     
-    btTransform transform;
+    btTransform& transform = this->btBody->getWorldTransform();
     transform.getBasis().setValue(side.x(), side.y(), side.z(),
                                   up.x(), up.y(), up.z(),
                                   forward.x(), forward.y(), forward.z());
     transform.setOrigin(pos);
-    
-    /*
-    printf("s(%.2f,%.2f,%.2f)\nu(%.2f,%.2f,%.2f)\nf(%.2f,%.2f,%.2f)\n\n",
-    side.x(),side.y(), side.z(),
-    up.x(), up.y(), up.z(),
-    forward.x(),forward.y(),forward.z());
-    */
     
     this->btBody->setWorldTransform(transform);
     if (this->motionState) {
@@ -128,35 +111,164 @@ void SceneBody::setPosition
     }
 }
 
-void SceneBody::setTransform(const ckm::matrix3f& basis, const ckm::vector3f& pos)
+void SceneBody::setTransform(const ckm::quat& basis, const ckm::vector3& pos)
 {
     btTransform& t = this->btBody->getWorldTransform();
-    // transpose to row major from column
-    btFromCkm(t.getBasis(), basis);
+    btQuaternion btq;
+    t.setRotation(btFromCkm(btq, basis));
     btFromCkm(t.getOrigin(), pos);
     
     //  updates the revision number, copy is trivial
     this->btBody->setWorldTransform(t);
-    
     transformChanged = true;
 }
 
-void SceneBody::setVelocity(const ckm::vector3f &linear, const ckm::vector3f &angular)
+void SceneBody::setTransformMatrix(const ckm::matrix4 &mtx)
 {
-    btFromCkm(linearVelocity, linear);
-    btFromCkm(angularVelocity, angular);
+    btTransform& t = this->btBody->getWorldTransform();
+    t.getBasis().setValue(mtx[0], mtx[4], mtx[8],
+                          mtx[1], mtx[5], mtx[9],
+                          mtx[2], mtx[6], mtx[10]);
+    t.getOrigin().setValue(mtx[12], mtx[13], mtx[14]);
+    
+    //  updates the revision number, copy is trivial
+    this->btBody->setWorldTransform(t);
+
+    if (this->motionState) {
+        this->motionState->setWorldTransform(t);
+    }
+}
+
+void SceneBody::getTransform(ckm::quat& basis, ckm::vector3& pos) const
+{
+    const btTransform& t = this->btBody->getWorldTransform();
+    btQuaternion btq;
+    ckmFromBt(basis, t.getRotation());
+    ckmFromBt(pos, t.getOrigin());
+}
+
+void SceneBody::getTransformMatrix(ckm::matrix4 &mtx) const
+{
+    const btTransform& t = this->btBody->getWorldTransform();
+    const btMatrix3x3& basis = t.getBasis();
+
+    auto& row0 = basis.getRow(0);
+    auto& row1 = basis.getRow(1);
+    auto& row2 = basis.getRow(2);
+    
+    mtx[0] = row0.x();
+    mtx[1] = row1.x();
+    mtx[2] = row2.x();
+    mtx[3] = ckm::scalar(0);
+    mtx[4] = row0.y();
+    mtx[5] = row1.y();
+    mtx[6] = row2.y();
+    mtx[7] = ckm::scalar(0);
+    mtx[8] = row0.z();
+    mtx[9] = row1.z();
+    mtx[10] = row2.z();
+    mtx[11] = ckm::scalar(0);
+    
+    const btVector3& origin = t.getOrigin();
+    mtx[12] = origin.x();
+    mtx[13] = origin.y();
+    mtx[14] = origin.z();
+    mtx[15] = ckm::scalar(1);
+}
+    
+bool SceneBody::checkFlags(uint32_t flags) const
+{
+    return (categoryMask & flags) != 0;
+}
+  
+ckm::AABB<ckm::vector3> SceneBody::calcAABB() const
+{
+    ckm::AABB<ckm::vector3> aabb;
+    
+    btVector3 min;
+    btVector3 max;
+    btBody->getCollisionShape()->getAabb(this->btBody->getWorldTransform(), min, max);
+    ckmFromBt(aabb.min, min);
+    ckmFromBt(aabb.max, max);
+    
+    return aabb;
+}
+
+//  Component
+
+OVERVIEW_COMPONENT_PROPERTY_POINT3_IMPL(SceneBody, Position)
+OVERVIEW_COMPONENT_PROPERTY_POINT3_IMPL(SceneBody, Rotation)
+OVERVIEW_COMPONENT_PROPERTY_POINT3_IMPL(SceneBody, Velocity)
+OVERVIEW_COMPONENT_PROPERTY_POINT3_IMPL(SceneBody, AngularVelocity)
+
+void SceneBody::setPosition(ckm::vector3 value)
+{
+    btVector3 btPos;
+    btFromCkm(btPos, value);
+
+    btTransform& transform = this->btBody->getWorldTransform();
+    transform.setOrigin(btPos);
+    
+    this->btBody->setWorldTransform(transform);
+    if (this->motionState) {
+        this->motionState->setWorldTransform(transform);
+    }
+}
+
+ckm::vector3 SceneBody::getPosition() const
+{
+    ckm::vector3 pos;
+    const btTransform& t = this->btBody->getWorldTransform();
+    ckmFromBt(pos, t.getOrigin());
+    return pos;
+}
+
+void SceneBody::setRotation(ckm::quat value)
+{
+    btQuaternion btq;
+    btFromCkm(btq, value);
+    btTransform& t = this->btBody->getWorldTransform();
+    t.getBasis().setRotation(btq);
+    this->btBody->setWorldTransform(t);
+    if (this->motionState) {
+        this->motionState->setWorldTransform(t);
+    }
+}
+
+ckm::quat SceneBody::getRotation() const
+{
+    ckm::quat rot;
+    btQuaternion btq;
+    this->btBody->getWorldTransform().getBasis().getRotation(btq);
+    ckmFromBt(rot, btq);
+    return rot;
+}
+
+ckm::vector3 SceneBody::getVelocity() const
+{
+    ckm::vector3 v;
+    return ckmFromBt(v, linearVelocity);
+}
+
+void SceneBody::setVelocity(ckm::vector3 v)
+{
+    btFromCkm(linearVelocity, v);
+
+    velocityChanged = true;
+}
+
+ckm::vector3 SceneBody::getAngularVelocity() const
+{
+    ckm::vector3 v;
+    return ckmFromBt(v, angularVelocity);
+}
+
+void SceneBody::setAngularVelocity(ckm::vector3 v)
+{
+    btFromCkm(angularVelocity, v);
     
     velocityChanged = true;
 }
 
-void SceneBody::getTransform(ckm::matrix3f& basis, ckm::vector3f& pos) const
-{
-    const btTransform& t = this->btBody->getWorldTransform();
-    ckmFromBt(basis, t.getBasis());
-    ckmFromBt(pos, t.getOrigin());
-}
-
-  
-  
     } /* namespace ove */
 } /* namespace cinek */

@@ -11,7 +11,7 @@
 
 #include "GameTypes.hpp"
 
-#include "Engine/Nav/NavBody.hpp"
+#include "Engine/Controller/NavBody.hpp"
 
 #include <cinek/objectpool.hpp>
 #include <unordered_map>

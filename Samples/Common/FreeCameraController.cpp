@@ -7,7 +7,6 @@
 //
 
 #include "FreeCameraController.hpp"
-#include "UICore/Input.hpp"
 
 #include "CKGfx/Camera.hpp"
 
@@ -25,23 +24,12 @@ FreeCameraController::FreeCameraController() :
     _moveYaw(0),
     _movePitch(0)
 {
-    bx::mtxIdentity(_cameraTransform.rotMtx);
-}
-
-void FreeCameraController::setTransform
-(
-    const gfx::Vector3& pos,
-    const gfx::Matrix4& rotMtx
-)
-{
-    _cameraTransform.pos = pos;
-    _cameraTransform.rotMtx = rotMtx;
 }
 
 void FreeCameraController::handleCameraInput
 (
     gfx::Camera &camera,
-    const cinek::uicore::InputState &state,
+    const cinek::input::InputState &state,
     float frameDelta
 )
 {
@@ -130,23 +118,31 @@ void FreeCameraController::handleCameraInput
         viewTranslate.y -= frameDelta * kSpeed;
     }
     
+    gfx::Matrix4 worldRotMtx;
+    gfx::Vector3 worldPos;
+    
+    worldRotMtx = camera.worldMtx;
+    worldPos.x = worldRotMtx[12];
+    worldPos.y = worldRotMtx[13];
+    worldPos.z = worldRotMtx[14];
+    worldRotMtx[12] = 0;
+    worldRotMtx[13] = 0;
+    worldRotMtx[14] = 0;
+    
     gfx::Matrix4 viewRotate;
     bx::mtxRotateXY(viewRotate, _movePitch * kRadiansDelta, _moveYaw * kRadiansDelta);
     
     gfx::Matrix4 worldRotate;
-    bx::mtxMul(worldRotate, viewRotate, _cameraTransform.rotMtx);
-    _cameraTransform.rotMtx = worldRotate;
+    bx::mtxMul(worldRotate, viewRotate, worldRotMtx);
     
     gfx::Vector3 worldTranslate;
-    bx::vec3MulMtx(worldTranslate, viewTranslate, _cameraTransform.rotMtx);
-    ckm::add(_cameraTransform.pos, _cameraTransform.pos, worldTranslate);
+    bx::vec3MulMtx(worldTranslate, viewTranslate, worldRotate);
+    ckm::add(worldPos, worldPos, worldTranslate);
     
     gfx::Matrix4 translate;
-    bx::mtxTranslate(translate, _cameraTransform.pos.x,
-        _cameraTransform.pos.y,
-        _cameraTransform.pos.z);
+    bx::mtxTranslate(translate, worldPos.x, worldPos.y, worldPos.z);
     
-    bx::mtxMul(camera.worldMtx, _cameraTransform.rotMtx, translate);
+    bx::mtxMul(camera.worldMtx, worldRotate, translate);
 }
 
     } /* namespace ove */

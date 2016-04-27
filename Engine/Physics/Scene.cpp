@@ -43,14 +43,28 @@ auto Scene::sceneContainerLowerBound
     return it;
 }
 
-Scene::Scene(btIDebugDraw* debugDrawer) :
+Scene::Scene
+(
+    const InitParams& initParams, 
+    btIDebugDraw* debugDrawer
+) :
     _simulateDynamics(true),
     _btCollisionDispatcher(&_btCollisionConfig),
     _btWorld(&_btCollisionDispatcher,
              &_btBroadphase,
              &_btCollisionConfig)
 {
-    _bodies.reserve(256);
+    int count = initParams.staticLimit;
+    
+    CK_ASSERT(initParams.limits.size() == _containers.size());
+    
+    for (int i = 0; i < initParams.limits.size(); ++i) {
+        if (initParams.limits[i] > 0) {
+            _containers[i].reserve(initParams.limits[i]);
+            count += initParams.limits[i];
+        }
+    }
+    _bodies.reserve(count);
     
     _btWorld.setDebugDrawer(debugDrawer);
 }
@@ -59,14 +73,14 @@ Scene::~Scene()
 {
 }
     
-void Scene::simulate(double dt)
+void Scene::simulate(CKTimeDelta dt)
 {
     _btWorld.performDiscreteCollisionDetection();
 
     if (_simulateDynamics) {
     
         for (auto& body : _bodies) {
-            if (body->isInCategory(SceneBody::kObject)) {
+            if (body->checkFlags(SceneBody::kIsDynamic)) {
                 if (body->transformChanged || body->velocityChanged) {
                     btTransform& transform = body->btBody->getWorldTransform();
                     
@@ -139,86 +153,120 @@ SceneBody* Scene::attachBody
     auto it = sceneContainerLowerBound(_bodies, body->entity);
     
     //  is it a new body? then add it to our master list
-    if (it == _bodies.end() || (*it)->entity != body->entity) {
-        //  reflect current simulation state
-        if (!_simulateDynamics) {
-            ove::deactivate(*body);
-        }
+    if (it != _bodies.end() && (*it)->entity == body->entity) {
+        CK_ASSERT(false);
+        return *it;
+    }
+    //  reflect current simulation state
+    if (!_simulateDynamics) {
+        ove::deactivate(*body);
+    }
 
-        body->btBody->setUserPointer(body);
-        it = _bodies.emplace(it, body);
-        _btWorld.addCollisionObject(body->btBody);
-        
-        if (body->motionState) {
-            btTransform btTransform;
-            body->motionState->getWorldTransform(btTransform);
-            body->btBody->setWorldTransform(btTransform);
-        }
-        
-        body->categoryMask = 0;
+    body->btBody->setUserPointer(body);
+    
+    if (body->motionState) {
+        btTransform btTransform;
+        body->motionState->getWorldTransform(btTransform);
+        body->btBody->setWorldTransform(btTransform);
     }
     
-    CK_ASSERT(body == *it);
+    body->categoryMask = 0;
     
-    uint32_t index = 0;
+    uint32_t category = 0;
     while (categories) {
         if ((categories & 1) != 0) {
-            auto& container = _containers[index];
-            it = sceneContainerLowerBound(container, body->entity);
-            if (it == container.end() || (*it)->entity != body->entity) {
-                it = container.emplace(it, body);
-                body->categoryMask |= (1 << index);
-            }
+            addCategoryToBody(body, category);
         }
-        ++index;
+        ++category;
         categories >>= 1;
     }
+    
+    it = _bodies.emplace(it, body);
+    CK_ASSERT(body == *it);
+    
+    //  update btWorld
+    addBodyToBtWorld(body);
     
     return body;
 }
 
+SceneBody* Scene::addCategoryToBody(Entity entity, uint32_t category)
+{
+    CK_ASSERT_RETURN_VALUE(category < SceneBody::kNumCategories, nullptr);
+
+    SceneBody* body = findBody(entity);
+    if (body) {
+        removeBodyFromBtWorld(body);
+        addCategoryToBody(body, category);
+        addBodyToBtWorld(body);
+    }
+    return body;
+}
+
+
+SceneBody* Scene::addCategoryToBody(SceneBody* body, uint32_t category)
+{
+    auto& container = _containers[category];
+    auto it = sceneContainerLowerBound(container, body->entity);
+    if (it == container.end() || (*it)->entity != body->entity) {
+        it = container.emplace(it, body);
+        uint32_t categoryFlag = 1 << category;
+        body->categoryMask |= categoryFlag;
+    }
+    return body;
+}
+
+SceneBody* Scene::removeCategoryFromBody(Entity entity, uint32_t category)
+{
+    SceneBody* body = findBody(entity);
+    if (body) {
+        removeBodyFromBtWorld(body);
+        removeCategoryFromBody(body, category);
+        addBodyToBtWorld(body);
+    }
+    return body;
+}
+
+SceneBody* Scene::removeCategoryFromBody(SceneBody* body, uint32_t category)
+{
+    auto& container = _containers[category];
+    auto it = sceneContainerLowerBound(container, body->entity);
+    if (it != container.end() && (*it)->entity == body->entity) {
+        body->categoryMask &= ~(1 << category);
+        container.erase(it);
+    }
+    return body;
+}
+
+
 SceneBody* Scene::detachBody
 (
-    Entity entity,
-    uint32_t categories
+    Entity entity
 )
 {
     SceneBody* body = nullptr;
-    uint32_t index = 0;
 
+    auto it = std::lower_bound(_bodies.begin(), _bodies.end(), entity,
+        [](const SceneBody* obj0, Entity e) -> bool {
+            return obj0->entity < e;
+        });
+    
+    CK_ASSERT_RETURN_VALUE(it != _bodies.end() && (*it)->entity == entity, nullptr);
+    body = *it;
+    
     //  remove from all categories
-    uint32_t categoryMask = categories;
-    while (categoryMask && (body && body->categoryMask)) {
-        if ((categoryMask & 1) != 0) {
-            auto& container = _containers[index];
-            auto it = sceneContainerLowerBound(container, entity);
-            if (it != container.end() && (*it)->entity == entity) {
-                body = *it;
-                body->categoryMask &= ~(1 << index);
-                _bodies.erase(it);
-            }
+    uint32_t categoryMask = body->getCategoryMask();
+    uint32_t category = 0;
+    while (categoryMask) {
+        if ((categoryMask & (1 << category)) != 0) {
+            removeCategoryFromBody(body, category);
+            categoryMask = body->categoryMask;
         }
-        ++index;
-        categoryMask >>= 1;
+        ++category;
     }
     
-    //  remove from the global list
-    if ((body && !body->categoryMask) || categories == SceneBody::kAllCategories) {
-        auto it = std::lower_bound(_bodies.begin(), _bodies.end(), entity,
-            [](const SceneBody* obj0, Entity e) -> bool {
-                return obj0->entity < e;
-            });
-        
-        CK_ASSERT_RETURN_VALUE(it != _bodies.end() && (*it)->entity == entity, nullptr);
-        CK_ASSERT(!body || body == *it);
-        
-        body = *it;
-    
-        auto obj = body->btBody;
-    
-        _btWorld.removeCollisionObject(obj);
-        _bodies.erase(it);
-    }
+    removeBodyFromBtWorld(body);
+    _bodies.erase(it);
     
     return body;
 }
@@ -270,7 +318,9 @@ SceneRayTestResult Scene::rayTestClosest
 (
     const btVector3& origin,
     const btVector3& dir,
-    float dist
+    float dist,
+    uint16_t includeFilters,
+    uint16_t excludeFilters
 )
 const
 {
@@ -282,6 +332,7 @@ const
     
     btCollisionWorld::ClosestRayResultCallback cb(origin, to);
     cb.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+    cb.m_collisionFilterMask = includeFilters ^ excludeFilters;
     
     _btWorld.rayTest(origin, to, cb);
     
@@ -298,8 +349,56 @@ const
     return result;
 }
 
+void Scene::addBodyToBtWorld(SceneBody* body)
+{
+    auto categoryMask = body->getCategoryMask();
+    if ((categoryMask & SceneBody::kIsDynamic) != 0) {
+        body->btBody->setCollisionFlags(0);
+    }
+    else {
+        body->btBody->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+    }
+    
+    short btGroup = 0;
+    short btMask = SceneBody::kAllFilter;
+    
+    if ((categoryMask & SceneBody::kIsStaging) != 0) {
+        //  staged bodies collide with everything
+        btGroup = SceneBody::kStagingFilter;
+    }
+    else if ((categoryMask & SceneBody::kIsDynamic) != 0) {
+        //  bodies collide with everything
+        /// note, this could be a bit more granular as needed
+        btGroup = SceneBody::kDefaultFilter;
+    }
+    else {
+        //  statics do not collide with each other
+        btGroup = SceneBody::kStaticFilter;
+        btMask = btMask ^ SceneBody::kStaticFilter;
+    }
+    
+    _btWorld.addCollisionObject(body->btBody, btGroup, btMask);
+}
 
-
+void Scene::removeBodyFromBtWorld(SceneBody* body)
+{
+    auto btBody = body->btBody;
+    
+    _btWorld.removeCollisionObject(btBody);
+}
+/*
+void Scene::updateBodyInBtWorld(SceneBody* body, bool addToWorld)
+{
+    auto categoryMask = body->getCategoryMask();
+    
+    if (body->btBody->getCollisionFlags())
+    
+    
+    
+ 
         
+ 
+}
+ */
     }   /* namespace ove */
 }   /* namespace cinek */

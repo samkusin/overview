@@ -10,15 +10,21 @@
 #include "GameView.hpp"
 #include "PlayView.hpp"
 
-#include "Engine/Nav/PathfinderDebug.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Physics/SceneDebugDrawer.hpp"
+#include "Engine/Path/PathfinderDebug.hpp"
+#include "Engine/Path/Pathfinder.hpp"
+#include "Engine/Render/RenderGraph.hpp"
+#include "Engine/Render/RenderContext.hpp"
 #include "Engine/AssetManifest.hpp"
 
-#include "UICore/UIBuilder.hpp"
+#include "CKGfx/Context.hpp"
 #include "CKGfx/Light.hpp"
 #include "CKGfx/ModelSet.hpp"
 #include "CKGfx/Geometry.hpp"
 #include "CKGfx/External/nanovg/nanovg.h"
+
+#include "UICore/UI.hpp"
 
 #include <ckjson/json.hpp>
 #include <ckm/math.hpp>
@@ -37,11 +43,10 @@ GameView::GameView(ApplicationContext* api) :
     _gameViewContext.pathfinder = api->pathfinder;
     _gameViewContext.pathfinderDebug = api->pathfinderDebug;
     _gameViewContext.navSystem = api->navSystem;
-    _gameViewContext.sceneService = &sceneService();
+    _gameViewContext.scene = api->scene;
     _gameViewContext.entityService = &entityService();
-    _gameViewContext.renderService = &renderService();
     _gameViewContext.assetService = &assetService();
-    _gameViewContext.uiService = &uiService();
+    _gameViewContext.renderContext = api->renderContext;
     _gameViewContext.nvgContext = nvgContext();
     _gameViewContext.game = this;
 }
@@ -64,12 +69,16 @@ void GameView::onViewAdded(ove::ViewStack& stateController)
     _camera.fovDegrees = 60.0f;
     _camera.worldMtx = gfx::Matrix4::kIdentity;
     
-    _renderer.setPlaceholderDiffuseTexture(renderService().findTexture("textures/df_plh"));
+    _renderer.setPlaceholderDiffuseTexture(gfxContext().findTexture("textures/df_plh"));
     
     //  create player
-    _focusedEntity = entityService().createEntity(kEntityStore_Staging, "entity",
+    _focusedEntity = entityService().createEntity(kEntityStore_Default, "entity",
                         "sample_male");
-    sceneService().setEntityPosition(_focusedEntity, btVector3(0,0,0), btVector3(0,1,0));
+    
+    auto body = scene().findBody(_focusedEntity);
+    if (body) {
+        body->setPosition(btVector3(0,0,0), btVector3(0,1,0));
+    }
     
     //  game state machine
     _viewStack.setFactory(
@@ -106,7 +115,7 @@ void GameView::onViewStartFrame(ove::ViewStack& stateController)
     _viewStack.startFrame();
 }
 
-void GameView::simulateView(ove::ViewStack& stateController, double dt)
+void GameView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {    
     _viewStack.simulate(dt);
 }
@@ -114,40 +123,49 @@ void GameView::simulateView(ove::ViewStack& stateController, double dt)
 void GameView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
-    const cinek::uicore::InputState& inputState
+    CKTimeDelta dt,
+    const cinek::input::InputState& inputState
 )
 {
-    //  RENDERING
-    _camera.viewportRect = renderService().getViewRect();
+    //  CAMERA-VIEW related non-rendering methods
+    _camera.viewportRect = renderContext().frameRect;
     _camera.update();
     
-    int32_t vx = inputState.mx - _camera.viewportRect.x;
-    int32_t vy = inputState.my - _camera.viewportRect.y;
+    gfx::Vector3 cameraPos = _camera.worldPosition();
 
-    gfx::Vector3 dir = _camera.rayFromViewportCoordinate(vx, vy);
-    gfx::Vector3 pos = _camera.worldPosition();
-    
-    _viewToSceneRayTestResult = sceneService().rayTestClosest(
-        { pos.x, pos.y, pos.z },
-        { dir.x , dir.y, dir.z },
-        100.0f);
+    if (!ImGui::IsMouseHoveringAnyWindow()) {
+        int32_t vx = inputState.mx - _camera.viewportRect.x;
+        int32_t vy = inputState.my - _camera.viewportRect.y;
 
-    sceneService().renderDebugStart(renderService(), _camera);
+        gfx::Vector3 dir = _camera.worldRayFromScreenCoordinate(vx, vy);
+        
+        _viewToSceneRayTestResult = scene().rayTestClosest(
+            ove::btFromGfx(cameraPos), ove::btFromGfx(dir), 100.0f,
+            ove::SceneBody::kAllFilter,
+            ove::SceneBody::kStagingFilter);
+    }
+    else {
+        _viewToSceneRayTestResult.clear();
+    }
     
-    renderService().renderNode(_renderer, sceneService().getGfxRootNode(), _camera);
+    //  RENDER SCENE
+    const ove::RenderContext& rc = renderContext();
+    _renderer(*rc.programs, *rc.uniforms,
+            _camera,
+            renderGraph().root());
     
-    sceneService().renderDebugAddRayTestHit(_viewToSceneRayTestResult,
-        { pos.x, pos.y, pos.z }, 0.1f, false);
+    sceneDebug().setup(*rc.programs, *rc.uniforms, _camera);
     
-    sceneService().renderDebugEnd();
+    sceneDebug().drawRayTestHit(_viewToSceneRayTestResult,
+        { cameraPos.x, cameraPos.y, cameraPos.z },
+        btScalar(0.1),
+        false);
     
-    pathfinderDebug().setup(renderService().context().programs,
-        renderService().context().uniforms,
-        &_camera,
-        nullptr);
+    scene().debugRender();
+   
+    pathfinderDebug().setup(rc.programs,rc.uniforms, &_camera, nullptr);
     pathfinder().simulateDebug(pathfinderDebug());
-    
+   
     //  SUBSTATE UPDATES
     _viewStack.frameUpdate(dt, inputState);
 }

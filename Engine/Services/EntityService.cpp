@@ -42,7 +42,7 @@ bool EntityService::isEntityValid(Entity e) const
     return _context->getStore(cinek_entity_context(e)).valid(e);
 }
 
-void EntityService::addDefintions
+void EntityService::addDefinitions
 (
     std::string name,
     std::shared_ptr<AssetManifest> manifest
@@ -59,6 +59,24 @@ void EntityService::clearDefinitions(const std::string& path)
 const AssetManifest* EntityService::getDefinitions(const std::string& name) const
 {
     return _context->getManifest(name);
+}
+
+void EntityService::enumerateDefinitions
+(
+    const std::function<void(const std::string&, const AssetManifest&)>& cb
+)
+{
+    _context->enumerateManifests(cb);
+}
+
+void EntityService::linkIdentityToEntity(Entity e, std::string identity)
+{
+    _context->linkIdentityToEntity(e, std::move(identity));
+}
+
+const std::string& EntityService::identityFromEntity(Entity e) const
+{
+    return _context->identityFromEntity(e);
 }
 
 

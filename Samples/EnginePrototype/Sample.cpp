@@ -8,6 +8,7 @@
 
 #include "Common.hpp"
 #include "Renderer.hpp"
+#include "Input.hpp"
 
 #include "CKGfx/VertexTypes.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
@@ -18,20 +19,20 @@
 #include "CKGfx/Node.hpp"
 #include "CKGfx/AnimationController.hpp"
 #include "CKGfx/Light.hpp"
+#include "CKGfx/External/nanovg/nanovg.h"
 
 #include <cinek/file.hpp>
 #include <cinek/allocator.hpp>
 #include <cinek/objectpool.hpp>
 
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
+
 #include <bgfx/bgfx.h>
 
-#include "UICore/UITypes.hpp"
 #include "UICore/UIEngine.hpp"
-#include "UICore/UIRenderer.hpp"
-#include "UICore/Input.hpp"
-
-#include "UICore/oui.h"
 
 #include <unordered_map>
 
@@ -58,16 +59,20 @@ enum
     kShaderProgramDiffuse       = 0x00000007
 };
 
-int runSample(int viewWidth, int viewHeight)
+NVGcontext* createNVGcontext(int viewId)
 {
-    //  UI
-    UIcontext* uiContext = uiCreateContext(4096, 1<<20);
-    uiMakeCurrent(uiContext);
-    uiSetHandler(cinek::uicore::OUIHandler);
+    NVGcontext* nvg = nvgCreate(1, viewId);
+    bgfx::setViewSeq(viewId, true);
     
-    NVGcontext* nvg = cinek::uicore::createRenderingContext(1);
-    if (!nvg)
-        return 1;
+    return nvg;
+}
+
+
+int runSample(int viewWidth, int viewHeight, int firstFreeViewId)
+{
+    NVGcontext* nvg = nvgCreate(1, firstFreeViewId);
+    bgfx::setViewSeq(1, true);
+    ++firstFreeViewId;
     
     //  nvg destruction should occur after the below scope's objects have been
     //  lost
@@ -135,15 +140,15 @@ int runSample(int viewWidth, int viewHeight)
                                                nvg);
 
         const double kSimFPS = 60.0;
-        const double kSecsPerSimFrame = 1/kSimFPS;
+        const CKTimeDelta kSecsPerSimFrame = 1/kSimFPS;
         
-        double simTime = 0.0;
-        double lagSecsSim = 0.0;
+        CKTime simTime = 0.0;
+        CKTime lagSecsSim = 0.0;
         
         uint32_t systemTimeMs = SDL_GetTicks();
         bool running = true;
         
-        cinek::uicore::InputState polledInputState;
+        cinek::input::InputState polledInputState;
         
         while (running) {
             uint32_t nextSystemTimeMs = SDL_GetTicks();
@@ -157,7 +162,7 @@ int runSample(int viewWidth, int viewHeight)
                 frameTimeMs = 100;
             }
             
-            double frameTime = frameTimeMs*0.001;
+            CKTimeDelta frameTime = frameTimeMs*0.001;
             lagSecsSim += frameTime;
         
             ////////////////////////////////////////////////////////////////////////
@@ -177,15 +182,43 @@ int runSample(int viewWidth, int viewHeight)
             //  SIMULATION END
             ////////////////////////////////////////////////////////////////////////
 
-            if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
-                running = false;
+            {
+                int mx, my;
+    
+                //  handle Mouse UI, which is polled per frame instead of set per event.
+                uint32_t mbtn = SDL_GetMouseState(&mx, &my);
+                SDL_GetRelativeMouseState(&polledInputState.mdx, &polledInputState.mdy);
+    
+                polledInputState.mx = mx;
+                polledInputState.my = my;
+                polledInputState.mbtn = mbtn;
+                polledInputState.mxWheel = 0;
+                polledInputState.myWheel = 0;
+    
+                //  poll system and key events
+                uint32_t flags = 0;
+                SDL_Event event;
+                while (SDL_PollEvent(&event)) {
+                    flags |= cinek::input::processSDLEvent(polledInputState, event);
+                    imGuiProcessEvent(&event);
+                }
+                if (flags & cinek::input::kPollSDLEvent_Quit)
+                    running = false;
+                
+                polledInputState.keystate = SDL_GetKeyboardState(&polledInputState.keystateArraySize);
+                polledInputState.keyModifiers = SDL_GetModState();
+            }
             
-
+            //  pixel ratio may change if for some reason we have different framebuffer
+            //  sizes from our window (i.e. fullscreen?)
+            
+            imGuiNewFrame();
+            nvgBeginFrame(nvg, viewRect.w, viewRect.h, 1.0f);
+            
             controller.renderFrame(frameTime, viewRect, polledInputState);
-
-            cinek::uicore::render(nvg, viewRect);
-        
-            uiProcess(systemTimeMs);
+            
+            nvgEndFrame(nvg);
+            imGuiRender();
             
             controller.endFrame();
             
@@ -193,7 +226,7 @@ int runSample(int viewWidth, int viewHeight)
         }
     }
     
-    cinek::uicore::destroyRenderingContext(nvg);
+    nvgDelete(nvg);
     
     return 0;
 }

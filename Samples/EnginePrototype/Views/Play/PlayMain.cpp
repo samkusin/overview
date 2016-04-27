@@ -8,13 +8,12 @@
 
 #include "PlayMain.hpp"
 
-#include "Engine/Services/RenderService.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
-#include "Engine/Nav/NavSystem.hpp"
-#include "Engine/Nav/NavPathQuery.hpp"
+#include "Engine/Render/RenderContext.hpp"
+#include "Engine/Path/Pathfinder.hpp"
+#include "Engine/Controller/NavSystem.hpp"
+#include "Engine/Path/NavPathQuery.hpp"
 #include "Engine/ViewStack.hpp"
 
-#include "UICore/UIBuilder.hpp"
 
 namespace cinek {
 
@@ -36,18 +35,19 @@ void PlayMain::onViewStartFrame(ove::ViewStack& stateController)
 {
 }
 
-void PlayMain::simulateView(ove::ViewStack& stateController, double dt)
+void PlayMain::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
 }
 
 void PlayMain::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
-    const cinek::uicore::InputState& inputState
+    CKTimeDelta dt,
+    const cinek::input::InputState& inputState
 )
 {
-    layoutUI();
+    updateUI(inputState);
+    handleUI(stateController);
 }
 
 void PlayMain::onViewEndFrame(ove::ViewStack& stateController)
@@ -60,8 +60,14 @@ const char* PlayMain::viewId() const
     return "PlayMain";
 }
 
-void PlayMain::layoutUI()
+void PlayMain::updateUI(const cinek::input::InputState &inputState)
 {
+    if (inputState.testKeyMod(KMOD_SHIFT)) {
+        if (inputState.testKey(SDL_SCANCODE_TAB)) {
+            game().setGameMode(GameMode::kEditor);
+        }
+    }
+    /*
     //  layout UI
     uicore::Layout::Style style;
     style.mask = uicore::Layout::Style::has_margins;
@@ -69,23 +75,17 @@ void PlayMain::layoutUI()
     
     uicore::Layout uiLayout;
     
-    _frameState.keyEventLimit = sizeof(_frameKeyEvents) / sizeof(_frameKeyEvents[0]);
-    _frameState.keyEvents = _frameKeyEvents;
     
-    auto frameWidth = renderService().getViewRect().w;
-    auto frameHeight = renderService().getViewRect().h;
-    
-    uiLayout.beginFrame(UI_BUTTON0_DOWN | UI_KEY_DOWN, &_frameState, nullptr, nullptr)
-        .setSize(frameWidth, frameHeight);
-    uiLayout.end();
-    
-    uiService().setKeyboardFocusToItem(_frameState.thisItem);
+    auto frameWidth = uiService().frame().width();
+    auto frameHeight = uiService().frame().height();
+    */
 }
 
 void PlayMain::handleUI(ove::ViewStack& stateController)
 {
+    /*
     uicore::KeyEvent keyEvt;
-    while ((keyEvt = _frameState.popKey())) {
+    while ((keyEvt = uiService().frame().popKey())) {
     
         if (keyEvt.mod & KMOD_SHIFT) {
         
@@ -99,12 +99,12 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
     }
     
     //  main frame selections
-    if (_frameState.evtType == UI_BUTTON0_DOWN) {
+    if (uiService().frame().eventType() == UI_BUTTON0_DOWN) {
     
         auto& rayTestResult = sceneRayTestResult();
         if (rayTestResult) {
-            ckm::vector3f pos;
-            ckm::vector3f extents { ckm::scalar(0.00), ckm::scalar(0.05), ckm::scalar(0.0) };
+            ckm::vector3 pos;
+            ckm::vector3 extents { ckm::scalar(0.00), ckm::scalar(0.05), ckm::scalar(0.0) };
             ove::ckmFromBt(pos, rayTestResult.position);
             
             auto query = pathfinder().acquireQuery();
@@ -116,6 +116,7 @@ void PlayMain::handleUI(ove::ViewStack& stateController)
             }
         }
     }
+    */
 }
 
 }

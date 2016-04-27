@@ -33,24 +33,24 @@ struct BVHTestFrustrumSweep
     /// @param  callback  Callback issued for every object within the frustrum
     ///                   with signature (ObjectId, const AABB<vec3>&)
     ///
-    template<typename _Callback> int operator()(const ckm::Frustrum& frustrum,
+    template<typename _Callback> int operator()(const ckm::frustrum& frustrum,
         const _Callback& cb) const;
     
-    template<typename _Callback> int operator()(const ckm::Frustrum& frustrum,
-        ckm::Frustrum::Plane plane,
+    template<typename _Callback> int operator()(const ckm::frustrum& frustrum,
+        ckm::frustrum::plane plane,
         const _Callback& cb) const;
 
 private:
     const _TreeType* _tree;
     
     template<typename _Callback>
-    int testIntersect(const ckm::Frustrum& frustrum,
+    int testIntersect(const ckm::frustrum& frustrum,
         int32_t atNodeIdx,
         const _Callback& cb) const;
     
     template<typename _Callback>
-    int testIntersect(const ckm::Frustrum& frustrum,
-        ckm::Frustrum::Plane plane,
+    int testIntersect(const ckm::frustrum& frustrum,
+        ckm::frustrum::plane plane,
         int32_t atNodeIdx,
         const _Callback& cb) const;
 };
@@ -60,7 +60,7 @@ template<typename _TreeType>
 template<typename _Callback>
 int BVHTestFrustrumSweep<_TreeType>::operator()
 (
-    const ckm::Frustrum& frustrum,
+    const ckm::frustrum& frustrum,
     const _Callback& cb
 )
 const
@@ -77,8 +77,8 @@ template<typename _TreeType>
 template<typename _Callback>
 int BVHTestFrustrumSweep<_TreeType>::operator()
 (
-    const ckm::Frustrum& frustrum,
-    ckm::Frustrum::Plane plane,
+    const ckm::frustrum& frustrum,
+    ckm::frustrum::plane plane,
     const _Callback& cb
 )
 const
@@ -95,7 +95,7 @@ template<typename _TreeType>
 template<typename _Callback>
 int BVHTestFrustrumSweep<_TreeType>::testIntersect
 (
-    const ckm::Frustrum& frustrum,
+    const ckm::frustrum& frustrum,
     int32_t atNodeIdx,
     const _Callback& cb
 ) const
@@ -128,8 +128,8 @@ template<typename _TreeType>
 template<typename _Callback>
 int BVHTestFrustrumSweep<_TreeType>::testIntersect
 (
-    const ckm::Frustrum& frustrum,
-    ckm::Frustrum::Plane plane,
+    const ckm::frustrum& frustrum,
+    ckm::frustrum::plane plane,
     int32_t atNodeIdx,
     const _Callback& cb
 ) const

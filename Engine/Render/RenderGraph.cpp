@@ -156,7 +156,7 @@ void RenderGraph::clear()
 
 void RenderGraph::update
 (
-    double dt
+    CKTimeDelta dt
 )
 {
     //  sort added nodes into active list first

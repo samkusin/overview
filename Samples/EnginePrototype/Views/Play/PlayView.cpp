@@ -9,8 +9,8 @@
 #include "PlayView.hpp"
 #include "PlayMain.hpp"
 
-#include "Engine/Services/SceneService.hpp"
-#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Physics/Scene.hpp"
+#include "Engine/Controller/NavSystem.hpp"
 
 namespace cinek {
 
@@ -40,7 +40,9 @@ void PlayView::onViewAdded(ove::ViewStack& stateController)
     
     _viewStack.present("PlayMain");
     
-    sceneService().enableSimulation();
+    
+    
+    scene().activate();
     navSystem().activate();
 }
 
@@ -56,16 +58,30 @@ void PlayView::onViewStartFrame(ove::ViewStack& stateController)
     _viewStack.startFrame();
 }
 
-void PlayView::simulateView(ove::ViewStack& stateController, double dt)
+void PlayView::simulateView(ove::ViewStack& stateController, CKTimeDelta dt)
 {
+    /*
+    auto entity = game().getFocusedGameEntity();
+    if (entity) {
+        auto body = scene().findBody(entity);
+        if (body) {
+            ckm::vector3 avel(0,1,0);
+            
+            ckm::scale(avel, avel, dt);
+        
+            body->setVelocity(ckm::vector3::kZero, avel);
+        }
+    }
+    */
+
     _viewStack.simulate(dt);
 }
 
 void PlayView::frameUpdateView
 (
     ove::ViewStack& stateController,
-    double dt,
-    const cinek::uicore::InputState& inputState
+    CKTimeDelta dt,
+    const cinek::input::InputState& inputState
 )
 {
 

@@ -13,11 +13,12 @@
 #include "Common.hpp"
 #include "ResourceFactory.hpp"
 
-#include "UICore/UITypes.hpp"
+#include "UICore/UIEngine.hpp"
 
 #include "Engine/EntityDatabase.hpp"
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Render/RenderContext.hpp"
+#include "Engine/Controller/ControllerTypes.hpp"
 #include "Engine/ViewStack.hpp"
 
 #include "CKGfx/GfxTypes.hpp"
@@ -51,9 +52,9 @@ public:
     
     void beginFrame();
     
-    void simulateFrame(double dt);
-    void renderFrame(double dt, const gfx::Rect& viewRect,
-        const cinek::uicore::InputState& inputState);
+    void simulateFrame(CKTimeDelta dt);
+    void renderFrame(CKTimeDelta dt, const gfx::Rect& viewRect,
+        const cinek::input::InputState& inputState);
     void endFrame();
     
 private:
@@ -77,7 +78,6 @@ private:
     
     gfx::NodeRenderer _renderer;
     NVGcontext* _nvg;
-    UIContext _uiContext;
     
     unique_ptr<ove::RenderGraph> _renderGraph;
     ove::RenderContext _renderContext;
@@ -93,6 +93,9 @@ private:
     
     unique_ptr<NavDataContext> _navDataContext;
     unique_ptr<ove::NavSystem> _navSystem;
+    
+    unique_ptr<TransformDataContext> _transformDataContext;
+    unique_ptr<ove::TransformSystem> _transformSystem;
     
     unique_ptr<GameEntityFactory> _componentFactory;
     

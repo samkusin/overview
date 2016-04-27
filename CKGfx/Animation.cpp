@@ -87,25 +87,6 @@ namespace bx {
         _result[2] = cz;
         _result[3] = cw;
     }
-    
-    inline void eulerToQuat(float* _result, const float *_euler) {
-        const float ex_2 = _euler[0]*0.5f;
-        const float ey_2 = _euler[1]*0.5f;
-        const float ez_2 = _euler[2]*0.5f;
-        const float cx = cosf(ex_2);
-        const float cy = cosf(ey_2);
-        const float cz = cosf(ez_2);
-        const float sx = sinf(ex_2);
-        const float sy = sinf(ey_2);
-        const float sz = sinf(ez_2);
-        _result[0] = cy*cz*sx - sy*sz*cx;
-        _result[1] = cx*cz*sy + sx*sz*cy;
-        _result[2] = cx*cy*sz - sx*sy*cz;
-        _result[3] = cx*cy*cz + sx*sy*sz;
-        
-        quatNorm(_result, _result);
-    }
-    
 }
 
 namespace cinek {

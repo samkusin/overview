@@ -11,15 +11,11 @@
 
 #include "GameTypes.hpp"
 #include "Common.hpp"
-#include "UICore/UITypes.hpp"
 #include "CKGfx/NodeRenderer.hpp"
-#include "UICore/Input.hpp"
 #include "Engine/ViewController.hpp"
 #include "Engine/Messages/Core.hpp"
 #include "Engine/Services/AssetService.hpp"
 #include "Engine/Services/EntityService.hpp"
-#include "Engine/Services/SceneService.hpp"
-#include "Engine/Services/RenderService.hpp"
 
 namespace cinek {
 
@@ -27,7 +23,6 @@ struct ApplicationContext
 {
     NVGcontext* nvg;
     TaskScheduler* taskScheduler;
-    UIContext *uiContext;
     
     ove::MessageClientSender* msgClientSender;
     ove::AssetManfiestFactory* resourceFactory;
@@ -57,14 +52,11 @@ protected:
     ove::EntityService& entityService() {
         return _entityService;
     }
-    ove::SceneService& sceneService() {
-        return _sceneService;
-    }
-    ove::RenderService& renderService() {
-        return _renderService;
-    }
     ove::Scene& scene() {
-        return *_scene;
+        return *_appContext->scene;
+    }
+    ove::SceneDebugDrawer& sceneDebug() {
+        return *_appContext->sceneDebugDrawer;
     }
     ove::Pathfinder& pathfinder() {
         return *_pathfinder;
@@ -75,26 +67,30 @@ protected:
     ove::NavSystem& navSystem() {
         return *_navSystem;
     }
-    UIService& uiService() {
-        return _uiService;
-    }
     NVGcontext* nvgContext() {
         return _appContext->nvg;
     }
-    
+    TaskScheduler& scheduler() {
+        return *_appContext->taskScheduler;
+    }
+    ove::RenderContext& renderContext() {
+        return *_appContext->renderContext;
+    }
+    ove::RenderGraph& renderGraph() {
+        return *_appContext->renderGraph;
+    }
+    gfx::Context& gfxContext() {
+        return *_appContext->gfxContext;
+    }
+
 private:
     ApplicationContext* _appContext;
     ove::AssetService _assetService;
     ove::EntityService _entityService;
-    ove::SceneService _sceneService;
-    ove::RenderService _renderService;
     
-    ove::Scene* _scene;
     ove::Pathfinder* _pathfinder;
     ove::PathfinderDebug* _pathfinderDebug;
     ove::NavSystem* _navSystem;
-    
-    UIService _uiService;
 };
 
 }

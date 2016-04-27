@@ -2,7 +2,8 @@
     "entity" : {
         "test_bot" : {
             "editor" : {
-                "name" : "Test Entity Bot"
+                "name" : "Test Entity Bot",
+                "category" : "Test"
             },
             "renderable" : {
                 "modelset" : "models/simple.json",
@@ -15,7 +16,8 @@
         },
         "coffee_table" : {
             "editor" : {
-                "name" : "Coffee Table (Mid)"
+                "name" : "Coffee Table (Mid)",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/furnature-tables-0.json",
@@ -28,7 +30,8 @@
         },
         "coffee_table_sm1" : {
             "editor" : {
-                "name" : "Coffee Table (Small)"
+                "name" : "Coffee Table (Small)",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/furnature-tables-0.json",
@@ -39,22 +42,10 @@
                 "mass" : 10.0
             }
         },
-        "coffee_table_sm2" : {
-            "editor" : {
-                "name" : "Coffee Table (Small Alt)"
-            },
-            "renderable" : {
-                "modelset" : "models/furnature-tables-0.json",
-                "model" : "CoffeeTable-Small2"
-            },
-            "scenebody" : {
-                "shape" : "box",
-                "mass" : 10.0
-            }
-        },
         "library_table" : {
             "editor" : {
-                "name" : "Library Table"
+                "name" : "Library Table",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -67,7 +58,8 @@
         },
         "library_chair" : {
             "editor" : {
-                "name" : "Library Table Chair"
+                "name" : "Library Table Chair",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -80,7 +72,8 @@
         },
         "library_vase" : {
             "editor" : {
-                "name" : "Library Vase"
+                "name" : "Library Vase",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -93,7 +86,8 @@
         },
         "library_trashcan" : {
             "editor" : {
-                "name" : "Library Trash Can"
+                "name" : "Library Trash Can",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -106,7 +100,8 @@
         },
         "library_shelves" : {
             "editor" : {
-                "name" : "Library Shelves"
+                "name" : "Library Shelves",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -119,7 +114,8 @@
         },
         "library_shelves_broken" : {
             "editor" : {
-                "name" : "Library Shelves (Disheveled)"
+                "name" : "Library Shelves (Disheveled)",
+                "category" : "Furniture"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -132,7 +128,8 @@
         },
         "library_shelves_books" : {
             "editor" : {
-                "name" : "Library Books on Shelf"
+                "name" : "Library Books on Shelf",
+                "category" : "Prop"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -145,7 +142,8 @@
         },
         "library_shelves_books_2" : {
             "editor" : {
-                "name" : "Library Books on Shelf 2"
+                "name" : "Library Books on Shelf 2",
+                "category" : "Prop"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -158,7 +156,8 @@
         },
         "library_shelves_books_3" : {
             "editor" : {
-                "name" : "Library Books on Shelf 3"
+                "name" : "Library Books on Shelf 3",
+                "category" : "Prop"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -171,7 +170,8 @@
         },
         "wood_crate" : {
             "editor" : {
-                "name" : "Wooden Crate"
+                "name" : "Wooden Crate",
+                "category" : "Container"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -184,7 +184,8 @@
         },
         "wood_crate_labeled_1" : {
             "editor" : {
-                "name" : "Wooden Crate Labeled"
+                "name" : "Wooden Crate Labeled",
+                "category" : "Container"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -197,7 +198,8 @@
         },
         "wood_crate_labeled_2" : {
             "editor" : {
-                "name" : "Wooden Crate Labeled 2"
+                "name" : "Wooden Crate Labeled 2",
+                "category" : "Container"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -210,7 +212,8 @@
         },
         "wood_crate_labeled_3" : {
             "editor" : {
-                "name" : "Wooden Crate Labeled 3"
+                "name" : "Wooden Crate Labeled 3",
+                "category" : "Container"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -223,7 +226,8 @@
         },
         "wood_crate_labeled_4" : {
             "editor" : {
-                "name" : "Wooden Crate Labeled 4"
+                "name" : "Wooden Crate Labeled 4",
+                "category" : "Container"
             },
             "renderable" : {
                 "modelset" : "models/library-items.json",
@@ -234,9 +238,24 @@
                 "mass" : 10.0
             }
         },
+        "sample_door" : {
+            "editor" : {
+                "name" : "Sample Door",
+                "category" : "Portal"
+            },
+            "scenebody" : {
+                "mass" : 90.0,
+                "shape" : "box"
+            },
+            "renderable" : {
+                "modelset" : "models/doors.json",
+                "model" : "Door"
+            }
+        },
         "sample_male" : {
            "editor" : {
-                "name" : "Sample Male"
+                "name" : "Sample Male",
+                "category" : "Character"
             },
             "renderable" : {
                 "modelset" : "models/male-mhm-anim.json",

@@ -27,20 +27,17 @@ private:
     virtual void onViewAdded(ove::ViewStack& stateController) override;
     virtual void onViewRemoved(ove::ViewStack& stateController) override;
     virtual void onViewStartFrame(ove::ViewStack& stateController) override;
-    virtual void simulateView(ove::ViewStack& stateController, double dt) override;
-    virtual void frameUpdateView(ove::ViewStack& stateController, double dt,
-                                 const cinek::uicore::InputState& inputState) override;
+    virtual void simulateView(ove::ViewStack& stateController, CKTimeDelta dt) override;
+    virtual void frameUpdateView(ove::ViewStack& stateController, CKTimeDelta dt,
+                                 const cinek::input::InputState& inputState) override;
     virtual void onViewEndFrame(ove::ViewStack& stateController) override;
     
     virtual const char* viewId() const override;
 
-private:    
-    uicore::FrameState _frameState;
-    uicore::KeyEvent _frameKeyEvents[16];
-    
+private:
     Entity _focusedEntity;
-    
-    void layoutUI();
+        
+    void updateUI(const cinek::input::InputState& inputState);
     void handleUI(ove::ViewStack& stateController);
 };
 

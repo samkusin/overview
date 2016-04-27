@@ -439,7 +439,7 @@ Mesh createUVSphere
     
     MeshBuilder::create(meshBuilder,
         MeshBuilder::calculateUVSphereCounts(numStacks, numSlices, primType));
-    MeshBuilder::buildUVSphere(meshBuilder, radius, numStacks, numSlices, primType);
+    MeshBuilder::UVSphere(meshBuilder, radius, numStacks, numSlices, primType);
     
     return Mesh(vertexType, meshBuilder.indexType,
         meshBuilder.vertexMemory,

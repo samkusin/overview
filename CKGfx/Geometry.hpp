@@ -114,14 +114,15 @@ namespace MeshBuilder {
         PrimitiveType primType
     );
  
-    MeshBuilder::BuilderState& buildUVSphere
+    BuilderState& UVSphere
     (
-        MeshBuilder::BuilderState& state,
+        BuilderState& state,
         float radius,
         int32_t numStacks,
         int32_t numSlices,
         PrimitiveType primType
     );
+    
 }
     
     } /* namespace gfx */

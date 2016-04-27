@@ -9,7 +9,7 @@
 #ifndef Game_NavSceneBodyTransform_hpp
 #define Game_NavSceneBodyTransform_hpp
 
-#include "Engine/Nav/NavBodyTransform.hpp"
+#include "Engine/Controller/NavBodyTransform.hpp"
 
 namespace cinek {
     namespace ove {
@@ -21,22 +21,22 @@ public:
     
     virtual void getNavBodyTransform
     (
-        ckm::vector3f& translate,
-        ckm::matrix3f& basis
+        ckm::quat& basis,
+        ckm::vector3& translate
     )
     override;
     
     virtual void setNavBodyTransform
     (
-        ckm::vector3f translate,
-        ckm::matrix3f basis
+        ckm::quat basis,
+        ckm::vector3 translate
     )
     override;
     
     virtual void setNavBodyVelocity
     (
-        ckm::vector3f linear,
-        ckm::vector3f angular
+        ckm::vector3 linear,
+        ckm::vector3 angular
     )
     override;
 

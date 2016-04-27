@@ -12,8 +12,6 @@
 #include "GameTypes.hpp"
 #include "Engine/Physics/SceneTypes.hpp"
 #include "Engine/ViewController.hpp"
-#include "UICore/Input.hpp"
-#include "UICore/UITypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
 
 namespace cinek {
@@ -43,12 +41,10 @@ struct GameViewContext
     gfx::Camera* camera;
     
     ove::SceneRayTestResult* screenRayTestResult;
-    ove::SceneService* sceneService;
+    ove::Scene* scene;
     ove::EntityService* entityService;
-    ove::RenderService* renderService;
     ove::AssetService* assetService;
-    
-    UIService* uiService;
+    ove::RenderContext* renderContext;
     NVGcontext* nvgContext;
     ove::Pathfinder* pathfinder;
     ove::PathfinderDebug* pathfinderDebug;
@@ -62,20 +58,19 @@ class GameState : public ove::ViewController
 public:
     GameState(GameViewContext* context);
     
-protected:
     GameInterface& game() { return *_context->game; }
     const GameInterface& game() const { return *_context->game; }
     gfx::Camera& camera() { return *_context->camera; };
-    ove::SceneService& sceneService()  { return *_context->sceneService; }
+    ove::Scene& scene() { return *_context->scene; }
     ove::EntityService& entityService() { return *_context->entityService; }
-    ove::RenderService& renderService() { return *_context->renderService; }
     ove::AssetService& assetSevice() { return *_context->assetService; }
     ove::Pathfinder& pathfinder() { return *_context->pathfinder; }
     ove::PathfinderDebug& pathfinderDebug() { return *_context->pathfinderDebug; }
     ove::NavSystem& navSystem() { return *_context->navSystem; }
-    
+    ove::RenderContext& renderContext() { return *_context->renderContext; }
     const ove::SceneRayTestResult& sceneRayTestResult() const { return *_context->screenRayTestResult; }
-    UIService& uiService() { return *_context->uiService; }
+    
+    NVGcontext* nvgContext() { return _context->nvgContext; }
     
 private:
     GameViewContext* _context;

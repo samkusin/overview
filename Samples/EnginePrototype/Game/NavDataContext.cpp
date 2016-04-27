@@ -7,7 +7,7 @@
 //
 
 #include "NavDataContext.hpp"
-#include "Engine/Nav/NavBody.hpp"
+#include "Engine/Controller/NavBody.hpp"
 #include "Engine/Game/NavSceneBodyTransform.hpp"
 
 #include <cinek/objectpool.inl>

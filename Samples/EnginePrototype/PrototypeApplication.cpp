@@ -11,11 +11,13 @@
 #include "Engine/Physics/SceneDebugDrawer.hpp"
 #include "Engine/Render/RenderGraph.hpp"
 #include "Engine/EntityDatabase.hpp"
-#include "Engine/Nav/Pathfinder.hpp"
+#include "Engine/Path/Pathfinder.hpp"
 
-#include "Engine/Nav/PathfinderDebug.hpp"
-#include "Engine/Nav/NavSystem.hpp"
+#include "Engine/Path/PathfinderDebug.hpp"
+#include "Engine/Controller/NavSystem.hpp"
 #include "Game/NavDataContext.hpp"
+#include "Game/TransformDataContext.hpp"
+#include "Engine/Controller/TransformSystem.hpp"
 
 #include "GameEntityFactory.hpp"
 
@@ -24,8 +26,6 @@
 #include "Views/GameView.hpp"
 
 #include "PrototypeApplication.hpp"
-
-#include "UICore/oui.h"
 
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
@@ -87,7 +87,14 @@ PrototypeApplication::PrototypeApplication
     
     _sceneData = cinek::allocate_unique<ove::SceneDataContext>(sceneDataInit);
     _sceneDbgDraw = cinek::allocate_unique<ove::SceneDebugDrawer>();
-    _scene = cinek::allocate_unique<ove::Scene>(_sceneDbgDraw.get());
+    
+    ove::Scene::InitParams sceneInitParams;
+    sceneInitParams.staticLimit = 1024;
+    sceneInitParams.limits[ove::SceneBody::kSection] = 64;
+    sceneInitParams.limits[ove::SceneBody::kDynamic] = 1024;
+    sceneInitParams.limits[ove::SceneBody::kStaging] = 16;
+    
+    _scene = cinek::allocate_unique<ove::Scene>(sceneInitParams, _sceneDbgDraw.get());
 
     _pathfinder = cinek::allocate_unique<ove::Pathfinder>();
     _pathfinderDebug = cinek::allocate_unique<ove::PathfinderDebug>(64);
@@ -101,17 +108,30 @@ PrototypeApplication::PrototypeApplication
     navInitParams.numBodies = navDataInitParams.navBodyCount;
     _navSystem = cinek::allocate_unique<ove::NavSystem>(navInitParams);
     
+    TransformDataContext::InitParams transformInitParams;
+    transformInitParams.setCount = 128;
+    transformInitParams.actionCount = transformInitParams.setCount * 2;
+    transformInitParams.sequenceCount = transformInitParams.actionCount * 8;
+    _transformDataContext = cinek::allocate_unique<TransformDataContext>(transformInitParams);
+    
+    ove::TransformSystem::InitParams transformSystemParams;
+    transformSystemParams.numBodies = 128;
+    _transformSystem = cinek::allocate_unique<ove::TransformSystem>(transformSystemParams);
+    _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers);
+    
     _componentFactory = allocate_unique<GameEntityFactory>(
+        _entityDb.get(),
         _gfxContext,
         _sceneData.get(),
         _scene.get(),
         _renderGraph.get(),
         _navDataContext.get(),
-        _navSystem.get()
+        _navSystem.get(),
+        _transformDataContext.get(),
+        _transformSystem.get()
     );
-    
-    _entityDb = allocate_unique<ove::EntityDatabase>(entityStoreInitializers,
-        *_componentFactory);
+    _entityDb->setFactory(_componentFactory.get());
+
     
     //  define the top-level states for this application
     _appContext = allocate_unique<ApplicationContext>();
@@ -122,7 +142,6 @@ PrototypeApplication::PrototypeApplication
     _appContext->msgClientSender = &_clientSender;
     _appContext->gfxContext = _gfxContext;
     _appContext->renderContext = &_renderContext;
-    _appContext->uiContext = &_uiContext;
 
     //  TODO - These should be created and destroyed by View objects
     //       - Reason, it makes more sense to wholesale drop these objects
@@ -174,34 +193,30 @@ PrototypeApplication::~PrototypeApplication()
     
 void PrototypeApplication::beginFrame()
 {
-    _uiContext.keyFocusItem = -1;
-    
     _server.receive();
     _client.receive();
     
-    _navSystem->startFrame();
-
     _viewStack.startFrame();
+    
+    _navSystem->startFrame();
 }
 
-void PrototypeApplication::simulateFrame(double dt)
+void PrototypeApplication::simulateFrame(CKTimeDelta dt)
 {
+    _viewStack.simulate(dt);
+ 
     _pathfinder->simulate(dt);
     _navSystem->simulate(dt);
     _scene->simulate(dt);
-    
-    _viewStack.simulate(dt);
 }
 
 void PrototypeApplication::renderFrame
 (
-    double dt,
+    CKTimeDelta dt,
     const gfx::Rect& viewRect,
-    const cinek::uicore::InputState& inputState
+    const cinek::input::InputState& inputState
 )
 {
-    uiBeginLayout();
-    
     _taskScheduler.update(dt * 1000);
     
     _renderContext.frameRect = viewRect;
@@ -212,11 +227,6 @@ void PrototypeApplication::renderFrame
         
     _gfxContext->update();
     
-    uiEndLayout();
-    
-    if (_uiContext.keyFocusItem >= 0) {
-        uiFocus(_uiContext.keyFocusItem);
-    }
 }
 
 void PrototypeApplication::endFrame()

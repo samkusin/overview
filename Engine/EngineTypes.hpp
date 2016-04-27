@@ -24,6 +24,10 @@ namespace cinek {
         class ViewController;
         
         class RenderGraph;
+        struct RenderContext;
+        
+        template<typename Object> class Component;
+        template<typename Body, typename Derived> class System;
         
         class Scene;
         struct SceneBody;
@@ -37,18 +41,21 @@ namespace cinek {
         struct PathfinderDebug;
         class PathfinderListener;
         class NavMesh;
-        class NavBody;
-        class NavBodyTransform;
-        class NavSceneBodyTransform;
-        class NavSystem;
         class NavPath;
         class NavPathQueryPool;
         class NavPathQuery;
         
+        struct TransformAction;
+        struct TransformSet;
+        class TransformBody;
+        class TransformSystem;
+        class NavBody;
+        class NavBodyTransform;
+        class NavSceneBodyTransform;
+        class NavSystem;
+        
         class AssetService;
         class EntityService;
-        class RenderService;
-        class SceneService;
         
         class AssetManifest;
         class AssetManifestLoader;

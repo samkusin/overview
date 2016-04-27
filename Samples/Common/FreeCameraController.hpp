@@ -9,9 +9,10 @@
 #ifndef Controller_hpp
 #define Controller_hpp
 
+#include "Input.hpp"
+
 #include "Engine/EngineTypes.hpp"
 #include "CKGfx/GfxTypes.hpp"
-#include "UICore/UITypes.hpp"
 
 
 namespace cinek {
@@ -21,10 +22,8 @@ class FreeCameraController
 {
 public:
     FreeCameraController();
-    
-    void setTransform(const gfx::Vector3& pos, const gfx::Matrix4& rotMtx);
-    
-    void handleCameraInput(gfx::Camera& camera, const cinek::uicore::InputState& state,
+
+    void handleCameraInput(gfx::Camera& camera, const cinek::input::InputState& state,
                            float frameDelta);
 
 private:
@@ -41,14 +40,6 @@ private:
     uint32_t _moveFlags;
     float _moveYaw;
     float _movePitch;
-    
-    struct LocalTransform
-    {
-        gfx::Vector3 pos;
-        gfx::Matrix4 rotMtx;
-    };
-    
-    LocalTransform _cameraTransform;
 };
     } /* namespace ove */
 } /* namespace cinek */

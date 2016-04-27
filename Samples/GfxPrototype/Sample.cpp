@@ -9,6 +9,7 @@
 #include "Common.hpp"
 #include "Renderer.hpp"
 #include "Controller.hpp"
+#include "Input.hp"
 
 #include "CKGfx/VertexTypes.hpp"
 #include "CKGfx/ShaderLibrary.hpp"
@@ -31,12 +32,7 @@
 #include <bgfx/bgfx.h>
 #include <bx/fpumath.h>
 
-#include "UICore/UITypes.hpp"
 #include "UICore/UIEngine.hpp"
-#include "UICore/UIRenderer.hpp"
-#include "UICore/Input.hpp"
-
-#include "UICore/oui.h"
 
 #include <unordered_map>
 
@@ -49,17 +45,8 @@ enum
 };
 
 
-int runSample(int viewWidth, int viewHeight)
+int runSample(int viewWidth, int viewHeight, int firstFreeViewId)
 {
-    //  UI
-    UIcontext* uiContext = uiCreateContext(4096, 1<<20);
-    uiMakeCurrent(uiContext);
-    uiSetHandler(cinek::uicore::OUIHandler);
-    
-    NVGcontext* nvg = cinek::uicore::createRenderingContext(1);
-    if (!nvg)
-        return 1;
-    
     //  GFX
     cinek::Allocator allocator;
     cinek::gfx::Rect viewRect = { 0, 0, viewWidth, viewHeight };
@@ -318,10 +305,30 @@ int runSample(int viewWidth, int viewHeight)
         }
         */
 
-        cinek::uicore::InputState polledInputState;
+        cinek::input::InputState polledInputState;
         
-        if (cinek::uicore::pollSDLEvents(polledInputState) & cinek::uicore::kPollSDLEvent_Quit)
-            running = false;
+        {
+            int mx, my;
+
+            //  handle Mouse UI, which is polled per frame instead of set per event.
+            uint32_t mbtn = SDL_GetMouseState(&mx, &my);
+            SDL_GetRelativeMouseState(&polledInputState.mdx, &polledInputState.mdy);
+
+            polledInputState.mx = mx;
+            polledInputState.my = my;
+            polledInputState.mbtn = mbtn;
+            polledInputState.mxWheel = 0;
+            polledInputState.myWheel = 0;
+
+            //  poll system and key events
+            uint32_t flags = 0;
+            SDL_Event event;
+            while (SDL_PollEvent(&event)) {
+                flags |= cinek::input::processSDLEvent(polledInputState, event);
+            }
+            if (flags & cinek::input::kPollSDLEvent_Quit)
+                running = false;
+        }
 
         {
             for (auto& animController : animControllers) {
@@ -335,18 +342,13 @@ int runSample(int viewWidth, int viewHeight)
             
             mainCamera.update();
             nodeRenderer(shaderPrograms, shaderUniforms, mainCamera, scene.root());
-
-            cinek::uicore::render(nvg, viewRect);
         }
         {
-            appController.handleCameraInput(mainCamera, polledInputState, frameTimeMs*.001f);
-            uiProcess(systemTimeMs);
+            appController.handleCameraInput(mainCamera, poledInputState, frameTimeMs*.001f);
         }
 
         bgfx::frame();
     }
-
-    cinek::uicore::destroyRenderingContext(nvg);
     
     return 0;
 }

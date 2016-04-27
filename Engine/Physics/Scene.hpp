@@ -35,7 +35,18 @@ namespace cinek {
 class Scene
 {
 public:
-    Scene(btIDebugDraw* debugDrawer=nullptr);
+    struct InitParams
+    {
+        int staticLimit;
+        std::array<int, SceneBody::kNumCategories> limits;
+        
+        InitParams() {
+            staticLimit = 0;
+            limits.fill(0);
+        }
+    };
+        
+    Scene(const InitParams& initParams, btIDebugDraw* debugDrawer=nullptr);
     ~Scene();
 
     /**
@@ -45,7 +56,7 @@ public:
      *
      *  @param  dt      Time step in seconds
      */
-    void simulate(double dt);
+    void simulate(CKTimeDelta dt);
     /**
      *  Deactivates dynamic physics simulation
      *
@@ -67,15 +78,23 @@ public:
     /**
      *   Adds a fixed body to the Scene.  The hull is managed by the Scene.
      */
-    SceneBody* attachBody(SceneBody* body, uint32_t categories);
+    SceneBody* attachBody(SceneBody* body, uint32_t categoryMask);
     /**
      *  Removes the body from the Scene.
      */
-    SceneBody* detachBody(Entity entity, uint32_t categories=SceneBody::kAllCategories);
+    SceneBody* detachBody(Entity entity);
     /**
      *  @param  entity  What entity to find a body for
      */
-    SceneBody* findBody(Entity entity, uint32_t categories=SceneBody::kAllCategories) const;
+    SceneBody* findBody(Entity entity, uint32_t categoryMask=SceneBody::kAllCategories) const;
+    /**
+     *  Add categories to a body
+     */
+    SceneBody* addCategoryToBody(Entity entity, uint32_t category);
+    /**
+     *  Remove categories from a body
+     */
+    SceneBody* removeCategoryFromBody(Entity entity, uint32_t category);
     /**
      *  Retrieve the closest hit point with a given ray.
      *  
@@ -85,7 +104,9 @@ public:
      */
     SceneRayTestResult rayTestClosest(const btVector3& origin,
         const btVector3& dir,
-        btScalar dist) const;
+        btScalar dist,
+        uint16_t includeFilters = SceneBody::kAllFilter,
+        uint16_t excludeFilters = 0) const;
     
     /**
      *  Retrieve body objects using a filter and category mask.
@@ -105,13 +126,19 @@ private:
     
     SceneBodyContainer _bodies;
 
-    std::array<SceneBodyContainer, 32> _containers;
+    std::array<SceneBodyContainer, SceneBody::kNumCategories> _containers;
     
     SceneBodyContainer::iterator sceneContainerLowerBound
     (
         SceneBodyContainer& container,
         Entity entity
     );
+    
+    SceneBody* addCategoryToBody(SceneBody* body, uint32_t category);
+    SceneBody* removeCategoryFromBody(SceneBody* body, uint32_t category);
+    
+    void addBodyToBtWorld(SceneBody* body);
+    void removeBodyFromBtWorld(SceneBody* body);
     
     bool _simulateDynamics;
     

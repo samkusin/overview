@@ -86,6 +86,33 @@ void SceneDebugDrawer::setup
     _camera = &camera;
 }
 
+void SceneDebugDrawer::drawRayTestHit
+(
+    const SceneRayTestResult& rayTestResult,
+    const btVector3& origin,
+    btScalar radius,
+    bool drawray
+)
+{
+    if (!rayTestResult)
+        return;
+        
+    btTransform transform;
+    transform.setIdentity();
+    transform.setOrigin(rayTestResult.position);
+        
+    drawSphere(radius, transform, btVector3(0,0.5,1.0f));
+    drawLine(rayTestResult.position,
+        rayTestResult.position + rayTestResult.normal,
+        btVector3(0,0.5,1.0f));
+    
+    if (drawray) {
+        drawLine(origin,
+            rayTestResult.position,
+            btVector3(0,0,1.0f));
+    }
+}
+
 void SceneDebugDrawer::flushLines()
 {
     CK_ASSERT_RETURN(_camera);
@@ -137,7 +164,7 @@ void SceneDebugDrawer::flushLines()
         color.r = _currentLineColor.getX();
         color.g = _currentLineColor.getY();
         color.b = _currentLineColor.getZ();
-        color.a = 1.0f;
+        color.a = 0.50f;
         
         bgfx::setUniform((*_uniforms)[gfx::kNodeUniformColor], color);
 
@@ -148,6 +175,8 @@ void SceneDebugDrawer::flushLines()
 
         bgfx::setState(
             BGFX_STATE_RGB_WRITE
+          | BGFX_STATE_ALPHA_WRITE
+          | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
           | BGFX_STATE_DEPTH_WRITE
           | BGFX_STATE_DEPTH_TEST_LESS
           | BGFX_STATE_PT_LINES
@@ -159,6 +188,8 @@ void SceneDebugDrawer::flushLines()
     
     _lineBuffer.clear();
 }
+
+
 
     } /* namespace ove */
 } /* namespace cinek */

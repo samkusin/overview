@@ -210,7 +210,8 @@ void NodeRenderer::operator()
                     bgfx::setViewTransform(_camera->viewIndex,
                         _camera->viewMtx.comp,
                         _camera->projMtx.comp);
-                    bx::mtxMul(_viewProjMtx, _camera->viewMtx, _camera->projMtx);
+                
+                    memcpy(_viewProjMtx.comp, _camera->viewProjMtx.comp, sizeof(_viewProjMtx.comp));
                 }
                 break;
             case kStageFlagLightEnum: {

@@ -22,6 +22,13 @@ class InitializeScene : public Task
 {
 public:
     static const UUID kUUID;
+ 
+    static unique_ptr<InitializeScene> create
+    (
+        std::shared_ptr<AssetManifest> inputManifest,
+        SceneJsonLoader loader,
+        EndCallback cb
+    );
     
     InitializeScene
     (
@@ -30,7 +37,7 @@ public:
         EndCallback cb
     );
     
-    std::vector<SceneBody*> acquireBodyList();
+    SceneJsonLoader::SceneBodyList acquireBodyList();
     
     virtual const TaskClassId& classId() const override { return kUUID; }
 
@@ -40,7 +47,7 @@ protected:
 private:
     std::shared_ptr<AssetManifest> _manifest;
     SceneJsonLoader _loader;
-    std::vector<SceneBody*> _bodyList;
+    SceneJsonLoader::SceneBodyList _bodyList;
 };
     
     }  /* namespace ove */

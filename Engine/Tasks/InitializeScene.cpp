@@ -16,7 +16,19 @@ const UUID InitializeScene::kUUID = {
     0x65, 0xda, 0xf1, 0xee, 0x81, 0xb1, 0x43, 0xc7,
     0x94, 0x5f, 0x53, 0x25, 0xdb, 0xf7, 0xdc, 0x8c
 };
-    
+
+unique_ptr<InitializeScene> InitializeScene::create
+(
+    std::shared_ptr<AssetManifest> inputManifest,
+    SceneJsonLoader loader,
+    EndCallback cb
+)
+{
+    return allocate_unique<InitializeScene>(std::move(inputManifest),
+                std::move(loader),
+                std::move(cb));
+}
+
 InitializeScene::InitializeScene
 (
     std::shared_ptr<AssetManifest> inputManifest,
@@ -30,7 +42,7 @@ InitializeScene::InitializeScene
 {
 }
 
-std::vector<SceneBody*> InitializeScene::acquireBodyList()
+SceneJsonLoader::SceneBodyList InitializeScene::acquireBodyList()
 {
     return std::move(_bodyList);
 }
