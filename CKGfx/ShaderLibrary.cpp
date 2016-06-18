@@ -60,13 +60,13 @@ ShaderProgramId ShaderLibrary::loadProgram
 {
     int vsIdx = loadShader(vertexShaderPath);
     if (vsIdx == -1)
-        return kNullHandle;
+        return 0;
     
     int fsIdx = loadShader(fragShaderPath);
     if (fsIdx == -1)
     {
         unloadShader(vsIdx);
-        return kNullHandle;
+        return 0;
     }
 
     bgfx::ProgramHandle prog = bgfx::createProgram(
@@ -74,7 +74,7 @@ ShaderProgramId ShaderLibrary::loadProgram
         _shaders[fsIdx].shader
     );
     if (!bgfx::isValid(prog))
-        return kNullHandle;
+        return 0;
     
     ProgramReference ref;
     ref.program = prog;

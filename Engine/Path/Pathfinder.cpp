@@ -190,7 +190,7 @@ private:
             _generateCb(result);
             _generateCb = nullptr;
         }
-        _generateTaskId = kNullHandle;
+        _generateTaskId = 0;
     }
     
     auto runCommand(Command& cmd) -> std::pair<PathfinderError, bool>
@@ -257,7 +257,7 @@ private:
 public:
     Impl() :
         _scheduler(16),
-        _generateTaskId(kNullHandle)
+        _generateTaskId(0)
     {
         //  TODO - magic numbers! consolidate into an InitParams
         _tasks.reserve(32);
